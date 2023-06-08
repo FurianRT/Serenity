@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,15 +18,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -36,11 +30,12 @@ import com.furianrt.serenity.ui.composables.Toolbar
 import com.furianrt.uikit.composables.NoteItem
 import com.furianrt.uikit.entities.UiNote
 import com.furianrt.uikit.extensions.addSerenityBackground
+import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
-private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 5
+private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 
 @Composable
 fun MainScreen(
@@ -107,8 +102,8 @@ private fun MainScreenContent(
             state = uiState.toolbarState,
             scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
             toolbarModifier = Modifier.drawBehind {
-                if (uiState.listState.firstVisibleItemScrollOffset > 0f) {
-                    drawToolbarShadow()
+                if (uiState.listState.firstVisibleItemScrollOffset > 0) {
+                    drawBottomShadow()
                 }
             },
             toolbar = { Toolbar(uiState.toolbarState, uiState.listState) },
@@ -124,7 +119,7 @@ private fun MainScreenContent(
         val needToHideNavigation by remember {
             derivedStateOf {
                 uiState.scrollState.firstVisibleIndex >= 0 &&
-                    uiState.scrollState.scrollDirection == HomeScrollState.ScrollDirection.DOWN
+                        uiState.scrollState.scrollDirection == HomeScrollState.ScrollDirection.DOWN
             }
         }
 
@@ -134,27 +129,13 @@ private fun MainScreenContent(
             }
         }
 
-        BottomNavigationBar(
-            modifier = Modifier.padding(bottom = 24.dp),
-            onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
-            needToHideNavigation = { needToHideNavigation },
-            needToShowScrollUpButton = { needToShowScrollUpButton },
-        )
+         BottomNavigationBar(
+             onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
+             needToHideNavigation = { needToHideNavigation },
+             needToShowScrollUpButton = { needToShowScrollUpButton },
+         )
     }
 }
-
-private fun DrawScope.drawToolbarShadow(
-    color: Color = Color.Black,
-    elevation: Dp = 6.dp,
-) = drawRect(
-    topLeft = Offset(0f, size.height),
-    size = Size(size.width, elevation.toPx()),
-    brush = Brush.verticalGradient(
-        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
-        startY = size.height,
-        endY = size.height + elevation.toPx(),
-    ),
-)
 
 @Composable
 private fun MainSuccess(
@@ -167,7 +148,10 @@ private fun MainSuccess(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
-            NoteItem(notes[index])
+            NoteItem(
+                note = notes[index],
+                onClick = {},
+            )
         }
     }
 }
@@ -192,8 +176,8 @@ private fun MainLoading() {
 
 fun generatePreviewNotes() = buildList {
     val title = "Kotlin is a modern programming language with a " +
-        "lot more syntactic sugar compared to Java, and as such " +
-        "there is equally more black magic"
+            "lot more syntactic sugar compared to Java, and as such " +
+            "there is equally more black magic"
     for (i in 0..2) {
         add(
             UiNote(

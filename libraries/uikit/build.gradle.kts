@@ -53,4 +53,6 @@ dependencies {
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
+
+    implementation(Deps.collapsingToolbar)
 }

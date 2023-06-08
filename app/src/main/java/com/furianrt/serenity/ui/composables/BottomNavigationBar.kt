@@ -1,6 +1,5 @@
 package com.furianrt.serenity.ui.composables
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -9,15 +8,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -26,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -42,42 +39,33 @@ private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
 
 @Composable
 fun BottomNavigationBar(
-    modifier: Modifier = Modifier,
     needToHideNavigation: () -> Boolean,
     needToShowScrollUpButton: () -> Boolean,
     onScrollToTopClick: () -> Unit,
 ) {
-    val offset by animateFloatAsState(
+    val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
         animationSpec = tween(durationMillis = OFFSET_ANIM_DURATION),
         label = LABEL_OFFSET_ANIM,
     )
 
-    Column(
-        modifier = modifier
-            .graphicsLayer { translationY = (90.dp.toPx() + size.height) * offset },
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .graphicsLayer { translationY = size.height * verticalBias },
+        contentAlignment = Alignment.Center,
     ) {
         ButtonScrollToTop(
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = 24.dp),
             isVisible = needToShowScrollUpButton,
             onClick = onScrollToTopClick,
         )
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            verticalAlignment = Alignment.CenterVertically,
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+            contentAlignment = Alignment.CenterEnd,
         ) {
-            ButtonOptionMenu(
-                iconRes = R.drawable.ic_search,
-                onClick = {},
-            )
             ButtonAddNote(
-                modifier = Modifier.padding(horizontal = 40.dp),
-                onClick = {},
-            )
-            ButtonOptionMenu(
-                iconRes = R.drawable.ic_settings,
+                modifier = Modifier.padding(end = 24.dp, bottom = 24.dp),
                 onClick = {},
             )
         }
@@ -89,53 +77,15 @@ private fun ButtonAddNote(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .size(64.dp)
-            .shadow(8.dp, CircleShape)
-            .background(MaterialTheme.colorScheme.secondary, CircleShape)
-            .clickable(
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
-                    color = MaterialTheme.colorScheme.onSecondary,
-                ),
-            ),
-        contentAlignment = Alignment.Center,
+    FloatingActionButton(
+        modifier = modifier.size(56.dp),
+        shape = CircleShape,
+        containerColor = MaterialTheme.colorScheme.secondary,
+        onClick = onClick,
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_add),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary,
-        )
-    }
-}
-
-@Composable
-private fun ButtonOptionMenu(
-    @DrawableRes iconRes: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .alpha(0.7f)
-            .size(48.dp)
-            .shadow(8.dp, CircleShape)
-            .background(MaterialTheme.colorScheme.secondary, CircleShape)
-            .clickable(
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
-                    color = MaterialTheme.colorScheme.onSecondary,
-                ),
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSecondary,
         )
     }
 }

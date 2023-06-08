@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import com.furianrt.uikit.extensions.expand
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
@@ -30,6 +31,7 @@ class MainUiState(
             scrollState.firstVisibleIndexState.value = 0
             launch { listState.animateScrollToItem(0) }
             launch { toolbarState.toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
+            launch { toolbarState.expand() }
         }
     }
 }
