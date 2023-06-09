@@ -16,6 +16,9 @@ val CollapsingToolbarScaffoldState.isExpanded
 val CollapsingToolbarScaffoldState.isCollapsed
     get() = abs(offsetY) == toolbarState.minHeight
 
+val CollapsingToolbarScaffoldState.isInMiddleState
+    get() = !isExpanded && !isCollapsed
+
 val CollapsingToolbarState.isExpanded
     get() = run {
         val slippage = 0.005f
@@ -27,6 +30,9 @@ val CollapsingToolbarState.isCollapsed
         val slippage = 0.005f
         progress <= slippage
     }
+
+val CollapsingToolbarState.isInMiddleState
+    get() = !isExpanded && !isCollapsed
 
 suspend fun CollapsingToolbarScaffoldState.expand(duration: Int = 250) {
     val offsetYState = getPrivateOffsetYState()

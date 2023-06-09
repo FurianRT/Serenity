@@ -106,7 +106,13 @@ private fun MainScreenContent(
                     drawBottomShadow()
                 }
             },
-            toolbar = { Toolbar(uiState.toolbarState, uiState.listState) },
+            toolbar = {
+                Toolbar(
+                    toolbarScaffoldState = uiState.toolbarState,
+                    listState = uiState.listState,
+                    onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
+                )
+            },
         ) {
             Spacer(modifier = Modifier)
             when (vmState) {
@@ -129,11 +135,11 @@ private fun MainScreenContent(
             }
         }
 
-         BottomNavigationBar(
-             onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
-             needToHideNavigation = { needToHideNavigation },
-             needToShowScrollUpButton = { needToShowScrollUpButton },
-         )
+        BottomNavigationBar(
+            onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
+            needToHideNavigation = { needToHideNavigation },
+            needToShowScrollUpButton = { needToShowScrollUpButton },
+        )
     }
 }
 

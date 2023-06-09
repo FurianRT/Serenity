@@ -10,6 +10,7 @@ sealed interface MainState {
 
 sealed interface MainEvent {
     object OnScrollToTopClick : MainEvent
+    object OnSettingsClick : MainEvent
 }
 
 sealed interface MainEffect {

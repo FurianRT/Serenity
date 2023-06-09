@@ -33,6 +33,10 @@ class MainViewModel @Inject constructor(
             is MainEvent.OnScrollToTopClick -> {
                 _effect.trySend(MainEffect.ScrollToTop)
             }
+
+            is MainEvent.OnSettingsClick -> {
+
+            }
         }
     }
 
