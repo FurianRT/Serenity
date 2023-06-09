@@ -1,5 +1,7 @@
 package com.furianrt.serenity.ui.composables
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
@@ -8,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,26 +24,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCancellationBehavior
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
-import com.airbnb.lottie.compose.rememberLottieDynamicProperties
-import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.furianrt.serenity.R
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.CollapsingToolbarScope
 
 private const val PARALLAX_RATIO = 0.03f
+private const val ANIM_BUTTON_AI_DURATION = 300
+private const val ANIM_BUTTON_SETTINGS_DURATION = 250
+private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
 
 @Composable
 fun CollapsingToolbarScope.Toolbar(
@@ -88,7 +92,7 @@ fun CollapsingToolbarScope.Toolbar(
                 clipRect(
                     right = size.width,
                     top = -size.height,
-                    bottom = searchBarTop - botHintTop,
+                    bottom = if (botHintTop == 0f) -size.height else searchBarTop - botHintTop,
                 ) {
                     this@drawWithContent.drawContent()
                 }
@@ -107,21 +111,18 @@ fun CollapsingToolbarScope.Toolbar(
             .pin()
             .height(toolbarHeightDp)
             .fillMaxWidth()
-            .padding(start = 16.dp, end = 12.dp)
+            .padding(horizontal = 16.dp)
             .graphicsLayer { translationY = toolbarState.height - size.height },
         verticalAlignment = Alignment.CenterVertically
     ) {
         SearchBar(
             modifier = Modifier
                 .height(36.dp)
-                .padding(end = 12.dp)
+                .padding(end = 16.dp)
                 .weight(1f)
                 .onGloballyPositioned { searchBarTop = it.boundsInRoot().top },
         )
-        SettingsButton(
-            modifier = Modifier.size(34.dp),
-            onClick = onSettingsClick,
-        )
+        SettingsButton(onClick = onSettingsClick)
     }
 }
 
@@ -130,45 +131,53 @@ private fun SettingsButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    var isPlaying by remember { mutableStateOf(false) }
 
-    val composition by rememberLottieComposition(
-        spec = LottieCompositionSpec.RawRes(R.raw.anim_icon_settings),
-    )
+    var isAnimStarted by remember { mutableStateOf(false) }
+    val scale = remember { Animatable(1f) }
+    val rotation = remember { Animatable(0f) }
 
-    val animState = animateLottieCompositionAsState(
-        composition = composition,
-        isPlaying = isPlaying,
-        speed = 5f,
-        cancellationBehavior = LottieCancellationBehavior.OnIterationFinish,
-    )
-
-    val dynamicProperties = rememberLottieDynamicProperties(
-        rememberLottieDynamicProperty(
-            keyPath = arrayOf("**"),
-            property = LottieProperty.COLOR,
-            value = MaterialTheme.colorScheme.onPrimary.toArgb(),
-        )
-    )
-
-    LaunchedEffect(animState.isAtEnd) {
-        if (animState.isAtEnd) {
-            isPlaying = false
+    LaunchedEffect(isAnimStarted) {
+        if (isAnimStarted) {
+            joinAll(
+                launch {
+                    scale.animateTo(
+                        targetValue = 1.1f,
+                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
+                    )
+                    scale.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
+                    )
+                },
+                launch {
+                    rotation.animateTo(
+                        targetValue = rotation.value + ANIM_BUTTON_SETTINGS_ROTATION,
+                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION)
+                    )
+                }
+            )
+            isAnimStarted = false
         }
     }
 
-    LottieAnimation(
-        modifier = modifier.clickable(
-            onClick = {
-                isPlaying = true
-                onClick()
+    Icon(
+        modifier = modifier
+            .clickable(
+                onClick = {
+                    isAnimStarted = true
+                    onClick()
+                },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+            )
+            .graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+                rotationZ = rotation.value
             },
-            interactionSource = remember { MutableInteractionSource() },
-            indication = null,
-        ),
-        composition = composition,
-        progress = { animState.progress },
-        dynamicProperties = dynamicProperties,
+        painter = painterResource(R.drawable.ic_settings),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onPrimary,
     )
 }
 
@@ -180,6 +189,22 @@ private fun BotHint(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        var isAnimStarted by remember { mutableStateOf(false) }
+        val scale = remember { Animatable(1f) }
+
+        LaunchedEffect(isAnimStarted) {
+            if (isAnimStarted) {
+                scale.animateTo(
+                    targetValue = 1.1f,
+                    animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
+                )
+                scale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
+                )
+                isAnimStarted = false
+            }
+        }
         val composition by rememberLottieComposition(
             spec = LottieCompositionSpec.RawRes(R.raw.anim_ai_murble),
         )
@@ -189,7 +214,19 @@ private fun BotHint(
         )
 
         LottieAnimation(
-            modifier = Modifier.size(48.dp),
+            modifier = Modifier
+                .size(48.dp)
+                .clickable(
+                    onClick = {
+                        isAnimStarted = true
+                    },
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                )
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                },
             composition = composition,
             progress = { progress },
         )

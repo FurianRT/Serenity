@@ -1,6 +1,7 @@
 package com.furianrt.serenity.ui.composables
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -20,12 +21,16 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,8 +38,9 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
 import com.furianrt.uikit.theme.SerenityTheme
 
-private const val OFFSET_ANIM_DURATION = 350
-private const val ALPHA_ANIM_DURATION = 250
+private const val ANIM_OFFSET_DURATION = 350
+private const val ANIM_BUTTON_SCROLL_DURATION = 350
+private const val ANIM_BUTTON_ADD_DURATION = 150
 private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
 
 @Composable
@@ -45,7 +51,7 @@ fun BottomNavigationBar(
 ) {
     val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
-        animationSpec = tween(durationMillis = OFFSET_ANIM_DURATION),
+        animationSpec = tween(durationMillis = ANIM_OFFSET_DURATION),
         label = LABEL_OFFSET_ANIM,
     )
 
@@ -77,11 +83,37 @@ private fun ButtonAddNote(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+
+    var isAnimStarted by remember { mutableStateOf(false) }
+    val scale = remember { Animatable(1f) }
+
+    LaunchedEffect(isAnimStarted) {
+        if (isAnimStarted) {
+            scale.animateTo(
+                targetValue = 1.05f,
+                animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+            )
+            scale.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+            )
+            isAnimStarted = false
+        }
+    }
+
     FloatingActionButton(
-        modifier = modifier.size(56.dp),
+        modifier = modifier
+            .size(56.dp)
+            .graphicsLayer {
+                scaleX = scale.value
+                scaleY = scale.value
+            },
         shape = CircleShape,
         containerColor = MaterialTheme.colorScheme.secondary,
-        onClick = onClick,
+        onClick = {
+            isAnimStarted = true
+            onClick()
+        },
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_add),
@@ -96,10 +128,29 @@ private fun ButtonScrollToTop(
     isVisible: () -> Boolean,
     onClick: () -> Unit,
 ) {
+
+    var buttonHeight by remember { mutableStateOf(0) }
+    var isAnimStarted by remember { mutableStateOf(false) }
+    val translation = remember { Animatable(0f) }
+
+    LaunchedEffect(isAnimStarted) {
+        if (isAnimStarted) {
+            translation.animateTo(
+                targetValue = buttonHeight.toFloat(),
+                animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
+            )
+            translation.snapTo(0f)
+            isAnimStarted = false
+        }
+    }
+
     AnimatedVisibility(
+        modifier = Modifier
+            .graphicsLayer { translationY = translation.value }
+            .onGloballyPositioned { buttonHeight = it.size.height },
         visible = isVisible(),
-        enter = fadeIn(animationSpec = tween(durationMillis = ALPHA_ANIM_DURATION)),
-        exit = fadeOut(animationSpec = tween(durationMillis = ALPHA_ANIM_DURATION)),
+        enter = fadeIn(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
+        exit = fadeOut(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
     ) {
         Box(
             modifier = modifier
@@ -109,7 +160,10 @@ private fun ButtonScrollToTop(
                     shape = RoundedCornerShape(24.dp),
                 )
                 .clickable(
-                    onClick = onClick,
+                    onClick = {
+                        isAnimStarted = true
+                        onClick()
+                    },
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(
                         color = MaterialTheme.colorScheme.onSecondary,
