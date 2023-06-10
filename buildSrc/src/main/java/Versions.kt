@@ -1,4 +1,5 @@
 object Versions {
+    // Изменение версий android и kotlin необходимо продублировать в convention plugin
     const val android = "8.0.2"
     const val kotlin = "1.8.10"
 

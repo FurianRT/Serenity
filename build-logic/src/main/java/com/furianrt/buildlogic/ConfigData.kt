@@ -1,3 +1,5 @@
+package com.furianrt.buildlogic
+
 object ConfigData {
     const val compileSdkVersion = 33
     const val minSdkVersion = 31
