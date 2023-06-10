@@ -1,24 +1,16 @@
 plugins {
-    id("com.android.application")
+    id("com.android.library")
     kotlin("android")
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
 }
 
 android {
-    namespace = "com.furianrt.serenity"
+    namespace = "com.furianrt.assistant"
     compileSdk = ConfigData.compileSdkVersion
 
     defaultConfig {
-        applicationId = "com.furianrt.serenity"
         minSdk = ConfigData.minSdkVersion
-        targetSdk = ConfigData.targetSdkVersion
-        versionCode = ConfigData.versionCode
-        versionName = ConfigData.versionName
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildTypes {
@@ -46,18 +38,9 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = Versions.compose
     }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
-    }
 }
 
 dependencies {
-    implementation(project(Features.assistant))
-    implementation(project(Features.noteView))
-
-    implementation(project(Libraries.uikit))
     implementation(project(Libraries.storage))
 
     implementation(Deps.coreKtx)
@@ -66,16 +49,11 @@ dependencies {
     implementation(Deps.material3Size)
 
     implementation(Deps.composeActivity)
-    implementation(Deps.composeFoundation)
     implementation(Deps.composeUi)
     implementation(Deps.composeMaterial)
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
-
-    implementation(Deps.systemuicontroller)
-
-    implementation(Deps.splashScreen)
 
     implementation(Deps.corrutinesCore)
     implementation(Deps.corrutinesAndroid)
@@ -83,8 +61,4 @@ dependencies {
     implementation(Deps.hilt)
     implementation(Deps.hiltNavigation)
     kapt(Deps.hiltCompiler)
-
-    implementation(Deps.collapsingToolbar)
-
-    implementation(Deps.lottie)
 }
