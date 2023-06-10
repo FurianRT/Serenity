@@ -34,4 +34,7 @@ object Deps {
     val collapsingToolbar = "me.onebone:toolbar-compose:${Versions.collapsingToolbar}"
 
     val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
+
+    val immutableCollections =
+        "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.immutableCollections}"
 }

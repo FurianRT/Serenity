@@ -16,11 +16,11 @@ android {
 }
 
 dependencies {
-    implementation(project(Features.assistant))
-    implementation(project(Features.noteView))
+    implementation(project(Modules.Features.assistant))
+    implementation(project(Modules.Features.noteView))
 
-    implementation(project(Libraries.uikit))
-    implementation(project(Libraries.storage))
+    implementation(project(Modules.Libraries.uikit))
+    implementation(project(Modules.Libraries.storage))
 
     implementation(Deps.coreKtx)
     implementation(Deps.lifecycle)
@@ -34,8 +34,6 @@ dependencies {
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
-
-    implementation(Deps.systemuicontroller)
 
     implementation(Deps.splashScreen)
 

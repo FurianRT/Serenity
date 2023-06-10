@@ -16,7 +16,8 @@ android {
 }
 
 dependencies {
-    implementation(project(Libraries.storage))
+    implementation(project(Modules.Libraries.uikit))
+    implementation(project(Modules.Libraries.storage))
 
     implementation(Deps.coreKtx)
     implementation(Deps.lifecycle)
