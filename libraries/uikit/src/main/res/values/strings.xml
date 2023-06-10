@@ -1,4 +1,6 @@
 <resources>
     <string name="app_name" translatable="false">Serenity</string>
     <string name="search_bar_title">Search</string>
+    <string name="button_scroll_to_top_title">Scroll to top</string>
+    <string name="settings_title">Settings</string>
 </resources>

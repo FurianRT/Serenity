@@ -39,6 +39,7 @@ fun NoteItem(
                 indication = rememberRipple(
                     color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.1f),
                 ),
+
             ),
     ) {
         /* for (item in note.content) {

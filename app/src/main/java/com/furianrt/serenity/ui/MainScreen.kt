@@ -39,30 +39,30 @@ private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 
 @Composable
 fun MainScreen(
-    uiState: MainUiState = rememberHomeState(),
+    screenState: MainScreenState = rememberHomeState(),
 ) {
     val viewModel: MainViewModel = hiltViewModel()
-    val vmState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MainEffect.ScrollToTop -> uiState.scrollToTop()
+                is MainEffect.ScrollToTop -> screenState.scrollToTop()
             }
         }
     }
 
     MainScreenContent(
-        vmState = vmState,
-        uiState = uiState,
+        vmState = uiState,
+        uiState = screenState,
         onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
 private fun MainScreenContent(
-    vmState: MainState,
-    uiState: MainUiState = rememberHomeState(),
+    vmState: MainUiState,
+    uiState: MainScreenState = rememberHomeState(),
     onEvent: (event: MainEvent) -> Unit = {},
 ) {
     val scrollConnection = remember {
@@ -111,14 +111,15 @@ private fun MainScreenContent(
                     toolbarScaffoldState = uiState.toolbarState,
                     listState = uiState.listState,
                     onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
+                    onSearchClick = { onEvent(MainEvent.OnSearchClick) }
                 )
             },
         ) {
             Spacer(modifier = Modifier)
             when (vmState) {
-                is MainState.Loading -> MainLoading()
-                is MainState.Empty -> MainEmpty()
-                is MainState.Success -> MainSuccess(vmState.notes, uiState.listState)
+                is MainUiState.Loading -> MainLoading()
+                is MainUiState.Empty -> MainEmpty()
+                is MainUiState.Success -> MainSuccess(vmState.notes, uiState.listState)
             }
         }
 
@@ -139,6 +140,7 @@ private fun MainScreenContent(
             onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
             needToHideNavigation = { needToHideNavigation },
             needToShowScrollUpButton = { needToShowScrollUpButton },
+            onAddNoteClick = { onEvent(MainEvent.OnAddNoteClick) },
         )
     }
 }
@@ -167,7 +169,7 @@ private fun MainSuccess(
 private fun GreetingPreview() {
     SerenityTheme {
         MainScreenContent(
-            vmState = MainState.Success(generatePreviewNotes()),
+            vmState = MainUiState.Success(generatePreviewNotes()),
         )
     }
 }

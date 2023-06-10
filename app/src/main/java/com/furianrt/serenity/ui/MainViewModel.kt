@@ -22,8 +22,8 @@ class MainViewModel @Inject constructor(
         loadNotes()
     }
 
-    private val _state = MutableStateFlow<MainState>(MainState.Loading)
-    val state: StateFlow<MainState> = _state.asStateFlow()
+    private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading)
+    val state: StateFlow<MainUiState> = _state.asStateFlow()
 
     private val _effect = Channel<MainEffect>()
     val effect = _effect.receiveAsFlow()
@@ -37,15 +37,23 @@ class MainViewModel @Inject constructor(
             is MainEvent.OnSettingsClick -> {
 
             }
+
+            is MainEvent.OnSearchClick -> {
+
+            }
+
+            is MainEvent.OnAddNoteClick -> {
+
+            }
         }
     }
 
     private fun loadNotes() = launch {
         val notes = notesRepository.getAllNotes()
         if (notes.isEmpty()) {
-            _state.tryEmit(MainState.Empty)
+            _state.tryEmit(MainUiState.Empty)
         } else {
-            _state.tryEmit(MainState.Success(notes.map(Note::toUiNote)))
+            _state.tryEmit(MainUiState.Success(notes.map(Note::toUiNote)))
         }
     }
 }

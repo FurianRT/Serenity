@@ -18,6 +18,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,6 +28,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
@@ -34,9 +36,9 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.serenity.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
-import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.CollapsingToolbarScope
@@ -51,6 +53,7 @@ fun CollapsingToolbarScope.Toolbar(
     toolbarScaffoldState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
     onSettingsClick: () -> Unit,
+    onSearchClick: () -> Unit,
 ) {
     val toolbarState = toolbarScaffoldState.toolbarState
 
@@ -121,6 +124,7 @@ fun CollapsingToolbarScope.Toolbar(
                 .padding(end = 16.dp)
                 .weight(1f)
                 .onGloballyPositioned { searchBarTop = it.boundsInRoot().top },
+            onClick = onSearchClick,
         )
         SettingsButton(onClick = onSettingsClick)
     }
@@ -131,40 +135,33 @@ private fun SettingsButton(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-
-    var isAnimStarted by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
     val rotation = remember { Animatable(0f) }
-
-    LaunchedEffect(isAnimStarted) {
-        if (isAnimStarted) {
-            joinAll(
-                launch {
-                    scale.animateTo(
-                        targetValue = 1.1f,
-                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
-                    )
-                    scale.animateTo(
-                        targetValue = 1f,
-                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
-                    )
-                },
-                launch {
-                    rotation.animateTo(
-                        targetValue = rotation.value + ANIM_BUTTON_SETTINGS_ROTATION,
-                        animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION)
-                    )
-                }
-            )
-            isAnimStarted = false
-        }
-    }
 
     Icon(
         modifier = modifier
             .clickable(
                 onClick = {
-                    isAnimStarted = true
+                    if (scale.isRunning || rotation.isRunning) {
+                        return@clickable
+                    }
+                    scope.launch {
+                        scale.animateTo(
+                            targetValue = 1.1f,
+                            animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
+                        )
+                        scale.animateTo(
+                            targetValue = 1f,
+                            animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION / 2)
+                        )
+                    }
+                    scope.launch {
+                        rotation.animateTo(
+                            targetValue = rotation.value + ANIM_BUTTON_SETTINGS_ROTATION,
+                            animationSpec = tween(ANIM_BUTTON_SETTINGS_DURATION)
+                        )
+                    }
                     onClick()
                 },
                 interactionSource = remember { MutableInteractionSource() },
@@ -176,7 +173,7 @@ private fun SettingsButton(
                 rotationZ = rotation.value
             },
         painter = painterResource(R.drawable.ic_settings),
-        contentDescription = null,
+        contentDescription = stringResource(id = uiR.string.settings_title),
         tint = MaterialTheme.colorScheme.onPrimary,
     )
 }
@@ -189,22 +186,9 @@ private fun BotHint(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        var isAnimStarted by remember { mutableStateOf(false) }
+        val scope = rememberCoroutineScope()
         val scale = remember { Animatable(1f) }
 
-        LaunchedEffect(isAnimStarted) {
-            if (isAnimStarted) {
-                scale.animateTo(
-                    targetValue = 1.1f,
-                    animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
-                )
-                scale.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
-                )
-                isAnimStarted = false
-            }
-        }
         val composition by rememberLottieComposition(
             spec = LottieCompositionSpec.RawRes(R.raw.anim_ai_murble),
         )
@@ -218,7 +202,19 @@ private fun BotHint(
                 .size(48.dp)
                 .clickable(
                     onClick = {
-                        isAnimStarted = true
+                        if (scale.isRunning) {
+                            return@clickable
+                        }
+                        scope.launch {
+                            scale.animateTo(
+                                targetValue = 1.1f,
+                                animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
+                            )
+                            scale.animateTo(
+                                targetValue = 1f,
+                                animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
+                            )
+                        }
                     },
                     interactionSource = remember { MutableInteractionSource() },
                     indication = null,

@@ -21,11 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -36,7 +36,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.coroutines.launch
 
 private const val ANIM_OFFSET_DURATION = 350
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
@@ -48,6 +50,7 @@ fun BottomNavigationBar(
     needToHideNavigation: () -> Boolean,
     needToShowScrollUpButton: () -> Boolean,
     onScrollToTopClick: () -> Unit,
+    onAddNoteClick: () -> Unit,
 ) {
     val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
@@ -72,7 +75,7 @@ fun BottomNavigationBar(
         ) {
             ButtonAddNote(
                 modifier = Modifier.padding(end = 24.dp, bottom = 24.dp),
-                onClick = {},
+                onClick = onAddNoteClick,
             )
         }
     }
@@ -83,23 +86,8 @@ private fun ButtonAddNote(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-
-    var isAnimStarted by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
-
-    LaunchedEffect(isAnimStarted) {
-        if (isAnimStarted) {
-            scale.animateTo(
-                targetValue = 1.05f,
-                animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
-            )
-            scale.animateTo(
-                targetValue = 1f,
-                animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
-            )
-            isAnimStarted = false
-        }
-    }
 
     FloatingActionButton(
         modifier = modifier
@@ -111,7 +99,19 @@ private fun ButtonAddNote(
         shape = CircleShape,
         containerColor = MaterialTheme.colorScheme.secondary,
         onClick = {
-            isAnimStarted = true
+            if (scale.isRunning) {
+                return@FloatingActionButton
+            }
+            scope.launch {
+                scale.animateTo(
+                    targetValue = 1.05f,
+                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+                )
+                scale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+                )
+            }
             onClick()
         },
     ) {
@@ -128,21 +128,9 @@ private fun ButtonScrollToTop(
     isVisible: () -> Boolean,
     onClick: () -> Unit,
 ) {
-
-    var buttonHeight by remember { mutableStateOf(0) }
-    var isAnimStarted by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
     val translation = remember { Animatable(0f) }
-
-    LaunchedEffect(isAnimStarted) {
-        if (isAnimStarted) {
-            translation.animateTo(
-                targetValue = buttonHeight.toFloat(),
-                animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
-            )
-            translation.snapTo(0f)
-            isAnimStarted = false
-        }
-    }
+    var buttonHeight by remember { mutableStateOf(0) }
 
     AnimatedVisibility(
         modifier = Modifier
@@ -161,7 +149,16 @@ private fun ButtonScrollToTop(
                 )
                 .clickable(
                     onClick = {
-                        isAnimStarted = true
+                        if (translation.isRunning) {
+                            return@clickable
+                        }
+                        scope.launch {
+                            translation.animateTo(
+                                targetValue = buttonHeight.toFloat(),
+                                animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
+                            )
+                            translation.snapTo(0f)
+                        }
                         onClick()
                     },
                     interactionSource = remember { MutableInteractionSource() },
@@ -173,7 +170,7 @@ private fun ButtonScrollToTop(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
-                text = stringResource(id = R.string.button_scroll_to_top_title),
+                text = stringResource(id = uiR.string.button_scroll_to_top_title),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -188,6 +185,7 @@ private fun BottomNavigationBarPreview() {
             needToHideNavigation = { false },
             needToShowScrollUpButton = { true },
             onScrollToTopClick = {},
+            onAddNoteClick = {},
         )
     }
 }
