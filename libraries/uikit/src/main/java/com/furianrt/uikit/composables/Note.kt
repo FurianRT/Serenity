@@ -1,54 +1,52 @@
 package com.furianrt.uikit.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.entities.UiNote
-import com.furianrt.uikit.theme.Colors
+import com.furianrt.uikit.extensions.div
+import com.furianrt.uikit.theme.SerenityRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
 fun NoteItem(
     note: UiNote,
-    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .heightIn(max = 200.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = Colors.WhiteAlpha5)
-            .clickable(
-                onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(
-                    color = MaterialTheme.colorScheme.onSecondary.copy(alpha = 0.1f),
-                ),
-
-            ),
-    ) {
-        /* for (item in note.content) {
+    CompositionLocalProvider(LocalRippleTheme provides NoteRippleTheme) {
+        Column(
+            modifier = modifier
+                .clip(shape = RoundedCornerShape(8.dp))
+                .background(color = MaterialTheme.colorScheme.primaryContainer),
+        ) {
+            /* for (item in note.content) {
              item.title?.let { NoteItemContentTitle(it) }
              NoteItemContentPhotos(item.photos)
          }
          NoteItemFooter(note)*/
-        NoteItemContentTitle(note.title)
+            var rere = ""
+            repeat(50) {
+                rere += note.title
+            }
+            NoteItemContentTitle(rere)
+        }
     }
+}
+
+private object NoteRippleTheme : SerenityRippleTheme() {
+    @Composable
+    override fun rippleAlpha() = super.rippleAlpha() / 3f
 }
 
 @Composable
@@ -102,7 +100,6 @@ private fun MainSuccessPreview() {
                         "lot more syntactic sugar compared to Java, and as such " +
                         "there is equally more black magic",
             ),
-            onClick ={},
         )
     }
 }

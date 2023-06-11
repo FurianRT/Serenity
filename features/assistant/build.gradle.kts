@@ -36,4 +36,6 @@ dependencies {
     implementation(Deps.hilt)
     implementation(Deps.hiltNavigation)
     kapt(Deps.hiltCompiler)
+
+    implementation(Deps.lottie)
 }

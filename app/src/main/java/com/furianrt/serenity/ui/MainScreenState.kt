@@ -10,6 +10,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import com.furianrt.serenity.ui.MainScrollState.*
 import com.furianrt.uikit.extensions.expand
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -21,9 +25,10 @@ private const val TOOLBAR_EXPAND_DURATION = 450
 
 @Stable
 class MainScreenState(
-    internal val listState: LazyListState,
-    internal val toolbarState: CollapsingToolbarScaffoldState,
-    val scrollState: HomeScrollState,
+    val listState: LazyListState,
+    val toolbarState: CollapsingToolbarScaffoldState,
+    val scrollConnection: NestedScrollConnection,
+    val scrollState: MainScrollState,
 ) {
     @OptIn(ExperimentalToolbarApi::class)
     suspend fun scrollToTop() {
@@ -37,7 +42,7 @@ class MainScreenState(
 }
 
 @Stable
-class HomeScrollState(
+class MainScrollState(
     initialScrollDirection: ScrollDirection = ScrollDirection.IDLE,
     initialFirstVisibleIndex: Int = 0,
 ) {
@@ -51,20 +56,20 @@ class HomeScrollState(
     val firstVisibleIndex: Int get() = firstVisibleIndexState.value
     internal val firstVisibleIndexState = mutableStateOf(initialFirstVisibleIndex)
 
-    class HomeScrollSaver : Saver<HomeScrollState, Bundle> {
+    class MainScrollSaver : Saver<MainScrollState, Bundle> {
         companion object {
             private const val SCROLL_DIRECTION = "scroll_direction"
             private const val FIRST_VISIBLE_INDEX = "first_visible_index"
         }
 
         @Suppress("DEPRECATION")
-        override fun restore(value: Bundle) = HomeScrollState(
+        override fun restore(value: Bundle) = MainScrollState(
             initialScrollDirection = (value.getSerializable(SCROLL_DIRECTION) as ScrollDirection?)
                 ?: ScrollDirection.IDLE,
             initialFirstVisibleIndex = value.getInt(FIRST_VISIBLE_INDEX, 0),
         )
 
-        override fun SaverScope.save(value: HomeScrollState) = Bundle().apply {
+        override fun SaverScope.save(value: MainScrollState) = Bundle().apply {
             putSerializable(SCROLL_DIRECTION, value.scrollDirection)
             putInt(FIRST_VISIBLE_INDEX, value.firstVisibleIndex)
         }
@@ -72,15 +77,33 @@ class HomeScrollState(
 }
 
 @Composable
-fun rememberHomeScrollState(): HomeScrollState =
-    rememberSaveable(saver = HomeScrollState.HomeScrollSaver()) {
-        HomeScrollState()
-    }
-
-@Composable
-fun rememberHomeState(): MainScreenState {
+fun rememberMainState(): MainScreenState {
     val listState = rememberLazyListState()
     val toolbarState = rememberCollapsingToolbarScaffoldState()
-    val homeScrollState = rememberHomeScrollState()
-    return remember { MainScreenState(listState, toolbarState, homeScrollState) }
+    val scrollState = rememberMainScrollState()
+    val scrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+                val scrollSlippage = 3f
+                when {
+                    available.y > scrollSlippage -> {
+                        scrollState.scrollDirectionState.value = ScrollDirection.UP
+                    }
+
+                    available.y < -scrollSlippage -> {
+                        scrollState.scrollDirectionState.value = ScrollDirection.DOWN
+                    }
+                }
+                scrollState.firstVisibleIndexState.value = listState.firstVisibleItemIndex
+                return super.onPreScroll(available, source)
+            }
+        }
+    }
+    return remember { MainScreenState(listState, toolbarState, scrollConnection, scrollState) }
 }
+
+@Composable
+private fun rememberMainScrollState(): MainScrollState =
+    rememberSaveable(saver = MainScrollSaver()) {
+        MainScrollState()
+    }

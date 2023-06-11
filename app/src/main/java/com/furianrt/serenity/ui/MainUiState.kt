@@ -8,6 +8,9 @@ sealed interface MainUiState {
     data class Success(val notes: List<UiNote>) : MainUiState
 }
 
+val MainUiState.hasNotes
+    get() = this is MainUiState.Success && notes.isNotEmpty()
+
 sealed interface MainEvent {
     object OnScrollToTopClick : MainEvent
     object OnSettingsClick : MainEvent

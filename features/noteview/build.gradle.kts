@@ -16,6 +16,8 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.Features.assistant))
+
     implementation(project(Modules.Libraries.uikit))
     implementation(project(Modules.Libraries.storage))
 
@@ -37,4 +39,6 @@ dependencies {
     implementation(Deps.hilt)
     implementation(Deps.hiltNavigation)
     kapt(Deps.hiltCompiler)
+
+    implementation(Deps.collapsingToolbar)
 }

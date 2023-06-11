@@ -24,4 +24,6 @@ object Versions {
     const val collapsingToolbar = "2.3.5"
 
     const val lottie = "6.0.0"
+
+    const val immutableCollections = "0.3.5"
 }

@@ -30,21 +30,16 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.serenity.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.CollapsingToolbarScope
+import com.furianrt.uikit.R as uiR
 
 private const val PARALLAX_RATIO = 0.03f
-private const val ANIM_BUTTON_AI_DURATION = 300
 private const val ANIM_BUTTON_SETTINGS_DURATION = 250
 private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
 
@@ -66,8 +61,7 @@ fun CollapsingToolbarScope.Toolbar(
 
     val needToSnapPin by remember {
         derivedStateOf {
-            val isScrolling = toolbarState.isScrollInProgress || listState.isScrollInProgress
-            !isScrolling && toolbarScaffoldState.isInMiddleState
+            !listState.isScrollInProgress && toolbarScaffoldState.isInMiddleState
         }
     }
 
@@ -186,45 +180,9 @@ private fun BotHint(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val scope = rememberCoroutineScope()
-        val scale = remember { Animatable(1f) }
-
-        val composition by rememberLottieComposition(
-            spec = LottieCompositionSpec.RawRes(R.raw.anim_ai_murble),
-        )
-        val progress by animateLottieCompositionAsState(
-            composition = composition,
-            iterations = LottieConstants.IterateForever,
-        )
-
-        LottieAnimation(
-            modifier = Modifier
-                .size(48.dp)
-                .clickable(
-                    onClick = {
-                        if (scale.isRunning) {
-                            return@clickable
-                        }
-                        scope.launch {
-                            scale.animateTo(
-                                targetValue = 1.1f,
-                                animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
-                            )
-                            scale.animateTo(
-                                targetValue = 1f,
-                                animationSpec = tween(ANIM_BUTTON_AI_DURATION / 2)
-                            )
-                        }
-                    },
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null,
-                )
-                .graphicsLayer {
-                    scaleX = scale.value
-                    scaleY = scale.value
-                },
-            composition = composition,
-            progress = { progress },
+        AssistantLogo(
+            modifier = Modifier.size(48.dp),
+            onClick = {},
         )
         ChatMessage(modifier = Modifier.padding(start = 10.dp))
     }
