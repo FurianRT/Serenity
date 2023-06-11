@@ -13,9 +13,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -105,22 +102,14 @@ private fun MainScreenContent(
             }
         }
 
-        val needToHideNavigation by remember {
-            derivedStateOf {
-                uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
-            }
-        }
-
-        val needToShowScrollUpButton by remember {
-            derivedStateOf {
-                screenState.scrollState.firstVisibleIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
-            }
-        }
-
         BottomNavigationBar(
             onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
-            needToHideNavigation = { needToHideNavigation },
-            needToShowScrollUpButton = { needToShowScrollUpButton },
+            needToHideNavigation = {
+                uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
+            },
+            needToShowScrollUpButton = {
+                screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
+            },
             onAddNoteClick = { onEvent(MainEvent.OnAddNoteClick) },
         )
     }
@@ -141,7 +130,7 @@ private fun MainSuccess(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = 200.dp)
-                    .clickable {  },
+                    .clickable { },
                 note = notes[index],
             )
         }

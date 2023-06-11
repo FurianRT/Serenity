@@ -28,7 +28,7 @@ fun NoteItem(
         Column(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(8.dp))
-                .background(color = MaterialTheme.colorScheme.primaryContainer),
+                .background(color = MaterialTheme.colorScheme.tertiary),
         ) {
             /* for (item in note.content) {
              item.title?.let { NoteItemContentTitle(it) }

@@ -26,7 +26,7 @@ fun SearchBar(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.05f))
+            .background(MaterialTheme.colorScheme.tertiary)
             .clickable(onClick = onClick),
         contentAlignment = Alignment.CenterStart,
     ) {

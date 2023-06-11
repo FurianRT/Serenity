@@ -33,7 +33,6 @@ class MainScreenState(
     @OptIn(ExperimentalToolbarApi::class)
     suspend fun scrollToTop() {
         coroutineScope {
-            scrollState.firstVisibleIndexState.value = 0
             launch { listState.animateScrollToItem(0) }
             launch { toolbarState.toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
             launch { toolbarState.expand() }
@@ -44,7 +43,6 @@ class MainScreenState(
 @Stable
 class MainScrollState(
     initialScrollDirection: ScrollDirection = ScrollDirection.IDLE,
-    initialFirstVisibleIndex: Int = 0,
 ) {
     enum class ScrollDirection {
         UP, DOWN, IDLE
@@ -53,25 +51,19 @@ class MainScrollState(
     val scrollDirection: ScrollDirection get() = scrollDirectionState.value
     internal val scrollDirectionState = mutableStateOf(initialScrollDirection)
 
-    val firstVisibleIndex: Int get() = firstVisibleIndexState.value
-    internal val firstVisibleIndexState = mutableStateOf(initialFirstVisibleIndex)
-
     class MainScrollSaver : Saver<MainScrollState, Bundle> {
         companion object {
             private const val SCROLL_DIRECTION = "scroll_direction"
-            private const val FIRST_VISIBLE_INDEX = "first_visible_index"
         }
 
         @Suppress("DEPRECATION")
         override fun restore(value: Bundle) = MainScrollState(
             initialScrollDirection = (value.getSerializable(SCROLL_DIRECTION) as ScrollDirection?)
                 ?: ScrollDirection.IDLE,
-            initialFirstVisibleIndex = value.getInt(FIRST_VISIBLE_INDEX, 0),
         )
 
         override fun SaverScope.save(value: MainScrollState) = Bundle().apply {
             putSerializable(SCROLL_DIRECTION, value.scrollDirection)
-            putInt(FIRST_VISIBLE_INDEX, value.firstVisibleIndex)
         }
     }
 }
@@ -94,7 +86,6 @@ fun rememberMainState(): MainScreenState {
                         scrollState.scrollDirectionState.value = ScrollDirection.DOWN
                     }
                 }
-                scrollState.firstVisibleIndexState.value = listState.firstVisibleItemIndex
                 return super.onPreScroll(available, source)
             }
         }

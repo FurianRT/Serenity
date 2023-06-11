@@ -52,7 +52,7 @@ internal fun CollapsingToolbarScope.Toolbar(
             Icon(
                 painter = painterResource(id = uiR.drawable.ic_arrow_back),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onPrimary,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
 
@@ -68,7 +68,7 @@ internal fun CollapsingToolbarScope.Toolbar(
                 Icon(
                     painter = painterResource(id = uiR.drawable.ic_action_edit),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
             AssistantLogo(
@@ -84,7 +84,7 @@ internal fun CollapsingToolbarScope.Toolbar(
                     modifier = Modifier.size(20.dp),
                     painter = painterResource(id = uiR.drawable.ic_action_menu),
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onPrimary,
+                    tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }

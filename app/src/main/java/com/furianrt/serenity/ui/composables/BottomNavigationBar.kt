@@ -6,14 +6,15 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,7 +27,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -95,7 +95,6 @@ private fun ButtonAddNote(
                 scaleY = scale.value
             },
         shape = CircleShape,
-        containerColor = MaterialTheme.colorScheme.secondary,
         onClick = {
             if (scale.isRunning) {
                 return@FloatingActionButton
@@ -138,30 +137,25 @@ private fun ButtonScrollToTop(
         enter = fadeIn(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
         exit = fadeOut(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
     ) {
-        Box(
-            modifier = modifier
-                .shadow(elevation = 8.dp, shape = RoundedCornerShape(24.dp))
-                .background(
-                    color = MaterialTheme.colorScheme.secondary,
-                    shape = RoundedCornerShape(24.dp),
-                )
-                .clickable {
-                    if (translation.isRunning) {
-                        return@clickable
-                    }
-                    scope.launch {
-                        translation.animateTo(
-                            targetValue = buttonHeight.toFloat(),
-                            animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
-                        )
-                        translation.snapTo(0f)
-                    }
-                    onClick()
-                },
-            contentAlignment = Alignment.Center,
+        Button(
+            modifier = modifier.heightIn(min = 32.dp),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
+            shape = RoundedCornerShape(24.dp),
+            onClick = {
+                if (translation.isRunning) {
+                    return@Button
+                }
+                scope.launch {
+                    translation.animateTo(
+                        targetValue = buttonHeight.toFloat(),
+                        animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
+                    )
+                    translation.snapTo(0f)
+                }
+                onClick()
+            }
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
                 text = stringResource(id = uiR.string.button_scroll_to_top_title),
                 style = MaterialTheme.typography.bodySmall,
             )
