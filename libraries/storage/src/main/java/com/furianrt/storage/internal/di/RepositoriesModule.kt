@@ -1,7 +1,11 @@
 package com.furianrt.storage.internal.di
 
+import com.furianrt.storage.api.repositories.ImagesRepository
 import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.storage.api.repositories.TagsRepository
+import com.furianrt.storage.internal.notes.repositories.ImagesRepositoryImp
 import com.furianrt.storage.internal.notes.repositories.NotesRepositoryImp
+import com.furianrt.storage.internal.notes.repositories.TagsRepositoryImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -13,4 +17,10 @@ internal interface RepositoriesModule {
 
     @Binds
     fun notesRepository(imp: NotesRepositoryImp): NotesRepository
+
+    @Binds
+    fun tagsRepository(imp: TagsRepositoryImp): TagsRepository
+
+    @Binds
+    fun imagesRepository(imp: ImagesRepositoryImp): ImagesRepository
 }

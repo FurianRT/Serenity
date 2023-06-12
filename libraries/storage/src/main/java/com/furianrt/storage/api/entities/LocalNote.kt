@@ -1,6 +1,6 @@
 package com.furianrt.storage.api.entities
 
-class Note(
+class LocalNote(
     val id: String,
     val time: Long,
     val title: String,

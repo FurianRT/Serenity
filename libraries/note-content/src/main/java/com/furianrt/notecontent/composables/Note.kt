@@ -1,4 +1,4 @@
-package com.furianrt.uikit.composables
+package com.furianrt.notecontent.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.furianrt.uikit.entities.UiNote
+import com.furianrt.notecontent.entities.UiNote
 import com.furianrt.uikit.extensions.div
 import com.furianrt.uikit.theme.SerenityRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
@@ -97,8 +97,8 @@ private fun MainSuccessPreview() {
                 id = "1",
                 time = 0L,
                 title = "Kotlin is a modern programming language with a " +
-                        "lot more syntactic sugar compared to Java, and as such " +
-                        "there is equally more black magic",
+                    "lot more syntactic sugar compared to Java, and as such " +
+                    "there is equally more black magic",
             ),
         )
     }

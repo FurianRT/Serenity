@@ -1,4 +1,4 @@
-package com.furianrt.uikit.entities
+package com.furianrt.notecontent.entities
 
 import androidx.compose.runtime.Immutable
 

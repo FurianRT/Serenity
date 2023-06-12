@@ -8,6 +8,4 @@ import javax.inject.Inject
 @HiltViewModel
 internal class PageViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
-) : ViewModel() {
-
-}
+) : ViewModel()
