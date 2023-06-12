@@ -22,15 +22,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.notecontent.composables.NoteItem
+import com.furianrt.notecontent.entities.UiNote
+import com.furianrt.notecontent.utils.generatePreviewNotes
 import com.furianrt.serenity.ui.MainScrollState.ScrollDirection
 import com.furianrt.serenity.ui.composables.BottomNavigationBar
 import com.furianrt.serenity.ui.composables.Toolbar
-import com.furianrt.uikit.composables.NoteItem
-import com.furianrt.uikit.entities.UiNote
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
-import com.furianrt.uikit.utils.generatePreviewNotes
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
@@ -90,7 +90,7 @@ private fun MainScreenContent(
                     toolbarScaffoldState = screenState.toolbarState,
                     listState = screenState.listState,
                     onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
-                    onSearchClick = { onEvent(MainEvent.OnSearchClick) }
+                    onSearchClick = { onEvent(MainEvent.OnSearchClick) },
                 )
             },
         ) {

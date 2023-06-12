@@ -1,6 +1,6 @@
 package com.furianrt.serenity.ui
 
-import com.furianrt.uikit.entities.UiNote
+import com.furianrt.notecontent.entities.UiNote
 
 sealed interface MainUiState {
     object Loading : MainUiState

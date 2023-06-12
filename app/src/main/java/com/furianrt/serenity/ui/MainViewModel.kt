@@ -1,10 +1,10 @@
 package com.furianrt.serenity.ui
 
 import androidx.lifecycle.ViewModel
-import com.furianrt.storage.api.entities.Note
+import com.furianrt.notecontent.extensions.toUiNote
+import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
-import com.furianrt.uikit.extensions.toUiNote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,15 +35,12 @@ class MainViewModel @Inject constructor(
             }
 
             is MainEvent.OnSettingsClick -> {
-
             }
 
             is MainEvent.OnSearchClick -> {
-
             }
 
             is MainEvent.OnAddNoteClick -> {
-
             }
         }
     }
@@ -53,7 +50,7 @@ class MainViewModel @Inject constructor(
         if (notes.isEmpty()) {
             _state.tryEmit(MainUiState.Empty)
         } else {
-            _state.tryEmit(MainUiState.Success(notes.map(Note::toUiNote)))
+            _state.tryEmit(MainUiState.Success(notes.map(LocalNote::toUiNote)))
         }
     }
 }

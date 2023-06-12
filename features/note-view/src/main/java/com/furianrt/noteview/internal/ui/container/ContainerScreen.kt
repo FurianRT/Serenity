@@ -2,8 +2,6 @@ package com.furianrt.noteview.internal.ui.container
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +13,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -24,12 +24,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.notecontent.composables.NoteItem
+import com.furianrt.notecontent.utils.generatePreviewNotes
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
-import com.furianrt.uikit.composables.NoteItem
 import com.furianrt.uikit.extensions.addSerenityBackground
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.extensions.isInMiddleState
+import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
-import com.furianrt.uikit.utils.generatePreviewNotes
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -85,19 +88,30 @@ private fun SuccessScreen(
         listsScrollStates[pagerState.currentPage]
     }
 
+    val needToSnapToolbar by remember(currentPageScrollState) {
+        derivedStateOf {
+            val isScrollInProgress = currentPageScrollState?.isScrollInProgress ?: false
+            !isScrollInProgress && toolbarScaffoldState.isInMiddleState
+        }
+    }
+
+    LaunchedEffect(needToSnapToolbar) {
+        if (needToSnapToolbar) {
+            toolbarScaffoldState.performSnap()
+        }
+    }
+
     CollapsingToolbarScaffold(
         modifier = modifier,
         state = toolbarScaffoldState,
         scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
         toolbarModifier = Modifier.drawBehind {
             if (currentPageScrollState?.value != 0) {
-                drawBottomShadow()
+                drawBottomShadow(elevation = 8.dp)
             }
         },
         toolbar = {
             Toolbar(
-                toolbarScaffoldState = toolbarScaffoldState,
-                isScrollInProgress = currentPageScrollState?.isScrollInProgress ?: false,
                 onEvent = onEvent,
             )
         },
@@ -114,12 +128,7 @@ private fun SuccessScreen(
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
                     .padding(all = 8.dp)
-                    .clickable(
-                        onClick = {},
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = null
-
-                    ),
+                    .clickableNoRipple {},
                 note = uiState.notes[index],
             )
         }
@@ -130,14 +139,12 @@ private fun SuccessScreen(
 private fun LoadingScreen(
     modifier: Modifier = Modifier,
 ) {
-
 }
 
 @Composable
 private fun EmptyScreen(
     modifier: Modifier = Modifier,
 ) {
-
 }
 
 @Preview

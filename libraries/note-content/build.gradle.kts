@@ -1,11 +1,9 @@
 plugins {
     id("convention.android")
-    id("com.google.dagger.hilt.android")
-    kotlin("kapt")
 }
 
 android {
-    namespace = "com.furianrt.assistant"
+    namespace = "com.furianrt.notecontent"
 
     buildFeatures {
         compose = true
@@ -16,10 +14,8 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.Features.assistant))
-
-    implementation(project(Modules.Libraries.uikit))
     implementation(project(Modules.Libraries.storage))
+    implementation(project(Modules.Libraries.uikit))
 
     implementation(Deps.coreKtx)
     implementation(Deps.lifecycle)
@@ -32,13 +28,4 @@ dependencies {
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
-
-    implementation(Deps.corrutinesCore)
-    implementation(Deps.corrutinesAndroid)
-
-    implementation(Deps.hilt)
-    implementation(Deps.hiltNavigation)
-    kapt(Deps.hiltCompiler)
-
-    implementation(Deps.collapsingToolbar)
 }

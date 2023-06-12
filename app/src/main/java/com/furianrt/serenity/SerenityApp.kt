@@ -6,8 +6,6 @@ import dagger.hilt.android.HiltAndroidApp
 @HiltAndroidApp
 internal class SerenityApp : Application()
 
-
-
 /*
 * TODO Главный экран
 * 1.Свайп записей для удаления
@@ -32,5 +30,5 @@ internal class SerenityApp : Application()
 * 1.(-incubated-) Проработать Accessibility
 * 2.Перенести версии зависимостей в другой файл, например toml.
 *   Сейчас некоторые версии приходится дублировать для convention plugin
-* 3.
+* 3.Не забыть решить вопрос с часовым поясом
 * */

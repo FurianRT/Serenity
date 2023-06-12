@@ -2,10 +2,10 @@ package com.furianrt.noteview.internal.ui.container
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.furianrt.storage.api.entities.Note
+import com.furianrt.notecontent.extensions.toUiNote
+import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
-import com.furianrt.uikit.extensions.toUiNote
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,7 +31,6 @@ internal class ContainerViewModel @Inject constructor(
     val effect = _effect.receiveAsFlow()
 
     fun onEvent(event: ContainerEvent) {
-
     }
 
     private fun loadNotes() = launch {
@@ -42,8 +41,8 @@ internal class ContainerViewModel @Inject constructor(
             _state.tryEmit(
                 ContainerUiState.Success(
                     initialPageIndex = 2,
-                    notes = notes.map(Note::toUiNote)
-                )
+                    notes = notes.map(LocalNote::toUiNote),
+                ),
             )
         }
     }

@@ -1,7 +1,7 @@
 package com.furianrt.noteview.internal.ui.container
 
 import androidx.compose.runtime.Immutable
-import com.furianrt.uikit.entities.UiNote
+import com.furianrt.notecontent.entities.UiNote
 
 @Immutable
 internal sealed interface ContainerUiState {
@@ -9,16 +9,12 @@ internal sealed interface ContainerUiState {
     object Empty : ContainerUiState
     data class Success(
         val initialPageIndex: Int,
-        val notes: List<UiNote>
+        val notes: List<UiNote>,
     ) : ContainerUiState
 }
 
 @Immutable
-internal sealed interface ContainerEvent {
-
-}
+internal sealed interface ContainerEvent
 
 @Immutable
-internal sealed interface ContainerEffect {
-
-}
+internal sealed interface ContainerEffect
