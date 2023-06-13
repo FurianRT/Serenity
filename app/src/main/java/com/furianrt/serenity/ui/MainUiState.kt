@@ -1,23 +1,42 @@
 package com.furianrt.serenity.ui
 
-import com.furianrt.notecontent.entities.UiNote
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import com.furianrt.serenity.ui.entities.MainScreenNote
+import kotlinx.collections.immutable.ImmutableList
 
-sealed interface MainUiState {
+@Stable
+internal sealed interface MainUiState {
+    @Immutable
     object Loading : MainUiState
+
+    @Immutable
     object Empty : MainUiState
-    data class Success(val notes: List<UiNote>) : MainUiState
+
+    @Immutable
+    data class Success(val notes: ImmutableList<MainScreenNote>) : MainUiState
 }
 
-val MainUiState.hasNotes
+internal val MainUiState.hasNotes
     get() = this is MainUiState.Success && notes.isNotEmpty()
 
-sealed interface MainEvent {
+@Stable
+internal sealed interface MainEvent {
+    @Immutable
     object OnScrollToTopClick : MainEvent
+
+    @Immutable
     object OnSettingsClick : MainEvent
+
+    @Immutable
     object OnSearchClick : MainEvent
+
+    @Immutable
     object OnAddNoteClick : MainEvent
 }
 
-sealed interface MainEffect {
+@Stable
+internal sealed interface MainEffect {
+    @Immutable
     object ScrollToTop : MainEffect
 }

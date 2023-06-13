@@ -24,7 +24,7 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 private const val TOOLBAR_EXPAND_DURATION = 450
 
 @Stable
-class MainScreenState(
+internal class MainScreenState(
     val listState: LazyListState,
     val toolbarState: CollapsingToolbarScaffoldState,
     val scrollConnection: NestedScrollConnection,
@@ -41,7 +41,7 @@ class MainScreenState(
 }
 
 @Stable
-class MainScrollState(
+internal class MainScrollState(
     initialScrollDirection: ScrollDirection = ScrollDirection.IDLE,
 ) {
     enum class ScrollDirection {
@@ -69,7 +69,7 @@ class MainScrollState(
 }
 
 @Composable
-fun rememberMainState(): MainScreenState {
+internal fun rememberMainState(): MainScreenState {
     val listState = rememberLazyListState()
     val toolbarState = rememberCollapsingToolbarScaffoldState()
     val scrollState = rememberMainScrollState()

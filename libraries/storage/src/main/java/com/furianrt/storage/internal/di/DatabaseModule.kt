@@ -10,6 +10,9 @@ import com.furianrt.storage.internal.notes.dao.NoteDao
 import com.furianrt.storage.internal.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.notes.dao.TagDao
 import com.furianrt.storage.internal.notes.entities.EntryNote
+import com.furianrt.storage.internal.notes.entities.EntryNoteTag
+import com.furianrt.storage.internal.notes.entities.EntryNoteTitle
+import com.furianrt.storage.internal.notes.entities.EntryNoteToTag
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -23,7 +26,7 @@ internal class DatabaseModule {
     @Provides
     fun provideDatabase(
         @ApplicationContext context: Context,
-    ): SerenityDatabase = SerenityDatabase.create(context) { fillDbWithInitialData(it) }
+    ): SerenityDatabase = SerenityDatabase.create(context, ::fillDbWithInitialData)
 
     @Provides
     fun noteDao(database: SerenityDatabase): NoteDao = database.noteDao()
@@ -38,106 +41,40 @@ internal class DatabaseModule {
     fun noteToTagDao(database: SerenityDatabase): NoteToTagDao = database.noteToTagDao()
 
     private fun fillDbWithInitialData(db: SupportSQLiteDatabase) {
-        with(ContentValues()) {
-            put(EntryNote.FIELD_ID, "1")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+        val noteTitle = "Kotlin is a modern programming language with a " +
+            "lot more syntactic sugar compared to Java"
 
-            put(EntryNote.FIELD_ID, "2")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+        val tagsTitles = listOf("Kotlin", "Programming", "Android", "Development", "Java")
 
-            put(EntryNote.FIELD_ID, "3")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+        for (noteIndex in 0..19) {
+            with(ContentValues()) {
+                put(EntryNote.FIELD_ID, noteIndex.toString())
+                put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
+                db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+                clear()
 
-            put(EntryNote.FIELD_ID, "4")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+                for (noteTitleIndex in 0 until 1) {
+                    put(EntryNoteTitle.FIELD_ID, noteIndex.toString() + noteTitleIndex.toString())
+                    put(EntryNoteTitle.FIELD_NOTE_ID, noteIndex.toString())
+                    put(EntryNoteTitle.FIELD_TEXT, noteTitle)
+                    put(EntryNoteTitle.FIELD_BLOCK_POSITION, noteTitleIndex)
+                    db.insert(EntryNoteTitle.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+                    clear()
+                }
 
-            put(EntryNote.FIELD_ID, "5")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+                for (tagIndex in 0 until tagsTitles.count()) {
+                    put(EntryNoteTag.FIELD_ID, noteIndex.toString() + tagIndex.toString())
+                    put(EntryNoteTag.FIELD_TITLE, tagsTitles[tagIndex])
+                    put(EntryNoteTag.FIELD_BLOCK_POSITION, tagIndex.toString())
+                    db.insert(EntryNoteTag.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+                    clear()
 
-            put(EntryNote.FIELD_ID, "6")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "7")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "8")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "9")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "10")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "11")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "12")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "13")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "14")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "15")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "16")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "17")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "18")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "19")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
-
-            put(EntryNote.FIELD_ID, "20")
-            put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
-            db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-            clear()
+                    put(EntryNoteToTag.FIELD_NOTE_ID, noteIndex.toString())
+                    put(EntryNoteToTag.FIELD_TAG_ID, noteIndex.toString() + tagIndex.toString())
+                    db.insert(EntryNoteToTag.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+                    clear()
+                }
+            }
         }
     }
 }

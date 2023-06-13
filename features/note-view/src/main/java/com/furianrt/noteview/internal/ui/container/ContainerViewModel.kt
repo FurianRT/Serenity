@@ -2,8 +2,7 @@ package com.furianrt.noteview.internal.ui.container
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.furianrt.notecontent.extensions.toUiNote
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNotes
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -41,7 +40,7 @@ internal class ContainerViewModel @Inject constructor(
             _state.tryEmit(
                 ContainerUiState.Success(
                     initialPageIndex = 2,
-                    notes = notes.map(LocalNote::toUiNote),
+                    notes = notes.toContainerScreenNotes(),
                 ),
             )
         }

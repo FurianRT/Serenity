@@ -3,8 +3,7 @@ package com.furianrt.notecontent.entities
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class UiNote(
+data class UiNoteTag(
     val id: String,
-    val time: Long,
     val title: String,
 )

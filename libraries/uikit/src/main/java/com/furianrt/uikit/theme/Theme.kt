@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.furianrt.uikit.extensions.div
 
 private val darkColorScheme = darkColorScheme(
     primary = Colors.Blue,
@@ -97,6 +98,11 @@ open class SerenityRippleTheme : RippleTheme {
     @Composable
     override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
         MaterialTheme.colorScheme.primary,
-        lightTheme = !isSystemInDarkTheme()
+        lightTheme = !isSystemInDarkTheme(),
     )
+}
+
+object OnTertiaryRippleTheme : SerenityRippleTheme() {
+    @Composable
+    override fun rippleAlpha() = super.rippleAlpha() / 2f
 }

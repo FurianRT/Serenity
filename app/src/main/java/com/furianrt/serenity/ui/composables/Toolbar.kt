@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -27,12 +28,15 @@ import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.serenity.R
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
+import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.CollapsingToolbarScope
@@ -43,7 +47,7 @@ private const val ANIM_BUTTON_SETTINGS_DURATION = 250
 private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
 
 @Composable
-fun CollapsingToolbarScope.Toolbar(
+internal fun CollapsingToolbarScope.Toolbar(
     toolbarScaffoldState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
     onSettingsClick: () -> Unit,
@@ -78,7 +82,7 @@ fun CollapsingToolbarScope.Toolbar(
     var botHintTop by remember { mutableStateOf(0f) }
     var searchBarTop by remember { mutableStateOf(0f) }
 
-    BotHint(
+    AssistantHint(
         modifier = Modifier
             .parallax(PARALLAX_RATIO)
             .padding(top = toolbarHeightDp)
@@ -98,7 +102,7 @@ fun CollapsingToolbarScope.Toolbar(
                 scaleX = scale
                 scaleY = scale
                 alpha = toolbarState.progress
-                translationY = -size.height
+                translationY = -toolbarHeightDp.toPx() + 16.dp.toPx()
             },
     )
 
@@ -153,17 +157,30 @@ private fun SettingsButton(
 }
 
 @Composable
-private fun BotHint(
+private fun AssistantHint(
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
         AssistantLogo(
             modifier = Modifier.size(48.dp),
             onClick = {},
         )
-        ChatMessage(modifier = Modifier.padding(start = 10.dp))
+        Text(
+            modifier = Modifier.padding(start = 10.dp),
+            text = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
+            style = MaterialTheme.typography.bodyMedium,
+            fontStyle = FontStyle.Italic,
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AssistantHintPreview() {
+    SerenityTheme {
+        AssistantHint()
     }
 }

@@ -46,4 +46,6 @@ dependencies {
     kapt(Deps.hiltCompiler)
 
     implementation(Deps.collapsingToolbar)
+
+    implementation(Deps.immutableCollections)
 }

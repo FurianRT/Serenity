@@ -1,8 +1,7 @@
 package com.furianrt.serenity.ui
 
 import androidx.lifecycle.ViewModel
-import com.furianrt.notecontent.extensions.toUiNote
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.serenity.ui.extensions.toMainScreenNotes
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +13,7 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class MainViewModel @Inject constructor(
+internal class MainViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
 ) : ViewModel() {
 
@@ -50,7 +49,7 @@ class MainViewModel @Inject constructor(
         if (notes.isEmpty()) {
             _state.tryEmit(MainUiState.Empty)
         } else {
-            _state.tryEmit(MainUiState.Success(notes.map(LocalNote::toUiNote)))
+            _state.tryEmit(MainUiState.Success(notes.toMainScreenNotes()))
         }
     }
 }

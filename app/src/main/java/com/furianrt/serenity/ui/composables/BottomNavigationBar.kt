@@ -44,7 +44,7 @@ private const val ANIM_BUTTON_ADD_DURATION = 150
 private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
 
 @Composable
-fun BottomNavigationBar(
+internal fun BottomNavigationBar(
     needToHideNavigation: () -> Boolean,
     needToShowScrollUpButton: () -> Boolean,
     onScrollToTopClick: () -> Unit,
@@ -102,11 +102,11 @@ private fun ButtonAddNote(
             scope.launch {
                 scale.animateTo(
                     targetValue = 1.05f,
-                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2),
                 )
                 scale.animateTo(
                     targetValue = 1f,
-                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2)
+                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2),
                 )
             }
             onClick()
@@ -148,16 +148,16 @@ private fun ButtonScrollToTop(
                 scope.launch {
                     translation.animateTo(
                         targetValue = buttonHeight.toFloat(),
-                        animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION)
+                        animationSpec = tween(ANIM_BUTTON_SCROLL_DURATION),
                     )
                     translation.snapTo(0f)
                 }
                 onClick()
-            }
+            },
         ) {
             Text(
                 text = stringResource(id = uiR.string.button_scroll_to_top_title),
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

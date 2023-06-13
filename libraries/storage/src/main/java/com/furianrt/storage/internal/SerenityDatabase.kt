@@ -10,11 +10,11 @@ import com.furianrt.storage.internal.notes.dao.ImageDao
 import com.furianrt.storage.internal.notes.dao.NoteDao
 import com.furianrt.storage.internal.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.notes.dao.TagDao
-import com.furianrt.storage.internal.notes.entities.EntryBindingNoteToTag
 import com.furianrt.storage.internal.notes.entities.EntryNote
 import com.furianrt.storage.internal.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.notes.entities.EntryNoteTitle
+import com.furianrt.storage.internal.notes.entities.EntryNoteToTag
 
 @Database(
     entities = [
@@ -22,7 +22,7 @@ import com.furianrt.storage.internal.notes.entities.EntryNoteTitle
         EntryNoteTitle::class,
         EntryNoteImage::class,
         EntryNoteTag::class,
-        EntryBindingNoteToTag::class,
+        EntryNoteToTag::class,
     ],
     version = VERSION,
     exportSchema = false,

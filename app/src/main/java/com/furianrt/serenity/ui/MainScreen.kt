@@ -22,22 +22,24 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.furianrt.notecontent.composables.NoteItem
-import com.furianrt.notecontent.entities.UiNote
-import com.furianrt.notecontent.utils.generatePreviewNotes
+import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.serenity.ui.MainScrollState.ScrollDirection
 import com.furianrt.serenity.ui.composables.BottomNavigationBar
+import com.furianrt.serenity.ui.composables.NoteListItem
 import com.furianrt.serenity.ui.composables.Toolbar
+import com.furianrt.serenity.ui.entities.MainScreenNote
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableList
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 
 @Composable
-fun MainScreen(
+internal fun MainScreen(
     screenState: MainScreenState = rememberMainState(),
 ) {
     val viewModel: MainViewModel = hiltViewModel()
@@ -117,7 +119,7 @@ private fun MainScreenContent(
 
 @Composable
 private fun MainSuccess(
-    notes: List<UiNote>,
+    notes: List<MainScreenNote>,
     listState: LazyListState,
 ) {
     LazyColumn(
@@ -126,7 +128,7 @@ private fun MainSuccess(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
-            NoteItem(
+            NoteListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(max = 200.dp)
@@ -135,6 +137,14 @@ private fun MainSuccess(
             )
         }
     }
+}
+
+@Composable
+private fun MainEmpty() {
+}
+
+@Composable
+private fun MainLoading() {
 }
 
 @Preview
@@ -148,10 +158,22 @@ private fun MainScreenSuccessPreview() {
     }
 }
 
-@Composable
-private fun MainEmpty() {
-}
-
-@Composable
-private fun MainLoading() {
-}
+private fun generatePreviewNotes() = buildList {
+    for (i in 0..5) {
+        add(
+            MainScreenNote(
+                id = i.toString(),
+                timestamp = 0,
+                tags = persistentSetOf(),
+                content = persistentSetOf(
+                    UiNoteContent.Title(
+                        id = "1",
+                        text = "Kotlin is a modern programming language with a " +
+                            "lot more syntactic sugar compared to Java, and as such " +
+                            "there is equally more black magic",
+                    ),
+                ),
+            ),
+        )
+    }
+}.toImmutableList()

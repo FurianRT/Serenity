@@ -44,4 +44,6 @@ dependencies {
     implementation(Deps.collapsingToolbar)
 
     implementation(Deps.lottie)
+
+    implementation(Deps.immutableCollections)
 }

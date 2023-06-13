@@ -28,4 +28,8 @@ dependencies {
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
+
+    implementation(Deps.immutableCollections)
+
+    implementation(Deps.flowLayout)
 }

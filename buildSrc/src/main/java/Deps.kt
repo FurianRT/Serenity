@@ -1,40 +1,42 @@
 object Deps {
-    val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
+    const val coreKtx = "androidx.core:core-ktx:${Versions.coreKtx}"
 
-    val lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.lifecycle}"
-    val material3 = "androidx.compose.material3:material3:${Versions.material3}"
-    val material3Size =
+    const val lifecycle = "androidx.lifecycle:lifecycle-runtime-compose:${Versions.lifecycle}"
+    const val material3 = "androidx.compose.material3:material3:${Versions.material3}"
+    const val material3Size =
         "androidx.compose.material3:material3-window-size-class:${Versions.material3}"
 
-    val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
-    val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
-    val composeUi = "androidx.compose.ui:ui:${Versions.compose}"
-    val composeGraphics = "androidx.compose.ui:ui-graphics:${Versions.compose}"
-    val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
-    val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
-    val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
+    const val composeActivity = "androidx.activity:activity-compose:${Versions.composeActivity}"
+    const val composeFoundation = "androidx.compose.foundation:foundation:${Versions.compose}"
+    const val composeUi = "androidx.compose.ui:ui:${Versions.compose}"
+    const val composeGraphics = "androidx.compose.ui:ui-graphics:${Versions.compose}"
+    const val composeToolingPreview = "androidx.compose.ui:ui-tooling-preview:${Versions.compose}"
+    const val composeTooling = "androidx.compose.ui:ui-tooling:${Versions.compose}"
+    const val composeMaterial = "androidx.compose.material:material:${Versions.compose}"
 
-    val systemuicontroller =
+    const val systemUiController =
         "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
+    const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.accompanist}"
 
-    val splashScreen = "androidx.core:core-splashscreen:${Versions.splashScreen}"
+    const val splashScreen = "androidx.core:core-splashscreen:${Versions.splashScreen}"
 
-    val corrutinesCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    val corrutinesAndroid =
+    const val corrutinesCore =
+        "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
+    const val corrutinesAndroid =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
-    val room = "androidx.room:room-ktx:${Versions.room}"
-    val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
-    val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
+    const val room = "androidx.room:room-ktx:${Versions.room}"
+    const val roomRuntime = "androidx.room:room-runtime:${Versions.room}"
+    const val roomCompiler = "androidx.room:room-compiler:${Versions.room}"
 
-    val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
-    val hiltCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
-    val hiltNavigation = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigation}"
+    const val hilt = "com.google.dagger:hilt-android:${Versions.hilt}"
+    const val hiltCompiler = "com.google.dagger:hilt-android-compiler:${Versions.hilt}"
+    const val hiltNavigation = "androidx.hilt:hilt-navigation-compose:${Versions.hiltNavigation}"
 
-    val collapsingToolbar = "me.onebone:toolbar-compose:${Versions.collapsingToolbar}"
+    const val collapsingToolbar = "me.onebone:toolbar-compose:${Versions.collapsingToolbar}"
 
-    val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
+    const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
 
-    val immutableCollections =
+    const val immutableCollections =
         "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.immutableCollections}"
 }

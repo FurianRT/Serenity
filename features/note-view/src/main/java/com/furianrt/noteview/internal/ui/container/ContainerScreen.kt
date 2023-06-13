@@ -24,15 +24,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.furianrt.notecontent.composables.NoteItem
-import com.furianrt.notecontent.utils.generatePreviewNotes
+import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
+import com.furianrt.noteview.internal.ui.container.entites.ContainerScreenNote
+import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.toImmutableList
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -123,7 +126,7 @@ private fun SuccessScreen(
         ) { index ->
             val scrollState = rememberScrollState()
             listsScrollStates[index] = scrollState
-            NoteItem(
+            PageScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
@@ -160,3 +163,23 @@ private fun ContainerScreenSuccessPreview() {
         )
     }
 }
+
+private fun generatePreviewNotes() = buildList {
+    for (i in 0..5) {
+        add(
+            ContainerScreenNote(
+                id = i.toString(),
+                timestamp = 0,
+                tags = persistentSetOf(),
+                content = persistentSetOf(
+                    UiNoteContent.Title(
+                        id = "1",
+                        text = "Kotlin is a modern programming language with a " +
+                            "lot more syntactic sugar compared to Java, and as such " +
+                            "there is equally more black magic",
+                    ),
+                ),
+            ),
+        )
+    }
+}.toImmutableList()
