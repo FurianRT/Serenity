@@ -2,6 +2,7 @@ package com.furianrt.serenity.ui
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.serenity.ui.entities.MainScreenNote
 import kotlinx.collections.immutable.ImmutableList
 
@@ -22,6 +23,12 @@ internal val MainUiState.hasNotes
 
 @Stable
 internal sealed interface MainEvent {
+    @Immutable
+    data class OnNoteClick(val note: MainScreenNote) : MainEvent
+
+    @Immutable
+    data class OnNoteTagClick(val tag: UiNoteTag) : MainEvent
+
     @Immutable
     object OnScrollToTopClick : MainEvent
 

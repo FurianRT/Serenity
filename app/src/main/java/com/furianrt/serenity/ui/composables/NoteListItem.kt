@@ -1,6 +1,7 @@
 package com.furianrt.serenity.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.serenity.ui.entities.MainScreenNote
 import com.furianrt.uikit.theme.OnTertiaryRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
@@ -25,12 +27,15 @@ import kotlinx.collections.immutable.persistentSetOf
 internal fun NoteListItem(
     note: MainScreenNote,
     modifier: Modifier = Modifier,
+    onClick: (note: MainScreenNote) -> Unit,
+    onTagClick: (tag: UiNoteTag) -> Unit,
 ) {
     CompositionLocalProvider(LocalRippleTheme provides OnTertiaryRippleTheme) {
         Column(
             modifier = modifier
                 .clip(shape = RoundedCornerShape(8.dp))
-                .background(color = MaterialTheme.colorScheme.tertiary),
+                .background(color = MaterialTheme.colorScheme.tertiary)
+                .clickable { onClick(note) },
         ) {
             for (item in note.content) {
                 when (item) {
@@ -42,6 +47,7 @@ internal fun NoteListItem(
                             title = item,
                         )
                     }
+
                     is UiNoteContent.Image -> Unit
                 }
             }
@@ -49,8 +55,10 @@ internal fun NoteListItem(
             NoteTags(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .padding(top = if (note.tags.isEmpty()) 0.dp else 16.dp)
                     .padding(horizontal = 8.dp),
                 tags = note.tags,
+                onTagClick = onTagClick,
             )
         }
     }
@@ -74,6 +82,8 @@ private fun NoteItemPreview() {
                     ),
                 ),
             ),
+            onClick = {},
+            onTagClick = {},
         )
     }
 }

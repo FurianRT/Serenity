@@ -18,6 +18,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlin.random.Random
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -61,18 +62,23 @@ internal class DatabaseModule {
                     db.insert(EntryNoteTitle.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                     clear()
                 }
+            }
+        }
 
-                for (tagIndex in 0 until tagsTitles.count()) {
-                    put(EntryNoteTag.FIELD_ID, noteIndex.toString() + tagIndex.toString())
-                    put(EntryNoteTag.FIELD_TITLE, tagsTitles[tagIndex])
-                    put(EntryNoteTag.FIELD_BLOCK_POSITION, tagIndex.toString())
-                    db.insert(EntryNoteTag.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-                    clear()
+        for (tagIndex in 0 until tagsTitles.count()) {
+            with(ContentValues()) {
+                put(EntryNoteTag.FIELD_ID, tagIndex.toString())
+                put(EntryNoteTag.FIELD_TITLE, tagsTitles[tagIndex])
+                db.insert(EntryNoteTag.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+            }
+        }
 
+        for (noteIndex in 0..19) {
+            for (tagIndex in 0..Random.nextInt(tagsTitles.count())) {
+                with(ContentValues()) {
                     put(EntryNoteToTag.FIELD_NOTE_ID, noteIndex.toString())
-                    put(EntryNoteToTag.FIELD_TAG_ID, noteIndex.toString() + tagIndex.toString())
+                    put(EntryNoteToTag.FIELD_TAG_ID, tagIndex.toString())
                     db.insert(EntryNoteToTag.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-                    clear()
                 }
             }
         }

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material.ripple.LocalRippleTheme
@@ -22,6 +23,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.uikit.extensions.MeasureUnconstrainedViewWidth
 import com.furianrt.uikit.theme.OnTertiaryRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableSet
@@ -33,30 +35,45 @@ fun NoteTags(
     tags: ImmutableSet<UiNoteTag>,
     modifier: Modifier = Modifier,
     date: String? = "Sat 9:12 PM",
+    onTagClick: (tag: UiNoteTag) -> Unit,
 ) {
-    FlowRow(
-        modifier = modifier.padding(top = if (tags.isEmpty()) 0.dp else 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.Bottom,
-    ) {
-        tags.forEach { tag ->
-            NoteTagItem(
-                modifier = Modifier.padding(bottom = 8.dp),
-                tag = tag,
-                onClick = {},
-            )
-        }
-
-        if (date != null) {
+    MeasureUnconstrainedViewWidth(
+        viewToMeasure = {
             Text(
-                modifier = Modifier
-                    .padding(end = 12.dp, bottom = 8.dp, top = 12.dp)
-                    .weight(1f)
-                    .alpha(0.6f),
-                text = date,
-                style = MaterialTheme.typography.bodySmall,
-                textAlign = TextAlign.End,
+                text = date.orEmpty(),
+                style = MaterialTheme.typography.labelSmall,
             )
+        },
+    ) { measuredWidth ->
+        FlowRow(
+            modifier = modifier,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            tags.forEach { tag ->
+                NoteTagItem(
+                    modifier = Modifier.padding(bottom = 8.dp),
+                    tag = tag,
+                    onClick = { onTagClick(tag) },
+                )
+            }
+
+            if (date != null) {
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterEnd,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 12.dp, bottom = 8.dp, top = 12.dp)
+                            .widthIn(min = measuredWidth)
+                            .alpha(0.6f),
+                        text = date,
+                        textAlign = TextAlign.End,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
         }
     }
 }
@@ -76,11 +93,11 @@ fun NoteTagItem(
             contentAlignment = Alignment.Center,
         ) {
             Text(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                 text = tag.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }
@@ -90,7 +107,10 @@ fun NoteTagItem(
 @Composable
 private fun NoteTagsPreview() {
     SerenityTheme {
-        NoteTags(tags = generatePreviewTags())
+        NoteTags(
+            tags = generatePreviewTags(),
+            onTagClick = {},
+        )
     }
 }
 

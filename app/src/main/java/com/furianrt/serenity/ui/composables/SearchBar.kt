@@ -39,7 +39,7 @@ internal fun SearchBar(
                     .alpha(0.6f)
                     .padding(horizontal = 16.dp),
                 text = stringResource(id = uiR.string.search_bar_title),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }

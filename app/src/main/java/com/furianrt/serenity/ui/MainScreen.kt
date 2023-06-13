@@ -1,6 +1,5 @@
 package com.furianrt.serenity.ui
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +12,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -100,18 +102,30 @@ private fun MainScreenContent(
             when (uiState) {
                 is MainUiState.Loading -> MainLoading()
                 is MainUiState.Empty -> MainEmpty()
-                is MainUiState.Success -> MainSuccess(uiState.notes, screenState.listState)
+                is MainUiState.Success -> MainSuccess(
+                    notes = uiState.notes,
+                    listState = screenState.listState,
+                    onEvent = onEvent,
+                )
+            }
+        }
+
+        val needToShowScrollUpButton by remember {
+            derivedStateOf {
+                screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
+            }
+        }
+
+        val needToHideNavigation by remember(screenState.scrollState.scrollDirection) {
+            derivedStateOf {
+                uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
             }
         }
 
         BottomNavigationBar(
             onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
-            needToHideNavigation = {
-                uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
-            },
-            needToShowScrollUpButton = {
-                screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
-            },
+            needToHideNavigation = { needToHideNavigation },
+            needToShowScrollUpButton = { needToShowScrollUpButton },
             onAddNoteClick = { onEvent(MainEvent.OnAddNoteClick) },
         )
     }
@@ -121,6 +135,7 @@ private fun MainScreenContent(
 private fun MainSuccess(
     notes: List<MainScreenNote>,
     listState: LazyListState,
+    onEvent: (event: MainEvent) -> Unit,
 ) {
     LazyColumn(
         state = listState,
@@ -131,9 +146,10 @@ private fun MainSuccess(
             NoteListItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .heightIn(max = 200.dp)
-                    .clickable { },
+                    .heightIn(max = 200.dp),
                 note = notes[index],
+                onClick = { onEvent(MainEvent.OnNoteClick(it)) },
+                onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },
             )
         }
     }

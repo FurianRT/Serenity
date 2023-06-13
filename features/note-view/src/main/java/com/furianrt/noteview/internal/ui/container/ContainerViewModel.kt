@@ -6,6 +6,7 @@ import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNotes
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -40,7 +41,7 @@ internal class ContainerViewModel @Inject constructor(
             _state.tryEmit(
                 ContainerUiState.Success(
                     initialPageIndex = 2,
-                    notes = notes.toContainerScreenNotes(),
+                    notes = notes.toContainerScreenNotes().toImmutableList(),
                 ),
             )
         }
