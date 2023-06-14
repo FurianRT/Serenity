@@ -3,6 +3,7 @@ package com.furianrt.serenity.ui.composables
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -33,38 +34,49 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.serenity.R
+import com.furianrt.serenity.ui.MainUiState
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
+import com.furianrt.uikit.extensions.expand
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.CollapsingToolbarScope
+import me.onebone.toolbar.ExperimentalToolbarApi
 import com.furianrt.uikit.R as uiR
 
 private const val PARALLAX_RATIO = 0.03f
 private const val ANIM_BUTTON_SETTINGS_DURATION = 250
 private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
+private const val ANIM_HINT_VISIBILITY_DURATION = 400
 
+@OptIn(ExperimentalToolbarApi::class)
 @Composable
 internal fun CollapsingToolbarScope.Toolbar(
     toolbarScaffoldState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
+    assistantHint: MainUiState.AssistantHint?,
     onSettingsClick: () -> Unit,
     onSearchClick: () -> Unit,
+    onAssistantHintCLick: () -> Unit,
 ) {
     val toolbarState = toolbarScaffoldState.toolbarState
 
     val needToSnapParallax by remember {
         derivedStateOf {
             val isScrolling = toolbarState.isScrollInProgress || listState.isScrollInProgress
-            !isScrolling && toolbarState.isInMiddleState
+            !isScrolling && toolbarState.isInMiddleState && !toolbarState.isScrollInProgress
         }
     }
 
     val needToSnapPin by remember {
         derivedStateOf {
-            !listState.isScrollInProgress && toolbarScaffoldState.isInMiddleState
+            !listState.isScrollInProgress &&
+                toolbarScaffoldState.isInMiddleState &&
+                !toolbarState.isScrollInProgress
         }
     }
 
@@ -78,33 +90,64 @@ internal fun CollapsingToolbarScope.Toolbar(
         }
     }
 
-    val toolbarHeightDp = 64.dp
+    val toolbarHeightDp = remember { 64.dp }
     var botHintTop by remember { mutableStateOf(0f) }
     var searchBarTop by remember { mutableStateOf(0f) }
 
-    AssistantHint(
-        modifier = Modifier
-            .parallax(PARALLAX_RATIO)
-            .padding(top = toolbarHeightDp)
-            .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp)
-            .onGloballyPositioned { botHintTop = it.boundsInRoot().top }
-            .drawWithContent {
-                clipRect(
-                    right = size.width,
-                    top = -size.height,
-                    bottom = if (botHintTop == 0f) -size.height else searchBarTop - botHintTop,
-                ) {
-                    this@drawWithContent.drawContent()
+    var message by remember { mutableStateOf(assistantHint?.message) }
+
+    LaunchedEffect(assistantHint) {
+        if (assistantHint == null) {
+            toolbarState.collapse(ANIM_HINT_VISIBILITY_DURATION)
+            message = ""
+            return@LaunchedEffect
+        }
+
+        val prevMessage = message
+        message = assistantHint.message
+
+        delay(200)
+
+        val isListAtTop = listState.firstVisibleItemIndex == 0
+        if (assistantHint.forceShow && isListAtTop && prevMessage != message) {
+            launch { toolbarScaffoldState.expand(ANIM_HINT_VISIBILITY_DURATION) }
+            launch { toolbarState.expand(ANIM_HINT_VISIBILITY_DURATION) }
+        }
+    }
+
+    if (message.isNullOrBlank()) {
+        Spacer(
+            modifier = Modifier
+                .parallax(PARALLAX_RATIO)
+                .height(toolbarHeightDp),
+        )
+    } else {
+        AssistantHint(
+            modifier = Modifier
+                .parallax(PARALLAX_RATIO)
+                .padding(top = toolbarHeightDp)
+                .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp)
+                .onGloballyPositioned { botHintTop = it.boundsInRoot().top }
+                .drawWithContent {
+                    clipRect(
+                        right = size.width,
+                        top = -size.height,
+                        bottom = if (botHintTop == 0f) -size.height else searchBarTop - botHintTop,
+                    ) {
+                        this@drawWithContent.drawContent()
+                    }
                 }
-            }
-            .graphicsLayer {
-                val scale = 1f - PARALLAX_RATIO * (1f - toolbarState.progress)
-                scaleX = scale
-                scaleY = scale
-                alpha = toolbarState.progress
-                translationY = -toolbarHeightDp.toPx() + 16.dp.toPx()
-            },
-    )
+                .graphicsLayer {
+                    val scale = 1f - PARALLAX_RATIO * (1f - toolbarState.progress)
+                    scaleX = scale
+                    scaleY = scale
+                    alpha = toolbarState.progress
+                    translationY = -toolbarHeightDp.toPx() + 16.dp.toPx()
+                },
+            message = message.orEmpty(),
+            onClick = onAssistantHintCLick,
+        )
+    }
 
     Row(
         modifier = Modifier
@@ -158,29 +201,57 @@ private fun SettingsButton(
 
 @Composable
 private fun AssistantHint(
+    message: String,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val logoHeightDp = remember { 48.dp }
+
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.Top,
     ) {
         AssistantLogo(
-            modifier = Modifier.size(48.dp),
-            onClick = {},
+            modifier = Modifier.size(logoHeightDp),
+            onClick = onClick,
         )
-        Text(
-            modifier = Modifier.padding(start = 10.dp),
-            text = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
-            style = MaterialTheme.typography.bodyMedium,
-            fontStyle = FontStyle.Italic,
+        AssistantMessage(
+            modifier = Modifier
+                .padding(start = 10.dp)
+                .graphicsLayer {
+                    translationY = if (size.height > logoHeightDp.toPx()) {
+                        0f
+                    } else {
+                        (logoHeightDp.toPx() - size.height) / 2f
+                    }
+                },
+            text = message,
+            onClick = onClick,
         )
     }
+}
+
+@Composable
+private fun AssistantMessage(
+    text: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        modifier = modifier.clickableNoRipple(onClick),
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        fontStyle = FontStyle.Italic,
+    )
 }
 
 @Preview
 @Composable
 private fun AssistantHintPreview() {
     SerenityTheme {
-        AssistantHint()
+        AssistantHint(
+            message = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
+            onClick = {},
+        )
     }
 }

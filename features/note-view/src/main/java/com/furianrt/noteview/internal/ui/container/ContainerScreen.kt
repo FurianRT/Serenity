@@ -94,7 +94,9 @@ private fun SuccessScreen(
     val needToSnapToolbar by remember(currentPageScrollState) {
         derivedStateOf {
             val isScrollInProgress = currentPageScrollState?.isScrollInProgress ?: false
-            !isScrollInProgress && toolbarScaffoldState.isInMiddleState
+            !isScrollInProgress &&
+                toolbarScaffoldState.isInMiddleState &&
+                !toolbarScaffoldState.toolbarState.isScrollInProgress
         }
     }
 

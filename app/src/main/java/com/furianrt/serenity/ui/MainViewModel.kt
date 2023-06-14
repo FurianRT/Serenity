@@ -22,7 +22,7 @@ internal class MainViewModel @Inject constructor(
         loadNotes()
     }
 
-    private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading)
+    private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading())
     val state: StateFlow<MainUiState> = _state.asStateFlow()
 
     private val _effect = Channel<MainEffect>()
@@ -41,6 +41,17 @@ internal class MainViewModel @Inject constructor(
             }
 
             is MainEvent.OnSettingsClick -> {
+                val newState = if (_state.value.hint != null) {
+                    _state.value.updateHint(hint = null)
+                } else {
+                    _state.value.updateHint(
+                        hint = MainUiState.AssistantHint(
+                            message = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
+                            forceShow = true,
+                        ),
+                    )
+                }
+                _state.tryEmit(newState)
             }
 
             is MainEvent.OnSearchClick -> {
@@ -48,13 +59,16 @@ internal class MainViewModel @Inject constructor(
 
             is MainEvent.OnAddNoteClick -> {
             }
+
+            is MainEvent.OnAssistantHintClick -> {
+            }
         }
     }
 
     private fun loadNotes() = launch {
         val notes = notesRepository.getAllNotes()
         if (notes.isEmpty()) {
-            _state.tryEmit(MainUiState.Empty)
+            _state.tryEmit(MainUiState.Empty())
         } else {
             _state.tryEmit(
                 MainUiState.Success(
@@ -62,5 +76,11 @@ internal class MainViewModel @Inject constructor(
                 ),
             )
         }
+    }
+
+    private fun MainUiState.updateHint(hint: MainUiState.AssistantHint?) = when (this) {
+        is MainUiState.Success -> copy(hint = hint)
+        is MainUiState.Loading -> copy(hint = hint)
+        is MainUiState.Empty -> copy(hint = hint)
     }
 }

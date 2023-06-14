@@ -7,15 +7,27 @@ import com.furianrt.serenity.ui.entities.MainScreenNote
 import kotlinx.collections.immutable.ImmutableList
 
 @Stable
-internal sealed interface MainUiState {
+internal sealed class MainUiState(
+    open val hint: AssistantHint?,
+) {
     @Immutable
-    object Loading : MainUiState
+    data class AssistantHint(val message: String, val forceShow: Boolean = false)
 
     @Immutable
-    object Empty : MainUiState
+    data class Loading(
+        override val hint: AssistantHint? = null,
+    ) : MainUiState(hint)
 
     @Immutable
-    data class Success(val notes: ImmutableList<MainScreenNote>) : MainUiState
+    data class Empty(
+        override val hint: AssistantHint? = null,
+    ) : MainUiState(hint)
+
+    @Immutable
+    data class Success(
+        val notes: ImmutableList<MainScreenNote>,
+        override val hint: AssistantHint? = null,
+    ) : MainUiState(hint)
 }
 
 internal val MainUiState.hasNotes
@@ -40,6 +52,9 @@ internal sealed interface MainEvent {
 
     @Immutable
     object OnAddNoteClick : MainEvent
+
+    @Immutable
+    object OnAssistantHintClick : MainEvent
 }
 
 @Stable

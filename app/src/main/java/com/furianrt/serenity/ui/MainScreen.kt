@@ -93,8 +93,10 @@ private fun MainScreenContent(
                 Toolbar(
                     toolbarScaffoldState = screenState.toolbarState,
                     listState = screenState.listState,
+                    assistantHint = uiState.hint,
                     onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
                     onSearchClick = { onEvent(MainEvent.OnSearchClick) },
+                    onAssistantHintCLick = { onEvent(MainEvent.OnAssistantHintClick) },
                 )
             },
         ) {
@@ -168,7 +170,13 @@ private fun MainLoading() {
 private fun MainScreenSuccessPreview() {
     SerenityTheme {
         MainScreenContent(
-            uiState = MainUiState.Success(generatePreviewNotes()),
+            uiState = MainUiState.Success(
+                notes = generatePreviewNotes(),
+                hint = MainUiState.AssistantHint(
+                    message = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
+                    forceShow = true,
+                ),
+            ),
             onEvent = {},
         )
     }

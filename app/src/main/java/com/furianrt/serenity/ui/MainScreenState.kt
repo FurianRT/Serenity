@@ -35,7 +35,7 @@ internal class MainScreenState(
         coroutineScope {
             launch { listState.animateScrollToItem(0) }
             launch { toolbarState.toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
-            launch { toolbarState.expand() }
+            launch { toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
         }
     }
 }
