@@ -1,16 +1,13 @@
 package com.furianrt.noteview.internal.ui.container
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -24,21 +21,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
-import com.furianrt.noteview.internal.ui.container.entites.ContainerScreenNote
 import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.addSerenityBackground
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.persistentSetOf
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
+
+private const val OFFSCREEN_PAGE_COUNT = 1
 
 @Composable
 internal fun ContainerScreen() {
@@ -47,9 +42,6 @@ internal fun ContainerScreen() {
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
-            /*when (effect) {
-                is MainEffect.ScrollToTop -> screenState.scrollToTop()
-            }*/
         }
     }
 
@@ -86,7 +78,7 @@ private fun SuccessScreen(
 ) {
     val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
     val pagerState = rememberPagerState(initialPage = uiState.initialPageIndex)
-    val listsScrollStates = remember { mutableStateMapOf<Int, ScrollState>() }
+    val listsScrollStates = remember { mutableStateMapOf<Int, LazyListState>() }
     val currentPageScrollState = remember(listsScrollStates.size, pagerState.currentPage) {
         listsScrollStates[pagerState.currentPage]
     }
@@ -111,30 +103,28 @@ private fun SuccessScreen(
         state = toolbarScaffoldState,
         scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
         toolbarModifier = Modifier.drawBehind {
-            if (currentPageScrollState?.value != 0) {
+            if (currentPageScrollState?.firstVisibleItemScrollOffset != 0) {
                 drawBottomShadow(elevation = 8.dp)
             }
         },
         toolbar = {
             Toolbar(
+                date = { uiState.date },
                 onEvent = onEvent,
             )
         },
     ) {
         Spacer(modifier = Modifier)
         HorizontalPager(
-            pageCount = uiState.notes.count(),
+            pageCount = uiState.notesIds.count(),
+            beyondBoundsPageCount = OFFSCREEN_PAGE_COUNT,
             state = pagerState,
         ) { index ->
-            val scrollState = rememberScrollState()
-            listsScrollStates[index] = scrollState
+            val lazyListState = rememberLazyListState()
+            listsScrollStates[index] = lazyListState
             PageScreen(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(scrollState)
-                    .padding(all = 8.dp)
-                    .clickableNoRipple {},
-                note = uiState.notes[index],
+                noteId = uiState.notesIds[index],
+                lazyListState = lazyListState,
             )
         }
     }
@@ -159,29 +149,10 @@ private fun ContainerScreenSuccessPreview() {
         ScreenContent(
             uiState = ContainerUiState.Success(
                 initialPageIndex = 0,
-                notes = generatePreviewNotes(),
+                date = "30 Sep 1992",
+                notesIds = persistentListOf("0", "1", "2"),
             ),
             onEvent = {},
         )
     }
 }
-
-private fun generatePreviewNotes() = buildList {
-    for (i in 0..5) {
-        add(
-            ContainerScreenNote(
-                id = i.toString(),
-                timestamp = 0,
-                tags = persistentSetOf(),
-                content = persistentSetOf(
-                    UiNoteContent.Title(
-                        id = "1",
-                        text = "Kotlin is a modern programming language with a " +
-                            "lot more syntactic sugar compared to Java, and as such " +
-                            "there is equally more black magic",
-                    ),
-                ),
-            ),
-        )
-    }
-}.toImmutableList()

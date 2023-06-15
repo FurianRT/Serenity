@@ -31,8 +31,8 @@ dependencies {
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
 
-    implementation(Deps.corrutinesCore)
-    implementation(Deps.corrutinesAndroid)
+    implementation(Deps.coroutinesCore)
+    implementation(Deps.coroutinesAndroid)
 
     implementation(Deps.hilt)
     implementation(Deps.hiltNavigation)

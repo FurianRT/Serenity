@@ -6,20 +6,16 @@ class LocalNote(
     val tags: List<Tag>,
     val content: List<Content>,
 ) {
-    sealed interface Content {
-        class Title(
-            val id: String,
-            val text: String,
-        ) : Content
-
-        class Image(
-            val id: String,
-            val uri: String,
-        ) : Content
-    }
-
     class Tag(
         val id: String,
         val title: String,
     )
+
+    sealed class Content(val position: Int) {
+        class TitlesBlock(position: Int, val titles: List<Title>) : Content(position)
+        class Title(val id: String, val text: String)
+
+        class ImagesBlock(position: Int, val titles: List<Image>) : Content(position)
+        class Image(val id: String, val uri: String)
+    }
 }

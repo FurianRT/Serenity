@@ -46,7 +46,7 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.pullRefresh
 import com.furianrt.uikit.rememberPullRefreshState
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -255,13 +255,18 @@ private fun generatePreviewNotes() = buildList {
             MainScreenNote(
                 id = i.toString(),
                 timestamp = 0,
-                tags = persistentSetOf(),
-                content = persistentSetOf(
-                    UiNoteContent.Title(
-                        id = "1",
-                        text = "Kotlin is a modern programming language with a " +
-                            "lot more syntactic sugar compared to Java, and as such " +
-                            "there is equally more black magic",
+                tags = persistentListOf(),
+                content = persistentListOf(
+                    UiNoteContent.TitlesBlock(
+                        position = 0,
+                        titles = persistentListOf(
+                            UiNoteContent.Title(
+                                id = "1",
+                                text = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                            ),
+                        ),
                     ),
                 ),
             ),

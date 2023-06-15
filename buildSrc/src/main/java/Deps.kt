@@ -17,12 +17,14 @@ object Deps {
     const val systemUiController =
         "com.google.accompanist:accompanist-systemuicontroller:${Versions.accompanist}"
     const val flowLayout = "com.google.accompanist:accompanist-flowlayout:${Versions.accompanist}"
+    const val navAnimation =
+        "com.google.accompanist:accompanist-navigation-animation:${Versions.accompanist}"
 
     const val splashScreen = "androidx.core:core-splashscreen:${Versions.splashScreen}"
 
-    const val corrutinesCore =
+    const val coroutinesCore =
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Versions.coroutines}"
-    const val corrutinesAndroid =
+    const val coroutinesAndroid =
         "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.coroutines}"
 
     const val room = "androidx.room:room-ktx:${Versions.room}"

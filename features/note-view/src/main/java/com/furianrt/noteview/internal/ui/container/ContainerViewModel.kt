@@ -2,7 +2,7 @@ package com.furianrt.noteview.internal.ui.container
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNotes
+import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -34,14 +34,15 @@ internal class ContainerViewModel @Inject constructor(
     }
 
     private fun loadNotes() = launch {
-        val notes = notesRepository.getAllNotes()
+        val notes = notesRepository.getAllNotesSimple()
         if (notes.isEmpty()) {
             _state.tryEmit(ContainerUiState.Empty)
         } else {
             _state.tryEmit(
                 ContainerUiState.Success(
-                    initialPageIndex = 2,
-                    notes = notes.toContainerScreenNotes().toImmutableList(),
+                    initialPageIndex = 0,
+                    date = "30 Sep 1992",
+                    notesIds = notes.map(LocalSimpleNote::id).toImmutableList(),
                 ),
             )
         }

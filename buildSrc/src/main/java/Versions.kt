@@ -19,7 +19,7 @@ object Versions {
     const val room = "2.5.1"
 
     const val hilt = "2.46.1"
-    const val hiltNavigation = "1.0.0"
+    const val hiltNavigation = "1.1.0-alpha01"
 
     const val collapsingToolbar = "2.3.5"
 

@@ -10,5 +10,8 @@ import com.furianrt.storage.internal.notes.entities.LinkedNote
 internal interface NoteDao {
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
-    suspend fun getAllNotes(): List<LinkedNote>
+    suspend fun getAllLinkedNotes(): List<LinkedNote>
+
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
+    suspend fun getAllNotes(): List<EntryNote>
 }

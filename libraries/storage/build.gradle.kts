@@ -9,8 +9,8 @@ android {
 }
 
 dependencies {
-    implementation(Deps.corrutinesCore)
-    implementation(Deps.corrutinesAndroid)
+    implementation(Deps.coroutinesCore)
+    implementation(Deps.coroutinesAndroid)
 
     implementation(Deps.room)
     implementation(Deps.roomRuntime)

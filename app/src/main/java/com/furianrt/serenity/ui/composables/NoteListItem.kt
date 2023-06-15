@@ -21,7 +21,7 @@ import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.serenity.ui.entities.MainScreenNote
 import com.furianrt.uikit.theme.OnTertiaryRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.persistentSetOf
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun NoteListItem(
@@ -39,16 +39,16 @@ internal fun NoteListItem(
         ) {
             for (item in note.content) {
                 when (item) {
-                    is UiNoteContent.Title -> {
+                    is UiNoteContent.TitlesBlock -> {
                         NoteContentTitle(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .padding(top = 8.dp),
-                            title = item,
+                            title = item.titles.first(),
                         )
                     }
 
-                    is UiNoteContent.Image -> Unit
+                    is UiNoteContent.ImagesBlock -> Unit
                 }
             }
 
@@ -59,6 +59,7 @@ internal fun NoteListItem(
                     .padding(horizontal = 8.dp),
                 tags = note.tags,
                 onTagClick = onTagClick,
+                date = "Sat 9:12 PM",
             )
         }
     }
@@ -72,13 +73,22 @@ private fun NoteItemPreview() {
             note = MainScreenNote(
                 id = "1",
                 timestamp = 0L,
-                tags = persistentSetOf(),
-                content = persistentSetOf(
-                    UiNoteContent.Title(
-                        id = "1",
-                        text = "Kotlin is a modern programming language with a " +
-                            "lot more syntactic sugar compared to Java, and as such " +
-                            "there is equally more black magic",
+                tags = persistentListOf(
+                    UiNoteTag.Regular("0", "Programming"),
+                    UiNoteTag.Editable("1", "Android"),
+                    UiNoteTag.Template("2", "Kotlin"),
+                ),
+                content = persistentListOf(
+                    UiNoteContent.TitlesBlock(
+                        position = 0,
+                        titles = persistentListOf(
+                            UiNoteContent.Title(
+                                id = "1",
+                                text = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                            ),
+                        ),
                     ),
                 ),
             ),

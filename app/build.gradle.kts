@@ -38,8 +38,8 @@ dependencies {
 
     implementation(Deps.splashScreen)
 
-    implementation(Deps.corrutinesCore)
-    implementation(Deps.corrutinesAndroid)
+    implementation(Deps.coroutinesCore)
+    implementation(Deps.coroutinesAndroid)
 
     implementation(Deps.hilt)
     implementation(Deps.hiltNavigation)
@@ -48,4 +48,6 @@ dependencies {
     implementation(Deps.collapsingToolbar)
 
     implementation(Deps.immutableCollections)
+
+    implementation(Deps.navAnimation)
 }

@@ -38,6 +38,7 @@ private const val ANIM_BUTTON_EDIT_DURATION = 350
 
 @Composable
 internal fun CollapsingToolbarScope.Toolbar(
+    date: () -> String,
     onEvent: (event: ContainerEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -66,7 +67,7 @@ internal fun CollapsingToolbarScope.Toolbar(
             }
             Text(
                 modifier = Modifier.padding(start = 24.dp),
-                text = "30 Sep 2022",
+                text = date(),
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
