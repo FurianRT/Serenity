@@ -11,12 +11,10 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.assistant.R
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 
-private const val ANIM_SCALE_DURATION = 300
-
 @Composable
 fun AssistantLogo(
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.anim_ai_murble),
@@ -28,7 +26,7 @@ fun AssistantLogo(
 
     LottieAnimation(
         modifier = modifier.clickableWithScaleAnim(
-            duration = ANIM_SCALE_DURATION,
+            duration = AssistantDefaults.ANIM_LOGO_CLICK_SCALE_DURATION,
             onClick = onClick,
         ),
         composition = composition,

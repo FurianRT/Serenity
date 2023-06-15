@@ -67,7 +67,7 @@ internal fun CollapsingToolbarScope.Toolbar(
             Text(
                 modifier = Modifier.padding(start = 24.dp),
                 text = "30 Sep 2022",
-                style = MaterialTheme.typography.bodyLarge,
+                style = MaterialTheme.typography.bodyMedium,
             )
         }
 

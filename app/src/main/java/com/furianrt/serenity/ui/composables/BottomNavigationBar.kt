@@ -157,7 +157,7 @@ private fun ButtonScrollToTop(
         ) {
             Text(
                 text = stringResource(id = uiR.string.button_scroll_to_top_title),
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
     }

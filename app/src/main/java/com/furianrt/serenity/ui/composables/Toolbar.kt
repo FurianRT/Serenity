@@ -32,6 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.assistant.api.AssistantDefaults
 import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.serenity.R
 import com.furianrt.serenity.ui.MainUiState
@@ -63,10 +64,9 @@ internal fun CollapsingToolbarScope.Toolbar(
     onSearchClick: () -> Unit,
     onAssistantHintCLick: () -> Unit,
 ) {
-    val toolbarState = toolbarScaffoldState.toolbarState
-
     val needToSnapParallax by remember {
         derivedStateOf {
+            val toolbarState = toolbarScaffoldState.toolbarState
             val isScrolling = toolbarState.isScrollInProgress || listState.isScrollInProgress
             !isScrolling && toolbarState.isInMiddleState && !toolbarState.isScrollInProgress
         }
@@ -76,13 +76,13 @@ internal fun CollapsingToolbarScope.Toolbar(
         derivedStateOf {
             !listState.isScrollInProgress &&
                 toolbarScaffoldState.isInMiddleState &&
-                !toolbarState.isScrollInProgress
+                !toolbarScaffoldState.toolbarState.isScrollInProgress
         }
     }
 
     LaunchedEffect(needToSnapParallax, needToSnapPin) {
         if (needToSnapParallax) {
-            toolbarState.performSnap()
+            toolbarScaffoldState.toolbarState.performSnap()
         }
 
         if (needToSnapPin) {
@@ -98,20 +98,23 @@ internal fun CollapsingToolbarScope.Toolbar(
 
     LaunchedEffect(assistantHint) {
         if (assistantHint == null) {
-            toolbarState.collapse(ANIM_HINT_VISIBILITY_DURATION)
+            toolbarScaffoldState.toolbarState.collapse(ANIM_HINT_VISIBILITY_DURATION)
             message = ""
             return@LaunchedEffect
         }
 
         val prevMessage = message
+        if (prevMessage == assistantHint.message) {
+            return@LaunchedEffect
+        }
+
         message = assistantHint.message
 
         delay(200)
 
-        val isListAtTop = listState.firstVisibleItemIndex == 0
-        if (assistantHint.forceShow && isListAtTop && prevMessage != message) {
+        if (assistantHint.forceShow && listState.firstVisibleItemIndex == 0) {
             launch { toolbarScaffoldState.expand(ANIM_HINT_VISIBILITY_DURATION) }
-            launch { toolbarState.expand(ANIM_HINT_VISIBILITY_DURATION) }
+            launch { toolbarScaffoldState.toolbarState.expand(ANIM_HINT_VISIBILITY_DURATION) }
         }
     }
 
@@ -125,8 +128,7 @@ internal fun CollapsingToolbarScope.Toolbar(
         AssistantHint(
             modifier = Modifier
                 .parallax(PARALLAX_RATIO)
-                .padding(top = toolbarHeightDp)
-                .padding(start = 16.dp, end = 16.dp, top = 4.dp, bottom = 24.dp)
+                .padding(start = 16.dp, end = 16.dp, top = toolbarHeightDp, bottom = 20.dp)
                 .onGloballyPositioned { botHintTop = it.boundsInRoot().top }
                 .drawWithContent {
                     clipRect(
@@ -138,6 +140,7 @@ internal fun CollapsingToolbarScope.Toolbar(
                     }
                 }
                 .graphicsLayer {
+                    val toolbarState = toolbarScaffoldState.toolbarState
                     val scale = 1f - PARALLAX_RATIO * (1f - toolbarState.progress)
                     scaleX = scale
                     scaleY = scale
@@ -155,7 +158,9 @@ internal fun CollapsingToolbarScope.Toolbar(
             .height(toolbarHeightDp)
             .fillMaxWidth()
             .padding(horizontal = 16.dp)
-            .graphicsLayer { translationY = toolbarState.height - size.height },
+            .graphicsLayer {
+                translationY = toolbarScaffoldState.toolbarState.height - size.height
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SearchBar(
@@ -211,8 +216,16 @@ private fun AssistantHint(
         modifier = modifier,
         verticalAlignment = Alignment.Top,
     ) {
+        val scope = rememberCoroutineScope()
+        val scale = remember { Animatable(1f) }
+
         AssistantLogo(
-            modifier = Modifier.size(logoHeightDp),
+            modifier = Modifier
+                .size(logoHeightDp)
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                },
             onClick = onClick,
         )
         AssistantMessage(
@@ -226,7 +239,21 @@ private fun AssistantHint(
                     }
                 },
             text = message,
-            onClick = onClick,
+            onClick = {
+                if (scale.isRunning) {
+                    return@AssistantMessage
+                }
+                scope.launch {
+                    scale.animateTo(
+                        targetValue = 1.1f,
+                        animationSpec = tween(AssistantDefaults.ANIM_LOGO_CLICK_SCALE_DURATION / 2),
+                    )
+                    scale.animateTo(
+                        targetValue = 1f,
+                        animationSpec = tween(AssistantDefaults.ANIM_LOGO_CLICK_SCALE_DURATION / 2),
+                    )
+                }
+            },
         )
     }
 }
@@ -240,7 +267,7 @@ private fun AssistantMessage(
     Text(
         modifier = modifier.clickableNoRipple(onClick),
         text = text,
-        style = MaterialTheme.typography.bodyMedium,
+        style = MaterialTheme.typography.labelMedium,
         fontStyle = FontStyle.Italic,
     )
 }

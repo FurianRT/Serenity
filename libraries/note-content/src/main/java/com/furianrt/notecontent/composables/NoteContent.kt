@@ -16,7 +16,7 @@ fun NoteContentTitle(
     Text(
         modifier = modifier,
         text = title.text,
-        style = MaterialTheme.typography.bodyLarge,
+        style = MaterialTheme.typography.bodyMedium,
     )
 }
 

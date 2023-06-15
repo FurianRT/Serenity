@@ -19,22 +19,20 @@ fun Modifier.clickableWithScaleAnim(
     graphicsLayer {
         scaleX = scale.value
         scaleY = scale.value
-    }.clickableNoRipple(
-        onClick = {
-            if (scale.isRunning) {
-                return@clickableNoRipple
-            }
-            scope.launch {
-                scale.animateTo(
-                    targetValue = maxScale,
-                    animationSpec = tween(durationMillis = duration / 2),
-                )
-                scale.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(durationMillis = duration / 2),
-                )
-            }
-            onClick()
-        },
-    )
+    }.clickableNoRipple {
+        if (scale.isRunning) {
+            return@clickableNoRipple
+        }
+        scope.launch {
+            scale.animateTo(
+                targetValue = maxScale,
+                animationSpec = tween(durationMillis = duration / 2),
+            )
+            scale.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = duration / 2),
+            )
+        }
+        onClick()
+    }
 }

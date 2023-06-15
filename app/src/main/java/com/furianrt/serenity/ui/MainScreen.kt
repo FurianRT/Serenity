@@ -1,5 +1,7 @@
 package com.furianrt.serenity.ui
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -7,6 +9,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -15,15 +19,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.serenity.ui.MainScrollState.ScrollDirection
 import com.furianrt.serenity.ui.composables.BottomNavigationBar
@@ -32,13 +43,17 @@ import com.furianrt.serenity.ui.composables.Toolbar
 import com.furianrt.serenity.ui.entities.MainScreenNote
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.pullRefresh
+import com.furianrt.uikit.rememberPullRefreshState
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
+private const val ANIM_PULL_SUCCESS_DURATION = 400
 
 @Composable
 internal fun MainScreen(
@@ -74,13 +89,65 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     screenState: MainScreenState = rememberMainState(),
 ) {
+    val scope = rememberCoroutineScope()
+    val scale = remember { Animatable(0f) }
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.BottomCenter,
     ) {
+        val haptic = LocalHapticFeedback.current
+        val pullRefreshState = rememberPullRefreshState(
+            refreshing = false,
+            refreshThreshold = 32.dp,
+            onRefresh = {},
+            onThresholdPassed = {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                scope.launch {
+                    scale.animateTo(
+                        targetValue = 0.1f,
+                        animationSpec = tween(durationMillis = ANIM_PULL_SUCCESS_DURATION / 2),
+                    )
+                    scale.animateTo(
+                        targetValue = 0f,
+                        animationSpec = tween(durationMillis = ANIM_PULL_SUCCESS_DURATION / 2),
+                    )
+                }
+            },
+        )
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            AssistantLogo(
+                modifier = Modifier
+                    .padding(top = 12.dp)
+                    .size(48.dp)
+                    .drawWithContent {
+                        clipRect(
+                            right = size.width * 2f,
+                            left = -size.width,
+                            top = -size.height,
+                            bottom = pullRefreshState.position + 2.dp.toPx(),
+                        ) {
+                            this@drawWithContent.drawContent()
+                        }
+                    }
+                    .graphicsLayer {
+                        val pullScaleRange = 0.2f
+                        val pullScale = 1f - pullScaleRange * (1f - pullRefreshState.progress)
+                        val resultScale = pullScale + scale.value
+                        scaleX = resultScale
+                        scaleY = resultScale
+                        alpha = pullRefreshState.progress
+                    },
+            )
+        }
         CollapsingToolbarScaffold(
             modifier = Modifier
                 .fillMaxSize()
+                .pullRefresh(state = pullRefreshState, enabled = uiState.hint == null)
                 .nestedScroll(screenState.scrollConnection),
             state = screenState.toolbarState,
             scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,

@@ -48,7 +48,7 @@ fun NoteTags(
         FlowRow(
             modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.Bottom,
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             tags.forEach { tag ->
                 NoteTagItem(
@@ -65,7 +65,11 @@ fun NoteTags(
                 ) {
                     Text(
                         modifier = Modifier
-                            .padding(end = 12.dp, bottom = 8.dp, top = 12.dp)
+                            .padding(
+                                end = 12.dp,
+                                bottom = 8.dp,
+                                top = if (tags.isEmpty()) 12.dp else 0.dp,
+                            )
                             .widthIn(min = measuredWidth)
                             .alpha(0.6f),
                         text = date,
@@ -97,7 +101,7 @@ fun NoteTagItem(
                 text = tag.title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.labelSmall,
             )
         }
     }
