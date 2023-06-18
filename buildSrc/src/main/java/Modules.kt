@@ -3,6 +3,7 @@ sealed interface Modules {
         const val uikit = ":libraries:uikit"
         const val storage = ":libraries:storage"
         const val noteContent = ":libraries:note-content"
+        const val core = ":libraries:core"
     }
 
     object Features : Modules {

@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -34,7 +33,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.furianrt.assistant.api.AssistantLogo
+import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.serenity.ui.MainScrollState.ScrollDirection
 import com.furianrt.serenity.ui.composables.BottomNavigationBar
@@ -47,7 +48,6 @@ import com.furianrt.uikit.pullRefresh
 import com.furianrt.uikit.rememberPullRefreshState
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -57,6 +57,7 @@ private const val ANIM_PULL_SUCCESS_DURATION = 400
 
 @Composable
 internal fun MainScreen(
+    navHostController: NavHostController,
     screenState: MainScreenState = rememberMainState(),
 ) {
     val viewModel: MainViewModel = hiltViewModel()
@@ -66,6 +67,7 @@ internal fun MainScreen(
         viewModel.effect.collect { effect ->
             when (effect) {
                 is MainEffect.ScrollToTop -> screenState.scrollToTop()
+                is MainEffect.OpenScreen -> navHostController.navigate("Note/${effect.noteId}")
             }
         }
     }
@@ -147,7 +149,7 @@ private fun MainScreenContent(
         CollapsingToolbarScaffold(
             modifier = Modifier
                 .fillMaxSize()
-                .pullRefresh(state = pullRefreshState, enabled = uiState.hint == null)
+                .pullRefresh(state = pullRefreshState, enabled = uiState.assistantHint == null)
                 .nestedScroll(screenState.scrollConnection),
             state = screenState.toolbarState,
             scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
@@ -160,7 +162,7 @@ private fun MainScreenContent(
                 Toolbar(
                     toolbarScaffoldState = screenState.toolbarState,
                     listState = screenState.listState,
-                    assistantHint = uiState.hint,
+                    assistantHint = uiState.assistantHint,
                     onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
                     onSearchClick = { onEvent(MainEvent.OnSearchClick) },
                     onAssistantHintCLick = { onEvent(MainEvent.OnAssistantHintClick) },
@@ -209,13 +211,12 @@ private fun MainSuccess(
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(start = 8.dp, end = 8.dp, bottom = 16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
             NoteListItem(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(max = 200.dp),
+                    .fillMaxWidth(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
                 onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },
@@ -239,17 +240,14 @@ private fun MainScreenSuccessPreview() {
         MainScreenContent(
             uiState = MainUiState.Success(
                 notes = generatePreviewNotes(),
-                hint = MainUiState.AssistantHint(
-                    message = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
-                    forceShow = true,
-                ),
+                assistantHint = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
             ),
             onEvent = {},
         )
     }
 }
 
-private fun generatePreviewNotes() = buildList {
+private fun generatePreviewNotes() = buildImmutableList {
     for (i in 0..5) {
         add(
             MainScreenNote(
@@ -257,19 +255,15 @@ private fun generatePreviewNotes() = buildList {
                 timestamp = 0,
                 tags = persistentListOf(),
                 content = persistentListOf(
-                    UiNoteContent.TitlesBlock(
+                    UiNoteContent.Title(
+                        id = "1",
                         position = 0,
-                        titles = persistentListOf(
-                            UiNoteContent.Title(
-                                id = "1",
-                                text = "Kotlin is a modern programming language with a " +
-                                    "lot more syntactic sugar compared to Java, and as such " +
-                                    "there is equally more black magic",
-                            ),
-                        ),
+                        text = "Kotlin is a modern programming language with a " +
+                            "lot more syntactic sugar compared to Java, and as such " +
+                            "there is equally more black magic",
                     ),
                 ),
             ),
         )
     }
-}.toImmutableList()
+}

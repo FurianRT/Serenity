@@ -14,7 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -137,13 +138,14 @@ private fun ButtonScrollToTop(
         enter = fadeIn(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
         exit = fadeOut(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
     ) {
-        Button(
+        ElevatedButton(
             modifier = modifier.heightIn(min = 32.dp),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             shape = RoundedCornerShape(24.dp),
+            elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 8.dp),
             onClick = {
                 if (translation.isRunning) {
-                    return@Button
+                    return@ElevatedButton
                 }
                 scope.launch {
                     translation.animateTo(

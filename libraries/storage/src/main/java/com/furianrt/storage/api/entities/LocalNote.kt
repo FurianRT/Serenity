@@ -11,11 +11,16 @@ class LocalNote(
         val title: String,
     )
 
-    sealed class Content(val position: Int) {
-        class TitlesBlock(position: Int, val titles: List<Title>) : Content(position)
-        class Title(val id: String, val text: String)
+    sealed class Content(val id: String, val position: Int) {
 
-        class ImagesBlock(position: Int, val titles: List<Image>) : Content(position)
+        class Title(id: String, position: Int, val text: String) : Content(id, position)
+
+        class ImagesBlock(
+            id: String,
+            position: Int,
+            val titles: List<Image>,
+        ) : Content(id, position)
+
         class Image(val id: String, val uri: String)
     }
 }

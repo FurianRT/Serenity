@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = EntryNoteTag.TABLE_NAME)
 internal class EntryNoteTag(
     @ColumnInfo(name = FIELD_ID)
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey
     val id: String,
 
     @ColumnInfo(name = FIELD_TITLE)

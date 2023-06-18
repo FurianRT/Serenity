@@ -14,6 +14,13 @@ operator fun RippleAlpha.div(value: Float) = RippleAlpha(
     pressedAlpha = pressedAlpha / value,
 )
 
+operator fun RippleAlpha.times(value: Float) = RippleAlpha(
+    draggedAlpha = draggedAlpha * value,
+    focusedAlpha = focusedAlpha * value,
+    hoveredAlpha = hoveredAlpha * value,
+    pressedAlpha = pressedAlpha * value,
+)
+
 fun Modifier.clickableNoRipple(
     onClick: () -> Unit,
 ) = composed {

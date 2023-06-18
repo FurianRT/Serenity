@@ -16,20 +16,20 @@ internal class LinkedNote(
     val titles: List<EntryNoteTitle>,
 
     @Relation(
-        entity = EntryNoteImage::class,
+        entity = EntryContentBlock::class,
+        entityColumn = EntryContentBlock.FIELD_NOTE_ID,
         parentColumn = EntryNote.FIELD_ID,
-        entityColumn = EntryNoteImage.FIELD_NOTE_ID,
     )
-    val images: List<EntryNoteImage>,
+    val contentBlocks: List<LinkedContentBlock>,
 
     @Relation(
         entity = EntryNoteTag::class,
-        parentColumn = EntryNoteTag.FIELD_ID,
-        entityColumn = EntryNote.FIELD_ID,
+        entityColumn = EntryNoteTag.FIELD_ID,
+        parentColumn = EntryNote.FIELD_ID,
         associateBy = Junction(
             value = EntryNoteToTag::class,
-            parentColumn = EntryNoteToTag.FIELD_TAG_ID,
-            entityColumn = EntryNoteToTag.FIELD_NOTE_ID,
+            entityColumn = EntryNoteToTag.FIELD_TAG_ID,
+            parentColumn = EntryNoteToTag.FIELD_NOTE_ID,
         ),
     )
     val tags: List<EntryNoteTag>,

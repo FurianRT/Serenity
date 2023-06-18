@@ -8,26 +8,23 @@ import kotlinx.collections.immutable.ImmutableList
 
 @Stable
 internal sealed class MainUiState(
-    open val hint: AssistantHint?,
+    open val assistantHint: String?,
 ) {
     @Immutable
-    data class AssistantHint(val message: String, val forceShow: Boolean = false)
-
-    @Immutable
     data class Loading(
-        override val hint: AssistantHint? = null,
-    ) : MainUiState(hint)
+        override val assistantHint: String? = null,
+    ) : MainUiState(assistantHint)
 
     @Immutable
     data class Empty(
-        override val hint: AssistantHint? = null,
-    ) : MainUiState(hint)
+        override val assistantHint: String? = null,
+    ) : MainUiState(assistantHint)
 
     @Immutable
     data class Success(
         val notes: ImmutableList<MainScreenNote>,
-        override val hint: AssistantHint? = null,
-    ) : MainUiState(hint)
+        override val assistantHint: String? = null,
+    ) : MainUiState(assistantHint)
 }
 
 internal val MainUiState.hasNotes
@@ -61,4 +58,7 @@ internal sealed interface MainEvent {
 internal sealed interface MainEffect {
     @Immutable
     object ScrollToTop : MainEffect
+
+    @Immutable
+    data class OpenScreen(val noteId: String) : MainEffect
 }

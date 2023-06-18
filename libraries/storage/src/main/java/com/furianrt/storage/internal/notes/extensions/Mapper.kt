@@ -6,6 +6,7 @@ import com.furianrt.storage.internal.notes.entities.EntryNote
 import com.furianrt.storage.internal.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.notes.entities.EntryNoteTitle
+import com.furianrt.storage.internal.notes.entities.LinkedContentBlock
 import com.furianrt.storage.internal.notes.entities.LinkedNote
 
 internal fun EntryNote.toLocalSimpleNote() = LocalSimpleNote(
@@ -18,39 +19,35 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     timestamp = note.timestamp,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
     content = buildList {
-        addAll(titles.toTitlesBlocks())
-        addAll(images.toImagesBlocks())
+        addAll(titles.map(EntryNoteTitle::toNoteContentTitle))
+        addAll(contentBlocks.map(LinkedContentBlock::toLocalNoteContent))
         sortBy(LocalNote.Content::position)
     },
 )
 
-private fun List<EntryNoteTitle>.toTitlesBlocks() = groupBy(EntryNoteTitle::blockPosition)
-    .map { entry ->
-        LocalNote.Content.TitlesBlock(
-            position = entry.key,
-            titles = entry.value.map(EntryNoteTitle::toNoteContentTitle),
-        )
-    }
-
-private fun List<EntryNoteImage>.toImagesBlocks() = groupBy(EntryNoteImage::blockPosition)
-    .map { entry ->
-        LocalNote.Content.ImagesBlock(
-            position = entry.key,
-            titles = entry.value.map(EntryNoteImage::toNoteContentImage),
-        )
-    }
-
-private fun EntryNoteTitle.toNoteContentTitle() = LocalNote.Content.Title(
+internal fun EntryNoteTitle.toNoteContentTitle() = LocalNote.Content.Title(
     id = id,
+    position = position,
     text = text,
 )
 
-private fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
+internal fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
     id = id,
     uri = uri,
 )
 
-private fun EntryNoteTag.toNoteContentTag() = LocalNote.Tag(
+internal fun EntryNoteTag.toNoteContentTag() = LocalNote.Tag(
     id = id,
     title = title,
+)
+
+internal fun LinkedContentBlock.toLocalNoteContent(): LocalNote.Content = when {
+    images.isNotEmpty() -> toImagesBlock()
+    else -> throw IllegalStateException("Block should not be empty")
+}
+
+private fun LinkedContentBlock.toImagesBlock() = LocalNote.Content.ImagesBlock(
+    id = block.id,
+    position = block.position,
+    titles = images.map(EntryNoteImage::toNoteContentImage),
 )

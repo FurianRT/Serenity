@@ -15,13 +15,17 @@ internal sealed interface ContainerUiState {
     @Immutable
     data class Success(
         val initialPageIndex: Int,
+        val isInEditMode: Boolean,
         val date: String,
         val notesIds: ImmutableList<String>,
     ) : ContainerUiState
 }
 
 @Stable
-internal sealed interface ContainerEvent
+internal sealed interface ContainerEvent {
+    @Immutable
+    object OnButtonEditClick : ContainerEvent
+}
 
 @Stable
 internal sealed interface ContainerEffect

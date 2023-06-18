@@ -2,6 +2,9 @@ package com.furianrt.uikit.extensions
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Indication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -10,19 +13,18 @@ import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.coroutines.launch
 
 fun Modifier.clickableWithScaleAnim(
-    duration: Int,
+    duration: Int = 250,
     maxScale: Float = 1.1f,
+    indication: Indication? = null,
     onClick: () -> Unit = {},
 ) = composed {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
-    graphicsLayer {
+    val resultModifier = graphicsLayer {
         scaleX = scale.value
         scaleY = scale.value
-    }.clickableNoRipple {
-        if (scale.isRunning) {
-            return@clickableNoRipple
-        }
+    }
+    val scaleAction = {
         scope.launch {
             scale.animateTo(
                 targetValue = maxScale,
@@ -33,6 +35,26 @@ fun Modifier.clickableWithScaleAnim(
                 animationSpec = tween(durationMillis = duration / 2),
             )
         }
-        onClick()
+    }
+    if (indication != null) {
+        resultModifier.clickable(
+            onClick = {
+                if (scale.isRunning) {
+                    return@clickable
+                }
+                scaleAction()
+                onClick()
+            },
+            indication = indication,
+            interactionSource = remember { MutableInteractionSource() },
+        )
+    } else {
+        resultModifier.clickableNoRipple {
+            if (scale.isRunning) {
+                return@clickableNoRipple
+            }
+            scaleAction()
+            onClick()
+        }
     }
 }

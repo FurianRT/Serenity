@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.Libraries.core))
+
     implementation(Deps.coroutinesCore)
     implementation(Deps.coroutinesAndroid)
 

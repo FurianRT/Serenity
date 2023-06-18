@@ -1,27 +1,24 @@
 package com.furianrt.notecontent.extensions
 
+import com.furianrt.core.mapImmutable
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.storage.api.entities.LocalNote
-import kotlinx.collections.immutable.toImmutableList
 
 fun LocalNote.Content.toUiNoteContent() = when (this) {
-    is LocalNote.Content.TitlesBlock -> toUiTitlesBlock()
-    is LocalNote.Content.ImagesBlock -> toUiImagesBlock()
+    is LocalNote.Content.Title -> toUiNoteContentTitle()
+    is LocalNote.Content.ImagesBlock -> toUiMediaBlock()
 }
 
-fun LocalNote.Content.TitlesBlock.toUiTitlesBlock() = UiNoteContent.TitlesBlock(
+fun LocalNote.Content.ImagesBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
+    id = id,
     position = position,
-    titles = titles.map(LocalNote.Content.Title::toUiNoteContentTitle).toImmutableList(),
-)
-
-fun LocalNote.Content.ImagesBlock.toUiImagesBlock() = UiNoteContent.ImagesBlock(
-    position = position,
-    images = titles.map(LocalNote.Content.Image::toUiNoteContentImage).toImmutableList(),
+    images = titles.mapImmutable(LocalNote.Content.Image::toUiNoteContentImage),
 )
 
 fun LocalNote.Content.Title.toUiNoteContentTitle() = UiNoteContent.Title(
     id = id,
+    position = position,
     text = text,
 )
 
@@ -30,14 +27,10 @@ fun LocalNote.Content.Image.toUiNoteContentImage() = UiNoteContent.Image(
     uri = uri,
 )
 
-fun LocalNote.Tag.toRegularUiNoteTag() = UiNoteTag.Regular(
+fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(
     id = id,
     title = title,
-)
-
-fun LocalNote.Tag.toEditableUiNoteTag() = UiNoteTag.Editable(
-    id = id,
-    title = title,
+    isRemovable = isRemovable,
 )
 
 fun LocalNote.Tag.toTemplateUiNoteTag() = UiNoteTag.Template(

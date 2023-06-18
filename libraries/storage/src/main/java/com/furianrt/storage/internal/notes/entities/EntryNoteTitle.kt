@@ -17,7 +17,7 @@ import androidx.room.PrimaryKey
     ],
 )
 internal class EntryNoteTitle(
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey
     @ColumnInfo(name = FIELD_ID)
     val id: String,
 
@@ -27,14 +27,14 @@ internal class EntryNoteTitle(
     @ColumnInfo(name = FIELD_TEXT)
     val text: String,
 
-    @ColumnInfo(name = FIELD_BLOCK_POSITION)
-    val blockPosition: Int,
+    @ColumnInfo(name = FIELD_POSITION)
+    val position: Int,
 ) {
     companion object {
         const val TABLE_NAME = "Titles"
         const val FIELD_ID = "id"
         const val FIELD_NOTE_ID = "note_id"
         const val FIELD_TEXT = "text"
-        const val FIELD_BLOCK_POSITION = "block_position"
+        const val FIELD_POSITION = "position"
     }
 }

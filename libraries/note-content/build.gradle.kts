@@ -14,6 +14,7 @@ android {
 }
 
 dependencies {
+    implementation(project(Modules.Libraries.core))
     implementation(project(Modules.Libraries.storage))
     implementation(project(Modules.Libraries.uikit))
 

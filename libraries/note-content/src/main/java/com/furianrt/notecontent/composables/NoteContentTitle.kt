@@ -12,6 +12,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
+    isEditable: Boolean = false,
 ) {
     Text(
         modifier = modifier,
@@ -19,12 +20,6 @@ fun NoteContentTitle(
         style = MaterialTheme.typography.bodyMedium,
     )
 }
-
-/*
-@Composable
-private fun NoteItemContentPhotos(photos: List<NoteContent.Photo>) {
-}
-*/
 
 /*@OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -57,6 +52,7 @@ private fun NoteContentTitlePreview() {
         NoteContentTitle(
             title = UiNoteContent.Title(
                 id = "1",
+                position = 0,
                 text = "Kotlin is a modern programming language with a " +
                     "lot more syntactic sugar compared to Java, and as such " +
                     "there is equally more black magic",

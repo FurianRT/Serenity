@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.assistant.api.AssistantDefaults
 import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.serenity.R
-import com.furianrt.serenity.ui.MainUiState
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.expand
@@ -59,7 +58,7 @@ private const val ANIM_HINT_VISIBILITY_DURATION = 400
 internal fun CollapsingToolbarScope.Toolbar(
     toolbarScaffoldState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
-    assistantHint: MainUiState.AssistantHint?,
+    assistantHint: String?,
     onSettingsClick: () -> Unit,
     onSearchClick: () -> Unit,
     onAssistantHintCLick: () -> Unit,
@@ -94,25 +93,25 @@ internal fun CollapsingToolbarScope.Toolbar(
     var botHintTop by remember { mutableStateOf(0f) }
     var searchBarTop by remember { mutableStateOf(0f) }
 
-    var message by remember { mutableStateOf(assistantHint?.message) }
+    var message by remember { mutableStateOf(assistantHint) }
 
     LaunchedEffect(assistantHint) {
         if (assistantHint == null) {
             toolbarScaffoldState.toolbarState.collapse(ANIM_HINT_VISIBILITY_DURATION)
-            message = ""
+            message = null
             return@LaunchedEffect
         }
 
         val prevMessage = message
-        if (prevMessage == assistantHint.message) {
+        if (prevMessage == assistantHint) {
             return@LaunchedEffect
         }
 
-        message = assistantHint.message
+        message = assistantHint
 
         delay(200)
 
-        if (assistantHint.forceShow && listState.firstVisibleItemIndex == 0) {
+        if (listState.firstVisibleItemIndex == 0) {
             launch { toolbarScaffoldState.expand(ANIM_HINT_VISIBILITY_DURATION) }
             launch { toolbarScaffoldState.toolbarState.expand(ANIM_HINT_VISIBILITY_DURATION) }
         }

@@ -26,7 +26,7 @@ object Colors {
     val Blue = Color(0xFF1074BB)
 
     @Stable
-    val Red = Color(0xFFB00C0C)
+    val Red = Color(0xFFF2402F)
 
     @Stable
     val Transparent = Color(0x00000000)

@@ -5,11 +5,11 @@ import com.furianrt.serenity.ui.extensions.toMainScreenNotes
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ internal class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     init {
-        loadNotes()
+        observeNotes()
     }
 
     private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading())
@@ -31,6 +31,7 @@ internal class MainViewModel @Inject constructor(
     fun onEvent(event: MainEvent) {
         when (event) {
             is MainEvent.OnNoteClick -> {
+                _effect.trySend(MainEffect.OpenScreen(event.note.id))
             }
 
             is MainEvent.OnNoteTagClick -> {
@@ -41,14 +42,11 @@ internal class MainViewModel @Inject constructor(
             }
 
             is MainEvent.OnSettingsClick -> {
-                val newState = if (_state.value.hint != null) {
+                val newState = if (_state.value.assistantHint != null) {
                     _state.value.updateHint(hint = null)
                 } else {
                     _state.value.updateHint(
-                        hint = MainUiState.AssistantHint(
-                            message = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
-                            forceShow = true,
-                        ),
+                        hint = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
                     )
                 }
                 _state.tryEmit(newState)
@@ -65,22 +63,23 @@ internal class MainViewModel @Inject constructor(
         }
     }
 
-    private fun loadNotes() = launch {
-        val notes = notesRepository.getAllNotes()
-        if (notes.isEmpty()) {
-            _state.tryEmit(MainUiState.Empty())
-        } else {
-            _state.tryEmit(
-                MainUiState.Success(
-                    notes = notes.toMainScreenNotes().toImmutableList(),
-                ),
-            )
+    private fun observeNotes() = launch {
+        notesRepository.getAllNotes().collectLatest { notes ->
+            if (notes.isEmpty()) {
+                _state.tryEmit(MainUiState.Empty())
+            } else {
+                _state.tryEmit(
+                    MainUiState.Success(
+                        notes = notes.toMainScreenNotes(),
+                    ),
+                )
+            }
         }
     }
 
-    private fun MainUiState.updateHint(hint: MainUiState.AssistantHint?) = when (this) {
-        is MainUiState.Success -> copy(hint = hint)
-        is MainUiState.Loading -> copy(hint = hint)
-        is MainUiState.Empty -> copy(hint = hint)
+    private fun MainUiState.updateHint(hint: String?) = when (this) {
+        is MainUiState.Success -> copy(assistantHint = hint)
+        is MainUiState.Loading -> copy(assistantHint = hint)
+        is MainUiState.Empty -> copy(assistantHint = hint)
     }
 }

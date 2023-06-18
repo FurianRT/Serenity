@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
@@ -37,29 +38,38 @@ internal fun NoteListItem(
                 .background(color = MaterialTheme.colorScheme.tertiary)
                 .clickable { onClick(note) },
         ) {
-            for (item in note.content) {
+            note.content.forEachIndexed { index, item ->
                 when (item) {
-                    is UiNoteContent.TitlesBlock -> {
+                    is UiNoteContent.Title -> {
                         NoteContentTitle(
                             modifier = Modifier
                                 .padding(horizontal = 8.dp)
                                 .padding(top = 8.dp),
-                            title = item.titles.first(),
+                            title = item,
                         )
                     }
 
-                    is UiNoteContent.ImagesBlock -> Unit
+                    is UiNoteContent.MediaBlock -> {
+                        NoteContentMedia(
+                            modifier = Modifier
+                                .padding(top = if (index == 0) 0.dp else 8.dp),
+                            media = item.images,
+                        )
+                    }
                 }
             }
 
             NoteTags(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = if (note.tags.isEmpty()) 0.dp else 16.dp)
-                    .padding(horizontal = 8.dp),
+                    .padding(
+                        top = if (note.tags.isEmpty()) 0.dp else 12.dp,
+                        bottom = if (note.tags.isEmpty()) 0.dp else 6.dp,
+                    )
+                    .padding(horizontal = 4.dp),
                 tags = note.tags,
                 onTagClick = onTagClick,
-                date = "Sat 9:12 PM",
+                date = "19.06.2023",
             )
         }
     }
@@ -74,21 +84,17 @@ private fun NoteItemPreview() {
                 id = "1",
                 timestamp = 0L,
                 tags = persistentListOf(
-                    UiNoteTag.Regular("0", "Programming"),
-                    UiNoteTag.Editable("1", "Android"),
-                    UiNoteTag.Template("2", "Kotlin"),
+                    UiNoteTag.Regular(id = "0", title = "Programming", isRemovable = false),
+                    UiNoteTag.Regular(id = "1", title = "Android", isRemovable = false),
+                    UiNoteTag.Template(id = "2", title = "Kotlin"),
                 ),
                 content = persistentListOf(
-                    UiNoteContent.TitlesBlock(
+                    UiNoteContent.Title(
+                        id = "1",
                         position = 0,
-                        titles = persistentListOf(
-                            UiNoteContent.Title(
-                                id = "1",
-                                text = "Kotlin is a modern programming language with a " +
-                                    "lot more syntactic sugar compared to Java, and as such " +
-                                    "there is equally more black magic",
-                            ),
-                        ),
+                        text = "Kotlin is a modern programming language with a " +
+                            "lot more syntactic sugar compared to Java, and as such " +
+                            "there is equally more black magic",
                     ),
                 ),
             ),

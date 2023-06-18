@@ -1,6 +1,7 @@
 package com.furianrt.noteview.internal.ui.container
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -14,6 +15,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
@@ -109,8 +111,9 @@ private fun SuccessScreen(
         },
         toolbar = {
             Toolbar(
+                isInEditMode = { uiState.isInEditMode },
                 date = { uiState.date },
-                onEvent = onEvent,
+                onEditClick = { onEvent(ContainerEvent.OnButtonEditClick) },
             )
         },
     ) {
@@ -118,12 +121,18 @@ private fun SuccessScreen(
         HorizontalPager(
             pageCount = uiState.notesIds.count(),
             beyondBoundsPageCount = OFFSCREEN_PAGE_COUNT,
+            userScrollEnabled = !uiState.isInEditMode,
+            verticalAlignment = Alignment.Top,
             state = pagerState,
         ) { index ->
             val lazyListState = rememberLazyListState()
             listsScrollStates[index] = lazyListState
+            val isInEditMode by remember(uiState.isInEditMode) {
+                derivedStateOf { pagerState.currentPage == index && uiState.isInEditMode }
+            }
             PageScreen(
                 noteId = uiState.notesIds[index],
+                isInEditMode = isInEditMode,
                 lazyListState = lazyListState,
             )
         }
@@ -134,6 +143,7 @@ private fun SuccessScreen(
 private fun LoadingScreen(
     modifier: Modifier = Modifier,
 ) {
+    Box(modifier = modifier)
 }
 
 @Composable
@@ -148,6 +158,7 @@ private fun ContainerScreenSuccessPreview() {
     SerenityTheme {
         ScreenContent(
             uiState = ContainerUiState.Success(
+                isInEditMode = false,
                 initialPageIndex = 0,
                 date = "30 Sep 1992",
                 notesIds = persistentListOf("0", "1", "2"),

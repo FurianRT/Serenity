@@ -11,12 +11,7 @@ sealed class UiNoteTag(
     data class Regular(
         override val id: String,
         override val title: String,
-    ) : UiNoteTag(id, title)
-
-    @Immutable
-    data class Editable(
-        override val id: String,
-        override val title: String,
+        val isRemovable: Boolean,
     ) : UiNoteTag(id, title)
 
     @Immutable

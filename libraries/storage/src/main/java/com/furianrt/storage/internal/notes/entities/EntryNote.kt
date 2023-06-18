@@ -8,7 +8,7 @@ import com.furianrt.storage.internal.notes.entities.EntryNote.Companion.TABLE_NA
 @Entity(tableName = TABLE_NAME)
 internal class EntryNote(
     @ColumnInfo(name = FIELD_ID)
-    @PrimaryKey(autoGenerate = false)
+    @PrimaryKey
     val id: String,
 
     @ColumnInfo(name = FIELD_TIMESTAMP)

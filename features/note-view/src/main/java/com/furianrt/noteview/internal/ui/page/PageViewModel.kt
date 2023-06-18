@@ -1,9 +1,12 @@
 package com.furianrt.noteview.internal.ui.page
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.furianrt.core.mapImmutable
+import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
 import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.uikit.extensions.launch
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -22,12 +25,7 @@ internal class PageViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     init {
-        Log.e("fkewfkwenfkwe", "init = $noteId")
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.e("fkewfkwenfkwe", "onCleared = $noteId")
+        observeNote()
     }
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
@@ -37,6 +35,55 @@ internal class PageViewModel @AssistedInject constructor(
     val effect = _effect.receiveAsFlow()
 
     fun onEvent(event: PageEvent) {
+        when (event) {
+            is PageEvent.OnEditModeStateChange -> {
+                onEditModeStateChange(event.isEnabled)
+            }
+
+            is PageEvent.OnTagClick -> {
+            }
+
+            is PageEvent.OnTagRemoved -> {
+            }
+        }
+    }
+
+    private fun onEditModeStateChange(isEnabled: Boolean) {
+        val oldState = state.value
+        when {
+            oldState is PageUiState.Success.View && isEnabled -> {
+                val newState = PageUiState.Success.Edit(
+                    content = oldState.content,
+                    tags = oldState.tags.mapImmutable { tag ->
+                        if (tag is UiNoteTag.Regular) {
+                            tag.copy(isRemovable = true)
+                        } else {
+                            tag
+                        }
+                    },
+                )
+                _state.tryEmit(newState)
+            }
+
+            oldState is PageUiState.Success.Edit && !isEnabled -> {
+                val newState = PageUiState.Success.View(
+                    content = oldState.content,
+                    tags = oldState.tags.mapImmutable { tag ->
+                        if (tag is UiNoteTag.Regular) {
+                            tag.copy(isRemovable = false)
+                        } else {
+                            tag
+                        }
+                    },
+                )
+                _state.tryEmit(newState)
+            }
+        }
+    }
+
+    private fun observeNote() = launch {
+        val note = requireNotNull(notesRepository.getNote(noteId)).toContainerScreenNote()
+        _state.tryEmit(PageUiState.Success.View(note.content, note.tags))
     }
 
     @AssistedFactory
