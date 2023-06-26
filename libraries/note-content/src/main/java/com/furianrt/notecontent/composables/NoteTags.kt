@@ -46,7 +46,7 @@ import com.furianrt.uikit.theme.SerenityRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableList
 
-private const val ANIM_DELETE_TAG_DURATION = 200
+private const val ANIM_EDIT_MODE_DURATION = 250
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -101,14 +101,6 @@ private fun RegularNoteTagItem(
             modifier = modifier,
             contentAlignment = Alignment.TopStart,
         ) {
-            AnimatedVisibility(
-                visible = isRemovable,
-                enter = fadeIn(animationSpec = tween(durationMillis = ANIM_DELETE_TAG_DURATION)),
-                exit = fadeOut(animationSpec = tween(durationMillis = ANIM_DELETE_TAG_DURATION)),
-            ) {
-                DeleteTagButton(onClick = { onRemoveClick(tag) })
-            }
-
             Box(
                 modifier = Modifier
                     .padding(all = 4.dp)
@@ -124,6 +116,14 @@ private fun RegularNoteTagItem(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.labelSmall,
                 )
+            }
+
+            AnimatedVisibility(
+                visible = isRemovable,
+                enter = fadeIn(animationSpec = tween(durationMillis = ANIM_EDIT_MODE_DURATION)),
+                exit = fadeOut(animationSpec = tween(durationMillis = ANIM_EDIT_MODE_DURATION)),
+            ) {
+                DeleteTagButton(onClick = { onRemoveClick(tag) })
             }
         }
     }
@@ -161,14 +161,14 @@ private fun DeleteTagButton(
     CompositionLocalProvider(LocalRippleTheme provides RemoveTagRippleTheme) {
         Box(
             modifier = Modifier
-                .size(16.dp)
+                .size(18.dp)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.errorContainer)
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center,
         ) {
             Icon(
-                modifier = Modifier.size(14.dp),
+                modifier = Modifier.size(16.dp),
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onErrorContainer,

@@ -30,6 +30,7 @@ dependencies {
 
     implementation(Deps.composeActivity)
     implementation(Deps.composeUi)
+    implementation(Deps.navAnimation)
     implementation(Deps.composeMaterial)
     implementation(Deps.composeGraphics)
     implementation(Deps.composeToolingPreview)

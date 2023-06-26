@@ -34,6 +34,7 @@ dependencies {
     implementation(Deps.composeUi)
     implementation(Deps.composeMaterial)
     implementation(Deps.composeGraphics)
+    implementation(Deps.navAnimation)
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
 
@@ -49,6 +50,4 @@ dependencies {
     implementation(Deps.collapsingToolbar)
 
     implementation(Deps.immutableCollections)
-
-    implementation(Deps.navAnimation)
 }

@@ -18,15 +18,15 @@ internal class MainViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
 ) : ViewModel() {
 
-    init {
-        observeNotes()
-    }
-
     private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading())
     val state: StateFlow<MainUiState> = _state.asStateFlow()
 
     private val _effect = Channel<MainEffect>()
     val effect = _effect.receiveAsFlow()
+
+    init {
+        observeNotes()
+    }
 
     fun onEvent(event: MainEvent) {
         when (event) {

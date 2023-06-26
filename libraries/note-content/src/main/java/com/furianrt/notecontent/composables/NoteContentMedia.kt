@@ -11,21 +11,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableList
-import kotlin.random.Random
 
 @Composable
 fun NoteContentMedia(
-    media: ImmutableList<UiNoteContent.Image>,
+    media: ImmutableList<UiNoteContent.MediaBlock.Image>,
     modifier: Modifier = Modifier,
     isEditable: Boolean = false,
 ) {
@@ -35,6 +34,7 @@ fun NoteContentMedia(
                 .fillMaxWidth()
                 .height(180.dp)
                 .clip(RoundedCornerShape(8.dp)),
+            image = media.first(),
             isRemovable = isEditable,
         )
         return
@@ -47,16 +47,18 @@ fun NoteContentMedia(
                 .height(120.dp),
         ) {
             ImageItem(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
                 isRemovable = isEditable,
+                image = media[0],
             )
             ImageItem(
-                modifier = modifier
+                modifier = Modifier
                     .fillMaxHeight()
                     .weight(1f),
                 isRemovable = isEditable,
+                image = media[1],
             )
         }
         return
@@ -82,6 +84,7 @@ fun NoteContentMedia(
                         ),
                     ),
                 isRemovable = isEditable,
+                image = media[index],
             )
         }
     }
@@ -89,21 +92,13 @@ fun NoteContentMedia(
 
 @Composable
 private fun ImageItem(
+    image: UiNoteContent.MediaBlock.Image,
     modifier: Modifier = Modifier,
     isRemovable: Boolean = false,
 ) {
-    val randomColor = remember {
-        Color(
-            alpha = 255,
-            red = Random.nextInt(256),
-            green = Random.nextInt(256),
-            blue = Random.nextInt(256),
-        )
-    }
-
     Box(
         modifier = modifier
-            .background(randomColor),
+            .background(Color(image.uri.toInt())),
     ) {
     }
 }
@@ -114,7 +109,13 @@ private fun NoteContentMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             media = buildImmutableList {
-                add(UiNoteContent.Image(id = "0", uri = ""))
+                add(
+                    UiNoteContent.MediaBlock.Image(
+                        id = "0",
+                        uri = Color.Blue.toArgb().toString(),
+                        position = 0,
+                    ),
+                )
             },
         )
     }

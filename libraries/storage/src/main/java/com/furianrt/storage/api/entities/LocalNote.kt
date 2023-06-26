@@ -18,9 +18,9 @@ class LocalNote(
         class ImagesBlock(
             id: String,
             position: Int,
-            val titles: List<Image>,
+            val images: List<Image>,
         ) : Content(id, position)
 
-        class Image(val id: String, val uri: String)
+        class Image(val id: String, val uri: String, val position: Int)
     }
 }

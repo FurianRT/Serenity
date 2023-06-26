@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -42,10 +41,10 @@ import com.furianrt.serenity.ui.composables.BottomNavigationBar
 import com.furianrt.serenity.ui.composables.NoteListItem
 import com.furianrt.serenity.ui.composables.Toolbar
 import com.furianrt.serenity.ui.entities.MainScreenNote
+import com.furianrt.uikit.components.pullRefresh
+import com.furianrt.uikit.components.rememberPullRefreshState
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.drawBottomShadow
-import com.furianrt.uikit.pullRefresh
-import com.furianrt.uikit.rememberPullRefreshState
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
@@ -215,8 +214,6 @@ private fun MainSuccess(
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
             NoteListItem(
-                modifier = Modifier
-                    .fillMaxWidth(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
                 onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },

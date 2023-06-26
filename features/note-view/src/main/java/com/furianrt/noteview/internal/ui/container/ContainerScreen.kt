@@ -16,13 +16,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
 import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.addSerenityBackground
@@ -38,15 +41,19 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 private const val OFFSCREEN_PAGE_COUNT = 1
 
 @Composable
-internal fun ContainerScreen() {
+internal fun ContainerScreen(navHostController: NavHostController) {
     val viewModel: ContainerViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
+            when (effect) {
+                is ContainerEffect.CloseScreen -> {
+                    navHostController.popBackStack()
+                }
+            }
         }
     }
-
     ScreenContent(
         modifier = Modifier
             .fillMaxSize()
@@ -72,7 +79,7 @@ private fun ScreenContent(
 }
 
 @Composable
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 private fun SuccessScreen(
     uiState: ContainerUiState.Success,
     onEvent: (event: ContainerEvent) -> Unit,
@@ -100,6 +107,8 @@ private fun SuccessScreen(
         }
     }
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     CollapsingToolbarScaffold(
         modifier = modifier,
         state = toolbarScaffoldState,
@@ -114,6 +123,10 @@ private fun SuccessScreen(
                 isInEditMode = { uiState.isInEditMode },
                 date = { uiState.date },
                 onEditClick = { onEvent(ContainerEvent.OnButtonEditClick) },
+                onBackButtonClick = {
+                    keyboardController?.hide()
+                    onEvent(ContainerEvent.OnButtonBackClick)
+                },
             )
         },
     ) {
@@ -134,6 +147,7 @@ private fun SuccessScreen(
                 noteId = uiState.notesIds[index],
                 isInEditMode = isInEditMode,
                 lazyListState = lazyListState,
+                onTitleClick = { onEvent(ContainerEvent.OnPageTitleClick) },
             )
         }
     }

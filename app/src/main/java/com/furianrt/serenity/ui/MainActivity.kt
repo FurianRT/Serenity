@@ -49,7 +49,7 @@ internal class MainActivity : ComponentActivity() {
                             },
                         ),
                     ) {
-                        NoteViewScreen()
+                        NoteViewScreen(navController)
                     }
                 }
             }

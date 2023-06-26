@@ -1,9 +1,8 @@
-package com.furianrt.storage.internal.notes.extensions
+package com.furianrt.storage.internal.notes.mappers
 
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.internal.notes.entities.EntryNote
-import com.furianrt.storage.internal.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.notes.entities.EntryNoteTitle
 import com.furianrt.storage.internal.notes.entities.LinkedContentBlock
@@ -25,29 +24,12 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     },
 )
 
-internal fun EntryNoteTitle.toNoteContentTitle() = LocalNote.Content.Title(
+internal fun LocalNote.toEntryNote() = EntryNote(
     id = id,
-    position = position,
-    text = text,
+    timestamp = timestamp,
 )
 
-internal fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
+internal fun LocalSimpleNote.toEntryNote() = EntryNote(
     id = id,
-    uri = uri,
-)
-
-internal fun EntryNoteTag.toNoteContentTag() = LocalNote.Tag(
-    id = id,
-    title = title,
-)
-
-internal fun LinkedContentBlock.toLocalNoteContent(): LocalNote.Content = when {
-    images.isNotEmpty() -> toImagesBlock()
-    else -> throw IllegalStateException("Block should not be empty")
-}
-
-private fun LinkedContentBlock.toImagesBlock() = LocalNote.Content.ImagesBlock(
-    id = block.id,
-    position = block.position,
-    titles = images.map(EntryNoteImage::toNoteContentImage),
+    timestamp = timestamp,
 )

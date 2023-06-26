@@ -6,8 +6,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.storage.internal.SerenityDatabase.Companion.VERSION
+import com.furianrt.storage.internal.notes.dao.ContentBlockDao
 import com.furianrt.storage.internal.notes.dao.ImageDao
 import com.furianrt.storage.internal.notes.dao.NoteDao
+import com.furianrt.storage.internal.notes.dao.NoteTitleDao
 import com.furianrt.storage.internal.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.notes.dao.TagDao
 import com.furianrt.storage.internal.notes.entities.EntryContentBlock
@@ -35,6 +37,8 @@ internal abstract class SerenityDatabase : RoomDatabase() {
     abstract fun tagDao(): TagDao
     abstract fun imageDao(): ImageDao
     abstract fun noteToTagDao(): NoteToTagDao
+    abstract fun contentBlockDao(): ContentBlockDao
+    abstract fun noteTitleDao(): NoteTitleDao
 
     companion object {
         private const val NAME = "Serenity.db"

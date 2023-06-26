@@ -11,23 +11,15 @@ internal sealed interface PageUiState {
     @Immutable
     object Loading : PageUiState
 
-    @Stable
-    sealed class Success(
-        open val content: ImmutableList<UiNoteContent>,
-        open val tags: ImmutableList<UiNoteTag>,
-    ) : PageUiState {
-        @Immutable
-        data class Edit(
-            override val content: ImmutableList<UiNoteContent>,
-            override val tags: ImmutableList<UiNoteTag>,
-        ) : Success(content, tags)
+    @Immutable
+    object Empty : PageUiState
 
-        @Immutable
-        data class View(
-            override val content: ImmutableList<UiNoteContent>,
-            override val tags: ImmutableList<UiNoteTag>,
-        ) : Success(content, tags)
-    }
+    @Immutable
+    data class Success(
+        val content: ImmutableList<UiNoteContent>,
+        val tags: ImmutableList<UiNoteTag>,
+        val isInEditMode: Boolean,
+    ) : PageUiState
 }
 
 @Stable
@@ -40,7 +32,19 @@ internal sealed interface PageEvent {
 
     @Immutable
     data class OnTagRemoved(val tag: UiNoteTag) : PageEvent
+
+    @Immutable
+    data class OnTitleTextChange(val id: String, val text: String) : PageEvent
+
+    @Immutable
+    data class OnTitleDoneEditing(val id: String, val text: String) : PageEvent
+
+    @Immutable
+    data class OnTitleClick(val id: String) : PageEvent
 }
 
 @Stable
-internal sealed interface PageEffect
+internal sealed interface PageEffect {
+    @Immutable
+    data class FocusTitle(val index: Int?) : PageEffect
+}

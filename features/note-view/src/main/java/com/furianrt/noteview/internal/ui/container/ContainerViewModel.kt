@@ -21,20 +21,28 @@ internal class ContainerViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
 ) : ViewModel() {
 
-    init {
-        observeNotes()
-    }
-
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
     val state: StateFlow<ContainerUiState> = _state.asStateFlow()
 
     private val _effect = Channel<ContainerEffect>()
     val effect = _effect.receiveAsFlow()
 
+    init {
+        observeNotes()
+    }
+
     fun onEvent(event: ContainerEvent) {
         when (event) {
             is ContainerEvent.OnButtonEditClick -> {
                 _state.tryEmit(_state.value.toggleEditModeState())
+            }
+
+            is ContainerEvent.OnButtonBackClick -> {
+                _effect.trySend(ContainerEffect.CloseScreen)
+            }
+
+            is ContainerEvent.OnPageTitleClick -> {
+                _state.tryEmit(_state.value.enableEditModeState())
             }
         }
     }
@@ -59,6 +67,11 @@ internal class ContainerViewModel @Inject constructor(
 
     private fun ContainerUiState.toggleEditModeState() = when (this) {
         is ContainerUiState.Success -> copy(isInEditMode = !isInEditMode)
+        else -> this
+    }
+
+    private fun ContainerUiState.enableEditModeState() = when (this) {
+        is ContainerUiState.Success -> copy(isInEditMode = true)
         else -> this
     }
 }

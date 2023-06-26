@@ -12,11 +12,11 @@ import androidx.compose.ui.composed
 import androidx.compose.ui.graphics.graphicsLayer
 import kotlinx.coroutines.launch
 
-fun Modifier.clickableWithScaleAnim(
+inline fun Modifier.clickableWithScaleAnim(
     duration: Int = 250,
     maxScale: Float = 1.1f,
     indication: Indication? = null,
-    onClick: () -> Unit = {},
+    crossinline onClick: () -> Unit = {},
 ) = composed {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }

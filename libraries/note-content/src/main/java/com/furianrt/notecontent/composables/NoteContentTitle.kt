@@ -1,49 +1,86 @@
 package com.furianrt.notecontent.composables
 
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
+    hint: String? = null,
     isEditable: Boolean = false,
+    onTitleChange: (text: String) -> Unit = {},
+    onTitleClick: ((id: String) -> Unit)? = null,
 ) {
-    Text(
-        modifier = modifier,
-        text = title.text,
-        style = MaterialTheme.typography.bodyMedium,
+    var titleText by remember { mutableStateOf(TextFieldValue(text = title.text)) }
+
+    LaunchedEffect(title.text) {
+        titleText = TextFieldValue(text = title.text, selection = titleText.selection)
+    }
+
+    val clickableModifier = if (onTitleClick != null && !isEditable) {
+        Modifier.clickableNoRipple { onTitleClick(title.id) }
+    } else {
+        Modifier
+    }
+
+    BasicTextField(
+        modifier = modifier
+            .then(clickableModifier)
+            .onFocusChanged {
+                titleText = TextFieldValue(
+                    text = title.text,
+                    selection = TextRange(title.text.length),
+                )
+            },
+        enabled = isEditable,
+        value = titleText,
+        onValueChange = { text ->
+            titleText = text
+            onTitleChange(text.text)
+        },
+        textStyle = MaterialTheme.typography.bodyMedium,
+        cursorBrush = SolidColor(Colors.Blue),
+        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+        decorationBox = { innerTextField ->
+            if (hint != null && titleText.text.isEmpty()) {
+                Placeholder(hint = hint)
+            }
+            innerTextField()
+        },
     )
 }
 
-/*@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun NoteItemFooter(note: UiNote) {
-    Column {
-        FlowRow(
-            modifier = Modifier.padding(all = 8.dp),
-            mainAxisSpacing = 8.dp,
-            crossAxisSpacing = 8.dp
-        ) {
-            for (tag in note.tags) {
-                Text(
-                    modifier = Modifier
-                        .background(color = Colors.WhiteAlpha5, shape = RoundedCornerShape(8.dp))
-                        .clip(RoundedCornerShape(8.dp))
-                        .clickable {  }
-                        .padding(all = 8.dp),
-                    text = tag.name,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-            }
-        }
-    }
-}*/
+private fun Placeholder(hint: String) {
+    Text(
+        modifier = Modifier.alpha(0.3f),
+        text = hint,
+        style = MaterialTheme.typography.labelMedium,
+        fontStyle = FontStyle.Italic,
+    )
+}
 
 @Preview
 @Composable
@@ -57,6 +94,7 @@ private fun NoteContentTitlePreview() {
                     "lot more syntactic sugar compared to Java, and as such " +
                     "there is equally more black magic",
             ),
+            hint = "Text",
         )
     }
 }

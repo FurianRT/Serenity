@@ -25,7 +25,16 @@ internal sealed interface ContainerUiState {
 internal sealed interface ContainerEvent {
     @Immutable
     object OnButtonEditClick : ContainerEvent
+
+    @Immutable
+    object OnButtonBackClick : ContainerEvent
+
+    @Immutable
+    object OnPageTitleClick : ContainerEvent
 }
 
 @Stable
-internal sealed interface ContainerEffect
+internal sealed interface ContainerEffect {
+    @Immutable
+    object CloseScreen : ContainerEffect
+}

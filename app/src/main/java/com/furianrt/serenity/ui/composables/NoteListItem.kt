@@ -10,6 +10,7 @@ import androidx.compose.material.ripple.LocalRippleTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,34 +28,36 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun NoteListItem(
     note: MainScreenNote,
-    modifier: Modifier = Modifier,
     onClick: (note: MainScreenNote) -> Unit,
     onTagClick: (tag: UiNoteTag) -> Unit,
 ) {
     CompositionLocalProvider(LocalRippleTheme provides OnTertiaryRippleTheme) {
         Column(
-            modifier = modifier
+            modifier = Modifier
+                .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(color = MaterialTheme.colorScheme.tertiary)
                 .clickable { onClick(note) },
         ) {
             note.content.forEachIndexed { index, item ->
-                when (item) {
-                    is UiNoteContent.Title -> {
-                        NoteContentTitle(
-                            modifier = Modifier
-                                .padding(horizontal = 8.dp)
-                                .padding(top = 8.dp),
-                            title = item,
-                        )
-                    }
+                key(item.id) {
+                    when (item) {
+                        is UiNoteContent.Title -> {
+                            NoteContentTitle(
+                                modifier = Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .padding(top = 8.dp),
+                                title = item,
+                            )
+                        }
 
-                    is UiNoteContent.MediaBlock -> {
-                        NoteContentMedia(
-                            modifier = Modifier
-                                .padding(top = if (index == 0) 0.dp else 8.dp),
-                            media = item.images,
-                        )
+                        is UiNoteContent.MediaBlock -> {
+                            NoteContentMedia(
+                                modifier = Modifier
+                                    .padding(top = if (index == 0) 0.dp else 12.dp),
+                                media = item.images,
+                            )
+                        }
                     }
                 }
             }
@@ -63,7 +66,7 @@ internal fun NoteListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        top = if (note.tags.isEmpty()) 0.dp else 12.dp,
+                        top = if (note.tags.isEmpty()) 0.dp else 16.dp,
                         bottom = if (note.tags.isEmpty()) 0.dp else 6.dp,
                     )
                     .padding(horizontal = 4.dp),

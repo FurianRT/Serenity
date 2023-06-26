@@ -1,4 +1,4 @@
-package com.furianrt.uikit
+package com.furianrt.uikit.components
 
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween

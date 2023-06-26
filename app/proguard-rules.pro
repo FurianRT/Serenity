@@ -1,0 +1,1 @@
+-keep class me.onebone.toolbar.CollapsingToolbarScaffoldState { *; }
