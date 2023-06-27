@@ -3,7 +3,13 @@ package com.furianrt.serenity.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
@@ -36,6 +42,26 @@ internal class MainActivity : ComponentActivity() {
                 ) {
                     composable(
                         route = "Main",
+                        exitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentScope.SlideDirection.Left,
+                                targetOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(400), targetAlpha = 0.2f)
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentScope.SlideDirection.Right,
+                                initialOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
+                        },
                     ) {
                         MainScreen(navController)
                     }
@@ -48,6 +74,26 @@ internal class MainActivity : ComponentActivity() {
                                 nullable = true
                             },
                         ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentScope.SlideDirection.Left,
+                                initialOffset = { it / 2 },
+                                animationSpec = tween(
+                                    durationMillis = 450,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(450))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentScope.SlideDirection.Right,
+                                targetOffset = { (it * 0.8f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
                     ) {
                         NoteViewScreen(navController)
                     }
