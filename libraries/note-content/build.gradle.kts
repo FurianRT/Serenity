@@ -32,5 +32,7 @@ dependencies {
 
     implementation(Deps.immutableCollections)
 
+    implementation(Deps.coil)
+
     implementation(Deps.flowLayout)
 }

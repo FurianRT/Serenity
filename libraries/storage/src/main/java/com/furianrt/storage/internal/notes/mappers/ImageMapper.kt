@@ -13,6 +13,7 @@ internal fun LinkedContentBlock.toImagesBlock() = LocalNote.Content.ImagesBlock(
 internal fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
     id = id,
     uri = uri,
+    ratio = ratio,
     position = position,
 )
 
@@ -20,5 +21,6 @@ internal fun LocalNote.Content.Image.toEntryNoteImage(blockId: String) = EntryNo
     id = id,
     blockId = blockId,
     uri = uri,
+    ratio = ratio,
     position = position,
 )

@@ -25,5 +25,7 @@ object Versions {
 
     const val lottie = "6.0.0"
 
+    const val coil = "2.4.0"
+
     const val immutableCollections = "0.3.5"
 }

@@ -19,10 +19,27 @@ sealed class UiNoteContent(open val id: String, open val position: Int) {
     data class MediaBlock(
         override val id: String,
         override val position: Int,
-        val images: ImmutableList<Image>,
+        val media: ImmutableList<Media>,
     ) : UiNoteContent(id, position) {
         @Immutable
-        data class Image(val id: String, val uri: String, val position: Int)
+        sealed class Media(
+            open val id: String,
+            open val position: Int,
+            open val ratio: Float,
+        ) {
+            @Immutable
+            data class Image(
+                override val id: String,
+                override val position: Int,
+                override val ratio: Float,
+                val uri: String,
+            ) : Media(id, position, ratio)
+
+            /*  @Immutable
+              data class Video(
+                  val id: String,
+              ) : Media*/
+        }
     }
 
     fun changePosition(newPosition: Int) = when (this) {

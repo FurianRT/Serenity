@@ -39,6 +39,8 @@ object Deps {
 
     const val lottie = "com.airbnb.android:lottie-compose:${Versions.lottie}"
 
+    const val coil = "io.coil-kt:coil-compose:${Versions.coil}"
+
     const val immutableCollections =
         "org.jetbrains.kotlinx:kotlinx-collections-immutable:${Versions.immutableCollections}"
 }

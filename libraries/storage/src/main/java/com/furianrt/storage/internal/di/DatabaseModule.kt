@@ -3,8 +3,6 @@ package com.furianrt.storage.internal.di
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
 import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.storage.api.TransactionsHelper
@@ -77,6 +75,38 @@ internal class DatabaseModule {
 
         val tagsTitles = listOf("Kotlin", "Programming", "Android", "Development", "Java")
 
+        val imageUrls = listOf(
+            Pair(
+                "https://tengritravel.kz/userdata/news/2022/news_473628/thumb_m/photo_402005.jpeg",
+                1.778f,
+            ),
+            Pair(
+                "https://kartinkof.club/uploads/posts/2022-12/1670401826_kartinkof-club-p-kartinki-neobichnie-so-smislom-1.jpg",
+                1.333f,
+            ),
+            Pair(
+                "https://interesnyefakty.org/wp-content/uploads/Foto-Gitlera-40.png",
+                0.7f,
+            ),
+            Pair(
+                "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg",
+                1.5f,
+            ),
+            Pair("https://ss.sport-express.ru/userfiles/materials/187/1876626/volga.jpg", 1.782f),
+            Pair(
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjuyn1MYqy3hrOOT8LtspjE3Ss4HsRbricew&usqp=CAU",
+                0.574f,
+            ),
+            Pair(
+                "https://moslenta.ru/thumb/1200x0/filters:quality(75):no_upscale()/imgs/2022/08/15/08/5541985/9432ed2f471e51edb0d70e1dcc0b4089591bec2d.jpg",
+                1.526f,
+            ),
+            Pair(
+                "https://blog.eva.ua/wp-content/webp-express/webp-images/uploads/2019/07/jernej-graj-Gu_qRB_m89g-unsplash-min.jpg.webp",
+                0.75f,
+            ),
+        )
+
         with(ContentValues()) {
             repeat(tagsTitles.count()) { tagIndex ->
                 put(EntryNoteTag.FIELD_ID, tagIndex.toString())
@@ -114,17 +144,13 @@ internal class DatabaseModule {
                     db.insert(EntryContentBlock.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                     clear()
 
-                    repeat(Random.nextInt(1, 5)) { index ->
+                    repeat(Random.nextInt(1, 7)) { index ->
                         val imageId = UUID.randomUUID().toString()
-                        val color = Color(
-                            alpha = 255,
-                            red = Random.nextInt(256),
-                            green = Random.nextInt(256),
-                            blue = Random.nextInt(256),
-                        ).toArgb().toString()
+                        val imageIndex = Random.nextInt(imageUrls.count())
                         put(EntryNoteImage.FIELD_ID, imageId)
                         put(EntryNoteImage.FIELD_BLOCK_ID, blockId)
-                        put(EntryNoteImage.FIELD_URI, color)
+                        put(EntryNoteImage.FIELD_URI, imageUrls[imageIndex].first)
+                        put(EntryNoteImage.FIELD_RATIO, imageUrls[imageIndex].second)
                         put(EntryNoteImage.FIELD_POSITION, index)
                         db.insert(EntryNoteImage.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                         clear()

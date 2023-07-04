@@ -27,6 +27,9 @@ internal class EntryNoteImage(
     @ColumnInfo(name = FIELD_URI)
     val uri: String,
 
+    @ColumnInfo(name = FIELD_RATIO)
+    val ratio: Float,
+
     @ColumnInfo(name = FIELD_POSITION)
     val position: Int,
 ) {
@@ -35,6 +38,7 @@ internal class EntryNoteImage(
         const val FIELD_ID = "id"
         const val FIELD_BLOCK_ID = "block_id"
         const val FIELD_URI = "uri"
+        const val FIELD_RATIO = "ratio"
         const val FIELD_POSITION = "position"
     }
 }

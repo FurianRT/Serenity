@@ -170,7 +170,7 @@ private fun SuccessScreen(
                 is UiNoteContent.MediaBlock -> {
                     NoteContentMedia(
                         modifier = Modifier.animateItemPlacement(),
-                        media = content.images,
+                        block = content,
                         isEditable = uiState.isInEditMode,
                     )
                 }

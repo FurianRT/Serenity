@@ -18,13 +18,13 @@ fun UiNoteContent.toLocalNoteContent() = when (this) {
 fun LocalNote.Content.ImagesBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
     id = id,
     position = position,
-    images = images.mapImmutable(LocalNote.Content.Image::toUiNoteImage),
+    media = images.mapImmutable(LocalNote.Content.Image::toUiNoteImage),
 )
 
 fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.ImagesBlock(
     id = id,
     position = position,
-    images = images.map(UiNoteContent.MediaBlock.Image::toLocalNoteImage),
+    images = media.map(UiNoteContent.MediaBlock.Media::toLocalMedia),
 )
 
 fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
@@ -39,15 +39,24 @@ fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
     text = text,
 )
 
-fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Image(
+fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Media.Image(
     id = id,
     uri = uri,
+    ratio = ratio,
     position = position,
 )
 
-fun UiNoteContent.MediaBlock.Image.toLocalNoteImage() = LocalNote.Content.Image(
+fun UiNoteContent.MediaBlock.Media.Image.toLocalNoteImage() = LocalNote.Content.Image(
     id = id,
     uri = uri,
+    ratio = ratio,
+    position = position,
+)
+
+fun UiNoteContent.MediaBlock.Media.toLocalMedia() = LocalNote.Content.Image(
+    id = id,
+    uri = (this as UiNoteContent.MediaBlock.Media.Image).uri,
+    ratio = ratio,
     position = position,
 )
 

@@ -1,7 +1,6 @@
 package com.furianrt.serenity.ui.composables
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -21,6 +20,7 @@ import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.serenity.ui.entities.MainScreenNote
+import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.theme.OnTertiaryRippleTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
@@ -37,25 +37,22 @@ internal fun NoteListItem(
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(color = MaterialTheme.colorScheme.tertiary)
-                .clickable { onClick(note) },
+                .debounceClickable { onClick(note) },
         ) {
             note.content.forEachIndexed { index, item ->
                 key(item.id) {
                     when (item) {
                         is UiNoteContent.Title -> {
                             NoteContentTitle(
-                                modifier = Modifier
-                                    .padding(horizontal = 8.dp)
-                                    .padding(top = 8.dp),
+                                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
                                 title = item,
                             )
                         }
 
                         is UiNoteContent.MediaBlock -> {
                             NoteContentMedia(
-                                modifier = Modifier
-                                    .padding(top = if (index == 0) 0.dp else 12.dp),
-                                media = item.images,
+                                modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                                block = item,
                             )
                         }
                     }

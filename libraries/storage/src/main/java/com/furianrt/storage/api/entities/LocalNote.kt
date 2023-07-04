@@ -21,6 +21,11 @@ class LocalNote(
             val images: List<Image>,
         ) : Content(id, position)
 
-        class Image(val id: String, val uri: String, val position: Int)
+        class Image(
+            val id: String,
+            val uri: String,
+            val ratio: Float,
+            val position: Int,
+        )
     }
 }
