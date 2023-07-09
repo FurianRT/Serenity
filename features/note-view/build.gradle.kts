@@ -11,12 +11,13 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.compose
+        kotlinCompilerExtensionVersion = Versions.composeCompiler
     }
 }
 
 dependencies {
     implementation(project(Modules.Features.assistant))
+    implementation(project(Modules.Features.toolsPanel))
 
     implementation(project(Modules.Libraries.core))
     implementation(project(Modules.Libraries.uikit))

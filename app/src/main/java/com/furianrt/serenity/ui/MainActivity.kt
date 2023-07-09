@@ -3,8 +3,7 @@ package com.furianrt.serenity.ui
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -12,19 +11,18 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.furianrt.noteview.api.NoteViewScreen
 import com.furianrt.uikit.theme.SerenityTheme
-import com.google.accompanist.navigation.animation.AnimatedNavHost
-import com.google.accompanist.navigation.animation.composable
-import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 450L
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity() {
-    @OptIn(ExperimentalAnimationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().setOnExitAnimationListener { splashScreenViewProvider ->
@@ -35,8 +33,8 @@ internal class MainActivity : ComponentActivity() {
         }
         setContent {
             SerenityTheme {
-                val navController = rememberAnimatedNavController()
-                AnimatedNavHost(
+                val navController = rememberNavController()
+                NavHost(
                     navController = navController,
                     startDestination = "Main",
                 ) {
@@ -44,7 +42,7 @@ internal class MainActivity : ComponentActivity() {
                         route = "Main",
                         exitTransition = {
                             slideOutOfContainer(
-                                towards = AnimatedContentScope.SlideDirection.Left,
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
                                 targetOffset = { (it * 0.1f).toInt() },
                                 animationSpec = tween(
                                     durationMillis = 400,
@@ -54,7 +52,7 @@ internal class MainActivity : ComponentActivity() {
                         },
                         popEnterTransition = {
                             slideIntoContainer(
-                                towards = AnimatedContentScope.SlideDirection.Right,
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
                                 initialOffset = { (it * 0.1f).toInt() },
                                 animationSpec = tween(
                                     durationMillis = 400,
@@ -76,7 +74,7 @@ internal class MainActivity : ComponentActivity() {
                         ),
                         enterTransition = {
                             slideIntoContainer(
-                                towards = AnimatedContentScope.SlideDirection.Left,
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
                                 initialOffset = { it / 2 },
                                 animationSpec = tween(
                                     durationMillis = 450,
@@ -86,7 +84,7 @@ internal class MainActivity : ComponentActivity() {
                         },
                         popExitTransition = {
                             slideOutOfContainer(
-                                towards = AnimatedContentScope.SlideDirection.Right,
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
                                 targetOffset = { (it * 0.8f).toInt() },
                                 animationSpec = tween(
                                     durationMillis = 400,

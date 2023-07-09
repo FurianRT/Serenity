@@ -9,5 +9,6 @@ sealed interface Modules {
     object Features : Modules {
         const val assistant = ":features:assistant"
         const val noteView = ":features:note-view"
+        const val toolsPanel = ":features:tools-panel"
     }
 }

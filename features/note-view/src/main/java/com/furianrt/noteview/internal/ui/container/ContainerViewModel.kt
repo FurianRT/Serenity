@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -34,15 +35,15 @@ internal class ContainerViewModel @Inject constructor(
     fun onEvent(event: ContainerEvent) {
         when (event) {
             is ContainerEvent.OnButtonEditClick -> {
-                _state.tryEmit(_state.value.toggleEditModeState())
+                _state.update { it.toggleEditModeState() }
             }
 
             is ContainerEvent.OnButtonBackClick -> {
                 _effect.trySend(ContainerEffect.CloseScreen)
             }
 
-            is ContainerEvent.OnPageTitleClick -> {
-                _state.tryEmit(_state.value.enableEditModeState())
+            is ContainerEvent.OnPageTitleFocusChange -> {
+                _state.update { it.enableEditModeState() }
             }
         }
     }

@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.sizeIn
@@ -30,8 +29,6 @@ import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableList
-
-private const val MAX_IMAGES_ON_SCREEN = 5
 
 @Composable
 fun NoteContentMedia(
@@ -76,18 +73,24 @@ private fun OneMediaHolder(
 private fun RowMediaHolder(
     media: ImmutableList<MediaBlock.Media>,
     modifier: Modifier = Modifier,
-    offscreenImageCount: Int = 0,
 ) {
+    val maxImagesCount = 4
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        val ratioSum = media.sumOf { it.ratio.toDouble() }.toFloat()
-        media.forEachIndexed { index, item ->
+        val subList = media.take(maxImagesCount)
+        val ratioSum = subList.sumOf { it.ratio.toDouble() }.toFloat()
+        subList.forEachIndexed { index, item ->
+            val weight = if (media.count() >= maxImagesCount) 1f else item.ratio / ratioSum
             MediaItem(
-                modifier = Modifier.fillMaxHeight().weight(item.ratio / ratioSum),
+                modifier = Modifier.weight(weight),
                 media = item,
-                offscreenImageCount = if (index == media.lastIndex) offscreenImageCount else 0,
+                offscreenImageCount = if (index == subList.lastIndex) {
+                    (media.count() - maxImagesCount).coerceAtLeast(0)
+                } else {
+                    0
+                },
             )
         }
     }
@@ -99,16 +102,16 @@ private fun FourMediaHolder(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        MediaItem(modifier = Modifier.fillMaxHeight().weight(0.55f), media = media[0])
+        MediaItem(modifier = Modifier.weight(0.55f), media = media[0])
         Column(
-            modifier = Modifier.fillMaxWidth().weight(0.45f),
+            modifier = Modifier.weight(0.45f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             MediaItem(modifier = Modifier.weight(0.6f), media = media[1])
-            RowMediaHolder(modifier = modifier.weight(0.4f), media = media.subList(2, 4))
+            RowMediaHolder(modifier = Modifier.weight(0.4f), media = media.subList(2, 4))
         }
     }
 }
@@ -123,11 +126,7 @@ private fun ManyMediaHolder(
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         RowMediaHolder(modifier = Modifier.height(120.dp), media = media.subList(0, 2))
-        RowMediaHolder(
-            modifier = Modifier.height(80.dp),
-            media = media.subList(2, MAX_IMAGES_ON_SCREEN),
-            offscreenImageCount = media.count() - MAX_IMAGES_ON_SCREEN,
-        )
+        RowMediaHolder(modifier = Modifier.height(80.dp), media = media.subList(2, media.count()))
     }
 }
 

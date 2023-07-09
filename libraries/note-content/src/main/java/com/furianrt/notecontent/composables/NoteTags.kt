@@ -7,6 +7,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -60,7 +61,8 @@ fun NoteTags(
 ) {
     FlowRow(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         tags.forEach { tag ->
             when (tag) {
@@ -103,7 +105,6 @@ private fun RegularNoteTagItem(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(all = 4.dp)
                     .clip(RoundedCornerShape(size = 8.dp))
                     .background(MaterialTheme.colorScheme.tertiary)
                     .clickable(onClick = onClick),

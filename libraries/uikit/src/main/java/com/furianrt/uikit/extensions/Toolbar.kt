@@ -1,6 +1,5 @@
 package com.furianrt.uikit.extensions
 
-import androidx.annotation.Px
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
@@ -41,12 +40,12 @@ suspend fun CollapsingToolbarScaffoldState.expand(duration: Int = 250) {
     }
 }
 
-suspend fun CollapsingToolbarScaffoldState.collapse(
-    @Px toolbarHeight: Float,
-    duration: Int = 250,
-) {
+suspend fun CollapsingToolbarScaffoldState.collapse(duration: Int = 250) {
     val offsetYState = getPrivateOffsetYState()
-    AnimationState(offsetY.toFloat()).animateTo(-toolbarHeight, tween(duration)) {
+    AnimationState(offsetY.toFloat()).animateTo(
+        -toolbarState.minHeight.toFloat(),
+        tween(duration),
+    ) {
         offsetYState.value = value.toInt()
     }
 }
@@ -58,7 +57,7 @@ suspend fun CollapsingToolbarScaffoldState.performSnap(
     val center = toolbarHeight / 2f
     val offset = abs(offsetY).toFloat()
     if (offset > center && offset < toolbarHeight) {
-        collapse(toolbarHeight, duration)
+        collapse(duration)
     } else if (offset <= center && offset > 0f) {
         expand(duration)
     }

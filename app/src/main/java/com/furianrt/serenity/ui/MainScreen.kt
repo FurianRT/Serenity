@@ -2,6 +2,7 @@ package com.furianrt.serenity.ui
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -46,6 +47,7 @@ import com.furianrt.uikit.components.rememberPullRefreshState
 import com.furianrt.uikit.extensions.addSerenityBackground
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -201,9 +203,10 @@ private fun MainScreenContent(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MainSuccess(
-    notes: List<MainScreenNote>,
+    notes: ImmutableList<MainScreenNote>,
     listState: LazyListState,
     onEvent: (event: MainEvent) -> Unit,
 ) {
@@ -214,6 +217,7 @@ private fun MainSuccess(
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
             NoteListItem(
+                modifier = Modifier.animateItemPlacement(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
                 onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },

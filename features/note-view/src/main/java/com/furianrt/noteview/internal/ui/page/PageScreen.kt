@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -18,13 +19,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,9 +33,12 @@ import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.uikit.extensions.isCollapsed
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.collections.immutable.persistentListOf
+import me.onebone.toolbar.CollapsingToolbarScaffoldState
+import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -55,7 +57,8 @@ internal fun PageScreen(
     noteId: String,
     isInEditMode: Boolean,
     lazyListState: LazyListState,
-    onTitleClick: () -> Unit,
+    toolbarState: CollapsingToolbarScaffoldState,
+    onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
     screenState: PageScreenState = rememberPageScreenState(),
 ) {
@@ -79,8 +82,9 @@ internal fun PageScreen(
         uiState = uiState,
         screenState = screenState,
         onEvent = viewModel::onEvent,
-        onTitleClick = onTitleClick,
+        onFocusChange = onFocusChange,
         lazyListState = lazyListState,
+        toolbarState = toolbarState,
     )
 }
 
@@ -89,39 +93,44 @@ private fun PageScreenContent(
     uiState: PageUiState,
     screenState: PageScreenState,
     lazyListState: LazyListState,
+    toolbarState: CollapsingToolbarScaffoldState,
     onEvent: (event: PageEvent) -> Unit,
-    onTitleClick: () -> Unit,
+    onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
         is PageUiState.Success ->
-            SuccessScreen(uiState, lazyListState, onEvent, onTitleClick, modifier, screenState)
+            SuccessScreen(
+                uiState = uiState,
+                lazyListState = lazyListState,
+                toolbarState = toolbarState,
+                onEvent = onEvent,
+                onFocusChange = onFocusChange,
+                modifier = modifier,
+                screenState = screenState,
+            )
 
         is PageUiState.Loading -> LoadingScreen(modifier)
         is PageUiState.Empty -> EmptyScreen(modifier)
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun SuccessScreen(
     uiState: PageUiState.Success,
     lazyListState: LazyListState,
+    toolbarState: CollapsingToolbarScaffoldState,
     onEvent: (event: PageEvent) -> Unit,
-    onTitleClick: () -> Unit,
+    onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
-    screenState: PageScreenState = PageScreenState(),
+    screenState: PageScreenState = rememberPageScreenState(),
 ) {
     val focusRequesters = remember { mutableStateMapOf<Int, FocusRequester>() }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     LaunchedEffect(screenState.focusedTitleIndex) {
         if (uiState.isInEditMode && screenState.focusedTitleIndex != null) {
             focusRequesters[screenState.focusedTitleIndex]?.requestFocus()
-            return@LaunchedEffect
-        }
-        if (!uiState.isInEditMode || screenState.focusedTitleIndex == null) {
-            keyboardController?.hide()
         }
     }
 
@@ -131,7 +140,8 @@ private fun SuccessScreen(
             .padding(horizontal = 8.dp)
             .padding(bottom = 8.dp)
             .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = MaterialTheme.colorScheme.tertiary),
+            .background(color = MaterialTheme.colorScheme.tertiary)
+            .imePadding(),
         state = lazyListState,
         contentPadding = PaddingValues(bottom = 8.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -158,11 +168,18 @@ private fun SuccessScreen(
                         } else {
                             stringResource(id = uiR.string.note_title_hint_write_more_here)
                         },
-                        isEditable = uiState.isInEditMode,
+                        isInEditMode = uiState.isInEditMode,
                         onTitleChange = { onEvent(PageEvent.OnTitleTextChange(content.id, it)) },
-                        onTitleClick = { titleId ->
-                            onTitleClick()
-                            onEvent(PageEvent.OnTitleClick(titleId))
+                        onTitleFocused = {
+                            onEvent(PageEvent.OnTitleFocused)
+                            onFocusChange()
+                        },
+                        focusOffset = {
+                            if (toolbarState.isCollapsed) {
+                                0
+                            } else {
+                                toolbarState.toolbarState.minHeight
+                            }
                         },
                     )
                 }
@@ -180,7 +197,7 @@ private fun SuccessScreen(
             NoteTags(
                 modifier = Modifier
                     .padding(top = 4.dp)
-                    .padding(horizontal = 4.dp)
+                    .padding(horizontal = 12.dp)
                     .animateItemPlacement(),
                 tags = uiState.tags,
                 isEditable = uiState.isInEditMode,
@@ -220,8 +237,9 @@ private fun SuccessScreenPreview() {
                 ),
             ),
             onEvent = {},
-            onTitleClick = {},
+            onFocusChange = {},
             lazyListState = rememberLazyListState(),
+            toolbarState = rememberCollapsingToolbarScaffoldState(),
         )
     }
 }

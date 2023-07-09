@@ -30,10 +30,11 @@ internal fun NoteListItem(
     note: MainScreenNote,
     onClick: (note: MainScreenNote) -> Unit,
     onTagClick: (tag: UiNoteTag) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     CompositionLocalProvider(LocalRippleTheme provides OnTertiaryRippleTheme) {
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .clip(shape = RoundedCornerShape(8.dp))
                 .background(color = MaterialTheme.colorScheme.tertiary)
@@ -63,10 +64,11 @@ internal fun NoteListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
+                        start = 12.dp,
+                        end = 12.dp,
                         top = if (note.tags.isEmpty()) 0.dp else 16.dp,
-                        bottom = if (note.tags.isEmpty()) 0.dp else 6.dp,
-                    )
-                    .padding(horizontal = 4.dp),
+                        bottom = 10.dp,
+                    ),
                 tags = note.tags,
                 onTagClick = onTagClick,
                 date = "19.06.2023",

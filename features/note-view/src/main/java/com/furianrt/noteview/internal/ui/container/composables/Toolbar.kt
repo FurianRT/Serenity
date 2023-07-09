@@ -59,8 +59,7 @@ internal fun CollapsingToolbarScope.Toolbar(
             date = date(),
         )
         ButtonEditAndDone(
-            modifier = Modifier
-                .padding(end = 28.dp),
+            modifier = Modifier.padding(end = 28.dp),
             isInEditMode = isInEditMode,
             onClick = onEditClick,
         )

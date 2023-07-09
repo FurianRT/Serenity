@@ -42,7 +42,7 @@ internal class PageViewModel @AssistedInject constructor(
     val effect = _effect.receiveAsFlow()
 
     private var titleFocusJob: Job? = null
-    private var clickedTitleId: String? = null
+    private var hasFocusedTitle = false
 
     init {
         observeNote()
@@ -73,8 +73,8 @@ internal class PageViewModel @AssistedInject constructor(
             is PageEvent.OnTitleDoneEditing -> {
             }
 
-            is PageEvent.OnTitleClick -> {
-                clickedTitleId = event.id
+            is PageEvent.OnTitleFocused -> {
+                hasFocusedTitle = true
             }
         }
     }
@@ -93,10 +93,12 @@ internal class PageViewModel @AssistedInject constructor(
         _state.update { PageUiState.Success(newContent, currentState.tags, isEnabled) }
         saveNoteContent(currentState.content)
 
-        if (isEnabled) {
+        if (isEnabled && !hasFocusedTitle) {
             tryFocusTitle()
-        } else {
-            cleatTitleFocus()
+        }
+
+        if (!isEnabled) {
+            clearTitleFocus()
         }
     }
 
@@ -150,21 +152,18 @@ internal class PageViewModel @AssistedInject constructor(
         titleFocusJob = launch {
             delay((TITLE_FOCUS_DELAY))
             val noteContent = (_state.value as? PageUiState.Success)?.content ?: return@launch
-            val lastTitleIndex = if (clickedTitleId != null) {
-                noteContent.indexOfFirst { it.id == clickedTitleId }
-            } else {
-                noteContent.indexOfLast { it is UiNoteContent.Title }
-            }
-            clickedTitleId = null
-            if (lastTitleIndex == -1) {
+            val firstTitleIndex = noteContent.indexOfFirst { it is UiNoteContent.Title }
+            if (firstTitleIndex == -1) {
                 return@launch
             }
-            _effect.trySend(PageEffect.FocusTitle(lastTitleIndex))
+            hasFocusedTitle = true
+            _effect.trySend(PageEffect.FocusTitle(firstTitleIndex))
         }
     }
 
-    private fun cleatTitleFocus() {
+    private fun clearTitleFocus() {
         titleFocusJob?.cancel()
+        hasFocusedTitle = false
         _effect.trySend(PageEffect.FocusTitle(null))
     }
 

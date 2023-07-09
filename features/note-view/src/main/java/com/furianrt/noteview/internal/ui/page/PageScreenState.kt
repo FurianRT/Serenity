@@ -16,6 +16,4 @@ internal class PageScreenState {
 }
 
 @Composable
-internal fun rememberPageScreenState(): PageScreenState = remember {
-    PageScreenState()
-}
+internal fun rememberPageScreenState(): PageScreenState = remember { PageScreenState() }

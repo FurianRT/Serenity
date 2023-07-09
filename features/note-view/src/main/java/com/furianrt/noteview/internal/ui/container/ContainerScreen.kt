@@ -20,7 +20,6 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -86,7 +85,11 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
-    val pagerState = rememberPagerState(initialPage = uiState.initialPageIndex)
+    val pagerState = rememberPagerState(
+        initialPage = uiState.initialPageIndex,
+        initialPageOffsetFraction = 0f,
+        pageCount = { uiState.notesIds.count() },
+    )
     val listsScrollStates = remember { mutableStateMapOf<Int, LazyListState>() }
     val currentPageScrollState = remember(listsScrollStates.size, pagerState.currentPage) {
         listsScrollStates[pagerState.currentPage]
@@ -107,8 +110,6 @@ private fun SuccessScreen(
         }
     }
 
-    val keyboardController = LocalSoftwareKeyboardController.current
-
     CollapsingToolbarScaffold(
         modifier = modifier,
         state = toolbarScaffoldState,
@@ -123,16 +124,12 @@ private fun SuccessScreen(
                 isInEditMode = { uiState.isInEditMode },
                 date = { uiState.date },
                 onEditClick = { onEvent(ContainerEvent.OnButtonEditClick) },
-                onBackButtonClick = {
-                    keyboardController?.hide()
-                    onEvent(ContainerEvent.OnButtonBackClick)
-                },
+                onBackButtonClick = { onEvent(ContainerEvent.OnButtonBackClick) },
             )
         },
     ) {
         Spacer(modifier = Modifier)
         HorizontalPager(
-            pageCount = uiState.notesIds.count(),
             beyondBoundsPageCount = OFFSCREEN_PAGE_COUNT,
             userScrollEnabled = !uiState.isInEditMode,
             verticalAlignment = Alignment.Top,
@@ -147,7 +144,8 @@ private fun SuccessScreen(
                 noteId = uiState.notesIds[index],
                 isInEditMode = isInEditMode,
                 lazyListState = lazyListState,
-                onTitleClick = { onEvent(ContainerEvent.OnPageTitleClick) },
+                toolbarState = toolbarScaffoldState,
+                onFocusChange = { onEvent(ContainerEvent.OnPageTitleFocusChange) },
             )
         }
     }

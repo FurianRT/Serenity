@@ -144,7 +144,7 @@ internal class DatabaseModule {
                     db.insert(EntryContentBlock.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                     clear()
 
-                    repeat(Random.nextInt(1, 7)) { index ->
+                    repeat(Random.nextInt(1, 9)) { index ->
                         val imageId = UUID.randomUUID().toString()
                         val imageIndex = Random.nextInt(imageUrls.count())
                         put(EntryNoteImage.FIELD_ID, imageId)

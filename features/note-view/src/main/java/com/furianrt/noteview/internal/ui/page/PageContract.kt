@@ -40,7 +40,7 @@ internal sealed interface PageEvent {
     data class OnTitleDoneEditing(val id: String, val text: String) : PageEvent
 
     @Immutable
-    data class OnTitleClick(val id: String) : PageEvent
+    object OnTitleFocused : PageEvent
 }
 
 @Stable

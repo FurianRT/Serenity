@@ -30,7 +30,7 @@ internal sealed interface ContainerEvent {
     object OnButtonBackClick : ContainerEvent
 
     @Immutable
-    object OnPageTitleClick : ContainerEvent
+    object OnPageTitleFocusChange : ContainerEvent
 }
 
 @Stable
