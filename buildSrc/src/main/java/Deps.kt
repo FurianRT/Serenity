@@ -20,6 +20,9 @@ object Deps {
     const val navAnimation =
         "com.google.accompanist:accompanist-navigation-animation:${Versions.accompanist}"
 
+    const val constraintLayout =
+        "androidx.constraintlayout:constraintlayout-compose:${Versions.constraintLayout}"
+
     const val splashScreen = "androidx.core:core-splashscreen:${Versions.splashScreen}"
 
     const val coroutinesCore =

@@ -61,8 +61,8 @@ fun NoteTags(
 ) {
     FlowRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         tags.forEach { tag ->
             when (tag) {
@@ -105,6 +105,7 @@ private fun RegularNoteTagItem(
         ) {
             Box(
                 modifier = Modifier
+                    .padding(all = 4.dp)
                     .clip(RoundedCornerShape(size = 8.dp))
                     .background(MaterialTheme.colorScheme.tertiary)
                     .clickable(onClick = onClick),

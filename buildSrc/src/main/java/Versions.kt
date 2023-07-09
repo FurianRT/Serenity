@@ -13,6 +13,8 @@ object Versions {
 
     const val accompanist = "0.31.5-beta"
 
+    const val constraintLayout = "1.0.1"
+
     const val splashScreen = "1.0.1"
 
     const val coroutines = "1.7.1"

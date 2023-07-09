@@ -64,10 +64,10 @@ internal fun NoteListItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = if (note.tags.isEmpty()) 0.dp else 16.dp,
-                        bottom = 10.dp,
+                        start = 8.dp,
+                        end = 8.dp,
+                        top = if (note.tags.isEmpty()) 0.dp else 12.dp,
+                        bottom = 6.dp,
                     ),
                 tags = note.tags,
                 onTagClick = onTagClick,

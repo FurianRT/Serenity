@@ -196,8 +196,7 @@ private fun SuccessScreen(
         item(key = "tags") {
             NoteTags(
                 modifier = Modifier
-                    .padding(top = 4.dp)
-                    .padding(horizontal = 12.dp)
+                    .padding(horizontal = 8.dp)
                     .animateItemPlacement(),
                 tags = uiState.tags,
                 isEditable = uiState.isInEditMode,
