@@ -33,6 +33,9 @@ internal class MainScreenState(
     @OptIn(ExperimentalToolbarApi::class)
     suspend fun scrollToTop() {
         coroutineScope {
+            if (listState.firstVisibleItemIndex > 6) {
+                listState.scrollToItem(6)
+            }
             launch { listState.animateScrollToItem(0) }
             launch { toolbarState.toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
             launch { toolbarState.expand(TOOLBAR_EXPAND_DURATION) }

@@ -22,7 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -128,7 +128,7 @@ private fun ButtonScrollToTop(
 ) {
     val scope = rememberCoroutineScope()
     val translation = remember { Animatable(0f) }
-    var buttonHeight by remember { mutableStateOf(0) }
+    var buttonHeight by remember { mutableIntStateOf(0) }
 
     AnimatedVisibility(
         modifier = Modifier

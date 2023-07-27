@@ -123,6 +123,9 @@ private fun MainScreenContent(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopCenter,
         ) {
+            val isLogoAnimInProgress by remember {
+                derivedStateOf { pullRefreshState.progress > 0f }
+            }
             AssistantLogo(
                 modifier = Modifier
                     .padding(top = 12.dp)
@@ -145,6 +148,7 @@ private fun MainScreenContent(
                         scaleY = resultScale
                         alpha = pullRefreshState.progress
                     },
+                isPlaying = { isLogoAnimInProgress },
             )
         }
         CollapsingToolbarScaffold(

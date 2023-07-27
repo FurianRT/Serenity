@@ -30,8 +30,6 @@ dependencies {
     implementation(Deps.composeToolingPreview)
     debugImplementation(Deps.composeTooling)
 
-    implementation(Deps.constraintLayout)
-
     implementation(Deps.immutableCollections)
 
     implementation(Deps.coil)

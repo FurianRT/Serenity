@@ -14,6 +14,7 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 @Composable
 fun AssistantLogo(
     modifier: Modifier = Modifier,
+    isPlaying: () -> Boolean = { true },
     onClick: () -> Unit = {},
 ) {
     val composition by rememberLottieComposition(
@@ -22,6 +23,7 @@ fun AssistantLogo(
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = LottieConstants.IterateForever,
+        isPlaying = isPlaying(),
     )
 
     LottieAnimation(

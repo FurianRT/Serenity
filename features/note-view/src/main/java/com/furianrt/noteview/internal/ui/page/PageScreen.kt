@@ -1,10 +1,15 @@
 package com.furianrt.noteview.internal.ui.page
 
 import android.app.Activity
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,12 +22,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.drawscope.clipRect
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,13 +43,17 @@ import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.toolspanel.Panel
 import com.furianrt.uikit.extensions.isCollapsed
+import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.collections.immutable.persistentListOf
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 import com.furianrt.uikit.R as uiR
+
+private const val ANIM_PANEL_VISIBILITY_DURATION = 250
 
 @Composable
 private fun pageViewModel(noteId: String): PageViewModel = viewModel(
@@ -126,83 +140,112 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
     screenState: PageScreenState = rememberPageScreenState(),
 ) {
-    val focusRequesters = remember { mutableStateMapOf<Int, FocusRequester>() }
-
     LaunchedEffect(screenState.focusedTitleIndex) {
-        if (uiState.isInEditMode && screenState.focusedTitleIndex != null) {
-            focusRequesters[screenState.focusedTitleIndex]?.requestFocus()
+        if (!uiState.isInEditMode) {
+            return@LaunchedEffect
+        }
+        screenState.focusedTitleIndex?.let { focusedTitleIndex ->
+            lazyListState.animateScrollToItem(focusedTitleIndex)
         }
     }
 
-    LazyColumn(
+    var toolsPanelHeight by remember { mutableFloatStateOf(0f) }
+
+    Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 8.dp)
-            .clip(shape = RoundedCornerShape(8.dp))
-            .background(color = MaterialTheme.colorScheme.tertiary)
+            .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
             .imePadding(),
-        state = lazyListState,
-        contentPadding = PaddingValues(bottom = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(
-            count = uiState.content.count(),
-            key = { uiState.content[it].id },
-            contentType = { uiState.content[it].javaClass.name },
-        ) { index ->
-            when (val content = uiState.content[index]) {
-                is UiNoteContent.Title -> {
-                    val focusRequester = remember { FocusRequester() }
-                    focusRequesters[index] = focusRequester
-                    NoteContentTitle(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = if (index == 0) 8.dp else 0.dp)
-                            .padding(horizontal = 8.dp)
-                            .focusRequester(focusRequester)
-                            .animateItemPlacement(),
-                        title = content,
-                        hint = if (index == 0) {
-                            stringResource(id = uiR.string.note_title_hint_text)
+        val background = MaterialTheme.colorScheme.tertiary
+        LazyColumn(
+            modifier = Modifier.weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .drawWithContent {
+                    clipRect(
+                        bottom = if (uiState.isInEditMode) {
+                            toolsPanelHeight - toolbarState.offsetYInverted
                         } else {
-                            stringResource(id = uiR.string.note_title_hint_write_more_here)
+                            size.height
                         },
-                        isInEditMode = uiState.isInEditMode,
-                        onTitleChange = { onEvent(PageEvent.OnTitleTextChange(content.id, it)) },
-                        onTitleFocused = {
-                            onEvent(PageEvent.OnTitleFocused)
-                            onFocusChange()
-                        },
-                        focusOffset = {
-                            if (toolbarState.isCollapsed) {
-                                0
-                            } else {
-                                toolbarState.toolbarState.minHeight
-                            }
-                        },
-                    )
-                }
+                    ) {
+                        drawRect(color = background)
+                        this@drawWithContent.drawContent()
+                    }
+                },
+            state = lazyListState,
+            contentPadding = PaddingValues(bottom = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            items(
+                count = uiState.content.count(),
+                key = { uiState.content[it].id },
+                contentType = { uiState.content[it].javaClass.name },
+            ) { index ->
 
-                is UiNoteContent.MediaBlock -> {
-                    NoteContentMedia(
-                        modifier = Modifier.animateItemPlacement(),
-                        block = content,
-                        isEditable = uiState.isInEditMode,
-                    )
+                when (val content = uiState.content[index]) {
+                    is UiNoteContent.Title -> {
+                        NoteContentTitle(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = if (index == 0) 8.dp else 0.dp)
+                                .padding(horizontal = 8.dp)
+                                .animateItemPlacement(),
+                            title = content,
+                            hint = if (index == 0) {
+                                stringResource(id = uiR.string.note_title_hint_text)
+                            } else {
+                                stringResource(id = uiR.string.note_title_hint_write_more_here)
+                            },
+                            isInEditMode = uiState.isInEditMode,
+                            onTitleChange = { text ->
+                                onEvent(PageEvent.OnTitleTextChange(content.id, text))
+                            },
+                            onTitleFocused = { id ->
+                                onEvent(PageEvent.OnTitleFocused(index))
+                                onFocusChange()
+                            },
+                            isFocused = screenState.focusedTitleIndex == index,
+                            focusOffset = {
+                                if (toolbarState.isCollapsed) {
+                                    0
+                                } else {
+                                    toolbarState.toolbarState.minHeight
+                                }
+                            },
+                        )
+                    }
+
+                    is UiNoteContent.MediaBlock -> {
+                        NoteContentMedia(
+                            modifier = Modifier.animateItemPlacement(),
+                            block = content,
+                            isEditable = uiState.isInEditMode,
+                        )
+                    }
                 }
             }
+            item(key = "tags") {
+                NoteTags(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .animateItemPlacement(),
+                    tags = uiState.tags,
+                    isEditable = uiState.isInEditMode,
+                    onTagClick = { onEvent(PageEvent.OnTagClick(it)) },
+                    onTagRemoveClick = { onEvent(PageEvent.OnTagRemoved(it)) },
+                )
+            }
         }
-        item(key = "tags") {
-            NoteTags(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .animateItemPlacement(),
-                tags = uiState.tags,
-                isEditable = uiState.isInEditMode,
-                onTagClick = { onEvent(PageEvent.OnTagClick(it)) },
-                onTagRemoveClick = { onEvent(PageEvent.OnTagRemoved(it)) },
-            )
+        AnimatedVisibility(
+            modifier = Modifier
+                .onGloballyPositioned { toolsPanelHeight = it.boundsInParent().top }
+                .graphicsLayer { translationY = -toolbarState.offsetYInverted.toFloat() },
+            visible = uiState.isInEditMode,
+            enter = fadeIn(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+            exit = fadeOut(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+        ) {
+            Panel()
         }
     }
 }

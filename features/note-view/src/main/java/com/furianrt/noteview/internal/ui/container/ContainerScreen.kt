@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import com.furianrt.core.orFalse
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
 import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.addSerenityBackground
@@ -97,7 +98,7 @@ private fun SuccessScreen(
 
     val needToSnapToolbar by remember(currentPageScrollState) {
         derivedStateOf {
-            val isScrollInProgress = currentPageScrollState?.isScrollInProgress ?: false
+            val isScrollInProgress = currentPageScrollState?.isScrollInProgress.orFalse()
             !isScrollInProgress &&
                 toolbarScaffoldState.isInMiddleState &&
                 !toolbarScaffoldState.toolbarState.isScrollInProgress

@@ -73,8 +73,11 @@ suspend fun CollapsingToolbarState.performSnap(duration: Int = 350) {
     }
 }
 
+val CollapsingToolbarScaffoldState.offsetYInverted
+    get() = toolbarState.minHeight + offsetY
+
 // Грязный хак с рефлексией для получения стейта офсета туллбара
 @Suppress("UNCHECKED_CAST")
-fun CollapsingToolbarScaffoldState.getPrivateOffsetYState(): MutableState<Int> =
+private fun CollapsingToolbarScaffoldState.getPrivateOffsetYState(): MutableState<Int> =
     this::class.java.getDeclaredMethod("getOffsetYState\$lib_release")
         .invoke(this) as MutableState<Int>

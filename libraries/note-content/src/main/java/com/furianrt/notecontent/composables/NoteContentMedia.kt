@@ -3,6 +3,7 @@ package com.furianrt.notecontent.composables
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -19,15 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.ConstraintSet
-import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
@@ -44,13 +41,21 @@ fun NoteContentMedia(
 ) {
     when (block.media.count()) {
         1 -> OneMediaHolder(
-            modifier = modifier.sizeIn(minHeight = 90.dp, maxHeight = 160.dp),
+            modifier = modifier.sizeIn(minHeight = 110.dp, maxHeight = 160.dp),
             media = block.media[0],
         )
 
-        2 -> RowMediaHolder(modifier = modifier.height(120.dp), media = block.media)
-        3 -> RowMediaHolder(modifier = modifier.height(110.dp), media = block.media)
-        4 -> FourMediaHolder(modifier = modifier.height(160.dp), media = block.media)
+        2 -> RowMediaHolder(
+            modifier = modifier.height(120.dp).clip(RoundedCornerShape(8.dp)),
+            media = block.media,
+        )
+
+        3 -> RowMediaHolder(
+            modifier = modifier.height(110.dp).clip(RoundedCornerShape(8.dp)),
+            media = block.media,
+        )
+
+        4 -> FourMediaHolder(modifier = modifier.height(150.dp), media = block.media)
         else -> ManyMediaHolder(modifier = modifier, media = block.media)
     }
 }
@@ -67,40 +72,19 @@ private fun OneMediaHolder(
             media = media,
         )
     } else {
-        val mainImageId = "main_image"
-        val blurredImageId = "blurred_image"
-        val constraints = ConstraintSet {
-            val mainImage = createRefFor(mainImageId)
-            val blurredImage = createRefFor(blurredImageId)
-            constrain(mainImage) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-            }
-            constrain(blurredImage) {
-                top.linkTo(mainImage.top)
-                bottom.linkTo(mainImage.bottom)
-                start.linkTo(parent.start)
-                end.linkTo(parent.end)
-                height = Dimension.fillToConstraints
-            }
-        }
-
-        ConstraintLayout(
-            constraintSet = constraints,
-            modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
+        Box(
+            modifier = modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .clip(RoundedCornerShape(8.dp)),
+            contentAlignment = Alignment.Center,
         ) {
             MediaItem(
+                modifier = Modifier.fillMaxWidth().blur(32.dp),
                 media = media,
                 cornerRadius = 0.dp,
-                modifier = Modifier
-                    .layoutId(blurredImageId)
-                    .fillMaxWidth()
-                    .blur(32.dp),
             )
             MediaItem(
-                modifier = Modifier.layoutId(mainImageId),
                 media = media,
                 cornerRadius = 0.dp,
                 contentScale = ContentScale.Fit,
@@ -142,7 +126,7 @@ private fun FourMediaHolder(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(8.dp)),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         MediaItem(modifier = Modifier.weight(0.55f), media = media[0])
@@ -162,11 +146,11 @@ private fun ManyMediaHolder(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier,
+        modifier = modifier.clip(RoundedCornerShape(8.dp)),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        RowMediaHolder(modifier = Modifier.height(120.dp), media = media.subList(0, 2))
-        RowMediaHolder(modifier = Modifier.height(80.dp), media = media.subList(2, media.count()))
+        RowMediaHolder(modifier = Modifier.height(110.dp), media = media.subList(0, 2))
+        RowMediaHolder(modifier = Modifier.height(70.dp), media = media.subList(2, media.count()))
     }
 }
 

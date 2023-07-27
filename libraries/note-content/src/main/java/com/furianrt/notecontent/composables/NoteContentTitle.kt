@@ -12,13 +12,17 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
@@ -30,7 +34,7 @@ import com.furianrt.uikit.extensions.cursorCoordinates
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -39,9 +43,10 @@ fun NoteContentTitle(
     modifier: Modifier = Modifier,
     hint: String? = null,
     isInEditMode: Boolean? = null,
+    isFocused: Boolean = false,
     focusOffset: () -> Int = { 0 },
     onTitleChange: (text: String) -> Unit = {},
-    onTitleFocused: () -> Unit = {},
+    onTitleFocused: (id: String) -> Unit = {},
 ) {
     if (isInEditMode == null) {
         Text(
@@ -59,39 +64,52 @@ fun NoteContentTitle(
         mutableStateOf(TextFieldValue(text = title.text))
     }
 
-    var hasFocus by remember { mutableStateOf(false) }
-    var enabled by remember { mutableStateOf(true) }
-
-    if (hasFocus) {
+    if (isFocused) {
         val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
         LaunchedEffect(titleText.selection, keyboardOffset) {
             bringIntoViewRequester.bringIntoView(layoutResult, titleText.selection, focusOffset())
         }
     }
 
+    val focusManager = LocalFocusManager.current
+
     LaunchedEffect(isInEditMode) {
-        if (!isInEditMode && hasFocus) {
-            enabled = false
-            delay(200)
-            enabled = true
+        if (!isInEditMode) {
+            focusManager.clearFocus()
         }
     }
 
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(isFocused) {
+        if (isFocused) {
+            focusRequester.requestFocus()
+        }
+    }
+
+    val scope = rememberCoroutineScope()
+
     BasicTextField(
         modifier = modifier
+            .bringIntoViewRequester(bringIntoViewRequester)
+            .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
-                hasFocus = focusState.hasFocus
                 if (focusState.hasFocus && !isInEditMode) {
-                    onTitleFocused()
+                    onTitleFocused(title.id)
                 }
-            }
-            .bringIntoViewRequester(bringIntoViewRequester),
+                if (focusState.hasFocus) {
+                    scope.launch {
+                        bringIntoViewRequester.bringIntoView()
+                    }
+                }
+            },
         onTextLayout = { layoutResult = it },
         value = titleText,
-        enabled = enabled,
         onValueChange = { text ->
+            if (titleText.text != text.text) {
+                onTitleChange(text.text)
+            }
             titleText = text
-            onTitleChange(text.text)
         },
         textStyle = MaterialTheme.typography.bodyMedium,
         cursorBrush = SolidColor(Colors.Blue),

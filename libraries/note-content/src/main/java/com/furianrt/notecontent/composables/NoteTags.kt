@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -84,7 +83,7 @@ fun NoteTags(
             NoteDateItem(
                 modifier = Modifier.weight(1f),
                 text = date,
-                topPadding = if (tags.isEmpty()) 12.dp else 4.dp,
+                topPadding = if (tags.isEmpty()) 12.dp else 6.dp,
             )
         }
     }
@@ -179,7 +178,6 @@ private fun DeleteTagButton(
     }
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 private fun NoteDateItem(
     text: String,

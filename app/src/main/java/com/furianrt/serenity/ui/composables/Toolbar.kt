@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -90,8 +91,8 @@ internal fun CollapsingToolbarScope.Toolbar(
     }
 
     val toolbarHeightDp = remember { 64.dp }
-    var botHintTop by remember { mutableStateOf(0f) }
-    var searchBarTop by remember { mutableStateOf(0f) }
+    var botHintTop by remember { mutableFloatStateOf(0f) }
+    var searchBarTop by remember { mutableFloatStateOf(0f) }
 
     var message by remember { mutableStateOf(assistantHint) }
 
