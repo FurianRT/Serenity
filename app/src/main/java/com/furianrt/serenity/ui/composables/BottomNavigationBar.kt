@@ -29,9 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
@@ -114,7 +115,7 @@ private fun ButtonAddNote(
         },
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_fab_add),
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_fab_add),
             contentDescription = null,
         )
     }
@@ -143,6 +144,9 @@ private fun ButtonScrollToTop(
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
             shape = RoundedCornerShape(24.dp),
             elevation = ButtonDefaults.elevatedButtonElevation(defaultElevation = 8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.secondary
+            ),
             onClick = {
                 if (translation.isRunning) {
                     return@ElevatedButton

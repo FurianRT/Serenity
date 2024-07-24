@@ -1,0 +1,93 @@
+[versions]
+
+agp = "8.5.1"
+kotlin = "1.9.24"
+
+ksp = "1.9.21-1.0.16"
+
+coreKtx = "1.13.1"
+lifecycle = "2.8.3"
+material3 = "1.3.0-beta04"
+
+compose = "1.6.8"
+composeCompiler = "1.5.14"
+composeActivity = "1.9.0"
+
+accompanist = "0.34.0"
+
+constraintLayout = "1.0.1"
+
+splashScreen = "1.0.1"
+
+coroutines = "1.7.3"
+
+room = "2.6.1"
+
+hilt = "2.49"
+hiltNavigation = "1.2.0"
+
+collapsingToolbar = "2.3.5"
+
+lottie = "6.4.0"
+
+coil = "2.4.0"
+
+immutableCollections = "0.3.5"
+
+
+[libraries]
+
+coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
+
+lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
+material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
+material3Size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3"}
+
+composeActivity = { module = "androidx.activity:activity-compose", version.ref = "composeActivity" }
+composeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
+composeUi = { module = "androidx.compose.ui:ui", version.ref = "compose" }
+composeGraphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "compose" }
+composeToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
+composeTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+composeMaterial = { module = "androidx.compose.material:material", version.ref = "compose" }
+
+systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
+flowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
+navAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+
+constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayout" }
+
+splashScreen = { module = "androidx.core:core-splashscreen", version.ref = "splashScreen" }
+
+coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+
+room = { module = "androidx.room:room-ktx", version.ref = "room" }
+roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
+roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+
+hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hiltCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hiltNavigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
+
+collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "collapsingToolbar" }
+
+lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
+
+coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+
+immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
+
+
+# Dependencies of the included build-logic
+android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
+kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
+
+
+[plugins]
+
+android-application = { id = "com.android.application", version.ref = "agp" }
+android-library = { id = "com.android.library", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

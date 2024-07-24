@@ -3,16 +3,17 @@ package com.furianrt.noteview.internal.ui.container
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.mapImmutable
+import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
 import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -25,8 +26,12 @@ internal class ContainerViewModel @Inject constructor(
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
     val state: StateFlow<ContainerUiState> = _state.asStateFlow()
 
-    private val _effect = Channel<ContainerEffect>()
-    val effect = _effect.receiveAsFlow()
+    private val _effect = MutableSharedFlow<ContainerEffect>()
+    val effect = _effect.asSharedFlow()
+
+    private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {
+        savedStateHandle.get<String>("noteId")
+    }
 
     init {
         observeNotes()
@@ -39,7 +44,7 @@ internal class ContainerViewModel @Inject constructor(
             }
 
             is ContainerEvent.OnButtonBackClick -> {
-                _effect.trySend(ContainerEffect.CloseScreen)
+                _effect.tryEmit(ContainerEffect.CloseScreen)
             }
 
             is ContainerEvent.OnPageTitleFocusChange -> {
@@ -51,17 +56,26 @@ internal class ContainerViewModel @Inject constructor(
     private fun observeNotes() = launch {
         notesRepository.getAllNotesSimple().collectLatest { notes ->
             if (notes.isEmpty()) {
-                _state.tryEmit(ContainerUiState.Empty)
+                _state.update { ContainerUiState.Empty }
             } else {
-                val noteId = savedStateHandle.get<String>("noteId")
-                _state.tryEmit(
-                    ContainerUiState.Success(
-                        initialPageIndex = notes.indexOfFirst { it.id == noteId },
-                        date = "30 Sep 1992",
-                        notesIds = notes.mapImmutable(LocalSimpleNote::id),
-                        isInEditMode = false,
-                    ),
-                )
+                _state.update { localState ->
+                    when (localState) {
+                        is ContainerUiState.Success -> localState.copy(
+                            initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                            notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                        )
+
+                        is ContainerUiState.Empty, is ContainerUiState.Loading -> {
+                            ContainerUiState.Success(
+                                initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                                notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                                isInEditMode = false,
+                            )
+                        }
+
+
+                    }
+                }
             }
         }
     }

@@ -2,10 +2,10 @@ package com.furianrt.uikit.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.ripple.LocalRippleTheme
-import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material.ripple.RippleTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
@@ -18,52 +18,45 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
-import com.furianrt.uikit.extensions.div
 
 private val darkColorScheme = darkColorScheme(
-    primary = Colors.Blue,
-    onPrimary = Colors.White,
-    secondary = Colors.Blue,
-    onSecondary = Colors.White,
-    surface = Colors.Blue,
-    onSurface = Colors.White,
-    primaryContainer = Colors.Blue,
-    onPrimaryContainer = Colors.White,
-    tertiary = Colors.WhiteAlpha5,
-    onTertiary = Colors.White,
+    primary = Color.White,
+    onPrimary = Color.White,
+    secondary = Colors.GreenLight,
+    onSecondary = Color.White,
+    surface = Colors.Green,
+    onSurface = Color.White,
+    primaryContainer = Colors.GreenLight,
+    onPrimaryContainer = Color.White,
+    tertiary = Color.White.copy(alpha = 0.1f),
+    onTertiary = Color.White,
+    tertiaryContainer = Color.White.copy(alpha = 0.2f),
+    onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
-    onErrorContainer = Colors.White,
+    onErrorContainer = Color.White,
 )
 
 private val lightColorScheme = lightColorScheme(
-    primary = Colors.Blue,
-    onPrimary = Colors.White,
-    secondary = Colors.Blue,
-    onSecondary = Colors.White,
-    surface = Colors.Blue,
-    onSurface = Colors.White,
-    primaryContainer = Colors.Blue,
-    onPrimaryContainer = Colors.White,
-    tertiary = Colors.WhiteAlpha5,
-    onTertiary = Colors.White,
-    errorContainer = Colors.Red,
-    onErrorContainer = Colors.White,
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
+    primary = Color.White,
     onPrimary = Color.White,
+    secondary = Colors.GreenLight,
     onSecondary = Color.White,
+    surface = Colors.Green,
+    onSurface = Color.White,
+    primaryContainer = Colors.GreenLight,
+    onPrimaryContainer = Color.White,
+    tertiary = Color.White.copy(alpha = 0.1f),
     onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    tertiaryContainer = Color.White.copy(alpha = 0.2f),
+    onTertiaryContainer = Color.White,
+    errorContainer = Colors.Red,
+    onErrorContainer = Color.White,
 )
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit,
 ) {
@@ -80,7 +73,7 @@ fun SerenityTheme(
     SideEffect {
         val window = (view.context as? Activity)?.window ?: return@SideEffect
         window.setDecorFitsSystemWindows(false)
-        window.statusBarColor = Colors.BlackAlpha25.toArgb()
+        window.statusBarColor = Color.Black.copy(alpha = 0.25f).toArgb()
         WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
     }
 
@@ -89,24 +82,8 @@ fun SerenityTheme(
         typography = Typography,
     ) {
         CompositionLocalProvider(
-            LocalRippleTheme provides SerenityRippleTheme(),
+            LocalRippleConfiguration provides RippleConfiguration(color = MaterialTheme.colorScheme.onPrimary, rippleAlpha = null),
             content = content,
         )
     }
-}
-
-open class SerenityRippleTheme : RippleTheme {
-    @Composable
-    override fun defaultColor(): Color = MaterialTheme.colorScheme.onPrimary
-
-    @Composable
-    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
-        MaterialTheme.colorScheme.primary,
-        lightTheme = !isSystemInDarkTheme(),
-    )
-}
-
-object OnTertiaryRippleTheme : SerenityRippleTheme() {
-    @Composable
-    override fun rippleAlpha() = super.rippleAlpha() / 2f
 }

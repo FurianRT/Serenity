@@ -9,30 +9,30 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.composeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
 dependencies {
-    implementation(project(Modules.Libraries.core))
-    implementation(project(Modules.Libraries.storage))
-    implementation(project(Modules.Libraries.uikit))
+    implementation(projects.libraries.core)
+    implementation(projects.libraries.uikit)
+    implementation(projects.libraries.storage)
 
-    implementation(Deps.coreKtx)
-    implementation(Deps.lifecycle)
-    implementation(Deps.material3)
-    implementation(Deps.material3Size)
+    implementation(libs.coreKtx)
+    implementation(libs.lifecycle)
+    implementation(libs.material3)
+    implementation(libs.material3Size)
 
-    implementation(Deps.composeActivity)
-    implementation(Deps.composeUi)
-    implementation(Deps.composeMaterial)
-    implementation(Deps.composeGraphics)
-    implementation(Deps.composeToolingPreview)
-    debugImplementation(Deps.composeTooling)
+    implementation(libs.composeActivity)
+    implementation(libs.composeUi)
+    implementation(libs.composeMaterial)
+    implementation(libs.composeGraphics)
+    implementation(libs.composeToolingPreview)
+    debugImplementation(libs.composeTooling)
 
-    implementation(Deps.immutableCollections)
+    implementation(libs.immutableCollections)
 
-    implementation(Deps.coil)
+    implementation(libs.coil)
 
-    implementation(Deps.flowLayout)
+    implementation(libs.flowLayout)
 }

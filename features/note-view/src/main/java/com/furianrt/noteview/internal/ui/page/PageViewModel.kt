@@ -1,22 +1,21 @@
 package com.furianrt.noteview.internal.ui.page
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import com.furianrt.core.mapImmutable
+import com.furianrt.core.orFalse
+import com.furianrt.core.updateState
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.extensions.toLocalNoteContent
 import com.furianrt.noteview.internal.ui.entites.NoteViewScreenNote
 import com.furianrt.noteview.internal.ui.extensions.addTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
-import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
+import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.EntryPoint
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.update
 
 private const val TITLE_FOCUS_DELAY = 200L
 
+@HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
     private val notesRepository: NotesRepository,
     @Assisted private val noteId: String,
@@ -48,17 +48,9 @@ internal class PageViewModel @AssistedInject constructor(
         observeNote()
     }
 
-    private var isInEditMode = false
-        set(value) {
-            onEditModeStateChange(value)
-            field = value
-        }
-
     fun onEvent(event: PageEvent) {
         when (event) {
-            is PageEvent.OnEditModeStateChange -> {
-                isInEditMode = event.isEnabled
-            }
+            is PageEvent.OnEditModeStateChange -> onEditModeStateChange(event.isEnabled)
 
             is PageEvent.OnTagClick -> {
             }
@@ -104,7 +96,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun observeNote() = launch {
         notesRepository.getNote(noteId)
-            .map { it?.toContainerScreenNote() }
+            .map { it?.toNoteViewScreenNote() }
             .collectLatest(::handleNoteResult)
     }
 
@@ -114,22 +106,36 @@ internal class PageViewModel @AssistedInject constructor(
             return
         }
 
-        val newContent = if (isInEditMode) {
-            note.content.addTitleTemplates()
-        } else {
-            note.content.removeTitleTemplates()
-        }
+        val isInEditMode = (_state.value as? PageUiState.Success)?.isInEditMode.orFalse()
+        _state.update { localState ->
+            when (localState) {
+                is PageUiState.Empty, PageUiState.Loading -> PageUiState.Success(
+                    content = if (isInEditMode) {
+                        note.content.addTitleTemplates()
+                    } else {
+                        note.content.removeTitleTemplates()
+                    },
+                    tags = note.tags,
+                    isInEditMode = false,
+                )
 
-        _state.update { PageUiState.Success(newContent, note.tags, isInEditMode) }
+                is PageUiState.Success -> localState.copy(
+                    content = if (isInEditMode) {
+                        note.content.addTitleTemplates()
+                    } else {
+                        note.content.removeTitleTemplates()
+                    },
+                    tags = note.tags,
+                )
+            }
+
+        }
     }
 
     private fun changeTitleText(id: String, text: String) {
-        _state.update { currentState ->
-            if (currentState !is PageUiState.Success) {
-                return@update currentState
-            }
-            currentState.copy(
-                content = currentState.content.mapImmutable { content ->
+        _state.updateState<PageUiState.Success> { localState ->
+            localState.copy(
+                content = localState.content.mapImmutable { content ->
                     if (content is UiNoteContent.Title && content.id == id) {
                         content.copy(text = text)
                     } else {
@@ -170,23 +176,5 @@ internal class PageViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory {
         fun create(noteId: String): PageViewModel
-    }
-
-    @EntryPoint
-    @InstallIn(ActivityComponent::class)
-    interface FactoryProvider {
-        fun provide(): Factory
-    }
-
-    companion object {
-        fun provideFactory(
-            factory: Factory,
-            noteId: String,
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                @Suppress("UNCHECKED_CAST")
-                return factory.create(noteId) as T
-            }
-        }
     }
 }

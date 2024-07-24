@@ -1,7 +1,7 @@
 plugins {
     id("convention.android-app")
-    id("com.google.dagger.hilt.android")
-    kotlin("kapt")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -11,43 +11,43 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = Versions.composeCompiler
+        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
     }
 }
 
 dependencies {
-    implementation(project(Modules.Features.assistant))
-    implementation(project(Modules.Features.noteView))
+    implementation(projects.features.assistant)
+    implementation(projects.features.noteView)
 
-    implementation(project(Modules.Libraries.core))
-    implementation(project(Modules.Libraries.uikit))
-    implementation(project(Modules.Libraries.storage))
-    implementation(project(Modules.Libraries.noteContent))
+    implementation(projects.libraries.core)
+    implementation(projects.libraries.uikit)
+    implementation(projects.libraries.storage)
+    implementation(projects.libraries.noteContent)
 
-    implementation(Deps.coreKtx)
-    implementation(Deps.lifecycle)
-    implementation(Deps.material3)
-    implementation(Deps.material3Size)
+    implementation(libs.coreKtx)
+    implementation(libs.lifecycle)
+    implementation(libs.material3)
+    implementation(libs.material3Size)
 
-    implementation(Deps.composeActivity)
-    implementation(Deps.composeFoundation)
-    implementation(Deps.composeUi)
-    implementation(Deps.composeMaterial)
-    implementation(Deps.composeGraphics)
-    implementation(Deps.navAnimation)
-    implementation(Deps.composeToolingPreview)
-    debugImplementation(Deps.composeTooling)
+    implementation(libs.composeActivity)
+    implementation(libs.composeFoundation)
+    implementation(libs.composeUi)
+    implementation(libs.composeMaterial)
+    implementation(libs.composeGraphics)
+    implementation(libs.navAnimation)
+    implementation(libs.composeToolingPreview)
+    debugImplementation(libs.composeTooling)
 
-    implementation(Deps.splashScreen)
+    implementation(libs.splashScreen)
 
-    implementation(Deps.coroutinesCore)
-    implementation(Deps.coroutinesAndroid)
+    implementation(libs.coroutinesCore)
+    implementation(libs.coroutinesAndroid)
 
-    implementation(Deps.hilt)
-    implementation(Deps.hiltNavigation)
-    kapt(Deps.hiltCompiler)
+    implementation(libs.hilt)
+    implementation(libs.hiltNavigation)
+    ksp(libs.hiltCompiler)
 
-    implementation(Deps.collapsingToolbar)
+    implementation(libs.collapsingToolbar)
 
-    implementation(Deps.immutableCollections)
+    implementation(libs.immutableCollections)
 }

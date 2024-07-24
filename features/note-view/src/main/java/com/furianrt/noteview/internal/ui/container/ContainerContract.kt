@@ -2,39 +2,39 @@ package com.furianrt.noteview.internal.ui.container
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.furianrt.noteview.internal.ui.entites.ContainerScreenNote
 import kotlinx.collections.immutable.ImmutableList
 
 @Stable
 internal sealed interface ContainerUiState {
     @Immutable
-    object Loading : ContainerUiState
+    data object Loading : ContainerUiState
 
     @Immutable
-    object Empty : ContainerUiState
+    data object Empty : ContainerUiState
 
     @Immutable
     data class Success(
         val initialPageIndex: Int,
         val isInEditMode: Boolean,
-        val date: String,
-        val notesIds: ImmutableList<String>,
+        val notes: ImmutableList<ContainerScreenNote>,
     ) : ContainerUiState
 }
 
 @Stable
 internal sealed interface ContainerEvent {
     @Immutable
-    object OnButtonEditClick : ContainerEvent
+    data object OnButtonEditClick : ContainerEvent
 
     @Immutable
-    object OnButtonBackClick : ContainerEvent
+    data object OnButtonBackClick : ContainerEvent
 
     @Immutable
-    object OnPageTitleFocusChange : ContainerEvent
+    data object OnPageTitleFocusChange : ContainerEvent
 }
 
 @Stable
 internal sealed interface ContainerEffect {
     @Immutable
-    object CloseScreen : ContainerEffect
+    data object CloseScreen : ContainerEffect
 }

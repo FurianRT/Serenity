@@ -5,7 +5,7 @@ import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 import java.util.UUID
 
-@Stable
+@Immutable
 sealed class UiNoteContent(open val id: String, open val position: Int) {
 
     @Immutable
@@ -47,3 +47,12 @@ sealed class UiNoteContent(open val id: String, open val position: Int) {
         is MediaBlock -> copy(position = newPosition)
     }
 }
+
+val UiNoteContent.MediaBlock.contentHeightDp: Int
+    get() = when (media.count()) {
+        1 -> 130
+        2 -> 120
+        3 -> 110
+        4 -> 150
+        else -> 180
+    }

@@ -1,7 +1,7 @@
 plugins {
     id("convention.android")
-    id("com.google.dagger.hilt.android")
-    kotlin("kapt")
+    alias(libs.plugins.hilt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -9,16 +9,16 @@ android {
 }
 
 dependencies {
-    implementation(project(Modules.Libraries.core))
+    implementation(projects.libraries.core)
 
-    implementation(Deps.coroutinesCore)
-    implementation(Deps.coroutinesAndroid)
+    implementation(libs.coroutinesCore)
+    implementation(libs.coroutinesAndroid)
 
-    implementation(Deps.room)
-    implementation(Deps.roomRuntime)
-    kapt(Deps.roomCompiler)
+    implementation(libs.room)
+    implementation(libs.roomRuntime)
+    ksp(libs.roomCompiler)
 
-    implementation(Deps.hilt)
-    implementation(Deps.hiltNavigation)
-    kapt(Deps.hiltCompiler)
+    implementation(libs.hilt)
+    implementation(libs.hiltNavigation)
+    ksp(libs.hiltCompiler)
 }

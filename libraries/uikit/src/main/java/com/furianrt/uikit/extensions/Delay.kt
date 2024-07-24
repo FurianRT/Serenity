@@ -15,19 +15,20 @@ inline fun Modifier.debounceClickable(
     debounceInterval: Long = 400,
     indication: Indication? = null,
     crossinline onClick: () -> Unit,
-): Modifier = composed {
-    var lastClickTime by remember { mutableLongStateOf(0L) }
-    clickable(
-        onClick = {
-            val currentTime = System.currentTimeMillis()
-            if ((currentTime - lastClickTime) < debounceInterval) return@clickable
-            lastClickTime = currentTime
-            onClick()
-        },
-        indication = indication,
-        interactionSource = remember { MutableInteractionSource() },
-    )
-}
+): Modifier = then(
+    Modifier.composed {
+        var lastClickTime by remember { mutableLongStateOf(0L) }
+        clickable(
+            onClick = {
+                val currentTime = System.currentTimeMillis()
+                if ((currentTime - lastClickTime) < debounceInterval) return@clickable
+                lastClickTime = currentTime
+                onClick()
+            },
+            indication = indication,
+            interactionSource = remember { MutableInteractionSource() },
+        )
+    })
 
 inline fun Modifier.debounceClickable(
     debounceInterval: Long = 400,

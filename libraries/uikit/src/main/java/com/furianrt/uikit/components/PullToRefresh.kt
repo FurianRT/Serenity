@@ -151,7 +151,9 @@ class PullRefreshState internal constructor(
 
         val newOffset = (distancePulled + pullDelta).coerceAtLeast(0f)
         val dragConsumed = newOffset - distancePulled
-        distancePulled = newOffset
+        if (pullDelta <= 0 || adjustedDistancePulled < threshold * 2.5f) {
+            distancePulled = newOffset
+        }
         _position = calculateIndicatorPosition()
         return dragConsumed
     }

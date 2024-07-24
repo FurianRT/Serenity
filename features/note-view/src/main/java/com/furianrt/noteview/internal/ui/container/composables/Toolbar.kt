@@ -1,18 +1,27 @@
 package com.furianrt.noteview.internal.ui.container.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,57 +30,59 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
-import com.furianrt.assistant.api.AssistantLogo
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.debounceClickable
-import me.onebone.toolbar.CollapsingToolbarScope
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.R as uiR
 
 private const val ANIM_BUTTON_EDIT_DURATION = 350
+private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
 @Composable
-internal fun CollapsingToolbarScope.Toolbar(
-    isInEditMode: () -> Boolean,
-    date: () -> String,
+internal fun Toolbar(
+    isInEditMode: Boolean,
+    date: String?,
     onEditClick: () -> Unit,
     onBackButtonClick: () -> Unit,
+    onDateClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Row(
+    Box(
         modifier = modifier
-            .pin()
             .height(64.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        contentAlignment = Alignment.Center,
     ) {
-        ButtonBack(
-            modifier = Modifier.padding(start = 4.dp),
-            onClick = onBackButtonClick,
-        )
-        DateLabel(
-            modifier = Modifier
-                .padding(start = 24.dp)
-                .weight(1f),
-            date = date(),
-        )
-        ButtonEditAndDone(
-            modifier = Modifier.padding(end = 28.dp),
-            isInEditMode = isInEditMode,
-            onClick = onEditClick,
-        )
-        AssistantLogo(
-            modifier = Modifier
-                .padding(end = 8.dp)
-                .size(28.dp),
-            onClick = {},
-        )
-        ButtonMenu(
-            onClick = {},
-        )
+        if (date != null) {
+            DateLabel(
+                isClickable = isInEditMode,
+                date = date,
+                onClick = onDateClick,
+            )
+        }
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            ButtonBack(
+                modifier = Modifier.padding(start = 4.dp),
+                onClick = onBackButtonClick,
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            ButtonEditAndDone(
+                isInEditMode = isInEditMode,
+                onClick = onEditClick,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            ButtonMenu(onClick = {})
+            Spacer(modifier = Modifier.width(4.dp))
+        }
     }
 }
 
@@ -80,34 +91,37 @@ private fun ButtonMenu(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    Icon(
-        modifier = modifier
-            .padding(8.dp)
-            .clickableWithScaleAnim(
-                maxScale = 1.2f,
-                indication = rememberRipple(bounded = false),
-                onClick = onClick,
-            ),
-        painter = painterResource(id = uiR.drawable.ic_action_menu),
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onSurface,
-    )
+    Box(
+        modifier = modifier.clickableWithScaleAnim(
+            maxScale = 1.2f,
+            indication = ripple(bounded = false, radius = 20.dp),
+            onClick = onClick,
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = modifier.padding(8.dp),
+            imageVector = ImageVector.vectorResource(id = uiR.drawable.ic_action_menu),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
 }
 
 @Composable
 private fun ButtonEditAndDone(
     onClick: () -> Unit,
-    isInEditMode: () -> Boolean,
+    isInEditMode: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val scale = remember { Animatable(1f) }
-    var prevState by remember { mutableStateOf(isInEditMode()) }
+    var prevState by remember { mutableStateOf(isInEditMode) }
 
-    LaunchedEffect(isInEditMode()) {
-        if (prevState == isInEditMode()) {
+    LaunchedEffect(isInEditMode) {
+        if (prevState == isInEditMode) {
             return@LaunchedEffect
         }
-        prevState = isInEditMode()
+        prevState = isInEditMode
         scale.animateTo(
             targetValue = 1.15f,
             animationSpec = tween(durationMillis = ANIM_BUTTON_EDIT_DURATION / 2),
@@ -118,24 +132,29 @@ private fun ButtonEditAndDone(
         )
     }
 
-    Icon(
-        modifier = modifier
-            .debounceClickable(
-                indication = rememberRipple(bounded = false),
-                onClick = onClick,
-            )
-            .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
+    Box(
+        modifier = modifier.debounceClickable(
+            indication = ripple(bounded = false, radius = 20.dp),
+            onClick = onClick,
+        ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(8.dp)
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                },
+            imageVector = if (isInEditMode) {
+                ImageVector.vectorResource(id = uiR.drawable.ic_action_done)
+            } else {
+                ImageVector.vectorResource(id = uiR.drawable.ic_action_edit)
             },
-        painter = if (isInEditMode()) {
-            painterResource(id = uiR.drawable.ic_action_done)
-        } else {
-            painterResource(id = uiR.drawable.ic_action_edit)
-        },
-        contentDescription = null,
-        tint = MaterialTheme.colorScheme.onPrimary,
-    )
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onPrimary,
+        )
+    }
 }
 
 @Composable
@@ -148,7 +167,7 @@ private fun ButtonBack(
         onClick = onClick,
     ) {
         Icon(
-            painter = painterResource(id = uiR.drawable.ic_arrow_back),
+            imageVector = ImageVector.vectorResource(id = uiR.drawable.ic_arrow_back),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
         )
@@ -158,11 +177,61 @@ private fun ButtonBack(
 @Composable
 private fun DateLabel(
     date: String,
+    isClickable: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Text(
-        modifier = modifier,
-        text = date,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+    Box(
+        modifier = modifier
+            .width(IntrinsicSize.Max)
+            .height(IntrinsicSize.Max),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedVisibility(
+            visible = isClickable,
+            enter = fadeIn(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
+            exit = fadeOut(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
+        ) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.tertiary)
+                    .clickable(onClick = onClick),
+            )
+        }
+        Text(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 12.dp),
+            text = date,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun ToolbarPreview() {
+    SerenityTheme {
+        Toolbar(
+            isInEditMode = false,
+            date = "30 Sep 1992",
+            onEditClick = {},
+            onBackButtonClick = {},
+            onDateClick = {},
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun ToolbarPreviewEditMode() {
+    SerenityTheme {
+        Toolbar(
+            isInEditMode = true,
+            date = "30 Sep 1992",
+            onEditClick = {},
+            onBackButtonClick = {},
+            onDateClick = {},
+        )
+    }
 }

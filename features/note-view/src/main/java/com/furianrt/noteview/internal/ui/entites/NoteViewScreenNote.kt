@@ -6,7 +6,7 @@ import com.furianrt.notecontent.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
-internal class NoteViewScreenNote(
+internal data class NoteViewScreenNote(
     val id: String,
     val timestamp: Long,
     val tags: ImmutableList<UiNoteTag>,

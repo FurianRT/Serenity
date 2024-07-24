@@ -15,14 +15,14 @@ val Typography = Typography(
     ),
     labelMedium = TextStyle(
         color = Color.White,
-        fontFamily = Fonts.light,
+        fontFamily = Fonts.regular,
         fontSize = 14.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.7.sp,
     ),
     labelLarge = TextStyle(
         color = Color.White,
-        fontFamily = Fonts.light,
+        fontFamily = Fonts.regular,
         fontSize = 17.sp,
         lineHeight = 22.sp,
         letterSpacing = 0.7.sp,

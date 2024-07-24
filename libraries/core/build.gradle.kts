@@ -8,7 +8,7 @@ java {
 }
 
 dependencies {
-    implementation(Deps.coroutinesCore)
-    implementation(Deps.coroutinesAndroid)
-    implementation(Deps.immutableCollections)
+    implementation(libs.coroutinesCore)
+    implementation(libs.coroutinesAndroid)
+    implementation(libs.immutableCollections)
 }

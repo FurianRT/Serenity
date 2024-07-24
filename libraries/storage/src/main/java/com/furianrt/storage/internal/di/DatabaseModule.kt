@@ -24,6 +24,11 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Singleton
 import kotlin.random.Random
@@ -85,8 +90,8 @@ internal class DatabaseModule {
                 1.333f,
             ),
             Pair(
-                "https://interesnyefakty.org/wp-content/uploads/Foto-Gitlera-40.png",
-                0.7f,
+                "https://i.pinimg.com/originals/25/90/a1/2590a1a6759841581e6e1ed7fc91376d.jpg",
+                0.68f,
             ),
             Pair(
                 "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg",
@@ -102,7 +107,7 @@ internal class DatabaseModule {
                 1.526f,
             ),
             Pair(
-                "https://blog.eva.ua/wp-content/webp-express/webp-images/uploads/2019/07/jernej-graj-Gu_qRB_m89g-unsplash-min.jpg.webp",
+                "https://amiel.club/uploads/posts/2022-03/1647751619_1-amiel-club-p-krasivie-kartinki-na-vaiber-1.jpg",
                 0.75f,
             ),
         )
@@ -115,10 +120,12 @@ internal class DatabaseModule {
                 clear()
             }
 
-            repeat(60) {
+            repeat(60) { times ->
                 val noteId = UUID.randomUUID().toString()
                 put(EntryNote.FIELD_ID, noteId)
-                put(EntryNote.FIELD_TIMESTAMP, System.currentTimeMillis())
+                val dateTime = ZonedDateTime.now().plusDays(times.toLong())
+                val resultMills = dateTime.toInstant().toEpochMilli()
+                put(EntryNote.FIELD_TIMESTAMP, resultMills)
                 db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                 clear()
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 fun Panel(
@@ -25,9 +26,6 @@ fun Panel(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
-            .background(Color.Black)
-            .background(Color(0x80001930))
-            .background(MaterialTheme.colorScheme.tertiary)
             .background(MaterialTheme.colorScheme.tertiary)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -64,7 +62,7 @@ fun Panel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_tag),
+                painter = painterResource(id = R.drawable.ic_stickers),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -90,7 +88,7 @@ fun Panel(
     }
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
 fun PanelPreview() {
     SerenityTheme {

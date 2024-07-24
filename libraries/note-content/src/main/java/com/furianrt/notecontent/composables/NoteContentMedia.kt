@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -21,6 +22,8 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -28,10 +31,28 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
+import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.notecontent.entities.UiNoteContent.Title
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
+import com.furianrt.notecontent.entities.contentHeightDp
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableList
+
+@Composable
+fun NoteContent(
+    content: ImmutableList<UiNoteContent>,
+    modifier: Modifier = Modifier,
+    isEditable: Boolean = false,
+) {
+
+
+}
+
+@Composable
+fun Title.toAnnotatedString() = buildAnnotatedString {
+    append(text)
+}
 
 @Composable
 fun NoteContentMedia(
@@ -41,22 +62,33 @@ fun NoteContentMedia(
 ) {
     when (block.media.count()) {
         1 -> OneMediaHolder(
-            modifier = modifier.sizeIn(minHeight = 110.dp, maxHeight = 160.dp),
+            modifier = modifier.height(block.contentHeightDp.dp),
             media = block.media[0],
         )
 
         2 -> RowMediaHolder(
-            modifier = modifier.height(120.dp).clip(RoundedCornerShape(8.dp)),
+            modifier = modifier
+                .height(block.contentHeightDp.dp)
+                .clip(RoundedCornerShape(8.dp)),
             media = block.media,
         )
 
         3 -> RowMediaHolder(
-            modifier = modifier.height(110.dp).clip(RoundedCornerShape(8.dp)),
+            modifier = modifier
+                .height(block.contentHeightDp.dp)
+                .clip(RoundedCornerShape(8.dp)),
             media = block.media,
         )
 
-        4 -> FourMediaHolder(modifier = modifier.height(150.dp), media = block.media)
-        else -> ManyMediaHolder(modifier = modifier, media = block.media)
+        4 -> FourMediaHolder(
+            modifier = modifier.height(block.contentHeightDp.dp),
+            media = block.media
+        )
+
+        else -> ManyMediaHolder(
+            modifier = modifier.height(block.contentHeightDp.dp),
+            media = block.media
+        )
     }
 }
 
@@ -67,7 +99,9 @@ private fun OneMediaHolder(
 ) {
     if (media.ratio >= 1.4f) {
         MediaItem(
-            modifier = modifier.fillMaxWidth().clip(RoundedCornerShape(8.dp)),
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp)),
             cornerRadius = 0.dp,
             media = media,
         )
@@ -80,11 +114,15 @@ private fun OneMediaHolder(
             contentAlignment = Alignment.Center,
         ) {
             MediaItem(
-                modifier = Modifier.fillMaxWidth().blur(32.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .sizeIn(minHeight = 110.dp)
+                    .blur(32.dp),
                 media = media,
                 cornerRadius = 0.dp,
             )
             MediaItem(
+                modifier = Modifier.sizeIn(minHeight = 110.dp),
                 media = media,
                 cornerRadius = 0.dp,
                 contentScale = ContentScale.Fit,
@@ -149,8 +187,8 @@ private fun ManyMediaHolder(
         modifier = modifier.clip(RoundedCornerShape(8.dp)),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        RowMediaHolder(modifier = Modifier.height(110.dp), media = media.subList(0, 2))
-        RowMediaHolder(modifier = Modifier.height(70.dp), media = media.subList(2, media.count()))
+        RowMediaHolder(modifier = Modifier.weight(0.63f), media = media.subList(0, 2))
+        RowMediaHolder(modifier = Modifier.weight(0.37f), media = media.subList(2, media.count()))
     }
 }
 
@@ -191,7 +229,7 @@ private fun ImageItem(
             AsyncImage(
                 modifier = Modifier.drawWithContent {
                     drawContent()
-                    drawRect(color = Color.Black, alpha = 0.65f)
+                    drawRect(color = Color.Black, alpha = 0.4f)
                 },
                 model = ImageRequest.Builder(LocalContext.current).data(image.uri).build(),
                 contentDescription = null,
@@ -201,7 +239,7 @@ private fun ImageItem(
                 modifier = Modifier.wrapContentSize(),
                 text = "+$offscreenImageCount",
                 textAlign = TextAlign.Center,
-                color = Colors.White.copy(alpha = 0.7f),
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
                 style = MaterialTheme.typography.headlineMedium,
             )
         }
