@@ -8,10 +8,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
@@ -31,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +45,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
-private const val ANIM_OFFSET_DURATION = 350
+private const val ANIM_OFFSET_DURATION = 500
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
 private const val ANIM_BUTTON_ADD_DURATION = 150
 private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
@@ -51,6 +56,8 @@ internal fun BottomNavigationBar(
     needToShowScrollUpButton: () -> Boolean,
     onScrollToTopClick: () -> Unit,
     onAddNoteClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
 ) {
     val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
@@ -58,14 +65,19 @@ internal fun BottomNavigationBar(
         label = LABEL_OFFSET_ANIM,
     )
 
+    val windowInsets = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+
     Box(
-        modifier = Modifier
+        modifier = modifier
+            .padding(contentPadding)
             .fillMaxWidth()
-            .graphicsLayer { translationY = size.height * verticalBias },
+            .graphicsLayer {
+                val bottomPadding = contentPadding.calculateBottomPadding().toPx()
+                translationY = (size.height + windowInsets.toPx() + bottomPadding) * verticalBias
+            },
         contentAlignment = Alignment.Center,
     ) {
         ButtonScrollToTop(
-            modifier = Modifier.padding(bottom = 24.dp),
             isVisible = needToShowScrollUpButton,
             onClick = onScrollToTopClick,
         )
@@ -74,7 +86,6 @@ internal fun BottomNavigationBar(
             contentAlignment = Alignment.CenterEnd,
         ) {
             ButtonAddNote(
-                modifier = Modifier.padding(end = 24.dp, bottom = 24.dp),
                 onClick = onAddNoteClick,
             )
         }
@@ -115,7 +126,7 @@ private fun ButtonAddNote(
         },
     ) {
         Icon(
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_fab_add),
+            painter = painterResource(id = R.drawable.ic_fab_add),
             contentDescription = null,
         )
     }

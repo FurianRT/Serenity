@@ -16,7 +16,6 @@ android {
 }
 
 dependencies {
-    implementation(projects.features.assistant)
     implementation(projects.features.toolsPanel)
 
     implementation(projects.libraries.core)

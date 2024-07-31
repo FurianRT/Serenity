@@ -8,6 +8,7 @@ import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,9 +25,9 @@ internal class ContainerViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
-    val state: StateFlow<ContainerUiState> = _state.asStateFlow()
+    val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ContainerEffect>()
+    private val _effect = MutableSharedFlow<ContainerEffect>(replay = 1)
     val effect = _effect.asSharedFlow()
 
     private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {

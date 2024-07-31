@@ -16,8 +16,8 @@ android {
 }
 
 dependencies {
-    implementation(projects.features.assistant)
     implementation(projects.features.noteView)
+    implementation(projects.features.settings)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

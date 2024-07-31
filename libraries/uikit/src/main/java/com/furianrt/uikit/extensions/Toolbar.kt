@@ -5,8 +5,6 @@ import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
 import androidx.compose.runtime.MutableState
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
-import me.onebone.toolbar.CollapsingToolbarState
-import me.onebone.toolbar.ExperimentalToolbarApi
 import kotlin.math.abs
 
 val CollapsingToolbarScaffoldState.isExpanded
@@ -16,21 +14,6 @@ val CollapsingToolbarScaffoldState.isCollapsed
     get() = abs(offsetY) == toolbarState.minHeight
 
 val CollapsingToolbarScaffoldState.isInMiddleState
-    get() = !isExpanded && !isCollapsed
-
-val CollapsingToolbarState.isExpanded
-    get() = run {
-        val slippage = 0.005f
-        progress >= 1f - slippage
-    }
-
-val CollapsingToolbarState.isCollapsed
-    get() = run {
-        val slippage = 0.005f
-        progress <= slippage
-    }
-
-val CollapsingToolbarState.isInMiddleState
     get() = !isExpanded && !isCollapsed
 
 suspend fun CollapsingToolbarScaffoldState.expand(duration: Int = 250) {
@@ -62,19 +45,6 @@ suspend fun CollapsingToolbarScaffoldState.performSnap(
         expand(duration)
     }
 }
-
-@OptIn(ExperimentalToolbarApi::class)
-suspend fun CollapsingToolbarState.performSnap(duration: Int = 350) {
-    val center = 0.5f
-    if (progress > center && progress < 1f) {
-        expand(duration)
-    } else if (progress <= center && progress > 0f) {
-        collapse(duration)
-    }
-}
-
-val CollapsingToolbarScaffoldState.offsetYInverted
-    get() = toolbarState.minHeight + offsetY
 
 // Грязный хак с рефлексией для получения стейта офсета туллбара
 @Suppress("UNCHECKED_CAST")

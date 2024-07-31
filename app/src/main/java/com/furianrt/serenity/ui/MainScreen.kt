@@ -1,12 +1,13 @@
 package com.furianrt.serenity.ui
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Surface
@@ -17,7 +18,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +40,6 @@ import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
-// private const val ANIM_PULL_SUCCESS_DURATION = 400
 
 @Composable
 internal fun MainScreen(
@@ -53,17 +52,22 @@ internal fun MainScreen(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is MainEffect.ScrollToTop -> screenState.scrollToTop()
-                is MainEffect.OpenScreen -> navHostController.navigate("Note/${effect.noteId}")
+                is MainEffect.ScrollToTop -> {
+                    screenState.scrollToTop()
+                }
+
+                is MainEffect.OpenNoteScreen -> {
+                    navHostController.navigate("Note/${effect.noteId}")
+                }
+
+                is MainEffect.OpenSettingsScreen -> {
+                    navHostController.navigate("Settings")
+                }
             }
         }
     }
 
     MainScreenContent(
-        modifier = Modifier
-            .fillMaxSize()
-            .systemBarsPadding()
-            .clipToBounds(),
         uiState = uiState,
         screenState = screenState,
         onEvent = viewModel::onEvent,
@@ -74,72 +78,30 @@ internal fun MainScreen(
 private fun MainScreenContent(
     uiState: MainUiState,
     onEvent: (event: MainEvent) -> Unit,
-    modifier: Modifier = Modifier,
     screenState: MainScreenState = rememberMainState(),
 ) {
-    Surface(modifier = modifier) {
-        Box(contentAlignment = Alignment.BottomCenter) {
-            /*val scope = rememberCoroutineScope()
-            val scale = remember { Animatable(0f) }
-            val haptic = LocalHapticFeedback.current
-            val pullRefreshState = rememberPullRefreshState(
-                refreshing = false,
-                refreshThreshold = 32.dp,
-                onRefresh = {},
-                onThresholdPassed = {
-                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                    scope.launch {
-                        scale.animateTo(
-                            targetValue = 0.1f,
-                            animationSpec = tween(durationMillis = ANIM_PULL_SUCCESS_DURATION / 2),
-                        )
-                        scale.animateTo(
-                            targetValue = 0f,
-                            animationSpec = tween(durationMillis = ANIM_PULL_SUCCESS_DURATION / 2),
-                        )
-                    }
-                },
-            )*/
+    val needToShowScrollUpButton by remember {
+        derivedStateOf {
+            screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
+        }
+    }
 
-            Box(
-                modifier = Modifier.fillMaxSize(),
-                contentAlignment = Alignment.TopCenter,
-            ) {
-                /*val isLogoAnimInProgress by remember {
-                    derivedStateOf { pullRefreshState.progress > 0f }
-                }
-                AssistantLogo(
-                    modifier = Modifier
-                        .padding(top = 12.dp)
-                        .size(48.dp)
-                        .drawWithContent {
-                            clipRect(
-                                right = size.width * 2f,
-                                left = -size.width,
-                                top = -size.height,
-                                bottom = pullRefreshState.position + 2.dp.toPx(),
-                            ) {
-                                this@drawWithContent.drawContent()
-                            }
-                        }
-                        .graphicsLayer {
-                            val pullScaleRange = 0.2f
-                            val pullScale = 1f - pullScaleRange * (1f - pullRefreshState.progress)
-                            val resultScale = pullScale + scale.value
-                            scaleX = resultScale
-                            scaleY = resultScale
-                            alpha = pullRefreshState.progress
-                        },
-                    isPlaying = { isLogoAnimInProgress },
-                )*/
-            }
+    val needToHideNavigation by remember(screenState.scrollState.scrollDirection) {
+        derivedStateOf {
+            uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
+        }
+    }
+
+    val systemBarsHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+
+    Surface {
+        Box(contentAlignment = Alignment.BottomCenter) {
             CollapsingToolbarScaffold(
                 modifier = Modifier
                     .fillMaxSize()
-                    //.pullRefresh(state = pullRefreshState, enabled = uiState.assistantHint == null)
                     .nestedScroll(screenState.scrollConnection),
                 state = screenState.toolbarState,
-                scrollStrategy = ScrollStrategy.EnterAlwaysCollapsed,
+                scrollStrategy = ScrollStrategy.EnterAlways,
                 toolbarModifier = Modifier.drawBehind {
                     if (screenState.listState.firstVisibleItemScrollOffset > 0) {
                         drawBottomShadow()
@@ -149,14 +111,11 @@ private fun MainScreenContent(
                     Toolbar(
                         toolbarScaffoldState = screenState.toolbarState,
                         listState = screenState.listState,
-                        assistantHint = uiState.assistantHint,
                         onSettingsClick = { onEvent(MainEvent.OnSettingsClick) },
                         onSearchClick = { onEvent(MainEvent.OnSearchClick) },
-                        onAssistantHintCLick = { onEvent(MainEvent.OnAssistantHintClick) },
                     )
                 },
             ) {
-                Spacer(modifier = Modifier)
                 when (uiState) {
                     is MainUiState.Loading -> MainLoading()
                     is MainUiState.Empty -> MainEmpty()
@@ -167,20 +126,12 @@ private fun MainScreenContent(
                     )
                 }
             }
-
-            val needToShowScrollUpButton by remember {
-                derivedStateOf {
-                    screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
-                }
-            }
-
-            val needToHideNavigation by remember(screenState.scrollState.scrollDirection) {
-                derivedStateOf {
-                    uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
-                }
-            }
-
             BottomNavigationBar(
+                contentPadding = PaddingValues(
+                    start = 24.dp,
+                    end = 24.dp,
+                    bottom = systemBarsHeight + 24.dp,
+                ),
                 onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
                 needToHideNavigation = { needToHideNavigation },
                 needToShowScrollUpButton = { needToShowScrollUpButton },
@@ -190,21 +141,27 @@ private fun MainScreenContent(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MainSuccess(
     notes: ImmutableList<MainScreenNote>,
     listState: LazyListState,
     onEvent: (event: MainEvent) -> Unit,
 ) {
+    val systemBarHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
     LazyColumn(
+        modifier = Modifier.fillMaxSize(),
         state = listState,
-        contentPadding = PaddingValues(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(
+            start = 8.dp,
+            end = 8.dp,
+            top = 8.dp,
+            bottom = systemBarHeight + 16.dp
+        ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
             NoteListItem(
-                modifier = Modifier.animateItemPlacement(),
+                modifier = Modifier.animateItem(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
                 onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },
@@ -215,10 +172,12 @@ private fun MainSuccess(
 
 @Composable
 private fun MainEmpty() {
+    Spacer(modifier = Modifier)
 }
 
 @Composable
 private fun MainLoading() {
+    Spacer(modifier = Modifier)
 }
 
 @Preview
@@ -228,7 +187,6 @@ private fun MainScreenSuccessPreview() {
         MainScreenContent(
             uiState = MainUiState.Success(
                 notes = generatePreviewNotes(),
-                assistantHint = "Hi, i’m your personal AI powered assistant. I can do a lot of things. Let me show you!",
             ),
             onEvent = {},
         )

@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.furianrt.noteview.api.NoteViewScreen
+import com.furianrt.setiings.api.SettingsScreen
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -94,6 +95,32 @@ internal class MainActivity : ComponentActivity() {
                         },
                     ) {
                         NoteViewScreen(navController)
+                    }
+
+                    composable(
+                        route = "Settings",
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                initialOffset = { it / 2 },
+                                animationSpec = tween(
+                                    durationMillis = 450,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(450))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                targetOffset = { (it * 0.8f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
+                    ) {
+                        SettingsScreen(navController)
                     }
                 }
             }

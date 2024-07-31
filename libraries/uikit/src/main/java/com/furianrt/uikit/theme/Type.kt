@@ -55,4 +55,11 @@ val Typography = Typography(
         lineHeight = 20.sp,
         letterSpacing = 0.7.sp,
     ),
+    titleMedium = TextStyle(
+        color = Color.White,
+        fontFamily = Fonts.bold,
+        fontSize = 17.sp,
+        lineHeight = 22.sp,
+        letterSpacing = 0.7.sp,
+    ),
 )

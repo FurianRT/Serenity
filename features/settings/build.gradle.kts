@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.furianrt.assistant"
+    namespace = "com.furianrt.settings"
 
     buildFeatures {
         compose = true
@@ -27,6 +27,7 @@ dependencies {
 
     implementation(libs.composeActivity)
     implementation(libs.composeUi)
+    implementation(libs.navAnimation)
     implementation(libs.composeMaterial)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
@@ -39,5 +40,5 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.lottie)
+    implementation(libs.immutableCollections)
 }
