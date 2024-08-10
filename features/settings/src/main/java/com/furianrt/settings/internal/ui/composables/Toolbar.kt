@@ -1,4 +1,4 @@
-package com.furianrt.setiings.internal.ui.composables
+package com.furianrt.settings.internal.ui.composables
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,10 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.settings.R
 import com.furianrt.uikit.components.ButtonBack
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun Toolbar(
-    onBackButtonClick: () -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -28,12 +30,22 @@ internal fun Toolbar(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .padding(start = 4.dp),
-            onClick = onBackButtonClick,
+            onClick = onBackClick,
         )
         Text(
             modifier = Modifier.align(Alignment.Center),
             text = stringResource(id = R.string.settings_screen_title),
             style = MaterialTheme.typography.titleMedium,
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun ToolbarPreview() {
+    SerenityTheme {
+        Toolbar(
+            onBackClick = {},
         )
     }
 }

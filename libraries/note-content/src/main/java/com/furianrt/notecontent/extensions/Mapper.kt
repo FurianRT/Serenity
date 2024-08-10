@@ -55,7 +55,9 @@ fun UiNoteContent.MediaBlock.Media.Image.toLocalNoteImage() = LocalNote.Content.
 
 fun UiNoteContent.MediaBlock.Media.toLocalMedia() = LocalNote.Content.Image(
     id = id,
-    uri = (this as UiNoteContent.MediaBlock.Media.Image).uri,
+    uri = when (this) {
+        is UiNoteContent.MediaBlock.Media.Image -> uri
+    },
     ratio = ratio,
     position = position,
 )

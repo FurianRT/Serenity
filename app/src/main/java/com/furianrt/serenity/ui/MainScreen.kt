@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.systemBars
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.Surface
@@ -19,15 +19,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.serenity.ui.MainScrollState.ScrollDirection
 import com.furianrt.serenity.ui.composables.BottomNavigationBar
 import com.furianrt.serenity.ui.composables.NoteListItem
 import com.furianrt.serenity.ui.composables.Toolbar
@@ -36,6 +38,7 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
@@ -48,23 +51,29 @@ internal fun MainScreen(
 ) {
     val viewModel: MainViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is MainEffect.ScrollToTop -> {
-                    screenState.scrollToTop()
-                }
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is MainEffect.ScrollToTop -> {
+                        screenState.scrollToTop()
+                    }
 
-                is MainEffect.OpenNoteScreen -> {
-                    navHostController.navigate("Note/${effect.noteId}")
-                }
+                    is MainEffect.OpenNoteScreen -> {
+                        navHostController.navigate(
+                            route = "Note/${effect.noteId}",
+                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
+                        )
+                    }
 
-                is MainEffect.OpenSettingsScreen -> {
-                    navHostController.navigate("Settings")
+                    is MainEffect.OpenSettingsScreen -> {
+                        navHostController.navigate("Settings")
+                    }
                 }
             }
-        }
     }
 
     MainScreenContent(
@@ -86,20 +95,10 @@ private fun MainScreenContent(
         }
     }
 
-    val needToHideNavigation by remember(screenState.scrollState.scrollDirection) {
-        derivedStateOf {
-            uiState.hasNotes && screenState.scrollState.scrollDirection == ScrollDirection.DOWN
-        }
-    }
-
-    val systemBarsHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
-
     Surface {
         Box(contentAlignment = Alignment.BottomCenter) {
             CollapsingToolbarScaffold(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .nestedScroll(screenState.scrollConnection),
+                modifier = Modifier.fillMaxSize(),
                 state = screenState.toolbarState,
                 scrollStrategy = ScrollStrategy.EnterAlways,
                 toolbarModifier = Modifier.drawBehind {
@@ -130,10 +129,12 @@ private fun MainScreenContent(
                 contentPadding = PaddingValues(
                     start = 24.dp,
                     end = 24.dp,
-                    bottom = systemBarsHeight + 24.dp,
+                    bottom = 24.dp,
                 ),
                 onScrollToTopClick = { onEvent(MainEvent.OnScrollToTopClick) },
-                needToHideNavigation = { needToHideNavigation },
+                needToHideNavigation = {
+                    uiState.hasNotes && screenState.listState.lastScrolledForward
+                },
                 needToShowScrollUpButton = { needToShowScrollUpButton },
                 onAddNoteClick = { onEvent(MainEvent.OnAddNoteClick) },
             )
@@ -147,7 +148,7 @@ private fun MainSuccess(
     listState: LazyListState,
     onEvent: (event: MainEvent) -> Unit,
 ) {
-    val systemBarHeight = WindowInsets.systemBars.asPaddingValues().calculateBottomPadding()
+    val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
@@ -155,7 +156,7 @@ private fun MainSuccess(
             start = 8.dp,
             end = 8.dp,
             top = 8.dp,
-            bottom = systemBarHeight + 16.dp
+            bottom = navBarsHeight + 16.dp
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -198,7 +199,7 @@ private fun generatePreviewNotes() = buildImmutableList {
         add(
             MainScreenNote(
                 id = i.toString(),
-                timestamp = 0,
+                date = "19.06.2023",
                 tags = persistentListOf(),
                 content = persistentListOf(
                     UiNoteContent.Title(

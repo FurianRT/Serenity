@@ -4,7 +4,9 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
+import com.furianrt.storage.api.TransactionsHelper
 import com.furianrt.storage.internal.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.notes.dao.ContentBlockDao
 import com.furianrt.storage.internal.notes.dao.ImageDao
@@ -31,7 +33,7 @@ import com.furianrt.storage.internal.notes.entities.EntryNoteToTag
     version = VERSION,
     exportSchema = false,
 )
-internal abstract class SerenityDatabase : RoomDatabase() {
+internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     abstract fun noteDao(): NoteDao
     abstract fun tagDao(): TagDao
@@ -58,4 +60,6 @@ internal abstract class SerenityDatabase : RoomDatabase() {
             )
             .build()
     }
+
+    override suspend fun <R> startTransaction(block: suspend () -> R): R = withTransaction(block)
 }

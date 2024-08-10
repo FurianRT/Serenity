@@ -27,7 +27,7 @@ internal class ContainerViewModel @Inject constructor(
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ContainerEffect>(replay = 1)
+    private val _effect = MutableSharedFlow<ContainerEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
 
     private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {

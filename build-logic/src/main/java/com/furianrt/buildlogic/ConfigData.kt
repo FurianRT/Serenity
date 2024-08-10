@@ -1,10 +1,10 @@
 package com.furianrt.buildlogic
 
 object ConfigData {
-    const val compileSdkVersion = 34
-    const val minSdkVersion = 31
-    const val targetSdkVersion = 34
-    const val versionCode = 1
-    const val versionName = "1.0"
-    const val jvmTarget = "17"
+    const val COMPILE_SDK_VERSION = 34
+    const val MIN_SDK_VERSION = 31
+    const val TARGET_SDK_VERSION = 34
+    const val VERSION_CODE = 1
+    const val VERSION_NAME = "1.0"
+    const val JVM_TARGET = "17"
 }

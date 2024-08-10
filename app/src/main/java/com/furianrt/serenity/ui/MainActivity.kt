@@ -16,22 +16,31 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.furianrt.noteview.api.NoteViewScreen
-import com.furianrt.setiings.api.SettingsScreen
+import com.furianrt.serenity.BuildConfig
+import com.furianrt.settings.api.SettingsScreen
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
 
-private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 450L
+private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen().setOnExitAnimationListener { splashScreenViewProvider ->
-            splashScreenViewProvider.view
-                .animate()
-                .alpha(0f)
-                .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
-        }
+        installSplashScreen()
+            .setOnExitAnimationListener { splashScreenViewProvider ->
+                splashScreenViewProvider.view
+                    .animate()
+                    .alpha(0f)
+                    .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
+
+                splashScreenViewProvider.view
+                    .animate()
+                    .scaleX(1.1f)
+                    .scaleY(1.1f)
+                    .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
+            }
+        BuildConfig.VERSION_NAME
         setContent {
             SerenityTheme {
                 val navController = rememberNavController()

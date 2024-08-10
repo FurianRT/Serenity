@@ -1,4 +1,4 @@
-package com.furianrt.setiings.internal.ui
+package com.furianrt.settings.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -7,7 +7,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -15,7 +14,7 @@ internal class SettingsViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<SettingsUiState>(SettingsUiState.Loading)
+    private val _state = MutableStateFlow<SettingsUiState>(SettingsUiState.Success)
     val state = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<SettingsEffect>(replay = 1)

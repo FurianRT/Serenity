@@ -17,7 +17,7 @@ internal class ImagesRepositoryImp @Inject constructor(
     override suspend fun upsert(
         noteId: String,
         block: LocalNote.Content.ImagesBlock,
-    ) = transactionsHelper.withTransaction {
+    ) = transactionsHelper.startTransaction {
         blockDao.upsert(block.toEntryContentBlock(noteId))
         block.images.forEach { imageDao.upsert(it.toEntryNoteImage(block.id)) }
     }

@@ -16,7 +16,6 @@ import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.serenity.ui.entities.MainScreenNote
-import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.persistentListOf
@@ -29,9 +28,8 @@ internal fun NoteListItem(
     modifier: Modifier = Modifier,
 ) {
     Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .debounceClickable { onClick(note) },
+        modifier = modifier.fillMaxWidth(),
+        onClick = { onClick(note) },
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -67,7 +65,7 @@ internal fun NoteListItem(
                 ),
             tags = note.tags,
             onTagClick = onTagClick,
-            date = "19.06.2023",
+            date = note.date,
         )
     }
 }
@@ -79,7 +77,7 @@ private fun NoteItemPreview() {
         NoteListItem(
             note = MainScreenNote(
                 id = "1",
-                timestamp = 0L,
+                date = "19.06.2023",
                 tags = persistentListOf(
                     UiNoteTag.Regular(id = "0", title = "Programming", isRemovable = false),
                     UiNoteTag.Regular(id = "1", title = "Android", isRemovable = false),

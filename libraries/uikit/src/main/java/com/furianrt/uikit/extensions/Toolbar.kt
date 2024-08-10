@@ -6,12 +6,13 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.MutableState
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import kotlin.math.abs
+import kotlin.math.absoluteValue
 
 val CollapsingToolbarScaffoldState.isExpanded
     get() = offsetY == 0
 
 val CollapsingToolbarScaffoldState.isCollapsed
-    get() = abs(offsetY) == toolbarState.minHeight
+    get() = offsetY.absoluteValue == toolbarState.minHeight
 
 val CollapsingToolbarScaffoldState.isInMiddleState
     get() = !isExpanded && !isCollapsed
@@ -45,6 +46,9 @@ suspend fun CollapsingToolbarScaffoldState.performSnap(
         expand(duration)
     }
 }
+
+val CollapsingToolbarScaffoldState.offsetYInverted
+    get() = toolbarState.minHeight + offsetY
 
 // Грязный хак с рефлексией для получения стейта офсета туллбара
 @Suppress("UNCHECKED_CAST")

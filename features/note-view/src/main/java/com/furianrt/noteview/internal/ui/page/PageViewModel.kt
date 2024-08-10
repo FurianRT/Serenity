@@ -16,9 +16,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,8 +24,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
-
-private const val TITLE_FOCUS_DELAY = 200L
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
@@ -40,9 +36,6 @@ internal class PageViewModel @AssistedInject constructor(
 
     private val _effect = Channel<PageEffect>()
     val effect = _effect.receiveAsFlow()
-
-    private var titleFocusJob: Job? = null
-    private var hasFocusedTitle = false
 
     init {
         observeNote()
@@ -64,10 +57,6 @@ internal class PageViewModel @AssistedInject constructor(
 
             is PageEvent.OnTitleDoneEditing -> {
             }
-
-            is PageEvent.OnTitleFocused -> {
-                hasFocusedTitle = true
-            }
         }
     }
 
@@ -84,14 +73,6 @@ internal class PageViewModel @AssistedInject constructor(
 
         _state.update { PageUiState.Success(newContent, currentState.tags, isEnabled) }
         saveNoteContent(currentState.content)
-
-        if (isEnabled && !hasFocusedTitle) {
-            tryFocusTitle()
-        }
-
-        if (!isEnabled) {
-            clearTitleFocus()
-        }
     }
 
     private fun observeNote() = launch {
@@ -151,26 +132,6 @@ internal class PageViewModel @AssistedInject constructor(
             noteId = noteId,
             content = content.map(UiNoteContent::toLocalNoteContent),
         )
-    }
-
-    private fun tryFocusTitle() {
-        titleFocusJob?.cancel()
-        titleFocusJob = launch {
-            delay((TITLE_FOCUS_DELAY))
-            val noteContent = (_state.value as? PageUiState.Success)?.content ?: return@launch
-            val firstTitleIndex = noteContent.indexOfFirst { it is UiNoteContent.Title }
-            if (firstTitleIndex == -1) {
-                return@launch
-            }
-            hasFocusedTitle = true
-            _effect.trySend(PageEffect.FocusTitle(firstTitleIndex))
-        }
-    }
-
-    private fun clearTitleFocus() {
-        titleFocusJob?.cancel()
-        hasFocusedTitle = false
-        _effect.trySend(PageEffect.FocusTitle(null))
     }
 
     @AssistedFactory

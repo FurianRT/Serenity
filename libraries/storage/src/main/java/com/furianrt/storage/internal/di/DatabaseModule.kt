@@ -3,7 +3,6 @@ package com.furianrt.storage.internal.di
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
-import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.storage.api.TransactionsHelper
 import com.furianrt.storage.internal.SerenityDatabase
@@ -24,10 +23,6 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Singleton
@@ -39,8 +34,9 @@ internal class DatabaseModule {
 
     @Provides
     @Singleton
-    fun provideDatabase(@ApplicationContext context: Context): SerenityDatabase =
-        SerenityDatabase.create(context, ::fillDbWithInitialData)
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+    ): SerenityDatabase = SerenityDatabase.create(context, ::fillDbWithInitialData)
 
     @Provides
     @Singleton
@@ -68,15 +64,11 @@ internal class DatabaseModule {
 
     @Provides
     @Singleton
-    fun transactionsHelper(database: SerenityDatabase): TransactionsHelper =
-        object : TransactionsHelper {
-            override suspend fun <R> withTransaction(block: suspend () -> R): R =
-                database.withTransaction(block)
-        }
+    fun transactionsHelper(database: SerenityDatabase): TransactionsHelper = database
 
     private fun fillDbWithInitialData(db: SupportSQLiteDatabase) {
         val noteTitle = "Kotlin is a modern programming language with a " +
-            "lot more syntactic sugar compared to Java"
+                "lot more syntactic sugar compared to Java"
 
         val tagsTitles = listOf("Kotlin", "Programming", "Android", "Development", "Java")
 

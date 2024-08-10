@@ -7,20 +7,24 @@ plugins {
 
 android {
     namespace = "com.furianrt.serenity"
-    compileSdk = ConfigData.compileSdkVersion
+    compileSdk = ConfigData.COMPILE_SDK_VERSION
 
     defaultConfig {
         applicationId = "com.furianrt.serenity"
-        minSdk = ConfigData.minSdkVersion
-        targetSdk = ConfigData.targetSdkVersion
-        versionCode = ConfigData.versionCode
-        versionName = ConfigData.versionName
+        minSdk = ConfigData.MIN_SDK_VERSION
+        targetSdk = ConfigData.TARGET_SDK_VERSION
+        versionCode = ConfigData.VERSION_CODE
+        versionName = ConfigData.VERSION_NAME
 
         vectorDrawables {
             useSupportLibrary = true
         }
     }
 
+    buildFeatures {
+        buildConfig = true
+    }
+    
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -38,7 +42,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = ConfigData.jvmTarget
+        jvmTarget = ConfigData.JVM_TARGET
     }
     packaging {
         resources {

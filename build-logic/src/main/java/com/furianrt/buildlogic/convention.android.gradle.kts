@@ -6,19 +6,20 @@ plugins {
 }
 
 android {
-    compileSdk = ConfigData.compileSdkVersion
+    compileSdk = ConfigData.COMPILE_SDK_VERSION
 
     defaultConfig {
-        minSdk = ConfigData.minSdkVersion
+        minSdk = ConfigData.MIN_SDK_VERSION
     }
 
     buildTypes {
+        defaultConfig {
+            if (file("${project.name}-proguard-rules.pro").exists()) {
+                consumerProguardFiles("${project.name}-proguard-rules.pro")
+            }
+        }
         release {
-            isMinifyEnabled = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+            isMinifyEnabled = false
         }
         debug {
             isMinifyEnabled = false
@@ -29,6 +30,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions {
-        jvmTarget = ConfigData.jvmTarget
+        jvmTarget = ConfigData.JVM_TARGET
     }
 }

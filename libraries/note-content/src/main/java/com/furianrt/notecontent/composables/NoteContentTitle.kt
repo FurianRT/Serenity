@@ -1,11 +1,10 @@
 package com.furianrt.notecontent.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.interaction.Interaction
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -13,12 +12,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,15 +30,12 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.uikit.extensions.cursorCoordinates
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -49,10 +43,10 @@ import kotlinx.coroutines.launch
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
+    scrollState: ScrollState = rememberScrollState(),
+    toolbarHeight: Int = 0,
     hint: String? = null,
     isInEditMode: Boolean? = null,
-    isFocused: Boolean = false,
-    focusOffset: () -> Int = { 0 },
     onTitleChange: (text: String) -> Unit = {},
     onTitleFocused: (id: String) -> Unit = {},
 ) {
@@ -79,7 +73,7 @@ fun NoteContentTitle(
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = textState.selection,
-                additionalOffset = focusOffset() + focusMargin,
+                additionalOffset = focusMargin + toolbarHeight,
             )
         }
     }
@@ -89,22 +83,14 @@ fun NoteContentTitle(
     }
 
     val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(isInEditMode) {
         if (!isInEditMode) {
             focusManager.clearFocus()
         }
     }
-
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(isFocused) {
-        if (isFocused) {
-            focusRequester.requestFocus()
-        }
-    }
-
-    val scope = rememberCoroutineScope()
 
     BasicTextField(
         modifier = modifier
@@ -114,11 +100,6 @@ fun NoteContentTitle(
                 hasFocus = focusState.hasFocus
                 if (focusState.hasFocus) {
                     onTitleFocused(title.id)
-                }
-                if (focusState.hasFocus) {
-                    scope.launch {
-                        bringIntoViewRequester.bringIntoView()
-                    }
                 }
             },
         onTextLayout = { layoutResult = it() },
@@ -132,6 +113,7 @@ fun NoteContentTitle(
             }
             innerTextField()
         },
+        scrollState = scrollState,
     )
 }
 

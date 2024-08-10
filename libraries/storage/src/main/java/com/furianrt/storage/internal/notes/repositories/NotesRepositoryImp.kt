@@ -30,13 +30,13 @@ internal class NotesRepositoryImp @Inject constructor(
     private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
-    override suspend fun upsertNote(note: LocalNote) = transactionsHelper.withTransaction {
+    override suspend fun upsertNote(note: LocalNote) = transactionsHelper.startTransaction {
         noteDao.upsert(note.toEntryNote())
         note.tags.forEach { upsertTag(note.id, it) }
         note.content.forEach { upsertNoteContent(note.id, it) }
     }
 
-    override suspend fun deleteNote(note: LocalNote) = transactionsHelper.withTransaction {
+    override suspend fun deleteNote(note: LocalNote) = transactionsHelper.startTransaction {
         noteDao.delete(note.toEntryNote()) // TODO удалять еще и файлы картинок
         tagsRepository.deleteTagsWithoutNotes()
     }
@@ -53,7 +53,7 @@ internal class NotesRepositoryImp @Inject constructor(
     override suspend fun upsertNoteContent(
         noteId: String,
         content: List<LocalNote.Content>,
-    ) = transactionsHelper.withTransaction { content.forEach { upsertNoteContent(noteId, it) } }
+    ) = transactionsHelper.startTransaction { content.forEach { upsertNoteContent(noteId, it) } }
 
     override suspend fun upsertNoteTitle(noteId: String, title: LocalNote.Content.Title) =
         if (title.text.isEmpty()) {
@@ -65,10 +65,10 @@ internal class NotesRepositoryImp @Inject constructor(
     override suspend fun upsertNoteTitle(
         noteId: String,
         titles: List<LocalNote.Content.Title>,
-    ) = transactionsHelper.withTransaction { titles.forEach { upsertNoteTitle(noteId, it) } }
+    ) = transactionsHelper.startTransaction { titles.forEach { upsertNoteTitle(noteId, it) } }
 
     private suspend fun upsertTag(noteId: String, tag: LocalNote.Tag) =
-        transactionsHelper.withTransaction {
+        transactionsHelper.startTransaction {
             tagsRepository.upsert(tag)
             noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
         }

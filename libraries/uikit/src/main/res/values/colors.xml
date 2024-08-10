@@ -2,4 +2,5 @@
 <resources>
     <color name="black_alpha_25">#40000000</color>
     <color name="green">#FF193727</color>
+    <color name="green_light">#FF497412</color>
 </resources>

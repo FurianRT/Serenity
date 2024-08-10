@@ -4,11 +4,11 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
@@ -54,8 +54,6 @@ internal fun Toolbar(
         }
     }
 
-    val statusBarHeight = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-
     LaunchedEffect(needToSnap) {
         if (needToSnap) {
             toolbarScaffoldState.performSnap()
@@ -64,7 +62,8 @@ internal fun Toolbar(
 
     Row(
         modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, top = statusBarHeight)
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .padding(horizontal = 16.dp)
             .height(64.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,

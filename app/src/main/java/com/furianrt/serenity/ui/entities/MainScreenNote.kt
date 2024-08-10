@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Immutable
 internal data class MainScreenNote(
     val id: String,
-    val timestamp: Long,
+    val date: String,
     val tags: ImmutableList<UiNoteTag>,
     val content: ImmutableList<UiNoteContent>,
 )

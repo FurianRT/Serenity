@@ -2,6 +2,7 @@ package com.furianrt.uikit.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
@@ -22,7 +23,7 @@ import androidx.core.view.WindowCompat
 private val darkColorScheme = darkColorScheme(
     primary = Color.White,
     onPrimary = Color.White,
-    secondary = Colors.GreenLight,
+    secondary = Color.White,
     onSecondary = Color.White,
     surface = Colors.Green,
     onSurface = Color.White,
@@ -34,12 +35,13 @@ private val darkColorScheme = darkColorScheme(
     onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
+    background = Colors.Green,
 )
 
 private val lightColorScheme = lightColorScheme(
     primary = Color.White,
     onPrimary = Color.White,
-    secondary = Colors.GreenLight,
+    secondary = Color.White,
     onSecondary = Color.White,
     surface = Colors.Green,
     onSurface = Color.White,
@@ -51,6 +53,7 @@ private val lightColorScheme = lightColorScheme(
     onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
+    background = Colors.Green,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,9 +84,13 @@ fun SerenityTheme(
         colorScheme = colorScheme,
         typography = Typography,
     ) {
-        CompositionLocalProvider(
-            LocalRippleConfiguration provides RippleConfiguration(color = MaterialTheme.colorScheme.onPrimary, rippleAlpha = null),
-            content = content,
+        val rippleAlpha = RippleAlpha(
+            draggedAlpha = 0.05f,
+            focusedAlpha = 0.05f,
+            hoveredAlpha = 0.05f,
+            pressedAlpha = 0.05f,
         )
+        val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, rippleAlpha)
+        CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig, content)
     }
 }

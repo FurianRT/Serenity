@@ -1,4 +1,4 @@
-package com.furianrt.setiings.internal.ui
+package com.furianrt.settings.internal.ui
 
 internal sealed interface SettingsUiState {
     data object Loading : SettingsUiState
