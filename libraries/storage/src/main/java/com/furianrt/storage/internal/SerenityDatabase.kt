@@ -61,5 +61,5 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
             .build()
     }
 
-    override suspend fun <R> startTransaction(block: suspend () -> R): R = withTransaction(block)
+    override suspend fun startTransaction(block: suspend () -> Unit) = withTransaction(block)
 }

@@ -7,7 +7,7 @@ import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -15,7 +15,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,13 +29,13 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.uikit.extensions.cursorCoordinates
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -47,13 +46,12 @@ fun NoteContentTitle(
     toolbarHeight: Int = 0,
     hint: String? = null,
     isInEditMode: Boolean? = null,
-    onTitleChange: (text: String) -> Unit = {},
     onTitleFocused: (id: String) -> Unit = {},
 ) {
     if (isInEditMode == null) {
         Text(
             modifier = modifier,
-            text = title.text,
+            text = title.state.text.toString(),
             style = MaterialTheme.typography.bodyMedium,
         )
         return
@@ -62,30 +60,21 @@ fun NoteContentTitle(
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
-    val textState = rememberTextFieldState(initialText = title.text)
-
     var hasFocus by remember { mutableStateOf(false) }
 
     val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
     val focusMargin = with(LocalDensity.current) { 8.dp.toPx().toInt() }
-    LaunchedEffect(textState.selection, keyboardOffset, hasFocus) {
+    LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
-                selection = textState.selection,
+                selection = title.state.selection,
                 additionalOffset = focusMargin + toolbarHeight,
             )
         }
     }
 
-    LaunchedEffect(textState.text) {
-        onTitleChange(textState.text.toString())
-    }
-
     val focusManager = LocalFocusManager.current
-    val focusRequester = remember { FocusRequester() }
-    val scope = rememberCoroutineScope()
-
     LaunchedEffect(isInEditMode) {
         if (!isInEditMode) {
             focusManager.clearFocus()
@@ -95,7 +84,6 @@ fun NoteContentTitle(
     BasicTextField(
         modifier = modifier
             .bringIntoViewRequester(bringIntoViewRequester)
-            .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 hasFocus = focusState.hasFocus
                 if (focusState.hasFocus) {
@@ -103,12 +91,15 @@ fun NoteContentTitle(
                 }
             },
         onTextLayout = { layoutResult = it() },
-        state = textState,
+        state = title.state,
         textStyle = MaterialTheme.typography.bodyMedium,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+        keyboardOptions = KeyboardOptions(
+            capitalization = KeyboardCapitalization.Sentences,
+            showKeyboardOnFocus = true,
+        ),
         decorator = { innerTextField ->
-            if (hint != null && textState.text.isEmpty()) {
+            if (hint != null && title.state.text.isEmpty()) {
                 Placeholder(hint = hint)
             }
             innerTextField()
@@ -118,7 +109,7 @@ fun NoteContentTitle(
 }
 
 @OptIn(ExperimentalFoundationApi::class)
-private suspend fun BringIntoViewRequester.bringIntoView(
+suspend fun BringIntoViewRequester.bringIntoView(
     textResult: TextLayoutResult?,
     selection: TextRange,
     additionalOffset: Int,
@@ -137,7 +128,7 @@ private suspend fun BringIntoViewRequester.bringIntoView(
 @Composable
 private fun Placeholder(hint: String) {
     Text(
-        modifier = Modifier.alpha(0.3f),
+        modifier = Modifier.alpha(0.5f),
         text = hint,
         style = MaterialTheme.typography.labelMedium,
         fontStyle = FontStyle.Italic,
@@ -152,9 +143,11 @@ private fun NoteContentTitlePreview() {
             title = UiNoteContent.Title(
                 id = "1",
                 position = 0,
-                text = "Kotlin is a modern programming language with a " +
-                        "lot more syntactic sugar compared to Java, and as such " +
-                        "there is equally more black magic",
+                state = TextFieldState(
+                    initialText = "Kotlin is a modern programming language with a " +
+                            "lot more syntactic sugar compared to Java, and as such " +
+                            "there is equally more black magic",
+                )
             ),
             hint = "Text",
         )

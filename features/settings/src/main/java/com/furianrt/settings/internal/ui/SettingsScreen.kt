@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -26,7 +25,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -44,10 +42,8 @@ import com.furianrt.settings.internal.ui.composables.Toolbar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
-import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import org.jetbrains.annotations.Range
 
 @Composable
 internal fun SettingsScreenInternal(navHostController: NavHostController) {
@@ -64,24 +60,17 @@ internal fun SettingsScreenInternal(navHostController: NavHostController) {
         }
     }
 
-    ScreenContent(
-        modifier = Modifier.fillMaxSize(),
-        uiState = uiState,
-        onEvent = viewModel::onEvent,
-    )
+    ScreenContent(uiState, viewModel::onEvent)
 }
 
 @Composable
 private fun ScreenContent(
     uiState: SettingsUiState,
     onEvent: (event: SettingsEvent) -> Unit,
-    modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    Surface(modifier = modifier) {
-        Column(
-            modifier = Modifier.systemBarsPadding(),
-        ) {
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.systemBarsPadding()) {
             Toolbar(
                 modifier = Modifier.drawBehind {
                     if (scrollState.canScrollBackward) {
@@ -170,6 +159,7 @@ private fun GeneralButton(
         Icon(
             painter = iconPainter,
             contentDescription = title,
+            tint = Color.Unspecified,
         )
         Text(
             text = title,
@@ -196,6 +186,7 @@ private fun ThemeSelector(
             Icon(
                 painter = painterResource(id = R.drawable.ic_theme),
                 contentDescription = stringResource(id = R.string.settings_theme_title),
+                tint = Color.Unspecified,
             )
             Text(
                 text = stringResource(id = R.string.settings_theme_title),
@@ -220,7 +211,7 @@ private fun ThemeSelector(
                         .size(50.dp)
                         .clip(shape)
                         .background(Color(colors[index]))
-                        .applyIf(index == 1) { border(1.dp, Color.White, shape) }
+                        .applyIf(index == 1) { Modifier.border(1.dp, Color.White, shape) }
                         .clickable(onClick = onSelected)
                 )
             }
@@ -245,6 +236,7 @@ private fun LanguageSelector(
         Icon(
             painter = painterResource(id = R.drawable.ic_language),
             contentDescription = stringResource(id = R.string.settings_language_title),
+            tint = Color.Unspecified,
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -286,7 +278,8 @@ private fun Rating(
                     } else {
                         painterResource(id = R.drawable.ic_star_outlined)
                     },
-                    contentDescription = null,
+                    contentDescription = (index + 1).toString(),
+                    tint = Color.Unspecified,
                 )
             }
         }

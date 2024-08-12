@@ -1,5 +1,6 @@
 package com.furianrt.noteview.internal.ui.container
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,7 +35,6 @@ import com.furianrt.noteview.internal.ui.entites.ContainerScreenNote
 import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.expand
-import com.furianrt.uikit.extensions.isCollapsed
 import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
@@ -120,7 +120,7 @@ private fun SuccessScreen(
 
     LaunchedEffect(uiState.isInEditMode) {
         if (uiState.isInEditMode) {
-            toolbarScaffoldState.expand()
+            toolbarScaffoldState.expand(duration = 0)
         }
     }
 
@@ -129,6 +129,11 @@ private fun SuccessScreen(
     LaunchedEffect(key1 = pagerState.currentPage) {
         date = uiState.notes.getOrNull(pagerState.currentPage)?.date
     }
+
+    BackHandler(
+        enabled = uiState.isInEditMode,
+        onBack = { onEvent(ContainerEvent.OnButtonEditClick) },
+    )
 
     CollapsingToolbarScaffold(
         modifier = Modifier.fillMaxSize(),
@@ -194,9 +199,9 @@ private fun EmptyScreen(
 
 @Preview
 @Composable
-private fun ContainerScreenSuccessPreview() {
+private fun ScreenSuccessPreview() {
     SerenityTheme {
-        ScreenContent(
+        SuccessScreen(
             uiState = ContainerUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,

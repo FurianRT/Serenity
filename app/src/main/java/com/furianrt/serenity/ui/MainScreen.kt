@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,12 +66,15 @@ internal fun MainScreen(
                     is MainEffect.OpenNoteScreen -> {
                         navHostController.navigate(
                             route = "Note/${effect.noteId}",
-                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build()
+                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                         )
                     }
 
                     is MainEffect.OpenSettingsScreen -> {
-                        navHostController.navigate("Settings")
+                        navHostController.navigate(
+                            route = "Settings",
+                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
+                        )
                     }
                 }
             }
@@ -205,9 +209,11 @@ private fun generatePreviewNotes() = buildImmutableList {
                     UiNoteContent.Title(
                         id = "1",
                         position = 0,
-                        text = "Kotlin is a modern programming language with a " +
-                                "lot more syntactic sugar compared to Java, and as such " +
-                                "there is equally more black magic",
+                        state = TextFieldState(
+                            initialText = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                        ),
                     ),
                 ),
             ),

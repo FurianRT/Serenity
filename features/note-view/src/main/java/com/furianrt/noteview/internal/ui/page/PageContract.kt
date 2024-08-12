@@ -16,10 +16,10 @@ internal sealed interface PageUiState {
 
 internal sealed interface PageEvent {
     data class OnEditModeStateChange(val isEnabled: Boolean) : PageEvent
-    data class OnTagClick(val tag: UiNoteTag) : PageEvent
-    data class OnTagRemoved(val tag: UiNoteTag) : PageEvent
-    data class OnTitleTextChange(val id: String, val text: String) : PageEvent
-    data class OnTitleDoneEditing(val id: String, val text: String) : PageEvent
+    data class OnTagRemoveClick(val tag: UiNoteTag.Regular) : PageEvent
+    data class OnTagDoneEditing(val tag: UiNoteTag.Template) : PageEvent
+    data object OnTagTextEntered : PageEvent
+    data object OnTagTextCleared : PageEvent
 }
 
 internal sealed interface PageEffect

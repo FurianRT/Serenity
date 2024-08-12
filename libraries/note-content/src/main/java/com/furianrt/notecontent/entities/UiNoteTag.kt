@@ -1,22 +1,24 @@
 package com.furianrt.notecontent.entities
 
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import java.util.UUID
 
 @Immutable
 sealed class UiNoteTag(
     open val id: String,
-    open val title: String,
 ) {
     @Immutable
     data class Regular(
-        override val id: String,
-        override val title: String,
+        val title: String,
         val isRemovable: Boolean,
-    ) : UiNoteTag(id, title)
+        override val id: String = UUID.randomUUID().toString(),
+    ) : UiNoteTag(id)
 
-    @Immutable
+    @Stable
     data class Template(
-        override val id: String,
-        override val title: String,
-    ) : UiNoteTag(id, title)
+        val textState: TextFieldState = TextFieldState(),
+        override val id: String = UUID.randomUUID().toString(),
+    ) : UiNoteTag(id)
 }

@@ -19,9 +19,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,11 +47,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.core.findInstance
 import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.toolspanel.Panel
+import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -73,7 +76,7 @@ internal fun PageScreen(
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
-        creationCallback = { factory -> factory.create(noteId = noteId) }
+        creationCallback = { factory -> factory.create(noteId = noteId) },
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -114,7 +117,6 @@ private fun PageScreenContent(
                 uiState = uiState,
                 onEvent = onEvent,
                 onFocusChange = onFocusChange,
-                // screenState = screenState,
                 toolbarState = toolbarState,
                 listState = listState,
                 titleScrollState = titleScrollState,
@@ -136,6 +138,7 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
+    var focusedTitleId: String? by remember { mutableStateOf(null) }
     val isListAtTop by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
@@ -197,12 +200,12 @@ private fun SuccessScreen(
             ),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(
-                count = uiState.content.count(),
-                key = { uiState.content[it].id },
-                contentType = { uiState.content[it].javaClass.name },
-            ) { index ->
-                when (val content = uiState.content[index]) {
+            itemsIndexed(
+                items = uiState.content,
+                key = { _, item -> item.id },
+                contentType = { _, item -> item.javaClass.name },
+            ) { index, item ->
+                when (item) {
                     is UiNoteContent.Title -> {
                         NoteContentTitle(
                             modifier = Modifier
@@ -210,20 +213,18 @@ private fun SuccessScreen(
                                 .padding(
                                     top = if (index == 0) 8.dp else 0.dp,
                                     start = 8.dp,
-                                    end = 8.dp
+                                    end = 8.dp,
                                 )
                                 .animateItem(),
-                            title = content,
+                            title = item,
                             hint = if (index == 0) {
                                 stringResource(id = uiR.string.note_title_hint_text)
                             } else {
                                 stringResource(id = uiR.string.note_title_hint_write_more_here)
                             },
                             isInEditMode = uiState.isInEditMode,
-                            onTitleChange = { text ->
-                                onEvent(PageEvent.OnTitleTextChange(content.id, text))
-                            },
                             onTitleFocused = { id ->
+                                focusedTitleId = id
                                 onFocusChange()
                             },
                             scrollState = titleScrollState,
@@ -234,7 +235,7 @@ private fun SuccessScreen(
                     is UiNoteContent.MediaBlock -> {
                         NoteContentMedia(
                             modifier = Modifier.animateItem(),
-                            block = content,
+                            block = item,
                             isEditable = uiState.isInEditMode,
                         )
                     }
@@ -245,11 +246,15 @@ private fun SuccessScreen(
                     NoteTags(
                         modifier = Modifier
                             .padding(start = 4.dp, end = 4.dp, top = 6.dp)
+                            .fillMaxWidth()
                             .animateItem(),
                         tags = uiState.tags,
                         isEditable = uiState.isInEditMode,
-                        onTagClick = { onEvent(PageEvent.OnTagClick(it)) },
-                        onTagRemoveClick = { onEvent(PageEvent.OnTagRemoved(it)) },
+                        toolbarHeight = toolbarState.toolbarState.minHeight,
+                        onTagRemoveClick = { onEvent(PageEvent.OnTagRemoveClick(it)) },
+                        onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
+                        onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
+                        onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
                     )
                 }
             }
@@ -262,7 +267,13 @@ private fun SuccessScreen(
             visible = uiState.isInEditMode,
             enter = fadeIn(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
             exit = fadeOut(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-            content = { Panel() }
+            content = {
+                val titleState = remember(uiState.content, focusedTitleId) {
+                    uiState.content
+                        .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }?.state
+                }
+                ActionsPanel(textFieldState = titleState ?: TextFieldState())
+            }
         )
     }
 }
@@ -289,9 +300,11 @@ private fun SuccessScreenPreview() {
                     UiNoteContent.Title(
                         id = "1",
                         position = 0,
-                        text = "Kotlin is a modern programming language with a " +
-                                "lot more syntactic sugar compared to Java, and as such " +
-                                "there is equally more black magic",
+                        state = TextFieldState(
+                            initialText = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                        ),
                     ),
                 ),
             ),

@@ -74,10 +74,6 @@ internal class DatabaseModule {
 
         val imageUrls = listOf(
             Pair(
-                "https://tengritravel.kz/userdata/news/2022/news_473628/thumb_m/photo_402005.jpeg",
-                1.778f,
-            ),
-            Pair(
                 "https://kartinkof.club/uploads/posts/2022-12/1670401826_kartinkof-club-p-kartinki-neobichnie-so-smislom-1.jpg",
                 1.333f,
             ),

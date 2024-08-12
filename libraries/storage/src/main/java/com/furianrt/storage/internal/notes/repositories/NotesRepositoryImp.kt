@@ -9,12 +9,10 @@ import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.storage.internal.notes.dao.NoteDao
 import com.furianrt.storage.internal.notes.dao.NoteTitleDao
-import com.furianrt.storage.internal.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.notes.entities.EntryNote
 import com.furianrt.storage.internal.notes.entities.LinkedNote
 import com.furianrt.storage.internal.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.notes.mappers.toEntryNoteTitle
-import com.furianrt.storage.internal.notes.mappers.toEntryNoteToTag
 import com.furianrt.storage.internal.notes.mappers.toLocalNote
 import com.furianrt.storage.internal.notes.mappers.toLocalSimpleNote
 import kotlinx.coroutines.flow.Flow
@@ -26,19 +24,20 @@ internal class NotesRepositoryImp @Inject constructor(
     private val noteTitleDao: NoteTitleDao,
     private val tagsRepository: TagsRepository,
     private val imagesRepository: ImagesRepository,
-    private val noteToTagDao: NoteToTagDao,
     private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
     override suspend fun upsertNote(note: LocalNote) = transactionsHelper.startTransaction {
         noteDao.upsert(note.toEntryNote())
-        note.tags.forEach { upsertTag(note.id, it) }
+        note.tags.forEach { tag ->
+            tagsRepository.upsert(noteId = note.id, tag = tag, inTransaction = false)
+        }
         note.content.forEach { upsertNoteContent(note.id, it) }
     }
 
     override suspend fun deleteNote(note: LocalNote) = transactionsHelper.startTransaction {
         noteDao.delete(note.toEntryNote()) // TODO удалять еще и файлы картинок
-        tagsRepository.deleteTagsWithoutNotes()
+        tagsRepository.deleteUnusedTags()
     }
 
     override suspend fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllLinkedNotes()
@@ -66,12 +65,6 @@ internal class NotesRepositoryImp @Inject constructor(
         noteId: String,
         titles: List<LocalNote.Content.Title>,
     ) = transactionsHelper.startTransaction { titles.forEach { upsertNoteTitle(noteId, it) } }
-
-    private suspend fun upsertTag(noteId: String, tag: LocalNote.Tag) =
-        transactionsHelper.startTransaction {
-            tagsRepository.upsert(tag)
-            noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
-        }
 
     private suspend fun upsertNoteContent(noteId: String, content: LocalNote.Content) {
         when (content) {

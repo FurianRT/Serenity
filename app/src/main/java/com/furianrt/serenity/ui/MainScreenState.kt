@@ -12,20 +12,19 @@ import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 private const val TOOLBAR_EXPAND_DURATION = 450
+private const val ANIMATED_SCROLL_INDEX = 10
 
 @Stable
 internal class MainScreenState(
     val listState: LazyListState,
     val toolbarState: CollapsingToolbarScaffoldState,
 ) {
-    suspend fun scrollToTop() {
-        coroutineScope {
-            if (listState.firstVisibleItemIndex > 6) {
-                listState.scrollToItem(6)
-            }
-            launch { listState.animateScrollToItem(0) }
-            launch { toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
+    suspend fun scrollToTop() = coroutineScope {
+        if (listState.firstVisibleItemIndex > ANIMATED_SCROLL_INDEX) {
+            listState.scrollToItem(ANIMATED_SCROLL_INDEX)
         }
+        launch { listState.animateScrollToItem(0) }
+        launch { toolbarState.expand(TOOLBAR_EXPAND_DURATION) }
     }
 }
 

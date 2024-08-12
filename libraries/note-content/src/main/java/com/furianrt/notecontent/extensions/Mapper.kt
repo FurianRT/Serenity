@@ -1,5 +1,6 @@
 package com.furianrt.notecontent.extensions
 
+import androidx.compose.foundation.text.input.TextFieldState
 import com.furianrt.core.mapImmutable
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
@@ -30,13 +31,13 @@ fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.ImagesBlock
 fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
     id = id,
     position = position,
-    text = text,
+    state = TextFieldState(initialText = text),
 )
 
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
     id = id,
     position = position,
-    text = text,
+    text = state.text.toString(),
 )
 
 fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Media.Image(
@@ -68,7 +69,13 @@ fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(
     isRemovable = isRemovable,
 )
 
-fun LocalNote.Tag.toTemplateUiNoteTag() = UiNoteTag.Template(
+fun UiNoteTag.Template.toLocalNoteTag() = LocalNote.Tag(
     id = id,
-    title = title,
+    title = textState.text.toString(),
+)
+
+fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
+    id = id,
+    title = textState.text.toString(),
+    isRemovable = isRemovable,
 )

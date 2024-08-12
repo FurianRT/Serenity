@@ -3,6 +3,7 @@ package com.furianrt.serenity.ui.composables
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -81,15 +82,17 @@ private fun NoteItemPreview() {
                 tags = persistentListOf(
                     UiNoteTag.Regular(id = "0", title = "Programming", isRemovable = false),
                     UiNoteTag.Regular(id = "1", title = "Android", isRemovable = false),
-                    UiNoteTag.Template(id = "2", title = "Kotlin"),
+                    UiNoteTag.Template(id = "2"),
                 ),
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",
                         position = 0,
-                        text = "Kotlin is a modern programming language with a " +
-                                "lot more syntactic sugar compared to Java, and as such " +
-                                "there is equally more black magic",
+                        state = TextFieldState(
+                            initialText = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                        ),
                     ),
                     UiNoteContent.MediaBlock(
                         id = "e2e2e",

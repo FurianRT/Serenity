@@ -8,3 +8,21 @@ inline fun <T, R> Iterable<T>.mapImmutable(transform: (T) -> R): ImmutableList<R
 
 inline fun <E> buildImmutableList(builderAction: MutableList<E>.() -> Unit): ImmutableList<E> =
     buildList(builderAction).toImmutableList()
+
+inline fun <reified R> Iterable<*>.findInstance(predicate: (R) -> Boolean): R? {
+    for (element in this) {
+        if (element is R && predicate(element)) {
+            return element
+        }
+    }
+    return null
+}
+
+fun <T> Iterable<T>.lastIndexOf(predicate: (T) -> Boolean): Int {
+    var lastIndex = -1
+    for ((index, item) in this.withIndex()) {
+        if (predicate(item))
+            lastIndex = index
+    }
+    return lastIndex
+}

@@ -3,15 +3,14 @@ package com.furianrt.noteview.internal.ui.container
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.mapImmutable
+import com.furianrt.core.updateState
 import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
 import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
@@ -41,7 +40,7 @@ internal class ContainerViewModel @Inject constructor(
     fun onEvent(event: ContainerEvent) {
         when (event) {
             is ContainerEvent.OnButtonEditClick -> {
-                _state.update { it.toggleEditModeState() }
+                _state.updateState<ContainerUiState.Success> { it.toggleEditMode() }
             }
 
             is ContainerEvent.OnButtonBackClick -> {
@@ -49,7 +48,7 @@ internal class ContainerViewModel @Inject constructor(
             }
 
             is ContainerEvent.OnPageTitleFocusChange -> {
-                _state.update { it.enableEditModeState() }
+                _state.updateState<ContainerUiState.Success> { it.enableEditMode() }
             }
         }
     }
@@ -73,21 +72,13 @@ internal class ContainerViewModel @Inject constructor(
                                 isInEditMode = false,
                             )
                         }
-
-
                     }
                 }
             }
         }
     }
 
-    private fun ContainerUiState.toggleEditModeState() = when (this) {
-        is ContainerUiState.Success -> copy(isInEditMode = !isInEditMode)
-        else -> this
-    }
+    private fun ContainerUiState.Success.toggleEditMode() = copy(isInEditMode = !isInEditMode)
 
-    private fun ContainerUiState.enableEditModeState() = when (this) {
-        is ContainerUiState.Success -> copy(isInEditMode = true)
-        else -> this
-    }
+    private fun ContainerUiState.Success.enableEditMode() = copy(isInEditMode = true)
 }

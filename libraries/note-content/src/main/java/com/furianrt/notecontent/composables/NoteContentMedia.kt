@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,23 +19,20 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.notecontent.entities.UiNoteContent.Title
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
-import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable
@@ -49,10 +45,10 @@ fun NoteContent(
 
 }
 
-@Composable
+/*@Composable
 fun Title.toAnnotatedString() = buildAnnotatedString {
     append(text)
-}
+}*/
 
 @Composable
 fun NoteContentMedia(
@@ -217,6 +213,7 @@ private fun ImageItem(
         AsyncImage(
             modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
             model = ImageRequest.Builder(LocalContext.current).data(image.uri).build(),
+            placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
             contentDescription = null,
             contentScale = contentScale,
         )
@@ -232,6 +229,7 @@ private fun ImageItem(
                     drawRect(color = Color.Black, alpha = 0.4f)
                 },
                 model = ImageRequest.Builder(LocalContext.current).data(image.uri).build(),
+                placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
                 contentDescription = null,
                 contentScale = contentScale,
             )
@@ -246,9 +244,25 @@ private fun ImageItem(
     }
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
-private fun NoteContentMediaPreview() {
+private fun NoteContentOneMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.5f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentTwoMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
@@ -256,6 +270,107 @@ private fun NoteContentMediaPreview() {
                 position = 0,
                 media = buildImmutableList {
                     add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentThreeMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 0.4f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentFourMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 0.4f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.8f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentFiveMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentSixMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.5f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.9f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                },
+            ),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun NoteContentSevenMediaPreview() {
+    SerenityTheme {
+        NoteContentMedia(
+            block = MediaBlock(
+                id = "1",
+                position = 0,
+                media = buildImmutableList {
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.5f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
+                    add(MediaBlock.Media.Image(id = "1", uri = "", position = 0, ratio = 1.2f))
                 },
             ),
         )
