@@ -41,7 +41,6 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.coroutines.launch
-import com.furianrt.uikit.R as uiR
 
 private const val ANIM_OFFSET_DURATION = 500
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
@@ -172,7 +171,7 @@ private fun ButtonScrollToTop(
             },
         ) {
             Text(
-                text = stringResource(id = uiR.string.button_scroll_to_top_title),
+                text = stringResource(id = R.string.button_scroll_to_top_title),
                 style = MaterialTheme.typography.bodySmall,
             )
         }

@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -24,7 +25,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -33,21 +36,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.CacheDrawScope
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.assistant.R
 import com.furianrt.core.findInstance
+import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
+import com.furianrt.mediaselector.api.rememberMediaSelectorState
 import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
@@ -59,11 +68,11 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.persistentListOf
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
-import com.furianrt.uikit.R as uiR
 
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 private const val TAGS_ITEM_KEY = "tags"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PageScreen(
     noteId: String,
@@ -72,7 +81,6 @@ internal fun PageScreen(
     toolbarState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
     titleScrollState: ScrollState,
-    modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
@@ -80,35 +88,46 @@ internal fun PageScreen(
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
+    val mediaSelectorState = rememberMediaSelectorState()
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
-
+            when (effect) {
+                is PageEffect.OpenMediaSelector -> mediaSelectorState.show()
+            }
         }
     }
     LaunchedEffect(isInEditMode) {
         viewModel.onEvent(PageEvent.OnEditModeStateChange(isInEditMode))
     }
 
-    PageScreenContent(
-        modifier = modifier,
-        uiState = uiState,
-        toolbarState = toolbarState,
-        listState = listState,
-        titleScrollState = titleScrollState,
-        onEvent = viewModel::onEvent,
-        onFocusChange = onFocusChange,
-    )
+    Scaffold(
+        contentWindowInsets = WindowInsets.statusBars,
+    ) { paddingValues ->
+        PageScreenContent(
+            uiState = uiState,
+            toolbarState = toolbarState,
+            listState = listState,
+            titleScrollState = titleScrollState,
+            onEvent = viewModel::onEvent,
+            onFocusChange = onFocusChange,
+        )
+        MediaSelectorBottomSheet(
+            modifier = Modifier.padding(paddingValues),
+            state = mediaSelectorState,
+        )
+    }
 }
 
 @Composable
 private fun PageScreenContent(
-    modifier: Modifier,
     uiState: PageUiState,
     toolbarState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
     titleScrollState: ScrollState,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     when (uiState) {
         is PageUiState.Success ->
@@ -144,40 +163,26 @@ private fun SuccessScreen(
             listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
         }
     }
-    val density = LocalDensity.current
-    val layoutDirection = LocalLayoutDirection.current
-    val background = MaterialTheme.colorScheme.tertiary
-    val roundedShape = if (isListAtTop) {
-        RoundedCornerShape(8.dp)
-    } else {
-        RoundedCornerShape(
-            topStart = 0.dp,
-            topEnd = 0.dp,
-            bottomEnd = 8.dp,
-            bottomStart = 8.dp,
-        )
-    }
     Column(
-        modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-            .drawBehind {
-                val resultSize = size.copy(
-                    height = if (uiState.isInEditMode) {
+            .drawNoteBackground(
+                shape = if (isListAtTop) {
+                    RoundedCornerShape(8.dp)
+                } else {
+                    RoundedCornerShape(bottomEnd = 8.dp, bottomStart = 8.dp)
+                },
+                color = MaterialTheme.colorScheme.tertiary,
+                density = LocalDensity.current,
+                height = {
+                    if (uiState.isInEditMode) {
                         toolsPanelRect.bottom - toolbarState.offsetYInverted
                     } else {
                         size.height
                     }
-                )
-                drawOutline(
-                    outline = roundedShape.createOutline(
-                        size = resultSize,
-                        layoutDirection = layoutDirection,
-                        density = density
-                    ),
-                    color = background
-                )
-            }
+                }
+            )
             .imePadding(),
     ) {
         LazyColumn(
@@ -206,39 +211,35 @@ private fun SuccessScreen(
                 contentType = { _, item -> item.javaClass.name },
             ) { index, item ->
                 when (item) {
-                    is UiNoteContent.Title -> {
-                        NoteContentTitle(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    top = if (index == 0) 8.dp else 0.dp,
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                )
-                                .animateItem(),
-                            title = item,
-                            hint = if (index == 0) {
-                                stringResource(id = uiR.string.note_title_hint_text)
-                            } else {
-                                stringResource(id = uiR.string.note_title_hint_write_more_here)
-                            },
-                            isInEditMode = uiState.isInEditMode,
-                            onTitleFocused = { id ->
-                                focusedTitleId = id
-                                onFocusChange()
-                            },
-                            scrollState = titleScrollState,
-                            toolbarHeight = toolbarState.toolbarState.minHeight,
-                        )
-                    }
+                    is UiNoteContent.Title -> NoteContentTitle(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                top = if (index == 0) 8.dp else 0.dp,
+                                start = 8.dp,
+                                end = 8.dp,
+                            )
+                            .animateItem(),
+                        title = item,
+                        hint = if (index == 0) {
+                            stringResource(id = R.string.note_title_hint_text)
+                        } else {
+                            stringResource(id = R.string.note_title_hint_write_more_here)
+                        },
+                        isInEditMode = uiState.isInEditMode,
+                        onTitleFocused = { id ->
+                            focusedTitleId = id
+                            onFocusChange()
+                        },
+                        scrollState = titleScrollState,
+                        focusOffset = toolbarState.toolbarState.minHeight,
+                    )
 
-                    is UiNoteContent.MediaBlock -> {
-                        NoteContentMedia(
-                            modifier = Modifier.animateItem(),
-                            block = item,
-                            isEditable = uiState.isInEditMode,
-                        )
-                    }
+                    is UiNoteContent.MediaBlock -> NoteContentMedia(
+                        modifier = Modifier.animateItem(),
+                        block = item,
+                        isEditable = uiState.isInEditMode,
+                    )
                 }
             }
             if (uiState.tags.isNotEmpty()) {
@@ -272,8 +273,30 @@ private fun SuccessScreen(
                     uiState.content
                         .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }?.state
                 }
-                ActionsPanel(textFieldState = titleState ?: TextFieldState())
+                ActionsPanel(
+                    textFieldState = titleState ?: TextFieldState(),
+                    onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+                )
             }
+        )
+    }
+}
+
+private fun Modifier.drawNoteBackground(
+    shape: Shape,
+    color: Color,
+    density: Density,
+    height: CacheDrawScope.() -> Float,
+) = drawWithCache {
+    val resultSize = size.copy(height = height())
+    onDrawBehind {
+        drawOutline(
+            outline = shape.createOutline(
+                size = resultSize,
+                layoutDirection = layoutDirection,
+                density = density
+            ),
+            color = color
         )
     }
 }

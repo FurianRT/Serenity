@@ -20,6 +20,9 @@ internal sealed interface PageEvent {
     data class OnTagDoneEditing(val tag: UiNoteTag.Template) : PageEvent
     data object OnTagTextEntered : PageEvent
     data object OnTagTextCleared : PageEvent
+    data object OnSelectMediaClick : PageEvent
 }
 
-internal sealed interface PageEffect
+internal sealed interface PageEffect {
+    data object OpenMediaSelector : PageEffect
+}

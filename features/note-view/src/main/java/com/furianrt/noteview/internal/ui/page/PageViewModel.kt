@@ -17,6 +17,7 @@ import com.furianrt.noteview.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
+import com.furianrt.noteview.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.noteview.internal.ui.page.PageEvent.*
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
@@ -27,8 +28,10 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.map
@@ -45,8 +48,8 @@ internal class PageViewModel @AssistedInject constructor(
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
     val state: StateFlow<PageUiState> = _state.asStateFlow()
 
-    private val _effect = Channel<PageEffect>()
-    val effect = _effect.receiveAsFlow()
+    private val _effect = MutableSharedFlow<PageEffect>(extraBufferCapacity = 1)
+    val effect = _effect.asSharedFlow()
 
     private val isInEditMode: Boolean
         get() = (_state.value as? PageUiState.Success)?.isInEditMode.orFalse()
@@ -57,44 +60,51 @@ internal class PageViewModel @AssistedInject constructor(
 
     fun onEvent(event: PageEvent) {
         when (event) {
-            is OnEditModeStateChange -> onEditModeStateChange(event.isEnabled)
+            is OnEditModeStateChange -> changeEditModeState(event.isEnabled)
+            is OnTagRemoveClick -> removeTag(event.tag)
+            is OnTagDoneEditing -> addTag(event.tag)
+            is OnTagTextEntered -> addSecondTagTemplate()
+            is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
+            is OnSelectMediaClick -> _effect.tryEmit(OpenMediaSelector)
+        }
+    }
 
-            is OnTagRemoveClick -> {
-                _state.updateState<PageUiState.Success> { it.removeTag(event.tag) }
-                launch { tagsRepository.deleteForNote(noteId, event.tag.id) }
+    private fun removeTag(tag: UiNoteTag.Regular) {
+        _state.updateState<PageUiState.Success> { it.removeTag(tag) }
+        launch { tagsRepository.deleteForNote(noteId, tag.id) }
+    }
+
+    private fun addTag(tag: UiNoteTag.Template) {
+        if (tag.textState.text.isNotBlank()) {
+            _state.updateState<PageUiState.Success> { currentState ->
+                currentState.addTag(
+                    tag = tag.toRegular(isInEditMode),
+                    addTemplate = isInEditMode,
+                )
             }
+            launch { tagsRepository.upsert(noteId, tag.toLocalNoteTag()) }
+        }
+    }
 
-            is OnTagDoneEditing -> {
-                if (event.tag.textState.text.isNotBlank()) {
-                    _state.updateState<PageUiState.Success> { currentState ->
-                        currentState.addTag(
-                            tag = event.tag.toRegular(isInEditMode),
-                            addTemplate = isInEditMode,
-                        )
-                    }
-                    launch { tagsRepository.upsert(noteId, event.tag.toLocalNoteTag()) }
-                }
-            }
+    private fun addSecondTagTemplate() {
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(tags = currentState.tags.addSecondTagTemplate())
+        }
+    }
 
-            is OnTagTextEntered -> _state.updateState<PageUiState.Success> { currentState ->
-                currentState.copy(tags = currentState.tags.addSecondTagTemplate())
-            }
-
-            is OnTagTextCleared -> {
-                val tags = (_state.value as? PageUiState.Success)?.tags ?: return
-                val hasTemplateTagWithText = tags.any { tag ->
-                    tag is UiNoteTag.Template && tag.textState.text.isNotBlank()
-                }
-                if (!hasTemplateTagWithText) {
-                    _state.updateState<PageUiState.Success> { currentState ->
-                        currentState.copy(tags = currentState.tags.removeSecondTagTemplate())
-                    }
-                }
+    private fun tryToRemoveSecondTagTemplate() {
+        val tags = (_state.value as? PageUiState.Success)?.tags ?: return
+        val hasTemplateTagWithText = tags.any { tag ->
+            tag is UiNoteTag.Template && tag.textState.text.isNotBlank()
+        }
+        if (!hasTemplateTagWithText) {
+            _state.updateState<PageUiState.Success> { currentState ->
+                currentState.copy(tags = currentState.tags.removeSecondTagTemplate())
             }
         }
     }
 
-    private fun onEditModeStateChange(isEnabled: Boolean) {
+    private fun changeEditModeState(isEnabled: Boolean) {
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(
                 content = with(currentState.content) {

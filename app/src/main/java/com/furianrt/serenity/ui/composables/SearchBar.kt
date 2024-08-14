@@ -15,8 +15,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.serenity.R
 import com.furianrt.uikit.theme.SerenityTheme
-import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun SearchBar(
@@ -35,7 +35,7 @@ internal fun SearchBar(
             modifier = Modifier
                 .alpha(0.6f)
                 .padding(horizontal = 16.dp),
-            text = stringResource(id = uiR.string.search_bar_title),
+            text = stringResource(id = R.string.search_bar_title),
             style = MaterialTheme.typography.labelMedium,
         )
     }

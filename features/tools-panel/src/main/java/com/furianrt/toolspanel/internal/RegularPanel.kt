@@ -28,7 +28,8 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 @Composable
 internal fun RegularPanelInternal(
     modifier: Modifier = Modifier,
-    textFieldState: TextFieldState = rememberTextFieldState(),
+    textFieldState: TextFieldState,
+    onSelectMediaClick: () -> Unit,
 ) {
     val undoRedoState = remember(textFieldState) { textFieldState.undoState }
     Row(
@@ -59,7 +60,7 @@ internal fun RegularPanelInternal(
             )
         }
         IconButton(
-            onClick = { },
+            onClick = onSelectMediaClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_camera),
@@ -105,6 +106,9 @@ internal fun RegularPanelInternal(
 @Composable
 private fun RegularPanelPreview() {
     SerenityTheme {
-        RegularPanelInternal()
+        RegularPanelInternal(
+            textFieldState = rememberTextFieldState(),
+            onSelectMediaClick = {},
+        )
     }
 }

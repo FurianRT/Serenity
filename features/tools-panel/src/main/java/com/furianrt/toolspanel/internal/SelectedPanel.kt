@@ -19,7 +19,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 @Composable
 internal fun SelectedPanelInternal(
     modifier: Modifier = Modifier,
-    textFieldState: TextFieldState = rememberTextFieldState(),
+    textFieldState: TextFieldState,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -87,6 +87,8 @@ internal fun SelectedPanelInternal(
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
-        SelectedPanelInternal()
+        SelectedPanelInternal(
+            textFieldState = rememberTextFieldState(),
+        )
     }
 }

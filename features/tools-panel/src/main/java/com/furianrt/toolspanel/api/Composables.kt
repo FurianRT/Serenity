@@ -19,6 +19,7 @@ import com.furianrt.toolspanel.internal.SelectedPanelInternal
 @Composable
 fun ActionsPanel(
     textFieldState: TextFieldState,
+    onSelectMediaClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hasMultiSelection by remember(textFieldState) {
@@ -35,9 +36,14 @@ fun ActionsPanel(
         label = "ActionsPanel"
     ) { targetState ->
         if (targetState) {
-            SelectedPanelInternal(textFieldState = textFieldState)
+            SelectedPanelInternal(
+                textFieldState = textFieldState,
+            )
         } else {
-            RegularPanelInternal(textFieldState = textFieldState)
+            RegularPanelInternal(
+                textFieldState = textFieldState,
+                onSelectMediaClick = onSelectMediaClick,
+            )
         }
     }
 }

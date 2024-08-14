@@ -4,10 +4,15 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,6 +26,14 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.persistentListOf
 
+private val cardRippleAlpha = RippleAlpha(
+    draggedAlpha = 0.05f,
+    focusedAlpha = 0.05f,
+    hoveredAlpha = 0.05f,
+    pressedAlpha = 0.05f,
+)
+
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NoteListItem(
     note: MainScreenNote,
@@ -28,46 +41,48 @@ internal fun NoteListItem(
     onTagClick: (tag: UiNoteTag) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        onClick = { onClick(note) },
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
-        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-    ) {
-        note.content.forEachIndexed { index, item ->
-            key(item.id) {
-                when (item) {
-                    is UiNoteContent.Title -> {
-                        NoteContentTitle(
-                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                            title = item,
-                        )
-                    }
+    val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
+        Card(
+            modifier = modifier.fillMaxWidth(),
+            onClick = { onClick(note) },
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        ) {
+            note.content.forEachIndexed { index, item ->
+                key(item.id) {
+                    when (item) {
+                        is UiNoteContent.Title -> {
+                            NoteContentTitle(
+                                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                                title = item,
+                            )
+                        }
 
-                    is UiNoteContent.MediaBlock -> {
-                        NoteContentMedia(
-                            modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
-                            block = item,
-                        )
+                        is UiNoteContent.MediaBlock -> {
+                            NoteContentMedia(
+                                modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                                block = item,
+                            )
+                        }
                     }
                 }
             }
+            NoteTags(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = if (note.tags.isEmpty()) 0.dp else 16.dp,
+                        bottom = 10.dp,
+                    ),
+                tags = note.tags,
+                onTagClick = onTagClick,
+                date = note.date,
+            )
         }
-
-        NoteTags(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    start = 4.dp,
-                    end = 4.dp,
-                    top = if (note.tags.isEmpty()) 0.dp else 16.dp,
-                    bottom = 10.dp,
-                ),
-            tags = note.tags,
-            onTagClick = onTagClick,
-            date = note.date,
-        )
     }
 }
 
@@ -102,7 +117,7 @@ private fun NoteItemPreview() {
                                 id = "femkfemkf",
                                 position = 0,
                                 ratio = 1.5f,
-                                uri = "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg"
+                                uri = "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg",
                             )
                         ),
                     ),

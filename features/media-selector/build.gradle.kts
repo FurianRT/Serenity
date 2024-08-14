@@ -1,22 +1,15 @@
 plugins {
     id("convention.android")
-    alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "com.furianrt.assistant"
+    namespace = "com.furianrt.mediaselector"
 }
 
 dependencies {
-    implementation(projects.features.toolsPanel)
-    implementation(projects.features.mediaSelector)
-
     implementation(projects.libraries.core)
-    implementation(projects.libraries.uikit)
-    implementation(projects.libraries.storage)
-    implementation(projects.libraries.noteContent)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
@@ -24,8 +17,8 @@ dependencies {
     implementation(libs.material3Size)
 
     implementation(libs.composeActivity)
+    implementation(libs.composeFoundation)
     implementation(libs.composeUi)
-    implementation(libs.navAnimation)
     implementation(libs.composeMaterial)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
@@ -38,9 +31,7 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.collapsingToolbar)
-
-    implementation(libs.lottie)
-
     implementation(libs.immutableCollections)
+
+    implementation(libs.coil)
 }

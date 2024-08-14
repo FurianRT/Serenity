@@ -18,8 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.SolidColor
@@ -29,7 +27,6 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.uikit.extensions.cursorCoordinates
@@ -43,7 +40,7 @@ fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
     scrollState: ScrollState = rememberScrollState(),
-    toolbarHeight: Int = 0,
+    focusOffset: Int = 0,
     hint: String? = null,
     isInEditMode: Boolean? = null,
     onTitleFocused: (id: String) -> Unit = {},
@@ -63,13 +60,13 @@ fun NoteContentTitle(
     var hasFocus by remember { mutableStateOf(false) }
 
     val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
-    val focusMargin = with(LocalDensity.current) { 8.dp.toPx().toInt() }
+    val focusMargin = with(LocalDensity.current) { 8.dp.toPx().toInt() } + focusOffset
     LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = title.state.selection,
-                additionalOffset = focusMargin + toolbarHeight,
+                additionalOffset = focusMargin,
             )
         }
     }

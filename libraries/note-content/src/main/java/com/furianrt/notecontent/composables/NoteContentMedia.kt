@@ -28,27 +28,11 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
-import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-
-@Composable
-fun NoteContent(
-    content: ImmutableList<UiNoteContent>,
-    modifier: Modifier = Modifier,
-    isEditable: Boolean = false,
-) {
-
-
-}
-
-/*@Composable
-fun Title.toAnnotatedString() = buildAnnotatedString {
-    append(text)
-}*/
 
 @Composable
 fun NoteContentMedia(

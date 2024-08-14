@@ -85,10 +85,10 @@ fun SerenityTheme(
         typography = Typography,
     ) {
         val rippleAlpha = RippleAlpha(
-            draggedAlpha = 0.05f,
-            focusedAlpha = 0.05f,
-            hoveredAlpha = 0.05f,
-            pressedAlpha = 0.05f,
+            draggedAlpha = 0.1f,
+            focusedAlpha = 0.1f,
+            hoveredAlpha = 0.1f,
+            pressedAlpha = 0.1f,
         )
         val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, rippleAlpha)
         CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig, content)

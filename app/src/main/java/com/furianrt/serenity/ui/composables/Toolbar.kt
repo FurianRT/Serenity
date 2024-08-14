@@ -103,7 +103,7 @@ private fun SettingsButton(
                 onClick()
             },
         painter = painterResource(id = R.drawable.ic_settings),
-        contentDescription = stringResource(id = uiR.string.settings_title),
+        contentDescription = null,
         tint = MaterialTheme.colorScheme.onPrimary,
     )
 }
