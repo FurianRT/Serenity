@@ -1,8 +1,11 @@
 package com.furianrt.serenity.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
@@ -24,6 +27,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
+private val SYSTEM_BARS_COLOR = Color.argb(0x4D, 0x1b, 0x1b, 0x1b)
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity() {
@@ -41,7 +45,17 @@ internal class MainActivity : ComponentActivity() {
                     .scaleX(1.1f)
                     .scaleY(1.1f)
                     .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
+
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+                    navigationBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+                )
             }
+
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+            navigationBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+        )
 
         setContent {
             SerenityTheme {

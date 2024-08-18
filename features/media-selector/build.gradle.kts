@@ -36,4 +36,6 @@ dependencies {
 
     implementation(libs.coil)
     implementation(libs.coilVideo)
+
+    implementation(libs.permissions)
 }

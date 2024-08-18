@@ -51,6 +51,7 @@ composeToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", ver
 composeTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
 
 navAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanist" }
 
 constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayout" }
 

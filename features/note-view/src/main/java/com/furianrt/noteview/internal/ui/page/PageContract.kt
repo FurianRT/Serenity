@@ -21,8 +21,10 @@ internal sealed interface PageEvent {
     data object OnTagTextEntered : PageEvent
     data object OnTagTextCleared : PageEvent
     data object OnSelectMediaClick : PageEvent
+    data object OnMediaPermissionsSelected : PageEvent
 }
 
 internal sealed interface PageEffect {
+    data object RequestStoragePermissions : PageEffect
     data object OpenMediaSelector : PageEffect
 }

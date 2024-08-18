@@ -17,13 +17,10 @@ import com.furianrt.noteview.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
-import com.furianrt.noteview.internal.ui.page.PageEffect.OpenMediaSelector
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnEditModeStateChange
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnSelectMediaClick
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagDoneEditing
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagRemoveClick
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextCleared
-import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextEntered
+import com.furianrt.noteview.internal.ui.page.PageEffect.*
+import com.furianrt.noteview.internal.ui.page.PageEvent.*
+import com.furianrt.storage.api.entities.MediaPermissionStatus
+import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.uikit.extensions.launch
@@ -46,6 +43,7 @@ import kotlinx.coroutines.flow.update
 internal class PageViewModel @AssistedInject constructor(
     private val notesRepository: NotesRepository,
     private val tagsRepository: TagsRepository,
+    private val deviceMediaRepository: DeviceMediaRepository,
     @Assisted private val noteId: String,
 ) : ViewModel() {
 
@@ -69,7 +67,8 @@ internal class PageViewModel @AssistedInject constructor(
             is OnTagDoneEditing -> addTag(event.tag)
             is OnTagTextEntered -> addSecondTagTemplate()
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
-            is OnSelectMediaClick -> _effect.tryEmit(OpenMediaSelector)
+            is OnSelectMediaClick -> tryRequestMediaPermissions()
+            is OnMediaPermissionsSelected -> tryOpenMediaSelector()
         }
     }
 
@@ -105,6 +104,20 @@ internal class PageViewModel @AssistedInject constructor(
             _state.updateState<PageUiState.Success> { currentState ->
                 currentState.copy(tags = currentState.tags.removeSecondTagTemplate())
             }
+        }
+    }
+
+    private fun tryRequestMediaPermissions() {
+        if (deviceMediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+            _effect.tryEmit(RequestStoragePermissions)
+        } else {
+            _effect.tryEmit(OpenMediaSelector)
+        }
+    }
+
+    private fun tryOpenMediaSelector() {
+        if (deviceMediaRepository.getMediaPermissionStatus() != MediaPermissionStatus.DENIED) {
+            _effect.tryEmit(OpenMediaSelector)
         }
     }
 

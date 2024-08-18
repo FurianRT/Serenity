@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.sizeIn
@@ -43,7 +44,7 @@ fun NoteContentMedia(
 ) {
     when (block.media.count()) {
         1 -> OneMediaHolder(
-            modifier = modifier.height(block.contentHeightDp.dp),
+            modifier = modifier.sizeIn(maxHeight = block.contentHeightDp.dp),
             media = block.media[0],
         )
 
@@ -97,13 +98,15 @@ private fun OneMediaHolder(
             MediaItem(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .sizeIn(minHeight = 110.dp)
                     .blur(32.dp),
                 media = media,
                 cornerRadius = 0.dp,
             )
             MediaItem(
-                modifier = Modifier.sizeIn(minHeight = 110.dp),
+                modifier = Modifier.aspectRatio(
+                    ratio = media.ratio,
+                    matchHeightConstraintsFirst = true
+                ),
                 media = media,
                 cornerRadius = 0.dp,
                 contentScale = ContentScale.Fit,
@@ -245,7 +248,7 @@ private fun NoteContentOneMediaPreview() {
                 id = "1",
                 position = 0,
                 media = buildImmutableList {
-                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.5f))
+                    add(MediaBlock.Media.Image(id = "0", uri = "", position = 0, ratio = 1.1f))
                 },
             ),
         )

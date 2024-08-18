@@ -24,7 +24,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -59,10 +58,13 @@ import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.collections.immutable.persistentListOf
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -70,6 +72,7 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 private const val TAGS_ITEM_KEY = "tags"
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun PageScreen(
     noteId: String,
@@ -86,9 +89,18 @@ internal fun PageScreen(
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
+    val storagePermissionsState = rememberMultiplePermissionsState(
+        permissions = DeviceMediaRepository.getMediaPermissionList(),
+        onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
+    )
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
+                is PageEffect.RequestStoragePermissions -> {
+                    storagePermissionsState.launchMultiplePermissionRequest()
+                }
+
                 is PageEffect.OpenMediaSelector -> navHostController.navigate(
                     route = "Sheet",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),

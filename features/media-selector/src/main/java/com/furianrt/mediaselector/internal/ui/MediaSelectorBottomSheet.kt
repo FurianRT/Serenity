@@ -3,9 +3,11 @@ package com.furianrt.mediaselector.internal.ui
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -18,11 +20,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -36,7 +40,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -50,12 +55,21 @@ import coil.decode.VideoFrameDecoder
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
+import com.furianrt.mediaselector.R
+import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.MediaSelectorUiState.*
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
+import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.collectLatest
 
-@OptIn(ExperimentalMaterial3Api::class)
+private const val PARTIAL_ACCESS_ITEM_KEY = "partial_access"
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 internal fun MediaSelectorBottomSheetInternal(
     navHostController: NavHostController,
@@ -66,11 +80,22 @@ internal fun MediaSelectorBottomSheetInternal(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+    val storagePermissionsState = rememberMultiplePermissionsState(
+        permissions = DeviceMediaRepository.getMediaPermissionList(),
+        onPermissionsResult = {
+            viewModel.onEvent(MediaSelectorEvent.OnMediaPermissionsSelected)
+        },
+    )
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
-
+                when (effect) {
+                    is MediaSelectorEffect.RequestMediaPermission -> {
+                        storagePermissionsState.launchMultiplePermissionRequest()
+                    }
+                }
             }
     }
 
@@ -93,10 +118,14 @@ internal fun MediaSelectorBottomSheetInternal(
                 .background(MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)),
         ) {
             DragHandle()
-            when (uiState) {
-                is MediaSelectorUiState.Success -> SuccessContent(uiState)
-                is MediaSelectorUiState.Loading -> LoadingContent()
-                is MediaSelectorUiState.Empty -> EmptyContent()
+            when (uiState.screenState) {
+                is ScreenState.Loading -> LoadingContent(uiState.showPartialAccessMessage)
+                is ScreenState.Empty -> EmptyContent(uiState.showPartialAccessMessage)
+                is ScreenState.Success -> SuccessContent(
+                    screenState = uiState.screenState,
+                    showPartialAccessMessage = uiState.showPartialAccessMessage,
+                    onEvent = viewModel::onEvent,
+                )
             }
         }
     }
@@ -104,30 +133,40 @@ internal fun MediaSelectorBottomSheetInternal(
 
 @Composable
 private fun SuccessContent(
-    uiState: MediaSelectorUiState.Success,
+    screenState: ScreenState.Success,
+    showPartialAccessMessage: Boolean,
+    onEvent: (event: MediaSelectorEvent) -> Unit,
 ) {
-    val columns = 3
+    val listSpanCount = 3
     LazyVerticalGrid(
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(horizontal = 4.dp),
-        state = uiState.listState,
-        columns = GridCells.Fixed(columns),
+        state = screenState.listState,
+        columns = GridCells.Fixed(listSpanCount),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues()
+        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
     ) {
+        if (showPartialAccessMessage) {
+            item(
+                key = PARTIAL_ACCESS_ITEM_KEY,
+                span = { GridItemSpan(listSpanCount) },
+                content = { PermissionsMessage(onClick = { onEvent(OnPartialAccessMessageClick) }) }
+            )
+        }
+
         items(
-            count = uiState.items.count(),
-            key = { uiState.items[it].id },
-            contentType = { uiState.items[it].javaClass.name },
+            count = screenState.items.count(),
+            key = { screenState.items[it].id },
+            contentType = { screenState.items[it].javaClass.name },
         ) { index ->
-            when (val item = uiState.items[index]) {
+            when (val item = screenState.items[index]) {
                 is MediaItem.Image -> ImageItem(
                     modifier = Modifier.clip(
                         RoundedCornerShape(
                             topStart = if (index == 0) 8.dp else 0.dp,
-                            topEnd = if (index == columns - 1) 8.dp else 0.dp,
+                            topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
                         )
                     ),
                     item = item,
@@ -137,7 +176,7 @@ private fun SuccessContent(
                     modifier = Modifier.clip(
                         RoundedCornerShape(
                             topStart = if (index == 0) 8.dp else 0.dp,
-                            topEnd = if (index == columns - 1) 8.dp else 0.dp,
+                            topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
                         )
                     ),
                     item = item,
@@ -164,7 +203,7 @@ private fun ImageItem(
                 .build(),
             contentScale = ContentScale.Crop,
             placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-            contentDescription = null
+            contentDescription = null,
         )
         CheckBox(
             modifier = Modifier
@@ -210,6 +249,38 @@ private fun VideoItem(
 }
 
 @Composable
+private fun PermissionsMessage(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .padding(horizontal = 4.dp, vertical = 8.dp)
+            .clip(RoundedCornerShape(8.dp))
+            .clickable(onClick = onClick)
+            .padding(horizontal = 4.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_warning),
+            tint = Color.Unspecified,
+            contentDescription = null,
+        )
+        Text(
+            modifier = Modifier.weight(1f),
+            text = stringResource(R.string.partial_access_message),
+            style = MaterialTheme.typography.labelMedium,
+        )
+        Icon(
+            painter = painterResource(R.drawable.ic_forward),
+            tint = Color.Unspecified,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 private fun DurationBadge(
     duration: String,
     modifier: Modifier = Modifier,
@@ -242,14 +313,18 @@ private fun CheckBox(
 }
 
 @Composable
-private fun LoadingContent() {
+private fun LoadingContent(
+    showPartialAccessMessage: Boolean,
+) {
     Spacer(
         modifier = Modifier.fillMaxSize(),
     )
 }
 
 @Composable
-private fun EmptyContent() {
+private fun EmptyContent(
+    showPartialAccessMessage: Boolean,
+) {
     Spacer(
         modifier = Modifier.fillMaxSize(),
     )
@@ -274,12 +349,14 @@ private fun DragHandle() {
     }
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
 private fun SuccessContentPreview() {
     SerenityTheme {
         SuccessContent(
-            uiState = MediaSelectorUiState.Success(
+            showPartialAccessMessage = true,
+            onEvent = {},
+            screenState = ScreenState.Success(
                 items = buildImmutableList {
                     repeat(19) { index ->
                         val item = if (index % 2 == 0) {
