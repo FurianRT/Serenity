@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.components.ButtonBack
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.theme.SerenityTheme
@@ -59,7 +60,7 @@ internal fun Toolbar(
     Box(
         modifier = modifier
             .windowInsetsPadding(WindowInsets.statusBars)
-            .height(64.dp)
+            .height(ToolbarConstants.toolbarHeight)
             .fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {

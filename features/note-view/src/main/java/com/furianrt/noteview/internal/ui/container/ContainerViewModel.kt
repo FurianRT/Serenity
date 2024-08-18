@@ -56,23 +56,21 @@ internal class ContainerViewModel @Inject constructor(
     private fun observeNotes() = launch {
         notesRepository.getAllNotesSimple().collectLatest { notes ->
             if (notes.isEmpty()) {
-                _state.update { ContainerUiState.Empty }
-            } else {
-                _state.update { localState ->
-                    when (localState) {
-                        is ContainerUiState.Success -> localState.copy(
-                            initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                            notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
-                        )
+                _effect.tryEmit(ContainerEffect.CloseScreen)
+                return@collectLatest
+            }
+            _state.update { localState ->
+                when (localState) {
+                    is ContainerUiState.Success -> localState.copy(
+                        initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                        notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                    )
 
-                        is ContainerUiState.Empty, is ContainerUiState.Loading -> {
-                            ContainerUiState.Success(
-                                initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                                notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
-                                isInEditMode = false,
-                            )
-                        }
-                    }
+                    is ContainerUiState.Loading -> ContainerUiState.Success(
+                        initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                        notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                        isInEditMode = false,
+                    )
                 }
             }
         }

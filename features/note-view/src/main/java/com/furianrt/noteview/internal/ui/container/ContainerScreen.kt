@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -29,9 +29,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
-import com.furianrt.core.buildImmutableList
 import com.furianrt.noteview.internal.ui.container.composables.Toolbar
-import com.furianrt.noteview.internal.ui.entites.ContainerScreenNote
 import com.furianrt.noteview.internal.ui.page.PageScreen
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.expand
@@ -39,6 +37,8 @@ import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
@@ -64,6 +64,7 @@ internal fun ContainerScreen(navHostController: NavHostController) {
     ScreenContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
+        navHostController = navHostController,
     )
 }
 
@@ -71,12 +72,12 @@ internal fun ContainerScreen(navHostController: NavHostController) {
 private fun ScreenContent(
     uiState: ContainerUiState,
     onEvent: (event: ContainerEvent) -> Unit,
+    navHostController: NavHostController,
 ) {
     Surface {
         when (uiState) {
-            is ContainerUiState.Success -> SuccessScreen(uiState, onEvent)
+            is ContainerUiState.Success -> SuccessScreen(uiState, onEvent, navHostController)
             is ContainerUiState.Loading -> LoadingScreen()
-            is ContainerUiState.Empty -> EmptyScreen()
         }
     }
 }
@@ -85,6 +86,7 @@ private fun ScreenContent(
 private fun SuccessScreen(
     uiState: ContainerUiState.Success,
     onEvent: (event: ContainerEvent) -> Unit,
+    navHostController: NavHostController,
 ) {
     val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
     val pagerState = rememberPagerState(
@@ -135,13 +137,20 @@ private fun SuccessScreen(
         onBack = { onEvent(ContainerEvent.OnButtonEditClick) },
     )
 
+    val isListAtTop by remember(currentPageScrollState) {
+        derivedStateOf {
+            currentPageScrollState?.firstVisibleItemIndex == 0 &&
+                    currentPageScrollState.firstVisibleItemScrollOffset == 0
+        }
+    }
+
     CollapsingToolbarScaffold(
         modifier = Modifier.fillMaxSize(),
         state = toolbarScaffoldState,
         scrollStrategy = ScrollStrategy.EnterAlways,
         enabled = !uiState.isInEditMode || !toolbarScaffoldState.isExpanded,
         toolbarModifier = Modifier.drawBehind {
-            if (currentPageScrollState?.firstVisibleItemScrollOffset != 0) {
+            if (!isListAtTop) {
                 drawBottomShadow(elevation = 8.dp)
             }
         },
@@ -177,6 +186,7 @@ private fun SuccessScreen(
                 toolbarState = toolbarScaffoldState,
                 listState = lazyListState,
                 titleScrollState = titlesScrollState,
+                navHostController = navHostController,
                 onFocusChange = { onEvent(ContainerEvent.OnPageTitleFocusChange) },
             )
         }
@@ -190,14 +200,7 @@ private fun LoadingScreen(
     Box(modifier = modifier)
 }
 
-@Composable
-private fun EmptyScreen(
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier = modifier)
-}
-
-@Preview
+@PreviewWithBackground
 @Composable
 private fun ScreenSuccessPreview() {
     SerenityTheme {
@@ -205,13 +208,10 @@ private fun ScreenSuccessPreview() {
             uiState = ContainerUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,
-                notes = buildImmutableList {
-                    add(ContainerScreenNote(id = "1", date = "30 Sep 1992"))
-                    add(ContainerScreenNote(id = "2", date = "22 Feb 2003"))
-                    add(ContainerScreenNote(id = "3", date = "03 Dec 1900"))
-                },
+                notes = persistentListOf(),
             ),
             onEvent = {},
+            navHostController = NavHostController(LocalContext.current),
         )
     }
 }

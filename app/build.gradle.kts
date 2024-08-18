@@ -27,7 +27,6 @@ dependencies {
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
-    implementation(libs.composeMaterial)
     implementation(libs.composeGraphics)
     implementation(libs.navAnimation)
     implementation(libs.composeToolingPreview)

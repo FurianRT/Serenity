@@ -1,32 +1,43 @@
 package com.furianrt.serenity.ui
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.furianrt.serenity.ui.extensions.toMainScreenNotes
 import com.furianrt.storage.api.repositories.NotesRepository
-import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 internal class MainViewModel @Inject constructor(
-    private val notesRepository: NotesRepository,
+    notesRepository: NotesRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<MainUiState>(MainUiState.Loading)
-    val state: StateFlow<MainUiState> = _state.asStateFlow()
+    val state: StateFlow<MainUiState> = notesRepository.getAllNotes()
+        .mapLatest { notes ->
+            if (notes.isEmpty()) {
+                MainUiState.Empty
+            } else {
+                MainUiState.Success(
+                    notes = notes.toMainScreenNotes(),
+                )
+            }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = MainUiState.Loading,
+        )
 
     private val _effect = MutableSharedFlow<MainEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
-
-    init {
-        observeNotes()
-    }
 
     fun onEvent(event: MainEvent) {
         when (event) {
@@ -49,20 +60,6 @@ internal class MainViewModel @Inject constructor(
             }
 
             is MainEvent.OnAddNoteClick -> {
-            }
-        }
-    }
-
-    private fun observeNotes() = launch {
-        notesRepository.getAllNotes().collectLatest { notes ->
-            if (notes.isEmpty()) {
-                _state.tryEmit(MainUiState.Empty)
-            } else {
-                _state.tryEmit(
-                    MainUiState.Success(
-                        notes = notes.toMainScreenNotes(),
-                    ),
-                )
             }
         }
     }

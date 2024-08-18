@@ -10,6 +10,8 @@ android {
 
 dependencies {
     implementation(projects.libraries.core)
+    implementation(projects.libraries.uikit)
+    implementation(projects.libraries.storage)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
@@ -19,7 +21,6 @@ dependencies {
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
-    implementation(libs.composeMaterial)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
@@ -34,4 +35,5 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.coil)
+    implementation(libs.coilVideo)
 }

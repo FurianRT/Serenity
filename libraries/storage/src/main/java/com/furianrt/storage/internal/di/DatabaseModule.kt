@@ -1,10 +1,10 @@
-package com.furianrt.storage.internal.database.di
+package com.furianrt.storage.internal.di
 
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.furianrt.storage.api.TransactionsHelper
+import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.notes.dao.ContentBlockDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao

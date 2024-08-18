@@ -13,6 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.settings.R
 import com.furianrt.uikit.components.ButtonBack
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -24,7 +25,7 @@ internal fun Toolbar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(64.dp),
+            .height(ToolbarConstants.toolbarHeight)
     ) {
         ButtonBack(
             modifier = Modifier

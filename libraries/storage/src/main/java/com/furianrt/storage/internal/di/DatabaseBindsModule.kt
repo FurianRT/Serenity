@@ -1,4 +1,4 @@
-package com.furianrt.storage.internal.database.di
+package com.furianrt.storage.internal.di
 
 import com.furianrt.storage.api.repositories.ImagesRepository
 import com.furianrt.storage.api.repositories.NotesRepository
@@ -13,7 +13,7 @@ import dagger.hilt.components.SingletonComponent
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface RepositoriesModule {
+internal interface DatabaseBindsModule {
 
     @Binds
     fun notesRepository(imp: NotesRepositoryImp): NotesRepository

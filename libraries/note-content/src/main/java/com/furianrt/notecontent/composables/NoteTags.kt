@@ -252,6 +252,7 @@ private fun Placeholder() {
         text = stringResource(id = R.string.note_content_add_tag_hint),
         style = MaterialTheme.typography.labelSmall,
         fontStyle = FontStyle.Italic,
+        maxLines = 1,
     )
 }
 
@@ -282,28 +283,22 @@ private fun NoteDateItem(
     topPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.labelSmall
+    val dateWidth = remember(text) {
+        density.run {
+            textMeasurer.measure(text = text, style = style, maxLines = 1).size.width.toDp()
+        }
+    }
     Box(
         modifier = modifier,
         contentAlignment = Alignment.CenterEnd,
     ) {
-        val textMeasurer = rememberTextMeasurer()
-        textMeasurer.measure(
-            text = text,
-            style = MaterialTheme.typography.labelSmall,
-            maxLines = 1,
-        )
         Text(
             modifier = Modifier
                 .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = topPadding)
-                .widthIn(
-                    min = LocalDensity.current.run {
-                        textMeasurer.measure(
-                            text = text,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                        ).size.width.toDp()
-                    },
-                )
+                .widthIn(min = dateWidth)
                 .alpha(0.6f),
             text = text,
             textAlign = TextAlign.End,

@@ -9,11 +9,11 @@ interface NotesRepository {
 
     suspend fun deleteNote(note: LocalNote)
 
-    suspend fun getAllNotes(): Flow<List<LocalNote>>
+    fun getAllNotes(): Flow<List<LocalNote>>
 
-    suspend fun getAllNotesSimple(): Flow<List<LocalSimpleNote>>
+    fun getAllNotesSimple(): Flow<List<LocalSimpleNote>>
 
-    suspend fun getNote(noteId: String): Flow<LocalNote?>
+    fun getNote(noteId: String): Flow<LocalNote?>
 
     suspend fun upsertNoteContent(noteId: String, content: List<LocalNote.Content>)
 

@@ -99,6 +99,13 @@ private fun MainScreenContent(
         }
     }
 
+    val isListAtTop by remember {
+        derivedStateOf {
+            screenState.listState.firstVisibleItemIndex == 0 &&
+                    screenState.listState.firstVisibleItemScrollOffset == 0
+        }
+    }
+
     Surface {
         Box(contentAlignment = Alignment.BottomCenter) {
             CollapsingToolbarScaffold(
@@ -106,7 +113,7 @@ private fun MainScreenContent(
                 state = screenState.toolbarState,
                 scrollStrategy = ScrollStrategy.EnterAlways,
                 toolbarModifier = Modifier.drawBehind {
-                    if (screenState.listState.firstVisibleItemScrollOffset > 0) {
+                    if (!isListAtTop) {
                         drawBottomShadow()
                     }
                 },

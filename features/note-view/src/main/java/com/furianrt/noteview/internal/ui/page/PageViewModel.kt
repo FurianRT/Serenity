@@ -18,7 +18,12 @@ import com.furianrt.noteview.internal.ui.extensions.removeTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
 import com.furianrt.noteview.internal.ui.page.PageEffect.OpenMediaSelector
-import com.furianrt.noteview.internal.ui.page.PageEvent.*
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnEditModeStateChange
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnSelectMediaClick
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagDoneEditing
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagRemoveClick
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextCleared
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextEntered
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.uikit.extensions.launch
@@ -27,15 +32,14 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
@@ -126,6 +130,7 @@ internal class PageViewModel @AssistedInject constructor(
     private fun observeNote() = launch {
         notesRepository.getNote(noteId)
             .map { it?.toNoteViewScreenNote() }
+            .distinctUntilChanged()
             .collectLatest(::handleNoteResult)
     }
 

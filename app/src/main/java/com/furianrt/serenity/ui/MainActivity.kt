@@ -9,14 +9,16 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.noteview.api.NoteViewScreen
-import com.furianrt.serenity.BuildConfig
 import com.furianrt.settings.api.SettingsScreen
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +42,7 @@ internal class MainActivity : ComponentActivity() {
                     .scaleY(1.1f)
                     .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
             }
-        BuildConfig.VERSION_NAME
+
         setContent {
             SerenityTheme {
                 val navController = rememberNavController()
@@ -70,9 +72,9 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
                         },
-                    ) {
-                        MainScreen(navController)
-                    }
+                        content = { MainScreen(navController) },
+                    )
+
                     composable(
                         route = "Note" + "/{noteId}",
                         arguments = listOf(
@@ -102,9 +104,8 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             ) + fadeOut(animationSpec = tween(300))
                         },
-                    ) {
-                        NoteViewScreen(navController)
-                    }
+                        content = { NoteViewScreen(navController) },
+                    )
 
                     composable(
                         route = "Settings",
@@ -128,9 +129,22 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             ) + fadeOut(animationSpec = tween(300))
                         },
-                    ) {
-                        SettingsScreen(navController)
-                    }
+                        content = { SettingsScreen(navController) },
+                    )
+
+                    dialog(
+                        route = "Sheet",
+                        dialogProperties = DialogProperties(
+                            decorFitsSystemWindows = false,
+                            usePlatformDefaultWidth = false,
+                        ),
+                        content = {
+                            MediaSelectorBottomSheet(
+                                onDismissRequest = navController::popBackStack,
+                                navHostController = navController,
+                            )
+                        },
+                    )
                 }
             }
         }

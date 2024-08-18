@@ -1,6 +1,6 @@
 package com.furianrt.storage.internal.database.notes.repositories
 
-import com.furianrt.storage.api.TransactionsHelper
+import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.ImagesRepository
 import com.furianrt.storage.internal.database.notes.dao.ContentBlockDao

@@ -49,10 +49,7 @@ composeUi = { module = "androidx.compose.ui:ui", version.ref = "compose" }
 composeGraphics = { module = "androidx.compose.ui:ui-graphics", version.ref = "compose" }
 composeToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "compose" }
 composeTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
-composeMaterial = { module = "androidx.compose.material:material", version.ref = "compose" }
 
-systemUiController = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanist" }
-flowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
 navAnimation = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
 
 constraintLayout = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayout" }
@@ -75,6 +72,7 @@ collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "coll
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
 coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
+coilVideo = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 
 immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
 

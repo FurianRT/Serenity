@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
@@ -193,10 +194,17 @@ private fun ImageItem(
     cornerRadius: Dp = 4.dp,
     offscreenImageCount: Int = 0,
 ) {
+    val request = ImageRequest.Builder(LocalContext.current)
+        .diskCachePolicy(CachePolicy.DISABLED)
+        .memoryCachePolicy(CachePolicy.ENABLED)
+        .memoryCacheKey(image.id)
+        .data(image.uri)
+        .build()
+
     if (offscreenImageCount == 0) {
         AsyncImage(
             modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
-            model = ImageRequest.Builder(LocalContext.current).data(image.uri).build(),
+            model = request,
             placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
             contentDescription = null,
             contentScale = contentScale,
@@ -212,7 +220,7 @@ private fun ImageItem(
                     drawContent()
                     drawRect(color = Color.Black, alpha = 0.4f)
                 },
-                model = ImageRequest.Builder(LocalContext.current).data(image.uri).build(),
+                model = request,
                 placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
                 contentDescription = null,
                 contentScale = contentScale,

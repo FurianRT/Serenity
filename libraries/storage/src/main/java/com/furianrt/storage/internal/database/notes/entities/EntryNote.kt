@@ -13,6 +13,8 @@ internal class EntryNote(
 
     @ColumnInfo(name = FIELD_TIMESTAMP)
     val timestamp: Long,
+
+
 ) {
     companion object {
         const val TABLE_NAME = "Notes"

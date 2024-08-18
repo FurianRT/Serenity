@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
@@ -64,7 +65,7 @@ internal fun Toolbar(
         modifier = Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = 16.dp)
-            .height(64.dp)
+            .height(ToolbarConstants.toolbarHeight)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {

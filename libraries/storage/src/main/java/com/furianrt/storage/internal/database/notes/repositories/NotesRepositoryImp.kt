@@ -1,7 +1,7 @@
 package com.furianrt.storage.internal.database.notes.repositories
 
 import com.furianrt.core.deepMap
-import com.furianrt.storage.api.TransactionsHelper
+import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.LocalSimpleNote
 import com.furianrt.storage.api.repositories.ImagesRepository
@@ -40,13 +40,13 @@ internal class NotesRepositoryImp @Inject constructor(
         tagsRepository.deleteUnusedTags()
     }
 
-    override suspend fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllLinkedNotes()
+    override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllLinkedNotes()
         .deepMap(LinkedNote::toLocalNote)
 
-    override suspend fun getAllNotesSimple(): Flow<List<LocalSimpleNote>> = noteDao.getAllNotes()
+    override fun getAllNotesSimple(): Flow<List<LocalSimpleNote>> = noteDao.getAllNotes()
         .deepMap(EntryNote::toLocalSimpleNote)
 
-    override suspend fun getNote(noteId: String): Flow<LocalNote?> =
+    override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId).map { it?.toLocalNote() }
 
     override suspend fun upsertNoteContent(

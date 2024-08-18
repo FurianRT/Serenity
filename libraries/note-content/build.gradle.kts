@@ -20,7 +20,6 @@ dependencies {
 
     implementation(libs.composeActivity)
     implementation(libs.composeUi)
-    implementation(libs.composeMaterial)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
@@ -28,6 +27,4 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.coil)
-
-    implementation(libs.flowLayout)
 }

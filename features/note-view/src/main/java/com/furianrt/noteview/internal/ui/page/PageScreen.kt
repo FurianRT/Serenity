@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -27,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -53,10 +51,10 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
+import androidx.navigation.NavOptions
 import com.furianrt.assistant.R
 import com.furianrt.core.findInstance
-import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
-import com.furianrt.mediaselector.api.rememberMediaSelectorState
 import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
@@ -72,7 +70,6 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 private const val TAGS_ITEM_KEY = "tags"
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PageScreen(
     noteId: String,
@@ -81,6 +78,7 @@ internal fun PageScreen(
     toolbarState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
     titleScrollState: ScrollState,
+    navHostController: NavHostController,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
@@ -88,35 +86,34 @@ internal fun PageScreen(
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
-    val mediaSelectorState = rememberMediaSelectorState()
-
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is PageEffect.OpenMediaSelector -> mediaSelectorState.show()
+                is PageEffect.OpenMediaSelector -> navHostController.navigate(
+                    route = "Sheet",
+                    navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
+                )
             }
         }
     }
     LaunchedEffect(isInEditMode) {
         viewModel.onEvent(PageEvent.OnEditModeStateChange(isInEditMode))
+        val isListAtTop = with(listState) {
+            firstVisibleItemIndex == 0 && firstVisibleItemScrollOffset == 0
+        }
+        if (isInEditMode && isListAtTop) {
+            listState.requestScrollToItem(0)
+        }
     }
 
-    Scaffold(
-        contentWindowInsets = WindowInsets.statusBars,
-    ) { paddingValues ->
-        PageScreenContent(
-            uiState = uiState,
-            toolbarState = toolbarState,
-            listState = listState,
-            titleScrollState = titleScrollState,
-            onEvent = viewModel::onEvent,
-            onFocusChange = onFocusChange,
-        )
-        MediaSelectorBottomSheet(
-            modifier = Modifier.padding(paddingValues),
-            state = mediaSelectorState,
-        )
-    }
+    PageScreenContent(
+        uiState = uiState,
+        toolbarState = toolbarState,
+        listState = listState,
+        titleScrollState = titleScrollState,
+        onEvent = viewModel::onEvent,
+        onFocusChange = onFocusChange,
+    )
 }
 
 @Composable

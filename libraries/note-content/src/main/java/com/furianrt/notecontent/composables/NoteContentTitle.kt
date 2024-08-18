@@ -33,6 +33,7 @@ import com.furianrt.uikit.extensions.cursorCoordinates
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -63,6 +64,7 @@ fun NoteContentTitle(
     val focusMargin = with(LocalDensity.current) { 8.dp.toPx().toInt() } + focusOffset
     LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
+            delay(50)
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = title.state.selection,
