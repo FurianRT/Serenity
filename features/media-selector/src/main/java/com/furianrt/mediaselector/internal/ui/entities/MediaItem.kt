@@ -22,4 +22,9 @@ sealed class MediaItem(
         override val isSelected: Boolean,
         val duration: String,
     ) : MediaItem(id, uri, title, isSelected)
+
+    fun toggleSelection(): MediaItem = when (this) {
+        is Image -> copy(isSelected = !isSelected)
+        is Video -> copy(isSelected = !isSelected)
+    }
 }

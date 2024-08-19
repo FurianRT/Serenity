@@ -148,10 +148,7 @@ internal class MainActivity : ComponentActivity() {
 
                     dialog(
                         route = "Sheet",
-                        dialogProperties = DialogProperties(
-                            decorFitsSystemWindows = false,
-                            usePlatformDefaultWidth = false,
-                        ),
+                        dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
                         content = {
                             MediaSelectorBottomSheet(
                                 onDismissRequest = navController::popBackStack,

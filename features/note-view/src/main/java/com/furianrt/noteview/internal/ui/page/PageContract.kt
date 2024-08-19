@@ -2,6 +2,7 @@ package com.furianrt.noteview.internal.ui.page
 
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface PageUiState {
@@ -12,6 +13,9 @@ internal sealed interface PageUiState {
         val tags: ImmutableList<UiNoteTag>,
         val isInEditMode: Boolean,
     ) : PageUiState
+
+    val mediaPermissionsList: List<String>
+        get() = DeviceMediaRepository.getMediaPermissionList()
 }
 
 internal sealed interface PageEvent {

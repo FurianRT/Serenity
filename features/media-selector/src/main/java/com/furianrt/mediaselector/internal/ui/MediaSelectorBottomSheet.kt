@@ -1,42 +1,49 @@
 package com.furianrt.mediaselector.internal.ui
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -57,15 +64,17 @@ import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.OnPartialAccessMessageClick
-import com.furianrt.mediaselector.internal.ui.MediaSelectorUiState.*
+import com.furianrt.mediaselector.internal.ui.MediaSelectorUiState.ScreenState
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import com.furianrt.uikit.R as uiR
 
 private const val PARTIAL_ACCESS_ITEM_KEY = "partial_access"
 
@@ -81,7 +90,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val storagePermissionsState = rememberMultiplePermissionsState(
-        permissions = DeviceMediaRepository.getMediaPermissionList(),
+        permissions = uiState.mediaPermissionsList,
         onPermissionsResult = {
             viewModel.onEvent(MediaSelectorEvent.OnMediaPermissionsSelected)
         },
@@ -92,43 +101,84 @@ internal fun MediaSelectorBottomSheetInternal(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is MediaSelectorEffect.RequestMediaPermission -> {
+                    is MediaSelectorEffect.RequestMediaPermissions -> {
                         storagePermissionsState.launchMultiplePermissionRequest()
                     }
                 }
             }
     }
 
-    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ModalBottomSheet(
-        modifier = modifier
-            .padding(top = ToolbarConstants.toolbarHeight)
-            .fillMaxSize(),
-        sheetState = sheetState,
-        contentWindowInsets = { WindowInsets.statusBars },
-        containerColor = Color.Transparent,
-        scrimColor = Color.Black.copy(alpha = 0.6f),
-        dragHandle = null,
-        onDismissRequest = onDismissRequest,
-    ) {
-        Column(
-            modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .background(MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)),
-        ) {
-            DragHandle()
-            when (uiState.screenState) {
-                is ScreenState.Loading -> LoadingContent(uiState.showPartialAccessMessage)
-                is ScreenState.Empty -> EmptyContent(uiState.showPartialAccessMessage)
-                is ScreenState.Success -> SuccessContent(
-                    screenState = uiState.screenState,
-                    showPartialAccessMessage = uiState.showPartialAccessMessage,
-                    onEvent = viewModel::onEvent,
-                )
-            }
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    )
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(true) {
+        scope.launch { scaffoldState.bottomSheetState.expand() }
+    }
+
+    var closeDialog by remember { mutableStateOf(false) }
+    LaunchedEffect(scaffoldState.bottomSheetState.isVisible) {
+        if (!scaffoldState.bottomSheetState.isVisible && !closeDialog) {
+            closeDialog = true
+            return@LaunchedEffect
+        }
+        if (!scaffoldState.bottomSheetState.isVisible) {
+            onDismissRequest()
         }
     }
+
+    val successState = uiState.screenState as? ScreenState.Success
+    val sheetSwipeEnabled by remember(successState) {
+        derivedStateOf {
+            successState?.listState?.firstVisibleItemIndex == 0 ||
+                    successState?.listState?.isScrollInProgress == false
+        }
+    }
+
+    val backgroundModifier = Modifier.background(
+        MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)
+    )
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(top = ToolbarConstants.toolbarHeight / 2),
+    ) {
+        BottomSheetScaffold(
+            modifier = Modifier.fillMaxSize(),
+            scaffoldState = scaffoldState,
+            sheetContainerColor = MaterialTheme.colorScheme.surface,
+            containerColor = Color.Transparent,
+            sheetSwipeEnabled = sheetSwipeEnabled,
+            sheetDragHandle = { DragHandle(modifier = backgroundModifier) },
+            snackbarHost = {},
+            content = {},
+            sheetContent = {
+                when (uiState.screenState) {
+                    is ScreenState.Loading -> LoadingContent(
+                        modifier = backgroundModifier,
+                        showPartialAccessMessage = uiState.showPartialAccessMessage,
+                    )
+
+                    is ScreenState.Empty -> EmptyContent(
+                        modifier = backgroundModifier,
+                        showPartialAccessMessage = uiState.showPartialAccessMessage,
+                    )
+
+                    is ScreenState.Success -> SuccessContent(
+                        modifier = backgroundModifier,
+                        screenState = uiState.screenState,
+                        showPartialAccessMessage = uiState.showPartialAccessMessage,
+                        onEvent = viewModel::onEvent,
+                    )
+                }
+            },
+        )
+    }
+
+    BackHandler(
+        enabled = scaffoldState.bottomSheetState.isVisible,
+        onBack = { scope.launch { scaffoldState.bottomSheetState.hide() } },
+    )
 }
 
 @Composable
@@ -136,17 +186,18 @@ private fun SuccessContent(
     screenState: ScreenState.Success,
     showPartialAccessMessage: Boolean,
     onEvent: (event: MediaSelectorEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val listSpanCount = 3
     LazyVerticalGrid(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 4.dp),
         state = screenState.listState,
         columns = GridCells.Fixed(listSpanCount),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
-        contentPadding = WindowInsets.navigationBars.asPaddingValues(),
+        contentPadding = PaddingValues(bottom = 8.dp),
     ) {
         if (showPartialAccessMessage) {
             item(
@@ -170,6 +221,7 @@ private fun SuccessContent(
                         )
                     ),
                     item = item,
+                    onSelectClick = { onEvent(MediaSelectorEvent.OnSelectItemClick(it)) },
                 )
 
                 is MediaItem.Video -> VideoItem(
@@ -180,6 +232,7 @@ private fun SuccessContent(
                         )
                     ),
                     item = item,
+                    onSelectClick = { onEvent(MediaSelectorEvent.OnSelectItemClick(it)) },
                 )
             }
         }
@@ -189,13 +242,23 @@ private fun SuccessContent(
 @Composable
 private fun ImageItem(
     item: MediaItem.Image,
+    onSelectClick: (itemId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val imageScaleValue by animateFloatAsState(
+        if (item.isSelected) 0.85f else 1f,
+        label = "ItemScale"
+    )
     Box(modifier = modifier.aspectRatio(1f)) {
         AsyncImage(
-            modifier = modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = imageScaleValue
+                    scaleY = imageScaleValue
+                },
             model = ImageRequest.Builder(LocalContext.current)
-                .size(width = 300, height = 300)
+                .size(300)
                 .diskCachePolicy(CachePolicy.DISABLED)
                 .memoryCachePolicy(CachePolicy.ENABLED)
                 .memoryCacheKey(item.id.toString())
@@ -210,7 +273,8 @@ private fun ImageItem(
                 .align(Alignment.TopEnd)
                 .padding(top = 8.dp, end = 8.dp),
             isChecked = item.isSelected,
-            onToggle = {},
+            itemId = item.id,
+            onClick = onSelectClick,
         )
     }
 }
@@ -218,13 +282,23 @@ private fun ImageItem(
 @Composable
 private fun VideoItem(
     item: MediaItem.Video,
+    onSelectClick: (itemId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val imageScaleValue by animateFloatAsState(
+        if (item.isSelected) 0.85f else 1f,
+        label = "ItemScale"
+    )
     Box(modifier = modifier.aspectRatio(1f)) {
         AsyncImage(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = imageScaleValue
+                    scaleY = imageScaleValue
+                },
             model = ImageRequest.Builder(LocalContext.current)
-                .size(width = 300, height = 300)
+                .size(300)
                 .data(item.uri)
                 .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
                 .build(),
@@ -242,8 +316,9 @@ private fun VideoItem(
             modifier = Modifier
                 .align(Alignment.TopEnd)
                 .padding(top = 8.dp, end = 8.dp),
+            itemId = item.id,
             isChecked = item.isSelected,
-            onToggle = {},
+            onClick = onSelectClick,
         )
     }
 }
@@ -255,7 +330,7 @@ private fun PermissionsMessage(
 ) {
     Row(
         modifier = modifier
-            .padding(horizontal = 4.dp, vertical = 8.dp)
+            .padding(start = 4.dp, end = 4.dp, bottom = 8.dp)
             .clip(RoundedCornerShape(8.dp))
             .clickable(onClick = onClick)
             .padding(horizontal = 4.dp, vertical = 8.dp),
@@ -300,40 +375,67 @@ private fun DurationBadge(
 
 @Composable
 private fun CheckBox(
+    itemId: Long,
     isChecked: Boolean,
-    onToggle: (isChecked: Boolean) -> Unit,
+    onClick: (itemId: Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Spacer(
+    AnimatedContent(
         modifier = modifier
             .size(24.dp)
-            .background(color = Color.Black.copy(alpha = 0.1f), shape = CircleShape)
-            .border(width = 1.5.dp, color = Color.White, shape = CircleShape),
-    )
+            .clickableNoRipple { onClick(itemId) },
+        targetState = isChecked,
+        label = "CheckBoxAnim",
+    ) { targetState ->
+        if (targetState) {
+            Box(
+                modifier = Modifier.background(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = CircleShape,
+                ),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    modifier = Modifier.padding(1.dp),
+                    painter = painterResource(uiR.drawable.ic_action_done),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            Box(
+                modifier = Modifier
+                    .background(color = Color.Black.copy(alpha = 0.1f), shape = CircleShape)
+                    .border(width = 1.5.dp, color = Color.White, shape = CircleShape),
+            )
+        }
+    }
 }
 
 @Composable
 private fun LoadingContent(
     showPartialAccessMessage: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Spacer(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     )
 }
 
 @Composable
 private fun EmptyContent(
     showPartialAccessMessage: Boolean,
+    modifier: Modifier = Modifier,
 ) {
     Spacer(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     )
 }
 
 @Composable
-private fun DragHandle() {
+private fun DragHandle(modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(24.dp),
         contentAlignment = Alignment.Center,
@@ -371,7 +473,7 @@ private fun SuccessContentPreview() {
                                 id = index + 10L,
                                 uri = Uri.EMPTY,
                                 title = "Test title $index",
-                                isSelected = index == 7,
+                                isSelected = index == 9,
                                 duration = "0:10",
                             )
                         }

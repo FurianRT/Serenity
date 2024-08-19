@@ -58,7 +58,6 @@ import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
@@ -90,7 +89,7 @@ internal fun PageScreen(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
     val storagePermissionsState = rememberMultiplePermissionsState(
-        permissions = DeviceMediaRepository.getMediaPermissionList(),
+        permissions = uiState.mediaPermissionsList,
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
 

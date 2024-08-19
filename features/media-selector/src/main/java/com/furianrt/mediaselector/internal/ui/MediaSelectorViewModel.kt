@@ -42,8 +42,9 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     fun onEvent(event: MediaSelectorEvent) {
         when (event) {
-            is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermission)
+            is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> loadMediaItems()
+            is OnSelectItemClick -> toggleItemSelection(event.itemId)
         }
     }
 
@@ -56,6 +57,15 @@ internal class MediaSelectorViewModel @Inject constructor(
             } else {
                 currentState.copy(screenState = ScreenState.Success(items))
             }
+        }
+    }
+
+    private fun toggleItemSelection(itemId: Long) {
+        _state.update { currentState ->
+            if (currentState.screenState !is ScreenState.Success) {
+                return
+            }
+            currentState.copy(screenState = currentState.screenState.toggleSelection(itemId))
         }
     }
 
