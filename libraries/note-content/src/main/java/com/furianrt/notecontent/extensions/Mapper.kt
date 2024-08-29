@@ -71,11 +71,11 @@ fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(
 
 fun UiNoteTag.Template.toLocalNoteTag() = LocalNote.Tag(
     id = id,
-    title = textState.text.toString(),
+    title = textState.text.trim().toString(),
 )
 
 fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
     id = id,
-    title = textState.text.toString(),
+    title = textState.text.trim().toString(),
     isRemovable = isRemovable,
 )

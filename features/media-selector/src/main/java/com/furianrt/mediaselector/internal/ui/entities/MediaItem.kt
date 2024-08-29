@@ -2,29 +2,32 @@ package com.furianrt.mediaselector.internal.ui.entities
 
 import android.net.Uri
 
-sealed class MediaItem(
+internal sealed class MediaItem(
     open val id: Long,
     open val uri: Uri,
     open val title: String,
-    open val isSelected: Boolean,
+    open val state: SelectionState,
 ) {
+    val isSelected: Boolean
+        get() = state is SelectionState.Selected
+
+    fun changeState(state: SelectionState): MediaItem = when (this) {
+        is Image -> copy(state = state)
+        is Video -> copy(state = state)
+    }
+
     data class Image(
         override val id: Long,
         override val uri: Uri,
         override val title: String,
-        override val isSelected: Boolean,
-    ) : MediaItem(id, uri, title, isSelected)
+        override val state: SelectionState,
+    ) : MediaItem(id, uri, title, state)
 
     data class Video(
         override val id: Long,
         override val uri: Uri,
         override val title: String,
-        override val isSelected: Boolean,
+        override val state: SelectionState,
         val duration: String,
-    ) : MediaItem(id, uri, title, isSelected)
-
-    fun toggleSelection(): MediaItem = when (this) {
-        is Image -> copy(isSelected = !isSelected)
-        is Video -> copy(isSelected = !isSelected)
-    }
+    ) : MediaItem(id, uri, title, state)
 }

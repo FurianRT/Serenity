@@ -1,3 +1,4 @@
 <resources>
-    <string name="partial_access_message">Please grant \"Allow all\" permission, or select more photos</string>
+    <string name="media_selector_partial_access_message">Please grant \"Allow all\" permission, or select more photos</string>
+    <string name="media_selector_empty_list_title">Empty</string>
 </resources>

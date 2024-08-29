@@ -30,5 +30,6 @@ internal sealed interface PageEvent {
 
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
+    data object ShowPermissionsDeniedDialog : PageEffect
     data object OpenMediaSelector : PageEffect
 }

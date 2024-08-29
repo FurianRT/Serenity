@@ -14,6 +14,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -23,14 +24,21 @@ import androidx.navigation.navArgument
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.noteview.api.NoteViewScreen
 import com.furianrt.settings.api.SettingsScreen
+import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
 private val SYSTEM_BARS_COLOR = Color.argb(0x4D, 0x1b, 0x1b, 0x1b)
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var deviceMediaRepository: DeviceMediaRepository
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen()
@@ -60,6 +68,15 @@ internal class MainActivity : ComponentActivity() {
         setContent {
             SerenityTheme {
                 val navController = rememberNavController()
+
+                LifecycleStartEffect(lifecycleOwner = this, key1 = Unit) {
+                    val currentRoute = navController.currentDestination?.route
+                    if (currentRoute == "Sheet" && deviceMediaRepository.mediaAccessDenied()) {
+                        navController.popBackStack()
+                    }
+                    onStopOrDispose {}
+                }
+
                 NavHost(
                     navController = navController,
                     startDestination = "Main",
@@ -151,7 +168,6 @@ internal class MainActivity : ComponentActivity() {
                         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
                         content = {
                             MediaSelectorBottomSheet(
-                                onDismissRequest = navController::popBackStack,
                                 navHostController = navController,
                             )
                         },

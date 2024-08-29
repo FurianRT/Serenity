@@ -44,6 +44,7 @@ import androidx.compose.ui.graphics.drawscope.clipRect
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
@@ -52,12 +53,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
-import com.furianrt.assistant.R
 import com.furianrt.core.findInstance
 import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.noteview.R
+import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
@@ -88,16 +91,24 @@ internal fun PageScreen(
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
+    val context = LocalContext.current
+
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = uiState.mediaPermissionsList,
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
+
+    var showMediaPermissionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
+                }
+
+                is PageEffect.ShowPermissionsDeniedDialog -> {
+                    showMediaPermissionDialog = true
                 }
 
                 is PageEffect.OpenMediaSelector -> navHostController.navigate(
@@ -125,6 +136,13 @@ internal fun PageScreen(
         onEvent = viewModel::onEvent,
         onFocusChange = onFocusChange,
     )
+
+    if (showMediaPermissionDialog) {
+        MediaPermissionDialog(
+            onDismissRequest = { showMediaPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
 }
 
 @Composable

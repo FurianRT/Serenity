@@ -133,7 +133,7 @@ private fun RegularNoteTagItem(
             modifier = Modifier
                 .padding(all = 4.dp)
                 .clip(RoundedCornerShape(size = 16.dp))
-                .background(MaterialTheme.colorScheme.tertiary)
+                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f))
                 .applyIf(onClick != null) { Modifier.clickable { onClick?.invoke() } },
             contentAlignment = Alignment.Center,
         ) {

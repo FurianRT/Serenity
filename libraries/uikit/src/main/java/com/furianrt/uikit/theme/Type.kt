@@ -50,7 +50,7 @@ val Typography = Typography(
     ),
     titleSmall = TextStyle(
         color = Color.White,
-        fontFamily = Fonts.regular,
+        fontFamily = Fonts.bold,
         fontSize = 15.sp,
         lineHeight = 20.sp,
         letterSpacing = 0.7.sp,

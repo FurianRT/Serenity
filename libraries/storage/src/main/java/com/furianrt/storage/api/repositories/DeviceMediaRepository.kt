@@ -29,3 +29,11 @@ interface DeviceMediaRepository {
         }
     }
 }
+
+fun DeviceMediaRepository.hasPartialMediaAccess(): Boolean {
+    return getMediaPermissionStatus() == MediaPermissionStatus.PARTIAL_ACCESS
+}
+
+fun DeviceMediaRepository.mediaAccessDenied(): Boolean {
+    return getMediaPermissionStatus() == MediaPermissionStatus.DENIED
+}

@@ -26,3 +26,5 @@ fun <T> Iterable<T>.lastIndexOf(predicate: (T) -> Boolean): Int {
     }
     return lastIndex
 }
+
+inline fun <T> Iterable<T>.hasItem(predicate: (T) -> Boolean): Boolean = find(predicate) != null

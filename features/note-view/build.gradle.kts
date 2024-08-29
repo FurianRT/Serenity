@@ -6,17 +6,17 @@ plugins {
 }
 
 android {
-    namespace = "com.furianrt.assistant"
+    namespace = "com.furianrt.noteview"
 }
 
 dependencies {
     implementation(projects.features.toolsPanel)
-    implementation(projects.features.mediaSelector)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.storage)
     implementation(projects.libraries.noteContent)
+    implementation(projects.libraries.permissions)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
@@ -27,7 +27,7 @@ dependencies {
     implementation(libs.composeUi)
     implementation(libs.navAnimation)
     implementation(libs.composeGraphics)
-    implementation(libs.composeToolingPreview)
+    debugImplementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 
     implementation(libs.coroutinesCore)

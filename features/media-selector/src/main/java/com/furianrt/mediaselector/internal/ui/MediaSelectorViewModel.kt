@@ -2,14 +2,19 @@ package com.furianrt.mediaselector.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.furianrt.core.hasItem
 import com.furianrt.core.mapImmutable
+import com.furianrt.core.updateState
 import com.furianrt.mediaselector.internal.ui.MediaSelectorEffect.*
 import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.*
-import com.furianrt.mediaselector.internal.ui.MediaSelectorUiState.ScreenState
+import com.furianrt.mediaselector.internal.ui.entities.MediaItem
+import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
+import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
 import com.furianrt.storage.api.entities.DeviceMedia
-import com.furianrt.storage.api.entities.MediaPermissionStatus
 import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.hasPartialMediaAccess
+import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,16 +30,13 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val deviceMediaRepository: DeviceMediaRepository,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(
-        MediaSelectorUiState(
-            showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
-            screenState = ScreenState.Loading,
-        )
-    )
+    private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
     val state = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
+
+    private val selectedIds = mutableListOf<Long>()
 
     init {
         loadMediaItems()
@@ -44,32 +46,56 @@ internal class MediaSelectorViewModel @Inject constructor(
         when (event) {
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> loadMediaItems()
-            is OnSelectItemClick -> toggleItemSelection(event.itemId)
+            is OnSelectItemClick -> toggleItemSelection(event.item)
         }
     }
 
-    private fun loadMediaItems() = launch {
-        _state.update { it.copy(screenState = ScreenState.Loading) }
-        val items = deviceMediaRepository.getMediaList().mapImmutable(DeviceMedia::toMediaItem)
-        _state.update { currentState ->
-            if (items.isEmpty()) {
-                currentState.copy(screenState = ScreenState.Empty)
-            } else {
-                currentState.copy(screenState = ScreenState.Success(items))
+    private fun loadMediaItems() {
+        if (deviceMediaRepository.mediaAccessDenied()) {
+            _effect.tryEmit(CloseScreen)
+            return
+        }
+        launch {
+            val items = deviceMediaRepository.getMediaList()
+            _state.update { currentState ->
+                when {
+                    items.isEmpty() -> MediaSelectorUiState.Empty(
+                        showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                    )
+
+                    currentState is MediaSelectorUiState.Success -> {
+                        selectedIds.removeAll { !items.hasItem { item -> item.id == it } }
+                        MediaSelectorUiState.Success(
+                            items = items.toMediaItems(
+                                state = { id ->
+                                    val selectedIndex = selectedIds.indexOfFirst { it == id }
+                                    if (selectedIndex != -1) {
+                                        SelectionState.Selected(order = selectedIndex + 1)
+                                    } else {
+                                        SelectionState.Default
+                                    }
+                                }
+                            ),
+                            showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                        )
+                    }
+
+                    else -> MediaSelectorUiState.Success(
+                        items = items.mapImmutable(DeviceMedia::toMediaItem),
+                        showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                    )
+                }
             }
         }
     }
 
-    private fun toggleItemSelection(itemId: Long) {
-        _state.update { currentState ->
-            if (currentState.screenState !is ScreenState.Success) {
-                return
-            }
-            currentState.copy(screenState = currentState.screenState.toggleSelection(itemId))
+    private fun toggleItemSelection(item: MediaItem) {
+        when (item.state) {
+            is SelectionState.Default -> selectedIds.add(item.id)
+            is SelectionState.Selected -> selectedIds.remove(item.id)
         }
-    }
-
-    private fun DeviceMediaRepository.hasPartialMediaAccess(): Boolean {
-        return getMediaPermissionStatus() == MediaPermissionStatus.PARTIAL_ACCESS
+        _state.updateState<MediaSelectorUiState.Success> { currentState ->
+            currentState.setSelectedItems(selectedIds)
+        }
     }
 }

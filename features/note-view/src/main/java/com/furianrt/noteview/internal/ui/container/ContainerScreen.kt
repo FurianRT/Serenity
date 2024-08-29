@@ -176,13 +176,11 @@ private fun SuccessScreen(
             val titlesScrollState = rememberScrollState()
             titlesScrollStates[index] = titlesScrollState
 
-            val isInEditMode by remember(uiState.isInEditMode) {
-                derivedStateOf { pagerState.currentPage == index && uiState.isInEditMode }
-            }
+            val isCurrentPage by remember { derivedStateOf { pagerState.currentPage == index } }
 
             PageScreen(
                 noteId = uiState.notes[index].id,
-                isInEditMode = isInEditMode,
+                isInEditMode = isCurrentPage && uiState.isInEditMode,
                 toolbarState = toolbarScaffoldState,
                 listState = lazyListState,
                 titleScrollState = titlesScrollState,

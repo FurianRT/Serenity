@@ -9,11 +9,9 @@ import com.furianrt.mediaselector.internal.ui.MediaSelectorBottomSheetInternal
 fun MediaSelectorBottomSheet(
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
-    onDismissRequest: () -> Unit = {},
 ) {
     MediaSelectorBottomSheetInternal(
         modifier = modifier,
         navHostController = navHostController,
-        onDismissRequest = onDismissRequest,
     )
 }

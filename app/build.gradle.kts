@@ -29,7 +29,7 @@ dependencies {
     implementation(libs.composeUi)
     implementation(libs.composeGraphics)
     implementation(libs.navAnimation)
-    implementation(libs.composeToolingPreview)
+    debugImplementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 
     implementation(libs.splashScreen)

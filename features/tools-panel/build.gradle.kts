@@ -21,6 +21,6 @@ dependencies {
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
     implementation(libs.composeGraphics)
-    implementation(libs.composeToolingPreview)
+    debugImplementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 }

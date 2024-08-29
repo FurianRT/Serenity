@@ -116,7 +116,9 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryOpenMediaSelector() {
-        if (deviceMediaRepository.getMediaPermissionStatus() != MediaPermissionStatus.DENIED) {
+        if (deviceMediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+            _effect.tryEmit(ShowPermissionsDeniedDialog)
+        } else {
             _effect.tryEmit(OpenMediaSelector)
         }
     }
