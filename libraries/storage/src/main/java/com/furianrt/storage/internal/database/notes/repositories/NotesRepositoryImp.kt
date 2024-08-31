@@ -4,7 +4,7 @@ import com.furianrt.core.deepMap
 import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.LocalSimpleNote
-import com.furianrt.storage.api.repositories.ImagesRepository
+import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
@@ -23,7 +23,8 @@ internal class NotesRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
     private val noteTitleDao: NoteTitleDao,
     private val tagsRepository: TagsRepository,
-    private val imagesRepository: ImagesRepository,
+    private val mediaRepository: MediaRepository,
+    private val appMediaRepository: AppMediaRepository,
     private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
@@ -36,7 +37,9 @@ internal class NotesRepositoryImp @Inject constructor(
     }
 
     override suspend fun deleteNote(note: LocalNote) = transactionsHelper.startTransaction {
-        noteDao.delete(note.toEntryNote()) // TODO удалять еще и файлы картинок
+        val media = mediaRepository.getMedia(note.id)
+        media.forEach { appMediaRepository.deleteMediaFile(it.id) }
+        noteDao.delete(note.toEntryNote())
         tagsRepository.deleteUnusedTags()
     }
 
@@ -69,7 +72,7 @@ internal class NotesRepositoryImp @Inject constructor(
     private suspend fun upsertNoteContent(noteId: String, content: LocalNote.Content) {
         when (content) {
             is LocalNote.Content.Title -> upsertNoteTitle(noteId, content)
-            is LocalNote.Content.ImagesBlock -> imagesRepository.upsert(noteId, content)
+            is LocalNote.Content.MediaBlock -> mediaRepository.upsert(noteId, content)
         }
     }
 }

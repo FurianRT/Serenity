@@ -1,5 +1,6 @@
 package com.furianrt.notecontent.entities
 
+import android.net.Uri
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
@@ -23,21 +24,25 @@ sealed class UiNoteContent(open val id: String, open val position: Int) {
     ) : UiNoteContent(id, position) {
         sealed class Media(
             open val id: String,
+            open val uri: Uri,
             open val position: Int,
             open val ratio: Float,
-        ) {
-            data class Image(
-                override val id: String,
-                override val position: Int,
-                override val ratio: Float,
-                val uri: String,
-            ) : Media(id, position, ratio)
+        )
 
-            /*
-              data class Video(
-                  val id: String,
-              ) : Media*/
-        }
+        data class Image(
+            override val id: String,
+            override val uri: Uri,
+            override val position: Int,
+            override val ratio: Float,
+        ) : Media(id, uri, position, ratio)
+
+        data class Video(
+            override val id: String,
+            override val uri: Uri,
+            override val position: Int,
+            override val ratio: Float,
+            val duration: Int,
+        ) : Media(id, uri, position, ratio)
     }
 
     fun changePosition(newPosition: Int) = when (this) {

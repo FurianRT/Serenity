@@ -1,27 +1,24 @@
 package com.furianrt.storage.internal.di
 
-import android.content.Context
-import com.furianrt.core.DispatchersProvider
+import com.furianrt.storage.internal.database.notes.repositories.AppMediaRepository
 import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.internal.device.repositories.AppMediaRepositoryImp
 import com.furianrt.storage.internal.device.repositories.DeviceMediaRepositoryImp
+import dagger.Binds
 import dagger.Module
-import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal class DeviceModule {
+internal interface DeviceModule {
 
-    @Provides
+    @Binds
     @Singleton
-    fun deviceMediaRepository(
-        @ApplicationContext context: Context,
-        dispatchersProvider: DispatchersProvider,
-    ): DeviceMediaRepository = DeviceMediaRepositoryImp(
-        context = context,
-        dispatchers = dispatchersProvider,
-    )
+    fun deviceMediaRepository(imp: DeviceMediaRepositoryImp): DeviceMediaRepository
+
+    @Binds
+    @Singleton
+    fun appMediaRepository(imp: AppMediaRepositoryImp): AppMediaRepository
 }

@@ -12,6 +12,7 @@ import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteTitleDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
+import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.EntryContentBlock
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
@@ -49,6 +50,10 @@ internal class DatabaseModule {
     @Provides
     @Singleton
     fun imageDao(database: SerenityDatabase): ImageDao = database.imageDao()
+
+    @Provides
+    @Singleton
+    fun videoDao(database: SerenityDatabase): VideoDao = database.videoDao()
 
     @Provides
     @Singleton

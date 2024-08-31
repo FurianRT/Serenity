@@ -1,5 +1,6 @@
 package com.furianrt.serenity.ui.composables
 
+import android.net.Uri
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -113,11 +114,11 @@ private fun NoteItemPreview() {
                         id = "e2e2e",
                         position = 1,
                         media = persistentListOf(
-                            UiNoteContent.MediaBlock.Media.Image(
+                            UiNoteContent.MediaBlock.Image(
                                 id = "femkfemkf",
                                 position = 0,
                                 ratio = 1.5f,
-                                uri = "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg",
+                                uri = Uri.EMPTY,
                             )
                         ),
                     ),

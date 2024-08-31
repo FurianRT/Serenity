@@ -177,7 +177,7 @@ private fun Preview() {
                             MediaItem.Image(
                                 id = index.toLong(),
                                 uri = Uri.EMPTY,
-                                title = "Test title $index",
+                                ratio = 1f,
                                 state = if (index == 4) {
                                     SelectionState.Selected(1)
                                 } else {
@@ -188,7 +188,7 @@ private fun Preview() {
                             MediaItem.Video(
                                 id = index + 10L,
                                 uri = Uri.EMPTY,
-                                title = "Test title $index",
+                                ratio = 1f,
                                 state = if (index == 9) {
                                     SelectionState.Selected(2)
                                 } else {

@@ -7,17 +7,17 @@ import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
 @Entity(
-    tableName = EntryNoteImage.TABLE_NAME,
+    tableName = EntryNoteVideo.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
-            entity = EntryContentBlock::class,
+            entity = EntryNoteVideo::class,
             parentColumns = [EntryContentBlock.FIELD_ID],
-            childColumns = [EntryNoteImage.FIELD_BLOCK_ID],
+            childColumns = [EntryNoteVideo.FIELD_BLOCK_ID],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
 )
-internal class EntryNoteImage(
+internal class EntryNoteVideo(
     @PrimaryKey
     @ColumnInfo(name = FIELD_ID)
     val id: String,
@@ -31,15 +31,19 @@ internal class EntryNoteImage(
     @ColumnInfo(name = FIELD_RATIO)
     val ratio: Float,
 
+    @ColumnInfo(name = FIELD_DURATION)
+    val duration: Int,
+
     @ColumnInfo(name = FIELD_POSITION)
     val position: Int,
 ) {
     companion object {
-        const val TABLE_NAME = "Images"
+        const val TABLE_NAME = "Videos"
         const val FIELD_ID = "id"
         const val FIELD_BLOCK_ID = "block_id"
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
+        const val FIELD_DURATION = "duration"
         const val FIELD_POSITION = "position"
     }
 }

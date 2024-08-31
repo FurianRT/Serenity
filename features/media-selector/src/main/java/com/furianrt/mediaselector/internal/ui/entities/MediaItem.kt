@@ -5,7 +5,7 @@ import android.net.Uri
 internal sealed class MediaItem(
     open val id: Long,
     open val uri: Uri,
-    open val title: String,
+    open val ratio: Float,
     open val state: SelectionState,
 ) {
     val isSelected: Boolean
@@ -19,15 +19,15 @@ internal sealed class MediaItem(
     data class Image(
         override val id: Long,
         override val uri: Uri,
-        override val title: String,
+        override val ratio: Float,
         override val state: SelectionState,
-    ) : MediaItem(id, uri, title, state)
+    ) : MediaItem(id, uri, ratio, state)
 
     data class Video(
         override val id: Long,
         override val uri: Uri,
-        override val title: String,
+        override val ratio: Float,
         override val state: SelectionState,
         val duration: String,
-    ) : MediaItem(id, uri, title, state)
+    ) : MediaItem(id, uri, ratio, state)
 }

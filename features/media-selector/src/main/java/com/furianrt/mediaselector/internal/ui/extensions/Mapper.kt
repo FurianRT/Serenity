@@ -12,14 +12,14 @@ internal fun DeviceMedia.toMediaItem(
     is DeviceMedia.Image -> MediaItem.Image(
         id = id,
         uri = uri,
-        title = title,
+        ratio = ratio,
         state = state,
     )
 
     is DeviceMedia.Video -> MediaItem.Video(
         id = id,
         uri = uri,
-        title = title,
+        ratio = ratio,
         duration = duration.toTimeString(),
         state = state,
     )

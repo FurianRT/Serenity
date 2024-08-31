@@ -13,4 +13,11 @@ internal class LinkedContentBlock(
         parentColumn = EntryContentBlock.FIELD_ID,
     )
     val images: List<EntryNoteImage>,
+
+    @Relation(
+        entity = EntryNoteVideo::class,
+        entityColumn = EntryNoteVideo.FIELD_BLOCK_ID,
+        parentColumn = EntryContentBlock.FIELD_ID,
+    )
+    val videos: List<EntryNoteVideo>,
 )

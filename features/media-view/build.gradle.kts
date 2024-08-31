@@ -1,24 +1,17 @@
 plugins {
-    id("convention.android-app")
-    alias(libs.plugins.hilt)
+    id("convention.android")
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "com.furianrt.serenity"
+    namespace = "com.furianrt.mediaview"
 }
 
 dependencies {
-    implementation(projects.features.noteView)
-    implementation(projects.features.settings)
-    implementation(projects.features.mediaSelector)
-    implementation(projects.features.mediaView)
-
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.storage)
-    implementation(projects.libraries.noteContent)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
@@ -29,11 +22,8 @@ dependencies {
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
     implementation(libs.composeGraphics)
-    implementation(libs.navAnimation)
     debugImplementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
-
-    implementation(libs.splashScreen)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
@@ -42,7 +32,12 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.collapsingToolbar)
-
     implementation(libs.immutableCollections)
+
+    implementation(libs.coil)
+    implementation(libs.coilVideo)
+
+    implementation(libs.permissions)
+
+    implementation(libs.blur)
 }

@@ -16,12 +16,13 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.storage.api.entities.DeviceMedia
 import com.furianrt.storage.api.entities.MediaPermissionStatus
 import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class DeviceMediaRepositoryImp @Inject constructor(
-    private val context: Context,
+    @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
 ) : DeviceMediaRepository {
 
@@ -80,11 +81,11 @@ internal class DeviceMediaRepositoryImp @Inject constructor(
         val collection = getContentUri(volumeName)
         val projection = arrayOf(
             FileColumns._ID,
-            FileColumns.DISPLAY_NAME,
             FileColumns.DATE_ADDED,
             FileColumns.DURATION,
-            FileColumns.SIZE,
             FileColumns.MEDIA_TYPE,
+            FileColumns.WIDTH,
+            FileColumns.HEIGHT,
         )
         val sortOrder = "${FileColumns.DATE_ADDED} DESC"
         val query = context.contentResolver.query(
@@ -96,11 +97,11 @@ internal class DeviceMediaRepositoryImp @Inject constructor(
         )
         query?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(FileColumns._ID)
-            val nameColumn = cursor.getColumnIndexOrThrow(FileColumns.DISPLAY_NAME)
             val durationColumn = cursor.getColumnIndexOrThrow(FileColumns.DURATION)
-            val sizeColumn = cursor.getColumnIndexOrThrow(FileColumns.SIZE)
             val dateColumn = cursor.getColumnIndexOrThrow(FileColumns.DATE_ADDED)
             val mediaTypeColumn = cursor.getColumnIndexOrThrow(FileColumns.MEDIA_TYPE)
+            val widthColumn = cursor.getColumnIndexOrThrow(FileColumns.WIDTH)
+            val heightColumn = cursor.getColumnIndexOrThrow(FileColumns.HEIGHT)
             while (cursor.moveToNext() && isActive) {
                 val id = cursor.getLong(idColumn)
                 val mediaType = cursor.getInt(mediaTypeColumn)
@@ -108,17 +109,16 @@ internal class DeviceMediaRepositoryImp @Inject constructor(
                     FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
                         id = id,
                         uri = ContentUris.withAppendedId(collection, id),
-                        title = cursor.getString(nameColumn),
                         date = cursor.getLong(dateColumn),
+                        ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
                     )
 
                     FileColumns.MEDIA_TYPE_VIDEO -> DeviceMedia.Video(
                         id = id,
                         uri = ContentUris.withAppendedId(collection, id),
-                        title = cursor.getString(nameColumn),
                         duration = cursor.getInt(durationColumn),
-                        size = cursor.getInt(sizeColumn),
                         date = cursor.getLong(dateColumn),
+                        ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
                     )
 
                     else -> continue
