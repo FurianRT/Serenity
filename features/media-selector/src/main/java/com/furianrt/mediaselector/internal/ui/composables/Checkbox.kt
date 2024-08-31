@@ -63,7 +63,7 @@ private fun PreviewSelected() {
     SerenityTheme {
         CheckBox(
             onClick = {},
-            state = SelectionState.Selected(1),
+            state = SelectionState.Selected(order = 1),
         )
     }
 }

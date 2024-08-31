@@ -47,6 +47,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> loadMediaItems()
             is OnSelectItemClick -> toggleItemSelection(event.item)
+            is OnSendClick -> {}
         }
     }
 
@@ -76,12 +77,14 @@ internal class MediaSelectorViewModel @Inject constructor(
                                     }
                                 }
                             ),
+                            selectedCount = selectedIds.count(),
                             showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
                         )
                     }
 
                     else -> MediaSelectorUiState.Success(
                         items = items.mapImmutable(DeviceMedia::toMediaItem),
+                        selectedCount = 0,
                         showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
                     )
                 }

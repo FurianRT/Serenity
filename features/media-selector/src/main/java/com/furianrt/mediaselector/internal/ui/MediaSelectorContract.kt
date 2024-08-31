@@ -12,11 +12,13 @@ internal sealed interface MediaSelectorUiState {
     data class Empty(val showPartialAccessMessage: Boolean) : MediaSelectorUiState
     data class Success(
         val items: ImmutableList<MediaItem>,
+        val selectedCount: Int,
         val showPartialAccessMessage: Boolean,
         val listState: LazyGridState = LazyGridState(),
     ) : MediaSelectorUiState {
 
         fun setSelectedItems(selectedItems: List<Long>): Success = copy(
+            selectedCount = selectedItems.count(),
             items = items.mapImmutable { item ->
                 val selectedIndex = selectedItems.indexOfFirst { it == item.id }
                 when {
@@ -42,6 +44,7 @@ internal sealed interface MediaSelectorEvent {
     data object OnPartialAccessMessageClick : MediaSelectorEvent
     data object OnMediaPermissionsSelected : MediaSelectorEvent
     data class OnSelectItemClick(val item: MediaItem) : MediaSelectorEvent
+    data object OnSendClick : MediaSelectorEvent
 }
 
 internal sealed interface MediaSelectorEffect {

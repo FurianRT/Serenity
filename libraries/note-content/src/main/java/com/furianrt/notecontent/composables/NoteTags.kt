@@ -83,6 +83,12 @@ fun NoteTags(
     onTextEntered: () -> Unit = {},
     onTextCleared: () -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
+    LaunchedEffect(isEditable) {
+        if (!isEditable) {
+            focusManager.clearFocus()
+        }
+    }
     FlowRow(modifier = modifier) {
         tags.forEach { tag ->
             key(tag.id) {

@@ -14,14 +14,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ElevatedButton
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,12 +35,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
+import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.coroutines.launch
 
 private const val ANIM_OFFSET_DURATION = 500
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
-private const val ANIM_BUTTON_ADD_DURATION = 150
 private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
 
 @Composable
@@ -70,7 +66,9 @@ internal fun BottomNavigationBar(
             .padding(contentPadding)
             .fillMaxWidth()
             .graphicsLayer {
-                val bottomPadding = contentPadding.calculateBottomPadding().toPx()
+                val bottomPadding = contentPadding
+                    .calculateBottomPadding()
+                    .toPx()
                 translationY = (size.height + bottomPadding + navBarsHeight.toPx()) * verticalBias
             },
         contentAlignment = Alignment.Center,
@@ -83,50 +81,11 @@ internal fun BottomNavigationBar(
             modifier = Modifier.fillMaxWidth(),
             contentAlignment = Alignment.CenterEnd,
         ) {
-            ButtonAddNote(
+            ActionButton(
+                icon = painterResource(R.drawable.ic_fab_add),
                 onClick = onAddNoteClick,
             )
         }
-    }
-}
-
-@Composable
-private fun ButtonAddNote(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val scope = rememberCoroutineScope()
-    val scale = remember { Animatable(1f) }
-
-    FloatingActionButton(
-        modifier = modifier
-            .size(56.dp)
-            .graphicsLayer {
-                scaleX = scale.value
-                scaleY = scale.value
-            },
-        shape = CircleShape,
-        onClick = {
-            if (scale.isRunning) {
-                return@FloatingActionButton
-            }
-            scope.launch {
-                scale.animateTo(
-                    targetValue = 1.05f,
-                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2),
-                )
-                scale.animateTo(
-                    targetValue = 1f,
-                    animationSpec = tween(ANIM_BUTTON_ADD_DURATION / 2),
-                )
-            }
-            onClick()
-        },
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_fab_add),
-            contentDescription = null,
-        )
     }
 }
 

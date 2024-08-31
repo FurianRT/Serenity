@@ -105,7 +105,7 @@ private fun OneMediaHolder(
             MediaItem(
                 modifier = Modifier.aspectRatio(
                     ratio = media.ratio,
-                    matchHeightConstraintsFirst = true
+                    matchHeightConstraintsFirst = true,
                 ),
                 media = media,
                 cornerRadius = 0.dp,

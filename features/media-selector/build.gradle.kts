@@ -38,4 +38,6 @@ dependencies {
     implementation(libs.coilVideo)
 
     implementation(libs.permissions)
+
+    implementation(libs.blur)
 }

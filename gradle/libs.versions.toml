@@ -34,6 +34,8 @@ coil = "2.4.0"
 
 immutableCollections = "0.3.5"
 
+blur = "0.9.0-alpha08"
+
 
 [libraries]
 
@@ -77,8 +79,10 @@ coilVideo = { module = "io.coil-kt:coil-video", version.ref = "coil" }
 
 immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
 
+blur = { module = "dev.chrisbanes.haze:haze", version.ref = "blur" }
 
-# Dependencies of the included build-logic
+
+
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 

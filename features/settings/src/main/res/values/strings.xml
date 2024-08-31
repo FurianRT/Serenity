@@ -1,5 +1,4 @@
 <resources>
-    <string name="settings_screen_title">Settings</string>
     <string name="settings_security_title">Security</string>
     <string name="settings_backup_title">Backup and Restore</string>
     <string name="settings_theme_title">Theme</string>

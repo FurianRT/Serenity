@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.furianrt.settings.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
@@ -35,7 +35,7 @@ internal fun Toolbar(
         )
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = stringResource(id = R.string.settings_screen_title),
+            text = stringResource(id = uiR.string.settings_title),
             style = MaterialTheme.typography.titleMedium,
         )
     }

@@ -8,8 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
@@ -32,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.permissions.R
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.R as uiR
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -41,9 +41,7 @@ fun MediaPermissionDialog(
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
-            modifier = Modifier
-                .wrapContentWidth()
-                .wrapContentHeight(),
+            modifier = Modifier.wrapContentSize(),
             shape = RoundedCornerShape(16.dp),
             tonalElevation = AlertDialogDefaults.TonalElevation,
         ) {
@@ -55,11 +53,11 @@ fun MediaPermissionDialog(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     ActionButton(
-                        title = stringResource(id = R.string.media_permission_not_now_title),
+                        title = stringResource(id = uiR.string.action_not_now),
                         onClick = onDismissRequest,
                     )
                     ActionButton(
-                        title = stringResource(id = R.string.media_permission_setting_title),
+                        title = stringResource(id = uiR.string.settings_title),
                         onClick = {
                             onSettingsClick()
                             onDismissRequest()
