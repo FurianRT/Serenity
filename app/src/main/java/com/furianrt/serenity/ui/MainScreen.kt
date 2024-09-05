@@ -214,8 +214,6 @@ private fun generatePreviewNotes() = buildImmutableList {
                 tags = persistentListOf(),
                 content = persistentListOf(
                     UiNoteContent.Title(
-                        id = "1",
-                        position = 0,
                         state = TextFieldState(
                             initialText = "Kotlin is a modern programming language with a " +
                                     "lot more syntactic sugar compared to Java, and as such " +

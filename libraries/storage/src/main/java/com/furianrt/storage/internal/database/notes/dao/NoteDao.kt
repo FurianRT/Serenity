@@ -14,15 +14,15 @@ internal interface NoteDao {
     @Upsert
     suspend fun upsert(note: EntryNote)
 
+    @Query("UPDATE ${EntryNote.TABLE_NAME} SET ${EntryNote.FIELD_TEXT} = :text WHERE ${EntryNote.FIELD_ID} = :noteId")
+    suspend fun updateNoteText(noteId: String, text: String)
+
     @Delete
     suspend fun delete(note: EntryNote)
 
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
-    fun getAllLinkedNotes(): Flow<List<LinkedNote>>
-
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
-    fun getAllNotes(): Flow<List<EntryNote>>
+    fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")

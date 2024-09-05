@@ -44,7 +44,7 @@ fun NoteContentTitle(
     focusOffset: Int = 0,
     hint: String? = null,
     isInEditMode: Boolean? = null,
-    onTitleFocused: (id: String) -> Unit = {},
+    onTitleFocused: () -> Unit = {},
 ) {
     if (isInEditMode == null) {
         Text(
@@ -86,7 +86,7 @@ fun NoteContentTitle(
             .onFocusChanged { focusState ->
                 hasFocus = focusState.hasFocus
                 if (focusState.hasFocus) {
-                    onTitleFocused(title.id)
+                    onTitleFocused()
                 }
             },
         onTextLayout = { layoutResult = it() },
@@ -140,8 +140,6 @@ private fun NoteContentTitlePreview() {
     SerenityTheme {
         NoteContentTitle(
             title = UiNoteContent.Title(
-                id = "1",
-                position = 0,
                 state = TextFieldState(
                     initialText = "Kotlin is a modern programming language with a " +
                             "lot more syntactic sugar compared to Java, and as such " +

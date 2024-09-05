@@ -12,7 +12,7 @@ import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
 import com.furianrt.storage.api.entities.DeviceMedia
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.hasPartialMediaAccess
 import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.extensions.launch
@@ -27,7 +27,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MediaSelectorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val deviceMediaRepository: DeviceMediaRepository,
+    private val mediaRepository: MediaRepository,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
@@ -35,6 +35,14 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
+
+    private val noteId by lazy(LazyThreadSafetyMode.NONE) {
+        savedStateHandle.get<String>("noteId")
+    }
+
+    private val blockId by lazy(LazyThreadSafetyMode.NONE) {
+        savedStateHandle.get<String>("blockId")
+    }
 
     private val selectedIds = mutableListOf<Long>()
 
@@ -47,21 +55,21 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> loadMediaItems()
             is OnSelectItemClick -> toggleItemSelection(event.item)
-            is OnSendClick -> {}
+            is OnSendClick -> saveMedia()
         }
     }
 
     private fun loadMediaItems() {
-        if (deviceMediaRepository.mediaAccessDenied()) {
+        if (mediaRepository.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
             return
         }
         launch {
-            val items = deviceMediaRepository.getMediaList()
+            val items = mediaRepository.getDeviceMediaList()
             _state.update { currentState ->
                 when {
                     items.isEmpty() -> MediaSelectorUiState.Empty(
-                        showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                        showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
@@ -78,14 +86,14 @@ internal class MediaSelectorViewModel @Inject constructor(
                                 }
                             ),
                             selectedCount = selectedIds.count(),
-                            showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                            showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                         )
                     }
 
                     else -> MediaSelectorUiState.Success(
                         items = items.mapImmutable(DeviceMedia::toMediaItem),
                         selectedCount = 0,
-                        showPartialAccessMessage = deviceMediaRepository.hasPartialMediaAccess(),
+                        showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                     )
                 }
             }
@@ -100,5 +108,10 @@ internal class MediaSelectorViewModel @Inject constructor(
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
             currentState.setSelectedItems(selectedIds)
         }
+    }
+
+    private fun saveMedia() {
+        //mediaRepository.upsert()
+        _effect.tryEmit(CloseScreen)
     }
 }

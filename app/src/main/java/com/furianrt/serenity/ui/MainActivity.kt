@@ -24,7 +24,7 @@ import androidx.navigation.navArgument
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.noteview.api.NoteViewScreen
 import com.furianrt.settings.api.SettingsScreen
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -37,7 +37,7 @@ private val SYSTEM_BARS_COLOR = Color.argb(0x4D, 0x1b, 0x1b, 0x1b)
 internal class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var deviceMediaRepository: DeviceMediaRepository
+    lateinit var mediaRepository: MediaRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +71,7 @@ internal class MainActivity : ComponentActivity() {
 
                 LifecycleStartEffect(lifecycleOwner = this, key1 = Unit) {
                     val currentRoute = navController.currentDestination?.route
-                    if (currentRoute == "Sheet" && deviceMediaRepository.mediaAccessDenied()) {
+                    if (currentRoute == "Sheet" && mediaRepository.mediaAccessDenied()) {
                         navController.popBackStack()
                     }
                     onStopOrDispose {}
@@ -164,7 +164,17 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     dialog(
-                        route = "Sheet",
+                        route = "Sheet" + "/{noteId}" + "/{blockId}",
+                        arguments = listOf(
+                            navArgument("noteId") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                            navArgument("blockId") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                        ),
                         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
                         content = {
                             MediaSelectorBottomSheet(

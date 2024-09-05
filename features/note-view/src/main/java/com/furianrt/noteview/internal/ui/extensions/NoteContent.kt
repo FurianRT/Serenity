@@ -7,19 +7,19 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 
 internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteContent> {
-    val result = this.toMutableList()
+    val result = toMutableList()
     forEachIndexed { index, content ->
         if (content is UiNoteContent.Title) {
             return@forEachIndexed
         }
 
         if (index == 0) {
-            result.add(index, UiNoteContent.Title(position = index))
+            result.add(index, UiNoteContent.Title())
         }
 
         if (index == lastIndex) {
             val newItemIndex = result.count()
-            result.add(newItemIndex, UiNoteContent.Title(position = newItemIndex))
+            result.add(newItemIndex, UiNoteContent.Title())
         }
 
         val nextItem = getOrElse(index + 1) {
@@ -28,22 +28,19 @@ internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiN
 
         if (nextItem !is UiNoteContent.Title) {
             val newItemIndex = result.indexOf(content) + 1
-            result.add(newItemIndex, UiNoteContent.Title(position = newItemIndex))
+            result.add(newItemIndex, UiNoteContent.Title())
         }
     }
 
     if (result.isEmpty()) {
-        result.add(UiNoteContent.Title(position = 0))
+        result.add(UiNoteContent.Title())
     }
 
-    return result.mapIndexed { index, content -> content.changePosition(index) }.toImmutableList()
+    return result.toImmutableList()
 }
 
 internal fun ImmutableList<UiNoteContent>.removeTitleTemplates(): ImmutableList<UiNoteContent> =
-    toMutableList()
-        .apply { removeIf { it is UiNoteContent.Title && it.state.text.isEmpty() } }
-        .mapIndexed { index, content -> content.changePosition(index) }
-        .toImmutableList()
+    toPersistentList().removeAll { it is UiNoteContent.Title && it.state.text.isEmpty() }
 
 internal fun ImmutableList<UiNoteTag>.addTagTemplate(): ImmutableList<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }

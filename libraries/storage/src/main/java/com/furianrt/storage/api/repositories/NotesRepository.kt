@@ -1,7 +1,6 @@
 package com.furianrt.storage.api.repositories
 
 import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.entities.LocalSimpleNote
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
@@ -9,15 +8,9 @@ interface NotesRepository {
 
     suspend fun deleteNote(note: LocalNote)
 
+    suspend fun updateNoteContent(noteId: String, content: List<LocalNote.Content>)
+
     fun getAllNotes(): Flow<List<LocalNote>>
 
-    fun getAllNotesSimple(): Flow<List<LocalSimpleNote>>
-
     fun getNote(noteId: String): Flow<LocalNote?>
-
-    suspend fun upsertNoteContent(noteId: String, content: List<LocalNote.Content>)
-
-    suspend fun upsertNoteTitle(noteId: String, title: LocalNote.Content.Title)
-
-    suspend fun upsertNoteTitle(noteId: String, titles: List<LocalNote.Content.Title>)
 }

@@ -4,7 +4,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import com.furianrt.core.mapImmutable
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.MediaRepository
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface MediaSelectorUiState {
@@ -37,7 +37,7 @@ internal sealed interface MediaSelectorUiState {
     }
 
     val mediaPermissionsList: List<String>
-        get() = DeviceMediaRepository.getMediaPermissionList()
+        get() = MediaRepository.getMediaPermissionList()
 }
 
 internal sealed interface MediaSelectorEvent {

@@ -6,18 +6,14 @@ import android.database.sqlite.SQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase
-import com.furianrt.storage.internal.database.notes.dao.ContentBlockDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
-import com.furianrt.storage.internal.database.notes.dao.NoteTitleDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
-import com.furianrt.storage.internal.database.notes.entities.EntryContentBlock
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
-import com.furianrt.storage.internal.database.notes.entities.EntryNoteTitle
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import dagger.Module
 import dagger.Provides
@@ -61,20 +57,9 @@ internal class DatabaseModule {
 
     @Provides
     @Singleton
-    fun contentBlockDao(database: SerenityDatabase): ContentBlockDao = database.contentBlockDao()
-
-    @Provides
-    @Singleton
-    fun noteTitleDao(database: SerenityDatabase): NoteTitleDao = database.noteTitleDao()
-
-    @Provides
-    @Singleton
     fun transactionsHelper(database: SerenityDatabase): TransactionsHelper = database
 
     private fun fillDbWithInitialData(db: SupportSQLiteDatabase) {
-        val noteTitle = "Kotlin is a modern programming language with a " +
-                "lot more syntactic sugar compared to Java"
-
         val tagsTitles = listOf("Kotlin", "Programming", "Android", "Development", "Java")
 
         val imageUrls = listOf(
@@ -115,46 +100,29 @@ internal class DatabaseModule {
 
             repeat(60) { times ->
                 val noteId = UUID.randomUUID().toString()
-                put(EntryNote.FIELD_ID, noteId)
                 val dateTime = ZonedDateTime.now().plusDays(times.toLong())
                 val resultMills = dateTime.toInstant().toEpochMilli()
+                val text = "Kotlin is a modern programming language" +
+                        "{media_block}${noteId + "0"},${noteId + "1"}{/media_block}" +
+                        "with a lot more syntactic" +
+                        "{media_block}${noteId + "2"},${noteId + "3"}{/media_block}" +
+                        "sugar compared to Java"
+                put(EntryNote.FIELD_ID, noteId)
                 put(EntryNote.FIELD_TIMESTAMP, resultMills)
+                put(EntryNote.FIELD_TEXT, text)
                 db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                 clear()
 
-                val positionFlag = Random.nextBoolean()
-
-                val hasTitle = Random.nextBoolean()
-
-                if (hasTitle) {
-                    val titleId = UUID.randomUUID().toString()
-                    put(EntryNoteTitle.FIELD_ID, titleId)
-                    put(EntryNoteTitle.FIELD_NOTE_ID, noteId)
-                    put(EntryNoteTitle.FIELD_POSITION, if (positionFlag) 1 else 0)
-                    put(EntryNoteTitle.FIELD_TEXT, noteTitle)
-                    db.insert(EntryNoteTitle.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
+                repeat(4) { index ->
+                    val imageId = index.toString()
+                    val imageIndex = Random.nextInt(imageUrls.count())
+                    put(EntryNoteImage.FIELD_ID, noteId + imageId)
+                    put(EntryNoteImage.FIELD_NOTE_ID, noteId)
+                    put(EntryNoteImage.FIELD_URI, imageUrls[imageIndex].first)
+                    put(EntryNoteImage.FIELD_RATIO, imageUrls[imageIndex].second)
+                    put(EntryNoteImage.FIELD_DATE, System.currentTimeMillis())
+                    db.insert(EntryNoteImage.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                     clear()
-                }
-
-                if (!hasTitle || Random.nextBoolean()) {
-                    val blockId = UUID.randomUUID().toString()
-                    put(EntryContentBlock.FIELD_ID, blockId)
-                    put(EntryContentBlock.FIELD_NOTE_ID, noteId)
-                    put(EntryContentBlock.FIELD_POSITION, if (positionFlag) 0 else 1)
-                    db.insert(EntryContentBlock.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-                    clear()
-
-                    repeat(Random.nextInt(1, 9)) { index ->
-                        val imageId = UUID.randomUUID().toString()
-                        val imageIndex = Random.nextInt(imageUrls.count())
-                        put(EntryNoteImage.FIELD_ID, imageId)
-                        put(EntryNoteImage.FIELD_BLOCK_ID, blockId)
-                        put(EntryNoteImage.FIELD_URI, imageUrls[imageIndex].first)
-                        put(EntryNoteImage.FIELD_RATIO, imageUrls[imageIndex].second)
-                        put(EntryNoteImage.FIELD_POSITION, index)
-                        db.insert(EntryNoteImage.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
-                        clear()
-                    }
                 }
 
                 repeat(Random.nextInt(tagsTitles.count())) { tagIndex ->

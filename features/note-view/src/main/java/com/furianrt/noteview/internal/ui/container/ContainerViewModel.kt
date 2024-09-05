@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
-import com.furianrt.storage.api.entities.LocalSimpleNote
+import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -54,7 +54,7 @@ internal class ContainerViewModel @Inject constructor(
     }
 
     private fun observeNotes() = launch {
-        notesRepository.getAllNotesSimple().collectLatest { notes ->
+        notesRepository.getAllNotes().collectLatest { notes ->
             if (notes.isEmpty()) {
                 _effect.tryEmit(ContainerEffect.CloseScreen)
                 return@collectLatest
@@ -63,12 +63,12 @@ internal class ContainerViewModel @Inject constructor(
                 when (localState) {
                     is ContainerUiState.Success -> localState.copy(
                         initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                        notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                        notes = notes.mapImmutable(LocalNote::toContainerScreenNote),
                     )
 
                     is ContainerUiState.Loading -> ContainerUiState.Success(
                         initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                        notes = notes.mapImmutable(LocalSimpleNote::toContainerScreenNote),
+                        notes = notes.mapImmutable(LocalNote::toContainerScreenNote),
                         isInEditMode = false,
                     )
                 }

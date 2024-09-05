@@ -15,6 +15,6 @@ internal interface ImageDao {
     @Delete
     suspend fun delete(image: EntryNoteImage)
 
-    @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_BLOCK_ID} = :blockId")
-    fun getImages(blockId: String): Flow<List<EntryNoteImage>>
+    @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NOTE_ID} = :noteId")
+    fun getImages(noteId: String): Flow<List<EntryNoteImage>>
 }

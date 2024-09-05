@@ -19,8 +19,9 @@ import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
 import com.furianrt.noteview.internal.ui.page.PageEffect.*
 import com.furianrt.noteview.internal.ui.page.PageEvent.*
+import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.MediaPermissionStatus
-import com.furianrt.storage.api.repositories.DeviceMediaRepository
+import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.uikit.extensions.launch
@@ -35,7 +36,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
@@ -43,7 +43,7 @@ import kotlinx.coroutines.flow.update
 internal class PageViewModel @AssistedInject constructor(
     private val notesRepository: NotesRepository,
     private val tagsRepository: TagsRepository,
-    private val deviceMediaRepository: DeviceMediaRepository,
+    private val mediaRepository: MediaRepository,
     @Assisted private val noteId: String,
 ) : ViewModel() {
 
@@ -108,7 +108,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryRequestMediaPermissions() {
-        if (deviceMediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+        if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
             _effect.tryEmit(OpenMediaSelector)
@@ -116,7 +116,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryOpenMediaSelector() {
-        if (deviceMediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+        if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
             _effect.tryEmit(ShowPermissionsDeniedDialog)
         } else {
             _effect.tryEmit(OpenMediaSelector)
@@ -145,7 +145,6 @@ internal class PageViewModel @AssistedInject constructor(
     private fun observeNote() = launch {
         notesRepository.getNote(noteId)
             .map { it?.toNoteViewScreenNote() }
-            .distinctUntilChanged()
             .collectLatest(::handleNoteResult)
     }
 
@@ -172,7 +171,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun saveNoteContent(content: List<UiNoteContent>) = launch {
-        notesRepository.upsertNoteContent(
+        notesRepository.updateNoteContent(
             noteId = noteId,
             content = content.map(UiNoteContent::toLocalNoteContent),
         )

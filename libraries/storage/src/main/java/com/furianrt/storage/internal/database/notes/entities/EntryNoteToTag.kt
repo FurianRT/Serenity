@@ -9,15 +9,15 @@ import androidx.room.ForeignKey
     primaryKeys = [EntryNoteToTag.FIELD_TAG_ID, EntryNoteToTag.FIELD_NOTE_ID],
     foreignKeys = [
         ForeignKey(
-            entity = EntryNoteTag::class,
-            parentColumns = [EntryNoteTag.FIELD_ID],
-            childColumns = [EntryNoteToTag.FIELD_TAG_ID],
-            onDelete = ForeignKey.CASCADE,
-        ),
-        ForeignKey(
             entity = EntryNote::class,
             parentColumns = [EntryNote.FIELD_ID],
             childColumns = [EntryNoteToTag.FIELD_NOTE_ID],
+            onDelete = ForeignKey.CASCADE,
+        ),
+        ForeignKey(
+            entity = EntryNoteTag::class,
+            parentColumns = [EntryNoteTag.FIELD_ID],
+            childColumns = [EntryNoteToTag.FIELD_TAG_ID],
             onDelete = ForeignKey.CASCADE,
         ),
     ],

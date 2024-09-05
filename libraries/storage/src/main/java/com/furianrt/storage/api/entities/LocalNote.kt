@@ -13,36 +13,32 @@ class LocalNote(
         val title: String,
     )
 
-    sealed class Content(val id: String, val position: Int) {
+    sealed interface Content {
 
-        class Title(id: String, position: Int, val text: String) : Content(id, position)
+        class Title(val text: String) : Content
 
-        class MediaBlock(
-            id: String,
-            position: Int,
-            val media: List<Media>,
-        ) : Content(id, position)
+        class MediaBlock(val media: List<Media>) : Content
 
         sealed class Media(
             val id: String,
             val uri: Uri,
             val ratio: Float,
-            val position: Int,
+            val date: Long,
         )
 
         class Image(
             id: String,
             uri: Uri,
             ratio: Float,
-            position: Int,
-        ) : Media(id, uri, ratio, position)
+            date: Long,
+        ) : Media(id, uri, ratio, date)
 
         class Video(
             id: String,
             uri: Uri,
             ratio: Float,
-            position: Int,
+            date: Long,
             val duration: Int,
-        ) : Media(id, uri, ratio, position)
+        ) : Media(id, uri, ratio, date)
     }
 }

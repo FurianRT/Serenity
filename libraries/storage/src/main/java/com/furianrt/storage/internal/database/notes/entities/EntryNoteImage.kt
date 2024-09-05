@@ -10,9 +10,9 @@ import androidx.room.PrimaryKey
     tableName = EntryNoteImage.TABLE_NAME,
     foreignKeys = [
         ForeignKey(
-            entity = EntryContentBlock::class,
-            parentColumns = [EntryContentBlock.FIELD_ID],
-            childColumns = [EntryNoteImage.FIELD_BLOCK_ID],
+            entity = EntryNote::class,
+            parentColumns = [EntryNote.FIELD_ID],
+            childColumns = [EntryNoteImage.FIELD_NOTE_ID],
             onDelete = ForeignKey.CASCADE,
         ),
     ],
@@ -22,8 +22,8 @@ internal class EntryNoteImage(
     @ColumnInfo(name = FIELD_ID)
     val id: String,
 
-    @ColumnInfo(name = FIELD_BLOCK_ID, index = true)
-    val blockId: String,
+    @ColumnInfo(name = FIELD_NOTE_ID, index = true)
+    val noteId: String,
 
     @ColumnInfo(name = FIELD_URI)
     val uri: Uri,
@@ -31,15 +31,15 @@ internal class EntryNoteImage(
     @ColumnInfo(name = FIELD_RATIO)
     val ratio: Float,
 
-    @ColumnInfo(name = FIELD_POSITION)
-    val position: Int,
+    @ColumnInfo(name = FIELD_DATE)
+    val date: Long,
 ) {
     companion object {
         const val TABLE_NAME = "Images"
         const val FIELD_ID = "id"
-        const val FIELD_BLOCK_ID = "block_id"
+        const val FIELD_NOTE_ID = "note_id"
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
-        const val FIELD_POSITION = "position"
+        const val FIELD_DATE = "date"
     }
 }

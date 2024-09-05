@@ -1,4 +1,4 @@
-package com.furianrt.storage.internal.database.notes.repositories
+package com.furianrt.storage.internal.repositories
 
 import com.furianrt.storage.internal.database.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
@@ -16,16 +16,12 @@ internal class TagsRepositoryImp @Inject constructor(
     private val transactionsHelper: TransactionsHelper,
 ) : TagsRepository {
 
-    override suspend fun upsert(noteId: String, tag: LocalNote.Tag, inTransaction: Boolean) {
-        val action: suspend () -> Unit = {
-            tagDao.upsert(tag.toEntryNoteTag())
-            noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
-        }
-        if (inTransaction) {
-            transactionsHelper.startTransaction(action)
-        } else {
-            action.invoke()
-        }
+    override suspend fun upsert(
+        noteId: String,
+        tag: LocalNote.Tag,
+    ) = transactionsHelper.startTransaction {
+        tagDao.upsert(tag.toEntryNoteTag())
+        noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
     }
 
     override suspend fun deleteForNote(

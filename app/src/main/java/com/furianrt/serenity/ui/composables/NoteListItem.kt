@@ -14,7 +14,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.composables.NoteContentMedia
@@ -52,21 +51,19 @@ internal fun NoteListItem(
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
         ) {
             note.content.forEachIndexed { index, item ->
-                key(item.id) {
-                    when (item) {
-                        is UiNoteContent.Title -> {
-                            NoteContentTitle(
-                                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                                title = item,
-                            )
-                        }
+                when (item) {
+                    is UiNoteContent.Title -> {
+                        NoteContentTitle(
+                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                            title = item,
+                        )
+                    }
 
-                        is UiNoteContent.MediaBlock -> {
-                            NoteContentMedia(
-                                modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
-                                block = item,
-                            )
-                        }
+                    is UiNoteContent.MediaBlock -> {
+                        NoteContentMedia(
+                            modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                            block = item,
+                        )
                     }
                 }
             }
@@ -102,8 +99,6 @@ private fun NoteItemPreview() {
                 ),
                 content = persistentListOf(
                     UiNoteContent.Title(
-                        id = "1",
-                        position = 0,
                         state = TextFieldState(
                             initialText = "Kotlin is a modern programming language with a " +
                                     "lot more syntactic sugar compared to Java, and as such " +
@@ -111,12 +106,10 @@ private fun NoteItemPreview() {
                         ),
                     ),
                     UiNoteContent.MediaBlock(
-                        id = "e2e2e",
-                        position = 1,
                         media = persistentListOf(
                             UiNoteContent.MediaBlock.Image(
                                 id = "femkfemkf",
-                                position = 0,
+                                date = 0,
                                 ratio = 1.5f,
                                 uri = Uri.EMPTY,
                             )

@@ -12,14 +12,10 @@ fun UiNoteContent.toLocalNoteContent() = when (this) {
 }
 
 fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
-    id = id,
-    position = position,
     media = media.map(UiNoteContent.MediaBlock.Media::toLocalMedia),
 )
 
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
-    id = id,
-    position = position,
     text = state.text.toString(),
 )
 
@@ -32,14 +28,14 @@ fun UiNoteContent.MediaBlock.Image.toLocalNoteImage() = LocalNote.Content.Image(
     id = id,
     uri = uri,
     ratio = ratio,
-    position = position,
+    date = date,
 )
 
 fun UiNoteContent.MediaBlock.Video.toLocalNoteVideo() = LocalNote.Content.Video(
     id = id,
     uri = uri,
     ratio = ratio,
-    position = position,
+    date = date,
     duration = duration,
 )
 
@@ -60,15 +56,11 @@ fun LocalNote.Content.toUiNoteContent() = when (this) {
 }
 
 fun LocalNote.Content.MediaBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
-    id = id,
-    position = position,
     media = media.mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
 )
 
 
 fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
-    id = id,
-    position = position,
     state = TextFieldState(initialText = text),
 )
 
@@ -81,15 +73,15 @@ fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Image(
     id = id,
     uri = uri,
     ratio = ratio,
-    position = position,
+    date = date,
 )
 
 fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
     id = id,
     uri = uri,
     ratio = ratio,
-    position = position,
     duration = duration,
+    date = date,
 )
 
 fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(

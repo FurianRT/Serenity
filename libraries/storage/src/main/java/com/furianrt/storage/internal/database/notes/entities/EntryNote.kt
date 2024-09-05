@@ -11,14 +11,16 @@ internal class EntryNote(
     @PrimaryKey
     val id: String,
 
+    @ColumnInfo(name = FIELD_TEXT)
+    val text: String,
+
     @ColumnInfo(name = FIELD_TIMESTAMP)
     val timestamp: Long,
-
-
 ) {
     companion object {
         const val TABLE_NAME = "Notes"
         const val FIELD_ID = "id"
+        const val FIELD_TEXT = "text"
         const val FIELD_TIMESTAMP = "timestamp"
     }
 }

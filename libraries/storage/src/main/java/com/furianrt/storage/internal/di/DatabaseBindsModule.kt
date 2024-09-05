@@ -3,9 +3,9 @@ package com.furianrt.storage.internal.di
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
-import com.furianrt.storage.internal.database.notes.repositories.MediaRepositoryImp
-import com.furianrt.storage.internal.database.notes.repositories.NotesRepositoryImp
-import com.furianrt.storage.internal.database.notes.repositories.TagsRepositoryImp
+import com.furianrt.storage.internal.repositories.MediaRepositoryImp
+import com.furianrt.storage.internal.repositories.NotesRepositoryImp
+import com.furianrt.storage.internal.repositories.TagsRepositoryImp
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

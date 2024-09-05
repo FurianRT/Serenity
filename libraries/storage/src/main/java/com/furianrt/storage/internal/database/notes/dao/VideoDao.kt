@@ -15,6 +15,6 @@ internal interface VideoDao {
     @Delete
     suspend fun delete(video: EntryNoteVideo)
 
-    @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_BLOCK_ID} = :blockId")
-    fun getVideos(blockId: String): Flow<List<EntryNoteVideo>>
+    @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NOTE_ID} = :noteId")
+    fun getVideos(noteId: String): Flow<List<EntryNoteVideo>>
 }

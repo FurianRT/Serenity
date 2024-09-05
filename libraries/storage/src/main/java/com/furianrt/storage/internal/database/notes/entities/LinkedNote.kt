@@ -9,18 +9,18 @@ internal class LinkedNote(
     val note: EntryNote,
 
     @Relation(
-        entity = EntryNoteTitle::class,
+        entity = EntryNoteImage::class,
+        entityColumn = EntryNoteImage.FIELD_NOTE_ID,
         parentColumn = EntryNote.FIELD_ID,
-        entityColumn = EntryNoteTitle.FIELD_NOTE_ID,
     )
-    val titles: List<EntryNoteTitle>,
+    val images: List<EntryNoteImage>,
 
     @Relation(
-        entity = EntryContentBlock::class,
-        entityColumn = EntryContentBlock.FIELD_NOTE_ID,
+        entity = EntryNoteVideo::class,
+        entityColumn = EntryNoteImage.FIELD_NOTE_ID,
         parentColumn = EntryNote.FIELD_ID,
     )
-    val contentBlocks: List<LinkedContentBlock>,
+    val videos: List<EntryNoteVideo>,
 
     @Relation(
         entity = EntryNoteTag::class,
