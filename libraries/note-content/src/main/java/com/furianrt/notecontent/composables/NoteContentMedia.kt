@@ -246,6 +246,7 @@ private fun NoteContentOneMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.1f))
                 },
@@ -260,6 +261,7 @@ private fun NoteContentTwoMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))
@@ -275,6 +277,7 @@ private fun NoteContentThreeMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))
@@ -291,6 +294,7 @@ private fun NoteContentFourMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 0.4f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.8f))
@@ -308,6 +312,7 @@ private fun NoteContentFiveMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
@@ -326,6 +331,7 @@ private fun NoteContentSixMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.5f))
@@ -345,6 +351,7 @@ private fun NoteContentSevenMediaPreview() {
     SerenityTheme {
         NoteContentMedia(
             block = MediaBlock(
+                id = "1",
                 media = buildImmutableList {
                     add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.5f))
                     add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))

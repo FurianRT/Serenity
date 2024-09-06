@@ -5,19 +5,20 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
-import java.util.UUID
 
-sealed interface UiNoteContent {
+sealed class UiNoteContent(open val id: String,) {
 
     @Stable
     data class Title(
+        override val id: String,
         val state: TextFieldState = TextFieldState(),
-    ) : UiNoteContent
+    ) : UiNoteContent(id)
 
     @Immutable
     data class MediaBlock(
+        override val id: String,
         val media: ImmutableList<Media>,
-    ) : UiNoteContent {
+    ) : UiNoteContent(id) {
         sealed class Media(
             open val id: String,
             open val uri: Uri,

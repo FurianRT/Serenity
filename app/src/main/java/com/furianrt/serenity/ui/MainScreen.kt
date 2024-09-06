@@ -206,14 +206,15 @@ private fun MainScreenSuccessPreview() {
 }
 
 private fun generatePreviewNotes() = buildImmutableList {
-    for (i in 0..5) {
+    repeat(5) { index ->
         add(
             MainScreenNote(
-                id = i.toString(),
+                id = index.toString(),
                 date = "19.06.2023",
                 tags = persistentListOf(),
                 content = persistentListOf(
                     UiNoteContent.Title(
+                        id = index.toString(),
                         state = TextFieldState(
                             initialText = "Kotlin is a modern programming language with a " +
                                     "lot more syntactic sugar compared to Java, and as such " +

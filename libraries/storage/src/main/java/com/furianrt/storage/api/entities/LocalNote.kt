@@ -13,11 +13,11 @@ class LocalNote(
         val title: String,
     )
 
-    sealed interface Content {
+    sealed class Content(val id: String) {
 
-        class Title(val text: String) : Content
+        class Title(id: String, val text: String) : Content(id)
 
-        class MediaBlock(val media: List<Media>) : Content
+        class MediaBlock(id: String, val media: List<Media>) : Content(id)
 
         sealed class Media(
             val id: String,

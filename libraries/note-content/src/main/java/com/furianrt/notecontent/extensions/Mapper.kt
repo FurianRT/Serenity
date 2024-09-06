@@ -12,10 +12,12 @@ fun UiNoteContent.toLocalNoteContent() = when (this) {
 }
 
 fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
+    id = id,
     media = media.map(UiNoteContent.MediaBlock.Media::toLocalMedia),
 )
 
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
+    id = id,
     text = state.text.toString(),
 )
 
@@ -56,11 +58,13 @@ fun LocalNote.Content.toUiNoteContent() = when (this) {
 }
 
 fun LocalNote.Content.MediaBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
+    id = id,
     media = media.mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
 )
 
 
 fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
+    id = id,
     state = TextFieldState(initialText = text),
 )
 

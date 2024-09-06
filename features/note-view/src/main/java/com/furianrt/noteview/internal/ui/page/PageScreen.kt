@@ -183,7 +183,7 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
-    var focusedTitleIndex: Int? by remember { mutableStateOf(null) }
+    var focusedTitleId: String? by remember { mutableStateOf(null) }
     val isListAtTop by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
@@ -233,6 +233,7 @@ private fun SuccessScreen(
         ) {
             itemsIndexed(
                 items = uiState.content,
+                key = { index, item -> item.id },
                 contentType = { _, item -> item.javaClass.name },
             ) { index, item ->
                 when (item) {
@@ -252,8 +253,8 @@ private fun SuccessScreen(
                             stringResource(id = R.string.note_title_hint_write_more_here)
                         },
                         isInEditMode = uiState.isInEditMode,
-                        onTitleFocused = {
-                            focusedTitleIndex = index
+                        onTitleFocused = { id ->
+                            focusedTitleId = id
                             onFocusChange()
                         },
                         scrollState = titleScrollState,
@@ -294,9 +295,9 @@ private fun SuccessScreen(
             enter = fadeIn(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
             exit = fadeOut(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
             content = {
-                val titleState = remember(uiState.content, focusedTitleIndex) {
-                    val index = focusedTitleIndex ?: return@remember null
-                    (uiState.content.getOrNull(index) as? UiNoteContent.Title)?.state
+                val titleState = remember(uiState.content, focusedTitleId) {
+                    uiState.content
+                        .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }?.state
                 }
                 ActionsPanel(
                     textFieldState = titleState ?: TextFieldState(),
@@ -346,6 +347,7 @@ private fun SuccessScreenPreview() {
                 tags = persistentListOf(),
                 content = persistentListOf(
                     UiNoteContent.Title(
+                        id = "1",
                         state = TextFieldState(
                             initialText = "Kotlin is a modern programming language with a " +
                                     "lot more syntactic sugar compared to Java, and as such " +

@@ -164,8 +164,8 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     dialog(
-                        route = "Sheet" + "/{noteId}" + "/{blockId}",
-                        arguments = listOf(
+                        route = "Sheet",
+                       /* arguments = listOf(
                             navArgument("noteId") {
                                 type = NavType.StringType
                                 nullable = false
@@ -174,7 +174,7 @@ internal class MainActivity : ComponentActivity() {
                                 type = NavType.StringType
                                 nullable = false
                             },
-                        ),
+                        ),*/
                         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
                         content = {
                             MediaSelectorBottomSheet(

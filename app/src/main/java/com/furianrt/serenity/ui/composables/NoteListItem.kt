@@ -99,6 +99,7 @@ private fun NoteItemPreview() {
                 ),
                 content = persistentListOf(
                     UiNoteContent.Title(
+                        id = "1",
                         state = TextFieldState(
                             initialText = "Kotlin is a modern programming language with a " +
                                     "lot more syntactic sugar compared to Java, and as such " +
@@ -106,6 +107,7 @@ private fun NoteItemPreview() {
                         ),
                     ),
                     UiNoteContent.MediaBlock(
+                        id = "1",
                         media = persistentListOf(
                             UiNoteContent.MediaBlock.Image(
                                 id = "femkfemkf",

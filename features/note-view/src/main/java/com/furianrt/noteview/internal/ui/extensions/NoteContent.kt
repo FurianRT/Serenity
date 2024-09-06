@@ -5,6 +5,7 @@ import com.furianrt.notecontent.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import java.util.UUID
 
 internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteContent> {
     val result = toMutableList()
@@ -14,12 +15,12 @@ internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiN
         }
 
         if (index == 0) {
-            result.add(index, UiNoteContent.Title())
+            result.add(index, UiNoteContent.Title(id = UUID.randomUUID().toString()))
         }
 
         if (index == lastIndex) {
             val newItemIndex = result.count()
-            result.add(newItemIndex, UiNoteContent.Title())
+            result.add(newItemIndex, UiNoteContent.Title(id = UUID.randomUUID().toString()))
         }
 
         val nextItem = getOrElse(index + 1) {
@@ -28,12 +29,12 @@ internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiN
 
         if (nextItem !is UiNoteContent.Title) {
             val newItemIndex = result.indexOf(content) + 1
-            result.add(newItemIndex, UiNoteContent.Title())
+            result.add(newItemIndex, UiNoteContent.Title(id = UUID.randomUUID().toString()))
         }
     }
 
     if (result.isEmpty()) {
-        result.add(UiNoteContent.Title())
+        result.add(UiNoteContent.Title(id = UUID.randomUUID().toString()))
     }
 
     return result.toImmutableList()

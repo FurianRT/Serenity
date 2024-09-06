@@ -19,7 +19,6 @@ import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
 import com.furianrt.noteview.internal.ui.page.PageEffect.*
 import com.furianrt.noteview.internal.ui.page.PageEvent.*
-import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.MediaPermissionStatus
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository

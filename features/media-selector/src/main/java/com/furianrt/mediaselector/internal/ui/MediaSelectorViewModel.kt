@@ -36,13 +36,13 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
 
-    private val noteId by lazy(LazyThreadSafetyMode.NONE) {
+   /* private val noteId by lazy(LazyThreadSafetyMode.NONE) {
         savedStateHandle.get<String>("noteId")
     }
 
     private val blockId by lazy(LazyThreadSafetyMode.NONE) {
         savedStateHandle.get<String>("blockId")
-    }
+    }*/
 
     private val selectedIds = mutableListOf<Long>()
 

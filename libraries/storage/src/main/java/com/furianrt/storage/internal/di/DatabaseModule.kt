@@ -64,28 +64,28 @@ internal class DatabaseModule {
 
         val imageUrls = listOf(
             Pair(
-                "https://kartinkof.club/uploads/posts/2022-12/1670401826_kartinkof-club-p-kartinki-neobichnie-so-smislom-1.jpg",
+                "content://media/external_primary/file/1000005635",
                 1.333f,
             ),
             Pair(
-                "https://i.pinimg.com/originals/25/90/a1/2590a1a6759841581e6e1ed7fc91376d.jpg",
+                "content://media/external_primary/file/1000005541",
                 0.68f,
             ),
             Pair(
-                "https://appleinsider.ru/wp-content/uploads/2019/07/drew-hays-z0WDn0Mas9o-unsplash-1.jpg",
+                "content://media/external_primary/file/1000005540",
                 1.5f,
             ),
-            Pair("https://ss.sport-express.ru/userfiles/materials/187/1876626/volga.jpg", 1.782f),
+            Pair("content://media/external_primary/file/1000005539", 1.782f),
             Pair(
-                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRjuyn1MYqy3hrOOT8LtspjE3Ss4HsRbricew&usqp=CAU",
+                "content://media/external_primary/file/1000005538",
                 0.574f,
             ),
             Pair(
-                "https://moslenta.ru/thumb/1200x0/filters:quality(75):no_upscale()/imgs/2022/08/15/08/5541985/9432ed2f471e51edb0d70e1dcc0b4089591bec2d.jpg",
+                "content://media/external_primary/file/1000005537",
                 1.526f,
             ),
             Pair(
-                "https://amiel.club/uploads/posts/2022-03/1647751619_1-amiel-club-p-krasivie-kartinki-na-vaiber-1.jpg",
+                "content://media/external_primary/file/1000005536",
                 0.75f,
             ),
         )
@@ -98,15 +98,15 @@ internal class DatabaseModule {
                 clear()
             }
 
-            repeat(60) { times ->
+            repeat(20) { times ->
                 val noteId = UUID.randomUUID().toString()
                 val dateTime = ZonedDateTime.now().plusDays(times.toLong())
                 val resultMills = dateTime.toInstant().toEpochMilli()
-                val text = "Kotlin is a modern programming language" +
-                        "{media_block}${noteId + "0"},${noteId + "1"}{/media_block}" +
-                        "with a lot more syntactic" +
-                        "{media_block}${noteId + "2"},${noteId + "3"}{/media_block}" +
-                        "sugar compared to Java"
+                val text = "{text}[id1]Kotlin is a modern programming language{/text}" +
+                        "{media}[id2]${noteId + "0"},${noteId + "1"}{/media}" +
+                        "{text}[id3]with a lot more syntactic{/text}" +
+                        "{media}[id4]${noteId + "2"},${noteId + "3"}{/media}" +
+                        "{text}[id5]sugar compared to Java{/text}"
                 put(EntryNote.FIELD_ID, noteId)
                 put(EntryNote.FIELD_TIMESTAMP, resultMills)
                 put(EntryNote.FIELD_TEXT, text)
