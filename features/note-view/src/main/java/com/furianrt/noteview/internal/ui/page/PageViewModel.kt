@@ -1,14 +1,19 @@
 package com.furianrt.noteview.internal.ui.page
 
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.mediaselector.api.entities.MediaSelectorResult
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.notecontent.extensions.toLocalNoteContent
 import com.furianrt.notecontent.extensions.toLocalNoteTag
 import com.furianrt.notecontent.extensions.toRegular
+import com.furianrt.noteview.internal.domain.UpdateNoteContentUseCase
 import com.furianrt.noteview.internal.ui.entites.NoteViewScreenNote
 import com.furianrt.noteview.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.addTagTemplate
@@ -16,18 +21,32 @@ import com.furianrt.noteview.internal.ui.extensions.addTitleTemplates
 import com.furianrt.noteview.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTagTemplate
 import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
+import com.furianrt.noteview.internal.ui.extensions.toMediaBlock
 import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
-import com.furianrt.noteview.internal.ui.page.PageEffect.*
-import com.furianrt.noteview.internal.ui.page.PageEvent.*
+import com.furianrt.noteview.internal.ui.page.PageEffect.OpenMediaSelector
+import com.furianrt.noteview.internal.ui.page.PageEffect.RequestStoragePermissions
+import com.furianrt.noteview.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnEditModeStateChange
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnMediaPermissionsSelected
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnSelectMediaClick
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagDoneEditing
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagRemoveClick
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextCleared
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTagTextEntered
+import com.furianrt.noteview.internal.ui.page.PageEvent.OnTitleFocusChange
 import com.furianrt.storage.api.entities.MediaPermissionStatus
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
-import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.utils.DialogResult
+import com.furianrt.uikit.utils.DialogResultCoordinator
+import com.furianrt.uikit.utils.DialogResultListener
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,16 +54,21 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import java.util.UUID
+
+private const val MEDIA_SELECTOR_DIALOG_ID = 1
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
+    private val updateNoteContentUseCase: UpdateNoteContentUseCase,
     private val notesRepository: NotesRepository,
-    private val tagsRepository: TagsRepository,
     private val mediaRepository: MediaRepository,
+    private val dialogResultCoordinator: DialogResultCoordinator,
     @Assisted private val noteId: String,
-) : ViewModel() {
+) : ViewModel(), DialogResultListener {
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
     val state: StateFlow<PageUiState> = _state.asStateFlow()
@@ -55,8 +79,16 @@ internal class PageViewModel @AssistedInject constructor(
     private val isInEditMode: Boolean
         get() = (_state.value as? PageUiState.Success)?.isInEditMode.orFalse()
 
+    private var focusedTitleId: String? = null
+
     init {
+        dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
         observeNote()
+    }
+
+    override fun onCleared() {
+        dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
+        super.onCleared()
     }
 
     fun onEvent(event: PageEvent) {
@@ -68,12 +100,83 @@ internal class PageViewModel @AssistedInject constructor(
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
             is OnSelectMediaClick -> tryRequestMediaPermissions()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
+            is OnTitleFocusChange -> focusedTitleId = event.id
+        }
+    }
+
+    override fun onDialogResult(dialogId: Int, result: DialogResult) {
+        when (dialogId) {
+            MEDIA_SELECTOR_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+                handleMediaSelectorResult(result.data as MediaSelectorResult)
+            }
+        }
+    }
+
+    private fun handleMediaSelectorResult(result: MediaSelectorResult) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            val newMediaBlock = result.toMediaBlock()
+            val newContent = buildContentWithNewMediaBlock(currentState.content, newMediaBlock)
+            if (currentState.isInEditMode) {
+                currentState.copy(content = newContent.addTitleTemplates())
+            } else {
+                currentState.copy(content = newContent)
+            }
+        }
+    }
+
+    private fun findTitleIndex(id: String?): Int? {
+        val successState = _state.value as? PageUiState.Success ?: return null
+        val index = successState.content.indexOfFirst { it.id == id }
+        return index.takeIf { it != -1 }
+    }
+
+    private fun buildContentWithNewMediaBlock(
+        content: List<UiNoteContent>,
+        mediaBlock: MediaBlock,
+    ): ImmutableList<UiNoteContent> {
+        val focusedTitleIndex = findTitleIndex(focusedTitleId)
+            ?: return (content + mediaBlock).toImmutableList()
+        val focusedTitle = content[focusedTitleIndex] as UiNoteContent.Title
+        val selection = focusedTitle.state.selection.start
+        when {
+            selection == 0 -> {
+                return content.toPersistentList().add(focusedTitleIndex, mediaBlock)
+            }
+
+            selection >= focusedTitle.state.text.length -> {
+                return content.toPersistentList().add(focusedTitleIndex + 1, mediaBlock)
+            }
+
+            else -> {
+                val titleFirstPart = UiNoteContent.Title(
+                    id = UUID.randomUUID().toString(),
+                    state = TextFieldState(
+                        initialText = focusedTitle.state.text.substring(
+                            startIndex = 0,
+                            endIndex = selection,
+                        ),
+                    )
+                )
+                val titleSecondPart = focusedTitle.copy(
+                    state = TextFieldState(
+                        initialText = focusedTitle.state.text.substring(
+                            startIndex = selection,
+                            endIndex = focusedTitle.state.text.length,
+                        ),
+                        initialSelection = TextRange.Zero,
+                    ),
+                )
+                val result = content.toMutableList()
+                result[focusedTitleIndex] = titleFirstPart
+                result.add(focusedTitleIndex + 1, mediaBlock)
+                result.add(focusedTitleIndex + 2, titleSecondPart)
+                return result.toImmutableList()
+            }
         }
     }
 
     private fun removeTag(tag: UiNoteTag.Regular) {
         _state.updateState<PageUiState.Success> { it.removeTag(tag) }
-        launch { tagsRepository.deleteForNote(noteId, tag.id) }
     }
 
     private fun addTag(tag: UiNoteTag.Template) {
@@ -84,7 +187,6 @@ internal class PageViewModel @AssistedInject constructor(
                     addTemplate = isInEditMode,
                 )
             }
-            launch { tagsRepository.upsert(noteId, tag.toLocalNoteTag()) }
         }
     }
 
@@ -110,7 +212,12 @@ internal class PageViewModel @AssistedInject constructor(
         if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
-            _effect.tryEmit(OpenMediaSelector)
+            _effect.tryEmit(
+                OpenMediaSelector(
+                    dialogId = MEDIA_SELECTOR_DIALOG_ID,
+                    requestId = noteId,
+                )
+            )
         }
     }
 
@@ -118,11 +225,19 @@ internal class PageViewModel @AssistedInject constructor(
         if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
             _effect.tryEmit(ShowPermissionsDeniedDialog)
         } else {
-            _effect.tryEmit(OpenMediaSelector)
+            _effect.tryEmit(
+                OpenMediaSelector(
+                    dialogId = MEDIA_SELECTOR_DIALOG_ID,
+                    requestId = noteId,
+                )
+            )
         }
     }
 
     private fun changeEditModeState(isEnabled: Boolean) {
+        if (!isEnabled) {
+            focusedTitleId = null
+        }
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(
                 content = with(currentState.content) {
@@ -135,15 +250,15 @@ internal class PageViewModel @AssistedInject constructor(
             )
         }
         // TODO написать логику сохранения заметки
-        val content = (_state.value as? PageUiState.Success)?.content
-        if (!isEnabled && content != null) {
-            saveNoteContent(content)
+        if (!isEnabled) {
+            saveNoteContent()
         }
     }
 
     private fun observeNote() = launch {
         notesRepository.getNote(noteId)
             .map { it?.toNoteViewScreenNote() }
+            .distinctUntilChanged()
             .collectLatest(::handleNoteResult)
     }
 
@@ -169,11 +284,15 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun saveNoteContent(content: List<UiNoteContent>) = launch {
-        notesRepository.updateNoteContent(
-            noteId = noteId,
-            content = content.map(UiNoteContent::toLocalNoteContent),
-        )
+    private fun saveNoteContent() {
+        val successState = getSuccessState() ?: return
+        launch {
+            updateNoteContentUseCase(
+                noteId = noteId,
+                content = successState.content.map(UiNoteContent::toLocalNoteContent),
+                tags = successState.tags.map(UiNoteTag::toLocalNoteTag),
+            )
+        }
     }
 
     private fun PageUiState.Success.addTag(
@@ -183,18 +302,14 @@ internal class PageViewModel @AssistedInject constructor(
         val result = tags.toPersistentList()
             .add(index = tags.lastIndexOf { it is UiNoteTag.Regular } + 1, element = tag)
             .removeTagTemplate(tag.id)
-        return copy(
-            tags = if (addTemplate) {
-                result.addTagTemplate()
-            } else {
-                result
-            },
-        )
+        return copy(tags = if (addTemplate) result.addTagTemplate() else result)
     }
 
     private fun PageUiState.Success.removeTag(tag: UiNoteTag) = copy(
-        tags = tags.toPersistentList().remove(tag)
+        tags = tags.toPersistentList().remove(tag),
     )
+
+    private fun getSuccessState() = _state.value as? PageUiState.Success
 
     @AssistedFactory
     interface Factory {

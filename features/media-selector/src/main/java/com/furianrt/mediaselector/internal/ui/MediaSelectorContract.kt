@@ -17,10 +17,10 @@ internal sealed interface MediaSelectorUiState {
         val listState: LazyGridState = LazyGridState(),
     ) : MediaSelectorUiState {
 
-        fun setSelectedItems(selectedItems: List<Long>): Success = copy(
+        fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             selectedCount = selectedItems.count(),
             items = items.mapImmutable { item ->
-                val selectedIndex = selectedItems.indexOfFirst { it == item.id }
+                val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
                 when {
                     selectedIndex != -1 -> {
                         item.changeState(SelectionState.Selected(order = selectedIndex + 1))

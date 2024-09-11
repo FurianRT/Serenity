@@ -18,28 +18,29 @@ sealed class UiNoteContent(open val id: String,) {
     data class MediaBlock(
         override val id: String,
         val media: ImmutableList<Media>,
+        val showLoading: Boolean = false,
     ) : UiNoteContent(id) {
         sealed class Media(
             open val id: String,
             open val uri: Uri,
             open val ratio: Float,
-            open val date: Long,
+            open val addedTime: Long,
         )
 
         data class Image(
             override val id: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val date: Long,
-        ) : Media(id, uri, ratio, date)
+            override val addedTime: Long,
+        ) : Media(id, uri, ratio, addedTime)
 
         data class Video(
             override val id: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val date: Long,
+            override val addedTime: Long,
             val duration: Int,
-        ) : Media(id, uri, ratio, date)
+        ) : Media(id, uri, ratio, addedTime)
     }
 }
 

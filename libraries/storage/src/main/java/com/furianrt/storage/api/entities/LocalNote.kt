@@ -23,22 +23,22 @@ class LocalNote(
             val id: String,
             val uri: Uri,
             val ratio: Float,
-            val date: Long,
+            val addedTime: Long,
         )
 
         class Image(
             id: String,
             uri: Uri,
             ratio: Float,
-            date: Long,
-        ) : Media(id, uri, ratio, date)
+            addedTime: Long,
+        ) : Media(id, uri, ratio, addedTime)
 
         class Video(
             id: String,
             uri: Uri,
             ratio: Float,
-            date: Long,
+            addedTime: Long,
             val duration: Int,
-        ) : Media(id, uri, ratio, date)
+        ) : Media(id, uri, ratio, addedTime)
     }
 }

@@ -26,10 +26,11 @@ internal sealed interface PageEvent {
     data object OnTagTextCleared : PageEvent
     data object OnSelectMediaClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
+    data class OnTitleFocusChange(val id: String) : PageEvent
 }
 
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
-    data object OpenMediaSelector : PageEffect
+    data class OpenMediaSelector(val dialogId: Int, val requestId: String): PageEffect
 }

@@ -107,7 +107,7 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     composable(
-                        route = "Note" + "/{noteId}",
+                        route = "Note/{noteId}",
                         arguments = listOf(
                             navArgument("noteId") {
                                 type = NavType.StringType
@@ -164,17 +164,17 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     dialog(
-                        route = "Sheet",
-                       /* arguments = listOf(
-                            navArgument("noteId") {
+                        route = "Sheet/{dialogId}/{requestId}",
+                        arguments = listOf(
+                            navArgument("dialogId") {
+                                type = NavType.IntType
+                                nullable = false
+                            },
+                            navArgument("requestId") {
                                 type = NavType.StringType
                                 nullable = false
                             },
-                            navArgument("blockId") {
-                                type = NavType.StringType
-                                nullable = false
-                            },
-                        ),*/
+                        ),
                         dialogProperties = DialogProperties(usePlatformDefaultWidth = false),
                         content = {
                             MediaSelectorBottomSheet(

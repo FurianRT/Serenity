@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -33,6 +34,8 @@ import coil.request.ImageRequest
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
+import com.furianrt.uikit.extensions.applyIf
+import com.furianrt.uikit.extensions.shimmer
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
@@ -43,33 +46,51 @@ fun NoteContentMedia(
     modifier: Modifier = Modifier,
     isEditable: Boolean = false,
 ) {
+    val loadingColor = MaterialTheme.colorScheme.tertiaryContainer
+    val loadingModifier = Modifier
+        .drawWithContent {
+            drawContent()
+            drawRoundRect(
+                color = loadingColor,
+                cornerRadius = CornerRadius(8.dp.toPx()),
+            )
+        }
+        .shimmer()
     when (block.media.count()) {
         1 -> OneMediaHolder(
-            modifier = modifier.sizeIn(maxHeight = block.contentHeightDp.dp),
+            modifier = modifier
+                .sizeIn(maxHeight = block.contentHeightDp.dp)
+                .applyIf(block.showLoading) { loadingModifier },
             media = block.media[0],
         )
 
         2 -> RowMediaHolder(
             modifier = modifier
                 .height(block.contentHeightDp.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(8.dp))
+                .applyIf(block.showLoading) { loadingModifier },
             media = block.media,
         )
 
         3 -> RowMediaHolder(
             modifier = modifier
                 .height(block.contentHeightDp.dp)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(8.dp))
+                .applyIf(block.showLoading) { loadingModifier },
             media = block.media,
         )
 
         4 -> FourMediaHolder(
-            modifier = modifier.height(block.contentHeightDp.dp),
+            modifier = modifier
+                .height(block.contentHeightDp.dp)
+                .applyIf(block.showLoading) { loadingModifier },
             media = block.media
         )
 
         else -> ManyMediaHolder(
-            modifier = modifier.height(block.contentHeightDp.dp),
+            modifier = modifier
+                .height(block.contentHeightDp.dp)
+                .applyIf(block.showLoading) { loadingModifier },
             media = block.media
         )
     }
@@ -248,7 +269,7 @@ private fun NoteContentOneMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.1f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.1f))
                 },
             ),
         )
@@ -263,8 +284,8 @@ private fun NoteContentTwoMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
                 },
             ),
         )
@@ -279,9 +300,9 @@ private fun NoteContentThreeMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, date = 0, ratio = 0.4f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
                 },
             ),
         )
@@ -296,10 +317,10 @@ private fun NoteContentFourMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 0.4f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.8f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.8f))
+                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -314,11 +335,11 @@ private fun NoteContentFiveMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -333,12 +354,12 @@ private fun NoteContentSixMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, date = 0, ratio = 1.9f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
+                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.9f))
+                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -353,13 +374,13 @@ private fun NoteContentSevenMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, date = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, date = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "6", uri = Uri.EMPTY, date = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
+                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(id = "6", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )

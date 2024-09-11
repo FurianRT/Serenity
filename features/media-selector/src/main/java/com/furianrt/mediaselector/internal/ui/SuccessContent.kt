@@ -194,7 +194,7 @@ private fun Preview() {
                                 } else {
                                     SelectionState.Default
                                 },
-                                duration = "0:10",
+                                duration = 10 * 60 * 1000,
                             )
                         }
                         add(item)

@@ -112,7 +112,7 @@ internal fun PageScreen(
                 }
 
                 is PageEffect.OpenMediaSelector -> navHostController.navigate(
-                    route = "Sheet",
+                    route = "Sheet/${effect.dialogId}/${effect.requestId}",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                 )
             }
@@ -254,6 +254,7 @@ private fun SuccessScreen(
                         },
                         isInEditMode = uiState.isInEditMode,
                         onTitleFocused = { id ->
+                            onEvent(PageEvent.OnTitleFocusChange(id))
                             focusedTitleId = id
                             onFocusChange()
                         },

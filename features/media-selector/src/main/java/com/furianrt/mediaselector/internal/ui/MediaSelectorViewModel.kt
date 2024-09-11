@@ -11,11 +11,15 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
+import com.furianrt.mediaselector.internal.ui.extensions.toMediaSelectorResult
 import com.furianrt.storage.api.entities.DeviceMedia
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.hasPartialMediaAccess
 import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.DialogResult
+import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,6 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MediaSelectorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
+    private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaRepository: MediaRepository,
 ) : ViewModel() {
 
@@ -36,15 +41,14 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 1)
     val effect = _effect.asSharedFlow()
 
-   /* private val noteId by lazy(LazyThreadSafetyMode.NONE) {
-        savedStateHandle.get<String>("noteId")
+    private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
+        DialogIdentifier(
+            requestId = savedStateHandle["requestId"]!!,
+            dialogId = savedStateHandle["dialogId"]!!,
+        )
     }
 
-    private val blockId by lazy(LazyThreadSafetyMode.NONE) {
-        savedStateHandle.get<String>("blockId")
-    }*/
-
-    private val selectedIds = mutableListOf<Long>()
+    private val selectedItems = mutableListOf<MediaItem>()
 
     init {
         loadMediaItems()
@@ -73,11 +77,11 @@ internal class MediaSelectorViewModel @Inject constructor(
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
-                        selectedIds.removeAll { !items.hasItem { item -> item.id == it } }
+                        selectedItems.removeAll { !items.hasItem { item -> item.id == it.id } }
                         MediaSelectorUiState.Success(
                             items = items.toMediaItems(
                                 state = { id ->
-                                    val selectedIndex = selectedIds.indexOfFirst { it == id }
+                                    val selectedIndex = selectedItems.indexOfFirst { it.id == id }
                                     if (selectedIndex != -1) {
                                         SelectionState.Selected(order = selectedIndex + 1)
                                     } else {
@@ -85,7 +89,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                                     }
                                 }
                             ),
-                            selectedCount = selectedIds.count(),
+                            selectedCount = selectedItems.count(),
                             showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                         )
                     }
@@ -102,16 +106,19 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     private fun toggleItemSelection(item: MediaItem) {
         when (item.state) {
-            is SelectionState.Default -> selectedIds.add(item.id)
-            is SelectionState.Selected -> selectedIds.remove(item.id)
+            is SelectionState.Default -> selectedItems.add(item)
+            is SelectionState.Selected -> selectedItems.removeAll { it.id == item.id }
         }
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
-            currentState.setSelectedItems(selectedIds)
+            currentState.setSelectedItems(selectedItems)
         }
     }
 
     private fun saveMedia() {
-        //mediaRepository.upsert()
+        dialogResultCoordinator.onDialogResult(
+            dialogIdentifier = dialogIdentifier,
+            code = DialogResult.Ok(data = selectedItems.toMediaSelectorResult()),
+        )
         _effect.tryEmit(CloseScreen)
     }
 }

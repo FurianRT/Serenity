@@ -13,15 +13,19 @@ import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
+import javax.inject.Singleton
 
-private const val COMPRESSION_VALUE = 10
+private const val COMPRESSION_VALUE = 70
 
+@Singleton
 internal class AppMediaStorage @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
 ) {
 
-    suspend fun saveMediaFile(media: LocalNote.Content.Media): LocalNote.Content.Media? =
+    suspend fun saveMediaFile(
+        media: LocalNote.Content.Media,
+    ): LocalNote.Content.Media? =
         when (media) {
             is LocalNote.Content.Image -> saveImage(media)
             is LocalNote.Content.Video -> saveVideo(media)
@@ -33,29 +37,27 @@ internal class AppMediaStorage @Inject constructor(
 
     private suspend fun saveImage(
         image: LocalNote.Content.Image,
-    ): LocalNote.Content.Image? = withContext(dispatchers.io) {
+    ): LocalNote.Content.Image? = withContext(dispatchers.default) {
         try {
             val destFile = File(context.filesDir, "${image.id}.webp")
-
-            val appImage = LocalNote.Content.Image(
+            val resultImage = LocalNote.Content.Image(
                 id = image.id,
                 uri = destFile.toUri(),
-                date = image.date,
+                addedTime = image.addedTime,
                 ratio = image.ratio,
             )
-
             if (destFile.exists()) {
-                return@withContext appImage
+                return@withContext resultImage
             }
 
             FileOutputStream(destFile).use { fos ->
                 val source = ImageDecoder.createSource(context.contentResolver, image.uri)
                 val sourceBitmap = source.decodeBitmap { _, _ -> }
-                sourceBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, COMPRESSION_VALUE, fos)
+                sourceBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, COMPRESSION_VALUE, fos)
                 fos.flush()
             }
 
-            return@withContext appImage
+            return@withContext resultImage
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -64,14 +66,14 @@ internal class AppMediaStorage @Inject constructor(
 
     private suspend fun saveVideo(
         video: LocalNote.Content.Video,
-    ): LocalNote.Content.Video? = withContext(dispatchers.io) {
+    ): LocalNote.Content.Video? = withContext(dispatchers.default) {
 
         return@withContext LocalNote.Content.Video(
             id = video.id,
             uri = Uri.EMPTY,
-            ratio = 0f,
+            ratio = 1f,
             duration = 0,
-            date = 0,
+            addedTime = 0,
         )
     }
 }

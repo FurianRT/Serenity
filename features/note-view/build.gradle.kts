@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.features.toolsPanel)
+    implementation(projects.features.mediaSelector)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
@@ -27,8 +28,8 @@ dependencies {
     implementation(libs.composeUi)
     implementation(libs.navAnimation)
     implementation(libs.composeGraphics)
-    debugImplementation(libs.composeToolingPreview)
-    debugImplementation(libs.composeTooling)
+    implementation(libs.composeToolingPreview)
+    implementation(libs.composeTooling)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)

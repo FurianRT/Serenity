@@ -28,6 +28,6 @@ internal sealed class MediaItem(
         override val uri: Uri,
         override val ratio: Float,
         override val state: SelectionState,
-        val duration: String,
+        val duration: Int,
     ) : MediaItem(id, uri, ratio, state)
 }

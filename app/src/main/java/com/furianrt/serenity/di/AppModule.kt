@@ -1,6 +1,7 @@
 package com.furianrt.serenity.di
 
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,4 +21,8 @@ object AppModule {
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
     }
+
+    @Singleton
+    @Provides
+    fun provideDialogResultCoordinator() = DialogResultCoordinator()
 }

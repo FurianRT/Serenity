@@ -30,21 +30,28 @@ fun UiNoteContent.MediaBlock.Image.toLocalNoteImage() = LocalNote.Content.Image(
     id = id,
     uri = uri,
     ratio = ratio,
-    date = date,
+    addedTime = addedTime,
 )
 
 fun UiNoteContent.MediaBlock.Video.toLocalNoteVideo() = LocalNote.Content.Video(
     id = id,
     uri = uri,
     ratio = ratio,
-    date = date,
+    addedTime = addedTime,
     duration = duration,
 )
 
-fun UiNoteTag.Template.toLocalNoteTag() = LocalNote.Tag(
-    id = id,
-    title = textState.text.trim().toString(),
-)
+fun UiNoteTag.toLocalNoteTag() = when (this) {
+    is UiNoteTag.Regular -> LocalNote.Tag(
+        id = id,
+        title = title,
+    )
+
+    is UiNoteTag.Template -> LocalNote.Tag(
+        id = id,
+        title = textState.text.toString(),
+    )
+}
 
 fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
     id = id,
@@ -77,7 +84,7 @@ fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Image(
     id = id,
     uri = uri,
     ratio = ratio,
-    date = date,
+    addedTime = addedTime,
 )
 
 fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
@@ -85,7 +92,7 @@ fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
     uri = uri,
     ratio = ratio,
     duration = duration,
-    date = date,
+    addedTime = addedTime,
 )
 
 fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(

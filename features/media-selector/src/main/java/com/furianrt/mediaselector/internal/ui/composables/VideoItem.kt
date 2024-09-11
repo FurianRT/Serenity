@@ -80,7 +80,7 @@ private fun Preview() {
                 uri = Uri.EMPTY,
                 ratio = 1f,
                 state = SelectionState.Selected(1),
-                duration = "10:35",
+                duration = 10 * 60 * 1000,
             ),
             onSelectClick = {},
         )

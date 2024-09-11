@@ -61,25 +61,29 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect
-            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collectLatest { effect ->
-                when (effect) {
-                    is MediaSelectorEffect.CloseScreen -> navHostController.popBackStack()
-                    is MediaSelectorEffect.RequestMediaPermissions -> {
-                        storagePermissionsState.launchMultiplePermissionRequest()
-                    }
-                }
-            }
-    }
-
     var showConfirmDialog by remember { mutableStateOf(false) }
     var skipConfirmation by remember { mutableStateOf(false) }
 
     val scaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     )
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is MediaSelectorEffect.CloseScreen -> {
+                        skipConfirmation = true
+                        scaffoldState.bottomSheetState.hide()
+                    }
+
+                    is MediaSelectorEffect.RequestMediaPermissions -> {
+                        storagePermissionsState.launchMultiplePermissionRequest()
+                    }
+                }
+            }
+    }
 
     LaunchedEffect(true) {
         scaffoldState.bottomSheetState.expand()

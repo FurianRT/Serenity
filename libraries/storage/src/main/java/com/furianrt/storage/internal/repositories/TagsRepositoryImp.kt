@@ -1,6 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
-import com.furianrt.storage.internal.database.TransactionsHelper
+import com.furianrt.storage.api.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.TagsRepository
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
@@ -8,6 +8,8 @@ import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteTag
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteToTag
+import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 internal class TagsRepositoryImp @Inject constructor(
@@ -16,12 +18,21 @@ internal class TagsRepositoryImp @Inject constructor(
     private val transactionsHelper: TransactionsHelper,
 ) : TagsRepository {
 
+    override suspend fun upsert(noteId: String, tag: LocalNote.Tag) = withContext(NonCancellable) {
+        transactionsHelper.startTransaction {
+            tagDao.upsert(tag.toEntryNoteTag())
+            noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
+        }
+    }
+
     override suspend fun upsert(
         noteId: String,
-        tag: LocalNote.Tag,
-    ) = transactionsHelper.startTransaction {
-        tagDao.upsert(tag.toEntryNoteTag())
-        noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
+        tags: List<LocalNote.Tag>,
+    ) = withContext(NonCancellable) {
+        transactionsHelper.startTransaction {
+            tagDao.upsert(tags.map(LocalNote.Tag::toEntryNoteTag))
+            noteToTagDao.upsert(tags.map { it.toEntryNoteToTag(noteId) })
+        }
     }
 
     override suspend fun deleteForNote(

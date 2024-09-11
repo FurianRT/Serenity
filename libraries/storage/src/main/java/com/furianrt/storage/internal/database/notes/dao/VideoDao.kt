@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface VideoDao {
     @Upsert
-    suspend fun upsert(video: EntryNoteVideo)
+    suspend fun upsert(videos: List<EntryNoteVideo>)
 
     @Delete
     suspend fun delete(video: EntryNoteVideo)

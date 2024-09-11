@@ -2,7 +2,14 @@ package com.furianrt.serenity.ui.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.StartOffset
+import androidx.compose.animation.core.StartOffsetType
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -60,6 +67,21 @@ internal fun BottomNavigationBar(
 
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
+    val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.06f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 250,
+                delayMillis = 1500,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Reverse,
+        ),
+        label = "ActionButtonScaleAnim",
+    )
+
     Box(
         modifier = modifier
             .windowInsetsPadding(WindowInsets.navigationBars)
@@ -82,6 +104,10 @@ internal fun BottomNavigationBar(
             contentAlignment = Alignment.CenterEnd,
         ) {
             ActionButton(
+                modifier = Modifier.graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                },
                 icon = painterResource(R.drawable.ic_fab_add),
                 onClick = onAddNoteClick,
             )

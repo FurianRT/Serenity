@@ -111,7 +111,7 @@ private fun NoteItemPreview() {
                         media = persistentListOf(
                             UiNoteContent.MediaBlock.Image(
                                 id = "femkfemkf",
-                                date = 0,
+                                addedTime = 0,
                                 ratio = 1.5f,
                                 uri = Uri.EMPTY,
                             )

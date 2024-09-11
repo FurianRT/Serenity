@@ -10,6 +10,9 @@ internal interface NoteToTagDao {
     @Upsert
     suspend fun upsert(noteToTag: EntryNoteToTag)
 
+    @Upsert
+    suspend fun upsert(noteToTag: List<EntryNoteToTag>)
+
     @Delete
     suspend fun delete(tag: EntryNoteToTag)
 }

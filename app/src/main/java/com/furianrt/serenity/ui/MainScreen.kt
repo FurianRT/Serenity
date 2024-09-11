@@ -1,5 +1,6 @@
 package com.furianrt.serenity.ui
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -173,7 +174,9 @@ private fun MainSuccess(
     ) {
         items(count = notes.count(), key = { notes[it].id }) { index ->
             NoteListItem(
-                modifier = Modifier.animateItem(),
+                modifier = Modifier
+                    .animateItem()
+                    .animateContentSize(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
                 onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },

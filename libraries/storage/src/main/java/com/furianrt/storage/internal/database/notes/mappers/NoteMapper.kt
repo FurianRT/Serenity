@@ -68,7 +68,11 @@ private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content
 
         FirstTagType.NONE -> return emptyList()
     }
-    return listOf(content) + getLocalNoteContent(text.substring(startIndex, text.length))
+    return if (content == null) {
+        getLocalNoteContent(text.substring(startIndex, text.length))
+    } else {
+        listOf(content) + getLocalNoteContent(text.substring(startIndex, text.length))
+    }
 }
 
 private fun extractTitle(text: String): LocalNote.Content.Title {
@@ -82,7 +86,7 @@ private fun extractTitle(text: String): LocalNote.Content.Title {
     return LocalNote.Content.Title(id = id, text = title)
 }
 
-private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock {
+private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock? {
     val indexOfTag = text.indexOf(MEDIA_START_TAG)
     val indexOfClosingTag = text.indexOf(MEDIA_END_TAG)
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
@@ -99,7 +103,11 @@ private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock 
             else -> throw IllegalArgumentException()
         }
     }
-    return LocalNote.Content.MediaBlock(id = id, media = localMedia)
+    return if (media.isEmpty()) {
+        null
+    } else {
+        LocalNote.Content.MediaBlock(id = id, media = localMedia)
+    }
 }
 
 private fun getFirstTagType(text: String): FirstTagType {

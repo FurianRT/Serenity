@@ -34,8 +34,11 @@ internal class EntryNoteVideo(
     @ColumnInfo(name = FIELD_DURATION)
     val duration: Int,
 
-    @ColumnInfo(name = FIELD_DATE)
-    val date: Long,
+    @ColumnInfo(name = FIELD_ADDED_TIME)
+    val addedTime: Long,
+
+    @ColumnInfo(name = FIELD_IS_SAVED)
+    val isSaved: Boolean,
 ) {
     companion object {
         const val TABLE_NAME = "Videos"
@@ -44,6 +47,7 @@ internal class EntryNoteVideo(
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
         const val FIELD_DURATION = "duration"
-        const val FIELD_DATE = "date"
+        const val FIELD_ADDED_TIME = "added_time"
+        const val FIELD_IS_SAVED = "is_saved"
     }
 }

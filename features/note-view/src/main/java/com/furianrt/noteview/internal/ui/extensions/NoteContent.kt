@@ -7,7 +7,7 @@ import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import java.util.UUID
 
-internal fun ImmutableList<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteContent> {
+internal fun List<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteContent> {
     val result = toMutableList()
     forEachIndexed { index, content ->
         if (content is UiNoteContent.Title) {

@@ -11,7 +11,7 @@ import com.furianrt.storage.api.entities.MediaPermissionStatus
 import kotlinx.coroutines.flow.Flow
 
 interface MediaRepository {
-    suspend fun upsert(noteId: String, media: LocalNote.Content.Media)
+    suspend fun upsert(noteId: String, media: List<LocalNote.Content.Media>)
     suspend fun delete(noteId: String, media: LocalNote.Content.Media)
     fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
 

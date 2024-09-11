@@ -21,8 +21,8 @@ dependencies {
     implementation(libs.composeActivity)
     implementation(libs.composeUi)
     implementation(libs.composeGraphics)
-    debugImplementation(libs.composeToolingPreview)
-    debugImplementation(libs.composeTooling)
+    implementation(libs.composeToolingPreview)
+    implementation(libs.composeTooling)
 
     implementation(libs.immutableCollections)
 

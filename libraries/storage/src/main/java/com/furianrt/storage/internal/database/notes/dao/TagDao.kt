@@ -11,6 +11,9 @@ internal interface TagDao {
     @Upsert
     suspend fun upsert(tag: EntryNoteTag)
 
+    @Upsert
+    suspend fun upsert(tags: List<EntryNoteTag>)
+
     @Query(
         "DELETE FROM ${EntryNoteTag.TABLE_NAME} WHERE NOT EXISTS (" +
             "SELECT * FROM ${EntryNoteToTag.TABLE_NAME} WHERE " +

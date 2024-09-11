@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface ImageDao {
     @Upsert
-    suspend fun upsert(image: EntryNoteImage)
+    suspend fun upsert(images: List<EntryNoteImage>)
 
     @Delete
     suspend fun delete(image: EntryNoteImage)

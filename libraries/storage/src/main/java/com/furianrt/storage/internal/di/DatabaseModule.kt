@@ -4,7 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.furianrt.storage.internal.database.TransactionsHelper
+import com.furianrt.storage.api.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
@@ -12,7 +12,6 @@ import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
-import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import dagger.Module
@@ -62,7 +61,7 @@ internal class DatabaseModule {
     private fun fillDbWithInitialData(db: SupportSQLiteDatabase) {
         val tagsTitles = listOf("Kotlin", "Programming", "Android", "Development", "Java")
 
-        val imageUrls = listOf(
+       /* val imageUrls = listOf(
             Pair(
                 "content://media/external_primary/file/1000005635",
                 1.333f,
@@ -88,7 +87,7 @@ internal class DatabaseModule {
                 "content://media/external_primary/file/1000005536",
                 0.75f,
             ),
-        )
+        )*/
 
         with(ContentValues()) {
             repeat(tagsTitles.count()) { tagIndex ->
@@ -102,18 +101,19 @@ internal class DatabaseModule {
                 val noteId = UUID.randomUUID().toString()
                 val dateTime = ZonedDateTime.now().plusDays(times.toLong())
                 val resultMills = dateTime.toInstant().toEpochMilli()
-                val text = "{text}[id1]Kotlin is a modern programming language{/text}" +
+               /* val text = "{text}[id1]Kotlin is a modern programming language{/text}" +
                         "{media}[id2]${noteId + "0"},${noteId + "1"}{/media}" +
                         "{text}[id3]with a lot more syntactic{/text}" +
                         "{media}[id4]${noteId + "2"},${noteId + "3"}{/media}" +
-                        "{text}[id5]sugar compared to Java{/text}"
+                        "{text}[id5]sugar compared to Java{/text}"*/
+                val text = "{text}[id1]Kotlin is a modern programming language{/text}"
                 put(EntryNote.FIELD_ID, noteId)
                 put(EntryNote.FIELD_TIMESTAMP, resultMills)
                 put(EntryNote.FIELD_TEXT, text)
                 db.insert(EntryNote.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                 clear()
 
-                repeat(4) { index ->
+               /* repeat(4) { index ->
                     val imageId = index.toString()
                     val imageIndex = Random.nextInt(imageUrls.count())
                     put(EntryNoteImage.FIELD_ID, noteId + imageId)
@@ -123,7 +123,7 @@ internal class DatabaseModule {
                     put(EntryNoteImage.FIELD_DATE, System.currentTimeMillis())
                     db.insert(EntryNoteImage.TABLE_NAME, SQLiteDatabase.CONFLICT_ABORT, this)
                     clear()
-                }
+                }*/
 
                 repeat(Random.nextInt(tagsTitles.count())) { tagIndex ->
                     put(EntryNoteToTag.FIELD_NOTE_ID, noteId)
