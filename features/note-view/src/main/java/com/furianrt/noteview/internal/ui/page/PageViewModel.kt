@@ -3,7 +3,6 @@ package com.furianrt.noteview.internal.ui.page
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
-import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse

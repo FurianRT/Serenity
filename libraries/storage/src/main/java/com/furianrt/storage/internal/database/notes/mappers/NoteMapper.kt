@@ -1,7 +1,6 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
 import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
@@ -21,12 +20,6 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     timestamp = note.timestamp,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
     content = getLocalNoteContent(),
-)
-
-internal fun LocalNote.toEntryNote() = EntryNote(
-    id = id,
-    text = content.toEntryNoteText(),
-    timestamp = timestamp,
 )
 
 internal fun LinkedNote.getLocalNoteContent(): List<LocalNote.Content> {
