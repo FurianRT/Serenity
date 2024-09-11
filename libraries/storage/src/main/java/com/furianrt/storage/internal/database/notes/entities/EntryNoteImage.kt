@@ -47,3 +47,15 @@ internal class EntryNoteImage(
         const val FIELD_IS_SAVED = "is_saved"
     }
 }
+
+@Entity
+internal class PartImageUri(
+    @ColumnInfo(name = EntryNoteImage.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNoteImage.FIELD_URI)
+    val uri: Uri,
+
+    @ColumnInfo(name = EntryNoteImage.FIELD_IS_SAVED)
+    val isSaved: Boolean,
+)

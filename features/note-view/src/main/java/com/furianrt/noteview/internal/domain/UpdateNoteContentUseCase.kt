@@ -21,14 +21,14 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         tags: List<LocalNote.Tag>,
     ) = withContext(NonCancellable) {
         transactionsHelper.startTransaction {
-            mediaRepository.upsert(
+            mediaRepository.insert(
                 noteId = noteId,
                 media = content
                     .filterIsInstance<LocalNote.Content.MediaBlock>()
                     .flatMap(LocalNote.Content.MediaBlock::media),
             )
             notesRepository.updateNoteText(noteId, content)
-            tagsRepository.upsert(noteId, tags)
+            tagsRepository.insert(noteId, tags)
         }
     }
 }

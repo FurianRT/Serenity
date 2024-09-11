@@ -4,8 +4,8 @@ import com.furianrt.storage.api.entities.LocalNote
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {
-    suspend fun deleteNote(note: LocalNote)
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
+    suspend fun deleteNote(noteId: String)
     fun getAllNotes(): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
 }

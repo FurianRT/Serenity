@@ -23,33 +23,37 @@ internal class AppMediaStorage @Inject constructor(
     private val dispatchers: DispatchersProvider,
 ) {
 
-    suspend fun saveMediaFile(
-        media: LocalNote.Content.Media,
-    ): LocalNote.Content.Media? =
-        when (media) {
-            is LocalNote.Content.Image -> saveImage(media)
-            is LocalNote.Content.Video -> saveVideo(media)
-        }
+    suspend fun saveMediaFile(noteId: String, media: LocalNote.Content.Media): Uri? = when (media) {
+        is LocalNote.Content.Image -> saveImage(noteId, media)
+        is LocalNote.Content.Video -> saveVideo(noteId, media)
+    }
 
-    suspend fun deleteMediaFile(id: String): Boolean = withContext(dispatchers.io) {
-        return@withContext File(context.filesDir, id).delete()
+    suspend fun deleteMediaFile(noteId: String, id: String): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(context.filesDir, "$noteId/$id").delete()
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun deleteAllMediaFiles(noteId: String): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(context.filesDir, noteId).delete()
+        } catch (e: Exception) {
+            false
+        }
     }
 
     private suspend fun saveImage(
+        noteId: String,
         image: LocalNote.Content.Image,
-    ): LocalNote.Content.Image? = withContext(dispatchers.default) {
+    ): Uri? = withContext(dispatchers.default) {
         try {
-            val destFile = File(context.filesDir, "${image.id}.webp")
-            val resultImage = LocalNote.Content.Image(
-                id = image.id,
-                uri = destFile.toUri(),
-                addedTime = image.addedTime,
-                ratio = image.ratio,
-            )
+            val destFile = File(context.filesDir, "$noteId/${image.id}.webp")
             if (destFile.exists()) {
-                return@withContext resultImage
+                return@withContext destFile.toUri()
             }
-
+            destFile.parentFile?.mkdirs()
             FileOutputStream(destFile).use { fos ->
                 val source = ImageDecoder.createSource(context.contentResolver, image.uri)
                 val sourceBitmap = source.decodeBitmap { _, _ -> }
@@ -57,7 +61,7 @@ internal class AppMediaStorage @Inject constructor(
                 fos.flush()
             }
 
-            return@withContext resultImage
+            return@withContext destFile.toUri()
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -65,15 +69,10 @@ internal class AppMediaStorage @Inject constructor(
     }
 
     private suspend fun saveVideo(
+        noteId: String,
         video: LocalNote.Content.Video,
-    ): LocalNote.Content.Video? = withContext(dispatchers.default) {
+    ): Uri? = withContext(dispatchers.default) {
 
-        return@withContext LocalNote.Content.Video(
-            id = video.id,
-            uri = Uri.EMPTY,
-            ratio = 1f,
-            duration = 0,
-            addedTime = 0,
-        )
+        return@withContext Uri.EMPTY
     }
 }

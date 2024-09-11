@@ -20,24 +20,24 @@ class LocalNote(
         class MediaBlock(id: String, val media: List<Media>) : Content(id)
 
         sealed class Media(
-            val id: String,
-            val uri: Uri,
-            val ratio: Float,
-            val addedTime: Long,
+            open val id: String,
+            open val uri: Uri,
+            open val ratio: Float,
+            open val addedTime: Long,
         )
 
-        class Image(
-            id: String,
-            uri: Uri,
-            ratio: Float,
-            addedTime: Long,
+        data class Image(
+            override val id: String,
+            override val uri: Uri,
+            override val ratio: Float,
+            override val addedTime: Long,
         ) : Media(id, uri, ratio, addedTime)
 
-        class Video(
-            id: String,
-            uri: Uri,
-            ratio: Float,
-            addedTime: Long,
+        data class Video(
+            override val id: String,
+            override val uri: Uri,
+            override val ratio: Float,
+            override val addedTime: Long,
             val duration: Int,
         ) : Media(id, uri, ratio, addedTime)
     }

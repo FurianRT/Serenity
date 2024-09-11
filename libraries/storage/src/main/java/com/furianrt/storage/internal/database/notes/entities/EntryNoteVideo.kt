@@ -51,3 +51,15 @@ internal class EntryNoteVideo(
         const val FIELD_IS_SAVED = "is_saved"
     }
 }
+
+@Entity
+internal class PartVideoUri(
+    @ColumnInfo(name = EntryNoteVideo.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNoteVideo.FIELD_URI)
+    val uri: Uri,
+
+    @ColumnInfo(name = EntryNoteVideo.FIELD_IS_SAVED)
+    val isSaved: Boolean,
+)

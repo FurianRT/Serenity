@@ -18,20 +18,20 @@ internal class TagsRepositoryImp @Inject constructor(
     private val transactionsHelper: TransactionsHelper,
 ) : TagsRepository {
 
-    override suspend fun upsert(noteId: String, tag: LocalNote.Tag) = withContext(NonCancellable) {
+    override suspend fun insert(noteId: String, tag: LocalNote.Tag) = withContext(NonCancellable) {
         transactionsHelper.startTransaction {
-            tagDao.upsert(tag.toEntryNoteTag())
-            noteToTagDao.upsert(tag.toEntryNoteToTag(noteId))
+            tagDao.insert(tag.toEntryNoteTag())
+            noteToTagDao.insert(tag.toEntryNoteToTag(noteId))
         }
     }
 
-    override suspend fun upsert(
+    override suspend fun insert(
         noteId: String,
         tags: List<LocalNote.Tag>,
     ) = withContext(NonCancellable) {
         transactionsHelper.startTransaction {
-            tagDao.upsert(tags.map(LocalNote.Tag::toEntryNoteTag))
-            noteToTagDao.upsert(tags.map { it.toEntryNoteToTag(noteId) })
+            tagDao.insert(tags.map(LocalNote.Tag::toEntryNoteTag))
+            noteToTagDao.insert(tags.map { it.toEntryNoteToTag(noteId) })
         }
     }
 

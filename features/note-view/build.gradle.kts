@@ -18,6 +18,7 @@ dependencies {
     implementation(projects.libraries.storage)
     implementation(projects.libraries.noteContent)
     implementation(projects.libraries.permissions)
+    implementation(projects.libraries.domain)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

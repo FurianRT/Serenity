@@ -19,21 +19,27 @@ internal fun EntryNoteVideo.toNoteContentVideo() = LocalNote.Content.Video(
     addedTime = addedTime,
 )
 
-internal fun LocalNote.Content.Image.toEntryImage(noteId: String) = EntryNoteImage(
+internal fun LocalNote.Content.Image.toEntryImage(
+    noteId: String,
+    isSaved: Boolean,
+) = EntryNoteImage(
     id = id,
     noteId = noteId,
     uri = uri,
     ratio = ratio,
     addedTime = addedTime,
-    isSaved = false,
+    isSaved = isSaved,
 )
 
-internal fun LocalNote.Content.Video.toEntryVideo(noteId: String) = EntryNoteVideo(
+internal fun LocalNote.Content.Video.toEntryVideo(
+    noteId: String,
+    isSaved: Boolean,
+) = EntryNoteVideo(
     id = id,
     noteId = noteId,
     uri = uri,
     ratio = ratio,
     duration = duration,
     addedTime = addedTime,
-    isSaved = false,
+    isSaved = isSaved,
 )

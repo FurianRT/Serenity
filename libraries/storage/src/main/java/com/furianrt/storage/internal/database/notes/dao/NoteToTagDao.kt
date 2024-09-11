@@ -2,16 +2,17 @@ package com.furianrt.storage.internal.database.notes.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Upsert
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 
 @Dao
 internal interface NoteToTagDao {
-    @Upsert
-    suspend fun upsert(noteToTag: EntryNoteToTag)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(noteToTag: EntryNoteToTag)
 
-    @Upsert
-    suspend fun upsert(noteToTag: List<EntryNoteToTag>)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(noteToTag: List<EntryNoteToTag>)
 
     @Delete
     suspend fun delete(tag: EntryNoteToTag)

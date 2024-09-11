@@ -195,7 +195,7 @@ private fun SuccessScreen(
 private fun LoadingScreen(
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier)
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @PreviewWithBackground

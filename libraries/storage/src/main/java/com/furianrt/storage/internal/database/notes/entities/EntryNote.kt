@@ -24,3 +24,12 @@ internal class EntryNote(
         const val FIELD_TIMESTAMP = "timestamp"
     }
 }
+
+@Entity
+internal class PartNoteText(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_TEXT)
+    val text: String,
+)

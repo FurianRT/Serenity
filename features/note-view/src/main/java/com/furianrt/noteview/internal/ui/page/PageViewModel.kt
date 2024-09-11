@@ -1,6 +1,8 @@
 package com.furianrt.noteview.internal.ui.page
 
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.delete
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.lastIndexOf
@@ -138,13 +140,19 @@ internal class PageViewModel @AssistedInject constructor(
             ?: return (content + mediaBlock).toImmutableList()
         val focusedTitle = content[focusedTitleIndex] as UiNoteContent.Title
         val selection = focusedTitle.state.selection.start
-        when {
-            selection == 0 -> {
-                return content.toPersistentList().add(focusedTitleIndex, mediaBlock)
-            }
-
+        return when {
+            selection == 0 -> content.toPersistentList().add(focusedTitleIndex, mediaBlock)
             selection >= focusedTitle.state.text.length -> {
-                return content.toPersistentList().add(focusedTitleIndex + 1, mediaBlock)
+                val titleFirstPart = UiNoteContent.Title(
+                    id = UUID.randomUUID().toString(),
+                    state = TextFieldState(initialText = focusedTitle.state.text.toString())
+                )
+                val titleSecondPart = focusedTitle.also { it.state.clearText() }
+                val result = content.toMutableList()
+                result[focusedTitleIndex] = titleFirstPart
+                result.add(focusedTitleIndex + 1, mediaBlock)
+                result.add(focusedTitleIndex + 2, titleSecondPart)
+                result.toImmutableList()
             }
 
             else -> {
@@ -157,20 +165,17 @@ internal class PageViewModel @AssistedInject constructor(
                         ),
                     )
                 )
-                val titleSecondPart = focusedTitle.copy(
-                    state = TextFieldState(
-                        initialText = focusedTitle.state.text.substring(
-                            startIndex = selection,
-                            endIndex = focusedTitle.state.text.length,
-                        ),
-                        initialSelection = TextRange.Zero,
-                    ),
-                )
+                val titleSecondPart = focusedTitle.also { title ->
+                    title.state.edit {
+                        delete(start = 0, end = selection)
+                        placeCursorBeforeCharAt(0)
+                    }
+                }
                 val result = content.toMutableList()
                 result[focusedTitleIndex] = titleFirstPart
                 result.add(focusedTitleIndex + 1, mediaBlock)
                 result.add(focusedTitleIndex + 2, titleSecondPart)
-                return result.toImmutableList()
+                result.toImmutableList()
             }
         }
     }
