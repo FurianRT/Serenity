@@ -69,17 +69,17 @@ internal class MediaSelectorViewModel @Inject constructor(
             return
         }
         launch {
-            val items = mediaRepository.getDeviceMediaList()
+            val media = mediaRepository.getDeviceMediaList()
             _state.update { currentState ->
                 when {
-                    items.isEmpty() -> MediaSelectorUiState.Empty(
+                    media.isEmpty() -> MediaSelectorUiState.Empty(
                         showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
-                        selectedItems.removeAll { !items.hasItem { item -> item.id == it.id } }
+                        selectedItems.removeAll { !media.hasItem { item -> item.id == it.id } }
                         MediaSelectorUiState.Success(
-                            items = items.toMediaItems(
+                            items = media.toMediaItems(
                                 state = { id ->
                                     val selectedIndex = selectedItems.indexOfFirst { it.id == id }
                                     if (selectedIndex != -1) {
@@ -95,7 +95,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     }
 
                     else -> MediaSelectorUiState.Success(
-                        items = items.mapImmutable(DeviceMedia::toMediaItem),
+                        items = media.mapImmutable(DeviceMedia::toMediaItem),
                         selectedCount = 0,
                         showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
                     )

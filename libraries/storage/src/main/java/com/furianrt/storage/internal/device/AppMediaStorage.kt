@@ -50,9 +50,6 @@ internal class AppMediaStorage @Inject constructor(
     ): Uri? = withContext(dispatchers.default) {
         try {
             val destFile = File(context.filesDir, "$noteId/${image.id}.webp")
-            if (destFile.exists()) {
-                return@withContext destFile.toUri()
-            }
             destFile.parentFile?.mkdirs()
             FileOutputStream(destFile).use { fos ->
                 val source = ImageDecoder.createSource(context.contentResolver, image.uri)

@@ -17,7 +17,7 @@ accompanist = "0.34.0"
 
 splashScreen = "1.0.1"
 
-coroutines = "1.8.0"
+coroutines = "1.8.1"
 
 room = "2.6.1"
 
@@ -28,7 +28,7 @@ collapsingToolbar = "2.3.5"
 
 lottie = "6.4.0"
 
-coil = "2.4.0"
+coil = "3.0.0-alpha10"
 
 immutableCollections = "0.3.5"
 
@@ -41,7 +41,7 @@ coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 
 lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
-material3Size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3"}
+material3Size = { module = "androidx.compose.material3:material3-window-size-class", version.ref = "material3" }
 
 composeActivity = { module = "androidx.activity:activity-compose", version.ref = "composeActivity" }
 composeFoundation = { module = "androidx.compose.foundation:foundation", version.ref = "compose" }
@@ -70,8 +70,8 @@ collapsingToolbar = { module = "me.onebone:toolbar-compose", version.ref = "coll
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
-coil = { module = "io.coil-kt:coil-compose", version.ref = "coil" }
-coilVideo = { module = "io.coil-kt:coil-video", version.ref = "coil" }
+coil = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coilVideo = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 
 immutableCollections = { module = "org.jetbrains.kotlinx:kotlinx-collections-immutable", version.ref = "immutableCollections" }
 

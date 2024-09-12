@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -28,9 +29,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.request.CachePolicy
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
@@ -219,12 +220,16 @@ private fun ImageItem(
     cornerRadius: Dp = 4.dp,
     offscreenImageCount: Int = 0,
 ) {
-    val request = ImageRequest.Builder(LocalContext.current)
-        .diskCachePolicy(CachePolicy.DISABLED)
-        .memoryCachePolicy(CachePolicy.ENABLED)
-        .memoryCacheKey(image.id)
-        .data(image.uri)
-        .build()
+    val context = LocalContext.current
+    val request = remember(image.id) {
+        ImageRequest.Builder(context)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCacheKey(image.id)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCacheKey(image.id)
+            .data(image.uri)
+            .build()
+    }
 
     if (offscreenImageCount == 0) {
         AsyncImage(

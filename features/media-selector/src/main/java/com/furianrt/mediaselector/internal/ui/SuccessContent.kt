@@ -27,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
@@ -48,7 +47,6 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
-import kotlin.math.max
 
 private const val ACTION_PANEL_ANIM_DURATION = 250
 
@@ -72,7 +70,7 @@ internal fun SuccessContent(
             columns = GridCells.Fixed(listSpanCount),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(start = 4.dp, end = 4.dp, bottom = 48.dp),
+            contentPadding = PaddingValues(start = 4.dp, end = 4.dp, bottom = 56.dp),
         ) {
             if (uiState.showPartialAccessMessage) {
                 item(span = { GridItemSpan(listSpanCount) }) {
@@ -111,7 +109,6 @@ internal fun SuccessContent(
             }
         }
         AnimatedVisibility(
-            modifier = Modifier.fillMaxWidth(),
             visible = uiState.selectedCount > 0,
             enter = fadeIn(animationSpec = tween(ACTION_PANEL_ANIM_DURATION)) + slideIn(
                 animationSpec = tween(ACTION_PANEL_ANIM_DURATION),
@@ -134,17 +131,15 @@ internal fun SuccessContent(
                             ),
                             blurRadius = 12.dp,
                         ),
-                    ),
-                title = stringResource(
-                    R.string.media_selector_apply_button_title,
-                    max(1, uiState.selectedCount),
-                ),
+                    )
+                    .padding(16.dp),
+                count = uiState.selectedCount,
             )
         }
         AnimatedVisibility(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(end = 16.dp, bottom = 16.dp)
+                .padding(end = 16.dp, bottom = 24.dp)
                 .align(Alignment.BottomEnd),
             visible = uiState.selectedCount > 0,
             enter = fadeIn(animationSpec = tween(ACTION_PANEL_ANIM_DURATION)) + scaleIn(

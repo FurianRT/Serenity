@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -17,9 +18,10 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import coil.decode.VideoFrameDecoder
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.video.VideoFrameDecoder
 import com.furianrt.mediaselector.internal.ui.entities.Constants
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
@@ -37,6 +39,18 @@ internal fun VideoItem(
         animationSpec = tween(durationMillis = Constants.IMAGE_SCALE_ANIM_DURATION),
         label = "ItemScale"
     )
+    val context = LocalContext.current
+    val request = remember(item.id) {
+        ImageRequest.Builder(context)
+            .size(Constants.REQUESTED_IMAGE_SIZE)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCacheKey(item.id.toString())
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCacheKey(item.id.toString())
+            .data(item.uri)
+            .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+            .build()
+    }
     Box(modifier = modifier.aspectRatio(1f)) {
         AsyncImage(
             modifier = Modifier
@@ -45,11 +59,7 @@ internal fun VideoItem(
                     scaleX = imageScaleValue
                     scaleY = imageScaleValue
                 },
-            model = ImageRequest.Builder(LocalContext.current)
-                .size(Constants.REQUESTED_IMAGE_SIZE)
-                .data(item.uri)
-                .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
-                .build(),
+            model = request,
             contentScale = ContentScale.Crop,
             placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
             contentDescription = null,

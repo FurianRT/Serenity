@@ -1,41 +1,40 @@
 package com.furianrt.mediaselector.internal.ui.composables
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.furianrt.mediaselector.R
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlin.math.max
 
 @Composable
 internal fun SelectedCountHint(
-    title: String,
+    count: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .clickableNoRipple {}
-            .padding(vertical = 12.dp),
+        modifier = modifier.clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = title,
+            text = stringResource(R.string.media_selector_apply_button_title, max(1, count)),
             style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
 
 @Composable
-@Preview
+@PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
         SelectedCountHint(
-            title = "Attach 3 media",
+            count = 3,
         )
     }
 }
