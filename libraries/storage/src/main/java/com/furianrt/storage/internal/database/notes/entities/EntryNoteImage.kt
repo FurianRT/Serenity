@@ -59,3 +59,9 @@ internal class PartImageUri(
     @ColumnInfo(name = EntryNoteImage.FIELD_IS_SAVED)
     val isSaved: Boolean,
 )
+
+@Entity
+internal class PartImageId(
+    @ColumnInfo(name = EntryNoteImage.FIELD_ID)
+    val id: String,
+)

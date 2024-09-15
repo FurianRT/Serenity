@@ -15,5 +15,5 @@ internal interface NoteToTagDao {
     suspend fun insert(noteToTag: List<EntryNoteToTag>)
 
     @Delete
-    suspend fun delete(tag: EntryNoteToTag)
+    suspend fun delete(tags: List<EntryNoteToTag>)
 }

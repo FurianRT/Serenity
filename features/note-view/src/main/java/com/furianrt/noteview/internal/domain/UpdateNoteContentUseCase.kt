@@ -1,11 +1,13 @@
 package com.furianrt.noteview.internal.domain
 
+import com.furianrt.core.hasItem
 import com.furianrt.storage.api.TransactionsHelper
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.api.repositories.TagsRepository
 import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -20,15 +22,41 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         content: List<LocalNote.Content>,
         tags: List<LocalNote.Tag>,
     ) = withContext(NonCancellable) {
+        val newMedia = content
+            .filterIsInstance<LocalNote.Content.MediaBlock>()
+            .flatMap(LocalNote.Content.MediaBlock::media)
+
         transactionsHelper.startTransaction {
-            mediaRepository.insert(
-                noteId = noteId,
-                media = content
-                    .filterIsInstance<LocalNote.Content.MediaBlock>()
-                    .flatMap(LocalNote.Content.MediaBlock::media),
-            )
+            val mediaToDelete = mediaRepository.getMedia(noteId)
+                .first()
+                .filterNot { media -> newMedia.hasItem { it.id == media.id } }
+
+            val mediaToInsert = content
+                .filterIsInstance<LocalNote.Content.MediaBlock>()
+                .flatMap(LocalNote.Content.MediaBlock::media)
+
+            val tagsToDelete = tagsRepository.getTags(noteId)
+                .first()
+                .filterNot { tag -> tags.hasItem { tag.id == it.id } }
+
+            if (mediaToInsert.isNotEmpty()) {
+                mediaRepository.insert(noteId, mediaToInsert)
+            }
+
+            if (mediaToDelete.isNotEmpty()) {
+                mediaRepository.delete(noteId, mediaToDelete)
+            }
+
             notesRepository.updateNoteText(noteId, content)
-            tagsRepository.insert(noteId, tags)
+
+            if (tags.isNotEmpty()) {
+                tagsRepository.insert(noteId, tags)
+            }
+            if (tagsToDelete.isNotEmpty()) {
+                tagsRepository.deleteForNote(noteId, tagsToDelete.map(LocalNote.Tag::id))
+            }
+
+            tagsRepository.deleteUnusedTags()
         }
     }
 }

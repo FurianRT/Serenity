@@ -1,31 +1,48 @@
 package com.furianrt.notecontent.composables
 
 import android.net.Uri
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,70 +53,105 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
 import com.furianrt.uikit.extensions.applyIf
-import com.furianrt.uikit.extensions.shimmer
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeDefaults.tint
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
+import com.furianrt.uikit.R as uiR
+
+private const val CONTENT_TRANSITION_DURATION = 400
 
 @Composable
 fun NoteContentMedia(
     block: MediaBlock,
     modifier: Modifier = Modifier,
-    isEditable: Boolean = false,
+    clickable: Boolean = false,
+    dropDownHazeState: HazeState? = null,
+    onClick: (media: MediaBlock.Media) -> Unit = {},
+    onShareClick: (media: MediaBlock.Media) -> Unit = {},
+    onRemoveClick: (media: MediaBlock.Media) -> Unit = {},
 ) {
-    val loadingColor = MaterialTheme.colorScheme.tertiaryContainer
-    val loadingModifier = Modifier
-        .drawWithContent {
-            drawContent()
-            drawRoundRect(
-                color = loadingColor,
-                cornerRadius = CornerRadius(8.dp.toPx()),
+    AnimatedContent(
+        modifier = modifier,
+        targetState = block,
+        contentKey = { targetState -> targetState.media.count() },
+        transitionSpec = {
+            fadeIn(animationSpec = tween(CONTENT_TRANSITION_DURATION))
+                .togetherWith(fadeOut(animationSpec = tween(CONTENT_TRANSITION_DURATION)))
+        },
+        label = "MediaContentTransitionAnim",
+    ) { targetState ->
+        when (targetState.media.count()) {
+            1 -> OneMediaHolder(
+                modifier = Modifier.sizeIn(maxHeight = targetState.contentHeightDp.dp),
+                media = targetState.media[0],
+                clickable = clickable,
+                dropDownHazeState = dropDownHazeState,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
+
+            2 -> RowMediaHolder(
+                modifier = Modifier
+                    .height(targetState.contentHeightDp.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                media = targetState.media,
+                clickable = clickable,
+                dropDownHazeState = dropDownHazeState,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
+
+            3 -> RowMediaHolder(
+                modifier = Modifier
+                    .height(targetState.contentHeightDp.dp)
+                    .clip(RoundedCornerShape(8.dp)),
+                media = targetState.media,
+                clickable = clickable,
+                dropDownHazeState = dropDownHazeState,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
+
+            4 -> FourMediaHolder(
+                modifier = Modifier.height(targetState.contentHeightDp.dp),
+                media = targetState.media,
+                clickable = clickable,
+                dropDownHazeState = dropDownHazeState,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
+
+            else -> ManyMediaHolder(
+                modifier = Modifier.height(targetState.contentHeightDp.dp),
+                media = targetState.media,
+                clickable = clickable,
+                dropDownHazeState = dropDownHazeState,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
             )
         }
-        .shimmer()
-    when (block.media.count()) {
-        1 -> OneMediaHolder(
-            modifier = modifier
-                .sizeIn(maxHeight = block.contentHeightDp.dp)
-                .applyIf(block.showLoading) { loadingModifier },
-            media = block.media[0],
-        )
-
-        2 -> RowMediaHolder(
-            modifier = modifier
-                .height(block.contentHeightDp.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .applyIf(block.showLoading) { loadingModifier },
-            media = block.media,
-        )
-
-        3 -> RowMediaHolder(
-            modifier = modifier
-                .height(block.contentHeightDp.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .applyIf(block.showLoading) { loadingModifier },
-            media = block.media,
-        )
-
-        4 -> FourMediaHolder(
-            modifier = modifier
-                .height(block.contentHeightDp.dp)
-                .applyIf(block.showLoading) { loadingModifier },
-            media = block.media
-        )
-
-        else -> ManyMediaHolder(
-            modifier = modifier
-                .height(block.contentHeightDp.dp)
-                .applyIf(block.showLoading) { loadingModifier },
-            media = block.media
-        )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OneMediaHolder(
     media: MediaBlock.Media,
+    clickable: Boolean,
+    dropDownHazeState: HazeState?,
+    onClick: (media: MediaBlock.Media) -> Unit,
+    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (media.ratio >= 1.4f) {
@@ -109,13 +161,29 @@ private fun OneMediaHolder(
                 .clip(RoundedCornerShape(8.dp)),
             cornerRadius = 0.dp,
             media = media,
+            dropDownHazeState = dropDownHazeState,
+            clickable = clickable,
+            onClick = onClick,
+            onShareClick = onShareClick,
+            onRemoveClick = onRemoveClick,
         )
     } else {
+        val haptic = LocalHapticFeedback.current
+        var showDropDownMenu by remember { mutableStateOf(false) }
         Box(
             modifier = modifier
                 .fillMaxWidth()
                 .height(IntrinsicSize.Min)
-                .clip(RoundedCornerShape(8.dp)),
+                .clip(RoundedCornerShape(8.dp))
+                .applyIf(clickable) {
+                    Modifier.combinedClickable(
+                        onClick = { onClick(media) },
+                        onLongClick = {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                            showDropDownMenu = true
+                        },
+                    )
+                },
             contentAlignment = Alignment.Center,
         ) {
             MediaItem(
@@ -127,12 +195,21 @@ private fun OneMediaHolder(
             )
             MediaItem(
                 modifier = Modifier.aspectRatio(
-                    ratio = media.ratio,
+                    ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
                     matchHeightConstraintsFirst = true,
                 ),
                 media = media,
                 cornerRadius = 0.dp,
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Crop,
+            )
+        }
+        if (clickable && dropDownHazeState != null) {
+            PopUpMenu(
+                expanded = showDropDownMenu,
+                hazeState = dropDownHazeState,
+                onRemoveClick = { onRemoveClick(media) },
+                onShareClick = { onShareClick(media) },
+                onDismissRequest = { showDropDownMenu = false },
             )
         }
     }
@@ -141,6 +218,11 @@ private fun OneMediaHolder(
 @Composable
 private fun RowMediaHolder(
     media: ImmutableList<MediaBlock.Media>,
+    clickable: Boolean,
+    dropDownHazeState: HazeState?,
+    onClick: (media: MediaBlock.Media) -> Unit,
+    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val maxImagesCount = 4
@@ -155,11 +237,16 @@ private fun RowMediaHolder(
             MediaItem(
                 modifier = Modifier.weight(weight),
                 media = item,
+                dropDownHazeState = dropDownHazeState,
                 offscreenImageCount = if (index == subList.lastIndex) {
                     (media.count() - maxImagesCount).coerceAtLeast(0)
                 } else {
                     0
                 },
+                clickable = clickable,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
             )
         }
     }
@@ -168,19 +255,48 @@ private fun RowMediaHolder(
 @Composable
 private fun FourMediaHolder(
     media: ImmutableList<MediaBlock.Media>,
+    clickable: Boolean,
+    dropDownHazeState: HazeState?,
+    onClick: (media: MediaBlock.Media) -> Unit,
+    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier.clip(RoundedCornerShape(8.dp)),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        MediaItem(modifier = Modifier.weight(0.55f), media = media[0])
+        MediaItem(
+            modifier = Modifier.weight(0.55f),
+            media = media[0],
+            dropDownHazeState = dropDownHazeState,
+            clickable = clickable,
+            onClick = onClick,
+            onShareClick = onShareClick,
+            onRemoveClick = onRemoveClick,
+        )
         Column(
             modifier = Modifier.weight(0.45f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
-            MediaItem(modifier = Modifier.weight(0.6f), media = media[1])
-            RowMediaHolder(modifier = Modifier.weight(0.4f), media = media.subList(2, 4))
+            MediaItem(
+                modifier = Modifier.weight(0.6f),
+                media = media[1],
+                dropDownHazeState = dropDownHazeState,
+                clickable = clickable,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
+            RowMediaHolder(
+                modifier = Modifier.weight(0.4f),
+                media = media.subList(2, 4),
+                dropDownHazeState = dropDownHazeState,
+                clickable = clickable,
+                onClick = onClick,
+                onShareClick = onShareClick,
+                onRemoveClick = onRemoveClick,
+            )
         }
     }
 }
@@ -188,14 +304,39 @@ private fun FourMediaHolder(
 @Composable
 private fun ManyMediaHolder(
     media: ImmutableList<MediaBlock.Media>,
+    clickable: Boolean,
+    dropDownHazeState: HazeState?,
+    onClick: (media: MediaBlock.Media) -> Unit,
+    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.clip(RoundedCornerShape(8.dp)),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        RowMediaHolder(modifier = Modifier.weight(0.63f), media = media.subList(0, 2))
-        RowMediaHolder(modifier = Modifier.weight(0.37f), media = media.subList(2, media.count()))
+        RowMediaHolder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.63f),
+            media = media.subList(0, 2),
+            dropDownHazeState = dropDownHazeState,
+            clickable = clickable,
+            onClick = onClick,
+            onShareClick = onShareClick,
+            onRemoveClick = onRemoveClick,
+        )
+        RowMediaHolder(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.37f),
+            media = media.subList(2, media.count()),
+            dropDownHazeState = dropDownHazeState,
+            clickable = clickable,
+            onClick = onClick,
+            onShareClick = onShareClick,
+            onRemoveClick = onRemoveClick,
+        )
     }
 }
 
@@ -203,18 +344,40 @@ private fun ManyMediaHolder(
 private fun MediaItem(
     media: MediaBlock.Media,
     modifier: Modifier = Modifier,
+    clickable: Boolean = false,
+    dropDownHazeState: HazeState? = null,
+    onClick: (media: MediaBlock.Media) -> Unit = {},
+    onShareClick: (media: MediaBlock.Media) -> Unit = {},
+    onRemoveClick: (media: MediaBlock.Media) -> Unit = {},
     contentScale: ContentScale = ContentScale.Crop,
     cornerRadius: Dp = 4.dp,
     offscreenImageCount: Int = 0,
 ) {
     if (media is MediaBlock.Image) {
-        ImageItem(media, modifier, contentScale, cornerRadius, offscreenImageCount)
+        ImageItem(
+            modifier = modifier,
+            image = media,
+            clickable = clickable,
+            dropDownHazeState = dropDownHazeState,
+            onClick = onClick,
+            onShareClick = onShareClick,
+            onRemoveClick = onRemoveClick,
+            contentScale = contentScale,
+            cornerRadius = cornerRadius,
+            offscreenImageCount = offscreenImageCount,
+        )
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ImageItem(
     image: MediaBlock.Image,
+    clickable: Boolean,
+    dropDownHazeState: HazeState?,
+    onClick: (image: MediaBlock.Image) -> Unit,
+    onRemoveClick: (image: MediaBlock.Image) -> Unit,
+    onShareClick: (image: MediaBlock.Image) -> Unit,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
     cornerRadius: Dp = 4.dp,
@@ -230,39 +393,141 @@ private fun ImageItem(
             .data(image.uri)
             .build()
     }
+    val haptic = LocalHapticFeedback.current
+    var showDropDownMenu by remember { mutableStateOf(false) }
 
-    if (offscreenImageCount == 0) {
-        AsyncImage(
-            modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
-            model = request,
-            placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-            contentDescription = null,
-            contentScale = contentScale,
-        )
-    } else {
-        Box(
-            modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
-            contentAlignment = Alignment.Center,
-            propagateMinConstraints = true,
-        ) {
+    Box(modifier = modifier) {
+        if (offscreenImageCount == 0) {
             AsyncImage(
-                modifier = Modifier.drawWithContent {
-                    drawContent()
-                    drawRect(color = Color.Black, alpha = 0.4f)
-                },
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(cornerRadius))
+                    .applyIf(clickable) {
+                        Modifier.combinedClickable(
+                            enabled = clickable,
+                            onClick = { onClick(image) },
+                            onLongClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                showDropDownMenu = true
+                            },
+                        )
+                    },
                 model = request,
                 placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
                 contentDescription = null,
                 contentScale = contentScale,
             )
-            Text(
-                modifier = Modifier.wrapContentSize(),
-                text = "+$offscreenImageCount",
-                textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                style = MaterialTheme.typography.headlineMedium,
+        } else {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(cornerRadius))
+                    .applyIf(clickable) {
+                        Modifier.combinedClickable(
+                            onClick = { onClick(image) },
+                            onLongClick = {
+                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                showDropDownMenu = true
+                            },
+                        )
+                    },
+                contentAlignment = Alignment.Center,
+                propagateMinConstraints = true,
+            ) {
+                AsyncImage(
+                    modifier = Modifier.drawWithContent {
+                        drawContent()
+                        drawRect(color = Color.Black, alpha = 0.4f)
+                    },
+                    model = request,
+                    placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
+                    contentDescription = null,
+                    contentScale = contentScale,
+                )
+                Text(
+                    modifier = Modifier.wrapContentSize(),
+                    text = "+$offscreenImageCount",
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                    style = MaterialTheme.typography.headlineMedium,
+                )
+            }
+        }
+        if (clickable && dropDownHazeState != null) {
+            PopUpMenu(
+                expanded = showDropDownMenu,
+                hazeState = dropDownHazeState,
+                onRemoveClick = { onRemoveClick(image) },
+                onShareClick = { onShareClick(image) },
+                onDismissRequest = { showDropDownMenu = false },
             )
         }
+    }
+}
+
+@Composable
+private fun PopUpMenu(
+    expanded: Boolean,
+    hazeState: HazeState,
+    onRemoveClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    DropdownMenu(
+        modifier = Modifier
+            .hazeChild(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint.Color(
+                        tint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
+                    ),
+                    blurRadius = 12.dp,
+                ),
+            ),
+        containerColor = Color.Transparent,
+        shape = RoundedCornerShape(8.dp),
+        shadowElevation = 0.dp,
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(uiR.string.action_delete),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_delete),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onRemoveClick()
+                onDismissRequest()
+            }
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(uiR.string.action_share),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_share),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onShareClick()
+                onDismissRequest()
+            }
+        )
     }
 }
 

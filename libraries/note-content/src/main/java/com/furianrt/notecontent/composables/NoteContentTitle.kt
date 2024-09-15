@@ -45,6 +45,7 @@ fun NoteContentTitle(
     hint: String? = null,
     isInEditMode: Boolean? = null,
     onTitleFocused: (id: String) -> Unit = {},
+    onTitleTextChange: (id: String) -> Unit = {},
 ) {
     if (isInEditMode == null) {
         Text(
@@ -78,6 +79,10 @@ fun NoteContentTitle(
         if (!isInEditMode) {
             focusManager.clearFocus()
         }
+    }
+    
+    LaunchedEffect(title.state.text) {
+        onTitleTextChange(title.id)
     }
 
     BasicTextField(

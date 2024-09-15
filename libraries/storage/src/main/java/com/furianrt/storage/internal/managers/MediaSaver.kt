@@ -75,6 +75,10 @@ internal class MediaSaver @Inject constructor(
         }
     }
 
+    suspend fun cancel(noteId: String, media: List<LocalNote.Content.Media>) {
+        media.forEach { cancel(noteId, it) }
+    }
+
     private suspend fun saveMedia(entry: QueueEntry) {
         if (isMediaSaved(entry.media)) {
             return

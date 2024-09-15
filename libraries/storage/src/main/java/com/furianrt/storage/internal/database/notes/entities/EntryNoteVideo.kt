@@ -63,3 +63,9 @@ internal class PartVideoUri(
     @ColumnInfo(name = EntryNoteVideo.FIELD_IS_SAVED)
     val isSaved: Boolean,
 )
+
+@Entity
+internal class PartVideoId(
+    @ColumnInfo(name = EntryNoteVideo.FIELD_ID)
+    val id: String,
+)

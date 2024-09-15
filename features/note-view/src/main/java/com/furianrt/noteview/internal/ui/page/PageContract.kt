@@ -27,10 +27,16 @@ internal sealed interface PageEvent {
     data object OnSelectMediaClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
     data class OnTitleFocusChange(val id: String) : PageEvent
+    data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
+    data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
+    data class OnMediaShareClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
+    data class OnTitleTextChange(val id: String) : PageEvent
+    data object OnOnSaveContentRequest : PageEvent
 }
 
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
     data class OpenMediaSelector(val dialogId: Int, val requestId: String): PageEffect
+    data class UpdateContentChangedState(val isChanged: Boolean): PageEffect
 }

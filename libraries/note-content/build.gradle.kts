@@ -27,4 +27,6 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.coil)
+
+    implementation(libs.blur)
 }

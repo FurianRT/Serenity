@@ -8,11 +8,13 @@ import android.os.Build
 import com.furianrt.storage.api.entities.DeviceMedia
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.MediaPermissionStatus
+import kotlinx.coroutines.flow.Flow
 
 interface MediaRepository {
     suspend fun insert(noteId: String, media: List<LocalNote.Content.Media>)
-    suspend fun delete(noteId: String, media: LocalNote.Content.Media)
+    suspend fun delete(noteId: String, media: List<LocalNote.Content.Media>)
     suspend fun deleteMediaFiles(noteId: String)
+    fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
 
     suspend fun getDeviceMediaList(): List<DeviceMedia>
     fun getMediaPermissionStatus(): MediaPermissionStatus

@@ -26,7 +26,7 @@ internal class ContainerViewModel @Inject constructor(
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ContainerEffect>(extraBufferCapacity = 1)
+    private val _effect = MutableSharedFlow<ContainerEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
     private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {
@@ -44,6 +44,9 @@ internal class ContainerViewModel @Inject constructor(
             }
 
             is ContainerEvent.OnButtonBackClick -> {
+                if (!event.isContentSaved) {
+                    _effect.tryEmit(ContainerEffect.SaveCurrentNoteContent)
+                }
                 _effect.tryEmit(ContainerEffect.CloseScreen)
             }
 

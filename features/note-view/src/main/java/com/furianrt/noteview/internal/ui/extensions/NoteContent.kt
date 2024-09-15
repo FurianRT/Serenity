@@ -79,3 +79,44 @@ internal fun ImmutableList<UiNoteTag>.removeSecondTagTemplate(): ImmutableList<U
     val item = findLast { it is UiNoteTag.Template } ?: return this
     return toPersistentList().remove(item)
 }
+
+internal fun ImmutableList<UiNoteContent>.removeMedia(
+    id: String,
+): ImmutableList<UiNoteContent> {
+    val mediaBlockIndex = indexOfFirst { content ->
+        content is UiNoteContent.MediaBlock && content.media.any { it.id == id }
+    }
+    if (mediaBlockIndex == -1) {
+        return this
+    }
+    val mediaBlock = this[mediaBlockIndex] as UiNoteContent.MediaBlock
+    val newMediaBlock = mediaBlock.copy(
+        media = mediaBlock.media.toPersistentList().removeAll { it.id == id },
+    )
+    return if (newMediaBlock.media.isEmpty()) {
+        toPersistentList().removeAt(mediaBlockIndex).joinTitles()
+    } else {
+        toPersistentList().set(mediaBlockIndex, newMediaBlock).joinTitles()
+    }
+}
+
+internal fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteContent> {
+    var counter = 0
+    val resultMap = mutableMapOf<Int, UiNoteContent>()
+    forEach { content ->
+        val entry = resultMap[counter]
+        when {
+            entry == null && content is UiNoteContent.Title -> resultMap[counter] = content
+
+            entry is UiNoteContent.Title && content is UiNoteContent.Title -> entry.state.edit {
+                if (content.state.text.isNotEmpty()) {
+                    appendLine()
+                    append(content.state.text)
+                }
+            }
+
+            else -> resultMap[++counter] = content
+        }
+    }
+    return resultMap.values.toImmutableList()
+}

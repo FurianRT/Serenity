@@ -18,7 +18,6 @@ sealed class UiNoteContent(open val id: String,) {
     data class MediaBlock(
         override val id: String,
         val media: ImmutableList<Media>,
-        val showLoading: Boolean = false,
     ) : UiNoteContent(id) {
         sealed class Media(
             open val id: String,

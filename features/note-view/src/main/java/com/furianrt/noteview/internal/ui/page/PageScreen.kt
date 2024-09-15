@@ -24,13 +24,18 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
@@ -67,6 +72,8 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -74,9 +81,35 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 private const val TAGS_ITEM_KEY = "tags"
 
+@Stable
+internal class PageScreenState {
+    var hasContentChanged = false
+
+    internal var onSaveContentRequest: () -> Unit = {}
+
+    fun saveContent() {
+        onSaveContentRequest()
+    }
+
+    companion object {
+        val Saver: Saver<PageScreenState, Boolean> = Saver(
+            save = { it.hasContentChanged },
+            restore = { PageScreenState().apply { hasContentChanged = it } },
+        )
+    }
+}
+
+@Composable
+internal fun rememberPageScreenState(): PageScreenState {
+    return rememberSaveable(saver = PageScreenState.Saver) {
+        PageScreenState()
+    }
+}
+
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun PageScreen(
+    state: PageScreenState,
     noteId: String,
     isInEditMode: Boolean,
     onFocusChange: () -> Unit,
@@ -100,6 +133,8 @@ internal fun PageScreen(
 
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
 
+    state.onSaveContentRequest = { viewModel.onEvent(PageEvent.OnOnSaveContentRequest) }
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -115,6 +150,10 @@ internal fun PageScreen(
                     route = "Sheet/${effect.dialogId}/${effect.requestId}",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                 )
+
+                is PageEffect.UpdateContentChangedState -> {
+                    state.hasContentChanged = effect.isChanged
+                }
             }
         }
     }
@@ -129,6 +168,7 @@ internal fun PageScreen(
     }
 
     PageScreenContent(
+        state = state,
         uiState = uiState,
         toolbarState = toolbarState,
         listState = listState,
@@ -147,6 +187,7 @@ internal fun PageScreen(
 
 @Composable
 private fun PageScreenContent(
+    state: PageScreenState,
     uiState: PageUiState,
     toolbarState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
@@ -159,6 +200,7 @@ private fun PageScreenContent(
         is PageUiState.Success ->
             SuccessScreen(
                 modifier = modifier,
+                state = state,
                 uiState = uiState,
                 onEvent = onEvent,
                 onFocusChange = onFocusChange,
@@ -174,6 +216,7 @@ private fun PageScreenContent(
 
 @Composable
 private fun SuccessScreen(
+    state: PageScreenState,
     uiState: PageUiState.Success,
     toolbarState: CollapsingToolbarScaffoldState,
     listState: LazyListState,
@@ -189,6 +232,7 @@ private fun SuccessScreen(
             listState.firstVisibleItemIndex == 0 && listState.firstVisibleItemScrollOffset == 0
         }
     }
+    val hazeState = remember { HazeState() }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -209,6 +253,7 @@ private fun SuccessScreen(
                     }
                 }
             )
+            .haze(hazeState)
             .imePadding(),
     ) {
         LazyColumn(
@@ -258,6 +303,7 @@ private fun SuccessScreen(
                             focusedTitleId = id
                             onFocusChange()
                         },
+                        onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
                         scrollState = titleScrollState,
                         focusOffset = toolbarState.toolbarState.minHeight,
                     )
@@ -265,7 +311,11 @@ private fun SuccessScreen(
                     is UiNoteContent.MediaBlock -> NoteContentMedia(
                         modifier = Modifier.animateItem(),
                         block = item,
-                        isEditable = uiState.isInEditMode,
+                        dropDownHazeState = hazeState,
+                        clickable = true,
+                        onClick = { onEvent(PageEvent.OnMediaClick(it)) },
+                        onRemoveClick = { onEvent(PageEvent.OnMediaRemoveClick(it)) },
+                        onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
                     )
                 }
             }
@@ -343,6 +393,7 @@ private fun EmptyScreen(modifier: Modifier = Modifier) {
 private fun SuccessScreenPreview() {
     SerenityTheme {
         SuccessScreen(
+            state = rememberPageScreenState(),
             uiState = PageUiState.Success(
                 isInEditMode = false,
                 tags = persistentListOf(),

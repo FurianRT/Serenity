@@ -24,4 +24,6 @@ dependencies {
     implementation(libs.composeTooling)
 
     implementation(libs.collapsingToolbar)
+
+    implementation(libs.blur)
 }

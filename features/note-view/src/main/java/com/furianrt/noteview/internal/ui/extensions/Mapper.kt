@@ -23,10 +23,9 @@ internal fun LocalNote.toContainerScreenNote() = ContainerScreenNote(
     date = timestamp.toDateString(),
 )
 
-internal fun MediaSelectorResult.toMediaBlock(showLoading: Boolean = false) = MediaBlock(
+internal fun MediaSelectorResult.toMediaBlock() = MediaBlock(
     id = UUID.randomUUID().toString(),
     media = media.mapImmutable(MediaSelectorResult.Media::toMediaBlockMedia),
-    showLoading = showLoading,
 )
 
 private fun MediaSelectorResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {

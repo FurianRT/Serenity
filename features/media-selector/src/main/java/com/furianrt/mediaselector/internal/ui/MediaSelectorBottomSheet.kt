@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -21,24 +20,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
-import com.furianrt.mediaselector.internal.ui.composables.ConfirmDialog
+import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.composables.DragHandle
+import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -154,16 +151,12 @@ internal fun MediaSelectorBottomSheetInternal(
     }
 
     if (showConfirmDialog) {
-        ConfirmDialog(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .hazeChild(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 20.dp,
-                    ),
-                ),
+        ConfirmationDialog(
+            title = stringResource(R.string.media_selector_discard_title),
+            hint = stringResource(R.string.media_selector_discard_hint),
+            cancelText = stringResource(com.furianrt.uikit.R.string.action_cancel),
+            confirmText = stringResource(com.furianrt.uikit.R.string.action_discard),
+            hazeState = hazeState,
             onDismissRequest = { showConfirmDialog = false },
             onConfirmClick = {
                 skipConfirmation = true

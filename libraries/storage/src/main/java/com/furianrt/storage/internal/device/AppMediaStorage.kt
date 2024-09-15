@@ -36,6 +36,10 @@ internal class AppMediaStorage @Inject constructor(
         }
     }
 
+    suspend fun deleteMediaFile(noteId: String, ids: Set<String>) {
+        ids.forEach { deleteMediaFile(noteId, it) }
+    }
+
     suspend fun deleteAllMediaFiles(noteId: String): Boolean = withContext(dispatchers.io) {
         return@withContext try {
             File(context.filesDir, noteId).delete()

@@ -63,6 +63,7 @@ internal fun NoteListItem(
                         NoteContentMedia(
                             modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
                             block = item,
+                            clickable = false,
                         )
                     }
                 }

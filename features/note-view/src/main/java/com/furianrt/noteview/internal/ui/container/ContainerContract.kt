@@ -14,10 +14,11 @@ internal sealed interface ContainerUiState {
 
 internal sealed interface ContainerEvent {
     data object OnButtonEditClick : ContainerEvent
-    data object OnButtonBackClick : ContainerEvent
+    data class OnButtonBackClick(val isContentSaved: Boolean) : ContainerEvent
     data object OnPageTitleFocusChange : ContainerEvent
 }
 
 internal sealed interface ContainerEffect {
     data object CloseScreen : ContainerEffect
+    data object SaveCurrentNoteContent : ContainerEffect
 }

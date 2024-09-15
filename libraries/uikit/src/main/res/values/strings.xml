@@ -2,6 +2,9 @@
     <string name="action_cancel">Cancel</string>
     <string name="action_discard">Discard</string>
     <string name="action_not_now">Not now</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="action_save">Save</string>
 
     <string name="settings_title">Settings</string>
 </resources>
