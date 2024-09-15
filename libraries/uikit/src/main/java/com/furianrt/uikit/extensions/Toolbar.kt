@@ -17,6 +17,10 @@ val CollapsingToolbarScaffoldState.isCollapsed
 val CollapsingToolbarScaffoldState.isInMiddleState
     get() = !isExpanded && !isCollapsed
 
+fun CollapsingToolbarScaffoldState.expandWithoutAnim() {
+    getPrivateOffsetYState().value = 0
+}
+
 suspend fun CollapsingToolbarScaffoldState.expand(duration: Int = 250) {
     val offsetYState = getPrivateOffsetYState()
     AnimationState(offsetY.toFloat()).animateTo(0f, tween(duration)) {

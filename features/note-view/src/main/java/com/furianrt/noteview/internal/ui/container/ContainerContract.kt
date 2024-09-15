@@ -16,6 +16,7 @@ internal sealed interface ContainerEvent {
     data object OnButtonEditClick : ContainerEvent
     data class OnButtonBackClick(val isContentSaved: Boolean) : ContainerEvent
     data object OnPageTitleFocusChange : ContainerEvent
+    data class OnPageChange(val index: Int) : ContainerEvent
 }
 
 internal sealed interface ContainerEffect {

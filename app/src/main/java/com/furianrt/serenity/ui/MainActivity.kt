@@ -107,12 +107,20 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     composable(
-                        route = "Note/{noteId}",
+                        route = "Note/{noteId}/{dialogId}/{requestId}",
                         arguments = listOf(
                             navArgument("noteId") {
                                 type = NavType.StringType
                                 defaultValue = null
                                 nullable = true
+                            },
+                            navArgument("dialogId") {
+                                type = NavType.IntType
+                                nullable = false
+                            },
+                            navArgument("requestId") {
+                                type = NavType.StringType
+                                nullable = false
                             },
                         ),
                         enterTransition = {

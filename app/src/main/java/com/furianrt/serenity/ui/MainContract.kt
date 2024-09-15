@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal sealed interface MainUiState {
     data object Loading : MainUiState
 
-    data object Empty: MainUiState
+    data object Empty : MainUiState
 
     @Immutable
     data class Success(
@@ -30,6 +30,11 @@ internal sealed interface MainEvent {
 
 internal sealed interface MainEffect {
     data object ScrollToTop : MainEffect
-    data class OpenNoteScreen(val noteId: String) : MainEffect
+    data class ScrollToPosition(val position: Int) : MainEffect
     data object OpenSettingsScreen : MainEffect
+    data class OpenNoteScreen(
+        val noteId: String,
+        val dialogId: Int,
+        val requestId: String,
+    ) : MainEffect
 }

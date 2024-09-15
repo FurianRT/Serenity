@@ -1,14 +1,10 @@
 package com.furianrt.noteview.internal.ui.container
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -49,7 +45,11 @@ import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 @Stable
 internal class SuccessScreenState {
-    internal var onSaveContentRequest: () -> Unit = {}
+    private var onSaveContentRequest: () -> Unit = {}
+
+    fun setOnSaveContentListener(callback: () -> Unit) {
+        onSaveContentRequest = callback
+    }
 
     fun saveContent() {
         onSaveContentRequest()
@@ -57,9 +57,7 @@ internal class SuccessScreenState {
 }
 
 @Composable
-internal fun rememberSuccessScreenState(): SuccessScreenState {
-    return remember { SuccessScreenState() }
-}
+internal fun rememberSuccessScreenState(): SuccessScreenState = remember { SuccessScreenState() }
 
 @Composable
 internal fun ContainerScreen(navHostController: NavHostController) {
@@ -121,27 +119,18 @@ private fun SuccessScreen(
         initialPage = uiState.initialPageIndex,
         pageCount = { uiState.notes.count() },
     )
-    val listsScrollStates = remember { mutableStateMapOf<Int, LazyListState>() }
-    val currentPageScrollState = remember(listsScrollStates.size, pagerState.currentPage) {
-        listsScrollStates[pagerState.currentPage]
-    }
-
-    val titlesScrollStates = remember { mutableStateMapOf<Int, ScrollState>() }
-    val currentPageTitlesScrollState = remember(titlesScrollStates.size, pagerState.currentPage) {
-        titlesScrollStates[pagerState.currentPage]
-    }
-
     val pageScreensStates = remember { mutableStateMapOf<Int, PageScreenState>() }
-    val currentPageScreenState = remember(listsScrollStates.size, pagerState.currentPage) {
+    val currentPageScreenState = remember(pageScreensStates.size, pagerState.currentPage) {
         pageScreensStates[pagerState.currentPage]
     }
 
-    state.onSaveContentRequest = { currentPageScreenState?.saveContent() }
+    state.setOnSaveContentListener { currentPageScreenState?.saveContent() }
 
-    val needToSnapToolbar by remember(currentPageScrollState) {
+    val needToSnapToolbar by remember(currentPageScreenState) {
         derivedStateOf {
-            val isScrollInProgress = currentPageScrollState?.isScrollInProgress ?: false
-            val isTitleScrollInProgress = currentPageTitlesScrollState?.isScrollInProgress ?: false
+            val isScrollInProgress = currentPageScreenState?.listState?.isScrollInProgress ?: false
+            val isTitleScrollInProgress =
+                currentPageScreenState?.titleScrollState?.isScrollInProgress ?: false
             !isScrollInProgress &&
                     !isTitleScrollInProgress &&
                     toolbarScaffoldState.isInMiddleState &&
@@ -163,8 +152,9 @@ private fun SuccessScreen(
 
     var date: String? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(key1 = pagerState.currentPage) {
+    LaunchedEffect(pagerState.currentPage) {
         date = uiState.notes.getOrNull(pagerState.currentPage)?.date
+        onEvent(ContainerEvent.OnPageChange(pagerState.currentPage))
     }
 
     BackHandler(
@@ -172,10 +162,10 @@ private fun SuccessScreen(
         onBack = { onEvent(ContainerEvent.OnButtonEditClick) },
     )
 
-    val isListAtTop by remember(currentPageScrollState) {
+    val isListAtTop by remember(currentPageScreenState) {
         derivedStateOf {
-            currentPageScrollState?.firstVisibleItemIndex == 0 &&
-                    currentPageScrollState.firstVisibleItemScrollOffset == 0
+            currentPageScreenState?.listState?.firstVisibleItemIndex == 0 &&
+                    currentPageScreenState.listState.firstVisibleItemScrollOffset == 0
         }
     }
 
@@ -211,12 +201,6 @@ private fun SuccessScreen(
             verticalAlignment = Alignment.Top,
             state = pagerState,
         ) { index ->
-            val lazyListState = rememberLazyListState()
-            listsScrollStates[index] = lazyListState
-
-            val titlesScrollState = rememberScrollState()
-            titlesScrollStates[index] = titlesScrollState
-
             val pageScreenState = rememberPageScreenState()
             pageScreensStates[index] = pageScreenState
 
@@ -226,9 +210,6 @@ private fun SuccessScreen(
                 state = pageScreenState,
                 noteId = uiState.notes[index].id,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
-                toolbarState = toolbarScaffoldState,
-                listState = lazyListState,
-                titleScrollState = titlesScrollState,
                 navHostController = navHostController,
                 onFocusChange = { onEvent(ContainerEvent.OnPageTitleFocusChange) },
             )

@@ -8,6 +8,9 @@ import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.DialogResult
+import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +24,7 @@ import javax.inject.Inject
 internal class ContainerViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
+    private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
@@ -31,6 +35,13 @@ internal class ContainerViewModel @Inject constructor(
 
     private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {
         savedStateHandle.get<String>("noteId")
+    }
+
+    private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
+        DialogIdentifier(
+            requestId = savedStateHandle["requestId"]!!,
+            dialogId = savedStateHandle["dialogId"]!!,
+        )
     }
 
     init {
@@ -53,6 +64,11 @@ internal class ContainerViewModel @Inject constructor(
             is ContainerEvent.OnPageTitleFocusChange -> {
                 _state.updateState<ContainerUiState.Success> { it.enableEditMode() }
             }
+
+            is ContainerEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
+                dialogIdentifier = dialogIdentifier,
+                code = DialogResult.Ok(data = event.index),
+            )
         }
     }
 

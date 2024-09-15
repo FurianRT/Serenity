@@ -66,7 +66,7 @@ internal fun MainScreen(
 
                     is MainEffect.OpenNoteScreen -> {
                         navHostController.navigate(
-                            route = "Note/${effect.noteId}",
+                            route = "Note/${effect.noteId}/${effect.dialogId}/${effect.requestId}",
                             navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                         )
                     }
@@ -76,6 +76,10 @@ internal fun MainScreen(
                             route = "Settings",
                             navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                         )
+                    }
+
+                    is MainEffect.ScrollToPosition -> {
+                        screenState.scrollToPosition(effect.position)
                     }
                 }
             }
