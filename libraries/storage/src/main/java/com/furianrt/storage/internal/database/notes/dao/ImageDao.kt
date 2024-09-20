@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
-import com.furianrt.storage.internal.database.notes.entities.PartImageId
+import com.furianrt.storage.internal.database.notes.entities.PartImageName
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import kotlinx.coroutines.flow.Flow
 
@@ -21,11 +21,11 @@ internal interface ImageDao {
     suspend fun update(data: PartImageUri)
 
     @Delete(entity = EntryNoteImage::class)
-    suspend fun delete(data: List<PartImageId>)
+    suspend fun delete(data: List<PartImageName>)
 
     @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NOTE_ID} = :noteId")
     fun getImages(noteId: String): Flow<List<EntryNoteImage>>
 
-    @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_ID} = :imageId AND ${EntryNoteImage.FIELD_IS_SAVED} = 1)")
-    suspend fun isSaved(imageId: String): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NAME} = :imageName AND ${EntryNoteImage.FIELD_IS_SAVED} = 1)")
+    suspend fun isSaved(imageName: String): Boolean
 }

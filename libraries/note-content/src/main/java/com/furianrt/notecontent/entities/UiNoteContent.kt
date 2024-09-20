@@ -20,26 +20,26 @@ sealed class UiNoteContent(open val id: String,) {
         val media: ImmutableList<Media>,
     ) : UiNoteContent(id) {
         sealed class Media(
-            open val id: String,
+            open val name: String,
             open val uri: Uri,
             open val ratio: Float,
             open val addedTime: Long,
         )
 
         data class Image(
-            override val id: String,
+            override val name: String,
             override val uri: Uri,
             override val ratio: Float,
             override val addedTime: Long,
-        ) : Media(id, uri, ratio, addedTime)
+        ) : Media(name, uri, ratio, addedTime)
 
         data class Video(
-            override val id: String,
+            override val name: String,
             override val uri: Uri,
             override val ratio: Float,
             override val addedTime: Long,
             val duration: Int,
-        ) : Media(id, uri, ratio, addedTime)
+        ) : Media(name, uri, ratio, addedTime)
     }
 }
 

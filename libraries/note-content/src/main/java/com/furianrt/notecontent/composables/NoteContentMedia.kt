@@ -422,12 +422,12 @@ private fun ImageItem(
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
-    val request = remember(image.id) {
+    val request = remember(image.name) {
         ImageRequest.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(image.id)
+            .diskCacheKey(image.name)
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(image.id)
+            .memoryCacheKey(image.name)
             .data(image.uri)
             .build()
     }
@@ -447,12 +447,12 @@ private fun VideoItem(
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
-    val request = remember(image.id) {
+    val request = remember(image.name) {
         ImageRequest.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(image.id)
+            .diskCacheKey(image.name)
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(image.id)
+            .memoryCacheKey(image.name)
             .data(image.uri)
             .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
             .build()
@@ -549,7 +549,7 @@ private fun NoteContentOneMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.1f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.1f))
                 },
             ),
         )
@@ -564,8 +564,8 @@ private fun NoteContentTwoMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
                 },
             ),
         )
@@ -580,9 +580,9 @@ private fun NoteContentThreeMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
                 },
             ),
         )
@@ -597,10 +597,10 @@ private fun NoteContentFourMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.8f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.8f))
+                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -615,11 +615,11 @@ private fun NoteContentFiveMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -634,12 +634,12 @@ private fun NoteContentSixMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.9f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
+                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.9f))
+                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )
@@ -654,13 +654,13 @@ private fun NoteContentSevenMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(id = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(id = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(id = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(id = "6", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
+                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(MediaBlock.Image(name = "6", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
                 },
             ),
         )

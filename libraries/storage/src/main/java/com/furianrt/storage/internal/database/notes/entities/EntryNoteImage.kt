@@ -19,8 +19,8 @@ import androidx.room.PrimaryKey
 )
 internal class EntryNoteImage(
     @PrimaryKey
-    @ColumnInfo(name = FIELD_ID)
-    val id: String,
+    @ColumnInfo(name = FIELD_NAME)
+    val name: String,
 
     @ColumnInfo(name = FIELD_NOTE_ID, index = true)
     val noteId: String,
@@ -39,7 +39,7 @@ internal class EntryNoteImage(
 ) {
     companion object {
         const val TABLE_NAME = "Images"
-        const val FIELD_ID = "id"
+        const val FIELD_NAME = "name"
         const val FIELD_NOTE_ID = "note_id"
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
@@ -50,8 +50,8 @@ internal class EntryNoteImage(
 
 @Entity
 internal class PartImageUri(
-    @ColumnInfo(name = EntryNoteImage.FIELD_ID)
-    val id: String,
+    @ColumnInfo(name = EntryNoteImage.FIELD_NAME)
+    val name: String,
 
     @ColumnInfo(name = EntryNoteImage.FIELD_URI)
     val uri: Uri,
@@ -61,7 +61,7 @@ internal class PartImageUri(
 )
 
 @Entity
-internal class PartImageId(
-    @ColumnInfo(name = EntryNoteImage.FIELD_ID)
-    val id: String,
+internal class PartImageName(
+    @ColumnInfo(name = EntryNoteImage.FIELD_NAME)
+    val name: String,
 )

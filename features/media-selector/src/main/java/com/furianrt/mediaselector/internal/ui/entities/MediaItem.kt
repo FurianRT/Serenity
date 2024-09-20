@@ -4,6 +4,7 @@ import android.net.Uri
 
 internal sealed class MediaItem(
     open val id: Long,
+    open val name: String,
     open val uri: Uri,
     open val ratio: Float,
     open val state: SelectionState,
@@ -18,16 +19,18 @@ internal sealed class MediaItem(
 
     data class Image(
         override val id: Long,
+        override val name: String,
         override val uri: Uri,
         override val ratio: Float,
         override val state: SelectionState,
-    ) : MediaItem(id, uri, ratio, state)
+    ) : MediaItem(id, name, uri, ratio, state)
 
     data class Video(
         override val id: Long,
+        override val name: String,
         override val uri: Uri,
         override val ratio: Float,
         override val state: SelectionState,
         val duration: Int,
-    ) : MediaItem(id, uri, ratio, state)
+    ) : MediaItem(id, name, uri, ratio, state)
 }

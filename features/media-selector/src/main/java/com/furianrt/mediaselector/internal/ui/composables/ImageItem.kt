@@ -79,6 +79,7 @@ private fun Preview() {
         ImageItem(
             item = MediaItem.Image(
                 id = 0L,
+                name = "",
                 uri = Uri.EMPTY,
                 ratio = 1f,
                 state = SelectionState.Selected(1),

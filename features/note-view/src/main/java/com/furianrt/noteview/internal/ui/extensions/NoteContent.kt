@@ -81,17 +81,17 @@ internal fun ImmutableList<UiNoteTag>.removeSecondTagTemplate(): ImmutableList<U
 }
 
 internal fun ImmutableList<UiNoteContent>.removeMedia(
-    id: String,
+    name: String,
 ): ImmutableList<UiNoteContent> {
     val mediaBlockIndex = indexOfFirst { content ->
-        content is UiNoteContent.MediaBlock && content.media.any { it.id == id }
+        content is UiNoteContent.MediaBlock && content.media.any { it.name == name }
     }
     if (mediaBlockIndex == -1) {
         return this
     }
     val mediaBlock = this[mediaBlockIndex] as UiNoteContent.MediaBlock
     val newMediaBlock = mediaBlock.copy(
-        media = mediaBlock.media.toPersistentList().removeAll { it.id == id },
+        media = mediaBlock.media.toPersistentList().removeAll { it.name == name },
     )
     return if (newMediaBlock.media.isEmpty()) {
         toPersistentList().removeAt(mediaBlockIndex).joinTitles()

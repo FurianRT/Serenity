@@ -10,13 +10,13 @@ import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
-import com.furianrt.storage.internal.database.notes.entities.PartImageId
-import com.furianrt.storage.internal.database.notes.entities.PartVideoId
+import com.furianrt.storage.internal.database.notes.entities.PartImageName
+import com.furianrt.storage.internal.database.notes.entities.PartVideoName
 import com.furianrt.storage.internal.database.notes.mappers.toEntryImage
 import com.furianrt.storage.internal.database.notes.mappers.toEntryVideo
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
-import com.furianrt.storage.internal.device.AppPrivateMediaSource
+import com.furianrt.storage.internal.device.AppMediaSource
 import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
 import kotlinx.coroutines.NonCancellable
@@ -29,7 +29,7 @@ internal class MediaRepositoryImp @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val sharedMediaSource: SharedMediaSource,
-    private val appPrivateMediaSource: AppPrivateMediaSource,
+    private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
 ) : MediaRepository {
@@ -60,23 +60,23 @@ internal class MediaRepositoryImp @Inject constructor(
             mediaSaver.cancel(noteId, media)
             val images = media
                 .filterIsInstance<LocalNote.Content.Image>()
-                .map { PartImageId(it.id) }
+                .map { PartImageName(it.name) }
             val videos = media
                 .filterIsInstance<LocalNote.Content.Video>()
-                .map { PartVideoId(it.id) }
+                .map { PartVideoName(it.name) }
             transactionsHelper.startTransaction {
                 imageDao.delete(images)
                 videoDao.delete(videos)
             }
-            appPrivateMediaSource.deleteMediaFile(
+            appMediaSource.deleteMediaFile(
                 noteId = noteId,
-                ids = media.map(LocalNote.Content.Media::id).toSet(),
+                names = media.map(LocalNote.Content.Media::name).toSet(),
             )
         }
     }
 
     override suspend fun deleteMediaFiles(noteId: String) {
-        appPrivateMediaSource.deleteAllMediaFiles(noteId)
+        appMediaSource.deleteAllMediaFiles(noteId)
     }
 
     override fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>> = combine(

@@ -6,7 +6,7 @@ import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
-import com.furianrt.storage.internal.device.AppPrivateMediaSource
+import com.furianrt.storage.internal.device.AppMediaSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,14 +27,14 @@ private class QueueEntry(
         other as QueueEntry
 
         if (noteId != other.noteId) return false
-        if (media.id != other.media.id) return false
+        if (media.name != other.media.name) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = noteId.hashCode()
-        result = 31 * result + media.id.hashCode()
+        result = 31 * result + media.name.hashCode()
         return result
     }
 }
@@ -44,7 +44,7 @@ internal class MediaSaver @Inject constructor(
     dispatchers: DispatchersProvider,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
-    private val appPrivateMediaSource: AppPrivateMediaSource,
+    private val appMediaSource: AppMediaSource,
 ) {
     private val canceledEntries = mutableSetOf<QueueEntry>()
     private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
@@ -83,11 +83,11 @@ internal class MediaSaver @Inject constructor(
         if (isMediaSaved(entry.media)) {
             return
         }
-        val resultUri = appPrivateMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
+        val resultUri = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
         when (entry.media) {
             is LocalNote.Content.Image -> imageDao.update(
                 PartImageUri(
-                    id = entry.media.id,
+                    name = entry.media.name,
                     uri = resultUri,
                     isSaved = true,
                 ),
@@ -95,7 +95,7 @@ internal class MediaSaver @Inject constructor(
 
             is LocalNote.Content.Video -> videoDao.update(
                 PartVideoUri(
-                    id = entry.media.id,
+                    name = entry.media.name,
                     uri = resultUri,
                     isSaved = true,
                 ),
@@ -104,8 +104,8 @@ internal class MediaSaver @Inject constructor(
     }
 
     private suspend fun isMediaSaved(media: LocalNote.Content.Media): Boolean = when (media) {
-        is LocalNote.Content.Image -> imageDao.isSaved(media.id)
-        is LocalNote.Content.Video -> videoDao.isSaved(media.id)
+        is LocalNote.Content.Image -> imageDao.isSaved(media.name)
+        is LocalNote.Content.Video -> videoDao.isSaved(media.name)
     }
 
     @Synchronized

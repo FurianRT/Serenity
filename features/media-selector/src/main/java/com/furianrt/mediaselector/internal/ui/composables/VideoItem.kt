@@ -88,6 +88,7 @@ private fun Preview() {
         VideoItem(
             item = MediaItem.Video(
                 id = 0L,
+                name = "",
                 uri = Uri.EMPTY,
                 ratio = 1f,
                 state = SelectionState.Selected(1),

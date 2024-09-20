@@ -5,14 +5,14 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 
 internal fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
-    id = id,
+    name = name,
     uri = uri,
     ratio = ratio,
     addedTime = addedTime,
 )
 
 internal fun EntryNoteVideo.toNoteContentVideo() = LocalNote.Content.Video(
-    id = id,
+    name = name,
     uri = uri,
     ratio = ratio,
     duration = duration,
@@ -23,7 +23,7 @@ internal fun LocalNote.Content.Image.toEntryImage(
     noteId: String,
     isSaved: Boolean,
 ) = EntryNoteImage(
-    id = id,
+    name = name,
     noteId = noteId,
     uri = uri,
     ratio = ratio,
@@ -35,7 +35,7 @@ internal fun LocalNote.Content.Video.toEntryVideo(
     noteId: String,
     isSaved: Boolean,
 ) = EntryNoteVideo(
-    id = id,
+    name = name,
     noteId = noteId,
     uri = uri,
     ratio = ratio,

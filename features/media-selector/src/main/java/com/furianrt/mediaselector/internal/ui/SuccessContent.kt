@@ -171,6 +171,7 @@ private fun Preview() {
                         val item = if (index % 2 == 0) {
                             MediaItem.Image(
                                 id = index.toLong(),
+                                name = index.toString(),
                                 uri = Uri.EMPTY,
                                 ratio = 1f,
                                 state = if (index == 4) {
@@ -182,6 +183,7 @@ private fun Preview() {
                         } else {
                             MediaItem.Video(
                                 id = index + 10L,
+                                name = index.toString(),
                                 uri = Uri.EMPTY,
                                 ratio = 1f,
                                 state = if (index == 9) {

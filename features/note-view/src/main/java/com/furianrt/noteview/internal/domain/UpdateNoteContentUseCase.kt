@@ -29,7 +29,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         transactionsHelper.startTransaction {
             val mediaToDelete = mediaRepository.getMedia(noteId)
                 .first()
-                .filterNot { media -> newMedia.hasItem { it.id == media.id } }
+                .filterNot { media -> newMedia.hasItem { it.name == media.name } }
 
             val mediaToInsert = content
                 .filterIsInstance<LocalNote.Content.MediaBlock>()

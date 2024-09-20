@@ -30,14 +30,14 @@ internal fun MediaSelectorResult.toMediaBlock() = MediaBlock(
 
 private fun MediaSelectorResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {
     is MediaSelectorResult.Media.Image -> MediaBlock.Image(
-        id = UUID.randomUUID().toString(),
+        name = UUID.randomUUID().toString() + name,
         uri = uri,
         ratio = ratio,
         addedTime = System.currentTimeMillis(),
     )
 
     is MediaSelectorResult.Media.Video -> MediaBlock.Video(
-        id = UUID.randomUUID().toString(),
+        name = UUID.randomUUID().toString() + name,
         uri = uri,
         ratio = ratio,
         addedTime = System.currentTimeMillis(),

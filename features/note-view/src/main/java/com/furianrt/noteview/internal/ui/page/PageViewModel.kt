@@ -72,7 +72,7 @@ internal class PageViewModel @AssistedInject constructor(
     val effect = _effect.asSharedFlow()
 
     private val isInEditMode: Boolean
-        get() = (_state.value as? PageUiState.Success)?.isInEditMode.orFalse()
+        get() = getSuccessState()?.isInEditMode.orFalse()
 
     private var focusedTitleId: String? = null
     private var hasContentChanged = false
@@ -110,7 +110,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnMediaShareClick -> {}
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
             is OnOnSaveContentRequest -> {
-                val successState = _state.value as? PageUiState.Success ?: return
+                val successState = getSuccessState() ?: return
                 launch { saveNoteContent(successState) }
             }
         }
@@ -138,7 +138,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun findTitleIndex(id: String?): Int? {
-        val successState = _state.value as? PageUiState.Success ?: return null
+        val successState = getSuccessState() ?: return null
         val index = successState.content.indexOfFirst { it.id == id }
         return index.takeIf { it != -1 }
     }
@@ -226,7 +226,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryToRemoveSecondTagTemplate() {
-        val tags = (_state.value as? PageUiState.Success)?.tags ?: return
+        val tags = getSuccessState()?.tags ?: return
         val hasTemplateTagWithText = tags.any { tag ->
             tag is UiNoteTag.Template && tag.textState.text.isNotBlank()
         }
@@ -264,10 +264,11 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun removeMedia(media: MediaBlock.Media) = launch {
-        hasContentChanged = true
         _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(currentState.content.removeMedia(media.id)).also {
-                if (!isInEditMode) {
+            currentState.copy(content = currentState.content.removeMedia(media.name)).also {
+                if (isInEditMode) {
+                    hasContentChanged = true
+                } else {
                     saveNoteContent(it)
                 }
             }
@@ -289,13 +290,10 @@ internal class PageViewModel @AssistedInject constructor(
                 },
                 isInEditMode = isEnabled,
             )
-            // TODO написать логику сохранения заметки
             if (!isEnabled) {
-                launch {
-                    saveNoteContent(newState)
-                }
+                launch { saveNoteContent(newState) }
             }
-            newState
+            return@updateState newState
         }
     }
 

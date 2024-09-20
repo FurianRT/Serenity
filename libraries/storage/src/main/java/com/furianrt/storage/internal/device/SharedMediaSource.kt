@@ -86,6 +86,7 @@ internal class SharedMediaSource @Inject constructor(
             MediaStore.Files.FileColumns.WIDTH,
             MediaStore.Files.FileColumns.HEIGHT,
             MediaStore.Files.FileColumns.ORIENTATION,
+            MediaStore.Files.FileColumns.DISPLAY_NAME,
         )
         val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         val query = context.contentResolver.query(
@@ -97,6 +98,7 @@ internal class SharedMediaSource @Inject constructor(
         )
         query?.use { cursor ->
             val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns._ID)
+            val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DISPLAY_NAME)
             val durationColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DURATION)
             val dateColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.DATE_ADDED)
             val mediaTypeColumn =
@@ -112,6 +114,7 @@ internal class SharedMediaSource @Inject constructor(
                 val item = when (mediaType) {
                     MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
                         id = id,
+                        name = cursor.getString(nameColumn),
                         uri = ContentUris.withAppendedId(collection, id),
                         date = cursor.getLong(dateColumn),
                         ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
@@ -119,6 +122,7 @@ internal class SharedMediaSource @Inject constructor(
 
                     MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> DeviceMedia.Video(
                         id = id,
+                        name = cursor.getString(nameColumn),
                         uri = ContentUris.withAppendedId(collection, id),
                         duration = cursor.getInt(durationColumn),
                         date = cursor.getLong(dateColumn),

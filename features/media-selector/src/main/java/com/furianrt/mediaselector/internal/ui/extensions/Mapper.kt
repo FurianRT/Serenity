@@ -11,6 +11,7 @@ internal fun DeviceMedia.toMediaItem(
 ): MediaItem = when (this) {
     is DeviceMedia.Image -> MediaItem.Image(
         id = id,
+        name = name,
         uri = uri,
         ratio = ratio,
         state = state,
@@ -18,6 +19,7 @@ internal fun DeviceMedia.toMediaItem(
 
     is DeviceMedia.Video -> MediaItem.Video(
         id = id,
+        name = name,
         uri = uri,
         ratio = ratio,
         duration = duration,
@@ -35,11 +37,13 @@ internal fun List<MediaItem>.toMediaSelectorResult() = MediaSelectorResult(
 
 private fun MediaItem.toResultMedia(): MediaSelectorResult.Media = when (this) {
     is MediaItem.Image -> MediaSelectorResult.Media.Image(
+        name = name,
         uri = uri,
         ratio = ratio,
     )
 
     is MediaItem.Video -> MediaSelectorResult.Media.Video(
+        name = name,
         uri = uri,
         ratio = ratio,
         duration = duration,
