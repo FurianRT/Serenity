@@ -25,6 +25,7 @@ import coil3.video.VideoFrameDecoder
 import com.furianrt.mediaselector.internal.ui.entities.Constants
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 

@@ -201,7 +201,7 @@ private fun SuccessScreen(
             verticalAlignment = Alignment.Top,
             state = pagerState,
         ) { index ->
-            val pageScreenState = rememberPageScreenState()
+            val pageScreenState = rememberPageScreenState(toolbarState = toolbarScaffoldState)
             pageScreensStates[index] = pageScreenState
 
             val isCurrentPage by remember { derivedStateOf { pagerState.currentPage == index } }

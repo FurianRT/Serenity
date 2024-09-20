@@ -12,12 +12,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.composables.NoteContentMedia
-import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
@@ -38,7 +39,6 @@ private val cardRippleAlpha = RippleAlpha(
 internal fun NoteListItem(
     note: MainScreenNote,
     onClick: (note: MainScreenNote) -> Unit,
-    onTagClick: (tag: UiNoteTag) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
@@ -52,20 +52,19 @@ internal fun NoteListItem(
         ) {
             note.content.forEachIndexed { index, item ->
                 when (item) {
-                    is UiNoteContent.Title -> {
-                        NoteContentTitle(
-                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                            title = item,
-                        )
-                    }
+                    is UiNoteContent.Title -> Text(
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                        text = item.state.text.toString(),
+                        maxLines = 4,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
 
-                    is UiNoteContent.MediaBlock -> {
-                        NoteContentMedia(
-                            modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
-                            block = item,
-                            clickable = false,
-                        )
-                    }
+                    is UiNoteContent.MediaBlock -> NoteContentMedia(
+                        modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                        block = item,
+                        clickable = false,
+                    )
                 }
             }
             NoteTags(
@@ -78,7 +77,6 @@ internal fun NoteListItem(
                         bottom = 10.dp,
                     ),
                 tags = note.tags,
-                onTagClick = onTagClick,
                 date = note.date,
             )
         }
@@ -121,7 +119,6 @@ private fun NoteItemPreview() {
                 ),
             ),
             onClick = {},
-            onTagClick = {},
         )
     }
 }

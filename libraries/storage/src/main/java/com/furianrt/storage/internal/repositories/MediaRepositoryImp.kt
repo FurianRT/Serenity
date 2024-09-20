@@ -16,8 +16,8 @@ import com.furianrt.storage.internal.database.notes.mappers.toEntryImage
 import com.furianrt.storage.internal.database.notes.mappers.toEntryVideo
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
-import com.furianrt.storage.internal.device.AppMediaStorage
-import com.furianrt.storage.internal.device.DeviceMediaStorage
+import com.furianrt.storage.internal.device.AppPrivateMediaSource
+import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -28,8 +28,8 @@ import javax.inject.Inject
 internal class MediaRepositoryImp @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
-    private val deviceMediaStorage: DeviceMediaStorage,
-    private val appMediaStorage: AppMediaStorage,
+    private val sharedMediaSource: SharedMediaSource,
+    private val appPrivateMediaSource: AppPrivateMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
 ) : MediaRepository {
@@ -68,7 +68,7 @@ internal class MediaRepositoryImp @Inject constructor(
                 imageDao.delete(images)
                 videoDao.delete(videos)
             }
-            appMediaStorage.deleteMediaFile(
+            appPrivateMediaSource.deleteMediaFile(
                 noteId = noteId,
                 ids = media.map(LocalNote.Content.Media::id).toSet(),
             )
@@ -76,7 +76,7 @@ internal class MediaRepositoryImp @Inject constructor(
     }
 
     override suspend fun deleteMediaFiles(noteId: String) {
-        appMediaStorage.deleteAllMediaFiles(noteId)
+        appPrivateMediaSource.deleteAllMediaFiles(noteId)
     }
 
     override fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>> = combine(
@@ -84,9 +84,9 @@ internal class MediaRepositoryImp @Inject constructor(
         videoDao.getVideos(noteId).deepMap(EntryNoteVideo::toNoteContentVideo),
     ) { images, videos -> images + videos }
 
-    override suspend fun getDeviceMediaList(): List<DeviceMedia> = deviceMediaStorage.getMediaList()
+    override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
 
     override fun getMediaPermissionStatus(): MediaPermissionStatus {
-        return deviceMediaStorage.getMediaPermissionStatus()
+        return sharedMediaSource.getMediaPermissionStatus()
     }
 }

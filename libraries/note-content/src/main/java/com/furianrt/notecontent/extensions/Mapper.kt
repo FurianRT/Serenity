@@ -49,7 +49,7 @@ fun UiNoteTag.toLocalNoteTag() = when (this) {
 
     is UiNoteTag.Template -> LocalNote.Tag(
         id = id,
-        title = textState.text.toString(),
+        title = textState.text.trim().toString(),
     )
 }
 

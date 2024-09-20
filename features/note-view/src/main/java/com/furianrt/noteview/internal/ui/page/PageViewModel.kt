@@ -96,8 +96,12 @@ internal class PageViewModel @AssistedInject constructor(
             is OnEditModeStateChange -> changeEditModeState(event.isEnabled)
             is OnTagRemoveClick -> removeTag(event.tag)
             is OnTagDoneEditing -> addTag(event.tag)
-            is OnTagTextEntered -> addSecondTagTemplate()
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
+            is OnTagTextEntered -> {
+                hasContentChanged = true
+                addSecondTagTemplate()
+            }
+
             is OnSelectMediaClick -> tryRequestMediaPermissions()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> focusedTitleId = event.id

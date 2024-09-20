@@ -18,7 +18,7 @@ import javax.inject.Singleton
 private const val COMPRESSION_VALUE = 70
 
 @Singleton
-internal class AppMediaStorage @Inject constructor(
+internal class AppPrivateMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
 ) {
@@ -61,7 +61,6 @@ internal class AppMediaStorage @Inject constructor(
                 sourceBitmap.compress(Bitmap.CompressFormat.WEBP_LOSSY, COMPRESSION_VALUE, fos)
                 fos.flush()
             }
-
             return@withContext destFile.toUri()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -73,7 +72,18 @@ internal class AppMediaStorage @Inject constructor(
         noteId: String,
         video: LocalNote.Content.Video,
     ): Uri? = withContext(dispatchers.default) {
-
-        return@withContext Uri.EMPTY
+        try {
+            val destFile = File(context.filesDir, "$noteId/${video.id}.mp4")
+            destFile.parentFile?.mkdirs()
+            context.contentResolver.openInputStream(video.uri)?.use { inputStream ->
+                FileOutputStream(destFile).use { outputStream ->
+                    inputStream.copyTo(outputStream)
+                }
+            }
+            return@withContext destFile.toUri()
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 }

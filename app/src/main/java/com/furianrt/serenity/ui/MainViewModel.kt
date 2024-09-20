@@ -78,9 +78,6 @@ internal class MainViewModel @Inject constructor(
                 )
             }
 
-            is MainEvent.OnNoteTagClick -> {
-            }
-
             is MainEvent.OnScrollToTopClick -> {
                 _effect.tryEmit(MainEffect.ScrollToTop)
             }

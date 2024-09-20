@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui.composables
+package com.furianrt.uikit.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -17,7 +17,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun DurationBadge(
+fun DurationBadge(
     duration: Int,
     modifier: Modifier = Modifier,
 ) {

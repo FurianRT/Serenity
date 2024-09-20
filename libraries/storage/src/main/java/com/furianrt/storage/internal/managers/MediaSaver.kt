@@ -6,7 +6,7 @@ import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
-import com.furianrt.storage.internal.device.AppMediaStorage
+import com.furianrt.storage.internal.device.AppPrivateMediaSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,7 +44,7 @@ internal class MediaSaver @Inject constructor(
     dispatchers: DispatchersProvider,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
-    private val appMediaStorage: AppMediaStorage,
+    private val appPrivateMediaSource: AppPrivateMediaSource,
 ) {
     private val canceledEntries = mutableSetOf<QueueEntry>()
     private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
@@ -83,7 +83,7 @@ internal class MediaSaver @Inject constructor(
         if (isMediaSaved(entry.media)) {
             return
         }
-        val resultUri = appMediaStorage.saveMediaFile(entry.noteId, entry.media) ?: return
+        val resultUri = appPrivateMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
         when (entry.media) {
             is LocalNote.Content.Image -> imageDao.update(
                 PartImageUri(

@@ -17,7 +17,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class DeviceMediaStorage @Inject constructor(
+internal class SharedMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
 ) {
@@ -85,6 +85,7 @@ internal class DeviceMediaStorage @Inject constructor(
             MediaStore.Files.FileColumns.MEDIA_TYPE,
             MediaStore.Files.FileColumns.WIDTH,
             MediaStore.Files.FileColumns.HEIGHT,
+            MediaStore.Files.FileColumns.ORIENTATION,
         )
         val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         val query = context.contentResolver.query(
@@ -102,9 +103,12 @@ internal class DeviceMediaStorage @Inject constructor(
                 cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.MEDIA_TYPE)
             val widthColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.WIDTH)
             val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.HEIGHT)
+            val orientationColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.ORIENTATION)
             while (cursor.moveToNext() && isActive) {
                 val id = cursor.getLong(idColumn)
                 val mediaType = cursor.getInt(mediaTypeColumn)
+                val orientation = cursor.getInt(orientationColumn)
                 val item = when (mediaType) {
                     MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
                         id = id,
@@ -118,7 +122,11 @@ internal class DeviceMediaStorage @Inject constructor(
                         uri = ContentUris.withAppendedId(collection, id),
                         duration = cursor.getInt(durationColumn),
                         date = cursor.getLong(dateColumn),
-                        ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
+                        ratio = if (orientation == 0 || orientation == 180) {
+                            cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn)
+                        } else {
+                            cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
+                        },
                     )
 
                     else -> continue

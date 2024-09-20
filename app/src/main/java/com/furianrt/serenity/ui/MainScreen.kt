@@ -172,7 +172,7 @@ private fun MainSuccess(
             start = 8.dp,
             end = 8.dp,
             top = 8.dp,
-            bottom = navBarsHeight + 16.dp
+            bottom = navBarsHeight + 16.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -183,7 +183,6 @@ private fun MainSuccess(
                     .animateContentSize(),
                 note = notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
-                onTagClick = { onEvent(MainEvent.OnNoteTagClick(it)) },
             )
         }
     }
@@ -191,12 +190,12 @@ private fun MainSuccess(
 
 @Composable
 private fun MainEmpty() {
-    Spacer(modifier = Modifier)
+    Spacer(modifier = Modifier.fillMaxSize())
 }
 
 @Composable
 private fun MainLoading() {
-    Spacer(modifier = Modifier)
+    Spacer(modifier = Modifier.fillMaxSize())
 }
 
 @Preview

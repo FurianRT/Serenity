@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -49,9 +50,11 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.video.VideoFrameDecoder
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.contentHeightDp
+import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -340,6 +343,7 @@ private fun ManyMediaHolder(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MediaItem(
     media: MediaBlock.Media,
@@ -353,35 +357,69 @@ private fun MediaItem(
     cornerRadius: Dp = 4.dp,
     offscreenImageCount: Int = 0,
 ) {
-    if (media is MediaBlock.Image) {
-        ImageItem(
-            modifier = modifier,
-            image = media,
-            clickable = clickable,
-            dropDownHazeState = dropDownHazeState,
-            onClick = onClick,
-            onShareClick = onShareClick,
-            onRemoveClick = onRemoveClick,
-            contentScale = contentScale,
-            cornerRadius = cornerRadius,
-            offscreenImageCount = offscreenImageCount,
-        )
+    val haptic = LocalHapticFeedback.current
+    var showDropDownMenu by remember { mutableStateOf(false) }
+    val dimModifier = Modifier.drawWithContent {
+        drawContent()
+        if (offscreenImageCount > 0) {
+            drawRect(color = Color.Black, alpha = 0.4f)
+        }
+    }
+    Box(
+        modifier = modifier
+            .clip(RoundedCornerShape(cornerRadius))
+            .applyIf(clickable) {
+                Modifier.combinedClickable(
+                    enabled = clickable,
+                    onClick = { onClick(media) },
+                    onLongClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        showDropDownMenu = true
+                    },
+                )
+            },
+        contentAlignment = Alignment.Center,
+        propagateMinConstraints = true,
+    ) {
+        when (media) {
+            is MediaBlock.Image -> ImageItem(
+                modifier = dimModifier,
+                image = media,
+                contentScale = contentScale,
+            )
+
+            is MediaBlock.Video -> VideoItem(
+                modifier = dimModifier,
+                image = media,
+                contentScale = contentScale,
+            )
+        }
+        if (offscreenImageCount > 0) {
+            Text(
+                modifier = Modifier.wrapContentSize(),
+                text = "+$offscreenImageCount",
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+        }
+        if (clickable && dropDownHazeState != null) {
+            PopUpMenu(
+                expanded = showDropDownMenu,
+                hazeState = dropDownHazeState,
+                onRemoveClick = { onRemoveClick(media) },
+                onShareClick = { onShareClick(media) },
+                onDismissRequest = { showDropDownMenu = false },
+            )
+        }
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun ImageItem(
     image: MediaBlock.Image,
-    clickable: Boolean,
-    dropDownHazeState: HazeState?,
-    onClick: (image: MediaBlock.Image) -> Unit,
-    onRemoveClick: (image: MediaBlock.Image) -> Unit,
-    onShareClick: (image: MediaBlock.Image) -> Unit,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
-    cornerRadius: Dp = 4.dp,
-    offscreenImageCount: Int = 0,
 ) {
     val context = LocalContext.current
     val request = remember(image.id) {
@@ -393,74 +431,46 @@ private fun ImageItem(
             .data(image.uri)
             .build()
     }
-    val haptic = LocalHapticFeedback.current
-    var showDropDownMenu by remember { mutableStateOf(false) }
+    AsyncImage(
+        modifier = modifier.fillMaxSize(),
+        model = request,
+        placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
+        contentDescription = null,
+        contentScale = contentScale,
+    )
+}
 
+@Composable
+private fun VideoItem(
+    image: MediaBlock.Video,
+    modifier: Modifier = Modifier,
+    contentScale: ContentScale = ContentScale.Crop,
+) {
+    val context = LocalContext.current
+    val request = remember(image.id) {
+        ImageRequest.Builder(context)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .diskCacheKey(image.id)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .memoryCacheKey(image.id)
+            .data(image.uri)
+            .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
+            .build()
+    }
     Box(modifier = modifier) {
-        if (offscreenImageCount == 0) {
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(RoundedCornerShape(cornerRadius))
-                    .applyIf(clickable) {
-                        Modifier.combinedClickable(
-                            enabled = clickable,
-                            onClick = { onClick(image) },
-                            onLongClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                showDropDownMenu = true
-                            },
-                        )
-                    },
-                model = request,
-                placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-                contentDescription = null,
-                contentScale = contentScale,
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(cornerRadius))
-                    .applyIf(clickable) {
-                        Modifier.combinedClickable(
-                            onClick = { onClick(image) },
-                            onLongClick = {
-                                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                                showDropDownMenu = true
-                            },
-                        )
-                    },
-                contentAlignment = Alignment.Center,
-                propagateMinConstraints = true,
-            ) {
-                AsyncImage(
-                    modifier = Modifier.drawWithContent {
-                        drawContent()
-                        drawRect(color = Color.Black, alpha = 0.4f)
-                    },
-                    model = request,
-                    placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-                    contentDescription = null,
-                    contentScale = contentScale,
-                )
-                Text(
-                    modifier = Modifier.wrapContentSize(),
-                    text = "+$offscreenImageCount",
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                    style = MaterialTheme.typography.headlineMedium,
-                )
-            }
-        }
-        if (clickable && dropDownHazeState != null) {
-            PopUpMenu(
-                expanded = showDropDownMenu,
-                hazeState = dropDownHazeState,
-                onRemoveClick = { onRemoveClick(image) },
-                onShareClick = { onShareClick(image) },
-                onDismissRequest = { showDropDownMenu = false },
-            )
-        }
+        AsyncImage(
+            modifier = Modifier.fillMaxSize(),
+            model = request,
+            placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
+            contentDescription = null,
+            contentScale = contentScale,
+        )
+        DurationBadge(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(start = 4.dp, bottom = 4.dp),
+            duration = image.duration,
+        )
     }
 }
 

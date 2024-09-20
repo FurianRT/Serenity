@@ -1,7 +1,10 @@
 package com.furianrt.serenity.ui
 
+import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.AttributeSet
+import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
@@ -31,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
+private const val SPLASH_SCREEN_DELAY = 400L
 private val SYSTEM_BARS_COLOR = Color.argb(0x4D, 0x1b, 0x1b, 0x1b)
 
 @AndroidEntryPoint
@@ -39,10 +43,21 @@ internal class MainActivity : ComponentActivity() {
     @Inject
     lateinit var mediaRepository: MediaRepository
 
+    private var keepSplashScreen = true
+
+    override fun onCreateView(
+        parent: View?,
+        name: String,
+        context: Context,
+        attrs: AttributeSet,
+    ): View? = super.onCreateView(parent, name, context, attrs)
+        .also { parent?.postDelayed({ keepSplashScreen = false }, SPLASH_SCREEN_DELAY) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        installSplashScreen()
-            .setOnExitAnimationListener { splashScreenViewProvider ->
+        installSplashScreen().apply {
+            setKeepOnScreenCondition { keepSplashScreen }
+            setOnExitAnimationListener { splashScreenViewProvider ->
                 splashScreenViewProvider.view
                     .animate()
                     .alpha(0f)
@@ -59,6 +74,7 @@ internal class MainActivity : ComponentActivity() {
                     navigationBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
                 )
             }
+        }
 
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),

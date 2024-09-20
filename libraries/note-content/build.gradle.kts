@@ -27,6 +27,7 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.coil)
+    implementation(libs.coilVideo)
 
     implementation(libs.blur)
 }

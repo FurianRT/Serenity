@@ -49,6 +49,7 @@ import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -65,6 +66,7 @@ import com.furianrt.noteview.R
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.toolspanel.api.ActionsPanel
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -125,24 +127,23 @@ internal class PageScreenState(
 }
 
 @Composable
-internal fun rememberPageScreenState(): PageScreenState {
-    val listState = rememberLazyListState()
-    val titleScrollState = rememberScrollState()
-    val toolbarState = rememberCollapsingToolbarScaffoldState()
-    return rememberSaveable(
-        saver = PageScreenState.saver(
-            listState = listState,
-            titleScrollState = titleScrollState,
-            toolbarState = toolbarState,
-        ),
-    ) {
-        PageScreenState(
-            listState = listState,
-            titleScrollState = titleScrollState,
-            toolbarState = toolbarState,
-            hasContentChanged = false,
-        )
-    }
+internal fun rememberPageScreenState(
+    listState: LazyListState = rememberLazyListState(),
+    titleScrollState: ScrollState = rememberScrollState(),
+    toolbarState: CollapsingToolbarScaffoldState = rememberCollapsingToolbarScaffoldState(),
+): PageScreenState = rememberSaveable(
+    saver = PageScreenState.saver(
+        listState = listState,
+        titleScrollState = titleScrollState,
+        toolbarState = toolbarState,
+    ),
+) {
+    PageScreenState(
+        listState = listState,
+        titleScrollState = titleScrollState,
+        toolbarState = toolbarState,
+        hasContentChanged = false,
+    )
 }
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -258,6 +259,7 @@ private fun SuccessScreen(
         }
     }
     val hazeState = remember { HazeState() }
+    val focusManager = LocalFocusManager.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -293,25 +295,27 @@ private fun SuccessScreen(
                         },
                         block = { this@drawWithContent.drawContent() }
                     )
-                },
+                }
+                .clickableNoRipple { focusManager.clearFocus() },
             state = state.listState,
             contentPadding = PaddingValues(
                 bottom = WindowInsets.navigationBars.asPaddingValues()
                     .calculateBottomPadding() + 90.dp
             ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             itemsIndexed(
                 items = uiState.content,
-                key = { index, item -> item.id },
-                contentType = { _, item -> item.javaClass.name },
+                key = { _, item -> item.id },
+                contentType = { _, item -> item.javaClass.simpleName },
             ) { index, item ->
                 when (item) {
                     is UiNoteContent.Title -> NoteContentTitle(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(
-                                top = if (index == 0) 8.dp else 0.dp,
+                                top = if (index == 0) 8.dp else 14.dp,
+                                bottom = 14.dp,
                                 start = 8.dp,
                                 end = 8.dp,
                             )
@@ -405,12 +409,12 @@ private fun Modifier.drawNoteBackground(
 
 @Composable
 private fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier)
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @Composable
 private fun EmptyScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier)
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @PreviewWithBackground

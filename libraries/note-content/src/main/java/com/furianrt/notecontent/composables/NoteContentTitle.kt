@@ -43,19 +43,10 @@ fun NoteContentTitle(
     scrollState: ScrollState = rememberScrollState(),
     focusOffset: Int = 0,
     hint: String? = null,
-    isInEditMode: Boolean? = null,
+    isInEditMode: Boolean = false,
     onTitleFocused: (id: String) -> Unit = {},
     onTitleTextChange: (id: String) -> Unit = {},
 ) {
-    if (isInEditMode == null) {
-        Text(
-            modifier = modifier,
-            text = title.state.text.toString(),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        return
-    }
-
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
@@ -80,7 +71,7 @@ fun NoteContentTitle(
             focusManager.clearFocus()
         }
     }
-    
+
     LaunchedEffect(title.state.text) {
         onTitleTextChange(title.id)
     }
