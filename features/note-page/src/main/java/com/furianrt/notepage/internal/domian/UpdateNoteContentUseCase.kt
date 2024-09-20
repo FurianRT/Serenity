@@ -1,4 +1,4 @@
-package com.furianrt.noteview.internal.domain
+package com.furianrt.notepage.internal.domian
 
 import com.furianrt.core.hasItem
 import com.furianrt.storage.api.TransactionsHelper

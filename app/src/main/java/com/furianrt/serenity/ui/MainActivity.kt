@@ -25,6 +25,7 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
+import com.furianrt.notecreate.api.NoteCreateScreen
 import com.furianrt.noteview.api.NoteViewScreen
 import com.furianrt.settings.api.SettingsScreen
 import com.furianrt.storage.api.repositories.MediaRepository
@@ -160,6 +161,31 @@ internal class MainActivity : ComponentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         },
                         content = { NoteViewScreen(navController) },
+                    )
+
+                    composable(
+                        route = "NoteCreate",
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                initialOffset = { it / 2 },
+                                animationSpec = tween(
+                                    durationMillis = 450,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(450))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                targetOffset = { (it * 0.8f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
+                        content = { NoteCreateScreen(navController) },
                     )
 
                     composable(

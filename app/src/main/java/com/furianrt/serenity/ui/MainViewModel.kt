@@ -68,29 +68,17 @@ internal class MainViewModel @Inject constructor(
 
     fun onEvent(event: MainEvent) {
         when (event) {
-            is MainEvent.OnNoteClick -> {
-                _effect.tryEmit(
-                    MainEffect.OpenNoteScreen(
-                        noteId = event.note.id,
-                        dialogId = NOTE_VIEW_DIALOG_ID,
-                        requestId = NOTE_VIEW_REQUEST_ID,
-                    )
+            is MainEvent.OnScrollToTopClick -> _effect.tryEmit(MainEffect.ScrollToTop)
+            is MainEvent.OnSettingsClick -> _effect.tryEmit(MainEffect.OpenSettingsScreen)
+            is MainEvent.OnAddNoteClick -> _effect.tryEmit(MainEffect.OpenNoteCreateScreen)
+            is MainEvent.OnSearchClick -> {}
+            is MainEvent.OnNoteClick -> _effect.tryEmit(
+                MainEffect.OpenNoteViewScreen(
+                    noteId = event.note.id,
+                    dialogId = NOTE_VIEW_DIALOG_ID,
+                    requestId = NOTE_VIEW_REQUEST_ID,
                 )
-            }
-
-            is MainEvent.OnScrollToTopClick -> {
-                _effect.tryEmit(MainEffect.ScrollToTop)
-            }
-
-            is MainEvent.OnSettingsClick -> {
-                _effect.tryEmit(MainEffect.OpenSettingsScreen)
-            }
-
-            is MainEvent.OnSearchClick -> {
-            }
-
-            is MainEvent.OnAddNoteClick -> {
-            }
+            )
         }
     }
 

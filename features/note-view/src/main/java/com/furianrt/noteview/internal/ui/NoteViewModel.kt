@@ -1,10 +1,10 @@
-package com.furianrt.noteview.internal.ui.container
+package com.furianrt.noteview.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
-import com.furianrt.noteview.internal.ui.extensions.toContainerScreenNote
+import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
@@ -21,16 +21,16 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-internal class ContainerViewModel @Inject constructor(
+internal class NoteViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<ContainerUiState>(ContainerUiState.Loading)
+    private val _state = MutableStateFlow<NoteViewUiState>(NoteViewUiState.Loading)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<ContainerEffect>(extraBufferCapacity = 10)
+    private val _effect = MutableSharedFlow<NoteViewEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
     private val initialNoteId by lazy(LazyThreadSafetyMode.NONE) {
@@ -48,24 +48,24 @@ internal class ContainerViewModel @Inject constructor(
         observeNotes()
     }
 
-    fun onEvent(event: ContainerEvent) {
+    fun onEvent(event: NoteViewEvent) {
         when (event) {
-            is ContainerEvent.OnButtonEditClick -> {
-                _state.updateState<ContainerUiState.Success> { it.toggleEditMode() }
+            is NoteViewEvent.OnButtonEditClick -> {
+                _state.updateState<NoteViewUiState.Success> { it.toggleEditMode() }
             }
 
-            is ContainerEvent.OnButtonBackClick -> {
+            is NoteViewEvent.OnButtonBackClick -> {
                 if (!event.isContentSaved) {
-                    _effect.tryEmit(ContainerEffect.SaveCurrentNoteContent)
+                    _effect.tryEmit(NoteViewEffect.SaveCurrentNoteContent)
                 }
-                _effect.tryEmit(ContainerEffect.CloseScreen)
+                _effect.tryEmit(NoteViewEffect.CloseScreen)
             }
 
-            is ContainerEvent.OnPageTitleFocusChange -> {
-                _state.updateState<ContainerUiState.Success> { it.enableEditMode() }
+            is NoteViewEvent.OnPageTitleFocusChange -> {
+                _state.updateState<NoteViewUiState.Success> { it.enableEditMode() }
             }
 
-            is ContainerEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
+            is NoteViewEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = dialogIdentifier,
                 code = DialogResult.Ok(data = event.index),
             )
@@ -75,19 +75,19 @@ internal class ContainerViewModel @Inject constructor(
     private fun observeNotes() = launch {
         notesRepository.getAllNotes().collectLatest { notes ->
             if (notes.isEmpty()) {
-                _effect.tryEmit(ContainerEffect.CloseScreen)
+                _effect.tryEmit(NoteViewEffect.CloseScreen)
                 return@collectLatest
             }
             _state.update { localState ->
                 when (localState) {
-                    is ContainerUiState.Success -> localState.copy(
+                    is NoteViewUiState.Success -> localState.copy(
                         initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                        notes = notes.mapImmutable(LocalNote::toContainerScreenNote),
+                        notes = notes.mapImmutable(LocalNote::toNoteItem),
                     )
 
-                    is ContainerUiState.Loading -> ContainerUiState.Success(
+                    is NoteViewUiState.Loading -> NoteViewUiState.Success(
                         initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
-                        notes = notes.mapImmutable(LocalNote::toContainerScreenNote),
+                        notes = notes.mapImmutable(LocalNote::toNoteItem),
                         isInEditMode = false,
                     )
                 }
@@ -95,7 +95,7 @@ internal class ContainerViewModel @Inject constructor(
         }
     }
 
-    private fun ContainerUiState.Success.toggleEditMode() = copy(isInEditMode = !isInEditMode)
+    private fun NoteViewUiState.Success.toggleEditMode() = copy(isInEditMode = !isInEditMode)
 
-    private fun ContainerUiState.Success.enableEditMode() = copy(isInEditMode = true)
+    private fun NoteViewUiState.Success.enableEditMode() = copy(isInEditMode = true)
 }

@@ -1,10 +1,9 @@
-package com.furianrt.noteview.internal.ui.page
+package com.furianrt.notepage.internal.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,22 +17,16 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.Saver
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
@@ -62,7 +55,9 @@ import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
 import com.furianrt.notecontent.composables.NoteTags
 import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.noteview.R
+import com.furianrt.notepage.R
+import com.furianrt.notepage.api.PageScreenState
+import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.toolspanel.api.ActionsPanel
@@ -75,89 +70,28 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
-import me.onebone.toolbar.CollapsingToolbarScaffoldState
-import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 private const val TAGS_ITEM_KEY = "tags"
 
-@Stable
-internal class PageScreenState(
-    val listState: LazyListState,
-    val titleScrollState: ScrollState,
-    val toolbarState: CollapsingToolbarScaffoldState,
-    hasContentChanged: Boolean,
-) {
-    val hasContentChanged: Boolean
-        get() = hasContentChangedState
-
-    private var hasContentChangedState by mutableStateOf(hasContentChanged)
-
-    private var onSaveContentRequest: () -> Unit = {}
-
-    fun setOnSaveContentListener(callback: () -> Unit) {
-        onSaveContentRequest = callback
-    }
-
-    fun saveContent() {
-        onSaveContentRequest()
-    }
-
-    fun setContentChanged(changed: Boolean) {
-        hasContentChangedState = changed
-    }
-
-    companion object {
-        fun saver(
-            listState: LazyListState,
-            titleScrollState: ScrollState,
-            toolbarState: CollapsingToolbarScaffoldState,
-        ): Saver<PageScreenState, Boolean> = Saver(
-            save = { it.hasContentChanged },
-            restore = {
-                PageScreenState(
-                    listState = listState,
-                    titleScrollState = titleScrollState,
-                    toolbarState = toolbarState,
-                    hasContentChanged = it,
-                )
-            },
-        )
-    }
-}
-
-@Composable
-internal fun rememberPageScreenState(
-    listState: LazyListState = rememberLazyListState(),
-    titleScrollState: ScrollState = rememberScrollState(),
-    toolbarState: CollapsingToolbarScaffoldState = rememberCollapsingToolbarScaffoldState(),
-): PageScreenState = rememberSaveable(
-    saver = PageScreenState.saver(
-        listState = listState,
-        titleScrollState = titleScrollState,
-        toolbarState = toolbarState,
-    ),
-) {
-    PageScreenState(
-        listState = listState,
-        titleScrollState = titleScrollState,
-        toolbarState = toolbarState,
-        hasContentChanged = false,
-    )
-}
-
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-internal fun PageScreen(
+internal fun NotePageScreenInternal(
     state: PageScreenState,
     noteId: String,
     isInEditMode: Boolean,
+    isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
     navHostController: NavHostController,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
-        creationCallback = { factory -> factory.create(noteId = noteId) },
+        creationCallback = { factory ->
+            factory.create(
+                noteId = noteId,
+                isNoteCreationMode = isNoteCreationMode,
+            )
+        },
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
@@ -352,7 +286,7 @@ private fun SuccessScreen(
                 item(key = TAGS_ITEM_KEY) {
                     NoteTags(
                         modifier = Modifier
-                            .padding(start = 4.dp, end = 4.dp, top = 6.dp)
+                            .padding(start = 4.dp, end = 4.dp, top = 24.dp)
                             .fillMaxWidth()
                             .animateItem(),
                         tags = uiState.tags,

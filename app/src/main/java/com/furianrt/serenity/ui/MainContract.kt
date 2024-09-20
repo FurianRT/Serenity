@@ -30,9 +30,11 @@ internal sealed interface MainEffect {
     data object ScrollToTop : MainEffect
     data class ScrollToPosition(val position: Int) : MainEffect
     data object OpenSettingsScreen : MainEffect
-    data class OpenNoteScreen(
+    data object OpenNoteCreateScreen : MainEffect
+    data class OpenNoteViewScreen(
         val noteId: String,
         val dialogId: Int,
         val requestId: String,
     ) : MainEffect
+
 }

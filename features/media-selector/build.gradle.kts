@@ -16,7 +16,6 @@ dependencies {
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
     implementation(libs.material3)
-    implementation(libs.material3Size)
 
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)

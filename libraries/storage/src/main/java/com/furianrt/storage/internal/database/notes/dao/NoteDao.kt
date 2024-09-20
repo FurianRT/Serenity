@@ -1,6 +1,8 @@
 package com.furianrt.storage.internal.database.notes.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
@@ -11,6 +13,9 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 internal interface NoteDao {
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insert(note: EntryNote)
+
     @Update(entity = EntryNote::class)
     suspend fun update(data: PartNoteText)
 
@@ -18,7 +23,7 @@ internal interface NoteDao {
     suspend fun delete(noteId: String)
 
     @Transaction
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} ORDER BY ${EntryNote.FIELD_TIMESTAMP} DESC")
     fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Transaction

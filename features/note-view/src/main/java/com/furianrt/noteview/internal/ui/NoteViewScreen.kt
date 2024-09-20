@@ -1,8 +1,11 @@
-package com.furianrt.noteview.internal.ui.container
+package com.furianrt.noteview.internal.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Surface
@@ -26,10 +29,10 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
-import com.furianrt.noteview.internal.ui.container.composables.Toolbar
-import com.furianrt.noteview.internal.ui.page.PageScreen
-import com.furianrt.noteview.internal.ui.page.PageScreenState
-import com.furianrt.noteview.internal.ui.page.rememberPageScreenState
+import com.furianrt.notepage.api.NotePageScreen
+import com.furianrt.notepage.api.PageScreenState
+import com.furianrt.notepage.api.rememberPageScreenState
+import com.furianrt.noteview.internal.ui.composables.Toolbar
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.expand
 import com.furianrt.uikit.extensions.isExpanded
@@ -60,8 +63,8 @@ internal class SuccessScreenState {
 internal fun rememberSuccessScreenState(): SuccessScreenState = remember { SuccessScreenState() }
 
 @Composable
-internal fun ContainerScreen(navHostController: NavHostController) {
-    val viewModel: ContainerViewModel = hiltViewModel()
+internal fun NoteViewScreenInternal(navHostController: NavHostController) {
+    val viewModel: NoteViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -72,8 +75,8 @@ internal fun ContainerScreen(navHostController: NavHostController) {
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is ContainerEffect.CloseScreen -> navHostController.popBackStack()
-                    is ContainerEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
+                    is NoteViewEffect.CloseScreen -> navHostController.popBackStack()
+                    is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
                 }
             }
     }
@@ -88,15 +91,15 @@ internal fun ContainerScreen(navHostController: NavHostController) {
 @Composable
 private fun ScreenContent(
     state: SuccessScreenState,
-    uiState: ContainerUiState,
-    onEvent: (event: ContainerEvent) -> Unit,
+    uiState: NoteViewUiState,
+    onEvent: (event: NoteViewEvent) -> Unit,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
         when (uiState) {
-            is ContainerUiState.Loading -> LoadingScreen()
-            is ContainerUiState.Success -> SuccessScreen(
+            is NoteViewUiState.Loading -> LoadingScreen()
+            is NoteViewUiState.Success -> SuccessScreen(
                 state = state,
                 uiState = uiState,
                 onEvent = onEvent,
@@ -109,8 +112,8 @@ private fun ScreenContent(
 @Composable
 private fun SuccessScreen(
     state: SuccessScreenState,
-    uiState: ContainerUiState.Success,
-    onEvent: (event: ContainerEvent) -> Unit,
+    uiState: NoteViewUiState.Success,
+    onEvent: (event: NoteViewEvent) -> Unit,
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -154,12 +157,12 @@ private fun SuccessScreen(
 
     LaunchedEffect(pagerState.currentPage) {
         date = uiState.notes.getOrNull(pagerState.currentPage)?.date
-        onEvent(ContainerEvent.OnPageChange(pagerState.currentPage))
+        onEvent(NoteViewEvent.OnPageChange(pagerState.currentPage))
     }
 
     BackHandler(
         enabled = uiState.isInEditMode,
-        onBack = { onEvent(ContainerEvent.OnButtonEditClick) },
+        onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
 
     val isListAtTop by remember(currentPageScreenState) {
@@ -181,12 +184,13 @@ private fun SuccessScreen(
         },
         toolbar = {
             Toolbar(
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                 isInEditMode = uiState.isInEditMode,
                 date = date,
-                onEditClick = { onEvent(ContainerEvent.OnButtonEditClick) },
+                onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
                 onBackButtonClick = {
                     onEvent(
-                        ContainerEvent.OnButtonBackClick(
+                        NoteViewEvent.OnButtonBackClick(
                             isContentSaved = !(currentPageScreenState?.hasContentChanged ?: false),
                         ),
                     )
@@ -206,12 +210,13 @@ private fun SuccessScreen(
 
             val isCurrentPage by remember { derivedStateOf { pagerState.currentPage == index } }
 
-            PageScreen(
+            NotePageScreen(
                 state = pageScreenState,
                 noteId = uiState.notes[index].id,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
+                isNoteCreationMode = false,
                 navHostController = navHostController,
-                onFocusChange = { onEvent(ContainerEvent.OnPageTitleFocusChange) },
+                onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },
             )
         }
     }
@@ -230,7 +235,7 @@ private fun ScreenSuccessPreview() {
     SerenityTheme {
         SuccessScreen(
             state = rememberSuccessScreenState(),
-            uiState = ContainerUiState.Success(
+            uiState = NoteViewUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,
                 notes = persistentListOf(),

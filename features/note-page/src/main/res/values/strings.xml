@@ -1,0 +1,4 @@
+<resources>
+    <string name="note_title_hint_text">Text…</string>
+    <string name="note_title_hint_write_more_here">Write more here…</string>
+</resources>

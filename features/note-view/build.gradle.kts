@@ -10,20 +10,16 @@ android {
 }
 
 dependencies {
-    implementation(projects.features.toolsPanel)
-    implementation(projects.features.mediaSelector)
+    implementation(projects.features.notePage)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.storage)
-    implementation(projects.libraries.noteContent)
-    implementation(projects.libraries.permissions)
     implementation(projects.libraries.domain)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
     implementation(libs.material3)
-    implementation(libs.material3Size)
 
     implementation(libs.composeActivity)
     implementation(libs.composeUi)
@@ -41,11 +37,5 @@ dependencies {
 
     implementation(libs.collapsingToolbar)
 
-    implementation(libs.lottie)
-
     implementation(libs.immutableCollections)
-
-    implementation(libs.permissions)
-
-    implementation(libs.blur)
 }

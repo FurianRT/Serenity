@@ -1,6 +1,8 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
 import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.storage.api.entities.SimpleNote
+import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
@@ -14,6 +16,12 @@ private const val MEDIA_END_TAG = "{/media}"
 private enum class FirstTagType {
     TITLE, MEDIA, NONE
 }
+
+internal fun SimpleNote.toEntryNote() = EntryNote(
+    id = id,
+    text = "",
+    timestamp = timestamp,
+)
 
 internal fun LinkedNote.toLocalNote() = LocalNote(
     id = note.id,

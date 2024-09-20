@@ -1,4 +1,4 @@
-package com.furianrt.noteview.internal.ui.page
+package com.furianrt.notepage.internal.ui
 
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag

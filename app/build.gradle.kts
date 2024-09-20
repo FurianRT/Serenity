@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.features.noteView)
+    implementation(projects.features.noteCreate)
     implementation(projects.features.settings)
     implementation(projects.features.mediaSelector)
     implementation(projects.features.mediaView)
@@ -24,7 +25,6 @@ dependencies {
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
     implementation(libs.material3)
-    implementation(libs.material3Size)
 
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)

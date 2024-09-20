@@ -1,4 +1,4 @@
-package com.furianrt.noteview.internal.ui.page
+package com.furianrt.notepage.internal.ui
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
@@ -14,21 +14,21 @@ import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.notecontent.extensions.toLocalNoteContent
 import com.furianrt.notecontent.extensions.toLocalNoteTag
 import com.furianrt.notecontent.extensions.toRegular
-import com.furianrt.noteview.internal.domain.UpdateNoteContentUseCase
-import com.furianrt.noteview.internal.ui.entites.NoteViewScreenNote
-import com.furianrt.noteview.internal.ui.extensions.addSecondTagTemplate
-import com.furianrt.noteview.internal.ui.extensions.addTagTemplate
-import com.furianrt.noteview.internal.ui.extensions.addTitleTemplates
-import com.furianrt.noteview.internal.ui.extensions.removeMedia
-import com.furianrt.noteview.internal.ui.extensions.removeSecondTagTemplate
-import com.furianrt.noteview.internal.ui.extensions.removeTagTemplate
-import com.furianrt.noteview.internal.ui.extensions.removeTitleTemplates
-import com.furianrt.noteview.internal.ui.extensions.toMediaBlock
-import com.furianrt.noteview.internal.ui.extensions.toNoteViewScreenNote
-import com.furianrt.noteview.internal.ui.page.PageEffect.OpenMediaSelector
-import com.furianrt.noteview.internal.ui.page.PageEffect.RequestStoragePermissions
-import com.furianrt.noteview.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog
-import com.furianrt.noteview.internal.ui.page.PageEvent.*
+import com.furianrt.notepage.internal.domian.UpdateNoteContentUseCase
+import com.furianrt.notepage.internal.ui.entities.NoteItem
+import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.addTitleTemplates
+import com.furianrt.notepage.internal.ui.extensions.removeMedia
+import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
+import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
+import com.furianrt.notepage.internal.ui.extensions.toNoteItem
+import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
+import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
+import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.PageEvent.*
 import com.furianrt.storage.api.entities.MediaPermissionStatus
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.NotesRepository
@@ -41,6 +41,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -63,6 +64,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val mediaRepository: MediaRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     @Assisted private val noteId: String,
+    @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener {
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
@@ -297,14 +299,26 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun observeNote() = launch {
-        notesRepository.getNote(noteId)
-            .map { it?.toNoteViewScreenNote() }
-            .distinctUntilChanged()
-            .collectLatest(::handleNoteResult)
+    private fun observeNote() {
+        if (isNoteCreationMode) {
+            handleNoteResult(
+                note = NoteItem(
+                    id = UUID.randomUUID().toString(),
+                    tags = persistentListOf(),
+                    content = persistentListOf(),
+                )
+            )
+        } else {
+            launch {
+                notesRepository.getNote(noteId)
+                    .map { it?.toNoteItem() }
+                    .distinctUntilChanged()
+                    .collectLatest(::handleNoteResult)
+            }
+        }
     }
 
-    private fun handleNoteResult(note: NoteViewScreenNote?) {
+    private fun handleNoteResult(note: NoteItem?) {
         if (note == null) {
             _state.update { PageUiState.Empty }
             return
@@ -352,6 +366,9 @@ internal class PageViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(noteId: String): PageViewModel
+        fun create(
+            noteId: String?,
+            isNoteCreationMode: Boolean,
+        ): PageViewModel
     }
 }
