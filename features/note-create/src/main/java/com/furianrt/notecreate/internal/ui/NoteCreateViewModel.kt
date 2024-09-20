@@ -3,7 +3,8 @@ package com.furianrt.notecreate.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.notecreate.internal.domain.InsertNoteUseCase
-import com.furianrt.storage.api.entities.SimpleNote
+import com.furianrt.notecreate.internal.ui.entites.NoteItem
+import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -15,7 +16,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
-internal class PageCreateViewModel @Inject constructor(
+internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val insertNoteUseCase: InsertNoteUseCase,
 ) : ViewModel() {
@@ -35,6 +36,7 @@ internal class PageCreateViewModel @Inject constructor(
                 }
                 toggleEditMode()
             }
+
             is NoteCreateEvent.OnButtonBackClick -> launch {
                 if (!event.isContentSaved) {
                     saveNote()
@@ -46,18 +48,15 @@ internal class PageCreateViewModel @Inject constructor(
     }
 
     private fun buildInitialState() = NoteCreateUiState(
-        noteId = UUID.randomUUID().toString(),
-        timestamp = System.currentTimeMillis(),
+        note = NoteItem(
+            id = UUID.randomUUID().toString(),
+            timestamp = System.currentTimeMillis(),
+        ),
         isInEditMode = true,
     )
 
     private suspend fun saveNote() {
-        insertNoteUseCase(
-            SimpleNote(
-                id = _state.value.noteId,
-                timestamp = _state.value.timestamp,
-            )
-        )
+        insertNoteUseCase(_state.value.note.toSimpleNote())
     }
 
     private fun toggleEditMode() {

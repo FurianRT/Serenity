@@ -1,8 +1,9 @@
 package com.furianrt.notecreate.internal.ui
 
+import com.furianrt.notecreate.internal.ui.entites.NoteItem
+
 internal data class NoteCreateUiState(
-    val noteId: String,
-    val timestamp: Long,
+    val note: NoteItem,
     val isInEditMode: Boolean,
 )
 

@@ -1,5 +1,6 @@
 package com.furianrt.notecreate.internal.ui
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.statusBars
@@ -20,24 +21,25 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
+import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.isExpanded
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
-import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 @Composable
 internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
-    val viewModel: PageCreateViewModel = hiltViewModel()
+    val viewModel: NoteCreateViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
-    val pageScreenState = rememberPageScreenState(toolbarState = toolbarScaffoldState)
+    val pageScreenState = rememberPageScreenState()
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
@@ -53,7 +55,16 @@ internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
         state = pageScreenState,
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        navHostController = navHostController,
+        notePage = {
+            NotePageScreen(
+                state = pageScreenState,
+                noteId = uiState.note.id,
+                isInEditMode = uiState.isInEditMode,
+                isNoteCreationMode = true,
+                navHostController = navHostController,
+                onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
+            )
+        }
     )
 }
 
@@ -61,19 +72,16 @@ internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
 private fun ScreenContent(
     state: PageScreenState,
     uiState: NoteCreateUiState,
-    navHostController: NavHostController,
     onEvent: (event: NoteCreateEvent) -> Unit,
-    modifier: Modifier = Modifier,
+    notePage: @Composable () -> Unit,
 ) {
-
-
     val isListAtTop by remember {
         derivedStateOf {
             state.listState.firstVisibleItemIndex == 0 &&
                     state.listState.firstVisibleItemScrollOffset == 0
         }
     }
-    Surface(modifier = modifier) {
+    Surface {
         CollapsingToolbarScaffold(
             modifier = Modifier.fillMaxSize(),
             state = state.toolbarState,
@@ -88,7 +96,7 @@ private fun ScreenContent(
                 Toolbar(
                     modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                     isInEditMode = uiState.isInEditMode,
-                    timestamp = uiState.timestamp,
+                    timestamp = uiState.note.timestamp,
                     onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
                     onBackButtonClick = {
                         onEvent(
@@ -100,15 +108,23 @@ private fun ScreenContent(
                     onDateClick = {},
                 )
             },
-        ) {
-            NotePageScreen(
-                state = state,
-                noteId = uiState.noteId,
-                isInEditMode = uiState.isInEditMode,
-                isNoteCreationMode = true,
-                navHostController = navHostController,
-                onFocusChange = { onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
-            )
-        }
+            body = { notePage() },
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun Preview() {
+    SerenityTheme {
+        ScreenContent(
+            state = rememberPageScreenState(),
+            uiState = NoteCreateUiState(
+                note = NoteItem(id = "", timestamp = System.currentTimeMillis()),
+                isInEditMode = true,
+            ),
+            onEvent = {},
+            notePage = { Box(Modifier.fillMaxSize()) },
+        )
     }
 }

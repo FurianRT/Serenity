@@ -5,7 +5,6 @@ import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.SimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
-import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
