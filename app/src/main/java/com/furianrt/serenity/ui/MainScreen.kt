@@ -143,6 +143,7 @@ private fun MainScreenContent(
                 }
             }
             BottomNavigationBar(
+                modifier = Modifier.align(Alignment.BottomEnd),
                 contentPadding = PaddingValues(
                     start = 24.dp,
                     end = 24.dp,

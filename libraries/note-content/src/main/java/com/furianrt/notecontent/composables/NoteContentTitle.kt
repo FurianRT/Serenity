@@ -18,6 +18,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.SolidColor
@@ -40,6 +42,7 @@ import kotlinx.coroutines.delay
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
+    focusRequester: FocusRequester = FocusRequester(),
     scrollState: ScrollState = rememberScrollState(),
     focusOffset: Int = 0,
     hint: String? = null,
@@ -72,13 +75,18 @@ fun NoteContentTitle(
         }
     }
 
+    var titleText by remember { mutableStateOf(title.state.text) }
     LaunchedEffect(title.state.text) {
-        onTitleTextChange(title.id)
+        if (titleText != title.state.text) {
+            onTitleTextChange(title.id)
+            titleText = title.state.text
+        }
     }
 
     BasicTextField(
         modifier = modifier
             .bringIntoViewRequester(bringIntoViewRequester)
+            .focusRequester(focusRequester)
             .onFocusChanged { focusState ->
                 hasFocus = focusState.hasFocus
                 if (focusState.hasFocus) {

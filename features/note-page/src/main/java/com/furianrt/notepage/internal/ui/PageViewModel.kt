@@ -41,9 +41,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 private const val MEDIA_SELECTOR_DIALOG_ID = 1
+private const val TITLE_FOCUS_DELAY = 500L
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
@@ -297,17 +298,18 @@ internal class PageViewModel @AssistedInject constructor(
             }
             return@updateState newState
         }
+        val successState = getSuccessState()
+        if (isEnabled && successState?.isContentEmpty == true) {
+            launch {
+                delay(TITLE_FOCUS_DELAY)
+                _effect.tryEmit(PageEffect.FocusFirstTitle)
+            }
+        }
     }
 
     private fun observeNote() {
         if (isNoteCreationMode) {
-            handleNoteResult(
-                note = NoteItem(
-                    id = UUID.randomUUID().toString(),
-                    tags = persistentListOf(),
-                    content = persistentListOf(),
-                )
-            )
+            handleNoteResult(NoteItem())
         } else {
             launch {
                 notesRepository.getNote(noteId)

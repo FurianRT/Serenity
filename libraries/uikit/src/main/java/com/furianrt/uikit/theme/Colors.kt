@@ -8,7 +8,7 @@ object Colors {
     val Green = Color(0xFF193727)
 
     @Stable
-    val GreenLight = Color(0xFF497412)
+    val GreenLight = Color(0xFF558B2F)
 
     @Stable
     val GreenDark = Color(0xFF50250A)

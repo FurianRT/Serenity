@@ -12,7 +12,12 @@ internal sealed interface PageUiState {
         val content: ImmutableList<UiNoteContent>,
         val tags: ImmutableList<UiNoteTag>,
         val isInEditMode: Boolean,
-    ) : PageUiState
+    ) : PageUiState {
+        val isContentEmpty: Boolean
+            get() = content.all { content ->
+                content is UiNoteContent.Title && content.state.text.isEmpty()
+            }
+    }
 
     val mediaPermissionsList: List<String>
         get() = MediaRepository.getMediaPermissionList()
@@ -37,6 +42,7 @@ internal sealed interface PageEvent {
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
+    data object FocusFirstTitle : PageEffect
     data class OpenMediaSelector(val dialogId: Int, val requestId: String): PageEffect
     data class UpdateContentChangedState(val isChanged: Boolean): PageEffect
 }

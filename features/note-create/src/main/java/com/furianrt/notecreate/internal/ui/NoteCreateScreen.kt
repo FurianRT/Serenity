@@ -1,5 +1,6 @@
 package com.furianrt.notecreate.internal.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,7 +65,7 @@ internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
                 navHostController = navHostController,
                 onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
             )
-        }
+        },
     )
 }
 
@@ -81,6 +82,16 @@ private fun ScreenContent(
                     state.listState.firstVisibleItemScrollOffset == 0
         }
     }
+    BackHandler(
+        enabled = uiState.isInEditMode,
+        onBack = {
+            onEvent(
+                NoteCreateEvent.OnButtonBackClick(
+                    isContentSaved = !state.hasContentChanged,
+                ),
+            )
+        },
+    )
     Surface {
         CollapsingToolbarScaffold(
             modifier = Modifier.fillMaxSize(),

@@ -30,6 +30,8 @@ class PageScreenState(
 
     private var onSaveContentRequest: () -> Unit = {}
 
+    private var onFirstTitleFocusRequest: () -> Unit = {}
+
     fun setOnSaveContentListener(callback: () -> Unit) {
         onSaveContentRequest = callback
     }
@@ -40,6 +42,14 @@ class PageScreenState(
 
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed
+    }
+
+    fun setOnFirstTitleFocusRequestListener(callback: () -> Unit) {
+        onFirstTitleFocusRequest = callback
+    }
+
+    fun focusFirstTitle() {
+        onFirstTitleFocusRequest()
     }
 
     companion object {

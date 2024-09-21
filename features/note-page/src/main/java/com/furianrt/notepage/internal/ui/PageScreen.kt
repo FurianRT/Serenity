@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
@@ -125,6 +126,10 @@ internal fun NotePageScreenInternal(
                 is PageEffect.UpdateContentChangedState -> {
                     state.setContentChanged(effect.isChanged)
                 }
+
+                is PageEffect.FocusFirstTitle -> {
+                    state.focusFirstTitle()
+                }
             }
         }
     }
@@ -194,6 +199,10 @@ private fun SuccessScreen(
     }
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
+    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
+    state.setOnFirstTitleFocusRequestListener {
+        focusRequesters.values.firstOrNull()?.requestFocus()
+    }
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -261,6 +270,7 @@ private fun SuccessScreen(
                             stringResource(id = R.string.note_title_hint_write_more_here)
                         },
                         isInEditMode = uiState.isInEditMode,
+                        focusRequester = focusRequesters.getOrPut(index) { FocusRequester() },
                         onTitleFocused = { id ->
                             onEvent(PageEvent.OnTitleFocusChange(id))
                             focusedTitleId = id
