@@ -47,9 +47,9 @@ private const val ANIM_BUTTON_SCROLL_DURATION = 350
 
 @Composable
 internal fun BottomNavigationBar(
+    modifier: Modifier = Modifier,
     needToHideNavigation: () -> Boolean = { false },
     needToShowScrollUpButton: () -> Boolean = { true },
-    modifier: Modifier = Modifier,
     onScrollToTopClick: () -> Unit = {},
     onAddNoteClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
