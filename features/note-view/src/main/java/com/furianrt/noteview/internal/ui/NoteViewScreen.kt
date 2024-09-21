@@ -40,6 +40,8 @@ import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -172,8 +174,12 @@ private fun SuccessScreen(
         }
     }
 
+    val hazeState = remember { HazeState() }
+
     CollapsingToolbarScaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .haze(hazeState),
         state = toolbarScaffoldState,
         scrollStrategy = ScrollStrategy.EnterAlways,
         enabled = !uiState.isInEditMode || !toolbarScaffoldState.isExpanded,
@@ -187,6 +193,7 @@ private fun SuccessScreen(
                 modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
                 isInEditMode = uiState.isInEditMode,
                 date = date,
+                dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
                 onBackButtonClick = {
                     onEvent(
@@ -196,6 +203,10 @@ private fun SuccessScreen(
                     )
                 },
                 onDateClick = {},
+                onDeleteClick = {
+                    val noteId = uiState.notes[pagerState.currentPage].id
+                    onEvent(NoteViewEvent.OnDeleteClick(noteId))
+                },
             )
         },
     ) {

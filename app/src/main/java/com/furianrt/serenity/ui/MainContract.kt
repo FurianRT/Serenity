@@ -12,6 +12,7 @@ internal sealed interface MainUiState {
     @Immutable
     data class Success(
         val notes: ImmutableList<MainScreenNote>,
+        val scrollToPosition: Int?,
     ) : MainUiState
 }
 
@@ -20,17 +21,22 @@ internal val MainUiState.hasNotes
 
 internal sealed interface MainEvent {
     data class OnNoteClick(val note: MainScreenNote) : MainEvent
+    data class OnNoteLongClick(val note: MainScreenNote) : MainEvent
     data object OnScrollToTopClick : MainEvent
     data object OnSettingsClick : MainEvent
     data object OnSearchClick : MainEvent
     data object OnAddNoteClick : MainEvent
+    data object OnScrolledToItem : MainEvent
 }
 
 internal sealed interface MainEffect {
     data object ScrollToTop : MainEffect
-    data class ScrollToPosition(val position: Int) : MainEffect
     data object OpenSettingsScreen : MainEffect
-    data object OpenNoteCreateScreen : MainEffect
+    data class OpenNoteCreateScreen(
+        val dialogId: Int,
+        val requestId: String,
+    ) : MainEffect
+
     data class OpenNoteViewScreen(
         val noteId: String,
         val dialogId: Int,

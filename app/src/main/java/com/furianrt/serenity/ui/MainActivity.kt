@@ -164,7 +164,17 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     composable(
-                        route = "NoteCreate",
+                        route = "NoteCreate/{dialogId}/{requestId}",
+                        arguments = listOf(
+                            navArgument("dialogId") {
+                                type = NavType.IntType
+                                nullable = false
+                            },
+                            navArgument("requestId") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                        ),
                         enterTransition = {
                             slideIntoContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Left,

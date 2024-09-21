@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -38,7 +37,6 @@ import com.furianrt.serenity.ui.composables.Toolbar
 import com.furianrt.serenity.ui.entities.MainScreenNote
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -73,7 +71,7 @@ internal fun MainScreen(
 
                     is MainEffect.OpenNoteCreateScreen -> {
                         navHostController.navigate(
-                            route = "NoteCreate",
+                            route = "NoteCreate/${effect.dialogId}/${effect.requestId}",
                             navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                         )
                     }
@@ -84,11 +82,6 @@ internal fun MainScreen(
                             navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                         )
                     }
-
-                    is MainEffect.ScrollToPosition -> {
-                        screenState.scrollToPosition(effect.position)
-                    }
-
                 }
             }
     }
@@ -143,8 +136,8 @@ private fun MainScreenContent(
                     is MainUiState.Loading -> MainLoading()
                     is MainUiState.Empty -> MainEmpty()
                     is MainUiState.Success -> MainSuccess(
-                        notes = uiState.notes,
-                        listState = screenState.listState,
+                        uiState = uiState,
+                        screenState = screenState,
                         onEvent = onEvent,
                     )
                 }
@@ -168,14 +161,22 @@ private fun MainScreenContent(
 
 @Composable
 private fun MainSuccess(
-    notes: ImmutableList<MainScreenNote>,
-    listState: LazyListState,
+    uiState: MainUiState.Success,
+    screenState: MainScreenState,
     onEvent: (event: MainEvent) -> Unit,
 ) {
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+    LaunchedEffect(uiState.scrollToPosition) {
+        if (uiState.scrollToPosition != null) {
+            screenState.scrollToPosition(uiState.scrollToPosition)
+            onEvent(MainEvent.OnScrolledToItem)
+        }
+    }
+
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
-        state = listState,
+        state = screenState.listState,
         contentPadding = PaddingValues(
             start = 8.dp,
             end = 8.dp,
@@ -184,13 +185,14 @@ private fun MainSuccess(
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(count = notes.count(), key = { notes[it].id }) { index ->
+        items(count = uiState.notes.count(), key = { uiState.notes[it].id }) { index ->
             NoteListItem(
                 modifier = Modifier
                     .animateItem()
                     .animateContentSize(),
-                note = notes[index],
+                note = uiState.notes[index],
                 onClick = { onEvent(MainEvent.OnNoteClick(it)) },
+                onLongClick = { onEvent(MainEvent.OnNoteLongClick(it)) },
             )
         }
     }
@@ -213,6 +215,7 @@ private fun MainScreenSuccessPreview() {
         MainScreenContent(
             uiState = MainUiState.Success(
                 notes = generatePreviewNotes(),
+                scrollToPosition = null,
             ),
             onEvent = {},
         )

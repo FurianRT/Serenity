@@ -112,7 +112,7 @@ internal fun MediaSelectorBottomSheetInternal(
     }
 
     val hazeState = remember { HazeState() }
-    val backgroundModifier = Modifier.background(MaterialTheme.colorScheme.tertiaryContainer)
+    val backgroundModifier = Modifier.background(MaterialTheme.colorScheme.tertiary)
     Box(
         modifier = modifier
             .fillMaxSize()

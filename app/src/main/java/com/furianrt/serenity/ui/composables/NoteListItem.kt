@@ -1,6 +1,8 @@
 package com.furianrt.serenity.ui.composables
 
 import android.net.Uri
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.composables.NoteContentMedia
@@ -34,18 +37,24 @@ private val cardRippleAlpha = RippleAlpha(
     pressedAlpha = 0.05f,
 )
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 internal fun NoteListItem(
     note: MainScreenNote,
-    onClick: (note: MainScreenNote) -> Unit,
     modifier: Modifier = Modifier,
+    onClick: (note: MainScreenNote) -> Unit = {},
+    onLongClick: (note: MainScreenNote) -> Unit = {},
 ) {
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         Card(
-            modifier = modifier.fillMaxWidth(),
-            onClick = { onClick(note) },
+            modifier = modifier
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(8.dp))
+                .combinedClickable(
+                    onClick = { onClick(note) },
+                    onLongClick = { onLongClick(note) },
+                ),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
@@ -118,7 +127,6 @@ private fun NoteItemPreview() {
                     ),
                 ),
             ),
-            onClick = {},
         )
     }
 }

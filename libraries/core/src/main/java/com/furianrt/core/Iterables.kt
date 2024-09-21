@@ -27,4 +27,7 @@ fun <T> Iterable<T>.lastIndexOf(predicate: (T) -> Boolean): Int {
     return lastIndex
 }
 
+inline fun <T> List<T>.indexOfFirstOrNull(predicate: (T) -> Boolean): Int? =
+    indexOfFirst(predicate).takeIf { it != -1 }
+
 inline fun <T> Iterable<T>.hasItem(predicate: (T) -> Boolean): Boolean = find(predicate) != null

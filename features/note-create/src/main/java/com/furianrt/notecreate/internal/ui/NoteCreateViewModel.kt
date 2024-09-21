@@ -6,6 +6,9 @@ import com.furianrt.notecreate.internal.domain.InsertNoteUseCase
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.DialogResult
+import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +22,7 @@ import javax.inject.Inject
 internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val insertNoteUseCase: InsertNoteUseCase,
+    private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(buildInitialState())
@@ -26,6 +30,13 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<NoteCreateEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
+
+    private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
+        DialogIdentifier(
+            requestId = savedStateHandle["requestId"]!!,
+            dialogId = savedStateHandle["dialogId"]!!,
+        )
+    }
 
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
@@ -57,6 +68,10 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private suspend fun saveNote() {
         insertNoteUseCase(_state.value.note.toSimpleNote())
+        dialogResultCoordinator.onDialogResult(
+            dialogIdentifier = dialogIdentifier,
+            code = DialogResult.Ok(data = _state.value.note.id),
+        )
     }
 
     private fun toggleEditMode() {

@@ -38,4 +38,6 @@ dependencies {
     implementation(libs.collapsingToolbar)
 
     implementation(libs.immutableCollections)
+
+    implementation(libs.blur)
 }

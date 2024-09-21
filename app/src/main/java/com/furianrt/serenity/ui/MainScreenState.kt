@@ -8,11 +8,13 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.furianrt.uikit.extensions.expand
 import com.furianrt.uikit.extensions.expandWithoutAnim
+import com.furianrt.uikit.extensions.visibleItemsInfo
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
+private const val ITEM_VISIBILITY_THRESHOLD = 90f
 private const val TOOLBAR_EXPAND_DURATION = 450
 private const val ANIMATED_SCROLL_INDEX = 10
 
@@ -30,7 +32,9 @@ internal class MainScreenState(
     }
 
     suspend fun scrollToPosition(position: Int) {
-        val visibleIndexes = listState.layoutInfo.visibleItemsInfo.map(LazyListItemInfo::index)
+        val visibleIndexes = listState
+            .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD)
+            .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {
             toolbarState.expandWithoutAnim()
             listState.scrollToItem(position)

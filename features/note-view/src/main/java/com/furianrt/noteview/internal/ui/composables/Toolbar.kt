@@ -16,19 +16,36 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.R
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonEditAndDone
 import com.furianrt.uikit.components.ButtonMenu
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeDefaults.tint
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeChild
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
@@ -36,11 +53,15 @@ private const val ANIM_DATE_VISIBILITY_DURATION = 250
 internal fun Toolbar(
     isInEditMode: Boolean,
     date: String?,
-    onEditClick: () -> Unit,
-    onBackButtonClick: () -> Unit,
-    onDateClick: () -> Unit,
+    dropDownHazeState: HazeState,
     modifier: Modifier = Modifier,
+    onEditClick: () -> Unit = {},
+    onBackButtonClick: () -> Unit = {},
+    onDateClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
 ) {
+    var showDropDownMenu by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .height(ToolbarConstants.toolbarHeight)
@@ -68,7 +89,16 @@ internal fun Toolbar(
                 onClick = onEditClick,
             )
             Spacer(modifier = Modifier.width(8.dp))
-            ButtonMenu(onClick = {})
+            Box {
+                ButtonMenu(onClick = { showDropDownMenu = true })
+                Menu(
+                    expanded = showDropDownMenu,
+                    hazeState = dropDownHazeState,
+                    onDeleteClick = onDeleteClick,
+                    onShareClick = onShareClick,
+                    onDismissRequest = { showDropDownMenu = false },
+                )
+            }
             Spacer(modifier = Modifier.width(4.dp))
         }
     }
@@ -108,6 +138,72 @@ private fun DateLabel(
     }
 }
 
+@Composable
+private fun Menu(
+    expanded: Boolean,
+    hazeState: HazeState,
+    onDeleteClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    DropdownMenu(
+        modifier = Modifier
+            .hazeChild(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint.Color(tint(MaterialTheme.colorScheme.surface)),
+                    blurRadius = 12.dp,
+                ),
+            ),
+        offset = DpOffset(x = (-8).dp, y = 0.dp),
+        containerColor = Color.Transparent,
+        shape = RoundedCornerShape(8.dp),
+        shadowElevation = 8.dp,
+        expanded = expanded,
+        onDismissRequest = onDismissRequest,
+    ) {
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.action_delete),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_delete),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onDeleteClick()
+                onDismissRequest()
+            }
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(R.string.action_share),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(R.drawable.ic_share),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onShareClick()
+                onDismissRequest()
+            }
+        )
+    }
+}
+
 @PreviewWithBackground
 @Composable
 private fun ToolbarPreview() {
@@ -115,9 +211,7 @@ private fun ToolbarPreview() {
         Toolbar(
             isInEditMode = false,
             date = "30 Sep 1992",
-            onEditClick = {},
-            onBackButtonClick = {},
-            onDateClick = {},
+            dropDownHazeState = HazeState(),
         )
     }
 }
@@ -129,9 +223,7 @@ private fun ToolbarPreviewEditMode() {
         Toolbar(
             isInEditMode = true,
             date = "30 Sep 1992",
-            onEditClick = {},
-            onBackButtonClick = {},
-            onDateClick = {},
+            dropDownHazeState = HazeState(),
         )
     }
 }
