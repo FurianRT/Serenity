@@ -44,21 +44,20 @@ import com.furianrt.uikit.theme.SerenityTheme
 
 private const val ANIM_OFFSET_DURATION = 500
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
-private const val LABEL_OFFSET_ANIM = "BottomNavigationBar_offset_anim"
 
 @Composable
 internal fun BottomNavigationBar(
-    needToHideNavigation: () -> Boolean,
-    needToShowScrollUpButton: () -> Boolean,
-    onScrollToTopClick: () -> Unit,
-    onAddNoteClick: () -> Unit,
+    needToHideNavigation: () -> Boolean = { false },
+    needToShowScrollUpButton: () -> Boolean = { true },
     modifier: Modifier = Modifier,
+    onScrollToTopClick: () -> Unit = {},
+    onAddNoteClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
         animationSpec = tween(durationMillis = ANIM_OFFSET_DURATION),
-        label = LABEL_OFFSET_ANIM,
+        label = "BottomNavigationBarOffsetAnim",
     )
 
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
@@ -142,11 +141,6 @@ private fun ButtonScrollToTop(
 @Composable
 private fun BottomNavigationBarPreview() {
     SerenityTheme {
-        BottomNavigationBar(
-            needToHideNavigation = { false },
-            needToShowScrollUpButton = { true },
-            onScrollToTopClick = {},
-            onAddNoteClick = {},
-        )
+        BottomNavigationBar()
     }
 }
