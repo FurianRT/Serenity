@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -87,11 +88,11 @@ internal fun BottomNavigationBar(
                     .toPx()
                 translationY = (size.height + bottomPadding + navBarsHeight.toPx()) * verticalBias
             },
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Bottom,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         ButtonScrollToTop(
-            modifier = Modifier.padding(top = 4.dp),
+            modifier = Modifier.padding(bottom = 4.dp),
             isVisible = needToShowScrollUpButton,
             onClick = onScrollToTopClick,
         )
@@ -122,13 +123,14 @@ private fun ButtonScrollToTop(
 
         Box(
             modifier = Modifier
+                .shadow(elevation = 6.dp, shape = CircleShape)
                 .clip(CircleShape)
                 .background(MaterialTheme.colorScheme.primaryContainer)
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                modifier = Modifier.padding(7.dp),
+                modifier = Modifier.padding(8.dp),
                 painter = painterResource(R.drawable.ic_scroll_up),
                 tint = Color.Unspecified,
                 contentDescription = null,

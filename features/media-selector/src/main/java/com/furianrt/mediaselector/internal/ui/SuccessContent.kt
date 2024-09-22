@@ -42,9 +42,7 @@ import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeDefaults.tint
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
@@ -125,10 +123,7 @@ internal fun SuccessContent(
                     .hazeChild(
                         state = hazeState,
                         style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint.Color(
-                                tint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-                            ),
+                            backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
                             blurRadius = 12.dp,
                         ),
                     )

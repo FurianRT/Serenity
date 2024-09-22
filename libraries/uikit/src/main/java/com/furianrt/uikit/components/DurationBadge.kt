@@ -2,7 +2,9 @@ package com.furianrt.uikit.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -24,6 +26,7 @@ fun DurationBadge(
     val durationString = remember(duration) { duration.toTimeString() }
     Box(
         modifier = modifier
+            .requiredWidth(IntrinsicSize.Max)
             .background(color = Color.Black.copy(alpha = 0.5f), shape = RoundedCornerShape(4.dp))
             .padding(horizontal = 4.dp),
     ) {

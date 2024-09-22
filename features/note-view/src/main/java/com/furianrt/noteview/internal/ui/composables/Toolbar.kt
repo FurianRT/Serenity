@@ -42,9 +42,7 @@ import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeDefaults.tint
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeChild
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
@@ -152,7 +150,6 @@ private fun Menu(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint.Color(tint(MaterialTheme.colorScheme.surface)),
                     blurRadius = 12.dp,
                 ),
             ),

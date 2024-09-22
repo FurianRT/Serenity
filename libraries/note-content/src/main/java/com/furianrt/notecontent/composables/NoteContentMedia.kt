@@ -40,12 +40,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
@@ -59,9 +61,7 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeDefaults.tint
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
 import com.furianrt.uikit.R as uiR
@@ -435,8 +435,9 @@ private fun ImageItem(
         modifier = modifier.fillMaxSize(),
         model = request,
         placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-        contentDescription = null,
+        error = ColorPainter(MaterialTheme.colorScheme.tertiary),
         contentScale = contentScale,
+        contentDescription = null,
     )
 }
 
@@ -446,6 +447,8 @@ private fun VideoItem(
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
+    var badgeSize by remember { mutableStateOf(IntSize.Zero) }
+    var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
     val request = remember(image.name) {
         ImageRequest.Builder(context)
@@ -457,20 +460,24 @@ private fun VideoItem(
             .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
             .build()
     }
-    Box(modifier = modifier) {
+    Box(modifier = modifier.onSizeChanged { isVisible = it.width >= badgeSize.width }) {
         AsyncImage(
             modifier = Modifier.fillMaxSize(),
             model = request,
             placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-            contentDescription = null,
+            error = ColorPainter(MaterialTheme.colorScheme.tertiary),
             contentScale = contentScale,
+            contentDescription = null,
         )
-        DurationBadge(
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(start = 4.dp, bottom = 4.dp),
-            duration = image.duration,
-        )
+        if (isVisible) {
+            DurationBadge(
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(start = 4.dp, bottom = 4.dp)
+                    .onSizeChanged { badgeSize = it },
+                duration = image.duration,
+            )
+        }
     }
 }
 
@@ -487,10 +494,7 @@ private fun PopUpMenu(
             .hazeChild(
                 state = hazeState,
                 style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint.Color(
-                        tint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
-                    ),
+                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
                     blurRadius = 12.dp,
                 ),
             ),

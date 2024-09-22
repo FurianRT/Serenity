@@ -60,6 +60,7 @@ internal fun ImageItem(
             model = request,
             contentScale = ContentScale.Crop,
             placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
+            error = ColorPainter(MaterialTheme.colorScheme.tertiary),
             contentDescription = null,
         )
         CheckBox(
