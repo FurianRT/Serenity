@@ -39,4 +39,6 @@ dependencies {
     implementation(libs.permissions)
 
     implementation(libs.blur)
+
+    implementation(libs.zoom)
 }

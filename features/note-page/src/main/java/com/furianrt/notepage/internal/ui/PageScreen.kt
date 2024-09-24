@@ -130,6 +130,11 @@ internal fun NotePageScreenInternal(
                 is PageEffect.FocusFirstTitle -> {
                     state.focusFirstTitle()
                 }
+
+                is PageEffect.OpenMediaViewScreen -> navHostController.navigate(
+                    route = "MediaView/${effect.noteId}/${effect.mediaName}",
+                    navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
+                )
             }
         }
     }

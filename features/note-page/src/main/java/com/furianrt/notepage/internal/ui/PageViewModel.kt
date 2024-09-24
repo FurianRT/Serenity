@@ -108,7 +108,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnSelectMediaClick -> tryRequestMediaPermissions()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> focusedTitleId = event.id
-            is OnMediaClick -> {}
+            is OnMediaClick -> _effect.tryEmit(PageEffect.OpenMediaViewScreen(noteId, event.media.name))
             is OnMediaRemoveClick -> removeMedia(event.media)
             is OnMediaShareClick -> {}
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode

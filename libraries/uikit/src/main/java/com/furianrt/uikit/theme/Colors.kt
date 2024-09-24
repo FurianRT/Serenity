@@ -15,4 +15,7 @@ object Colors {
 
     @Stable
     val Red = Color(0xFFF2402F)
+
+    @Stable
+    val DarkGrey = Color(0xFF212121)
 }

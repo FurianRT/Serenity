@@ -45,7 +45,7 @@ internal fun MediaSelectorBottomSheetInternal(
     navHostController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: MediaSelectorViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<MediaSelectorViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 

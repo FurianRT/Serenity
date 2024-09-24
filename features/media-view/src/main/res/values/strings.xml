@@ -1,2 +1,3 @@
 <resources>
+    <string name="media_view_counter_pattern">%d of %d</string>
 </resources>

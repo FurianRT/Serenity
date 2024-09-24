@@ -196,24 +196,26 @@ private fun OneMediaHolder(
                 media = media,
                 cornerRadius = 0.dp,
             )
-            MediaItem(
-                modifier = Modifier.aspectRatio(
-                    ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
-                    matchHeightConstraintsFirst = true,
-                ),
-                media = media,
-                cornerRadius = 0.dp,
-                contentScale = ContentScale.Crop,
-            )
-        }
-        if (clickable && dropDownHazeState != null) {
-            PopUpMenu(
-                expanded = showDropDownMenu,
-                hazeState = dropDownHazeState,
-                onRemoveClick = { onRemoveClick(media) },
-                onShareClick = { onShareClick(media) },
-                onDismissRequest = { showDropDownMenu = false },
-            )
+            Box {
+                MediaItem(
+                    modifier = Modifier.aspectRatio(
+                        ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
+                        matchHeightConstraintsFirst = true,
+                    ),
+                    media = media,
+                    cornerRadius = 0.dp,
+                    contentScale = ContentScale.Crop,
+                )
+                if (clickable && dropDownHazeState != null) {
+                    PopUpMenu(
+                        expanded = showDropDownMenu,
+                        hazeState = dropDownHazeState,
+                        onRemoveClick = { onRemoveClick(media) },
+                        onShareClick = { onShareClick(media) },
+                        onDismissRequest = { showDropDownMenu = false },
+                    )
+                }
+            }
         }
     }
 }
@@ -431,6 +433,7 @@ private fun ImageItem(
             .data(image.uri)
             .build()
     }
+
     AsyncImage(
         modifier = modifier.fillMaxSize(),
         model = request,

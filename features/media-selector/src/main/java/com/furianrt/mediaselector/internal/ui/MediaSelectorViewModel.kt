@@ -38,7 +38,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 1)
+    private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
     private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {

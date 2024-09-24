@@ -1,7 +1,6 @@
 package com.furianrt.serenity.ui
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -15,6 +14,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -25,18 +25,19 @@ import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
+import com.furianrt.mediaview.api.MediaViewScreen
 import com.furianrt.notecreate.api.NoteCreateScreen
 import com.furianrt.noteview.api.NoteViewScreen
 import com.furianrt.settings.api.SettingsScreen
 import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.storage.api.repositories.mediaAccessDenied
+import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
 private const val SPLASH_SCREEN_DELAY = 400L
-private val SYSTEM_BARS_COLOR = Color.argb(0x4D, 0x1b, 0x1b, 0x1b)
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity() {
@@ -71,15 +72,15 @@ internal class MainActivity : ComponentActivity() {
                     .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
 
                 enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
-                    navigationBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+                    statusBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
+                    navigationBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
                 )
             }
         }
 
         enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
-            navigationBarStyle = SystemBarStyle.dark(SYSTEM_BARS_COLOR),
+            statusBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
+            navigationBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
         )
 
         setContent {
@@ -150,6 +151,16 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             ) + fadeIn(animationSpec = tween(450))
                         },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                targetOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(400), targetAlpha = 0.2f)
+                        },
                         popExitTransition = {
                             slideOutOfContainer(
                                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
@@ -159,6 +170,16 @@ internal class MainActivity : ComponentActivity() {
                                     easing = LinearEasing,
                                 ),
                             ) + fadeOut(animationSpec = tween(300))
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                initialOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
                         },
                         content = { NoteViewScreen(navController) },
                     )
@@ -184,6 +205,26 @@ internal class MainActivity : ComponentActivity() {
                                     easing = FastOutSlowInEasing,
                                 ),
                             ) + fadeIn(animationSpec = tween(450))
+                        },
+                        exitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                targetOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(400), targetAlpha = 0.2f)
+                        },
+                        popEnterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                initialOffset = { (it * 0.1f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
                         },
                         popExitTransition = {
                             slideOutOfContainer(
@@ -221,6 +262,41 @@ internal class MainActivity : ComponentActivity() {
                             ) + fadeOut(animationSpec = tween(300))
                         },
                         content = { SettingsScreen(navController) },
+                    )
+
+                    composable(
+                        route = "MediaView/{noteId}/{mediaName}",
+                        arguments = listOf(
+                            navArgument("noteId") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                            navArgument("mediaName") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                        ),
+                        enterTransition = {
+                            slideIntoContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                initialOffset = { it / 2 },
+                                animationSpec = tween(
+                                    durationMillis = 450,
+                                    easing = FastOutSlowInEasing,
+                                ),
+                            ) + fadeIn(animationSpec = tween(450))
+                        },
+                        popExitTransition = {
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                targetOffset = { (it * 0.8f).toInt() },
+                                animationSpec = tween(
+                                    durationMillis = 400,
+                                    easing = LinearEasing,
+                                ),
+                            ) + fadeOut(animationSpec = tween(300))
+                        },
+                        content = { MediaViewScreen(navController) },
                     )
 
                     dialog(

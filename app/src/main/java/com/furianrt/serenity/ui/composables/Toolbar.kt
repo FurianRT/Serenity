@@ -111,7 +111,7 @@ private fun SettingsButton(
 
 @PreviewWithBackground
 @Composable
-fun ToolbarPreview() {
+private fun Preview() {
     SerenityTheme {
         Toolbar(
             toolbarScaffoldState = rememberCollapsingToolbarScaffoldState(),
