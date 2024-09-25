@@ -17,5 +17,5 @@ object Colors {
     val Red = Color(0xFFF2402F)
 
     @Stable
-    val DarkGrey = Color(0xFF212121)
+    val DarkGray = Color(0xFF212121)
 }

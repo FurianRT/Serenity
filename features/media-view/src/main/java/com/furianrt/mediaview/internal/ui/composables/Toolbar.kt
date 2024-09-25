@@ -27,22 +27,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaview.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonMenu
-import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun Toolbar(
     totalImages: Int,
     currentImageIndex: Int,
-    dropDownHazeState: HazeState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -53,7 +48,6 @@ internal fun Toolbar(
         modifier = modifier
             .fillMaxWidth()
             .height(ToolbarConstants.toolbarHeight)
-            .background(SystemBarsConstants.Color)
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -71,7 +65,6 @@ internal fun Toolbar(
             )
             Menu(
                 expanded = showDropDownMenu,
-                hazeState = dropDownHazeState,
                 onDeleteClick = onDeleteClick,
                 onSaveMediaClick = onSaveMediaClick,
                 onDismissRequest = { showDropDownMenu = false },
@@ -89,7 +82,7 @@ private fun Counter(
     Text(
         modifier = modifier,
         textAlign = TextAlign.Center,
-        text = stringResource(R.string.media_view_counter_pattern, currentIndex, total),
+        text = stringResource(R.string.media_view_counter_pattern, currentIndex + 1, total),
         style = MaterialTheme.typography.titleMedium,
     )
 }
@@ -97,37 +90,29 @@ private fun Counter(
 @Composable
 private fun Menu(
     expanded: Boolean,
-    hazeState: HazeState,
     onDeleteClick: () -> Unit,
     onSaveMediaClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     DropdownMenu(
-        modifier = Modifier
-            .hazeChild(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = Colors.DarkGrey,
-                    blurRadius = 12.dp,
-                ),
-            ),
+        modifier = Modifier.background(Colors.DarkGray.copy(alpha = 0.8f)),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),
-        shadowElevation = 8.dp,
+        shadowElevation = 0.dp,
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
         DropdownMenuItem(
             text = {
                 Text(
-                    text = stringResource(uiR.string.action_share),
-                    style = MaterialTheme.typography.bodyMedium,
+                    text = stringResource(R.string.media_view_save_to_gallery),
+                    style = MaterialTheme.typography.titleSmall,
                 )
             },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(uiR.drawable.ic_share),
+                    painter = painterResource(R.drawable.ic_save),
                     tint = Color.Unspecified,
                     contentDescription = null,
                 )
@@ -141,7 +126,7 @@ private fun Menu(
             text = {
                 Text(
                     text = stringResource(uiR.string.action_delete),
-                    style = MaterialTheme.typography.bodyMedium,
+                    style = MaterialTheme.typography.titleSmall,
                 )
             },
             leadingIcon = {
@@ -166,7 +151,6 @@ private fun Preview() {
         Toolbar(
             totalImages = 50,
             currentImageIndex = 25,
-            dropDownHazeState = HazeState(),
         )
     }
 }

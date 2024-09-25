@@ -23,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.serenity.R
 import com.furianrt.uikit.constants.ToolbarConstants
@@ -35,7 +34,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
-import com.furianrt.uikit.R as uiR
 
 private const val ANIM_BUTTON_SETTINGS_DURATION = 250
 private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f

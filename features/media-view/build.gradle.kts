@@ -41,4 +41,7 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.zoom)
+
+    implementation(libs.exoplayer)
+    implementation(libs.exoplayerUi)
 }

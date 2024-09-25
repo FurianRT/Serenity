@@ -1,22 +1,27 @@
 package com.furianrt.mediaview.internal.ui
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -24,13 +29,16 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
+import com.furianrt.mediaview.internal.ui.composables.ControlsAnimatedVisibility
 import com.furianrt.mediaview.internal.ui.composables.MediaList
 import com.furianrt.mediaview.internal.ui.composables.MediaPager
 import com.furianrt.mediaview.internal.ui.composables.Toolbar
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
+import com.furianrt.uikit.constants.SystemBarsConstants
+import com.furianrt.uikit.extensions.findActivity
+import com.furianrt.uikit.extensions.hideSystemUi
+import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -78,40 +86,61 @@ private fun SuccessContent(
         initialPage = uiState.initialMediaIndex,
         pageCount = { uiState.media.count() },
     )
-    val listState = rememberLazyListState()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var showControls by remember { mutableStateOf(true) }
 
-    val hazeState = remember { HazeState() }
+    DisposableEffect(showControls) {
+        val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
+        if (showControls) {
+            window.showSystemUi()
+        } else {
+            window.hideSystemUi()
+        }
+        onDispose {
+            window.showSystemUi()
+        }
+    }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .haze(hazeState),
+        modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         MediaPager(
             modifier = Modifier.fillMaxSize(),
             media = uiState.media,
             state = pagerState,
+            showControls = showControls,
+            onMediaItemClick = { showControls = !showControls },
         )
-        Toolbar(
+        ControlsAnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .windowInsetsPadding(WindowInsets.statusBars),
-            totalImages = uiState.media.count(),
-            currentImageIndex = pagerState.currentPage + 1,
-            dropDownHazeState = hazeState,
-            onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
-        )
-        MediaList(
+                .windowInsetsPadding(WindowInsets.systemBars),
+            visible = showControls,
+            label = "ToolbarAnim",
+        ) {
+            Toolbar(
+                modifier = Modifier.background(SystemBarsConstants.Color),
+                totalImages = uiState.media.count(),
+                currentImageIndex = pagerState.currentPage,
+                onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
+            )
+        }
+        ControlsAnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .windowInsetsPadding(WindowInsets.navigationBars),
-            media = uiState.media,
-            currentItem = pagerState.currentPage,
-            state = listState,
-            onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
-        )
+            visible = showControls,
+            label = "MediaListAnim",
+        ) {
+            MediaList(
+                modifier = Modifier.background(SystemBarsConstants.Color),
+                media = uiState.media,
+                currentItem = pagerState.currentPage,
+                onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
+            )
+        }
     }
 }
 
@@ -133,14 +162,13 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 0.5f,
                     ),
-                    MediaItem.Video(
-                        name = "1",
+                    MediaItem.Image(
+                        name = "2",
                         uri = Uri.EMPTY,
-                        ratio = 1f,
-                        duration = 2000,
+                        ratio = 0.5f,
                     ),
                     MediaItem.Image(
-                        name = "1",
+                        name = "3",
                         uri = Uri.EMPTY,
                         ratio = 1.4f,
                     ),

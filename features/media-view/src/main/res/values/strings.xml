@@ -1,3 +1,4 @@
 <resources>
     <string name="media_view_counter_pattern">%d of %d</string>
+    <string name="media_view_save_to_gallery">Save to Gallery</string>
 </resources>
