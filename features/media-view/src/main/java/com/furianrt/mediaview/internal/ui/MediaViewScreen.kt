@@ -3,13 +3,14 @@ package com.furianrt.mediaview.internal.ui
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -29,15 +32,18 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
+import com.furianrt.mediaview.R
 import com.furianrt.mediaview.internal.ui.composables.ControlsAnimatedVisibility
 import com.furianrt.mediaview.internal.ui.composables.MediaList
 import com.furianrt.mediaview.internal.ui.composables.MediaPager
 import com.furianrt.mediaview.internal.ui.composables.Toolbar
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.findActivity
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
+import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
@@ -51,35 +57,57 @@ internal fun MediaViewScreenInternal(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+    val snackBarHostState = remember { SnackbarHostState() }
+    val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
+    val imageNotSavedMessage = stringResource(R.string.media_view_save_to_gallery_error)
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
                     is MediaViewEffect.CloseScreen -> navHostController.popBackStack()
+                    is MediaViewEffect.ShowMediaSavedMessage -> snackBarHostState.showSnackbar(
+                        message = imageSavedMessage,
+                        duration = SnackbarDuration.Short,
+                    )
+
+                    is MediaViewEffect.ShowMediaSaveErrorMessage -> snackBarHostState.showSnackbar(
+                        message = imageNotSavedMessage,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
             }
     }
 
-    Surface(color = Color.Black) {
-        when (uiState) {
-            is MediaViewUiState.Success -> if (uiState.media.isEmpty()) {
-                navHostController.popBackStack()
-            } else {
-                SuccessContent(
-                    uiState = uiState,
-                    onEvent = viewModel::onEvent,
-                )
-            }
-
-            is MediaViewUiState.Loading -> LoadingContent()
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(R.drawable.ic_save),
+                        color = Colors.DarkGray.copy(alpha = 0.9f),
+                    )
+                },
+            )
+        },
+        content = { paddingValues ->
+            SuccessContent(
+                paddingValues = paddingValues,
+                uiState = uiState,
+                onEvent = viewModel::onEvent,
+            )
         }
-    }
+    )
 }
 
 @Composable
 private fun SuccessContent(
-    uiState: MediaViewUiState.Success,
+    uiState: MediaViewUiState,
+    modifier: Modifier = Modifier,
+    paddingValues: PaddingValues = PaddingValues(),
     onEvent: (event: MediaViewEvent) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
@@ -103,7 +131,9 @@ private fun SuccessContent(
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black),
         contentAlignment = Alignment.Center,
     ) {
         MediaPager(
@@ -116,7 +146,7 @@ private fun SuccessContent(
         ControlsAnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .windowInsetsPadding(WindowInsets.systemBars),
+                .padding(paddingValues),
             visible = showControls,
             label = "ToolbarAnim",
         ) {
@@ -125,12 +155,18 @@ private fun SuccessContent(
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
+                onDeleteClick = {
+                    onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
+                },
+                onSaveMediaClick = {
+                    onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))
+                }
             )
         }
         ControlsAnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .windowInsetsPadding(WindowInsets.navigationBars),
+                .padding(paddingValues),
             visible = showControls,
             label = "MediaListAnim",
         ) {
@@ -144,33 +180,31 @@ private fun SuccessContent(
     }
 }
 
-@Composable
-private fun LoadingContent() {
-    Box(modifier = Modifier.fillMaxSize())
-}
-
 @Preview(backgroundColor = 0xFF000000)
 @Composable
 private fun Preview() {
     SerenityTheme {
         SuccessContent(
-            uiState = MediaViewUiState.Success(
+            uiState = MediaViewUiState(
                 initialMediaIndex = 1,
                 media = persistentListOf(
                     MediaItem.Image(
                         name = "1",
                         uri = Uri.EMPTY,
                         ratio = 0.5f,
+                        addedTime = 0L,
                     ),
                     MediaItem.Image(
                         name = "2",
                         uri = Uri.EMPTY,
                         ratio = 0.5f,
+                        addedTime = 0L,
                     ),
                     MediaItem.Image(
                         name = "3",
                         uri = Uri.EMPTY,
                         ratio = 1.4f,
+                        addedTime = 0L,
                     ),
                 ),
             ),

@@ -89,4 +89,8 @@ internal class MediaRepositoryImp @Inject constructor(
     override fun getMediaPermissionStatus(): MediaPermissionStatus {
         return sharedMediaSource.getMediaPermissionStatus()
     }
+
+    override suspend fun saveToGallery(media: LocalNote.Content.Media): Boolean {
+        return sharedMediaSource.saveToGallery(media)
+    }
 }

@@ -56,6 +56,7 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 private const val MEDIA_SELECTOR_DIALOG_ID = 1
+private const val MEDIA_VIEW__DIALOG_ID = 2
 private const val TITLE_FOCUS_DELAY = 500L
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
@@ -91,6 +92,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     override fun onCleared() {
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
+        notesRepository.deleteNoteContentFromCache(noteId)
         super.onCleared()
     }
 
@@ -108,8 +110,8 @@ internal class PageViewModel @AssistedInject constructor(
             is OnSelectMediaClick -> tryRequestMediaPermissions()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> focusedTitleId = event.id
-            is OnMediaClick -> _effect.tryEmit(PageEffect.OpenMediaViewScreen(noteId, event.media.name))
-            is OnMediaRemoveClick -> removeMedia(event.media)
+            is OnMediaClick -> openMediaViewScreen(event.media.name)
+            is OnMediaRemoveClick -> removeMedia(setOf(event.media.name))
             is OnMediaShareClick -> {}
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
             is OnOnSaveContentRequest -> {
@@ -123,6 +125,11 @@ internal class PageViewModel @AssistedInject constructor(
         when (dialogId) {
             MEDIA_SELECTOR_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 handleMediaSelectorResult(result.data as MediaSelectorResult)
+            }
+
+            MEDIA_VIEW__DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+                @Suppress("UNCHECKED_CAST")
+                removeMedia(result.data as Set<String>)
             }
         }
     }
@@ -261,14 +268,37 @@ internal class PageViewModel @AssistedInject constructor(
                 OpenMediaSelector(
                     dialogId = MEDIA_SELECTOR_DIALOG_ID,
                     requestId = noteId,
-                )
+                ),
             )
         }
     }
 
-    private fun removeMedia(media: MediaBlock.Media) = launch {
+    private fun openMediaViewScreen(mediaName: String) {
+        val successState = getSuccessState() ?: return
+        notesRepository.cacheNoteContent(
+            noteId = noteId,
+            content = successState.content.map(UiNoteContent::toLocalNoteContent)
+        )
+        _effect.tryEmit(
+            PageEffect.OpenMediaViewScreen(
+                noteId = noteId,
+                mediaName = mediaName,
+                dialogId = MEDIA_VIEW__DIALOG_ID,
+                requestId = noteId,
+            ),
+        )
+    }
+
+    private fun removeMedia(mediaNames: Set<String>) = launch {
+        if (mediaNames.isEmpty()) {
+            return@launch
+        }
         _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(content = currentState.content.removeMedia(media.name)).also {
+            var newContent = currentState.content
+            mediaNames.forEach {
+                newContent = newContent.removeMedia(it)
+            }
+            currentState.copy(content = newContent).also {
                 if (isInEditMode) {
                     hasContentChanged = true
                 } else {

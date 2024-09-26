@@ -2,17 +2,21 @@ package com.furianrt.storage.internal.device
 
 import android.Manifest
 import android.content.ContentUris
+import android.content.ContentValues
 import android.content.Context
 import android.os.Build
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.storage.api.entities.DeviceMedia
+import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.MediaPermissionStatus
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -21,6 +25,39 @@ internal class SharedMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
 ) {
+    suspend fun saveToGallery(
+        media: LocalNote.Content.Media,
+    ): Boolean = withContext(dispatchers.default) {
+        val values = ContentValues().apply {
+            put(MediaStore.Files.FileColumns.DISPLAY_NAME, media.name)
+            put(MediaStore.Files.FileColumns.MEDIA_TYPE, media.mediaType)
+            put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+            put(MediaStore.Files.FileColumns.IS_PENDING, 1)
+        }
+        val resolver = context.contentResolver
+        val uri = resolver.insert(
+            MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL),
+            values,
+        )
+        return@withContext if (uri != null) {
+            try {
+                resolver.openInputStream(media.uri)?.use { inputStream ->
+                    resolver.openOutputStream(uri)?.use { outputStream ->
+                        inputStream.copyTo(outputStream)
+                    }
+                }
+                values.clear()
+                values.put(MediaStore.Images.Media.IS_PENDING, 0)
+                resolver.update(uri, values, null, null)
+                true
+            } catch (e: IOException) {
+                e.printStackTrace()
+                false
+            }
+        } else {
+            false
+        }
+    }
 
     suspend fun getMediaList(): List<DeviceMedia> = withContext(dispatchers.default) {
         val mediaList = mutableListOf<DeviceMedia>()
@@ -87,6 +124,7 @@ internal class SharedMediaSource @Inject constructor(
             MediaStore.Files.FileColumns.HEIGHT,
             MediaStore.Files.FileColumns.ORIENTATION,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
+            MediaStore.Files.FileColumns.MIME_TYPE,
         )
         val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         val query = context.contentResolver.query(
@@ -140,4 +178,10 @@ internal class SharedMediaSource @Inject constructor(
         }
         return@withContext filesList
     }
+
+    private val LocalNote.Content.Media.mediaType: Int
+        get() = when (this) {
+            is LocalNote.Content.Image -> MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+            is LocalNote.Content.Video -> MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+        }
 }

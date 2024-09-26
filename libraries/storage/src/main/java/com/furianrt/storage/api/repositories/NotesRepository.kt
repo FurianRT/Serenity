@@ -10,4 +10,8 @@ interface NotesRepository {
     suspend fun deleteNote(noteId: String)
     fun getAllNotes(): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
+
+    fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>)
+    fun deleteNoteContentFromCache(noteId: String)
+    fun getNoteContentFromCache(noteId: String): List<LocalNote.Content>
 }

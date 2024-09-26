@@ -132,7 +132,7 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.OpenMediaViewScreen -> navHostController.navigate(
-                    route = "MediaView/${effect.noteId}/${effect.mediaName}",
+                    route = "MediaView/${effect.noteId}/${effect.mediaName}/${effect.dialogId}/${effect.requestId}",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
                 )
             }

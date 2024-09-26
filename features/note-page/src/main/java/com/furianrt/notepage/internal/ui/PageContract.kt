@@ -45,5 +45,10 @@ internal sealed interface PageEffect {
     data object FocusFirstTitle : PageEffect
     data class OpenMediaSelector(val dialogId: Int, val requestId: String) : PageEffect
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
-    data class OpenMediaViewScreen(val noteId: String, val mediaName: String) : PageEffect
+    data class OpenMediaViewScreen(
+        val noteId: String,
+        val mediaName: String,
+        val dialogId: Int,
+        val requestId: String,
+    ) : PageEffect
 }

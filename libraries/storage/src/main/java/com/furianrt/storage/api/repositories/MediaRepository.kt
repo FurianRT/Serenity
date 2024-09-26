@@ -19,6 +19,8 @@ interface MediaRepository {
     suspend fun getDeviceMediaList(): List<DeviceMedia>
     fun getMediaPermissionStatus(): MediaPermissionStatus
 
+    suspend fun saveToGallery(media: LocalNote.Content.Media): Boolean
+
     companion object {
         fun getMediaPermissionList(): List<String> = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> listOf(

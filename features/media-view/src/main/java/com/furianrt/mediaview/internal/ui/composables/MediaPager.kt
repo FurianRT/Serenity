@@ -1,5 +1,7 @@
 package com.furianrt.mediaview.internal.ui.composables
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,12 +12,14 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,6 +45,7 @@ import androidx.media3.common.MediaItem as ExoMediaItem
 
 private const val SCALE_MULTIPLIER = 1.8f
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MediaPager(
     media: ImmutableList<MediaItem>,
@@ -49,25 +54,27 @@ internal fun MediaPager(
     onMediaItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    HorizontalPager(
-        modifier = modifier,
-        state = state,
-        key = { media[it].name },
-        pageSpacing = 8.dp,
-        beyondViewportPageCount = 1,
-    ) { page ->
-        when (val item = media[page]) {
-            is MediaItem.Image -> ImagePage(
-                item = item,
-                onClick = onMediaItemClick,
-            )
+    CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
+        HorizontalPager(
+            modifier = modifier,
+            state = state,
+            key = { media[it].name },
+            pageSpacing = 8.dp,
+            beyondViewportPageCount = 1,
+        ) { page ->
+            when (val item = media[page]) {
+                is MediaItem.Image -> ImagePage(
+                    item = item,
+                    onClick = onMediaItemClick,
+                )
 
-            is MediaItem.Video -> VideoPage(
-                item = item,
-                isPlaying = state.currentPage == page,
-                showControls = showControls,
-                onClick = onMediaItemClick,
-            )
+                is MediaItem.Video -> VideoPage(
+                    item = item,
+                    isPlaying = state.currentPage == page,
+                    showControls = showControls,
+                    onClick = onMediaItemClick,
+                )
+            }
         }
     }
 }
@@ -113,12 +120,10 @@ internal fun VideoPage(
 ) {
     val context = LocalContext.current
     val exoPlayer = remember(item.name) { ExoPlayer.Builder(context).build() }
-    val mediaSource = remember(item.name) {
-        ExoMediaItem.fromUri(item.uri)
-    }
-    var playing by remember { mutableStateOf(isPlaying) }
-    var isEnded by remember { mutableStateOf(false) }
-    var currentPosition by remember { mutableLongStateOf(0L) }
+    val mediaSource = remember(item.name) { ExoMediaItem.fromUri(item.uri) }
+    var playing by rememberSaveable(isPlaying) { mutableStateOf(isPlaying) }
+    var isEnded by rememberSaveable { mutableStateOf(false) }
+    var currentPosition by rememberSaveable { mutableLongStateOf(0L) }
 
     val zoomableState = rememberZoomableState()
     LaunchedEffect(zoomableState) {
@@ -126,9 +131,9 @@ internal fun VideoPage(
     }
 
     LaunchedEffect(mediaSource) {
-        exoPlayer.playWhenReady = false
         exoPlayer.setMediaItem(mediaSource)
         exoPlayer.prepare()
+        exoPlayer.seekTo(currentPosition)
     }
 
     LaunchedEffect(playing) {
@@ -155,18 +160,19 @@ internal fun VideoPage(
         }
     }
 
-    if (playing) {
-        LaunchedEffect(playing) {
-            while (true) {
-                currentPosition = exoPlayer.currentPosition
-                delay(200)
-            }
+    LaunchedEffect(playing) {
+        while (playing) {
+            currentPosition = exoPlayer.currentPosition
+            delay(200)
         }
     }
 
-    LifecycleStartEffect(Unit) {
+    LifecycleStartEffect(playing) {
+        if (playing) {
+            exoPlayer.play()
+        }
         onStopOrDispose {
-            playing = false
+            exoPlayer.pause()
         }
     }
 

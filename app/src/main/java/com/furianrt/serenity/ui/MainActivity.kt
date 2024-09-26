@@ -265,13 +265,21 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     composable(
-                        route = "MediaView/{noteId}/{mediaName}",
+                        route = "MediaView/{noteId}/{mediaName}/{dialogId}/{requestId}",
                         arguments = listOf(
                             navArgument("noteId") {
                                 type = NavType.StringType
                                 nullable = false
                             },
                             navArgument("mediaName") {
+                                type = NavType.StringType
+                                nullable = false
+                            },
+                            navArgument("dialogId") {
+                                type = NavType.IntType
+                                nullable = false
+                            },
+                            navArgument("requestId") {
                                 type = NavType.StringType
                                 nullable = false
                             },

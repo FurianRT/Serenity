@@ -4,6 +4,7 @@ import com.furianrt.core.deepMap
 import com.furianrt.storage.api.entities.LocalNote
 import com.furianrt.storage.api.entities.SimpleNote
 import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
@@ -16,6 +17,7 @@ import javax.inject.Inject
 
 internal class NotesRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
+    private val noteCache: NoteCache,
 ) : NotesRepository {
 
     override suspend fun insetNote(note: SimpleNote) {
@@ -35,4 +37,16 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId).map { it?.toLocalNote() }
+
+    override fun getNoteContentFromCache(noteId: String): List<LocalNote.Content> {
+        return noteCache.getNoteContent(noteId)
+    }
+
+    override fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>) {
+        noteCache.cacheNoteContent(noteId, content)
+    }
+
+    override fun deleteNoteContentFromCache(noteId: String) {
+        noteCache.deleteCache(noteId)
+    }
 }
