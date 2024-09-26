@@ -1,7 +1,7 @@
 package com.furianrt.storage.internal.managers
 
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri

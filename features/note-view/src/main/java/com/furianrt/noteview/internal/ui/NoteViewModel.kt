@@ -4,10 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
-import com.furianrt.domain.DeleteNoteUseCase
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult

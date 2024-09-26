@@ -61,6 +61,7 @@ import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.offsetYInverted
@@ -99,7 +100,7 @@ internal fun NotePageScreenInternal(
     val context = LocalContext.current
 
     val storagePermissionsState = rememberMultiplePermissionsState(
-        permissions = uiState.mediaPermissionsList,
+        permissions = PermissionsUtils.getMediaPermissionList(),
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
 

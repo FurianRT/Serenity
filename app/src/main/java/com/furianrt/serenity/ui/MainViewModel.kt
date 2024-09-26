@@ -3,9 +3,9 @@ package com.furianrt.serenity.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.domain.DeleteNoteUseCase
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.serenity.ui.extensions.toMainScreenNotes
-import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator

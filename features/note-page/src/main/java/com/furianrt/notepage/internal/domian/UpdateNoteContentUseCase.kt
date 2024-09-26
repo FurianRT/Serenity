@@ -1,11 +1,11 @@
 package com.furianrt.notepage.internal.domian
 
 import com.furianrt.core.hasItem
-import com.furianrt.storage.api.TransactionsHelper
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.NotesRepository
-import com.furianrt.storage.api.repositories.TagsRepository
+import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.TagsRepository
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext

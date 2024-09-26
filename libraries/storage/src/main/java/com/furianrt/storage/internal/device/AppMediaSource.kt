@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File

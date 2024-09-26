@@ -4,11 +4,11 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.extensions.toLocalNoteMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.repositories.MediaRepository
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult

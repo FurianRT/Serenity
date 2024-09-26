@@ -2,9 +2,9 @@ package com.furianrt.notecontent.extensions
 
 import androidx.compose.foundation.text.input.TextFieldState
 import com.furianrt.core.mapImmutable
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
-import com.furianrt.storage.api.entities.LocalNote
 
 fun UiNoteContent.toLocalNoteContent() = when (this) {
     is UiNoteContent.Title -> toLocalNoteTitle()

@@ -3,7 +3,7 @@ package com.furianrt.notepage.internal.ui.extensions
 import com.furianrt.core.mapImmutable
 import com.furianrt.mediaselector.api.entities.MediaSelectorResult
 import com.furianrt.notepage.internal.ui.entities.NoteItem
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.extensions.toRegularUiNoteTag
 import com.furianrt.notecontent.extensions.toUiNoteContent

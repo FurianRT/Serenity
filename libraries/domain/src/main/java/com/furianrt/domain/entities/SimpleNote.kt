@@ -1,4 +1,4 @@
-package com.furianrt.storage.api.entities
+package com.furianrt.domain.entities
 
 class SimpleNote(
     val id: String,

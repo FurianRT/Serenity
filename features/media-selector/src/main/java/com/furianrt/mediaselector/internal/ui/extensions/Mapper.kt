@@ -1,10 +1,10 @@
 package com.furianrt.mediaselector.internal.ui.extensions
 
 import com.furianrt.core.mapImmutable
+import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.mediaselector.api.entities.MediaSelectorResult
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import com.furianrt.storage.api.entities.DeviceMedia
 
 internal fun DeviceMedia.toMediaItem(
     state: SelectionState = SelectionState.Default,

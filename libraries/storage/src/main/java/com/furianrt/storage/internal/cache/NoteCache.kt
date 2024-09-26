@@ -1,6 +1,6 @@
 package com.furianrt.storage.internal.cache
 
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import javax.inject.Inject
 import javax.inject.Singleton
 

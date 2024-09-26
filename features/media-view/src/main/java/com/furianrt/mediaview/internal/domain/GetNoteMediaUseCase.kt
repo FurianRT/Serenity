@@ -1,7 +1,7 @@
 package com.furianrt.mediaview.internal.domain
 
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.NotesRepository
 import javax.inject.Inject
 
 internal class GetNoteMediaUseCase @Inject constructor(

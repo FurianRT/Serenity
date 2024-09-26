@@ -16,6 +16,10 @@ dependencies {
     implementation(libs.lifecycle)
     implementation(libs.material3)
 
+    implementation(libs.hilt)
+    implementation(libs.hiltNavigation)
+    ksp(libs.hiltCompiler)
+
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)

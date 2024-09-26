@@ -1,9 +1,9 @@
-package com.furianrt.domain
+package com.furianrt.domain.usecase
 
-import com.furianrt.storage.api.TransactionsHelper
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.NotesRepository
-import com.furianrt.storage.api.repositories.TagsRepository
+import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.TagsRepository
 import javax.inject.Inject
 
 class DeleteNoteUseCase @Inject constructor(

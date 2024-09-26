@@ -11,7 +11,7 @@ android {
 dependencies {
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
-    implementation(projects.libraries.storage)
+    implementation(projects.libraries.domain)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

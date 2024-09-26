@@ -28,9 +28,8 @@ import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaview.api.MediaViewScreen
 import com.furianrt.notecreate.api.NoteCreateScreen
 import com.furianrt.noteview.api.NoteViewScreen
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.settings.api.SettingsScreen
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.mediaAccessDenied
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,7 +42,7 @@ private const val SPLASH_SCREEN_DELAY = 400L
 internal class MainActivity : ComponentActivity() {
 
     @Inject
-    lateinit var mediaRepository: MediaRepository
+    lateinit var permissionsUtils: PermissionsUtils
 
     private var keepSplashScreen = true
 
@@ -89,7 +88,7 @@ internal class MainActivity : ComponentActivity() {
 
                 LifecycleStartEffect(lifecycleOwner = this, key1 = Unit) {
                     val currentRoute = navController.currentDestination?.route
-                    if (currentRoute == "Sheet" && mediaRepository.mediaAccessDenied()) {
+                    if (currentRoute == "Sheet" && permissionsUtils.mediaAccessDenied()) {
                         navController.popBackStack()
                     }
                     onStopOrDispose {}

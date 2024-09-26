@@ -29,9 +29,8 @@ import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.PageEvent.*
-import com.furianrt.storage.api.entities.MediaPermissionStatus
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
@@ -63,8 +62,8 @@ private const val TITLE_FOCUS_DELAY = 500L
 internal class PageViewModel @AssistedInject constructor(
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
     private val notesRepository: NotesRepository,
-    private val mediaRepository: MediaRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
+    private val permissionsUtils: PermissionsUtils,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener {
@@ -248,7 +247,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryRequestMediaPermissions() {
-        if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+        if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
             _effect.tryEmit(
@@ -261,7 +260,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryOpenMediaSelector() {
-        if (mediaRepository.getMediaPermissionStatus() == MediaPermissionStatus.DENIED) {
+        if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(ShowPermissionsDeniedDialog)
         } else {
             _effect.tryEmit(

@@ -2,7 +2,6 @@ package com.furianrt.notepage.internal.ui
 
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
-import com.furianrt.storage.api.repositories.MediaRepository
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface PageUiState {
@@ -18,9 +17,6 @@ internal sealed interface PageUiState {
                 content is UiNoteContent.Title && content.state.text.isEmpty()
             }
     }
-
-    val mediaPermissionsList: List<String>
-        get() = MediaRepository.getMediaPermissionList()
 }
 
 internal sealed interface PageEvent {

@@ -12,7 +12,7 @@ dependencies {
     implementation(projects.features.notePage)
     
     implementation(projects.libraries.core)
-    implementation(projects.libraries.storage)
+    implementation(projects.libraries.domain)
     implementation(projects.libraries.uikit)
 
     implementation(libs.coreKtx)

@@ -1,5 +1,8 @@
 package com.furianrt.uikit.utils
 
+import javax.inject.Inject
+import javax.inject.Singleton
+
 sealed interface DialogResult {
     data class Ok<T>(val data: T) : DialogResult
     data object Cancel : DialogResult
@@ -14,7 +17,8 @@ class DialogIdentifier(
     val dialogId: Int,
 )
 
-class DialogResultCoordinator {
+@Singleton
+class DialogResultCoordinator @Inject constructor() {
 
     private val resultListeners = mutableMapOf<String, MutableList<DialogResultListener>>()
 

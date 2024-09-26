@@ -1,8 +1,8 @@
 package com.furianrt.storage.internal.di
 
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.NotesRepository
-import com.furianrt.storage.api.repositories.TagsRepository
+import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
 import com.furianrt.storage.internal.repositories.TagsRepositoryImp

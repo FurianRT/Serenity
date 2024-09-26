@@ -1,9 +1,9 @@
 package com.furianrt.storage.internal.repositories
 
 import com.furianrt.core.deepMap
-import com.furianrt.storage.api.TransactionsHelper
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.repositories.TagsRepository
+import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag

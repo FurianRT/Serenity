@@ -1,11 +1,10 @@
 package com.furianrt.storage.internal.repositories
 
 import com.furianrt.core.deepMap
-import com.furianrt.storage.api.TransactionsHelper
-import com.furianrt.storage.api.entities.DeviceMedia
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.entities.MediaPermissionStatus
-import com.furianrt.storage.api.repositories.MediaRepository
+import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
@@ -85,10 +84,6 @@ internal class MediaRepositoryImp @Inject constructor(
     ) { images, videos -> images + videos }
 
     override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
-
-    override fun getMediaPermissionStatus(): MediaPermissionStatus {
-        return sharedMediaSource.getMediaPermissionStatus()
-    }
 
     override suspend fun saveToGallery(media: LocalNote.Content.Media): Boolean {
         return sharedMediaSource.saveToGallery(media)

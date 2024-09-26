@@ -1,6 +1,6 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 

@@ -30,6 +30,7 @@ import androidx.lifecycle.flowWithLifecycle
 import androidx.navigation.NavHostController
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.composables.DragHandle
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -50,7 +51,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val storagePermissionsState = rememberMultiplePermissionsState(
-        permissions = uiState.mediaPermissionsList,
+        permissions = PermissionsUtils.getMediaPermissionList(),
         onPermissionsResult = {
             viewModel.onEvent(MediaSelectorEvent.OnMediaPermissionsSelected)
         },

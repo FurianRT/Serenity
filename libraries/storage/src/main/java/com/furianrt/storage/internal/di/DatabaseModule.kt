@@ -1,7 +1,7 @@
 package com.furianrt.storage.internal.di
 
 import android.content.Context
-import com.furianrt.storage.api.TransactionsHelper
+import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao

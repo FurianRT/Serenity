@@ -1,7 +1,7 @@
 package com.furianrt.noteview.internal.ui.extensions
 
 import com.furianrt.noteview.internal.ui.entites.NoteItem
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.uikit.extensions.toDateString
 
 internal fun LocalNote.toNoteItem() = NoteItem(

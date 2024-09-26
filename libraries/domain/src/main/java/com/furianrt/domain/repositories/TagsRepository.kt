@@ -1,6 +1,6 @@
-package com.furianrt.storage.api.repositories
+package com.furianrt.domain.repositories
 
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import kotlinx.coroutines.flow.Flow
 
 interface TagsRepository {

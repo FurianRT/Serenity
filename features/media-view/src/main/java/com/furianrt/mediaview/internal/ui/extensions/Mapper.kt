@@ -1,7 +1,7 @@
 package com.furianrt.mediaview.internal.ui.extensions
 
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
-import com.furianrt.storage.api.entities.LocalNote
 
 internal fun LocalNote.Content.Media.toMediaItem() = when (this) {
     is LocalNote.Content.Image -> toImageItem()

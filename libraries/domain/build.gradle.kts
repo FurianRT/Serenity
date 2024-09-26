@@ -10,10 +10,8 @@ android {
 
 dependencies {
     implementation(projects.libraries.core)
-    implementation(projects.libraries.storage)
 
     implementation(libs.coroutinesCore)
-    implementation(libs.coroutinesAndroid)
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)

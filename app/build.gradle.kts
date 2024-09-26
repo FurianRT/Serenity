@@ -18,9 +18,9 @@ dependencies {
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
-    implementation(projects.libraries.storage)
     implementation(projects.libraries.noteContent)
     implementation(projects.libraries.domain)
+    implementation(projects.libraries.permissions)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import com.furianrt.core.hasItem
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
+import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.internal.ui.MediaSelectorEffect.*
 import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.*
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
@@ -12,10 +14,7 @@ import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaSelectorResult
-import com.furianrt.storage.api.entities.DeviceMedia
-import com.furianrt.storage.api.repositories.MediaRepository
-import com.furianrt.storage.api.repositories.hasPartialMediaAccess
-import com.furianrt.storage.api.repositories.mediaAccessDenied
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -33,6 +32,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaRepository: MediaRepository,
+    private val permissionsUtils: PermissionsUtils,
 ) : ViewModel() {
 
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
@@ -64,7 +64,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     }
 
     private fun loadMediaItems() {
-        if (mediaRepository.mediaAccessDenied()) {
+        if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
             return
         }
@@ -73,7 +73,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             _state.update { currentState ->
                 when {
                     media.isEmpty() -> MediaSelectorUiState.Empty(
-                        showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
+                        showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
@@ -90,14 +90,14 @@ internal class MediaSelectorViewModel @Inject constructor(
                                 }
                             ),
                             selectedCount = selectedItems.count(),
-                            showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
+                            showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                         )
                     }
 
                     else -> MediaSelectorUiState.Success(
                         items = media.mapImmutable(DeviceMedia::toMediaItem),
                         selectedCount = 0,
-                        showPartialAccessMessage = mediaRepository.hasPartialMediaAccess(),
+                        showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )
                 }
             }

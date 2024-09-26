@@ -1,4 +1,4 @@
-package com.furianrt.storage.api.entities
+package com.furianrt.domain.entities
 
 import android.net.Uri
 

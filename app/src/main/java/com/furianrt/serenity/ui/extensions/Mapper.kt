@@ -7,7 +7,7 @@ import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.extensions.toRegularUiNoteTag
 import com.furianrt.notecontent.extensions.toUiNoteMedia
 import com.furianrt.serenity.ui.entities.MainScreenNote
-import com.furianrt.storage.api.entities.LocalNote
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.uikit.extensions.toDateString
 
 internal fun List<LocalNote>.toMainScreenNotes() = mapImmutable(LocalNote::toMainScreenNote)

@@ -10,6 +10,7 @@ android {
 
 dependencies {
     implementation(projects.libraries.core)
+    implementation(projects.libraries.domain)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)

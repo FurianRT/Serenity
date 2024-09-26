@@ -1,7 +1,7 @@
-package com.furianrt.storage.api.repositories
+package com.furianrt.domain.repositories
 
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.entities.SimpleNote
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.SimpleNote
 import kotlinx.coroutines.flow.Flow
 
 interface NotesRepository {

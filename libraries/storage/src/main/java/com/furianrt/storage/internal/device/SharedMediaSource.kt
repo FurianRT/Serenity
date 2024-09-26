@@ -1,18 +1,13 @@
 package com.furianrt.storage.internal.device
 
-import android.Manifest
 import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
-import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.core.content.ContextCompat
-import androidx.core.content.PermissionChecker
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.storage.api.entities.DeviceMedia
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.entities.MediaPermissionStatus
+import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.entities.LocalNote
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -68,46 +63,6 @@ internal class SharedMediaSource @Inject constructor(
             }
         }
         return@withContext mediaList.sortedByDescending(DeviceMedia::date)
-    }
-
-    fun getMediaPermissionStatus(): MediaPermissionStatus = when {
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> {
-            getMediaPermissionStatusUpsideDownCake()
-        }
-
-        Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
-            getMediaPermissionStatusTiramisu()
-        }
-
-        Manifest.permission.READ_EXTERNAL_STORAGE.isGranted() -> MediaPermissionStatus.FULL_ACCESS
-
-        else -> MediaPermissionStatus.DENIED
-    }
-
-    private fun getMediaPermissionStatusUpsideDownCake(): MediaPermissionStatus = when {
-        Manifest.permission.READ_MEDIA_IMAGES.isGranted() || Manifest.permission.READ_MEDIA_VIDEO.isGranted() -> {
-            MediaPermissionStatus.FULL_ACCESS
-        }
-
-        Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED.isGranted() -> {
-            MediaPermissionStatus.PARTIAL_ACCESS
-        }
-
-        else -> MediaPermissionStatus.DENIED
-    }
-
-    private fun getMediaPermissionStatusTiramisu(): MediaPermissionStatus =
-        if (Manifest.permission.READ_MEDIA_IMAGES.isGranted() || Manifest.permission.READ_MEDIA_VIDEO.isGranted()) {
-            MediaPermissionStatus.FULL_ACCESS
-        } else {
-            MediaPermissionStatus.DENIED
-        }
-
-    private fun String.isGranted(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            this
-        ) == PermissionChecker.PERMISSION_GRANTED
     }
 
     private suspend fun getMediaFiles(

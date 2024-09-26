@@ -1,9 +1,9 @@
 package com.furianrt.storage.internal.repositories
 
 import com.furianrt.core.deepMap
-import com.furianrt.storage.api.entities.LocalNote
-import com.furianrt.storage.api.entities.SimpleNote
-import com.furianrt.storage.api.repositories.NotesRepository
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.SimpleNote
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.furianrt.storage.api.TransactionsHelper
+import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
