@@ -2,6 +2,7 @@ package com.furianrt.notepage.internal.ui
 
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface PageUiState {
@@ -39,12 +40,11 @@ internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
     data object FocusFirstTitle : PageEffect
-    data class OpenMediaSelector(val dialogId: Int, val requestId: String) : PageEffect
+    data class OpenMediaSelector(val identifier: DialogIdentifier) : PageEffect
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
     data class OpenMediaViewScreen(
         val noteId: String,
         val mediaName: String,
-        val dialogId: Int,
-        val requestId: String,
+        val identifier: DialogIdentifier,
     ) : PageEffect
 }

@@ -49,8 +49,6 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
-import androidx.navigation.NavOptions
 import com.furianrt.core.findInstance
 import com.furianrt.notecontent.composables.NoteContentMedia
 import com.furianrt.notecontent.composables.NoteContentTitle
@@ -66,6 +64,7 @@ import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.offsetYInverted
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -84,7 +83,8 @@ internal fun NotePageScreenInternal(
     isInEditMode: Boolean,
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
-    navHostController: NavHostController,
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
@@ -111,31 +111,28 @@ internal fun NotePageScreenInternal(
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
+                is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
+                is PageEffect.OpenMediaSelector -> openMediaSelectorScreen(effect.identifier)
+                is PageEffect.OpenMediaViewScreen -> {
+                    openMediaViewScreen(effect.noteId, effect.mediaName, effect.identifier)
+                }
+
+                is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
+                is PageEffect.FocusFirstTitle -> state.focusFirstTitle()
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
                 }
 
-                is PageEffect.ShowPermissionsDeniedDialog -> {
-                    showMediaPermissionDialog = true
-                }
-
-                is PageEffect.OpenMediaSelector -> navHostController.navigate(
+                /*is PageEffect.OpenMediaSelector -> navHostController.navigate(
                     route = "Sheet/${effect.dialogId}/${effect.requestId}",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
-                )
+                )*/
 
-                is PageEffect.UpdateContentChangedState -> {
-                    state.setContentChanged(effect.isChanged)
-                }
 
-                is PageEffect.FocusFirstTitle -> {
-                    state.focusFirstTitle()
-                }
-
-                is PageEffect.OpenMediaViewScreen -> navHostController.navigate(
+                /*is PageEffect.OpenMediaViewScreen -> navHostController.navigate(
                     route = "MediaView/${effect.noteId}/${effect.mediaName}/${effect.dialogId}/${effect.requestId}",
                     navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
-                )
+                )*/
             }
         }
     }
@@ -302,7 +299,7 @@ private fun SuccessScreen(
                 item(key = TAGS_ITEM_KEY) {
                     NoteTags(
                         modifier = Modifier
-                            .padding(start = 4.dp, end = 4.dp, top = 24.dp)
+                            .padding(start = 4.dp, end = 4.dp, top = 20.dp)
                             .fillMaxWidth()
                             .animateItem(),
                         tags = uiState.tags,

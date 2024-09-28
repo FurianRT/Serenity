@@ -2,6 +2,7 @@ plugins {
     id("convention.android")
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -25,6 +26,7 @@ dependencies {
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
+    implementation(libs.composeNavigation)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
@@ -36,4 +38,6 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.collapsingToolbar)
+
+    implementation(libs.kotlinxSerializationJson)
 }

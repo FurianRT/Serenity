@@ -30,6 +30,7 @@ import com.furianrt.mediaview.R
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonMenu
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.R as uiR
@@ -48,6 +49,7 @@ internal fun Toolbar(
         modifier = modifier
             .fillMaxWidth()
             .height(ToolbarConstants.toolbarHeight)
+            .clickableNoRipple {}
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

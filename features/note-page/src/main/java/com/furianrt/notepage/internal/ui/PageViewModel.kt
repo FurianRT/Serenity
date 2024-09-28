@@ -4,10 +4,10 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.ViewModel
+import com.furianrt.common.MediaResult
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
-import com.furianrt.mediaselector.api.entities.MediaSelectorResult
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.UiNoteTag
@@ -32,6 +32,7 @@ import com.furianrt.notepage.internal.ui.PageEvent.*
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import com.furianrt.uikit.utils.DialogResultListener
@@ -123,7 +124,7 @@ internal class PageViewModel @AssistedInject constructor(
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
         when (dialogId) {
             MEDIA_SELECTOR_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
-                handleMediaSelectorResult(result.data as MediaSelectorResult)
+                handleMediaSelectorResult(result.data as MediaResult)
             }
 
             MEDIA_VIEW__DIALOG_ID -> if (result is DialogResult.Ok<*>) {
@@ -133,7 +134,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleMediaSelectorResult(result: MediaSelectorResult) {
+    private fun handleMediaSelectorResult(result: MediaResult) {
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { currentState ->
             val newMediaBlock = result.toMediaBlock()
@@ -252,8 +253,10 @@ internal class PageViewModel @AssistedInject constructor(
         } else {
             _effect.tryEmit(
                 OpenMediaSelector(
-                    dialogId = MEDIA_SELECTOR_DIALOG_ID,
-                    requestId = noteId,
+                    identifier = DialogIdentifier(
+                        dialogId = MEDIA_SELECTOR_DIALOG_ID,
+                        requestId = noteId,
+                    ),
                 )
             )
         }
@@ -265,8 +268,10 @@ internal class PageViewModel @AssistedInject constructor(
         } else {
             _effect.tryEmit(
                 OpenMediaSelector(
-                    dialogId = MEDIA_SELECTOR_DIALOG_ID,
-                    requestId = noteId,
+                    identifier = DialogIdentifier(
+                        dialogId = MEDIA_SELECTOR_DIALOG_ID,
+                        requestId = noteId,
+                    ),
                 ),
             )
         }
@@ -282,8 +287,10 @@ internal class PageViewModel @AssistedInject constructor(
             PageEffect.OpenMediaViewScreen(
                 noteId = noteId,
                 mediaName = mediaName,
-                dialogId = MEDIA_VIEW__DIALOG_ID,
-                requestId = noteId,
+                identifier = DialogIdentifier(
+                    dialogId = MEDIA_VIEW__DIALOG_ID,
+                    requestId = noteId,
+                ),
             ),
         )
     }

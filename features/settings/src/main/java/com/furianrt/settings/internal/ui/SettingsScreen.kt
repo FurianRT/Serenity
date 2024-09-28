@@ -36,7 +36,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.Toolbar
 import com.furianrt.uikit.extensions.applyIf
@@ -46,16 +45,16 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun SettingsScreenInternal(navHostController: NavHostController) {
+internal fun SettingsScreen(
+    onCloseRequest: () -> Unit,
+) {
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is SettingsEffect.CloseScreen -> {
-                    navHostController.popBackStack()
-                }
+                is SettingsEffect.CloseScreen -> onCloseRequest()
             }
         }
     }

@@ -2,12 +2,14 @@ package com.furianrt.noteview.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -23,28 +25,19 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class NoteViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
 ) : ViewModel() {
+
+    private val route = savedStateHandle.toRoute<NoteViewRoute>()
 
     private val _state = MutableStateFlow<NoteViewUiState>(NoteViewUiState.Loading)
     val state = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<NoteViewEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
-
-    private val initialNoteId: String? by lazy(LazyThreadSafetyMode.NONE) {
-        savedStateHandle["noteId"]
-    }
-
-    private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
-        DialogIdentifier(
-            requestId = savedStateHandle["requestId"]!!,
-            dialogId = savedStateHandle["dialogId"]!!,
-        )
-    }
 
     init {
         observeNotes()
@@ -62,7 +55,10 @@ internal class NoteViewModel @Inject constructor(
             }
 
             is NoteViewEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
-                dialogIdentifier = dialogIdentifier,
+                dialogIdentifier = DialogIdentifier(
+                    requestId = route.requestId,
+                    dialogId = route.dialogId,
+                ),
                 code = DialogResult.Ok(data = event.index),
             )
 
@@ -82,12 +78,12 @@ internal class NoteViewModel @Inject constructor(
             _state.update { localState ->
                 when (localState) {
                     is NoteViewUiState.Success -> localState.copy(
-                        initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                        initialPageIndex = notes.indexOfFirst { it.id == route.noteId },
                         notes = notes.mapImmutable(LocalNote::toNoteItem),
                     )
 
                     is NoteViewUiState.Loading -> NoteViewUiState.Success(
-                        initialPageIndex = notes.indexOfFirst { it.id == initialNoteId },
+                        initialPageIndex = notes.indexOfFirst { it.id == route.noteId },
                         notes = notes.mapImmutable(LocalNote::toNoteItem),
                         isInEditMode = false,
                     )

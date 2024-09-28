@@ -27,7 +27,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -42,9 +41,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
-internal fun MediaSelectorBottomSheetInternal(
-    navHostController: NavHostController,
-    modifier: Modifier = Modifier,
+internal fun MediaSelectorBottomSheet(
+    onCloseRequest: () -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaSelectorViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
@@ -99,7 +97,7 @@ internal fun MediaSelectorBottomSheetInternal(
                 showConfirmDialog = true
             }
 
-            !isBottomSheetVisible -> navHostController.popBackStack()
+            !isBottomSheetVisible -> onCloseRequest()
         }
     }
 
@@ -115,7 +113,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val hazeState = remember { HazeState() }
     val backgroundModifier = Modifier.background(MaterialTheme.colorScheme.tertiary)
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
             .padding(top = ToolbarConstants.toolbarHeight / 2)
             .haze(state = hazeState),

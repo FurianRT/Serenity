@@ -56,7 +56,10 @@ internal fun MediaList(
         (SELECTED_ITEM_HEIGHT_DP + HORIZONTAL_PADDING_DP).dp.toPx().toInt()
     }
     LaunchedEffect(currentItem) {
-        listState.animateScrollToItem(index = currentItem, scrollOffset = (itemWidth - listWidth) / 2)
+        listState.animateScrollToItem(
+            index = currentItem,
+            scrollOffset = (itemWidth - listWidth) / 2,
+        )
     }
     LazyRow(
         modifier = modifier
@@ -153,7 +156,7 @@ internal fun VideoItem(
     }
     Box(modifier = modifier) {
         AsyncImage(
-            modifier = modifier
+            modifier = Modifier
                 .size(width = 60.dp, height = scaleValue.dp)
                 .clip(RoundedCornerShape(4.dp))
                 .clickableNoRipple(onClick = onClick),

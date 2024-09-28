@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -15,11 +16,12 @@ dependencies {
     implementation(projects.features.settings)
     implementation(projects.features.mediaSelector)
     implementation(projects.features.mediaView)
+    implementation(projects.features.noteList)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
-    implementation(projects.libraries.noteContent)
     implementation(projects.libraries.domain)
+    implementation(projects.libraries.storage)
     implementation(projects.libraries.permissions)
 
     implementation(libs.coreKtx)
@@ -33,6 +35,7 @@ dependencies {
     implementation(libs.navAnimation)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
+    implementation(libs.composeNavigation)
 
     implementation(libs.splashScreen)
 
@@ -42,10 +45,4 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
-
-    implementation(libs.collapsingToolbar)
-
-    implementation(libs.immutableCollections)
-
-    implementation(libs.blur)
 }

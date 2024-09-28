@@ -20,7 +20,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notepage.api.NotePageScreen
@@ -29,13 +28,18 @@ import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 
 @Composable
-internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
+internal fun NoteCreateScreen(
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
+    onCloseRequest: () -> Unit,
+) {
     val viewModel: NoteCreateViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -48,7 +52,7 @@ internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
             .collectLatest { effect ->
                 when (effect) {
                     is NoteCreateEffect.SaveCurrentNoteContent -> pageScreenState.saveContent()
-                    is NoteCreateEffect.CloseScreen -> navHostController.popBackStack()
+                    is NoteCreateEffect.CloseScreen -> onCloseRequest()
                 }
             }
     }
@@ -62,8 +66,9 @@ internal fun NoteCreateScreenInternal(navHostController: NavHostController) {
                 noteId = uiState.note.id,
                 isInEditMode = uiState.isInEditMode,
                 isNoteCreationMode = true,
-                navHostController = navHostController,
                 onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
+                openMediaViewScreen = openMediaViewScreen,
+                openMediaSelectorScreen = openMediaSelectorScreen,
             )
         },
     )

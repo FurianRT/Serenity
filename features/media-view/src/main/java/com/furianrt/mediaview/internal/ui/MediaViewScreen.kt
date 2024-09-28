@@ -31,7 +31,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import com.furianrt.mediaview.R
 import com.furianrt.mediaview.internal.ui.composables.ControlsAnimatedVisibility
 import com.furianrt.mediaview.internal.ui.composables.MediaList
@@ -50,8 +49,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @Composable
-internal fun MediaViewScreenInternal(
-    navHostController: NavHostController,
+internal fun MediaViewScreen(
+    onCloseRequest: () -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
@@ -66,7 +65,7 @@ internal fun MediaViewScreenInternal(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is MediaViewEffect.CloseScreen -> navHostController.popBackStack()
+                    is MediaViewEffect.CloseScreen -> onCloseRequest()
                     is MediaViewEffect.ShowMediaSavedMessage -> snackBarHostState.showSnackbar(
                         message = imageSavedMessage,
                         duration = SnackbarDuration.Short,

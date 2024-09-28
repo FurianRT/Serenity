@@ -21,14 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import androidx.navigation.NavHostController
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -39,6 +37,7 @@ import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.extensions.isInMiddleState
 import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -65,7 +64,11 @@ internal class SuccessScreenState {
 internal fun rememberSuccessScreenState(): SuccessScreenState = remember { SuccessScreenState() }
 
 @Composable
-internal fun NoteViewScreenInternal(navHostController: NavHostController) {
+internal fun NoteViewScreen(
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
+    onCloseRequest: () -> Unit,
+) {
     val viewModel: NoteViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -77,7 +80,7 @@ internal fun NoteViewScreenInternal(navHostController: NavHostController) {
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is NoteViewEffect.CloseScreen -> navHostController.popBackStack()
+                    is NoteViewEffect.CloseScreen -> onCloseRequest()
                     is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
                 }
             }
@@ -86,7 +89,8 @@ internal fun NoteViewScreenInternal(navHostController: NavHostController) {
         state = successScreenState,
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        navHostController = navHostController,
+        openMediaViewScreen = openMediaViewScreen,
+        openMediaSelectorScreen = openMediaSelectorScreen,
     )
 }
 
@@ -95,7 +99,8 @@ private fun ScreenContent(
     state: SuccessScreenState,
     uiState: NoteViewUiState,
     onEvent: (event: NoteViewEvent) -> Unit,
-    navHostController: NavHostController,
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
@@ -105,7 +110,8 @@ private fun ScreenContent(
                 state = state,
                 uiState = uiState,
                 onEvent = onEvent,
-                navHostController = navHostController,
+                openMediaViewScreen = openMediaViewScreen,
+                openMediaSelectorScreen = openMediaSelectorScreen,
             )
         }
     }
@@ -113,11 +119,12 @@ private fun ScreenContent(
 
 @Composable
 private fun SuccessScreen(
-    state: SuccessScreenState,
     uiState: NoteViewUiState.Success,
-    onEvent: (event: NoteViewEvent) -> Unit,
-    navHostController: NavHostController,
     modifier: Modifier = Modifier,
+    state: SuccessScreenState = rememberSuccessScreenState(),
+    onEvent: (event: NoteViewEvent) -> Unit = {},
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
 ) {
     val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
     val pagerState = rememberPagerState(
@@ -226,8 +233,9 @@ private fun SuccessScreen(
                 noteId = uiState.notes[index].id,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
-                navHostController = navHostController,
                 onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },
+                openMediaViewScreen = openMediaViewScreen,
+                openMediaSelectorScreen = openMediaSelectorScreen,
             )
         }
     }
@@ -245,14 +253,13 @@ private fun LoadingScreen(
 private fun ScreenSuccessPreview() {
     SerenityTheme {
         SuccessScreen(
-            state = rememberSuccessScreenState(),
             uiState = NoteViewUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,
                 notes = persistentListOf(),
             ),
-            onEvent = {},
-            navHostController = NavHostController(LocalContext.current),
+            openMediaSelectorScreen = {},
+            openMediaViewScreen = { _, _, _ -> },
         )
     }
 }

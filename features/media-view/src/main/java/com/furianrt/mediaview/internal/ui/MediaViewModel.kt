@@ -2,10 +2,12 @@ package com.furianrt.mediaview.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.navigation.toRoute
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.extensions.toLocalNoteMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
@@ -24,26 +26,13 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MediaViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle,
+    savedStateHandle: SavedStateHandle,
     private val getNoteMediaUseCase: GetNoteMediaUseCase,
     private val mediaRepository: MediaRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
-    private val noteId: String by lazy(LazyThreadSafetyMode.NONE) {
-        savedStateHandle["noteId"]!!
-    }
-
-    private val mediaName: String by lazy(LazyThreadSafetyMode.NONE) {
-        savedStateHandle["mediaName"]!!
-    }
-
-    private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
-        DialogIdentifier(
-            requestId = savedStateHandle["requestId"]!!,
-            dialogId = savedStateHandle["dialogId"]!!,
-        )
-    }
+    private val route = savedStateHandle.toRoute<MediaViewRoute>()
 
     private val _state = MutableStateFlow(buildInitialState())
     val state = _state.asStateFlow()
@@ -56,7 +45,10 @@ internal class MediaViewModel @Inject constructor(
     override fun onCleared() {
         if (deletedMediaNames.isNotEmpty()) {
             dialogResultCoordinator.onDialogResult(
-                dialogIdentifier = dialogIdentifier,
+                dialogIdentifier = DialogIdentifier(
+                    requestId = route.requestId,
+                    dialogId = route.dialogId,
+                ),
                 code = DialogResult.Ok(data = deletedMediaNames),
             )
         }
@@ -93,10 +85,10 @@ internal class MediaViewModel @Inject constructor(
     }
 
     private fun buildInitialState(): MediaViewUiState {
-        val media = getNoteMediaUseCase(noteId)
+        val media = getNoteMediaUseCase(route.noteId)
         return MediaViewUiState(
             media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
-            initialMediaIndex = media.indexOfFirstOrNull { it.name == mediaName } ?: 0,
+            initialMediaIndex = media.indexOfFirstOrNull { it.name == route.mediaName } ?: 0,
         )
     }
 }

@@ -11,8 +11,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.navigation.NavHostController
 import com.furianrt.notepage.internal.ui.NotePageScreenInternal
+import com.furianrt.uikit.utils.DialogIdentifier
 import me.onebone.toolbar.CollapsingToolbarScaffoldState
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
@@ -98,7 +98,8 @@ fun NotePageScreen(
     isInEditMode: Boolean,
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
-    navHostController: NavHostController,
+    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
 ) {
     NotePageScreenInternal(
         state = state,
@@ -106,6 +107,7 @@ fun NotePageScreen(
         isInEditMode = isInEditMode,
         isNoteCreationMode = isNoteCreationMode,
         onFocusChange = onFocusChange,
-        navHostController = navHostController,
+        openMediaViewScreen = openMediaViewScreen,
+        openMediaSelectorScreen = openMediaSelectorScreen,
     )
 }

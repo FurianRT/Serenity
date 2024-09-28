@@ -11,11 +11,10 @@ android {
 
 dependencies {
     implementation(projects.features.toolsPanel)
-    implementation(projects.features.mediaSelector)
 
     implementation(projects.libraries.core)
+    implementation(projects.libraries.common)
     implementation(projects.libraries.uikit)
-    implementation(projects.libraries.storage)
     implementation(projects.libraries.noteContent)
     implementation(projects.libraries.permissions)
     implementation(projects.libraries.domain)
@@ -30,6 +29,7 @@ dependencies {
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
+    implementation(libs.composeNavigation)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)

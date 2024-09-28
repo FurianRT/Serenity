@@ -22,4 +22,5 @@ dependencies {
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
+    implementation(libs.composeNavigation)
 }
