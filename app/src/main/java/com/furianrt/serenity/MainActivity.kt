@@ -8,18 +8,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavDestination.Companion.hierarchy
-import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.api.MediaSelectorRoute
@@ -31,12 +24,12 @@ import com.furianrt.mediaview.api.navigateToMediaView
 import com.furianrt.notecreate.api.NoteCreateRoute
 import com.furianrt.notecreate.api.navigateToNoteCreate
 import com.furianrt.notecreate.api.noteCreateScreen
-import com.furianrt.notelist.api.NoteListRoute
 import com.furianrt.notelist.api.noteListScreen
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.serenity.navigation.SerenityNavHost
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsScreen
 import com.furianrt.uikit.constants.SystemBarsConstants
@@ -106,50 +99,7 @@ internal class MainActivity : ComponentActivity() {
                     onStopOrDispose {}
                 }
 
-                NavHost(
-                    navController = navController,
-                    startDestination = NoteListRoute,
-                    enterTransition = {
-                        slideIntoContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                            initialOffset = { it / 2 },
-                            animationSpec = tween(
-                                durationMillis = 450,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        ) + fadeIn(animationSpec = tween(450))
-                    },
-                    exitTransition = {
-                        slideOutOfContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                            targetOffset = { (it * 0.1f).toInt() },
-                            animationSpec = tween(
-                                durationMillis = 400,
-                                easing = LinearEasing,
-                            ),
-                        ) + fadeOut(animationSpec = tween(400), targetAlpha = 0.2f)
-                    },
-                    popExitTransition = {
-                        slideOutOfContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                            targetOffset = { (it * 0.8f).toInt() },
-                            animationSpec = tween(
-                                durationMillis = 400,
-                                easing = LinearEasing,
-                            ),
-                        ) + fadeOut(animationSpec = tween(300))
-                    },
-                    popEnterTransition = {
-                        slideIntoContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                            initialOffset = { (it * 0.1f).toInt() },
-                            animationSpec = tween(
-                                durationMillis = 400,
-                                easing = FastOutSlowInEasing,
-                            ),
-                        ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
-                    },
-                ) {
+                SerenityNavHost(navController = navController) {
                     noteListScreen(
                         openSettingsScreen = navController::navigateToSettings,
                         openNoteCreateScreen = { identifier ->
@@ -190,7 +140,7 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             )
                         },
-                        onCloseRequest = navController::popBackStack,
+                        onCloseRequest = navController::navigateUp,
                     )
 
                     noteCreateScreen(
@@ -212,19 +162,19 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             )
                         },
-                        onCloseRequest = navController::popBackStack,
+                        onCloseRequest = navController::navigateUp,
                     )
 
                     settingsScreen(
-                        onCloseRequest = navController::popBackStack,
+                        onCloseRequest = navController::navigateUp,
                     )
 
                     mediaViewScreen(
-                        onCloseRequest = navController::popBackStack,
+                        onCloseRequest = navController::navigateUp,
                     )
 
                     mediaSelectorDialog(
-                        onCloseRequest = navController::popBackStack,
+                        onCloseRequest = navController::navigateUp,
                     )
                 }
             }

@@ -2,6 +2,8 @@ package com.furianrt.mediaview.internal.ui.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +46,7 @@ import kotlinx.coroutines.delay
 import androidx.media3.common.MediaItem as ExoMediaItem
 
 private const val SCALE_MULTIPLIER = 1.8f
+private const val SLIDER_UPDATE_INTERVAL = 200L
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -124,6 +127,7 @@ internal fun VideoPage(
     var playing by rememberSaveable(isPlaying) { mutableStateOf(isPlaying) }
     var isEnded by rememberSaveable { mutableStateOf(false) }
     var currentPosition by rememberSaveable { mutableLongStateOf(0L) }
+    var isThumbDragging by remember { mutableStateOf(false) }
 
     val zoomableState = rememberZoomableState()
     LaunchedEffect(zoomableState) {
@@ -160,10 +164,10 @@ internal fun VideoPage(
         }
     }
 
-    LaunchedEffect(playing) {
-        while (playing) {
+    LaunchedEffect(playing, isThumbDragging) {
+        while (playing && !isThumbDragging) {
             currentPosition = exoPlayer.currentPosition
-            delay(200)
+            delay(SLIDER_UPDATE_INTERVAL)
         }
     }
 
@@ -173,6 +177,16 @@ internal fun VideoPage(
         }
         onStopOrDispose {
             exoPlayer.pause()
+        }
+    }
+
+    val sliderInteractionSource = remember { MutableInteractionSource() }
+    LaunchedEffect(sliderInteractionSource) {
+        sliderInteractionSource.interactions.collect { interaction ->
+            when (interaction) {
+                is DragInteraction.Start -> isThumbDragging = true
+                is DragInteraction.Stop -> isThumbDragging = false
+            }
         }
     }
 
@@ -219,11 +233,9 @@ internal fun VideoPage(
             VideoSlider(
                 value = currentPosition.toFloat(),
                 valueRange = 0f..item.duration.toFloat(),
-                onValueChange = { value ->
-                    val position = value.toLong()
-                    currentPosition = position
-                    exoPlayer.seekTo(position)
-                },
+                interactionSource = sliderInteractionSource,
+                onValueChange = { currentPosition = it.toLong() },
+                onValueChangeFinished = { exoPlayer.seekTo(currentPosition) },
             )
         }
     }

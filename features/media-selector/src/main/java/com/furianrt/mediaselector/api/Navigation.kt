@@ -3,7 +3,7 @@ package com.furianrt.mediaselector.api
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
-import androidx.navigation.NavOptionsBuilder
+import androidx.navigation.NavOptions
 import androidx.navigation.compose.dialog
 import com.furianrt.mediaselector.internal.ui.MediaSelectorBottomSheet
 import kotlinx.serialization.Serializable
@@ -16,8 +16,8 @@ data class MediaSelectorRoute(
 
 fun NavController.navigateToMediaSelector(
     route: MediaSelectorRoute,
-    navOptions: NavOptionsBuilder.() -> Unit = {},
-) = navigate(route = route, builder = navOptions)
+    navOptions: NavOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
+) = navigate(route = route, navOptions = navOptions)
 
 fun NavGraphBuilder.mediaSelectorDialog(
     onCloseRequest: () -> Unit,
