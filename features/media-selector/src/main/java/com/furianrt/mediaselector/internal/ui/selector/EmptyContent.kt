@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui
+package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,8 +13,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.R
-import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.OnPartialAccessMessageClick
-import com.furianrt.mediaselector.internal.ui.composables.PermissionsMessage
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -48,7 +48,7 @@ internal fun EmptyContent(
 
 @Composable
 @PreviewWithBackground
-private fun Preivew() {
+private fun Preview() {
     SerenityTheme {
         EmptyContent(
             uiState = MediaSelectorUiState.Empty(

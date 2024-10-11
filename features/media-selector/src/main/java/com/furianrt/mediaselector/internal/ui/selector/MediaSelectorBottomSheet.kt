@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui
+package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
@@ -28,7 +28,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.R
-import com.furianrt.mediaselector.internal.ui.composables.DragHandle
+import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.constants.ToolbarConstants
@@ -42,6 +43,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
 internal fun MediaSelectorBottomSheet(
+    openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaSelectorViewModel>()
@@ -77,6 +79,14 @@ internal fun MediaSelectorBottomSheet(
                     is MediaSelectorEffect.RequestMediaPermissions -> {
                         storagePermissionsState.launchMultiplePermissionRequest()
                     }
+
+                    is MediaSelectorEffect.OpenMediaViewer -> openMediaViewer(
+                        MediaViewerRoute(
+                            mediaId = effect.mediaId,
+                            dialogId = effect.dialogId,
+                            requestId = effect.requestId,
+                        ),
+                    )
                 }
             }
     }

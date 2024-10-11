@@ -7,4 +7,7 @@
     <string name="action_save">Save</string>
 
     <string name="settings_title">Settings</string>
+
+    <string name="media_counter_pattern">%d of %d</string>
+    <string name="general_error">Something went wrong</string>
 </resources>

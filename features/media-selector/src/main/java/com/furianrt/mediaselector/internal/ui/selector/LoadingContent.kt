@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui
+package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -7,7 +7,6 @@ import androidx.compose.ui.Modifier
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
-// TODO Сделать индикатор
 @Composable
 internal fun LoadingContent(
     modifier: Modifier = Modifier,
@@ -17,7 +16,7 @@ internal fun LoadingContent(
 
 @Composable
 @PreviewWithBackground
-private fun Preivew() {
+private fun Preview() {
     SerenityTheme {
         LoadingContent(
 

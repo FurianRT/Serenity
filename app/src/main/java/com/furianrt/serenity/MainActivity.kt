@@ -17,7 +17,9 @@ import androidx.navigation.compose.rememberNavController
 import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.api.MediaSelectorRoute
 import com.furianrt.mediaselector.api.mediaSelectorDialog
+import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaSelector
+import com.furianrt.mediaselector.api.navigateToMediaViewer
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.api.mediaViewScreen
 import com.furianrt.mediaview.api.navigateToMediaView
@@ -174,6 +176,11 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     mediaSelectorDialog(
+                        openMediaViewer = navController::navigateToMediaViewer,
+                        onCloseRequest = navController::navigateUp,
+                    )
+
+                    mediaViewerScreen(
                         onCloseRequest = navController::navigateUp,
                     )
                 }

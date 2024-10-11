@@ -1,22 +1,15 @@
-package com.furianrt.mediaview.internal.ui
+package com.furianrt.mediaselector.internal.ui.viewer
 
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarDuration
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -24,92 +17,62 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.mediaview.R
+import com.furianrt.mediaselector.internal.ui.entities.MediaItem
+import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import com.furianrt.mediaselector.internal.ui.viewer.composables.MediaList
+import com.furianrt.mediaselector.internal.ui.viewer.composables.MediaPager
+import com.furianrt.mediaselector.internal.ui.viewer.composables.Toolbar
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
-import com.furianrt.mediaview.internal.ui.composables.MediaList
-import com.furianrt.mediaview.internal.ui.composables.MediaPager
-import com.furianrt.mediaview.internal.ui.composables.Toolbar
-import com.furianrt.mediaview.internal.ui.entities.MediaItem
-import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.findActivity
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
-import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import com.furianrt.uikit.R as uiR
 
 @Composable
-internal fun MediaViewScreen(
+internal fun MediaViewerScreen(
     onCloseRequest: () -> Unit,
 ) {
-    val viewModel = hiltViewModel<MediaViewModel>()
+    val viewModel = hiltViewModel<MediaViewerViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    val snackBarHostState = remember { SnackbarHostState() }
-    val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
-    val imageNotSavedMessage = stringResource(uiR.string.general_error)
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is MediaViewEffect.CloseScreen -> onCloseRequest()
-                    is MediaViewEffect.ShowMediaSavedMessage -> snackBarHostState.showSnackbar(
-                        message = imageSavedMessage,
-                        duration = SnackbarDuration.Short,
-                    )
-
-                    is MediaViewEffect.ShowMediaSaveErrorMessage -> snackBarHostState.showSnackbar(
-                        message = imageNotSavedMessage,
-                        duration = SnackbarDuration.Short,
-                    )
+                    is MediaViewerEffect.CloseScreen -> onCloseRequest()
                 }
             }
     }
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(R.drawable.ic_download),
-                        color = Colors.DarkGray.copy(alpha = 0.9f),
-                    )
-                },
-            )
-        },
-        content = { paddingValues ->
-            SuccessContent(
-                paddingValues = paddingValues,
-                uiState = uiState,
-                onEvent = viewModel::onEvent,
-            )
-        }
-    )
+    when (uiState) {
+        is MediaViewerUiState.Success -> SuccessContent(
+            uiState = uiState,
+            onEvent = viewModel::onEvent,
+        )
+
+        is MediaViewerUiState.Loading -> Box(
+            modifier = Modifier.fillMaxSize()
+        )
+    }
 }
 
 @Composable
 private fun SuccessContent(
-    uiState: MediaViewUiState,
+    uiState: MediaViewerUiState.Success,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(),
-    onEvent: (event: MediaViewEvent) -> Unit = {},
+    onEvent: (event: MediaViewerEvent) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
         initialPage = uiState.initialMediaIndex,
@@ -119,7 +82,7 @@ private fun SuccessContent(
     val context = LocalContext.current
     var showControls by rememberSaveable { mutableStateOf(true) }
 
-    DisposableEffect(showControls) {
+    /*DisposableEffect(showControls) {
         val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
         if (showControls) {
             window.showSystemUi()
@@ -129,7 +92,7 @@ private fun SuccessContent(
         onDispose {
             window.showSystemUi()
         }
-    }
+    }*/
 
     Box(
         modifier = modifier
@@ -146,8 +109,7 @@ private fun SuccessContent(
         )
         ControlsAnimatedVisibility(
             modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(paddingValues),
+                .align(Alignment.TopCenter),
             visible = showControls,
             label = "ToolbarAnim",
         ) {
@@ -155,25 +117,27 @@ private fun SuccessContent(
                 modifier = Modifier.background(SystemBarsConstants.Color),
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
-                onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
-                onDeleteClick = {
-                    onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
+                selectionState = uiState.media[pagerState.currentPage].state,
+                onBackClick = { onEvent(MediaViewerEvent.OnButtonBackClick) },
+                onSelectClick = {
+                    onEvent(
+                        MediaViewerEvent.OnMediaSelectionToggle(
+                            media = uiState.media[pagerState.currentPage],
+                        ),
+                    )
                 },
-                onSaveMediaClick = {
-                    onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))
-                }
             )
         }
         ControlsAnimatedVisibility(
             modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(paddingValues),
+                .align(Alignment.BottomCenter),
             visible = showControls,
             label = "MediaListAnim",
         ) {
             MediaList(
                 modifier = Modifier.background(SystemBarsConstants.Color),
                 media = uiState.media,
+                initialMediaIndex = uiState.initialMediaIndex,
                 currentItem = pagerState.currentPage,
                 onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
             )
@@ -186,26 +150,29 @@ private fun SuccessContent(
 private fun Preview() {
     SerenityTheme {
         SuccessContent(
-            uiState = MediaViewUiState(
+            uiState = MediaViewerUiState.Success(
                 initialMediaIndex = 1,
                 media = persistentListOf(
                     MediaItem.Image(
+                        id = 1L,
                         name = "1",
                         uri = Uri.EMPTY,
-                        ratio = 0.5f,
-                        addedTime = 0L,
+                        ratio = 1f,
+                        state = SelectionState.Default,
                     ),
                     MediaItem.Image(
+                        id = 2L,
                         name = "2",
                         uri = Uri.EMPTY,
-                        ratio = 0.5f,
-                        addedTime = 0L,
+                        ratio = 1f,
+                        state = SelectionState.Selected(1),
                     ),
                     MediaItem.Image(
+                        id = 3L,
                         name = "3",
                         uri = Uri.EMPTY,
-                        ratio = 1.4f,
-                        addedTime = 0L,
+                        ratio = 1f,
+                        state = SelectionState.Default,
                     ),
                 ),
             ),

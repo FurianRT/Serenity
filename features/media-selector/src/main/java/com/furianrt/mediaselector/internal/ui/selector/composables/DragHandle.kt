@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui.composables
+package com.furianrt.mediaselector.internal.ui.selector.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

@@ -1,4 +1,4 @@
-package com.furianrt.mediaview.internal.ui.composables
+package com.furianrt.mediaselector.internal.ui.viewer.composables
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -37,7 +37,7 @@ import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.furianrt.mediaview.internal.ui.entities.MediaItem
+import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.VideoSlider

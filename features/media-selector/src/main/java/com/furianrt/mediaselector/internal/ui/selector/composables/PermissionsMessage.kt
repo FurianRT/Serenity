@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui.composables
+package com.furianrt.mediaselector.internal.ui.selector.composables
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

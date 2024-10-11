@@ -84,7 +84,7 @@ private fun Counter(
     Text(
         modifier = modifier,
         textAlign = TextAlign.Center,
-        text = stringResource(R.string.media_view_counter_pattern, currentIndex + 1, total),
+        text = stringResource(uiR.string.media_counter_pattern, currentIndex + 1, total),
         style = MaterialTheme.typography.titleMedium,
     )
 }
@@ -114,7 +114,7 @@ private fun Menu(
             },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_save),
+                    painter = painterResource(R.drawable.ic_download),
                     tint = Color.Unspecified,
                     contentDescription = null,
                 )

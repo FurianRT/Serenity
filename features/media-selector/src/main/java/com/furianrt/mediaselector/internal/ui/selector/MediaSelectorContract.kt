@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui
+package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import com.furianrt.core.mapImmutable
@@ -41,9 +41,15 @@ internal sealed interface MediaSelectorEvent {
     data object OnMediaPermissionsSelected : MediaSelectorEvent
     data class OnSelectItemClick(val item: MediaItem) : MediaSelectorEvent
     data object OnSendClick : MediaSelectorEvent
+    data class OnMediaClick(val id: Long) : MediaSelectorEvent
 }
 
 internal sealed interface MediaSelectorEffect {
     data object RequestMediaPermissions : MediaSelectorEffect
     data object CloseScreen : MediaSelectorEffect
+    data class OpenMediaViewer(
+        val dialogId: Int,
+        val requestId: String,
+        val mediaId: Long,
+    ) : MediaSelectorEffect
 }

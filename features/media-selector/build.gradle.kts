@@ -45,4 +45,9 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.zoom)
+
+    implementation(libs.exoplayer)
+    implementation(libs.exoplayerUi)
 }

@@ -1,18 +1,21 @@
-package com.furianrt.mediaselector.internal.ui.composables
+package com.furianrt.mediaselector.internal.ui.selector.composables
 
 import android.net.Uri
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -32,8 +35,9 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 @Composable
 internal fun VideoItem(
     item: MediaItem.Video,
-    onSelectClick: (item: MediaItem.Video) -> Unit,
     modifier: Modifier = Modifier,
+    onSelectClick: (item: MediaItem.Video) -> Unit = {},
+    onClick: (item: MediaItem.Video) -> Unit = {},
 ) {
     val imageScaleValue by animateFloatAsState(
         targetValue = if (item.isSelected) Constants.SELECTED_ITEM_SCALE else 1f,
@@ -52,7 +56,12 @@ internal fun VideoItem(
             .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
             .build()
     }
-    Box(modifier = modifier.aspectRatio(1f)) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(2.dp))
+            .clickable { onClick(item) },
+    ) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
@@ -95,7 +104,6 @@ private fun Preview() {
                 state = SelectionState.Selected(1),
                 duration = 10 * 60 * 1000,
             ),
-            onSelectClick = {},
         )
     }
 }

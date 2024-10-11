@@ -1,4 +1,4 @@
-package com.furianrt.mediaselector.internal.ui
+package com.furianrt.mediaselector.internal.ui.selector
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -31,11 +31,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.mediaselector.R
-import com.furianrt.mediaselector.internal.ui.MediaSelectorEvent.OnPartialAccessMessageClick
-import com.furianrt.mediaselector.internal.ui.composables.ImageItem
-import com.furianrt.mediaselector.internal.ui.composables.PermissionsMessage
-import com.furianrt.mediaselector.internal.ui.composables.SelectedCountHint
-import com.furianrt.mediaselector.internal.ui.composables.VideoItem
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.selector.composables.ImageItem
+import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
+import com.furianrt.mediaselector.internal.ui.selector.composables.SelectedCountHint
+import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.components.ActionButton
@@ -91,6 +91,7 @@ internal fun SuccessContent(
                         ),
                         item = item,
                         onSelectClick = { onEvent(MediaSelectorEvent.OnSelectItemClick(it)) },
+                        onClick = { onEvent(MediaSelectorEvent.OnMediaClick(it.id)) },
                     )
 
                     is MediaItem.Video -> VideoItem(
@@ -102,6 +103,7 @@ internal fun SuccessContent(
                         ),
                         item = item,
                         onSelectClick = { onEvent(MediaSelectorEvent.OnSelectItemClick(it)) },
+                        onClick = { onEvent(MediaSelectorEvent.OnMediaClick(it.id)) },
                     )
                 }
             }

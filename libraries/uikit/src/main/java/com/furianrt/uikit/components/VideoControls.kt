@@ -1,4 +1,4 @@
-package com.furianrt.mediaview.internal.ui.composables
+package com.furianrt.uikit.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -36,14 +36,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.furianrt.mediaview.R
+import com.furianrt.uikit.R
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
-internal fun ButtonPlayPause(
+fun ButtonPlayPause(
     isPlay: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -75,7 +75,7 @@ internal fun ButtonPlayPause(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun VideoSlider(
+fun VideoSlider(
     value: Float,
     valueRange: ClosedFloatingPointRange<Float>,
     modifier: Modifier = Modifier,
@@ -112,7 +112,7 @@ internal fun VideoSlider(
 }
 
 @Composable
-internal fun ControlsAnimatedVisibility(
+fun ControlsAnimatedVisibility(
     visible: Boolean,
     label: String,
     modifier: Modifier = Modifier,
