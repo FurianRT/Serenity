@@ -1,5 +1,8 @@
 package com.furianrt.mediaview.api
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -23,7 +26,9 @@ fun NavController.navigateToMediaView(
 fun NavGraphBuilder.mediaViewScreen(
     onCloseRequest: () -> Unit,
 ) {
-    composable<MediaViewRoute> {
-        MediaViewScreen(onCloseRequest)
-    }
+    composable<MediaViewRoute>(
+        enterTransition = { fadeIn(animationSpec = tween(500)) },
+        exitTransition = { fadeOut(animationSpec = tween(500)) },
+        content = { MediaViewScreen(onCloseRequest) },
+    )
 }

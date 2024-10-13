@@ -1,25 +1,29 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.navigation.toRoute
 import com.furianrt.core.hasItem
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.repositories.MediaRepository
-import com.furianrt.mediaselector.api.MediaSelectorRoute
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.*
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.*
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaSelectorResult
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.CloseScreen
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.OpenMediaViewer
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.RequestMediaPermissions
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.SendMediaResult
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCloseScreenRequest
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaPermissionsSelected
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSelectItemClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSendClick
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
-import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import com.furianrt.uikit.utils.DialogResultListener
@@ -36,7 +40,6 @@ private const val MEDIA_VIEWER_DIALOG_ID = 1
 
 @HiltViewModel
 internal class MediaSelectorViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaRepository: MediaRepository,
     private val permissionsUtils: PermissionsUtils,
@@ -48,8 +51,6 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
-
-    private val route = savedStateHandle.toRoute<MediaSelectorRoute>()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -76,7 +77,6 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> loadMediaItems()
             is OnSelectItemClick -> toggleItemSelection(event.item)
-            is OnSendClick -> saveMedia()
             is OnMediaClick -> _effect.tryEmit(
                 OpenMediaViewer(
                     dialogId = MEDIA_VIEWER_DIALOG_ID,
@@ -84,12 +84,35 @@ internal class MediaSelectorViewModel @Inject constructor(
                     mediaId = event.id,
                 )
             )
+
+            is OnSendClick -> {
+                _effect.tryEmit(
+                    SendMediaResult(mediaCoordinator.getSelectedMedia().toMediaSelectorResult()),
+                )
+                _effect.tryEmit(CloseScreen)
+                mediaCoordinator.unselectAllMedia()
+                _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                    currentState.setSelectedItems(emptyList())
+                }
+            }
+
+            is OnCloseScreenRequest -> {
+                _effect.tryEmit(CloseScreen)
+                mediaCoordinator.unselectAllMedia()
+                _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                    currentState.setSelectedItems(emptyList())
+                }
+            }
         }
     }
 
     private fun loadMediaItems() {
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
+            mediaCoordinator.unselectAllMedia()
+            _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                currentState.setSelectedItems(emptyList())
+            }
             return
         }
         launch {
@@ -137,18 +160,5 @@ internal class MediaSelectorViewModel @Inject constructor(
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
             currentState.setSelectedItems(mediaCoordinator.getSelectedMedia())
         }
-    }
-
-    private fun saveMedia() {
-        dialogResultCoordinator.onDialogResult(
-            dialogIdentifier = DialogIdentifier(
-                dialogId = route.dialogId,
-                requestId = route.requestId,
-            ),
-            code = DialogResult.Ok(
-                data = mediaCoordinator.getSelectedMedia().toMediaSelectorResult(),
-            ),
-        )
-        _effect.tryEmit(CloseScreen)
     }
 }

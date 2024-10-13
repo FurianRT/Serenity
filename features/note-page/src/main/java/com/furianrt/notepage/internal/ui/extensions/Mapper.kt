@@ -1,9 +1,9 @@
 package com.furianrt.notepage.internal.ui.extensions
 
-import com.furianrt.common.MediaResult
 import com.furianrt.core.mapImmutable
 import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.extensions.toRegularUiNoteTag
 import com.furianrt.notecontent.extensions.toUiNoteContent

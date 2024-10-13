@@ -1,7 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import com.furianrt.core.mapImmutable
+import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import kotlinx.collections.immutable.ImmutableList
@@ -13,7 +13,6 @@ internal sealed interface MediaSelectorUiState {
         val items: ImmutableList<MediaItem>,
         val selectedCount: Int,
         val showPartialAccessMessage: Boolean,
-        val listState: LazyGridState = LazyGridState(),
     ) : MediaSelectorUiState {
 
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
@@ -42,11 +41,13 @@ internal sealed interface MediaSelectorEvent {
     data class OnSelectItemClick(val item: MediaItem) : MediaSelectorEvent
     data object OnSendClick : MediaSelectorEvent
     data class OnMediaClick(val id: Long) : MediaSelectorEvent
+    data object OnCloseScreenRequest : MediaSelectorEvent
 }
 
 internal sealed interface MediaSelectorEffect {
     data object RequestMediaPermissions : MediaSelectorEffect
     data object CloseScreen : MediaSelectorEffect
+    data class SendMediaResult(val result: MediaResult) : MediaSelectorEffect
     data class OpenMediaViewer(
         val dialogId: Int,
         val requestId: String,

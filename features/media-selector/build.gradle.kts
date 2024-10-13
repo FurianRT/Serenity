@@ -23,6 +23,7 @@ dependencies {
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
+    implementation(libs.composeAnimation)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
@@ -33,6 +34,7 @@ dependencies {
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
+    implementation(libs.composeAnimation)
     ksp(libs.hiltCompiler)
 
     implementation(libs.immutableCollections)

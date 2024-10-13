@@ -1,13 +1,21 @@
 package com.furianrt.noteview.internal.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,20 +25,26 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
+import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.expand
 import com.furianrt.uikit.extensions.isExpanded
@@ -43,6 +57,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
 import me.onebone.toolbar.ScrollStrategy
 import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
@@ -66,7 +81,7 @@ internal fun rememberSuccessScreenState(): SuccessScreenState = remember { Succe
 @Composable
 internal fun NoteViewScreen(
     openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
-    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
+    openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteViewModel = hiltViewModel()
@@ -90,7 +105,7 @@ internal fun NoteViewScreen(
         uiState = uiState,
         onEvent = viewModel::onEvent,
         openMediaViewScreen = openMediaViewScreen,
-        openMediaSelectorScreen = openMediaSelectorScreen,
+        openMediaViewer = openMediaViewer,
     )
 }
 
@@ -100,7 +115,7 @@ private fun ScreenContent(
     uiState: NoteViewUiState,
     onEvent: (event: NoteViewEvent) -> Unit,
     openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
-    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
+    openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Surface(modifier = modifier) {
@@ -111,20 +126,21 @@ private fun ScreenContent(
                 uiState = uiState,
                 onEvent = onEvent,
                 openMediaViewScreen = openMediaViewScreen,
-                openMediaSelectorScreen = openMediaSelectorScreen,
+                openMediaViewer = openMediaViewer,
             )
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
     modifier: Modifier = Modifier,
     state: SuccessScreenState = rememberSuccessScreenState(),
-    onEvent: (event: NoteViewEvent) -> Unit = {},
     openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
-    openMediaSelectorScreen: (identifier: DialogIdentifier) -> Unit,
+    openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {
     val toolbarScaffoldState = rememberCollapsingToolbarScaffoldState()
     val pagerState = rememberPagerState(
@@ -132,17 +148,17 @@ private fun SuccessScreen(
         pageCount = { uiState.notes.count() },
     )
     val pageScreensStates = remember { mutableStateMapOf<Int, PageScreenState>() }
-    val currentPageScreenState = remember(pageScreensStates.size, pagerState.currentPage) {
+    val currentPageState = remember(pageScreensStates.size, pagerState.currentPage) {
         pageScreensStates[pagerState.currentPage]
     }
 
-    state.setOnSaveContentListener { currentPageScreenState?.saveContent() }
+    state.setOnSaveContentListener { currentPageState?.saveContent() }
 
-    val needToSnapToolbar by remember(currentPageScreenState) {
+    val needToSnapToolbar by remember(currentPageState) {
         derivedStateOf {
-            val isScrollInProgress = currentPageScreenState?.listState?.isScrollInProgress ?: false
+            val isScrollInProgress = currentPageState?.listState?.isScrollInProgress ?: false
             val isTitleScrollInProgress =
-                currentPageScreenState?.titleScrollState?.isScrollInProgress ?: false
+                currentPageState?.titleScrollState?.isScrollInProgress ?: false
             !isScrollInProgress &&
                     !isTitleScrollInProgress &&
                     toolbarScaffoldState.isInMiddleState &&
@@ -174,14 +190,16 @@ private fun SuccessScreen(
         onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
 
-    val isListAtTop by remember(currentPageScreenState) {
+    val isListAtTop by remember(currentPageState) {
         derivedStateOf {
-            currentPageScreenState?.listState?.firstVisibleItemIndex == 0 &&
-                    currentPageScreenState.listState.firstVisibleItemScrollOffset == 0
+            currentPageState?.listState?.firstVisibleItemIndex == 0 &&
+                    currentPageState.listState.firstVisibleItemScrollOffset == 0
         }
     }
 
     val hazeState = remember { HazeState() }
+
+    val scope = rememberCoroutineScope()
 
     CollapsingToolbarScaffold(
         modifier = modifier
@@ -196,25 +214,39 @@ private fun SuccessScreen(
             }
         },
         toolbar = {
-            Toolbar(
-                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                isInEditMode = uiState.isInEditMode,
-                date = date,
-                dropDownHazeState = hazeState,
-                onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
-                onBackButtonClick = {
-                    onEvent(
-                        NoteViewEvent.OnButtonBackClick(
-                            isContentSaved = !(currentPageScreenState?.hasContentChanged ?: false),
-                        ),
-                    )
-                },
-                onDateClick = {},
-                onDeleteClick = {
-                    val noteId = uiState.notes[pagerState.currentPage].id
-                    onEvent(NoteViewEvent.OnDeleteClick(noteId))
-                },
-            )
+            Box {
+                Toolbar(
+                    modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                    isInEditMode = uiState.isInEditMode,
+                    date = date,
+                    dropDownHazeState = hazeState,
+                    onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
+                    onBackButtonClick = {
+                        onEvent(
+                            NoteViewEvent.OnButtonBackClick(
+                                isContentSaved = !(currentPageState?.hasContentChanged
+                                    ?: false),
+                            ),
+                        )
+                    },
+                    onDateClick = {},
+                    onDeleteClick = {
+                        val noteId = uiState.notes[pagerState.currentPage].id
+                        onEvent(NoteViewEvent.OnDeleteClick(noteId))
+                    },
+                )
+                AnimatedVisibility(
+                    modifier = Modifier.zIndex(1f),
+                    visible = currentPageState?.bottomSheetState?.isVisible == true ||
+                            currentPageState?.bottomSheetState?.targetValue == SheetValue.Expanded,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    ToolbarDim {
+                        scope.launch { currentPageState?.bottomSheetState?.hide() }
+                    }
+                }
+            }
         },
     ) {
         HorizontalPager(
@@ -235,10 +267,25 @@ private fun SuccessScreen(
                 isNoteCreationMode = false,
                 onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },
                 openMediaViewScreen = openMediaViewScreen,
-                openMediaSelectorScreen = openMediaSelectorScreen,
+                openMediaViewer = openMediaViewer,
             )
         }
     }
+}
+
+@Composable
+private fun ToolbarDim(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(Color.Black.copy(alpha = 0.4f))
+            .windowInsetsPadding(WindowInsets.statusBars)
+            .height(ToolbarConstants.toolbarHeight)
+            .clickableNoRipple(onClick = onClick)
+    )
 }
 
 @Composable
@@ -258,8 +305,8 @@ private fun ScreenSuccessPreview() {
                 initialPageIndex = 0,
                 notes = persistentListOf(),
             ),
-            openMediaSelectorScreen = {},
             openMediaViewScreen = { _, _, _ -> },
+            openMediaViewer = {},
         )
     }
 }

@@ -12,13 +12,19 @@ import androidx.compose.animation.slideOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -51,11 +57,13 @@ private const val ACTION_PANEL_ANIM_DURATION = 250
 @Composable
 internal fun SuccessContent(
     uiState: MediaSelectorUiState.Success,
+    listState: LazyGridState,
     onEvent: (event: MediaSelectorEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hazeState = remember { HazeState() }
     val listSpanCount = 3
+    val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,
@@ -64,11 +72,15 @@ internal fun SuccessContent(
             modifier = Modifier
                 .fillMaxSize()
                 .haze(state = hazeState),
-            state = uiState.listState,
+            state = listState,
             columns = GridCells.Fixed(listSpanCount),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
-            contentPadding = PaddingValues(start = 4.dp, end = 4.dp, bottom = 56.dp),
+            contentPadding = PaddingValues(
+                start = 4.dp,
+                end = 4.dp,
+                bottom = 56.dp + bottomInsetPadding
+            ),
         ) {
             if (uiState.showPartialAccessMessage) {
                 item(span = { GridItemSpan(listSpanCount) }) {
@@ -129,7 +141,8 @@ internal fun SuccessContent(
                             blurRadius = 12.dp,
                         ),
                     )
-                    .padding(16.dp),
+                    .padding(16.dp)
+                    .windowInsetsPadding(WindowInsets.navigationBars),
                 count = uiState.selectedCount,
             )
         }
@@ -137,6 +150,7 @@ internal fun SuccessContent(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(end = 16.dp, bottom = 24.dp)
+                .windowInsetsPadding(WindowInsets.navigationBars)
                 .align(Alignment.BottomEnd),
             visible = uiState.selectedCount > 0,
             enter = fadeIn(animationSpec = tween(ACTION_PANEL_ANIM_DURATION)) + scaleIn(
@@ -162,6 +176,7 @@ private fun Preview() {
     SerenityTheme {
         SuccessContent(
             onEvent = {},
+            listState = rememberLazyGridState(),
             uiState = MediaSelectorUiState.Success(
                 items = buildImmutableList {
                     repeat(18) { index ->

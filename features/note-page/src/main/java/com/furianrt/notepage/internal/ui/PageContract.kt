@@ -1,5 +1,7 @@
 package com.furianrt.notepage.internal.ui
 
+import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteTag
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -32,6 +34,8 @@ internal sealed interface PageEvent {
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaShareClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
+    data class OnMediaSelected(val result: MediaResult) : PageEvent
+    data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
     data object OnOnSaveContentRequest : PageEvent
 }
@@ -40,7 +44,8 @@ internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
     data object FocusFirstTitle : PageEffect
-    data class OpenMediaSelector(val identifier: DialogIdentifier) : PageEffect
+    data object OpenMediaSelector : PageEffect
+    data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
     data class OpenMediaViewScreen(
         val noteId: String,

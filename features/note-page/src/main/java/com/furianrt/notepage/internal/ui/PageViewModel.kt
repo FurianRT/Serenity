@@ -4,10 +4,11 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.ViewModel
-import com.furianrt.common.MediaResult
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notecontent.entities.UiNoteContent
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.entities.UiNoteTag
@@ -15,6 +16,24 @@ import com.furianrt.notecontent.extensions.toLocalNoteContent
 import com.furianrt.notecontent.extensions.toLocalNoteTag
 import com.furianrt.notecontent.extensions.toRegular
 import com.furianrt.notepage.internal.domian.UpdateNoteContentUseCase
+import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
+import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
+import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.PageEvent.OnEditModeStateChange
+import com.furianrt.notepage.internal.ui.PageEvent.OnMediaClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnMediaPermissionsSelected
+import com.furianrt.notepage.internal.ui.PageEvent.OnMediaRemoveClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnMediaSelected
+import com.furianrt.notepage.internal.ui.PageEvent.OnMediaShareClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnOnSaveContentRequest
+import com.furianrt.notepage.internal.ui.PageEvent.OnOpenMediaViewerRequest
+import com.furianrt.notepage.internal.ui.PageEvent.OnSelectMediaClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnTagDoneEditing
+import com.furianrt.notepage.internal.ui.PageEvent.OnTagRemoveClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextCleared
+import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextEntered
+import com.furianrt.notepage.internal.ui.PageEvent.OnTitleFocusChange
+import com.furianrt.notepage.internal.ui.PageEvent.OnTitleTextChange
 import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -25,11 +44,6 @@ import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
-import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
-import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
-import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
-import com.furianrt.notepage.internal.ui.PageEvent.*
-import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -55,9 +69,8 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.util.UUID
 
-private const val MEDIA_SELECTOR_DIALOG_ID = 1
-private const val MEDIA_VIEW__DIALOG_ID = 2
-private const val TITLE_FOCUS_DELAY = 500L
+private const val MEDIA_VIEW_DIALOG_ID = 1
+private const val TITLE_FOCUS_DELAY = 350L
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
@@ -84,6 +97,8 @@ internal class PageViewModel @AssistedInject constructor(
             _effect.tryEmit(PageEffect.UpdateContentChangedState(value))
             field = value
         }
+
+    private var focusFirstTitle = isNoteCreationMode
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
@@ -113,21 +128,20 @@ internal class PageViewModel @AssistedInject constructor(
             is OnMediaClick -> openMediaViewScreen(event.media.name)
             is OnMediaRemoveClick -> removeMedia(setOf(event.media.name))
             is OnMediaShareClick -> {}
+            is OnOpenMediaViewerRequest -> _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
             is OnOnSaveContentRequest -> {
                 val successState = getSuccessState() ?: return
                 launch { saveNoteContent(successState) }
             }
+
+            is OnMediaSelected -> handleMediaSelectorResult(event.result)
         }
     }
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
         when (dialogId) {
-            MEDIA_SELECTOR_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
-                handleMediaSelectorResult(result.data as MediaResult)
-            }
-
-            MEDIA_VIEW__DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+            MEDIA_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 @Suppress("UNCHECKED_CAST")
                 removeMedia(result.data as Set<String>)
             }
@@ -251,14 +265,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
-            _effect.tryEmit(
-                OpenMediaSelector(
-                    identifier = DialogIdentifier(
-                        dialogId = MEDIA_SELECTOR_DIALOG_ID,
-                        requestId = noteId,
-                    ),
-                )
-            )
+            _effect.tryEmit(OpenMediaSelector)
         }
     }
 
@@ -266,14 +273,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(ShowPermissionsDeniedDialog)
         } else {
-            _effect.tryEmit(
-                OpenMediaSelector(
-                    identifier = DialogIdentifier(
-                        dialogId = MEDIA_SELECTOR_DIALOG_ID,
-                        requestId = noteId,
-                    ),
-                ),
-            )
+            _effect.tryEmit(OpenMediaSelector)
         }
     }
 
@@ -288,7 +288,7 @@ internal class PageViewModel @AssistedInject constructor(
                 noteId = noteId,
                 mediaName = mediaName,
                 identifier = DialogIdentifier(
-                    dialogId = MEDIA_VIEW__DIALOG_ID,
+                    dialogId = MEDIA_VIEW_DIALOG_ID,
                     requestId = noteId,
                 ),
             ),
@@ -335,10 +335,11 @@ internal class PageViewModel @AssistedInject constructor(
             return@updateState newState
         }
         val successState = getSuccessState()
-        if (isEnabled && successState?.isContentEmpty == true) {
+        if (focusFirstTitle && isEnabled && successState?.isContentEmpty == true) {
             launch {
                 delay(TITLE_FOCUS_DELAY)
                 _effect.tryEmit(PageEffect.FocusFirstTitle)
+                focusFirstTitle = false
             }
         }
     }

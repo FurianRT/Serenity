@@ -11,6 +11,7 @@ android {
 
 dependencies {
     implementation(projects.features.notePage)
+    implementation(projects.features.mediaSelector)
     
     implementation(projects.libraries.core)
     implementation(projects.libraries.domain)
@@ -23,6 +24,7 @@ dependencies {
     implementation(libs.composeActivity)
     implementation(libs.composeFoundation)
     implementation(libs.composeUi)
+    implementation(libs.composeAnimation)
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)

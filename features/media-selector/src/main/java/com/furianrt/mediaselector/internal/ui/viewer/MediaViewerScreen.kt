@@ -3,7 +3,11 @@ package com.furianrt.mediaselector.internal.ui.viewer
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -63,7 +67,7 @@ internal fun MediaViewerScreen(
         )
 
         is MediaViewerUiState.Loading -> Box(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.fillMaxSize(),
         )
     }
 }
@@ -82,7 +86,7 @@ private fun SuccessContent(
     val context = LocalContext.current
     var showControls by rememberSaveable { mutableStateOf(true) }
 
-    /*DisposableEffect(showControls) {
+    DisposableEffect(showControls) {
         val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
         if (showControls) {
             window.showSystemUi()
@@ -92,7 +96,7 @@ private fun SuccessContent(
         onDispose {
             window.showSystemUi()
         }
-    }*/
+    }
 
     Box(
         modifier = modifier
@@ -109,7 +113,8 @@ private fun SuccessContent(
         )
         ControlsAnimatedVisibility(
             modifier = Modifier
-                .align(Alignment.TopCenter),
+                .align(Alignment.TopCenter)
+                .windowInsetsPadding(WindowInsets.statusBars),
             visible = showControls,
             label = "ToolbarAnim",
         ) {
@@ -130,7 +135,8 @@ private fun SuccessContent(
         }
         ControlsAnimatedVisibility(
             modifier = Modifier
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
+                .windowInsetsPadding(WindowInsets.navigationBars),
             visible = showControls,
             label = "MediaListAnim",
         ) {
@@ -165,7 +171,7 @@ private fun Preview() {
                         name = "2",
                         uri = Uri.EMPTY,
                         ratio = 1f,
-                        state = SelectionState.Selected(1),
+                        state = SelectionState.Selected(order = 1),
                     ),
                     MediaItem.Image(
                         id = 3L,

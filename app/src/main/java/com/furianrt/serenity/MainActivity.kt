@@ -10,15 +10,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.LifecycleStartEffect
-import androidx.navigation.NavDestination.Companion.hasRoute
-import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.rememberNavController
-import com.furianrt.core.orFalse
-import com.furianrt.mediaselector.api.MediaSelectorRoute
-import com.furianrt.mediaselector.api.mediaSelectorDialog
 import com.furianrt.mediaselector.api.mediaViewerScreen
-import com.furianrt.mediaselector.api.navigateToMediaSelector
 import com.furianrt.mediaselector.api.navigateToMediaViewer
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.api.mediaViewScreen
@@ -89,18 +82,6 @@ internal class MainActivity : ComponentActivity() {
         setContent {
             SerenityTheme {
                 val navController = rememberNavController()
-
-                LifecycleStartEffect(lifecycleOwner = this, key1 = Unit) {
-                    val isMediaSelector = navController.currentDestination
-                        ?.hierarchy
-                        ?.any { it.hasRoute(MediaSelectorRoute::class) }
-                        .orFalse()
-                    if (isMediaSelector && permissionsUtils.mediaAccessDenied()) {
-                        navController.popBackStack()
-                    }
-                    onStopOrDispose {}
-                }
-
                 SerenityNavHost(navController = navController) {
                     noteListScreen(
                         openSettingsScreen = navController::navigateToSettings,
@@ -134,14 +115,7 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             )
                         },
-                        openMediaSelectorScreen = { identifier ->
-                            navController.navigateToMediaSelector(
-                                route = MediaSelectorRoute(
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
+                        openMediaViewer = navController::navigateToMediaViewer,
                         onCloseRequest = navController::navigateUp,
                     )
 
@@ -156,14 +130,7 @@ internal class MainActivity : ComponentActivity() {
                                 ),
                             )
                         },
-                        openMediaSelectorScreen = { identifier ->
-                            navController.navigateToMediaSelector(
-                                route = MediaSelectorRoute(
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
+                        openMediaViewer = navController::navigateToMediaViewer,
                         onCloseRequest = navController::navigateUp,
                     )
 
@@ -172,11 +139,6 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     mediaViewScreen(
-                        onCloseRequest = navController::navigateUp,
-                    )
-
-                    mediaSelectorDialog(
-                        openMediaViewer = navController::navigateToMediaViewer,
                         onCloseRequest = navController::navigateUp,
                     )
 
