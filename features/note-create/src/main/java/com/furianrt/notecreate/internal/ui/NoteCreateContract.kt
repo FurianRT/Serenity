@@ -10,7 +10,8 @@ internal data class NoteCreateUiState(
 internal sealed interface NoteCreateEvent {
     data object OnButtonEditClick : NoteCreateEvent
     data object OnPageTitleFocusChange : NoteCreateEvent
-    data class OnButtonBackClick(val isContentSaved: Boolean) : NoteCreateEvent
+    data object OnButtonBackClick : NoteCreateEvent
+    data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
 }
 
 internal sealed interface NoteCreateEffect {

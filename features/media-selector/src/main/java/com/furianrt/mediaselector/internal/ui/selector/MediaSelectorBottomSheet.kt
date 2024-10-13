@@ -1,11 +1,17 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.PredictiveBackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -26,6 +32,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -41,11 +49,13 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.coroutines.cancellation.CancellationException
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -102,9 +112,19 @@ internal fun MediaSelectorBottomSheetInternal(
             }
     }
 
+    val translationYAnim = remember { Animatable(0f) }
+    var bottomSheetTranslationY by remember(translationYAnim) {
+        mutableStateOf(translationYAnim.value.dp)
+    }
+
     LaunchedEffect(state.bottomSheetState.isVisible) {
         val isBottomSheetVisible = state.bottomSheetState.isVisible
         val selectedCount = (uiState as? MediaSelectorUiState.Success)?.selectedCount ?: 0
+        if (isBottomSheetVisible) {
+            viewModel.onEvent(MediaSelectorEvent.OnExpanded)
+        } else {
+            bottomSheetTranslationY = 0.dp
+        }
         when {
             !isBottomSheetVisible && selectedCount > 0 && !skipConfirmation -> {
                 state.bottomSheetState.expand()
@@ -138,6 +158,7 @@ internal fun MediaSelectorBottomSheetInternal(
         containerColor = Color.Transparent,
         sheetSwipeEnabled = sheetSwipeEnabled,
         sheetShadowElevation = 0.dp,
+        sheetShape = RectangleShape,
         sheetDragHandle = {},
         snackbarHost = {},
         content = { paddingValues ->
@@ -161,28 +182,45 @@ internal fun MediaSelectorBottomSheetInternal(
             }
         },
         sheetContent = {
-            DragHandle(
+            Column(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
-                    .then(backgroundModifier),
-            )
-            when (uiState) {
-                is MediaSelectorUiState.Loading -> LoadingContent(
-                    modifier = backgroundModifier,
+                    .graphicsLayer {
+                        translationY = bottomSheetTranslationY.toPx()
+                    },
+            ) {
+                DragHandle(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                        .then(backgroundModifier),
                 )
+                AnimatedContent(
+                    targetState = uiState,
+                    transitionSpec = {
+                        fadeIn(animationSpec = tween(durationMillis = 300))
+                            .togetherWith(fadeOut(animationSpec = tween(durationMillis = 300)))
+                    },
+                    contentKey = { it::class.simpleName },
+                    label = "StateAnim",
+                ) { targetState ->
+                    when (targetState) {
+                        is MediaSelectorUiState.Loading -> LoadingContent(
+                            modifier = backgroundModifier,
+                        )
 
-                is MediaSelectorUiState.Empty -> EmptyContent(
-                    modifier = backgroundModifier,
-                    uiState = uiState,
-                    onEvent = viewModel::onEvent,
-                )
+                        is MediaSelectorUiState.Empty -> EmptyContent(
+                            modifier = backgroundModifier,
+                            uiState = targetState,
+                            onEvent = viewModel::onEvent,
+                        )
 
-                is MediaSelectorUiState.Success -> SuccessContent(
-                    modifier = backgroundModifier.padding(bottom = bottomPadding),
-                    uiState = uiState,
-                    listState = listState,
-                    onEvent = viewModel::onEvent,
-                )
+                        is MediaSelectorUiState.Success -> SuccessContent(
+                            modifier = backgroundModifier.padding(bottom = bottomPadding),
+                            uiState = targetState,
+                            listState = listState,
+                            onEvent = viewModel::onEvent,
+                        )
+                    }
+                }
             }
         },
     )
@@ -199,8 +237,22 @@ internal fun MediaSelectorBottomSheetInternal(
         )
     }
 
+    PredictiveBackHandler(
+        enabled = state.bottomSheetState.isVisible && isGestureNavigationEnabled(),
+        onBack = { progress ->
+            try {
+                progress.collect { event ->
+                    bottomSheetTranslationY = (100f * event.progress).dp
+                }
+                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
+            } catch (e: CancellationException) {
+                translationYAnim.animateTo(0f)
+            }
+        },
+    )
+
     BackHandler(
-        enabled = state.bottomSheetState.isVisible,
+        enabled = state.bottomSheetState.isVisible && !isGestureNavigationEnabled(),
         onBack = {
             if (uiState is MediaSelectorUiState.Success && uiState.selectedCount > 0) {
                 showConfirmDialog = true

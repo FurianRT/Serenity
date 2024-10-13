@@ -17,6 +17,7 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.OpenM
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.RequestMediaPermissions
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.SendMediaResult
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCloseScreenRequest
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpanded
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaPermissionsSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
@@ -52,9 +53,10 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
+    private var isDataLoaded = false
+
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
-        loadMediaItems()
     }
 
     override fun onCleared() {
@@ -103,6 +105,10 @@ internal class MediaSelectorViewModel @Inject constructor(
                     currentState.setSelectedItems(emptyList())
                 }
             }
+
+            is OnExpanded -> if (!isDataLoaded) {
+                loadMediaItems()
+            }
         }
     }
 
@@ -149,6 +155,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     )
                 }
             }
+            isDataLoaded = true
         }
     }
 

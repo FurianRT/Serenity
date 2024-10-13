@@ -155,7 +155,6 @@ internal fun NotePageScreenInternal(
     PageScreenContent(
         state = state,
         uiState = uiState,
-        noteId = noteId,
         onEvent = viewModel::onEvent,
         onFocusChange = onFocusChange,
     )
@@ -172,7 +171,6 @@ internal fun NotePageScreenInternal(
 private fun PageScreenContent(
     state: PageScreenState,
     uiState: PageUiState,
-    noteId: String,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,

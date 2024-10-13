@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.furianrt.mediaselector.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -42,6 +43,7 @@ internal fun PermissionsMessage(
         Text(
             modifier = Modifier.weight(1f),
             text = stringResource(R.string.media_selector_partial_access_message),
+            lineHeight = 24.sp,
             style = MaterialTheme.typography.labelMedium,
         )
         Icon(

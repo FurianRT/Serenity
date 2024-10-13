@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -162,7 +161,6 @@ private fun RegularNoteTagItem(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun TemplateNoteTagItem(
     tag: UiNoteTag.Template,
@@ -179,7 +177,7 @@ private fun TemplateNoteTagItem(
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
 
     val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
-    val focusMargin = with(LocalDensity.current) { 24.dp.toPx().toInt() }
+    val focusMargin = with(LocalDensity.current) { 56.dp.toPx().toInt() }
     LaunchedEffect(tag.textState.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
             bringIntoViewRequester.bringIntoView(

@@ -57,6 +57,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -106,9 +107,13 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     override fun onCleared() {
+        if (isInEditMode && hasContentChanged) {
+            getSuccessState()?.let { successState ->
+                launch(NonCancellable) { saveNoteContent(successState) }
+            }
+        }
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
         notesRepository.deleteNoteContentFromCache(noteId)
-        super.onCleared()
     }
 
     fun onEvent(event: PageEvent) {
@@ -132,7 +137,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
             is OnOnSaveContentRequest -> {
                 val successState = getSuccessState() ?: return
-                launch { saveNoteContent(successState) }
+                launch(NonCancellable) { saveNoteContent(successState) }
             }
 
             is OnMediaSelected -> handleMediaSelectorResult(event.result)
@@ -213,7 +218,12 @@ internal class PageViewModel @AssistedInject constructor(
                 )
                 val titleSecondPart = focusedTitle.also { title ->
                     title.state.edit {
-                        delete(start = 0, end = selection)
+                        val text = title.state.text
+                        if (text.substring(selection, text.length).isBlank()) {
+                            delete(0, text.length)
+                        } else {
+                            delete(start = 0, end = selection)
+                        }
                         placeCursorBeforeCharAt(0)
                     }
                 }
@@ -295,7 +305,7 @@ internal class PageViewModel @AssistedInject constructor(
         )
     }
 
-    private fun removeMedia(mediaNames: Set<String>) = launch {
+    private fun removeMedia(mediaNames: Set<String>) = launch(NonCancellable) {
         if (mediaNames.isEmpty()) {
             return@launch
         }
@@ -330,7 +340,7 @@ internal class PageViewModel @AssistedInject constructor(
                 isInEditMode = isEnabled,
             )
             if (!isEnabled) {
-                launch { saveNoteContent(newState) }
+                launch(NonCancellable) { saveNoteContent(newState) }
             }
             return@updateState newState
         }
@@ -385,6 +395,7 @@ internal class PageViewModel @AssistedInject constructor(
             content = state.content.map(UiNoteContent::toLocalNoteContent),
             tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
         )
+        hasContentChanged = false
     }
 
     private fun PageUiState.Success.addTag(

@@ -15,6 +15,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -39,21 +40,26 @@ internal class NoteViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<NoteViewEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
+    private var isContentChanged = false
+
     init {
         observeNotes()
+    }
+
+    override fun onCleared() {
+        if (isContentChanged) {
+            launch(NonCancellable) {
+                _effect.tryEmit(NoteViewEffect.SaveCurrentNoteContent)
+            }
+        }
     }
 
     fun onEvent(event: NoteViewEvent) {
         when (event) {
             is NoteViewEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
-            is NoteViewEvent.OnButtonBackClick -> {
-                if (!event.isContentSaved) {
-                    _effect.tryEmit(NoteViewEffect.SaveCurrentNoteContent)
-                }
-                _effect.tryEmit(NoteViewEffect.CloseScreen)
-            }
-
+            is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
+            is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)
             is NoteViewEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = DialogIdentifier(
                     requestId = route.requestId,

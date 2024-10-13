@@ -10,6 +10,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -38,6 +39,17 @@ internal class NoteCreateViewModel @Inject constructor(
         )
     }
 
+    private var isContentChanged = false
+
+    override fun onCleared() {
+        if (isContentChanged) {
+            launch(NonCancellable) {
+                saveNote()
+                _effect.emit(NoteCreateEffect.SaveCurrentNoteContent)
+            }
+        }
+    }
+
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
@@ -48,13 +60,8 @@ internal class NoteCreateViewModel @Inject constructor(
                 toggleEditMode()
             }
 
-            is NoteCreateEvent.OnButtonBackClick -> launch {
-                if (!event.isContentSaved) {
-                    saveNote()
-                    _effect.tryEmit(NoteCreateEffect.SaveCurrentNoteContent)
-                }
-                _effect.tryEmit(NoteCreateEffect.CloseScreen)
-            }
+            is NoteCreateEvent.OnButtonBackClick -> _effect.tryEmit(NoteCreateEffect.CloseScreen)
+            is NoteCreateEvent.OnContentChanged -> isContentChanged = event.isChanged
         }
     }
 

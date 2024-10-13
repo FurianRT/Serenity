@@ -38,6 +38,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
@@ -53,6 +54,7 @@ import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
@@ -185,8 +187,12 @@ private fun SuccessScreen(
         onEvent(NoteViewEvent.OnPageChange(pagerState.currentPage))
     }
 
+    LaunchedEffect(currentPageState?.hasContentChanged.orFalse()) {
+        onEvent(NoteViewEvent.OnContentChanged(currentPageState?.hasContentChanged.orFalse()))
+    }
+
     BackHandler(
-        enabled = uiState.isInEditMode,
+        enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
         onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
 
@@ -221,14 +227,7 @@ private fun SuccessScreen(
                     date = date,
                     dropDownHazeState = hazeState,
                     onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
-                    onBackButtonClick = {
-                        onEvent(
-                            NoteViewEvent.OnButtonBackClick(
-                                isContentSaved = !(currentPageState?.hasContentChanged
-                                    ?: false),
-                            ),
-                        )
-                    },
+                    onBackButtonClick = { onEvent(NoteViewEvent.OnButtonBackClick) },
                     onDateClick = {},
                     onDeleteClick = {
                         val noteId = uiState.notes[pagerState.currentPage].id

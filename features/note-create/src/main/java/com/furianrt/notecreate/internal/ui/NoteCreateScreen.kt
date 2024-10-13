@@ -44,6 +44,7 @@ import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import me.onebone.toolbar.CollapsingToolbarScaffold
@@ -98,23 +99,22 @@ private fun ScreenContent(
     onEvent: (event: NoteCreateEvent) -> Unit,
     notePage: @Composable () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    BackHandler(
+        enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
+        onBack = { onEvent(NoteCreateEvent.OnButtonBackClick) },
+    )
+
+    LaunchedEffect(state.hasContentChanged) {
+        onEvent(NoteCreateEvent.OnContentChanged(state.hasContentChanged))
+    }
+
     val isListAtTop by remember {
         derivedStateOf {
             state.listState.firstVisibleItemIndex == 0 &&
                     state.listState.firstVisibleItemScrollOffset == 0
         }
     }
-    val scope = rememberCoroutineScope()
-    BackHandler(
-        enabled = uiState.isInEditMode,
-        onBack = {
-            onEvent(
-                NoteCreateEvent.OnButtonBackClick(
-                    isContentSaved = !state.hasContentChanged,
-                ),
-            )
-        },
-    )
     Surface {
         CollapsingToolbarScaffold(
             modifier = Modifier.fillMaxSize(),
@@ -133,13 +133,7 @@ private fun ScreenContent(
                         isInEditMode = uiState.isInEditMode,
                         timestamp = uiState.note.timestamp,
                         onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
-                        onBackButtonClick = {
-                            onEvent(
-                                NoteCreateEvent.OnButtonBackClick(
-                                    isContentSaved = !state.hasContentChanged,
-                                ),
-                            )
-                        },
+                        onBackButtonClick = { onEvent(NoteCreateEvent.OnButtonBackClick) },
                         onDateClick = {},
                     )
                     AnimatedVisibility(

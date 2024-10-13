@@ -3,12 +3,10 @@ package com.furianrt.mediaselector.api
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import com.furianrt.mediaselector.internal.ui.viewer.MediaViewerScreen
 import kotlinx.serialization.Serializable
 
