@@ -21,6 +21,7 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpa
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaPermissionsSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnScreenResumed
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSelectItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSendClick
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -104,9 +105,14 @@ internal class MediaSelectorViewModel @Inject constructor(
                 _state.updateState<MediaSelectorUiState.Success> { currentState ->
                     currentState.setSelectedItems(emptyList())
                 }
+                isDataLoaded = false
             }
 
             is OnExpanded -> if (!isDataLoaded) {
+                loadMediaItems()
+            }
+
+            is OnScreenResumed -> if (isDataLoaded) {
                 loadMediaItems()
             }
         }

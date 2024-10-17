@@ -1,6 +1,5 @@
 package com.furianrt.notecontent.composables
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -37,7 +36,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NoteContentTitle(
     title: UiNoteContent.Title,
@@ -111,7 +109,6 @@ fun NoteContentTitle(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 suspend fun BringIntoViewRequester.bringIntoView(
     textResult: TextLayoutResult?,
     selection: TextRange,

@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -56,6 +57,9 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.coroutines.cancellation.CancellationException
+
+private const val CONTENT_ANIM_DURATION = 300
+private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -112,17 +116,20 @@ internal fun MediaSelectorBottomSheetInternal(
             }
     }
 
+    LifecycleStartEffect(Unit) {
+        viewModel.onEvent(MediaSelectorEvent.OnScreenResumed)
+        onStopOrDispose {}
+    }
+
     val translationYAnim = remember { Animatable(0f) }
     var bottomSheetTranslationY by remember(translationYAnim) {
         mutableStateOf(translationYAnim.value.dp)
     }
 
-    LaunchedEffect(state.bottomSheetState.isVisible) {
-        val isBottomSheetVisible = state.bottomSheetState.isVisible
+    val isBottomSheetVisible = state.bottomSheetState.isVisible
+    LaunchedEffect(isBottomSheetVisible) {
         val selectedCount = (uiState as? MediaSelectorUiState.Success)?.selectedCount ?: 0
-        if (isBottomSheetVisible) {
-            viewModel.onEvent(MediaSelectorEvent.OnExpanded)
-        } else {
+        if (!isBottomSheetVisible) {
             bottomSheetTranslationY = 0.dp
         }
         when {
@@ -134,6 +141,12 @@ internal fun MediaSelectorBottomSheetInternal(
             !isBottomSheetVisible -> {
                 viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
             }
+        }
+    }
+
+    LaunchedEffect(state.bottomSheetState.targetValue) {
+        if (state.bottomSheetState.targetValue == SheetValue.Expanded) {
+            viewModel.onEvent(MediaSelectorEvent.OnExpanded)
         }
     }
 
@@ -165,7 +178,7 @@ internal fun MediaSelectorBottomSheetInternal(
             Box {
                 content(paddingValues)
                 AnimatedVisibility(
-                    visible = state.bottomSheetState.isVisible ||
+                    visible = isBottomSheetVisible ||
                             state.bottomSheetState.targetValue == SheetValue.Expanded,
                     enter = fadeIn(),
                     exit = fadeOut(),
@@ -196,8 +209,8 @@ internal fun MediaSelectorBottomSheetInternal(
                 AnimatedContent(
                     targetState = uiState,
                     transitionSpec = {
-                        fadeIn(animationSpec = tween(durationMillis = 300))
-                            .togetherWith(fadeOut(animationSpec = tween(durationMillis = 300)))
+                        fadeIn(tween(CONTENT_ANIM_DURATION))
+                            .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
                     },
                     contentKey = { it::class.simpleName },
                     label = "StateAnim",
@@ -238,11 +251,11 @@ internal fun MediaSelectorBottomSheetInternal(
     }
 
     PredictiveBackHandler(
-        enabled = state.bottomSheetState.isVisible && isGestureNavigationEnabled(),
+        enabled = isBottomSheetVisible && isGestureNavigationEnabled(),
         onBack = { progress ->
             try {
                 progress.collect { event ->
-                    bottomSheetTranslationY = (100f * event.progress).dp
+                    bottomSheetTranslationY = PREDICTIVE_BACK_TRANSLATION * event.progress
                 }
                 viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
             } catch (e: CancellationException) {
@@ -252,7 +265,7 @@ internal fun MediaSelectorBottomSheetInternal(
     )
 
     BackHandler(
-        enabled = state.bottomSheetState.isVisible && !isGestureNavigationEnabled(),
+        enabled = isBottomSheetVisible && !isGestureNavigationEnabled(),
         onBack = {
             if (uiState is MediaSelectorUiState.Success && uiState.selectedCount > 0) {
                 showConfirmDialog = true

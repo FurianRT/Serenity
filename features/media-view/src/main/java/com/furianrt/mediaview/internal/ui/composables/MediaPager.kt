@@ -1,6 +1,5 @@
 package com.furianrt.mediaview.internal.ui.composables
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -49,9 +48,8 @@ import kotlinx.coroutines.delay
 import androidx.media3.common.MediaItem as ExoMediaItem
 
 private const val SCALE_MULTIPLIER = 1.8f
-private const val SLIDER_UPDATE_INTERVAL = 200L
+private const val SLIDER_UPDATE_INTERVAL = 25L
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MediaPager(
     media: ImmutableList<MediaItem>,
@@ -156,8 +154,8 @@ internal fun VideoPage(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 isEnded = playbackState == ExoPlayer.STATE_ENDED
                 if (isEnded) {
-                    playing = false
                     currentPosition = exoPlayer.currentPosition
+                    playing = false
                 }
             }
         }
@@ -215,7 +213,7 @@ internal fun VideoPage(
             label = "ButtonPlayPauseAnim",
         ) {
             ButtonPlayPause(
-                isPlay = !playing,
+                isPlay = !playing || isEnded,
                 onClick = {
                     if (!playing && isEnded) {
                         exoPlayer.seekTo(0)

@@ -43,7 +43,7 @@ internal sealed interface PageEvent {
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowPermissionsDeniedDialog : PageEffect
-    data object FocusFirstTitle : PageEffect
+    data class FocusFirstTitle(val index: Int) : PageEffect
     data object OpenMediaSelector : PageEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect

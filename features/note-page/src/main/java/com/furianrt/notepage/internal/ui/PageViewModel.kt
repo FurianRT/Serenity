@@ -155,6 +155,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun handleMediaSelectorResult(result: MediaResult) {
         hasContentChanged = true
+        val titleIndexToFocus = findTitleIndex(focusedTitleId)?.let { it + 2 }
         _state.updateState<PageUiState.Success> { currentState ->
             val newMediaBlock = result.toMediaBlock()
             val newContent = buildContentWithNewMediaBlock(currentState.content, newMediaBlock)
@@ -162,6 +163,12 @@ internal class PageViewModel @AssistedInject constructor(
                 currentState.copy(content = newContent.addTitleTemplates())
             } else {
                 currentState.copy(content = newContent)
+            }
+        }
+        if (titleIndexToFocus != null) {
+            launch {
+                delay(TITLE_FOCUS_DELAY)
+                _effect.tryEmit(PageEffect.FocusFirstTitle(titleIndexToFocus))
             }
         }
     }
@@ -181,10 +188,17 @@ internal class PageViewModel @AssistedInject constructor(
         val focusedTitle = content[focusedTitleIndex] as UiNoteContent.Title
         val selection = focusedTitle.state.selection.start
         return when {
-            selection == 0 -> content.toPersistentList().add(focusedTitleIndex, mediaBlock)
+            selection == 0 -> {
+                if (focusedTitle.state.text.startsWith(' ')) {
+                    focusedTitle.state.edit { delete(0, 1) }
+                }
+                content.toPersistentList().add(focusedTitleIndex, mediaBlock)
+            }
 
             selection >= focusedTitle.state.text.length -> {
-                val titleFirstPartText = if (focusedTitle.state.text.endsWith('\n')) {
+                val titleFirstPartText = if (focusedTitle.state.text.endsWith('\n') ||
+                    focusedTitle.state.text.endsWith(' ')
+                ) {
                     focusedTitle.state.text.dropLast(1)
                 } else {
                     focusedTitle.state.text
@@ -209,7 +223,9 @@ internal class PageViewModel @AssistedInject constructor(
                 val titleFirstPart = UiNoteContent.Title(
                     id = UUID.randomUUID().toString(),
                     state = TextFieldState(
-                        initialText = if (firstPartText.endsWith('\n')) {
+                        initialText = if (firstPartText.endsWith('\n') ||
+                            firstPartText.endsWith(' ')
+                        ) {
                             firstPartText.dropLast(1)
                         } else {
                             firstPartText
@@ -348,7 +364,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (focusFirstTitle && isEnabled && successState?.isContentEmpty == true) {
             launch {
                 delay(TITLE_FOCUS_DELAY)
-                _effect.tryEmit(PageEffect.FocusFirstTitle)
+                _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
                 focusFirstTitle = false
             }
         }

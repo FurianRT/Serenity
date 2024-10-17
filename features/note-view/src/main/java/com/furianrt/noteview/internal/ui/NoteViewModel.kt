@@ -15,7 +15,6 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -48,8 +47,8 @@ internal class NoteViewModel @Inject constructor(
 
     override fun onCleared() {
         if (isContentChanged) {
-            launch(NonCancellable) {
-                _effect.tryEmit(NoteViewEffect.SaveCurrentNoteContent)
+            launch {
+                _effect.emit(NoteViewEffect.SaveCurrentNoteContent)
             }
         }
     }

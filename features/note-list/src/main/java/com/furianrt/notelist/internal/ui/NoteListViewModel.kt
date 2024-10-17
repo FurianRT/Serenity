@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "MainViewModel"
@@ -89,6 +90,7 @@ internal class NoteListViewModel @Inject constructor(
             )
 
             is NoteListEvent.OnNoteLongClick -> launch {
+                this.launch {  }
                 deleteNoteUseCase(event.note.id)
             }
         }

@@ -49,6 +49,7 @@ internal fun Toolbar(
         CheckBox(
             modifier = Modifier.padding(end = 16.dp),
             state = selectionState,
+            size = 28.dp,
             onClick = onSelectClick,
         )
     }

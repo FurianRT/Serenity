@@ -135,7 +135,7 @@ internal fun NotePageScreenInternal(
                 is PageEffect.OpenMediaViewer -> openMediaViewer(effect.route)
 
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
-                is PageEffect.FocusFirstTitle -> state.focusFirstTitle()
+                is PageEffect.FocusFirstTitle -> state.focusTitle(effect.index)
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
                 }
@@ -210,8 +210,8 @@ private fun SuccessScreen(
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
     val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-    state.setOnFirstTitleFocusRequestListener {
-        focusRequesters.values.firstOrNull()?.requestFocus()
+    state.setOnTitleFocusRequestListener {
+        focusRequesters[it]?.requestFocus()
     }
 
     MediaSelectorBottomSheet(

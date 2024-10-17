@@ -2,6 +2,7 @@ package com.furianrt.mediaselector.internal.ui.selector.composables
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
@@ -20,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -30,10 +32,11 @@ internal fun CheckBox(
     state: SelectionState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    size: Dp = 24.dp,
 ) {
     Box(
         modifier = modifier
-            .size(24.dp)
+            .size(size)
             .clickableNoRipple(onClick = onClick),
     ) {
         AnimatedVisibility(
@@ -62,7 +65,7 @@ internal fun CheckBox(
         AnimatedVisibility(
             visible = state is SelectionState.Default,
             enter = fadeIn(),
-            exit = ExitTransition.None,
+            exit = fadeOut(tween(durationMillis = 200)),
             label = "CheckBoxAnim2",
         ) {
             Box(

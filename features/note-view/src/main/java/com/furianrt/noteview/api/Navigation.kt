@@ -1,11 +1,11 @@
 package com.furianrt.noteview.api
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
@@ -33,7 +33,7 @@ fun NavGraphBuilder.noteViewScreen(
     onCloseRequest: () -> Unit,
 ) {
     composable<NoteViewRoute>(
-        exitTransition = { scaleOut(animationSpec = tween(300), targetScale = 1.1f) },
+        exitTransition = { ExitTransition.None },
         popExitTransition = {
             slideOutOfContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Right,
@@ -44,9 +44,7 @@ fun NavGraphBuilder.noteViewScreen(
                 ),
             ) + fadeOut(animationSpec = tween(300))
         },
-        popEnterTransition = {
-            scaleIn(animationSpec = tween(300), initialScale = 1.1f)
-        },
+        popEnterTransition = { EnterTransition.None },
     ) {
         NoteViewScreen(
             openMediaViewScreen = openMediaViewScreen,
