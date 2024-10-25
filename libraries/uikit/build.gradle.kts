@@ -27,7 +27,7 @@ dependencies {
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
 
-    implementation(libs.collapsingToolbar)
-
     implementation(libs.blur)
+
+    implementation(libs.calendar)
 }

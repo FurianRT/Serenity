@@ -9,14 +9,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,45 +21,28 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
-import com.furianrt.uikit.extensions.isInMiddleState
-import com.furianrt.uikit.extensions.performSnap
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.launch
-import me.onebone.toolbar.CollapsingToolbarScaffoldState
-import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 private const val ANIM_BUTTON_SETTINGS_DURATION = 250
 private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
 
 @Composable
 internal fun Toolbar(
-    toolbarScaffoldState: CollapsingToolbarScaffoldState,
-    listState: LazyListState,
     onSettingsClick: () -> Unit,
     onSearchClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val needToSnap by remember {
-        derivedStateOf {
-            !listState.isScrollInProgress &&
-                toolbarScaffoldState.isInMiddleState &&
-                !toolbarScaffoldState.toolbarState.isScrollInProgress
-        }
-    }
-
-    LaunchedEffect(needToSnap) {
-        if (needToSnap) {
-            toolbarScaffoldState.performSnap()
-        }
-    }
-
     Row(
-        modifier = Modifier
+        modifier = modifier
             .windowInsetsPadding(WindowInsets.statusBars)
             .padding(horizontal = 16.dp)
-            .height(ToolbarConstants.toolbarHeight)
-            .fillMaxWidth(),
+            .height(ToolbarConstants.bigToolbarHeight)
+            .fillMaxWidth()
+            .clickableNoRipple {},
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SearchBar(
@@ -112,8 +90,6 @@ private fun SettingsButton(
 private fun Preview() {
     SerenityTheme {
         Toolbar(
-            toolbarScaffoldState = rememberCollapsingToolbarScaffoldState(),
-            listState = rememberLazyListState(),
             onSettingsClick = {},
             onSearchClick = {},
         )

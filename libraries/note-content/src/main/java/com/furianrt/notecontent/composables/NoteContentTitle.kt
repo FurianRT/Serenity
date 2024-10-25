@@ -24,13 +24,16 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.cursorCoordinates
+import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -42,7 +45,6 @@ fun NoteContentTitle(
     modifier: Modifier = Modifier,
     focusRequester: FocusRequester = FocusRequester(),
     scrollState: ScrollState = rememberScrollState(),
-    focusOffset: Int = 0,
     hint: String? = null,
     isInEditMode: Boolean = false,
     onTitleFocused: (id: String) -> Unit = {},
@@ -53,15 +55,20 @@ fun NoteContentTitle(
 
     var hasFocus by remember { mutableStateOf(false) }
 
+    val view = LocalView.current
     val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
-    val focusMargin = with(LocalDensity.current) { 8.dp.toPx().toInt() } + focusOffset
+    val topFocusMargin = with(LocalDensity.current) {
+        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight()).toInt()
+    }
+    val bottomFocusMargin = with(LocalDensity.current) { 64.dp.toPx().toInt() }
     LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
             delay(50)
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = title.state.selection,
-                additionalOffset = focusMargin,
+                additionalTopOffset = topFocusMargin,
+                additionalBottomOffset = bottomFocusMargin,
             )
         }
     }
@@ -112,15 +119,16 @@ fun NoteContentTitle(
 suspend fun BringIntoViewRequester.bringIntoView(
     textResult: TextLayoutResult?,
     selection: TextRange,
-    additionalOffset: Int,
+    additionalTopOffset: Int,
+    additionalBottomOffset: Int,
 ) {
     val (top, bottom) = textResult?.cursorCoordinates(selection) ?: return
     bringIntoView(
         Rect(
             left = 0f,
-            top = top + additionalOffset,
+            top = top - additionalTopOffset,
             right = 0f,
-            bottom = bottom + additionalOffset,
+            bottom = bottom + additionalBottomOffset,
         ),
     )
 }

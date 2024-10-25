@@ -6,7 +6,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -29,24 +28,34 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
-import androidx.compose.ui.graphics.drawscope.clipRect
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
@@ -67,8 +76,9 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.offsetYInverted
+import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -133,7 +143,6 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.OpenMediaViewer -> openMediaViewer(effect.route)
-
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
                 is PageEffect.FocusFirstTitle -> state.focusTitle(effect.index)
                 is PageEffect.RequestStoragePermissions -> {
@@ -200,18 +209,45 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
+    var toolsPanelHeight by remember { mutableStateOf(0f) }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
+    val hazeState = remember { HazeState() }
+    val focusManager = LocalFocusManager.current
+    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
+    state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
+
     val isListAtTop by remember {
         derivedStateOf {
             state.listState.firstVisibleItemIndex == 0 &&
                     state.listState.firstVisibleItemScrollOffset == 0
         }
     }
-    val hazeState = remember { HazeState() }
-    val focusManager = LocalFocusManager.current
-    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-    state.setOnTitleFocusRequestListener {
-        focusRequesters[it]?.requestFocus()
+
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val statusBarHeight = density.run { remember { view.getStatusBarHeight().toDp() } }
+    val toolbarMargin = statusBarHeight + ToolbarConstants.toolbarHeight + 8.dp
+    var bgOffset by rememberSaveable { mutableStateOf(0f) }
+    val bgOffsetInverted = toolbarMargin - density.run { bgOffset.toDp() }
+    var totalScroll by rememberSaveable { mutableStateOf(0f) }
+    val bgScrollConnection = remember {
+        object : NestedScrollConnection {
+            override fun onPostScroll(
+                consumed: Offset,
+                available: Offset,
+                source: NestedScrollSource,
+            ): Offset {
+                val delta = consumed.y
+                totalScroll += delta
+                if (isListAtTop) {
+                    totalScroll = 0f
+                }
+                if (totalScroll in -density.run { toolbarMargin.toPx() }..0f) {
+                    bgOffset = -totalScroll
+                }
+                return super.onPostScroll(consumed, available, source)
+            }
+        }
     }
 
     MediaSelectorBottomSheet(
@@ -223,49 +259,66 @@ private fun SuccessScreen(
         onMediaSelected = remember {
             { result: MediaResult -> onEvent(PageEvent.OnMediaSelected(result)) }
         },
-        bottomPadding = LocalDensity.current.run { state.toolbarState.offsetYInverted.toDp() }
     ) {
-        Column(
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                .padding(horizontal = 8.dp)
                 .drawNoteBackground(
-                    shape = if (isListAtTop) {
-                        RoundedCornerShape(8.dp)
-                    } else {
-                        RoundedCornerShape(bottomEnd = 8.dp, bottomStart = 8.dp)
-                    },
+                    shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.tertiary,
                     density = LocalDensity.current,
+                    translationY = { bgOffsetInverted.toPx() },
                     height = {
                         if (uiState.isInEditMode) {
-                            toolsPanelRect.bottom - state.toolbarState.offsetYInverted
+                            toolsPanelRect.bottom - bgOffsetInverted.toPx()
                         } else {
-                            size.height
+                            size.height - bgOffsetInverted.toPx()
                         }
                     }
                 )
-                .haze(hazeState)
                 .imePadding(),
         ) {
             LazyColumn(
                 modifier = Modifier
-                    .weight(1f)
-                    .drawWithContent {
-                        clipRect(
-                            bottom = if (uiState.isInEditMode) {
-                                toolsPanelRect.top - state.toolbarState.offsetYInverted
-                            } else {
-                                size.height
-                            },
-                            block = { this@drawWithContent.drawContent() }
+                    .fillMaxSize()
+                    .nestedScroll(bgScrollConnection)
+                    .drawWithCache {
+                        val path = Path()
+                        val rect = size.toRect()
+                        val cornerRadius = CornerRadius(8.dp.toPx())
+                        path.addRoundRect(
+                            RoundRect(
+                                rect = rect.copy(
+                                    bottom = if (uiState.isInEditMode) {
+                                        toolsPanelRect.top + toolsPanelHeight
+                                    } else {
+                                        size.height
+                                    },
+                                ),
+                                bottomLeft = cornerRadius,
+                                bottomRight = cornerRadius,
+                            )
                         )
+                        onDrawWithContent {
+                            clipPath(path) {
+                                this@onDrawWithContent.drawContent()
+                            }
+                        }
                     }
+                    .haze(hazeState)
                     .clickableNoRipple { focusManager.clearFocus() },
                 state = state.listState,
                 contentPadding = PaddingValues(
-                    bottom = WindowInsets.navigationBars.asPaddingValues()
-                        .calculateBottomPadding() + 90.dp
+                    top = toolbarMargin,
+                    bottom = if (uiState.isInEditMode) {
+                        LocalDensity.current.run { toolsPanelHeight.toDp() } +
+                                WindowInsets.navigationBars.asPaddingValues()
+                                    .calculateBottomPadding() + 32.dp
+                    } else {
+                        WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 32.dp
+                    },
                 ),
                 verticalArrangement = Arrangement.spacedBy(2.dp),
             ) {
@@ -300,7 +353,6 @@ private fun SuccessScreen(
                             },
                             onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
                             scrollState = state.titleScrollState,
-                            focusOffset = state.toolbarState.toolbarState.minHeight,
                         )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
@@ -323,7 +375,6 @@ private fun SuccessScreen(
                                 .animateItem(),
                             tags = uiState.tags,
                             isEditable = uiState.isInEditMode,
-                            toolbarHeight = state.toolbarState.toolbarState.minHeight,
                             onTagRemoveClick = { onEvent(PageEvent.OnTagRemoveClick(it)) },
                             onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
                             onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
@@ -334,18 +385,22 @@ private fun SuccessScreen(
             }
             AnimatedVisibility(
                 modifier = Modifier
+                    .align(Alignment.BottomCenter)
                     .windowInsetsPadding(WindowInsets.navigationBars)
-                    .onGloballyPositioned { toolsPanelRect = it.boundsInParent() }
-                    .graphicsLayer { translationY = -state.toolbarState.offsetYInverted.toFloat() },
+                    .padding(bottom = 8.dp)
+                    .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
                 visible = uiState.isInEditMode,
-                enter = fadeIn(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                exit = fadeOut(animationSpec = tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
                 content = {
                     val titleState = remember(uiState.content, focusedTitleId) {
                         uiState.content
                             .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }?.state
                     }
                     ActionsPanel(
+                        modifier = Modifier
+                            .onGloballyPositioned { toolsPanelHeight = it.boundsInParent().height },
+                        hazeState = hazeState,
                         textFieldState = titleState ?: TextFieldState(),
                         onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                     )
@@ -359,18 +414,21 @@ private fun Modifier.drawNoteBackground(
     shape: Shape,
     color: Color,
     density: Density,
+    translationY: CacheDrawScope.() -> Float,
     height: CacheDrawScope.() -> Float,
 ) = drawWithCache {
     val resultSize = size.copy(height = height())
     onDrawBehind {
-        drawOutline(
-            outline = shape.createOutline(
-                size = resultSize,
-                layoutDirection = layoutDirection,
-                density = density
-            ),
-            color = color
-        )
+        translate(top = translationY()) {
+            drawOutline(
+                outline = shape.createOutline(
+                    size = resultSize,
+                    layoutDirection = layoutDirection,
+                    density = density
+                ),
+                color = color
+            )
+        }
     }
 }
 

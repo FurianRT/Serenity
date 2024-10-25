@@ -1,5 +1,6 @@
 package com.furianrt.uikit.extensions
 
+import android.view.View
 import android.view.Window
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.ime
@@ -8,6 +9,7 @@ import androidx.compose.runtime.IntState
 import androidx.compose.runtime.asIntState
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalDensity
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
@@ -33,3 +35,7 @@ fun Window.hideSystemUi() {
         systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 }
+
+fun View.getStatusBarHeight() = ViewCompat.getRootWindowInsets(this)
+    ?.getInsets(WindowInsetsCompat.Type.systemBars())
+    ?.top ?: 0

@@ -11,10 +11,14 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -35,7 +39,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -49,6 +52,7 @@ import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -68,8 +72,7 @@ internal fun MediaSelectorBottomSheetInternal(
     onMediaSelected: (result: MediaResult) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
-    bottomPadding: Dp = 0.dp,
-    content: @Composable (PaddingValues) -> Unit,
+    content: @Composable BoxScope.(PaddingValues) -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaSelectorViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
@@ -197,6 +200,8 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetContent = {
             Column(
                 modifier = Modifier
+                    .windowInsetsPadding(WindowInsets.statusBars)
+                    .padding(top = ToolbarConstants.toolbarHeight)
                     .graphicsLayer {
                         translationY = bottomSheetTranslationY.toPx()
                     },
@@ -227,7 +232,7 @@ internal fun MediaSelectorBottomSheetInternal(
                         )
 
                         is MediaSelectorUiState.Success -> SuccessContent(
-                            modifier = backgroundModifier.padding(bottom = bottomPadding),
+                            modifier = backgroundModifier,
                             uiState = targetState,
                             listState = listState,
                             onEvent = viewModel::onEvent,

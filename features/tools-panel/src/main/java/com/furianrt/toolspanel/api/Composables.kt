@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.api
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
@@ -15,10 +16,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.furianrt.toolspanel.internal.RegularPanelInternal
 import com.furianrt.toolspanel.internal.SelectedPanelInternal
+import com.furianrt.uikit.extensions.clickableNoRipple
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun ActionsPanel(
     textFieldState: TextFieldState,
+    hazeState: HazeState,
     onSelectMediaClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -27,23 +34,38 @@ fun ActionsPanel(
             textFieldState.selection.min != textFieldState.selection.max
         }
     }
-    AnimatedContent(
+    Box(
         modifier = modifier
+            .fillMaxWidth()
             .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp))
-            .background(MaterialTheme.colorScheme.tertiary)
-            .fillMaxWidth(),
-        targetState = hasMultiSelection,
-        label = "ActionsPanel"
-    ) { targetState ->
-        if (targetState) {
-            SelectedPanelInternal(
-                textFieldState = textFieldState,
+            .hazeChild(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint.Color(
+                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                    ),
+                    noiseFactor = 0f,
+                    blurRadius = 12.dp,
+                ),
             )
-        } else {
-            RegularPanelInternal(
-                textFieldState = textFieldState,
-                onSelectMediaClick = onSelectMediaClick,
-            )
+            .background(MaterialTheme.colorScheme.tertiaryContainer)
+            .clickableNoRipple {},
+    ) {
+        AnimatedContent(
+            targetState = hasMultiSelection,
+            label = "ActionsPanel"
+        ) { targetState ->
+            if (targetState) {
+                SelectedPanelInternal(
+                    textFieldState = textFieldState,
+                )
+            } else {
+                RegularPanelInternal(
+                    textFieldState = textFieldState,
+                    onSelectMediaClick = onSelectMediaClick,
+                )
+            }
         }
     }
 }

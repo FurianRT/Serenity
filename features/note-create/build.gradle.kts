@@ -39,7 +39,5 @@ dependencies {
 
     implementation(libs.immutableCollections)
 
-    implementation(libs.collapsingToolbar)
-
     implementation(libs.kotlinxSerializationJson)
 }

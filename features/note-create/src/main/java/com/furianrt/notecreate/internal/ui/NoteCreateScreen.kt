@@ -13,18 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -37,18 +33,16 @@ import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
+import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.drawBottomShadow
-import com.furianrt.uikit.extensions.isExpanded
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import me.onebone.toolbar.CollapsingToolbarScaffold
-import me.onebone.toolbar.ScrollStrategy
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,6 +94,7 @@ private fun ScreenContent(
     notePage: @Composable () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
+    val toolbarState = remember { MovableToolbarState() }
     BackHandler(
         enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
         onBack = { onEvent(NoteCreateEvent.OnButtonBackClick) },
@@ -109,49 +104,42 @@ private fun ScreenContent(
         onEvent(NoteCreateEvent.OnContentChanged(state.hasContentChanged))
     }
 
-    val isListAtTop by remember {
-        derivedStateOf {
-            state.listState.firstVisibleItemIndex == 0 &&
-                    state.listState.firstVisibleItemScrollOffset == 0
+    LaunchedEffect(uiState.isInEditMode) {
+        if (uiState.isInEditMode) {
+            toolbarState.expand()
         }
     }
-    Surface {
-        CollapsingToolbarScaffold(
-            modifier = Modifier.fillMaxSize(),
-            state = state.toolbarState,
-            scrollStrategy = ScrollStrategy.EnterAlways,
-            enabled = !uiState.isInEditMode || !state.toolbarState.isExpanded,
-            toolbarModifier = Modifier.drawBehind {
-                if (!isListAtTop) {
-                    drawBottomShadow(elevation = 8.dp)
+
+    MovableToolbarScaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+        state = toolbarState,
+        enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
+        listState = state.listState,
+        toolbar = {
+            Toolbar(
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                isInEditMode = uiState.isInEditMode,
+                timestamp = uiState.note.timestamp,
+                onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
+                onBackButtonClick = { onEvent(NoteCreateEvent.OnButtonBackClick) },
+                onDateClick = {},
+            )
+            AnimatedVisibility(
+                modifier = Modifier.zIndex(1f),
+                visible = state.bottomSheetState.isVisible ||
+                        state.bottomSheetState.targetValue == SheetValue.Expanded,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                ToolbarDim {
+                    scope.launch { state.bottomSheetState.hide() }
                 }
-            },
-            toolbar = {
-                Box {
-                    Toolbar(
-                        modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
-                        isInEditMode = uiState.isInEditMode,
-                        timestamp = uiState.note.timestamp,
-                        onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
-                        onBackButtonClick = { onEvent(NoteCreateEvent.OnButtonBackClick) },
-                        onDateClick = {},
-                    )
-                    AnimatedVisibility(
-                        modifier = Modifier.zIndex(1f),
-                        visible = state.bottomSheetState.isVisible ||
-                                state.bottomSheetState.targetValue == SheetValue.Expanded,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        ToolbarDim {
-                            scope.launch { state.bottomSheetState.hide() }
-                        }
-                    }
-                }
-            },
-            body = { notePage() },
-        )
-    }
+            }
+        },
+        content = { notePage() },
+    )
 }
 
 @Composable

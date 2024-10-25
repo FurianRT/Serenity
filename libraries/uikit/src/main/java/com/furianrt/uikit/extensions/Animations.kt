@@ -25,11 +25,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.round
 import kotlinx.coroutines.launch
 
-inline fun Modifier.clickableWithScaleAnim(
+fun Modifier.clickableWithScaleAnim(
     duration: Int = 250,
     maxScale: Float = 1.1f,
     indication: Indication? = null,
-    crossinline onClick: () -> Unit = {},
+    onClick: () -> Unit = {},
 ) = composed {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }

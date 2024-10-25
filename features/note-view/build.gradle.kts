@@ -38,8 +38,6 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.collapsingToolbar)
-
     implementation(libs.immutableCollections)
 
     implementation(libs.blur)

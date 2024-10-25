@@ -75,7 +75,6 @@ fun NoteTags(
     modifier: Modifier = Modifier,
     date: String? = null,
     isEditable: Boolean = false,
-    toolbarHeight: Int = 0,
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
     onTagRemoveClick: (tag: UiNoteTag.Regular) -> Unit = {},
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit = {},
@@ -106,7 +105,6 @@ fun NoteTags(
                         onDoneEditing = onDoneEditing,
                         onTextEntered = onTextEntered,
                         onTextCleared = onTextCleared,
-                        toolbarHeight = toolbarHeight,
                     )
                 }
             }
@@ -168,7 +166,6 @@ private fun TemplateNoteTagItem(
     onTextEntered: () -> Unit,
     onTextCleared: () -> Unit,
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit,
-    toolbarHeight: Int = 0,
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
@@ -177,13 +174,14 @@ private fun TemplateNoteTagItem(
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
 
     val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
-    val focusMargin = with(LocalDensity.current) { 56.dp.toPx().toInt() }
+    val focusMargin = with(LocalDensity.current) { 108.dp.toPx().toInt() }
     LaunchedEffect(tag.textState.selection, keyboardOffset, hasFocus) {
         if (hasFocus) {
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = tag.textState.selection,
-                additionalOffset = focusMargin + toolbarHeight,
+                additionalTopOffset = 0,
+                additionalBottomOffset = focusMargin,
             )
         }
     }

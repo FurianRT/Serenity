@@ -24,4 +24,6 @@ dependencies {
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
     implementation(libs.composeNavigation)
+
+    implementation(libs.blur)
 }

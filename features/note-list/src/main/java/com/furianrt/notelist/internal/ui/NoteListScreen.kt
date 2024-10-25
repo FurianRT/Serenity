@@ -1,6 +1,7 @@
 package com.furianrt.notelist.internal.ui
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,9 +9,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.material3.Surface
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -18,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,13 +33,12 @@ import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.NoteListItem
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
-import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
-import me.onebone.toolbar.CollapsingToolbarScaffold
-import me.onebone.toolbar.ScrollStrategy
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 
@@ -68,27 +68,6 @@ internal fun NoteListScreen(
                     is NoteListEffect.OpenNoteCreateScreen -> {
                         openNoteCreateScreen(effect.identifier)
                     }
-
-                    /*is NoteListEffect.OpenNoteViewScreen -> {
-                        navHostController.navigate(
-                            route = "Note/${effect.noteId}/${effect.dialogId}/${effect.requestId}",
-                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
-                        )
-                    }
-
-                    is NoteListEffect.OpenNoteCreateScreen -> {
-                        navHostController.navigate(
-                            route = "NoteCreate/${effect.dialogId}/${effect.requestId}",
-                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
-                        )
-                    }
-
-                    is NoteListEffect.OpenSettingsScreen -> {
-                        navHostController.navigate(
-                            route = "Settings",
-                            navOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
-                        )
-                    }*/
                 }
             }
     }
@@ -112,58 +91,41 @@ private fun MainScreenContent(
         }
     }
 
-    val isListAtTop by remember {
-        derivedStateOf {
-            screenState.listState.firstVisibleItemIndex == 0 &&
-                    screenState.listState.firstVisibleItemScrollOffset == 0
-        }
-    }
-
-    Surface {
-        Box(contentAlignment = Alignment.BottomCenter) {
-            CollapsingToolbarScaffold(
-                modifier = Modifier.fillMaxSize(),
-                state = screenState.toolbarState,
-                scrollStrategy = ScrollStrategy.EnterAlways,
-                toolbarModifier = Modifier.drawBehind {
-                    if (!isListAtTop) {
-                        drawBottomShadow()
-                    }
-                },
-                toolbar = {
-                    Toolbar(
-                        toolbarScaffoldState = screenState.toolbarState,
-                        listState = screenState.listState,
-                        onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
-                        onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
-                    )
-                },
-            ) {
-                when (uiState) {
-                    is NoteListUiState.Loading -> NoteListLoading()
-                    is NoteListUiState.Empty -> NoteListEmpty()
-                    is NoteListUiState.Success -> MainSuccess(
-                        uiState = uiState,
-                        screenState = screenState,
-                        onEvent = onEvent,
-                    )
-                }
-            }
-            BottomNavigationBar(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                contentPadding = PaddingValues(
-                    start = 24.dp,
-                    end = 24.dp,
-                    bottom = 24.dp,
-                ),
-                onScrollToTopClick = { onEvent(NoteListEvent.OnScrollToTopClick) },
-                needToHideNavigation = {
-                    uiState.hasNotes && screenState.listState.lastScrolledForward
-                },
-                needToShowScrollUpButton = { needToShowScrollUpButton },
-                onAddNoteClick = { onEvent(NoteListEvent.OnAddNoteClick) },
+    MovableToolbarScaffold(
+        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+        listState = screenState.listState,
+        state = screenState.toolbarState,
+        toolbar = {
+            Toolbar(
+                onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
+                onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
+            )
+        },
+    ) {
+        when (uiState) {
+            is NoteListUiState.Loading -> NoteListLoading()
+            is NoteListUiState.Empty -> NoteListEmpty()
+            is NoteListUiState.Success -> MainSuccess(
+                uiState = uiState,
+                screenState = screenState,
+                onEvent = onEvent,
             )
         }
+
+        BottomNavigationBar(
+            modifier = Modifier.align(Alignment.BottomEnd),
+            contentPadding = PaddingValues(
+                start = 24.dp,
+                end = 24.dp,
+                bottom = 24.dp,
+            ),
+            onScrollToTopClick = { onEvent(NoteListEvent.OnScrollToTopClick) },
+            needToHideNavigation = {
+                uiState.hasNotes && screenState.listState.lastScrolledForward
+            },
+            needToShowScrollUpButton = { needToShowScrollUpButton },
+            onAddNoteClick = { onEvent(NoteListEvent.OnAddNoteClick) },
+        )
     }
 }
 
@@ -172,6 +134,7 @@ private fun MainSuccess(
     uiState: NoteListUiState.Success,
     screenState: NoteListScreenState,
     onEvent: (event: NoteListEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -183,12 +146,13 @@ private fun MainSuccess(
     }
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         state = screenState.listState,
         contentPadding = PaddingValues(
             start = 8.dp,
             end = 8.dp,
-            top = 8.dp,
+            top = ToolbarConstants.bigToolbarHeight + 8.dp +
+                    WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
             bottom = navBarsHeight + 16.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -207,13 +171,17 @@ private fun MainSuccess(
 }
 
 @Composable
-private fun NoteListEmpty() {
-    Box(modifier = Modifier.fillMaxSize())
+private fun NoteListEmpty(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @Composable
-private fun NoteListLoading() {
-    Box(modifier = Modifier.fillMaxSize())
+private fun NoteListLoading(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @Preview

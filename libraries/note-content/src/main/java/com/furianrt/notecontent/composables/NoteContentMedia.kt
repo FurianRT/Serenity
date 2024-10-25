@@ -6,7 +6,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -62,6 +61,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
 import com.furianrt.uikit.R as uiR
@@ -146,7 +146,6 @@ fun NoteContentMedia(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun OneMediaHolder(
     media: MediaBlock.Media,
@@ -345,7 +344,6 @@ private fun ManyMediaHolder(
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MediaItem(
     media: MediaBlock.Media,
@@ -497,7 +495,8 @@ private fun PopUpMenu(
             .hazeChild(
                 state = hazeState,
                 style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint.Color(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)),
                     blurRadius = 12.dp,
                 ),
             ),

@@ -19,15 +19,12 @@ import androidx.compose.runtime.setValue
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notepage.internal.ui.NotePageScreenInternal
 import com.furianrt.uikit.utils.DialogIdentifier
-import me.onebone.toolbar.CollapsingToolbarScaffoldState
-import me.onebone.toolbar.rememberCollapsingToolbarScaffoldState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Stable
 class PageScreenState(
     val listState: LazyListState,
     val titleScrollState: ScrollState,
-    val toolbarState: CollapsingToolbarScaffoldState,
     val bottomScaffoldState: BottomSheetScaffoldState,
     hasContentChanged: Boolean,
 ) {
@@ -67,7 +64,6 @@ class PageScreenState(
         fun saver(
             listState: LazyListState,
             titleScrollState: ScrollState,
-            toolbarState: CollapsingToolbarScaffoldState,
             bottomScaffoldState: BottomSheetScaffoldState,
         ): Saver<PageScreenState, Boolean> = Saver(
             save = { it.hasContentChanged },
@@ -75,7 +71,6 @@ class PageScreenState(
                 PageScreenState(
                     listState = listState,
                     titleScrollState = titleScrollState,
-                    toolbarState = toolbarState,
                     bottomScaffoldState = bottomScaffoldState,
                     hasContentChanged = it,
                 )
@@ -89,7 +84,6 @@ class PageScreenState(
 fun rememberPageScreenState(
     listState: LazyListState = rememberLazyListState(),
     titleScrollState: ScrollState = rememberScrollState(),
-    toolbarState: CollapsingToolbarScaffoldState = rememberCollapsingToolbarScaffoldState(),
     bottomScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ),
@@ -97,14 +91,12 @@ fun rememberPageScreenState(
     saver = PageScreenState.saver(
         listState = listState,
         titleScrollState = titleScrollState,
-        toolbarState = toolbarState,
         bottomScaffoldState = bottomScaffoldState,
     ),
 ) {
     PageScreenState(
         listState = listState,
         titleScrollState = titleScrollState,
-        toolbarState = toolbarState,
         bottomScaffoldState = bottomScaffoldState,
         hasContentChanged = false,
     )
@@ -126,7 +118,7 @@ fun NotePageScreen(
         isInEditMode = isInEditMode,
         isNoteCreationMode = isNoteCreationMode,
         onFocusChange = onFocusChange,
-        openMediaViewer,
+        openMediaViewer = openMediaViewer,
         openMediaViewScreen = openMediaViewScreen,
     )
 }
