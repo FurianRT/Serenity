@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 private const val ITEM_VISIBILITY_THRESHOLD = 90f
 private const val ANIMATED_SCROLL_INDEX = 10
+private const val TOOLBAR_EXPAND_DURATION = 150
 
 @Stable
 internal class NoteListScreenState(
@@ -24,7 +25,7 @@ internal class NoteListScreenState(
             listState.scrollToItem(ANIMATED_SCROLL_INDEX)
         }
         launch { listState.animateScrollToItem(0) }
-        toolbarState.expand()
+        toolbarState.expand(TOOLBAR_EXPAND_DURATION)
     }
 
     suspend fun scrollToPosition(position: Int) {
@@ -33,7 +34,7 @@ internal class NoteListScreenState(
             .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {
             listState.scrollToItem(position)
-            toolbarState.expand()
+            toolbarState.expand(TOOLBAR_EXPAND_DURATION)
         }
     }
 }

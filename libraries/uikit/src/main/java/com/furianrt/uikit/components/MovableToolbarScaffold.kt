@@ -28,7 +28,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastRoundToInt
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.drawBottomShadow
@@ -46,14 +45,14 @@ private const val TOOLBAR_SNAP_DURATION = 350
 @Stable
 class MovableToolbarState {
 
-    private var onExpandRequest: () -> Unit = {}
+    private var onExpandRequest: (duration: Int) -> Unit = {}
 
-    fun setExpandRequestListener(callback: () -> Unit) {
+    fun setExpandRequestListener(callback: (duration: Int) -> Unit) {
         onExpandRequest = callback
     }
 
-    fun expand() {
-        onExpandRequest()
+    fun expand(duration: Int = TOOLBAR_SNAP_DURATION) {
+        onExpandRequest(duration)
     }
 }
 
@@ -71,6 +70,7 @@ fun MovableToolbarScaffold(
     var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
     val toolbarHeight = LocalDensity.current.run { ToolbarConstants.toolbarHeight.toPx() }
     val toolbarMaxScroll = toolbarHeight + statusBarHeight
+    var totalScroll by rememberSaveable { mutableFloatStateOf(0f) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -79,6 +79,7 @@ fun MovableToolbarScaffold(
                 source: NestedScrollSource,
             ): Offset {
                 val delta = consumed.y
+                totalScroll += delta
                 when {
                     !enabled -> Unit
 
@@ -104,11 +105,11 @@ fun MovableToolbarScaffold(
 
     val scope = rememberCoroutineScope()
 
-    state.setExpandRequestListener {
+    state.setExpandRequestListener { duration ->
         scope.launch {
             AnimationState(toolbarOffset).animateTo(
                 targetValue = 0f,
-                animationSpec = tween(TOOLBAR_SNAP_DURATION),
+                animationSpec = tween(duration),
                 block = { toolbarOffset = value },
             )
         }
@@ -143,11 +144,9 @@ fun MovableToolbarScaffold(
         }
     }
 
-    val showShadow by remember {
+    val showShadow by remember(listState) {
         derivedStateOf {
-            val offset = toolbarOffset.absoluteValue.fastRoundToInt()
-            listState.firstVisibleItemIndex != 0 ||
-                    listState.firstVisibleItemScrollOffset - offset > 1
+            (totalScroll - toolbarOffset).absoluteValue > 1 && !isListAtTop
         }
     }
 
