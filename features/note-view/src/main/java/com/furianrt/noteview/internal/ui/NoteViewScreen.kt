@@ -50,7 +50,6 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
-import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
@@ -160,7 +159,7 @@ private fun SuccessScreen(
     }
 
     BackHandler(
-        enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
+        enabled = uiState.isInEditMode,
         onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
 

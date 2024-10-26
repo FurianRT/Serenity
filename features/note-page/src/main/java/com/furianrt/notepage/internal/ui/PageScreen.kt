@@ -209,7 +209,6 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
-    var toolsPanelHeight by remember { mutableStateOf(0f) }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
@@ -291,7 +290,7 @@ private fun SuccessScreen(
                             RoundRect(
                                 rect = rect.copy(
                                     bottom = if (uiState.isInEditMode) {
-                                        toolsPanelRect.top + toolsPanelHeight
+                                        toolsPanelRect.bottom
                                     } else {
                                         size.height
                                     },
@@ -312,7 +311,7 @@ private fun SuccessScreen(
                 contentPadding = PaddingValues(
                     top = toolbarMargin,
                     bottom = if (uiState.isInEditMode) {
-                        LocalDensity.current.run { toolsPanelHeight.toDp() } +
+                        LocalDensity.current.run { toolsPanelRect.height.toDp() } +
                                 WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 32.dp
                     } else {
@@ -383,29 +382,31 @@ private fun SuccessScreen(
                     }
                 }
             }
-            AnimatedVisibility(
+            Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .windowInsetsPadding(WindowInsets.navigationBars)
                     .padding(bottom = 8.dp)
                     .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
-                visible = uiState.isInEditMode,
-                enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                content = {
-                    val titleState = remember(uiState.content, focusedTitleId) {
-                        uiState.content
-                            .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }?.state
+            ) {
+                AnimatedVisibility(
+                    visible = uiState.isInEditMode,
+                    enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                    exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                    content = {
+                        val titleState = remember(uiState.content, focusedTitleId) {
+                            uiState.content
+                                .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
+                                ?.state
+                        }
+                        ActionsPanel(
+                            hazeState = hazeState,
+                            textFieldState = titleState ?: TextFieldState(),
+                            onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+                        )
                     }
-                    ActionsPanel(
-                        modifier = Modifier
-                            .onGloballyPositioned { toolsPanelHeight = it.boundsInParent().height },
-                        hazeState = hazeState,
-                        textFieldState = titleState ?: TextFieldState(),
-                        onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
-                    )
-                }
-            )
+                )
+            }
         }
     }
 }

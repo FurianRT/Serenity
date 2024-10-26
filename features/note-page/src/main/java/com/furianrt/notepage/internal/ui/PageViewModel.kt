@@ -397,10 +397,7 @@ internal class PageViewModel @AssistedInject constructor(
                     isInEditMode = false,
                 )
 
-                is PageUiState.Success -> localState.copy(
-                    content = if (isInEditMode) localState.content else note.content,
-                    tags = if (isInEditMode) localState.tags else note.tags,
-                )
+                is PageUiState.Success -> localState
             }
         }
     }

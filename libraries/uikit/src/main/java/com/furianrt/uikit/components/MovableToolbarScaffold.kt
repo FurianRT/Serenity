@@ -30,6 +30,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.getStatusBarHeight
 import dev.chrisbanes.haze.HazeDefaults
@@ -171,7 +172,8 @@ fun MovableToolbarScaffold(
                     if (showShadow) {
                         drawBottomShadow(elevation = 8.dp)
                     }
-                },
+                }
+                .clickableNoRipple {},
             content = { toolbar() },
         )
         Box(

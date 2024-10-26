@@ -51,10 +51,15 @@ internal class MediaRepositoryImp @Inject constructor(
             videoDao.insert(videos)
         }
 
-        mediaSaver.save(noteId, media)
+        if (media.isNotEmpty()) {
+            mediaSaver.save(noteId, media)
+        }
     }
 
     override suspend fun delete(noteId: String, media: List<LocalNote.Content.Media>) {
+        if (media.isEmpty()) {
+            return
+        }
         withContext(NonCancellable) {
             mediaSaver.cancel(noteId, media)
             val images = media
