@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
@@ -163,9 +164,6 @@ internal fun MediaSelectorBottomSheetInternal(
     }
 
     val hazeState = remember { HazeState() }
-    val backgroundModifier = Modifier
-        .background(MaterialTheme.colorScheme.surface)
-        .background(MaterialTheme.colorScheme.tertiary)
 
     BottomSheetScaffold(
         modifier = modifier.haze(state = hazeState),
@@ -180,66 +178,23 @@ internal fun MediaSelectorBottomSheetInternal(
         content = { paddingValues ->
             Box {
                 content(paddingValues)
-                AnimatedVisibility(
-                    visible = isBottomSheetVisible ||
+                DimLayout(
+                    isVisible = isBottomSheetVisible ||
                             state.bottomSheetState.targetValue == SheetValue.Expanded,
-                    enter = fadeIn(),
-                    exit = fadeOut(),
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(Color.Black.copy(alpha = 0.4f))
-                            .clickableNoRipple {
-                                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-                            },
-                    )
-                }
+                    onClick = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
+                )
             }
         },
         sheetContent = {
-            Column(
+            SheetContent(
                 modifier = Modifier
                     .windowInsetsPadding(WindowInsets.statusBars)
                     .padding(top = ToolbarConstants.toolbarHeight)
-                    .graphicsLayer {
-                        translationY = bottomSheetTranslationY.toPx()
-                    },
-            ) {
-                DragHandle(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                        .then(backgroundModifier),
-                )
-                AnimatedContent(
-                    targetState = uiState,
-                    transitionSpec = {
-                        fadeIn(tween(CONTENT_ANIM_DURATION))
-                            .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
-                    },
-                    contentKey = { it::class.simpleName },
-                    label = "StateAnim",
-                ) { targetState ->
-                    when (targetState) {
-                        is MediaSelectorUiState.Loading -> LoadingContent(
-                            modifier = backgroundModifier,
-                        )
-
-                        is MediaSelectorUiState.Empty -> EmptyContent(
-                            modifier = backgroundModifier,
-                            uiState = targetState,
-                            onEvent = viewModel::onEvent,
-                        )
-
-                        is MediaSelectorUiState.Success -> SuccessContent(
-                            modifier = backgroundModifier,
-                            uiState = targetState,
-                            listState = listState,
-                            onEvent = viewModel::onEvent,
-                        )
-                    }
-                }
-            }
+                    .graphicsLayer { translationY = bottomSheetTranslationY.toPx() },
+                uiState = uiState,
+                onEvent = viewModel::onEvent,
+                listState = listState,
+            )
         },
     )
 
@@ -279,4 +234,73 @@ internal fun MediaSelectorBottomSheetInternal(
             }
         },
     )
+}
+
+@Composable
+private fun SheetContent(
+    uiState: MediaSelectorUiState,
+    onEvent: (event: MediaSelectorEvent) -> Unit,
+    listState: LazyGridState,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundModifier = Modifier
+        .background(MaterialTheme.colorScheme.surface)
+        .background(MaterialTheme.colorScheme.tertiary)
+
+    Column(modifier = modifier) {
+        DragHandle(
+            modifier = Modifier
+                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
+                .then(backgroundModifier),
+        )
+        AnimatedContent(
+            targetState = uiState,
+            transitionSpec = {
+                fadeIn(tween(CONTENT_ANIM_DURATION))
+                    .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
+            },
+            contentKey = { it::class.simpleName },
+            label = "StateAnim",
+        ) { targetState ->
+            when (targetState) {
+                is MediaSelectorUiState.Loading -> LoadingContent(
+                    modifier = backgroundModifier,
+                )
+
+                is MediaSelectorUiState.Empty -> EmptyContent(
+                    modifier = backgroundModifier,
+                    uiState = targetState,
+                    onEvent = onEvent,
+                )
+
+                is MediaSelectorUiState.Success -> SuccessContent(
+                    modifier = backgroundModifier,
+                    uiState = targetState,
+                    listState = listState,
+                    onEvent = onEvent,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun DimLayout(
+    isVisible: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = isVisible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.4f))
+                .clickableNoRipple(onClick = onClick),
+        )
+    }
 }
