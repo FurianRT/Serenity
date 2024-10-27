@@ -187,6 +187,7 @@ private fun SuccessScreen(
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberLazyListState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
+        toolbarHeight = ToolbarConstants.toolbarHeight,
         toolbar = {
             Toolbar(
                 modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),

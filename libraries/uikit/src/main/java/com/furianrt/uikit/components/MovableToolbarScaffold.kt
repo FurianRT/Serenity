@@ -27,9 +27,9 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.getStatusBarHeight
@@ -61,6 +61,7 @@ class MovableToolbarState {
 fun MovableToolbarScaffold(
     listState: LazyListState,
     toolbar: @Composable BoxScope.() -> Unit,
+    toolbarHeight: Dp,
     modifier: Modifier = Modifier,
     state: MovableToolbarState = MovableToolbarState(),
     enabled: Boolean = true,
@@ -69,8 +70,8 @@ fun MovableToolbarScaffold(
     val view = LocalView.current
     val statusBarHeight = remember { view.getStatusBarHeight() }
     var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
-    val toolbarHeight = LocalDensity.current.run { ToolbarConstants.toolbarHeight.toPx() }
-    val toolbarMaxScroll = toolbarHeight + statusBarHeight
+    val toolbarHeightPx = LocalDensity.current.run { toolbarHeight.toPx() }
+    val toolbarMaxScroll = toolbarHeightPx + statusBarHeight
     var totalScroll by rememberSaveable { mutableFloatStateOf(0f) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
@@ -104,6 +105,8 @@ fun MovableToolbarScaffold(
         }
     }
 
+    totalScroll = if (isListAtTop) 0f else totalScroll
+
     val scope = rememberCoroutineScope()
 
     state.setExpandRequestListener { duration ->
@@ -120,7 +123,7 @@ fun MovableToolbarScaffold(
 
     LaunchedEffect(listState.isScrollInProgress) {
         val forceShowToolbar = listState.firstVisibleItemIndex == 0 &&
-                listState.firstVisibleItemScrollOffset <= toolbarHeight
+                listState.firstVisibleItemScrollOffset <= toolbarHeightPx
         val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarMaxScroll
         when {
             !isToolbarInHalfState || listState.isScrollInProgress -> {
@@ -147,7 +150,9 @@ fun MovableToolbarScaffold(
 
     val showShadow by remember(listState) {
         derivedStateOf {
-            (totalScroll - toolbarOffset).absoluteValue > 1 && !isListAtTop
+            (totalScroll - toolbarOffset).absoluteValue > 1 &&
+                    !isListAtTop ||
+                    (toolbarOffset == 0f && !isListAtTop)
         }
     }
 

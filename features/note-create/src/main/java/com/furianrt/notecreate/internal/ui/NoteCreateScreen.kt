@@ -115,6 +115,7 @@ private fun ScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
+        toolbarHeight = ToolbarConstants.toolbarHeight,
         enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
         listState = state.listState,
         toolbar = {
