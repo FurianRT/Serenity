@@ -1,7 +1,6 @@
 package com.furianrt.notelist.internal.ui.composables
 
 import android.net.Uri
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,7 +36,7 @@ private val cardRippleAlpha = RippleAlpha(
     pressedAlpha = 0.05f,
 )
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NoteListItem(
     note: NoteListScreenNote,

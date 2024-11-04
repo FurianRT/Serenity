@@ -6,7 +6,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import kotlinx.collections.immutable.ImmutableList
 
-sealed class UiNoteContent(open val id: String,) {
+sealed class UiNoteContent(open val id: String) {
 
     @Stable
     data class Title(

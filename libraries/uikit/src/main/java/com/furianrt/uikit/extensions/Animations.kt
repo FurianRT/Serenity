@@ -30,7 +30,7 @@ fun Modifier.clickableWithScaleAnim(
     maxScale: Float = 1.1f,
     indication: Indication? = null,
     onClick: () -> Unit = {},
-) = composed {
+) = this.composed {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
     val resultModifier = graphicsLayer {
@@ -74,7 +74,7 @@ fun Modifier.clickableWithScaleAnim(
 
 fun Modifier.animatePlacement(
     animationSpec: AnimationSpec<IntOffset> = spring(stiffness = StiffnessMediumLow),
-): Modifier = composed {
+): Modifier = this.composed {
     val scope = rememberCoroutineScope()
     var targetOffset by remember { mutableStateOf(IntOffset.Zero) }
     var animatable by remember { mutableStateOf<Animatable<IntOffset, AnimationVector2D>?>(null) }

@@ -11,10 +11,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 
-inline fun Modifier.debounceClickable(
+fun Modifier.debounceClickable(
     debounceInterval: Long = 400,
     indication: Indication? = null,
-    crossinline onClick: () -> Unit,
+    onClick: () -> Unit,
 ): Modifier = then(
     Modifier.composed {
         var lastClickTime by remember { mutableLongStateOf(0L) }
@@ -30,9 +30,9 @@ inline fun Modifier.debounceClickable(
         )
     })
 
-inline fun Modifier.debounceClickable(
+fun Modifier.debounceClickable(
     debounceInterval: Long = 400,
-    crossinline onClick: () -> Unit,
+    onClick: () -> Unit,
 ): Modifier = composed {
     debounceClickable(
         onClick = onClick,

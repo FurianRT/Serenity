@@ -23,7 +23,7 @@ operator fun RippleAlpha.times(value: Float) = RippleAlpha(
 
 fun Modifier.clickableNoRipple(
     onClick: () -> Unit,
-) = composed {
+) = this.composed {
     clickableNoRipple(
         onClick = onClick,
         interactionSource = remember { MutableInteractionSource() },
@@ -33,7 +33,7 @@ fun Modifier.clickableNoRipple(
 fun Modifier.clickableNoRipple(
     interactionSource: MutableInteractionSource,
     onClick: () -> Unit,
-) = clickable(
+) = this.clickable(
     onClick = onClick,
     indication = null,
     interactionSource = interactionSource,
