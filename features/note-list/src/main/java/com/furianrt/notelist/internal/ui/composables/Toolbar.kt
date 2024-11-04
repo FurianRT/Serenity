@@ -3,12 +3,10 @@ package com.furianrt.notelist.internal.ui.composables
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,7 +36,7 @@ internal fun Toolbar(
 ) {
     Row(
         modifier = modifier
-            .windowInsetsPadding(WindowInsets.statusBars)
+            .statusBarsPadding()
             .padding(horizontal = 16.dp)
             .height(ToolbarConstants.bigToolbarHeight)
             .fillMaxWidth()

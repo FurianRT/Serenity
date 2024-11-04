@@ -95,7 +95,6 @@ private fun MainScreenContent(
         modifier = Modifier.background(MaterialTheme.colorScheme.surface),
         listState = screenState.listState,
         state = screenState.toolbarState,
-        toolbarHeight = ToolbarConstants.bigToolbarHeight,
         toolbar = {
             Toolbar(
                 onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },

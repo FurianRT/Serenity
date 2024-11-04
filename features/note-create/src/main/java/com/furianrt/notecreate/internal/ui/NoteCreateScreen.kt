@@ -6,12 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
@@ -115,12 +113,11 @@ private fun ScreenContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
-        toolbarHeight = ToolbarConstants.toolbarHeight,
         enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
         listState = state.listState,
         toolbar = {
             Toolbar(
-                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+                modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
                 timestamp = uiState.note.timestamp,
                 onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
@@ -152,7 +149,7 @@ private fun ToolbarDim(
         modifier = modifier
             .fillMaxWidth()
             .background(Color.Black.copy(alpha = 0.4f))
-            .windowInsetsPadding(WindowInsets.statusBars)
+            .statusBarsPadding()
             .height(ToolbarConstants.toolbarHeight)
             .clickableNoRipple(onClick = onClick)
     )

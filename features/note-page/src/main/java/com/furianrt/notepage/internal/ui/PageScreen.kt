@@ -13,8 +13,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -224,7 +224,7 @@ private fun SuccessScreen(
 
     val view = LocalView.current
     val density = LocalDensity.current
-    val statusBarHeight = density.run { remember { view.getStatusBarHeight().toDp() } }
+    val statusBarHeight = density.run { view.getStatusBarHeight().toDp() }
     val toolbarMargin = statusBarHeight + ToolbarConstants.toolbarHeight + 8.dp
     var bgOffset by rememberSaveable { mutableStateOf(0f) }
     val bgOffsetInverted = toolbarMargin - density.run { bgOffset.toDp() }
@@ -385,7 +385,7 @@ private fun SuccessScreen(
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .windowInsetsPadding(WindowInsets.navigationBars)
+                    .navigationBarsPadding()
                     .padding(bottom = 8.dp)
                     .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
             ) {

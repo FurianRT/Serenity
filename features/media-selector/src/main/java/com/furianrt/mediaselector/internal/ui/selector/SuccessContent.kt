@@ -17,8 +17,8 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -142,7 +142,7 @@ internal fun SuccessContent(
                         ),
                     )
                     .padding(16.dp)
-                    .windowInsetsPadding(WindowInsets.navigationBars),
+                    .navigationBarsPadding(),
                 count = uiState.selectedCount,
             )
         }
@@ -150,7 +150,7 @@ internal fun SuccessContent(
             modifier = Modifier
                 .wrapContentSize()
                 .padding(end = 16.dp, bottom = 24.dp)
-                .windowInsetsPadding(WindowInsets.navigationBars)
+                .navigationBarsPadding()
                 .align(Alignment.BottomEnd),
             visible = uiState.selectedCount > 0,
             enter = fadeIn(animationSpec = tween(ACTION_PANEL_ANIM_DURATION)) + scaleIn(

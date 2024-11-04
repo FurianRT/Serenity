@@ -25,14 +25,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.layout.boundsInParent
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
-import com.furianrt.uikit.extensions.getStatusBarHeight
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
@@ -61,17 +59,14 @@ class MovableToolbarState {
 fun MovableToolbarScaffold(
     listState: LazyListState,
     toolbar: @Composable BoxScope.() -> Unit,
-    toolbarHeight: Dp,
     modifier: Modifier = Modifier,
     state: MovableToolbarState = MovableToolbarState(),
     enabled: Boolean = true,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val view = LocalView.current
-    val statusBarHeight = remember { view.getStatusBarHeight() }
+    val scope = rememberCoroutineScope()
     var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
-    val toolbarHeightPx = LocalDensity.current.run { toolbarHeight.toPx() }
-    val toolbarMaxScroll = toolbarHeightPx + statusBarHeight
+    var toolbarHeight by remember { mutableFloatStateOf(0f) }
     var totalScroll by rememberSaveable { mutableFloatStateOf(0f) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
@@ -83,10 +78,18 @@ fun MovableToolbarScaffold(
                 val delta = consumed.y
                 totalScroll += delta
                 when {
+                    !enabled && toolbarOffset != 0f -> scope.launch {
+                        AnimationState(toolbarOffset).animateTo(
+                            targetValue = 0f,
+                            animationSpec = tween(350),
+                            block = { toolbarOffset = value },
+                        )
+                    }
+
                     !enabled -> Unit
 
                     delta < 0 -> {
-                        toolbarOffset = (toolbarOffset + delta).coerceAtLeast(-toolbarMaxScroll)
+                        toolbarOffset = (toolbarOffset + delta).coerceAtLeast(-toolbarHeight)
                     }
 
                     delta > 0 -> {
@@ -107,8 +110,6 @@ fun MovableToolbarScaffold(
 
     totalScroll = if (isListAtTop) 0f else totalScroll
 
-    val scope = rememberCoroutineScope()
-
     state.setExpandRequestListener { duration ->
         scope.launch {
             AnimationState(toolbarOffset).animateTo(
@@ -123,14 +124,14 @@ fun MovableToolbarScaffold(
 
     LaunchedEffect(listState.isScrollInProgress) {
         val forceShowToolbar = listState.firstVisibleItemIndex == 0 &&
-                listState.firstVisibleItemScrollOffset <= toolbarHeightPx
-        val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarMaxScroll
+                listState.firstVisibleItemScrollOffset <= toolbarHeight
+        val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
         when {
             !isToolbarInHalfState || listState.isScrollInProgress -> {
                 return@LaunchedEffect
             }
 
-            toolbarOffset > -toolbarMaxScroll / 2 || forceShowToolbar || isListAtTop -> {
+            toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || isListAtTop -> {
                 AnimationState(toolbarOffset).animateTo(
                     targetValue = 0f,
                     animationSpec = tween(TOOLBAR_SNAP_DURATION),
@@ -138,9 +139,9 @@ fun MovableToolbarScaffold(
                 )
             }
 
-            toolbarOffset <= -toolbarMaxScroll / 2 -> {
+            toolbarOffset <= -toolbarHeight / 2 -> {
                 AnimationState(toolbarOffset).animateTo(
-                    targetValue = -toolbarMaxScroll,
+                    targetValue = -toolbarHeight,
                     animationSpec = tween(TOOLBAR_SNAP_DURATION),
                     block = { toolbarOffset = value },
                 )
@@ -162,6 +163,7 @@ fun MovableToolbarScaffold(
                 .align(Alignment.TopCenter)
                 .zIndex(1f)
                 .graphicsLayer { translationY = toolbarOffset }
+                .onGloballyPositioned { toolbarHeight = it.boundsInParent().height }
                 .hazeChild(
                     state = hazeState,
                     style = HazeDefaults.style(
