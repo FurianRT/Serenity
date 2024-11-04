@@ -4,6 +4,8 @@ import android.net.Uri
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
 
 sealed class UiNoteContent(open val id: String) {
@@ -43,11 +45,11 @@ sealed class UiNoteContent(open val id: String) {
     }
 }
 
-val UiNoteContent.MediaBlock.contentHeightDp: Int
+val UiNoteContent.MediaBlock.contentHeight: Dp
     get() = when (media.count()) {
-        1 -> 130
-        2 -> 120
-        3 -> 110
-        4 -> 150
-        else -> 180
+        1 -> 130.dp
+        2 -> 120.dp
+        3 -> 110.dp
+        4 -> 150.dp
+        else -> 180.dp
     }

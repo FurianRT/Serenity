@@ -54,7 +54,7 @@ import coil3.request.ImageRequest
 import coil3.video.VideoFrameDecoder
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
-import com.furianrt.notecontent.entities.contentHeightDp
+import com.furianrt.notecontent.entities.contentHeight
 import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
@@ -90,7 +90,7 @@ fun NoteContentMedia(
     ) { targetState ->
         when (targetState.media.count()) {
             1 -> OneMediaHolder(
-                modifier = Modifier.sizeIn(maxHeight = targetState.contentHeightDp.dp),
+                modifier = Modifier.sizeIn(maxHeight = targetState.contentHeight),
                 media = targetState.media[0],
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
@@ -101,7 +101,7 @@ fun NoteContentMedia(
 
             2 -> RowMediaHolder(
                 modifier = Modifier
-                    .height(targetState.contentHeightDp.dp)
+                    .height(targetState.contentHeight)
                     .clip(RoundedCornerShape(8.dp)),
                 media = targetState.media,
                 clickable = clickable,
@@ -113,7 +113,7 @@ fun NoteContentMedia(
 
             3 -> RowMediaHolder(
                 modifier = Modifier
-                    .height(targetState.contentHeightDp.dp)
+                    .height(targetState.contentHeight)
                     .clip(RoundedCornerShape(8.dp)),
                 media = targetState.media,
                 clickable = clickable,
@@ -124,7 +124,7 @@ fun NoteContentMedia(
             )
 
             4 -> FourMediaHolder(
-                modifier = Modifier.height(targetState.contentHeightDp.dp),
+                modifier = Modifier.height(targetState.contentHeight),
                 media = targetState.media,
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
@@ -134,7 +134,7 @@ fun NoteContentMedia(
             )
 
             else -> ManyMediaHolder(
-                modifier = Modifier.height(targetState.contentHeightDp.dp),
+                modifier = Modifier.height(targetState.contentHeight),
                 media = targetState.media,
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
