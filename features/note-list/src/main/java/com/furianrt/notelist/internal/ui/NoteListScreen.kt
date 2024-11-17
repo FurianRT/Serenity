@@ -49,7 +49,7 @@ internal fun NoteListScreen(
     openSettingsScreen: () -> Unit,
 ) {
     val viewModel: NoteListViewModel = hiltViewModel()
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val screenState = rememberMainState()

@@ -1,6 +1,7 @@
 package com.furianrt.mediaview.internal.ui.composables
 
-import androidx.compose.foundation.LocalOverscrollConfiguration
+import android.view.HapticFeedbackConstants
+import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -56,7 +58,7 @@ internal fun MediaPager(
     onMediaItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CompositionLocalProvider(LocalOverscrollConfiguration provides null) {
+    CompositionLocalProvider(LocalOverscrollFactory provides null) {
         HorizontalPager(
             modifier = modifier,
             state = state,
@@ -221,6 +223,7 @@ internal fun VideoPage(
             )
         }
 
+        val view = LocalView.current
         ControlsAnimatedVisibility(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -233,7 +236,10 @@ internal fun VideoPage(
                 value = currentPosition.toFloat(),
                 valueRange = 0f..item.duration.toFloat(),
                 interactionSource = sliderInteractionSource,
-                onValueChange = { currentPosition = it.toLong() },
+                onValueChange = {
+                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    currentPosition = it.toLong()
+                },
                 onValueChangeFinished = { exoPlayer.seekTo(currentPosition) },
             )
         }

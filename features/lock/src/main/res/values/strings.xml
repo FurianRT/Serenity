@@ -1,0 +1,6 @@
+<resources>
+    <string name="lock_enter_new_pin_title">Enter new PIN</string>
+    <string name="lock_repeat_your_pin_title">Repeat your PIN</string>
+    <string name="recovery_email_hint">Please enter your email address to receive your forgotten PIN code</string>
+    <string name="recovery_email_format_error">Invalid email</string>
+</resources>

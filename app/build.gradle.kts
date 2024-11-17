@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.features.mediaSelector)
     implementation(projects.features.mediaView)
     implementation(projects.features.noteList)
+    implementation(projects.features.lock)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

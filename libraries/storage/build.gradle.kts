@@ -22,4 +22,6 @@ dependencies {
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
+
+    implementation(libs.dataStore)
 }

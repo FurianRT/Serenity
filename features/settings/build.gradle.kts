@@ -11,6 +11,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.features.lock)
+
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
@@ -38,4 +40,6 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.blur)
 }

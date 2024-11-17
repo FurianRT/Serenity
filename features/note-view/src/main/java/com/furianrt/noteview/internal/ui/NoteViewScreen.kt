@@ -77,7 +77,7 @@ internal fun NoteViewScreen(
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteViewModel = hiltViewModel()
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val successScreenState = rememberSuccessScreenState()

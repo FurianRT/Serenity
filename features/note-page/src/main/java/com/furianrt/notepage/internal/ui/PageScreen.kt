@@ -112,7 +112,7 @@ internal fun NotePageScreenInternal(
             )
         },
     )
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -224,8 +224,9 @@ private fun SuccessScreen(
 
     val view = LocalView.current
     val density = LocalDensity.current
-    val statusBarHeight = density.run { view.getStatusBarHeight().toDp() }
-    val toolbarMargin = statusBarHeight + ToolbarConstants.toolbarHeight + 8.dp
+    val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
+    val statusBarHeightDp = density.run { statusBarHeight.toDp() }
+    val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
     var bgOffset by rememberSaveable { mutableStateOf(0f) }
     val bgOffsetInverted = toolbarMargin - density.run { bgOffset.toDp() }
     var totalScroll by rememberSaveable { mutableStateOf(0f) }

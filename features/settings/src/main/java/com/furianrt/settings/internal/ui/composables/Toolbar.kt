@@ -19,6 +19,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun Toolbar(
+    title: String,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -35,7 +36,7 @@ internal fun Toolbar(
         )
         Text(
             modifier = Modifier.align(Alignment.Center),
-            text = stringResource(id = uiR.string.settings_title),
+            text = title,
             style = MaterialTheme.typography.titleMedium,
         )
     }
@@ -46,6 +47,7 @@ internal fun Toolbar(
 private fun ToolbarPreview() {
     SerenityTheme {
         Toolbar(
+            title = stringResource(uiR.string.settings_title),
             onBackClick = {},
         )
     }

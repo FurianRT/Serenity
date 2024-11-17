@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui
+package com.furianrt.settings.internal.ui.main
 
 import androidx.annotation.IntRange
 import androidx.compose.foundation.ScrollState
@@ -21,22 +21,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.settings.R
+import com.furianrt.uikit.R as uiR
+import com.furianrt.settings.internal.ui.composables.GeneralButton
 import com.furianrt.settings.internal.ui.composables.Toolbar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -46,15 +46,17 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun SettingsScreen(
+    openSecurityScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SettingsEffect.CloseScreen -> onCloseRequest()
+                is SettingsEffect.OpenSecurityScreen -> openSecurityScreen()
             }
         }
     }
@@ -68,20 +70,24 @@ private fun ScreenContent(
     onEvent: (event: SettingsEvent) -> Unit,
 ) {
     val scrollState = rememberScrollState()
-    Surface(modifier = Modifier.fillMaxSize()) {
-        Column(modifier = Modifier.systemBarsPadding()) {
-            Toolbar(
-                modifier = Modifier.drawBehind {
-                    if (scrollState.canScrollBackward) {
-                        drawBottomShadow(elevation = 8.dp)
-                    }
-                },
-                onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
-            )
-            when (uiState) {
-                is SettingsUiState.Success -> SuccessScreen(uiState, scrollState, onEvent)
-                is SettingsUiState.Loading -> LoadingScreen()
-            }
+    Column(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .fillMaxSize()
+            .systemBarsPadding()
+    ) {
+        Toolbar(
+            modifier = Modifier.drawBehind {
+                if (scrollState.canScrollBackward) {
+                    drawBottomShadow(elevation = 8.dp)
+                }
+            },
+            title = stringResource(uiR.string.settings_title),
+            onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
+        )
+        when (uiState) {
+            is SettingsUiState.Success -> SuccessScreen(uiState, scrollState, onEvent)
+            is SettingsUiState.Loading -> LoadingScreen()
         }
     }
 }
@@ -102,7 +108,7 @@ private fun SuccessScreen(
         GeneralButton(
             title = stringResource(id = R.string.settings_security_title),
             iconPainter = painterResource(id = R.drawable.ic_lock),
-            onClick = {},
+            onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
         )
         GeneralButton(
             title = stringResource(id = R.string.settings_backup_title),
@@ -113,8 +119,10 @@ private fun SuccessScreen(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             onSelected = {},
         )
-        LanguageSelector(
-            language = "English",
+        GeneralButton(
+            title = stringResource(R.string.settings_language_title),
+            iconPainter = painterResource(R.drawable.ic_language),
+            hint = "English",
             onClick = {},
         )
         Rating(
@@ -136,33 +144,6 @@ private fun SuccessScreen(
             title = stringResource(id = R.string.settings_about_title),
             iconPainter = painterResource(id = R.drawable.ic_info),
             onClick = {},
-        )
-    }
-}
-
-@Composable
-private fun GeneralButton(
-    title: String,
-    iconPainter: Painter,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-            .padding(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Icon(
-            painter = iconPainter,
-            contentDescription = title,
-            tint = Color.Unspecified,
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
         )
     }
 }
@@ -219,42 +200,6 @@ private fun ThemeSelector(
 }
 
 @Composable
-private fun LanguageSelector(
-    language: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 16.dp),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_language),
-            contentDescription = stringResource(id = R.string.settings_language_title),
-            tint = Color.Unspecified,
-        )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Text(
-                text = stringResource(id = R.string.settings_language_title),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                modifier = Modifier.alpha(0.5f),
-                text = language,
-                style = MaterialTheme.typography.labelMedium,
-            )
-        }
-    }
-
-}
-
-@Composable
 private fun Rating(
     @IntRange(0, 5) rating: Int,
     onSelected: (Int) -> Unit,
@@ -288,7 +233,7 @@ private fun Rating(
 @Composable
 private fun LoadingScreen(
 ) {
-    Box(modifier = Modifier) {
+    Box(modifier = Modifier.fillMaxSize()) {
     }
 }
 

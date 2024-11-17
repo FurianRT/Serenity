@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -50,7 +51,7 @@ internal fun NoteCreateScreen(
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteCreateViewModel = hiltViewModel()
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val pageScreenState = rememberPageScreenState()

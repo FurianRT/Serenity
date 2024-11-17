@@ -2,9 +2,17 @@ package com.furianrt.settings.api
 
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
-import androidx.navigation.compose.composable
-import com.furianrt.settings.internal.ui.SettingsScreen
+import androidx.navigation.compose.navigation
+import com.furianrt.lock.api.changeEmailScreen
+import com.furianrt.lock.api.changePinNavigation
+import com.furianrt.lock.api.navigateToChangeEmail
+import com.furianrt.lock.api.navigateToChangePin
+import com.furianrt.settings.internal.ui.main.MainRoute
+import com.furianrt.settings.internal.ui.main.settingsScreen
+import com.furianrt.settings.internal.ui.security.navigateToSecurity
+import com.furianrt.settings.internal.ui.security.securityScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -15,12 +23,28 @@ fun NavController.navigateToSettings(
     navOptions: NavOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
 ) = navigate(route = route, navOptions = navOptions)
 
-fun NavGraphBuilder.settingsScreen(
-    onCloseRequest: () -> Unit,
+fun NavGraphBuilder.settingsNavigation(
+    navController: NavHostController,
 ) {
-    composable<SettingsRoute> {
-        SettingsScreen(
-            onCloseRequest = onCloseRequest,
+    navigation<SettingsRoute>(
+        startDestination = MainRoute,
+    ) {
+        settingsScreen(
+            openSecurityScreen = navController::navigateToSecurity,
+            onCloseRequest = {
+                navController.popBackStack(route = SettingsRoute, inclusive = true)
+            },
+        )
+        securityScreen(
+            openChangePinScreen = navController::navigateToChangePin,
+            openChangeEmailScreen = navController::navigateToChangeEmail,
+            onCloseRequest = { navController.popBackStack(route = MainRoute, inclusive = false) },
+        )
+        changePinNavigation(
+            navController = navController,
+        )
+        changeEmailScreen(
+            onCloseRequest = navController::navigateUp,
         )
     }
 }

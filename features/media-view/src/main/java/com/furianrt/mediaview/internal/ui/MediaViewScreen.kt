@@ -55,7 +55,7 @@ internal fun MediaViewScreen(
     onCloseRequest: () -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaViewModel>()
-    val uiState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val snackBarHostState = remember { SnackbarHostState() }

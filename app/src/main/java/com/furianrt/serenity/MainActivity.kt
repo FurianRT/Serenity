@@ -26,7 +26,7 @@ import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.serenity.navigation.SerenityNavHost
 import com.furianrt.settings.api.navigateToSettings
-import com.furianrt.settings.api.settingsScreen
+import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -134,9 +134,7 @@ internal class MainActivity : ComponentActivity() {
                         onCloseRequest = navController::navigateUp,
                     )
 
-                    settingsScreen(
-                        onCloseRequest = navController::navigateUp,
-                    )
+                    settingsNavigation(navController)
 
                     mediaViewScreen(
                         onCloseRequest = navController::navigateUp,

@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui
+package com.furianrt.settings.internal.ui.main
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -17,12 +17,15 @@ internal class SettingsViewModel @Inject constructor(
     private val _state = MutableStateFlow<SettingsUiState>(SettingsUiState.Success)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<SettingsEffect>(replay = 1)
+    private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
     fun onEvent(event: SettingsEvent) {
         when (event) {
             is SettingsEvent.OnButtonBackClick -> _effect.tryEmit(SettingsEffect.CloseScreen)
+            is SettingsEvent.OnButtonSecurityClick -> {
+                _effect.tryEmit(SettingsEffect.OpenSecurityScreen)
+            }
         }
     }
 }
