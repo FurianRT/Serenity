@@ -24,4 +24,6 @@ dependencies {
     ksp(libs.hiltCompiler)
 
     implementation(libs.dataStore)
+
+    implementation(libs.biometric)
 }

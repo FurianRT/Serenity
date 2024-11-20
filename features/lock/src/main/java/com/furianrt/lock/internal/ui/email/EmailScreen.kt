@@ -111,7 +111,7 @@ private fun ScreenContent(
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(40.dp)
+            verticalArrangement = Arrangement.spacedBy(40.dp),
         ) {
             ButtonClose(
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),

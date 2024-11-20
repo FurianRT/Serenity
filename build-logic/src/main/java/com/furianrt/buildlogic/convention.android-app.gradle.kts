@@ -1,4 +1,5 @@
 import com.furianrt.buildlogic.ConfigData
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -24,8 +25,17 @@ android {
     buildFeatures {
         buildConfig = true
     }
-    
+
     buildTypes {
+        val localProperties = rootProject.file("local.properties")
+        val prefsPassword = Properties().apply {
+            load(localProperties.inputStream())
+        }.getProperty("PREFS_PASSWORD")
+
+        defaultConfig {
+            buildConfigField("String", "PREFS_PASSWORD", "\"${prefsPassword}\"")
+        }
+
         release {
             isMinifyEnabled = true
             proguardFiles(

@@ -138,13 +138,17 @@ private fun SuccessScreen(
         )
         GeneralButton(
             title = stringResource(R.string.settings_pin_request_title),
-            hint = if (uiState.requestDelay == 0) {
-                stringResource(R.string.settings_no_pin_delay_title)
+            hint = if (uiState.requestDelay < 60 * 1000) {
+                pluralStringResource(
+                    R.plurals.settings_pin_delay_seconds_plural,
+                    uiState.requestDelay / 1000,
+                    uiState.requestDelay / 1000,
+                )
             } else {
                 pluralStringResource(
                     R.plurals.settings_pin_delay_minutes_plural,
-                    uiState.requestDelay,
-                    uiState.requestDelay,
+                    uiState.requestDelay / 60 / 1000,
+                    uiState.requestDelay / 60 / 1000,
                 )
             },
             enabled = uiState.isPinEnabled,

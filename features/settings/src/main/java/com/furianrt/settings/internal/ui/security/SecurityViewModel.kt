@@ -23,7 +23,7 @@ internal class SecurityViewModel @Inject constructor(
     val state = combine(
         securityRepository.getPin(),
         securityRepository.getPinRecoveryEmail(),
-        securityRepository.getPinRequestDelayMinutes(),
+        securityRepository.getPinRequestDelay(),
         securityRepository.isFingerprintEnabled()
     ) { pin, email, delay, fingerprint ->
         buildState(pin, delay, email, fingerprint)
@@ -59,7 +59,7 @@ internal class SecurityViewModel @Inject constructor(
 
             is OnPinDelayClick -> _effect.tryEmit(SecurityEffect.ShowPinDelaysDialog)
             is OnPinDelaySelected -> launch {
-                securityRepository.setPinRequestDelayMinutes(event.delay)
+                securityRepository.setPinRequestDelay(event.delay)
             }
         }
     }

@@ -78,7 +78,7 @@ private fun ScreenContent(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(8.dp),
-            onClick = { onEvent(ChangePinEvent.OnCloseClick) }
+            onClick = { onEvent(ChangePinEvent.OnCloseClick) },
         )
         Column(
             modifier = Modifier

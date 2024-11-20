@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.furianrt.domain.managers.LockManager
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.lock.api.ChangeEmailRoute
 import com.furianrt.lock.internal.domain.ValidateEmailUseCase
@@ -23,6 +24,7 @@ internal class EmailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val securityRepository: SecurityRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
+    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<ChangeEmailRoute>()
@@ -57,6 +59,7 @@ internal class EmailViewModel @Inject constructor(
         }
         _state.update { it.copy(isLoading = true) }
         if (validateEmailUseCase(email)) {
+            lockManager.authorize()
             validateEmailJob = launch {
                 savePinAndEmail(route.pin, email)
                 _effect.tryEmit(EmailEffect.CloseScreen)

@@ -8,9 +8,18 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.lock.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
 import com.furianrt.mediaview.api.MediaViewRoute
@@ -30,6 +39,8 @@ import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
@@ -40,6 +51,8 @@ internal class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var permissionsUtils: PermissionsUtils
+
+    private val viewModel: MainViewModel by viewModels()
 
     private var keepSplashScreen = true
 
@@ -80,9 +93,15 @@ internal class MainActivity : ComponentActivity() {
         )
 
         setContent {
+            val uiState by viewModel.state.collectAsStateWithLifecycle()
+            val navController = rememberNavController()
+            val hazeState = remember { HazeState() }
+
             SerenityTheme {
-                val navController = rememberNavController()
-                SerenityNavHost(navController = navController) {
+                SerenityNavHost(
+                    modifier = Modifier.haze(hazeState),
+                    navController = navController,
+                ) {
                     noteListScreen(
                         openSettingsScreen = navController::navigateToSettings,
                         openNoteCreateScreen = { identifier ->
@@ -135,13 +154,17 @@ internal class MainActivity : ComponentActivity() {
                     )
 
                     settingsNavigation(navController)
-
-                    mediaViewScreen(
-                        onCloseRequest = navController::navigateUp,
-                    )
-
-                    mediaViewerScreen(
-                        onCloseRequest = navController::navigateUp,
+                    mediaViewScreen(onCloseRequest = navController::navigateUp)
+                    mediaViewerScreen(onCloseRequest = navController::navigateUp)
+                }
+                AnimatedVisibility(
+                    visible = uiState.isScreenLocked,
+                    enter = EnterTransition.None,
+                    exit = fadeOut(),
+                ) {
+                    CheckPinScreen(
+                        hazeState = hazeState,
+                        onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
                     )
                 }
             }

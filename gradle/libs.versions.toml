@@ -42,6 +42,8 @@ calendar = "2.6.0"
 
 dataStore = "1.1.1"
 
+biometric = "1.4.0-alpha02"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -94,6 +96,8 @@ kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serializati
 calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calendar" }
 
 dataStore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore" }
+
+biometric = { module = "androidx.biometric:biometric-ktx", version.ref = "biometric" }
 
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

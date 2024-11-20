@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.settings.R
 import com.furianrt.uikit.theme.SerenityTheme
@@ -33,7 +32,14 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val PIN_DELAYS: ImmutableList<Int> = persistentListOf(0, 1, 3, 5, 15, 30)
+private val PIN_DELAYS: ImmutableList<Int> = persistentListOf(
+    5* 1000,
+    15 * 1000,
+    30 * 1000,
+    60 * 1000,
+    5 * 60 * 1000,
+    15* 60 * 1000,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -63,13 +69,17 @@ internal fun PinDelayDialog(
             PIN_DELAYS.forEach { delay ->
                 RadioButtonWithText(
                     modifier = Modifier.fillMaxWidth(),
-                    title = if (delay == 0) {
-                        stringResource(R.string.settings_no_pin_delay_title)
+                    title = if (delay < 60 * 1000) {
+                        pluralStringResource(
+                            R.plurals.settings_pin_delay_seconds_plural,
+                            delay / 1000,
+                            delay / 1000,
+                        )
                     } else {
                         pluralStringResource(
                             R.plurals.settings_pin_delay_minutes_plural,
-                            delay,
-                            delay,
+                            delay / 60 / 1000,
+                            delay / 60 / 1000,
                         )
                     },
                     isSelected = delay == selectedDelay,
@@ -120,7 +130,7 @@ private fun RadioButtonWithText(
 private fun Preview() {
     SerenityTheme {
         PinDelayDialog(
-            selectedDelay = 5,
+            selectedDelay = 0,
             onDismissRequest = {},
             hazeState = HazeState(),
         )

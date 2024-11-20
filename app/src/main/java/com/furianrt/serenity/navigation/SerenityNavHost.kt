@@ -7,6 +7,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -15,9 +16,11 @@ import com.furianrt.notelist.api.NoteListRoute
 @Composable
 internal fun SerenityNavHost(
     navController: NavHostController,
-    builder: NavGraphBuilder.() -> Unit
+    modifier: Modifier = Modifier,
+    builder: NavGraphBuilder.() -> Unit,
 ) {
     NavHost(
+        modifier = modifier,
         navController = navController,
         startDestination = NoteListRoute,
         enterTransition = {

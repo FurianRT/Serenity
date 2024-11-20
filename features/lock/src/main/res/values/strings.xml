@@ -1,6 +1,10 @@
 <resources>
+    <string name="lock_enter_your_pin_title">Enter your PIN</string>
     <string name="lock_enter_new_pin_title">Enter new PIN</string>
     <string name="lock_repeat_your_pin_title">Repeat your PIN</string>
+    <string name="lock_forgot_pin_title">Forgot your PIN?</string>
+    <string name="lock_fingerprint_title">Only awesome people allowed</string>
+    <string name="lock_use_pin_title">Use PIN</string>
     <string name="recovery_email_hint">Please enter your email address to receive your forgotten PIN code</string>
     <string name="recovery_email_format_error">Invalid email</string>
 </resources>

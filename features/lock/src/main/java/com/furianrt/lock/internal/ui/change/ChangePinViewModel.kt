@@ -1,6 +1,7 @@
 package com.furianrt.lock.internal.ui.change
 
 import androidx.lifecycle.ViewModel
+import com.furianrt.domain.managers.LockManager
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.lock.internal.ui.change.ChangePinUiState.Mode
 import com.furianrt.lock.internal.ui.entities.Constants
@@ -20,6 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class ChangePinViewModel @Inject constructor(
     private val securityRepository: SecurityRepository,
+    private val lockManager: LockManager,
 ) : ViewModel() {
 
     private var initialPin = ""
@@ -85,6 +87,7 @@ internal class ChangePinViewModel @Inject constructor(
             if (email.isNullOrBlank()) {
                 _effect.tryEmit(ChangePinEffect.OpenEmailScreen(initialPin))
             } else {
+                lockManager.authorize()
                 securityRepository.setPin(initialPin)
                 _effect.tryEmit(ChangePinEffect.CloseScreen)
             }

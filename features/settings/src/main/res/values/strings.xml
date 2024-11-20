@@ -13,7 +13,10 @@
     <string name="settings_pin_request_title">PIN request delay</string>
     <string name="settings_enable_fingerprint_title">Enable Fingerprint</string>
 
-    <string name="settings_no_pin_delay_title">No delay</string>
+    <plurals name="settings_pin_delay_seconds_plural">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
 
     <plurals name="settings_pin_delay_minutes_plural">
         <item quantity="one">%d minute</item>
