@@ -2,11 +2,15 @@ package com.furianrt.lock.internal.ui.check
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.SecurityRepository
+import com.furianrt.lock.R
 import com.furianrt.lock.internal.domain.CheckPinUseCase
+import com.furianrt.lock.internal.domain.SendPinRecoveryEmailUseCase
 import com.furianrt.lock.internal.ui.entities.Constants
 import com.furianrt.lock.internal.ui.entities.PinCount
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.extensions.toTimeString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -15,25 +19,36 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+private const val SEND_EMAIL_INTERVAL = 1000 * 60 * 5 // 5 min
+
 @HiltViewModel
 internal class CheckPinViewModel @Inject constructor(
     private val securityRepository: SecurityRepository,
+    private val resourcesManager: ResourcesManager,
     private val checkPinUseCase: CheckPinUseCase,
+    private val sendPinRecoveryEmailUseCase: SendPinRecoveryEmailUseCase,
 ) : ViewModel() {
 
     private var currentPin = MutableStateFlow("")
 
+    private val forgotPinButtonState = MutableStateFlow<CheckPinUiState.ForgotPinButtonState>(
+        CheckPinUiState.ForgotPinButtonState.Enabled,
+    )
+
     val state = combine(
         securityRepository.isFingerprintEnabled(),
         currentPin,
-    ) { isFingerprintEnabled, pin ->
+        forgotPinButtonState,
+    ) { isFingerprintEnabled, pin, forgotButtonState ->
         CheckPinUiState(
             showFingerprint = isFingerprintEnabled && securityRepository.isBiometricAvailable(),
             pins = PinCount.fromPin(pin),
+            forgotPinButtonState = forgotButtonState,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -52,6 +67,7 @@ internal class CheckPinViewModel @Inject constructor(
             is CheckPinEvent.OnKeyEntered -> onKeyEntered(event.key)
             is CheckPinEvent.OnClearKeyClick -> onClearKeyClick()
             is CheckPinEvent.OnCloseClick -> closeScreen()
+            is CheckPinEvent.OnSendRecoveryEmailClick -> sendRecoveryEmail()
             is CheckPinEvent.OnScreenStarted, is CheckPinEvent.OnFingerprintClick -> {
                 if (scannerJob?.isCompleted != false) {
                     scannerJob = tryShowBiometricScanner()
@@ -59,10 +75,10 @@ internal class CheckPinViewModel @Inject constructor(
             }
 
             is CheckPinEvent.OnForgotPinClick -> {
-                _effect.tryEmit(CheckPinEffect.ShowForgotPinDialog(""))
+                _effect.tryEmit(CheckPinEffect.ShowForgotPinDialog)
             }
 
-            is CheckPinEvent.OnBiometricSucceeded -> launch {
+            is CheckPinEvent.OnBiometricSucceeded -> {
                 _effect.tryEmit(CheckPinEffect.ShowPinSuccess)
                 resetPin()
             }
@@ -91,8 +107,10 @@ internal class CheckPinViewModel @Inject constructor(
     }
 
     private fun tryShowBiometricScanner() = launch {
-        if (state.value.showFingerprint) {
-            delay(200)
+        val isFingerprintEnabled = securityRepository.isBiometricAvailable() &&
+                securityRepository.isFingerprintEnabled().first()
+        if (isFingerprintEnabled) {
+            delay(100)
             _effect.tryEmit(CheckPinEffect.ShowBiometricScanner)
         }
     }
@@ -112,5 +130,36 @@ internal class CheckPinViewModel @Inject constructor(
     private fun closeScreen() {
         resetPin()
         _effect.tryEmit(CheckPinEffect.CloseScreen)
+    }
+
+    private fun sendRecoveryEmail() {
+        forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Disabled }
+        launch {
+            sendPinRecoveryEmailUseCase(
+                subject = resourcesManager.getString(R.string.pin_recovery_email_subject),
+                text = resourcesManager.getString(
+                    R.string.pin_recovery_email_content,
+                    securityRepository.getPin().first()!!,
+                ),
+            ).onSuccess {
+                _effect.tryEmit(CheckPinEffect.ShowSendEmailSuccess)
+                startEmailSendTimer()
+            }.onFailure {
+                _effect.tryEmit(CheckPinEffect.ShowSendEmailFailure)
+                forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Enabled }
+            }
+        }
+    }
+
+    private suspend fun startEmailSendTimer() {
+        var interval = SEND_EMAIL_INTERVAL
+        while (interval > 0) {
+            delay(1000)
+            interval -= 1000
+            forgotPinButtonState.update {
+                CheckPinUiState.ForgotPinButtonState.Timer(interval.toTimeString())
+            }
+        }
+        forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Enabled }
     }
 }

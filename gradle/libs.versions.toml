@@ -44,6 +44,8 @@ dataStore = "1.1.1"
 
 biometric = "1.4.0-alpha02"
 
+mail = "1.6.6"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -98,6 +100,9 @@ calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calenda
 dataStore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore" }
 
 biometric = { module = "androidx.biometric:biometric-ktx", version.ref = "biometric" }
+
+mail = { module = "com.sun.mail:android-mail", version.ref = "mail" }
+mailActivaliton = { module = "com.sun.mail:android-activation", version.ref = "mail" }
 
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

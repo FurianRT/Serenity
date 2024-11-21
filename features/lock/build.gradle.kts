@@ -35,4 +35,7 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.mail)
+    implementation(libs.mailActivaliton)
 }

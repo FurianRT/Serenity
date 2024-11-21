@@ -19,15 +19,14 @@ android {
 
     buildTypes {
         val localProperties = rootProject.file("local.properties")
-        val prefsPassword = Properties().apply {
-            load(localProperties.inputStream())
-        }.getProperty("PREFS_PASSWORD")
-
+        val properties = Properties().apply { load(localProperties.inputStream()) }
         defaultConfig {
             if (file("${project.name}-proguard-rules.pro").exists()) {
                 consumerProguardFiles("${project.name}-proguard-rules.pro")
             }
-            buildConfigField("String", "PREFS_PASSWORD", "\"${prefsPassword}\"")
+            buildConfigField("String", "PREFS_PASSWORD", "\"${properties.getProperty("PREFS_PASSWORD")}\"")
+            buildConfigField("String", "GMAIL_APP_PASSWORD", "\"${properties.getProperty("GMAIL_APP_PASSWORD")}\"")
+            buildConfigField("String", "SUPPORT_EMAIL", "\"${properties.getProperty("SUPPORT_EMAIL")}\"")
         }
         release {
             isMinifyEnabled = false
@@ -42,5 +41,12 @@ android {
     }
     kotlinOptions {
         jvmTarget = ConfigData.JVM_TARGET
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/NOTICE.md"
+            excludes += "/META-INF/LICENSE.md"
+        }
     }
 }

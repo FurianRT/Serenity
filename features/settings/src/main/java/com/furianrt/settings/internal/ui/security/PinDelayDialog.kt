@@ -33,12 +33,12 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private val PIN_DELAYS: ImmutableList<Int> = persistentListOf(
-    5* 1000,
+    5 * 1000,
     15 * 1000,
     30 * 1000,
     60 * 1000,
     5 * 60 * 1000,
-    15* 60 * 1000,
+    15 * 60 * 1000,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

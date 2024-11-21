@@ -200,7 +200,6 @@ internal fun MediaSelectorBottomSheetInternal(
         ConfirmationDialog(
             title = stringResource(R.string.media_selector_discard_title),
             hint = stringResource(R.string.media_selector_discard_hint),
-            cancelText = stringResource(com.furianrt.uikit.R.string.action_cancel),
             confirmText = stringResource(com.furianrt.uikit.R.string.action_discard),
             hazeState = hazeState,
             onDismissRequest = { showConfirmDialog = false },

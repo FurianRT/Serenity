@@ -9,17 +9,24 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -32,14 +39,18 @@ import com.furianrt.lock.internal.ui.elements.Pins
 import com.furianrt.lock.internal.ui.entities.PinCount
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
+import com.furianrt.uikit.components.SnackBar
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 import java.util.concurrent.Executors
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun CheckPinScreenInternal(
@@ -51,6 +62,8 @@ internal fun CheckPinScreenInternal(
 
     val view = LocalView.current
     val activity = LocalActivity.current
+
+    var showRecoveryDialog by remember { mutableStateOf(false) }
 
     val biometricPrompt = remember {
         activity?.let {
@@ -75,12 +88,18 @@ internal fun CheckPinScreenInternal(
         direction = ShakingState.Direction.LEFT_THEN_RIGHT,
     )
 
+    val recoveryDialogHazeState = remember { HazeState() }
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    val emailFailureText = stringResource(R.string.send_pin_recovery_email_failure)
+    val emailSuccessText = stringResource(R.string.send_pin_recovery_email_success)
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)
                 is CheckPinEffect.ShowPinSuccess -> onCloseRequest()
-                is CheckPinEffect.ShowForgotPinDialog -> {}
+                is CheckPinEffect.ShowForgotPinDialog -> showRecoveryDialog = true
                 is CheckPinEffect.ShowWrongPinError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                     shakeState.shake(25)
@@ -97,16 +116,53 @@ internal fun CheckPinScreenInternal(
                         }
                     }
                 )
+
+                is CheckPinEffect.ShowSendEmailFailure -> snackBarHostState.showSnackbar(
+                    message = emailFailureText,
+                    duration = SnackbarDuration.Short,
+                )
+
+                is CheckPinEffect.ShowSendEmailSuccess -> snackBarHostState.showSnackbar(
+                    message = emailSuccessText,
+                    duration = SnackbarDuration.Short,
+                )
             }
         }
     }
 
-    ScreenContent(
-        uiState = uiState,
-        hazeState = hazeState,
-        pinsShakingState = shakeState,
-        onEvent = viewModel::onEvent,
+    Scaffold(
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(uiR.drawable.ic_email),
+                    )
+                },
+            )
+        },
+        content = { paddingValues ->
+            ScreenContent(
+                modifier = Modifier
+                    .clickableNoRipple {}
+                    .haze(recoveryDialogHazeState)
+                    .padding(paddingValues),
+                uiState = uiState,
+                hazeState = hazeState,
+                pinsShakingState = shakeState,
+                onEvent = viewModel::onEvent,
+            )
+        },
     )
+
+    if (showRecoveryDialog) {
+        ForgotPinDialog(
+            hazeState = recoveryDialogHazeState,
+            onConfirmClick = { viewModel.onEvent(CheckPinEvent.OnSendRecoveryEmailClick) },
+            onDismissRequest = { showRecoveryDialog = false },
+        )
+    }
 
     BackHandler {
         viewModel.onEvent(CheckPinEvent.OnCloseClick)
@@ -116,12 +172,13 @@ internal fun CheckPinScreenInternal(
 @Composable
 private fun ScreenContent(
     uiState: CheckPinUiState,
+    modifier: Modifier = Modifier,
     hazeState: HazeState = HazeState(),
     pinsShakingState: ShakingState = rememberShakingState(),
     onEvent: (event: CheckPinEvent) -> Unit = {},
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .hazeChild(
                 state = hazeState,
@@ -132,9 +189,7 @@ private fun ScreenContent(
                     ),
                     blurRadius = 20.dp,
                 ),
-            )
-            .clickableNoRipple {}
-            .systemBarsPadding(),
+            ),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ButtonClose(
@@ -163,13 +218,27 @@ private fun ScreenContent(
             )
         }
         TextButton(
-            modifier = Modifier.padding(bottom = 24.dp),
+            modifier = Modifier
+                .padding(bottom = 24.dp)
+                .applyIf(!uiState.isForgotButtonEnabled) { Modifier.alpha(0.5f) },
+            enabled = uiState.isForgotButtonEnabled,
             onClick = { onEvent(CheckPinEvent.OnForgotPinClick) },
         ) {
-            Text(
-                text = stringResource(R.string.lock_forgot_pin_title),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Text(
+                    text = stringResource(R.string.lock_forgot_pin_title),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (uiState.forgotPinButtonState is CheckPinUiState.ForgotPinButtonState.Timer) {
+                    Text(
+                        text = uiState.forgotPinButtonState.timer,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
         }
     }
 }
@@ -182,6 +251,7 @@ private fun Preview() {
             uiState = CheckPinUiState(
                 showFingerprint = true,
                 pins = PinCount.TWO,
+                forgotPinButtonState = CheckPinUiState.ForgotPinButtonState.Enabled,
             )
         )
     }

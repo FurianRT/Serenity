@@ -17,25 +17,66 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConfirmationDialog(
-    title: String,
-    hint: String,
-    cancelText: String,
-    confirmText: String,
+    cancelText: String = stringResource(R.string.action_cancel),
+    confirmText: String = stringResource(R.string.action_confirm),
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,
+    hint: String? = null,
     onCancelClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {},
+) {
+    ConfirmationDialog(
+        cancelButton = {
+            ConfirmationDialogButton(
+                title = cancelText,
+                textColor = MaterialTheme.colorScheme.primary,
+                onClick = {
+                    onCancelClick()
+                    onDismissRequest()
+                },
+            )
+        },
+        confirmButton = {
+            ConfirmationDialogButton(
+                title = confirmText,
+                textColor = MaterialTheme.colorScheme.errorContainer,
+                onClick = {
+                    onConfirmClick()
+                    onDismissRequest()
+                },
+            )
+        },
+        hazeState = hazeState,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        title = title,
+        hint = hint,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfirmationDialog(
+    cancelButton: @Composable () -> Unit,
+    confirmButton: @Composable () -> Unit,
+    hazeState: HazeState,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    hint: String? = null,
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Column(
@@ -53,43 +94,33 @@ fun ConfirmationDialog(
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = title,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = hint,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            if (title != null) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = title,
+                    style = MaterialTheme.typography.titleMedium,
+                )
+            }
+            if (hint != null) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = hint,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
             Row(
                 modifier = Modifier.padding(bottom = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                DialogButton(
-                    title = cancelText,
-                    textColor = MaterialTheme.colorScheme.primary,
-                    onClick = {
-                        onCancelClick()
-                        onDismissRequest()
-                    },
-                )
-                DialogButton(
-                    title = confirmText,
-                    textColor = MaterialTheme.colorScheme.errorContainer,
-                    onClick = {
-                        onConfirmClick()
-                        onDismissRequest()
-                    },
-                )
+                cancelButton()
+                confirmButton()
             }
         }
     }
 }
 
 @Composable
-private fun DialogButton(
+fun ConfirmationDialogButton(
     title: String,
     textColor: Color,
     onClick: () -> Unit,
@@ -115,8 +146,6 @@ private fun Preview() {
         ConfirmationDialog(
             title = "Test title",
             hint = "Test hint",
-            cancelText = "Cancel",
-            confirmText = "Confirm",
             onDismissRequest = {},
             hazeState = HazeState(),
         )
