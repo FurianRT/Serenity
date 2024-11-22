@@ -7,12 +7,9 @@ internal data class CheckPinUiState(
     val pins: PinCount = PinCount.ZERO,
     val forgotPinButtonState: ForgotPinButtonState = ForgotPinButtonState.Enabled,
 ) {
-    val isForgotButtonEnabled: Boolean
-        get() = forgotPinButtonState is ForgotPinButtonState.Enabled
-
     sealed interface ForgotPinButtonState {
         data object Enabled : ForgotPinButtonState
-        data object Disabled : ForgotPinButtonState
+        data object Loading : ForgotPinButtonState
         data class Timer(val timer: String) : ForgotPinButtonState
     }
 }

@@ -38,4 +38,6 @@ dependencies {
 
     implementation(libs.mail)
     implementation(libs.mailActivaliton)
+
+    implementation(libs.lottie)
 }

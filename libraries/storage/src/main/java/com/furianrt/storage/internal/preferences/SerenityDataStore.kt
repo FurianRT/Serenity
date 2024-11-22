@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.furianrt.domain.repositories.SecurityRepository
@@ -25,6 +26,7 @@ private val KEY_PIN = stringPreferencesKey("pin")
 private val KEY_PIN_REQUEST_DELAY = intPreferencesKey("pin_request_delay")
 private val KEY_IS_FINGERPRINT_ENABLED = booleanPreferencesKey("is_fingerprint_enabled")
 private val KEY_PIN_RECOVERY_EMAIL = stringPreferencesKey("pin_recovery_email")
+private val KEY_RECOVERY_EMAIL_SEND_TIME = longPreferencesKey("recovery_email_send_time")
 
 @Singleton
 internal class SerenityDataStore @Inject constructor(
@@ -72,5 +74,12 @@ internal class SerenityDataStore @Inject constructor(
     override fun isBiometricAvailable(): Boolean {
         val result = biometricManager.canAuthenticate(BIOMETRIC_WEAK or BIOMETRIC_STRONG)
         return result == BiometricManager.BIOMETRIC_SUCCESS
+    }
+
+    override fun getLastEmailSendTime(): Flow<Long> = dataStore.data
+        .map { prefs -> prefs[KEY_RECOVERY_EMAIL_SEND_TIME] ?: 0L }
+
+    override suspend fun setLastEmailSendTime(time: Long) {
+        dataStore.edit { prefs -> prefs[KEY_RECOVERY_EMAIL_SEND_TIME] = time }
     }
 }

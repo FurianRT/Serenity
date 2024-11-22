@@ -5,9 +5,17 @@ import android.os.CancellationSignal
 import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,6 +40,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.lock.R
 import com.furianrt.lock.internal.ui.elements.ButtonClose
 import com.furianrt.lock.internal.ui.elements.Keyboard
@@ -138,6 +151,7 @@ internal fun CheckPinScreenInternal(
                     SnackBar(
                         title = data.visuals.message,
                         icon = painterResource(uiR.drawable.ic_email),
+                        tonalColor = MaterialTheme.colorScheme.tertiary,
                     )
                 },
             )
@@ -217,29 +231,72 @@ private fun ScreenContent(
                 onFingerprintClick = { onEvent(CheckPinEvent.OnFingerprintClick) },
             )
         }
-        TextButton(
-            modifier = Modifier
-                .padding(bottom = 24.dp)
-                .applyIf(!uiState.isForgotButtonEnabled) { Modifier.alpha(0.5f) },
-            enabled = uiState.isForgotButtonEnabled,
+        ButtonForgotPin(
+            modifier = Modifier.padding(bottom = 8.dp),
+            state = uiState.forgotPinButtonState,
             onClick = { onEvent(CheckPinEvent.OnForgotPinClick) },
-        ) {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Text(
-                    text = stringResource(R.string.lock_forgot_pin_title),
-                    style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+private fun ButtonForgotPin(
+    onClick: () -> Unit,
+    state: CheckPinUiState.ForgotPinButtonState,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier.heightIn(min = 64.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedContent(
+            targetState = state,
+            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
+            contentKey = { it is CheckPinUiState.ForgotPinButtonState.Loading },
+            label = "ForgotPinButtonAnim",
+        ) { targetState ->
+            if (targetState is CheckPinUiState.ForgotPinButtonState.Loading) {
+                val composition by rememberLottieComposition(
+                    LottieCompositionSpec.RawRes(R.raw.anim_sending_mail),
                 )
-                if (uiState.forgotPinButtonState is CheckPinUiState.ForgotPinButtonState.Timer) {
-                    Text(
-                        text = uiState.forgotPinButtonState.timer,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                val progress by animateLottieCompositionAsState(
+                    composition = composition,
+                    iterations = LottieConstants.IterateForever,
+                )
+                LottieAnimation(
+                    modifier = Modifier.height(64.dp),
+                    composition = composition,
+                    progress = { progress },
+                )
+            } else {
+                TextButton(
+                    modifier = modifier
+                        .applyIf(targetState !is CheckPinUiState.ForgotPinButtonState.Enabled) {
+                            Modifier.alpha(0.5f)
+                        }
+                        .animateContentSize(),
+                    enabled = targetState is CheckPinUiState.ForgotPinButtonState.Enabled,
+                    onClick = onClick,
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(4.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        Text(
+                            text = stringResource(R.string.lock_forgot_pin_title),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                        if (targetState is CheckPinUiState.ForgotPinButtonState.Timer) {
+                            Text(
+                                text = targetState.timer,
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
+                    }
                 }
             }
         }
+
     }
 }
 

@@ -16,4 +16,7 @@ interface SecurityRepository {
     suspend fun setPinRecoveryEmail(email: String)
 
     fun isBiometricAvailable(): Boolean
+
+    fun getLastEmailSendTime(): Flow<Long>
+    suspend fun setLastEmailSendTime(time: Long)
 }

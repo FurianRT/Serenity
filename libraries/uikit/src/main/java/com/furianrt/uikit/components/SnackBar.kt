@@ -1,5 +1,6 @@
 package com.furianrt.uikit.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,24 +19,26 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
-import com.furianrt.uikit.theme.Colors
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
 fun SnackBar(
     title: String,
     modifier: Modifier = Modifier,
-    color: Color = Colors.DarkGray,
+    color: Color? = null,
+    tonalColor: Color? = null,
     icon: Painter? = null,
 ) {
     Surface(
         modifier = modifier.padding(16.dp),
         shape = RoundedCornerShape(16.dp),
-        color = color,
+        color = color ?: MaterialTheme.colorScheme.surface,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .applyIf(tonalColor != null) { Modifier.background(tonalColor!!) }
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -62,6 +65,7 @@ private fun Preview() {
         SnackBar(
             title = "Test tiles",
             icon = painterResource(R.drawable.ic_share),
+            tonalColor = MaterialTheme.colorScheme.tertiary,
         )
     }
 }

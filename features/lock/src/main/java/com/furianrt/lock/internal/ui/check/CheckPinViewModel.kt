@@ -6,6 +6,7 @@ import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.lock.R
 import com.furianrt.lock.internal.domain.CheckPinUseCase
+import com.furianrt.lock.internal.domain.GetEmailSendTimerUseCase
 import com.furianrt.lock.internal.domain.SendPinRecoveryEmailUseCase
 import com.furianrt.lock.internal.ui.entities.Constants
 import com.furianrt.lock.internal.ui.entities.PinCount
@@ -24,31 +25,29 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-private const val SEND_EMAIL_INTERVAL = 1000 * 60 * 5 // 5 min
-
 @HiltViewModel
 internal class CheckPinViewModel @Inject constructor(
     private val securityRepository: SecurityRepository,
     private val resourcesManager: ResourcesManager,
     private val checkPinUseCase: CheckPinUseCase,
     private val sendPinRecoveryEmailUseCase: SendPinRecoveryEmailUseCase,
+    getEmailSendTimerUseCase: GetEmailSendTimerUseCase,
 ) : ViewModel() {
 
     private var currentPin = MutableStateFlow("")
-
-    private val forgotPinButtonState = MutableStateFlow<CheckPinUiState.ForgotPinButtonState>(
-        CheckPinUiState.ForgotPinButtonState.Enabled,
-    )
+    private val showForgotPinButtonLoading = MutableStateFlow(false)
 
     val state = combine(
         securityRepository.isFingerprintEnabled(),
         currentPin,
-        forgotPinButtonState,
-    ) { isFingerprintEnabled, pin, forgotButtonState ->
-        CheckPinUiState(
-            showFingerprint = isFingerprintEnabled && securityRepository.isBiometricAvailable(),
-            pins = PinCount.fromPin(pin),
-            forgotPinButtonState = forgotButtonState,
+        getEmailSendTimerUseCase(),
+        showForgotPinButtonLoading,
+    ) { isFingerprintEnabled, pin, emailSendTimer, isForgotPinButtonLoading ->
+        buildState(
+            isFingerprintEnabled = isFingerprintEnabled,
+            pin = pin,
+            emailSendTimer = emailSendTimer,
+            isForgotButtonLoading = isForgotPinButtonLoading,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -133,7 +132,7 @@ internal class CheckPinViewModel @Inject constructor(
     }
 
     private fun sendRecoveryEmail() {
-        forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Disabled }
+        showForgotPinButtonLoading.update { true }
         launch {
             sendPinRecoveryEmailUseCase(
                 subject = resourcesManager.getString(R.string.pin_recovery_email_subject),
@@ -143,23 +142,30 @@ internal class CheckPinViewModel @Inject constructor(
                 ),
             ).onSuccess {
                 _effect.tryEmit(CheckPinEffect.ShowSendEmailSuccess)
-                startEmailSendTimer()
+                securityRepository.setLastEmailSendTime(System.currentTimeMillis())
+                showForgotPinButtonLoading.update { false }
             }.onFailure {
                 _effect.tryEmit(CheckPinEffect.ShowSendEmailFailure)
-                forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Enabled }
+                showForgotPinButtonLoading.update { false }
             }
         }
     }
 
-    private suspend fun startEmailSendTimer() {
-        var interval = SEND_EMAIL_INTERVAL
-        while (interval > 0) {
-            delay(1000)
-            interval -= 1000
-            forgotPinButtonState.update {
-                CheckPinUiState.ForgotPinButtonState.Timer(interval.toTimeString())
+    private fun buildState(
+        isFingerprintEnabled: Boolean,
+        pin: String,
+        emailSendTimer: Long,
+        isForgotButtonLoading: Boolean,
+    ) = CheckPinUiState(
+        showFingerprint = isFingerprintEnabled && securityRepository.isBiometricAvailable(),
+        pins = PinCount.fromPin(pin),
+        forgotPinButtonState = when {
+            emailSendTimer > 0L -> {
+                CheckPinUiState.ForgotPinButtonState.Timer(emailSendTimer.toTimeString())
             }
-        }
-        forgotPinButtonState.update { CheckPinUiState.ForgotPinButtonState.Enabled }
-    }
+
+            isForgotButtonLoading -> CheckPinUiState.ForgotPinButtonState.Loading
+            else -> CheckPinUiState.ForgotPinButtonState.Enabled
+        },
+    )
 }
