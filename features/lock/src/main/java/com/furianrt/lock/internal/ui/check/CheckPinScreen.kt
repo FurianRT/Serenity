@@ -76,7 +76,7 @@ internal fun CheckPinScreenInternal(
     val view = LocalView.current
     val activity = LocalActivity.current
 
-    var showRecoveryDialog by remember { mutableStateOf(false) }
+    var recoveryDialogState: String? by remember { mutableStateOf(null) }
 
     val biometricPrompt = remember {
         activity?.let {
@@ -112,7 +112,7 @@ internal fun CheckPinScreenInternal(
             when (effect) {
                 is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)
                 is CheckPinEffect.ShowPinSuccess -> onCloseRequest()
-                is CheckPinEffect.ShowForgotPinDialog -> showRecoveryDialog = true
+                is CheckPinEffect.ShowForgotPinDialog -> recoveryDialogState = effect.email
                 is CheckPinEffect.ShowWrongPinError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                     shakeState.shake(25)
@@ -170,11 +170,12 @@ internal fun CheckPinScreenInternal(
         },
     )
 
-    if (showRecoveryDialog) {
+    recoveryDialogState?.let { state ->
         ForgotPinDialog(
+            email = state,
             hazeState = recoveryDialogHazeState,
             onConfirmClick = { viewModel.onEvent(CheckPinEvent.OnSendRecoveryEmailClick) },
-            onDismissRequest = { showRecoveryDialog = false },
+            onDismissRequest = { recoveryDialogState = null },
         )
     }
 

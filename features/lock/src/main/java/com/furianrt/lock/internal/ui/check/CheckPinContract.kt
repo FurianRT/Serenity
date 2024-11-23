@@ -26,7 +26,7 @@ internal sealed interface CheckPinEvent {
 }
 
 internal sealed interface CheckPinEffect {
-    data object ShowForgotPinDialog : CheckPinEffect
+    data class ShowForgotPinDialog(val email: String?) : CheckPinEffect
     data object ShowWrongPinError : CheckPinEffect
     data object ShowPinSuccess : CheckPinEffect
     data object ShowBiometricScanner : CheckPinEffect

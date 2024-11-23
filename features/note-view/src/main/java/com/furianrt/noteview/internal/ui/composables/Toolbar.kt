@@ -152,7 +152,8 @@ private fun Menu(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 12.dp,
                 ),
-            ),
+            )
+            .background(MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),

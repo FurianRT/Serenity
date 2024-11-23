@@ -6,6 +6,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,6 +47,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -61,7 +63,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
 import com.furianrt.uikit.R as uiR
@@ -496,11 +497,12 @@ private fun PopUpMenu(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint.Color(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)),
                     blurRadius = 12.dp,
                 ),
-            ),
+            )
+            .background(MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)),
         containerColor = Color.Transparent,
+        offset = DpOffset(x = 0.dp, y = -(8).dp),
         shape = RoundedCornerShape(8.dp),
         shadowElevation = 0.dp,
         expanded = expanded,

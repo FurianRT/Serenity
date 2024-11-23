@@ -18,6 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
 import com.furianrt.uikit.theme.SerenityTheme
@@ -25,6 +27,47 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
+
+@Composable
+fun ConfirmationDialog(
+    cancelText: String = stringResource(R.string.action_cancel),
+    confirmText: String = stringResource(R.string.action_confirm),
+    hazeState: HazeState,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+    title: AnnotatedString? = null,
+    hint: AnnotatedString? = null,
+    onCancelClick: () -> Unit = {},
+    onConfirmClick: () -> Unit = {},
+) {
+    ConfirmationDialog(
+        cancelButton = {
+            ConfirmationDialogButton(
+                title = cancelText,
+                textColor = MaterialTheme.colorScheme.primary,
+                onClick = {
+                    onCancelClick()
+                    onDismissRequest()
+                },
+            )
+        },
+        confirmButton = {
+            ConfirmationDialogButton(
+                title = confirmText,
+                textColor = MaterialTheme.colorScheme.errorContainer,
+                onClick = {
+                    onConfirmClick()
+                    onDismissRequest()
+                },
+            )
+        },
+        hazeState = hazeState,
+        onDismissRequest = onDismissRequest,
+        modifier = modifier,
+        title = title,
+        hint = hint,
+    )
+}
 
 @Composable
 fun ConfirmationDialog(
@@ -62,8 +105,12 @@ fun ConfirmationDialog(
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
-        title = title,
-        hint = hint,
+        title = title?.let {
+            buildAnnotatedString { append(it) }
+        },
+        hint = hint?.let {
+            buildAnnotatedString { append(it) }
+        },
     )
 }
 
@@ -75,8 +122,8 @@ fun ConfirmationDialog(
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
-    title: String? = null,
-    hint: String? = null,
+    title: AnnotatedString? = null,
+    hint: AnnotatedString? = null,
 ) {
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Column(

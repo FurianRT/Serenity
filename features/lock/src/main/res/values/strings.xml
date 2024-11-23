@@ -7,7 +7,7 @@
     <string name="lock_use_pin_title">Use PIN</string>
     <string name="recovery_email_hint">Please enter your email address to receive your forgotten PIN code</string>
     <string name="recovery_email_format_error">Invalid email</string>
-    <string name="pin_recovery_dialog_title">We\'ll send an email with password recovery instructions to the address you provide when creating your password. If you don\'t receive it, check your spam folder – it might end up there</string>
+    <string name="pin_recovery_dialog_title">We\'ll send an email with password recovery instructions to %s. If you don\'t receive it, check your spam folder - it might end up there.</string>
     <string name="pin_recovery_email_subject">PIN recovery</string>
     <string name="pin_recovery_email_content">Your PIN: %s</string>
     <string name="send_pin_recovery_email_failure">Something went wrong</string>

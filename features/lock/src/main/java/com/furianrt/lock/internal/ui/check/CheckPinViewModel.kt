@@ -7,6 +7,7 @@ import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.lock.R
 import com.furianrt.lock.internal.domain.CheckPinUseCase
 import com.furianrt.lock.internal.domain.GetEmailSendTimerUseCase
+import com.furianrt.lock.internal.domain.GetPartiallyHiddenEmailUseCase
 import com.furianrt.lock.internal.domain.SendPinRecoveryEmailUseCase
 import com.furianrt.lock.internal.ui.entities.Constants
 import com.furianrt.lock.internal.ui.entities.PinCount
@@ -31,6 +32,7 @@ internal class CheckPinViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val checkPinUseCase: CheckPinUseCase,
     private val sendPinRecoveryEmailUseCase: SendPinRecoveryEmailUseCase,
+    private val getPartiallyHiddenEmailUseCase: GetPartiallyHiddenEmailUseCase,
     getEmailSendTimerUseCase: GetEmailSendTimerUseCase,
 ) : ViewModel() {
 
@@ -73,8 +75,12 @@ internal class CheckPinViewModel @Inject constructor(
                 }
             }
 
-            is CheckPinEvent.OnForgotPinClick -> {
-                _effect.tryEmit(CheckPinEffect.ShowForgotPinDialog)
+            is CheckPinEvent.OnForgotPinClick -> launch {
+                _effect.tryEmit(
+                    CheckPinEffect.ShowForgotPinDialog(
+                        getPartiallyHiddenEmailUseCase().first(),
+                    )
+                )
             }
 
             is CheckPinEvent.OnBiometricSucceeded -> {

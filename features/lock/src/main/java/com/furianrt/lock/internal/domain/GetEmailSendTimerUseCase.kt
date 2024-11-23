@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.transformLatest
 import javax.inject.Inject
 import kotlin.math.max
 
-private const val SEND_EMAIL_INTERVAL = 10000L * 60L * 5L // 5 min
+private const val SEND_EMAIL_INTERVAL = 1000L * 60L * 2L // 2 min
 
 internal class GetEmailSendTimerUseCase @Inject constructor(
     private val securityRepository: SecurityRepository,
