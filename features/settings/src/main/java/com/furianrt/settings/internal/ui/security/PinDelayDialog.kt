@@ -21,8 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.settings.R
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
@@ -51,6 +53,17 @@ internal fun PinDelayDialog(
     onDelayClick: (delay: Int) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
+    val auth = LocalAuth.current
+
+    LifecycleStartEffect(Unit) {
+        scope.launch {
+            if (!auth.isAuthorized()) {
+                onDismissRequest()
+            }
+        }
+        onStopOrDispose {}
+    }
+
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Column(
             modifier = modifier

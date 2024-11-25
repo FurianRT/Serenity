@@ -12,6 +12,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -19,6 +20,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.domain.managers.LockManager
 import com.furianrt.lock.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
@@ -38,23 +40,31 @@ import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.IsAuthorizedProvider
+import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
 private const val SPLASH_SCREEN_DELAY = 400L
 
 @AndroidEntryPoint
-internal class MainActivity : ComponentActivity() {
+internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     @Inject
     lateinit var permissionsUtils: PermissionsUtils
 
+    @Inject
+    lateinit var lockManager: LockManager
+
     private val viewModel: MainViewModel by viewModels()
 
     private var keepSplashScreen = true
+
+    override suspend fun isAuthorized(): Boolean = lockManager.isAuthorized().first()
 
     override fun onCreateView(
         parent: View?,
@@ -98,74 +108,76 @@ internal class MainActivity : ComponentActivity() {
             val hazeState = remember { HazeState() }
 
             SerenityTheme {
-                SerenityNavHost(
-                    modifier = Modifier.haze(hazeState),
-                    navController = navController,
-                ) {
-                    noteListScreen(
-                        openSettingsScreen = navController::navigateToSettings,
-                        openNoteCreateScreen = { identifier ->
-                            navController.navigateToNoteCreate(
-                                route = NoteCreateRoute(
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
-                        openNoteViewScreen = { noteId, identifier ->
-                            navController.navigateToNoteView(
-                                route = NoteViewRoute(
-                                    noteId = noteId,
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
-                    )
+                CompositionLocalProvider(LocalAuth provides this) {
+                    SerenityNavHost(
+                        modifier = Modifier.haze(hazeState),
+                        navController = navController,
+                    ) {
+                        noteListScreen(
+                            openSettingsScreen = navController::navigateToSettings,
+                            openNoteCreateScreen = { identifier ->
+                                navController.navigateToNoteCreate(
+                                    route = NoteCreateRoute(
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    ),
+                                )
+                            },
+                            openNoteViewScreen = { noteId, identifier ->
+                                navController.navigateToNoteView(
+                                    route = NoteViewRoute(
+                                        noteId = noteId,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    ),
+                                )
+                            },
+                        )
 
-                    noteViewScreen(
-                        openMediaViewScreen = { noteId, mediaName, identifier ->
-                            navController.navigateToMediaView(
-                                route = MediaViewRoute(
-                                    noteId = noteId,
-                                    mediaName = mediaName,
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
-                        openMediaViewer = navController::navigateToMediaViewer,
-                        onCloseRequest = navController::navigateUp,
-                    )
+                        noteViewScreen(
+                            openMediaViewScreen = { noteId, mediaName, identifier ->
+                                navController.navigateToMediaView(
+                                    route = MediaViewRoute(
+                                        noteId = noteId,
+                                        mediaName = mediaName,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    ),
+                                )
+                            },
+                            openMediaViewer = navController::navigateToMediaViewer,
+                            onCloseRequest = navController::navigateUp,
+                        )
 
-                    noteCreateScreen(
-                        openMediaViewScreen = { noteId, mediaName, identifier ->
-                            navController.navigateToMediaView(
-                                route = MediaViewRoute(
-                                    noteId = noteId,
-                                    mediaName = mediaName,
-                                    dialogId = identifier.dialogId,
-                                    requestId = identifier.requestId,
-                                ),
-                            )
-                        },
-                        openMediaViewer = navController::navigateToMediaViewer,
-                        onCloseRequest = navController::navigateUp,
-                    )
+                        noteCreateScreen(
+                            openMediaViewScreen = { noteId, mediaName, identifier ->
+                                navController.navigateToMediaView(
+                                    route = MediaViewRoute(
+                                        noteId = noteId,
+                                        mediaName = mediaName,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    ),
+                                )
+                            },
+                            openMediaViewer = navController::navigateToMediaViewer,
+                            onCloseRequest = navController::navigateUp,
+                        )
 
-                    settingsNavigation(navController)
-                    mediaViewScreen(onCloseRequest = navController::navigateUp)
-                    mediaViewerScreen(onCloseRequest = navController::navigateUp)
-                }
-                AnimatedVisibility(
-                    visible = uiState.isScreenLocked,
-                    enter = EnterTransition.None,
-                    exit = fadeOut(),
-                ) {
-                    CheckPinScreen(
-                        hazeState = hazeState,
-                        onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
-                    )
+                        settingsNavigation(navController)
+                        mediaViewScreen(onCloseRequest = navController::navigateUp)
+                        mediaViewerScreen(onCloseRequest = navController::navigateUp)
+                    }
+                    AnimatedVisibility(
+                        visible = uiState.isScreenLocked,
+                        enter = EnterTransition.None,
+                        exit = fadeOut(),
+                    ) {
+                        CheckPinScreen(
+                            hazeState = hazeState,
+                            onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
+                        )
+                    }
                 }
             }
         }

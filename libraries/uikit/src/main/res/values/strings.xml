@@ -7,6 +7,7 @@
     <string name="action_save">Save</string>
     <string name="action_confirm">Confirm</string>
     <string name="action_send">Send</string>
+    <string name="action_done">Done</string>
 
     <string name="title_email">Email</string>
 
@@ -15,4 +16,20 @@
 
     <string name="media_counter_pattern">%d of %d</string>
     <string name="general_error">Something went wrong</string>
+
+    <string-array name="months_array">
+        <item>January</item>
+        <item>February</item>
+        <item>March</item>
+        <item>April</item>
+        <item>May</item>
+        <item>June</item>
+        <item>July</item>
+        <item>August</item>
+        <item>September</item>
+        <item>October</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
 </resources>

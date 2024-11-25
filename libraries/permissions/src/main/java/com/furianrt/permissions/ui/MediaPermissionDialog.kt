@@ -19,6 +19,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,8 +30,11 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.permissions.R
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.LocalAuth
+import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,6 +43,17 @@ fun MediaPermissionDialog(
     onDismissRequest: () -> Unit,
     onSettingsClick: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val auth = LocalAuth.current
+
+    LifecycleStartEffect(Unit) {
+        scope.launch {
+            if (!auth.isAuthorized()) {
+                onDismissRequest()
+            }
+        }
+        onStopOrDispose {}
+    }
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = Modifier.wrapContentSize(),

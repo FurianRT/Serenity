@@ -1,5 +1,6 @@
 package com.furianrt.noteview.internal.ui
 
+import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -29,6 +30,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -43,6 +45,8 @@ import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.SelectedDate
+import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
@@ -53,6 +57,7 @@ import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Stable
 internal class SuccessScreenState {
@@ -81,6 +86,8 @@ internal fun NoteViewScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val successScreenState = rememberSuccessScreenState()
+    var showCalendar by remember { mutableStateOf(false) }
+    val hazeState = remember { HazeState() }
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
@@ -89,16 +96,26 @@ internal fun NoteViewScreen(
                 when (effect) {
                     is NoteViewEffect.CloseScreen -> onCloseRequest()
                     is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
+                    is NoteViewEffect.ShowDateSelector -> showCalendar = true
                 }
             }
     }
     ScreenContent(
+        modifier = Modifier.haze(hazeState),
         state = successScreenState,
         uiState = uiState,
         onEvent = viewModel::onEvent,
         openMediaViewScreen = openMediaViewScreen,
         openMediaViewer = openMediaViewer,
     )
+    if (showCalendar) {
+        SingleChoiceCalendar(
+            selectedDate = SelectedDate(LocalDate.now()),
+            hazeState = hazeState,
+            onDismissRequest = { showCalendar = false },
+            onDateSelected = {},
+        )
+    }
 }
 
 @Composable
@@ -164,6 +181,7 @@ private fun SuccessScreen(
     val hazeState = remember { HazeState() }
     val scope = rememberCoroutineScope()
     val toolbarState = remember { MovableToolbarState() }
+    val view = LocalView.current
 
     LaunchedEffect(uiState.isInEditMode) {
         if (uiState.isInEditMode) {
@@ -193,10 +211,11 @@ private fun SuccessScreen(
                 dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
                 onBackButtonClick = { onEvent(NoteViewEvent.OnButtonBackClick) },
-                onDateClick = {},
+                onDateClick = { onEvent(NoteViewEvent.OnButtonDateClick) },
                 onDeleteClick = {
                     val noteId = uiState.notes[pagerState.currentPage].id
                     onEvent(NoteViewEvent.OnDeleteClick(noteId))
+                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 },
             )
             AnimatedVisibility(

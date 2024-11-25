@@ -1,17 +1,18 @@
 package com.furianrt.uikit.extensions
 
 import androidx.compose.foundation.lazy.LazyListItemInfo
-import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import kotlin.math.max
 
 private const val MAX_VISIBLE_THRESHOLD = 100f
 
-fun LazyListState.visibleItemsInfo(itemVisiblePercentThreshold: Float) = layoutInfo
-    .visibleItemsInfo
+fun LazyListLayoutInfo.firstMostVisibleItemInfo() = visibleItemsInfo.maxBy { visibilityPercent(it) }
+
+fun LazyListLayoutInfo.visibleItemsInfo(itemVisiblePercentThreshold: Float) = visibleItemsInfo
     .filter { visibilityPercent(it) >= itemVisiblePercentThreshold }
 
-fun LazyListState.visibilityPercent(info: LazyListItemInfo): Float {
-    val cutTop = max(0, layoutInfo.viewportStartOffset - info.offset)
-    val cutBottom = max(0, info.offset + info.size - layoutInfo.viewportEndOffset)
+fun LazyListLayoutInfo.visibilityPercent(info: LazyListItemInfo): Float {
+    val cutTop = max(0, viewportStartOffset - info.offset)
+    val cutBottom = max(0, info.offset + info.size - viewportEndOffset)
     return max(0f, MAX_VISIBLE_THRESHOLD - (cutTop + cutBottom) * MAX_VISIBLE_THRESHOLD / info.size)
 }

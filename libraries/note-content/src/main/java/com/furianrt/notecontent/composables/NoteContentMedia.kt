@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
@@ -60,11 +62,13 @@ import com.furianrt.notecontent.entities.contentHeight
 import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 private const val CONTENT_TRANSITION_DURATION = 400
@@ -491,6 +495,17 @@ private fun PopUpMenu(
     onShareClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val auth = LocalAuth.current
+
+    LifecycleStartEffect(Unit) {
+        scope.launch {
+            if (!auth.isAuthorized()) {
+                onDismissRequest()
+            }
+        }
+        onStopOrDispose {}
+    }
     DropdownMenu(
         modifier = Modifier
             .hazeChild(

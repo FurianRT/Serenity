@@ -29,7 +29,7 @@ internal class NoteListScreenState(
     }
 
     suspend fun scrollToPosition(position: Int) {
-        val visibleIndexes = listState
+        val visibleIndexes = listState.layoutInfo
             .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD)
             .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {

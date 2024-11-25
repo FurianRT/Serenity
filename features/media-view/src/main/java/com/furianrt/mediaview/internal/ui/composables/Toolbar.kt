@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.mediaview.R
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonMenu
@@ -33,6 +35,8 @@ import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.LocalAuth
+import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -96,6 +100,17 @@ private fun Menu(
     onSaveMediaClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val auth = LocalAuth.current
+
+    LifecycleStartEffect(Unit) {
+        scope.launch {
+            if (!auth.isAuthorized()) {
+                onDismissRequest()
+            }
+        }
+        onStopOrDispose {}
+    }
     DropdownMenu(
         modifier = Modifier.background(Colors.DarkGray.copy(alpha = 0.8f)),
         offset = DpOffset(x = (-8).dp, y = 0.dp),

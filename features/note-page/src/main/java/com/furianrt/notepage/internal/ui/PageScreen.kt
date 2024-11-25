@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -361,7 +362,10 @@ private fun SuccessScreen(
                             dropDownHazeState = hazeState,
                             clickable = true,
                             onClick = { onEvent(PageEvent.OnMediaClick(it)) },
-                            onRemoveClick = { onEvent(PageEvent.OnMediaRemoveClick(it)) },
+                            onRemoveClick = {
+                                onEvent(PageEvent.OnMediaRemoveClick(it))
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            },
                             onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
                         )
                     }
@@ -375,7 +379,10 @@ private fun SuccessScreen(
                                 .animateItem(),
                             tags = uiState.tags,
                             isEditable = uiState.isInEditMode,
-                            onTagRemoveClick = { onEvent(PageEvent.OnTagRemoveClick(it)) },
+                            onTagRemoveClick = {
+                                onEvent(PageEvent.OnTagRemoveClick(it))
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            },
                             onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
                             onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
                             onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },

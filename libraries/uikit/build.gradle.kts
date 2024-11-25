@@ -30,4 +30,6 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.calendar)
+
+    implementation(libs.immutableCollections)
 }

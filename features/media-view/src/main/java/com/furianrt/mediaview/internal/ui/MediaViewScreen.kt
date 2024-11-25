@@ -1,6 +1,7 @@
 package com.furianrt.mediaview.internal.ui
 
 import android.net.Uri
+import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -24,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -118,6 +120,7 @@ private fun SuccessContent(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showControls by rememberSaveable { mutableStateOf(true) }
+    val view = LocalView.current
 
     DisposableEffect(showControls) {
         val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
@@ -158,6 +161,7 @@ private fun SuccessContent(
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
                 onDeleteClick = {
                     onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
+                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 },
                 onSaveMediaClick = {
                     onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))

@@ -25,6 +25,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,16 +35,19 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.R
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonEditAndDone
 import com.furianrt.uikit.components.ButtonMenu
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
+import kotlinx.coroutines.launch
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
@@ -144,6 +148,17 @@ private fun Menu(
     onShareClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
+    val scope = rememberCoroutineScope()
+    val auth = LocalAuth.current
+
+    LifecycleStartEffect(Unit) {
+        scope.launch {
+            if (!auth.isAuthorized()) {
+                onDismissRequest()
+            }
+        }
+        onStopOrDispose {}
+    }
     DropdownMenu(
         modifier = Modifier
             .hazeChild(

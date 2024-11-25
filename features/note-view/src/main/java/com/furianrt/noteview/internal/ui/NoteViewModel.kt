@@ -59,6 +59,7 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
             is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
             is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)
+            is NoteViewEvent.OnButtonDateClick -> _effect.tryEmit(NoteViewEffect.ShowDateSelector)
             is NoteViewEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = DialogIdentifier(
                     requestId = route.requestId,
