@@ -28,6 +28,7 @@ import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.persistentListOf
+import java.time.ZonedDateTime
 
 private val cardRippleAlpha = RippleAlpha(
     draggedAlpha = 0.05f,
@@ -118,7 +119,7 @@ private fun NoteItemPreview() {
                         media = persistentListOf(
                             UiNoteContent.MediaBlock.Image(
                                 name = "",
-                                addedTime = 0,
+                                addedDate = ZonedDateTime.now(),
                                 ratio = 1.5f,
                                 uri = Uri.EMPTY,
                             )

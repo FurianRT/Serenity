@@ -5,6 +5,7 @@ import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
@@ -90,7 +91,7 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
 
-    override suspend fun saveToGallery(media: LocalNote.Content.Media): Boolean {
+    override suspend fun saveToGallery(media: LocalMedia): Boolean {
         return sharedMediaSource.saveToGallery(media)
     }
 }

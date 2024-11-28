@@ -3,13 +3,15 @@ package com.furianrt.noteview.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.furianrt.core.doWithState
+import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
-import com.furianrt.domain.usecase.DeleteNoteUseCase
-import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.noteview.api.NoteViewRoute
+import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -21,7 +23,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import javax.inject.Inject
+import kotlin.math.min
 
 @HiltViewModel
 internal class NoteViewModel @Inject constructor(
@@ -59,14 +65,41 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
             is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
             is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)
-            is NoteViewEvent.OnButtonDateClick -> _effect.tryEmit(NoteViewEffect.ShowDateSelector)
-            is NoteViewEvent.OnPageChange -> dialogResultCoordinator.onDialogResult(
-                dialogIdentifier = DialogIdentifier(
-                    requestId = route.requestId,
-                    dialogId = route.dialogId,
-                ),
-                code = DialogResult.Ok(data = event.index),
-            )
+            is NoteViewEvent.OnButtonDateClick -> _state.doWithState<NoteViewUiState.Success> {
+                _effect.tryEmit(NoteViewEffect.ShowDateSelector(date = it.date.toLocalDate()))
+            }
+
+            is NoteViewEvent.OnDateSelected -> {
+                _state.doWithState<NoteViewUiState.Success> { successState ->
+                    val zonedDateTime = ZonedDateTime.of(
+                        event.date,
+                        LocalTime.now(),
+                        ZoneId.systemDefault(),
+                    )
+                    launch {
+                        notesRepository.updateNoteDate(
+                            noteId = successState.currentNote.id,
+                            date = zonedDateTime,
+                        )
+                    }
+                }
+            }
+
+            is NoteViewEvent.OnPageChange -> {
+                _state.updateState<NoteViewUiState.Success> { currentState ->
+                    currentState.copy(
+                        currentPageIndex = event.index,
+                        date = currentState.notes[event.index].date,
+                    )
+                }
+                dialogResultCoordinator.onDialogResult(
+                    dialogIdentifier = DialogIdentifier(
+                        requestId = route.requestId,
+                        dialogId = route.dialogId,
+                    ),
+                    code = DialogResult.Ok(data = event.index),
+                )
+            }
 
             is NoteViewEvent.OnDeleteClick -> {
                 disableEditMode()
@@ -83,16 +116,31 @@ internal class NoteViewModel @Inject constructor(
             }
             _state.update { localState ->
                 when (localState) {
-                    is NoteViewUiState.Success -> localState.copy(
-                        initialPageIndex = notes.indexOfFirst { it.id == route.noteId },
-                        notes = notes.mapImmutable(LocalNote::toNoteItem),
-                    )
+                    is NoteViewUiState.Success -> {
+                        val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
+                        val notesItems = notes.mapImmutable(LocalNote::toNoteItem)
+                        val currentPageIndex = notesItems.indexOfFirstOrNull {
+                            it.id == localState.currentNote.id
+                        } ?: min(localState.currentPageIndex, notesItems.lastIndex)
+                        localState.copy(
+                            initialPageIndex = initialPageIndex,
+                            currentPageIndex = currentPageIndex,
+                            notes = notesItems,
+                            date = notesItems[currentPageIndex].date,
+                        )
+                    }
 
-                    is NoteViewUiState.Loading -> NoteViewUiState.Success(
-                        initialPageIndex = notes.indexOfFirst { it.id == route.noteId },
-                        notes = notes.mapImmutable(LocalNote::toNoteItem),
-                        isInEditMode = false,
-                    )
+                    is NoteViewUiState.Loading -> {
+                        val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
+                        val notesItems = notes.mapImmutable(LocalNote::toNoteItem)
+                        NoteViewUiState.Success(
+                            initialPageIndex = initialPageIndex,
+                            currentPageIndex = initialPageIndex,
+                            notes = notesItems,
+                            date = notesItems[initialPageIndex].date,
+                            isInEditMode = false,
+                        )
+                    }
                 }
             }
         }

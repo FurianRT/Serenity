@@ -9,7 +9,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
-import com.furianrt.mediaview.internal.ui.extensions.toLocalNoteMedia
+import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -74,7 +74,7 @@ internal class MediaViewModel @Inject constructor(
             is MediaViewEvent.OnButtonSaveToGalleryClick -> {
                 val media = _state.value.media.getOrNull(event.mediaIndex) ?: return
                 launch {
-                    if (mediaRepository.saveToGallery(media.toLocalNoteMedia())) {
+                    if (mediaRepository.saveToGallery(media.toLocalMedia())) {
                         _effect.tryEmit(MediaViewEffect.ShowMediaSavedMessage)
                     } else {
                         _effect.tryEmit(MediaViewEffect.ShowMediaSaveErrorMessage)

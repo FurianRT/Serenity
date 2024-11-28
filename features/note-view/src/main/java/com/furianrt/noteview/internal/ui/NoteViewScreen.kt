@@ -49,6 +49,7 @@ import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -57,7 +58,7 @@ import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
 @Stable
 internal class SuccessScreenState {
@@ -86,7 +87,7 @@ internal fun NoteViewScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val successScreenState = rememberSuccessScreenState()
-    var showCalendar by remember { mutableStateOf(false) }
+    var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
     LaunchedEffect(viewModel.effect) {
@@ -96,7 +97,9 @@ internal fun NoteViewScreen(
                 when (effect) {
                     is NoteViewEffect.CloseScreen -> onCloseRequest()
                     is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
-                    is NoteViewEffect.ShowDateSelector -> showCalendar = true
+                    is NoteViewEffect.ShowDateSelector -> {
+                        calendarDialogState = SelectedDate(effect.date)
+                    }
                 }
             }
     }
@@ -108,12 +111,12 @@ internal fun NoteViewScreen(
         openMediaViewScreen = openMediaViewScreen,
         openMediaViewer = openMediaViewer,
     )
-    if (showCalendar) {
+    calendarDialogState?.let { dialogState ->
         SingleChoiceCalendar(
-            selectedDate = SelectedDate(LocalDate.now()),
+            selectedDate = dialogState,
             hazeState = hazeState,
-            onDismissRequest = { showCalendar = false },
-            onDateSelected = {},
+            onDismissRequest = { calendarDialogState = null },
+            onDateSelected = { viewModel.onEvent(NoteViewEvent.OnDateSelected(it.date)) },
         )
     }
 }
@@ -162,11 +165,14 @@ private fun SuccessScreen(
 
     state.setOnSaveContentListener { currentPageState?.saveContent() }
 
-    var date: String? by remember { mutableStateOf(null) }
-
     LaunchedEffect(pagerState.currentPage) {
-        date = uiState.notes.getOrNull(pagerState.currentPage)?.date
         onEvent(NoteViewEvent.OnPageChange(pagerState.currentPage))
+    }
+
+    LaunchedEffect(uiState.currentPageIndex) {
+        if (uiState.currentPageIndex != pagerState.currentPage) {
+            pagerState.scrollToPage(uiState.currentPageIndex)
+        }
     }
 
     LaunchedEffect(currentPageState?.hasContentChanged.orFalse()) {
@@ -204,6 +210,9 @@ private fun SuccessScreen(
         listState = currentPageState?.listState ?: rememberLazyListState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
         toolbar = {
+            val date = remember(uiState.date) {
+                uiState.date.toDateString()
+            }
             Toolbar(
                 modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
@@ -285,7 +294,9 @@ private fun ScreenSuccessPreview() {
             uiState = NoteViewUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,
+                currentPageIndex = 0,
                 notes = persistentListOf(),
+                date = ZonedDateTime.now(),
             ),
             openMediaViewScreen = { _, _, _ -> },
             openMediaViewer = {},

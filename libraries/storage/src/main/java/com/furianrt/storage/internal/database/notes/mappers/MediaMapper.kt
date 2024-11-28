@@ -8,7 +8,7 @@ internal fun EntryNoteImage.toNoteContentImage() = LocalNote.Content.Image(
     name = name,
     uri = uri,
     ratio = ratio,
-    addedTime = addedTime,
+    addedDate = addedDate,
 )
 
 internal fun EntryNoteVideo.toNoteContentVideo() = LocalNote.Content.Video(
@@ -16,7 +16,7 @@ internal fun EntryNoteVideo.toNoteContentVideo() = LocalNote.Content.Video(
     uri = uri,
     ratio = ratio,
     duration = duration,
-    addedTime = addedTime,
+    addedDate = addedDate,
 )
 
 internal fun LocalNote.Content.Image.toEntryImage(
@@ -27,7 +27,7 @@ internal fun LocalNote.Content.Image.toEntryImage(
     noteId = noteId,
     uri = uri,
     ratio = ratio,
-    addedTime = addedTime,
+    addedDate = addedDate,
     isSaved = isSaved,
 )
 
@@ -40,6 +40,6 @@ internal fun LocalNote.Content.Video.toEntryVideo(
     uri = uri,
     ratio = ratio,
     duration = duration,
-    addedTime = addedTime,
+    addedDate = addedDate,
     isSaved = isSaved,
 )

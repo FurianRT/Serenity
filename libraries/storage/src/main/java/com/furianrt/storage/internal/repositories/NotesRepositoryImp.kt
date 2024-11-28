@@ -7,12 +7,14 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 internal class NotesRepositoryImp @Inject constructor(
@@ -28,12 +30,17 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteText(id = noteId, text = content.toEntryNoteText()))
     }
 
+    override suspend fun updateNoteDate(noteId: String, date: ZonedDateTime) {
+        noteDao.update(PartNoteDate(id = noteId, date = date))
+    }
+
     override suspend fun deleteNote(noteId: String) {
         noteDao.delete(noteId)
     }
 
     override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllNotes()
         .deepMap(LinkedNote::toLocalNote)
+        .map { it.sortedByDescending(LocalNote::date) }
 
     override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId).map { it?.toLocalNote() }

@@ -9,7 +9,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -59,7 +58,7 @@ fun Modifier.clickableWithScaleAnim(
                 onClick()
             },
             indication = indication,
-            interactionSource = remember { MutableInteractionSource() },
+            interactionSource = null,
         )
     } else {
         resultModifier.clickableNoRipple {

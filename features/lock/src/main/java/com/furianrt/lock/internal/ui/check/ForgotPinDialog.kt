@@ -40,6 +40,7 @@ internal fun ForgotPinDialog(
         hint = hint,
         confirmText = stringResource(uiR.string.action_send),
         hazeState = hazeState,
+        hideOnLock = false,
         onDismissRequest = onDismissRequest,
         onConfirmClick = onConfirmClick,
     )
@@ -50,7 +51,7 @@ internal fun ForgotPinDialog(
 private fun Preview() {
     SerenityTheme {
         ForgotPinDialog(
-            email = "te**st@test.com",
+            email = "te***st@test.com",
             onDismissRequest = {},
             hazeState = HazeState(),
         )

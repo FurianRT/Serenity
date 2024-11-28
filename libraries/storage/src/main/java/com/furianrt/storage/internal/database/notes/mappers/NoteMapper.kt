@@ -20,12 +20,12 @@ private enum class FirstTagType {
 internal fun SimpleNote.toEntryNote() = EntryNote(
     id = id,
     text = "",
-    timestamp = timestamp,
+    date = date,
 )
 
 internal fun LinkedNote.toLocalNote() = LocalNote(
     id = note.id,
-    timestamp = note.timestamp,
+    date = note.date,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
     content = getLocalNoteContent(),
 )

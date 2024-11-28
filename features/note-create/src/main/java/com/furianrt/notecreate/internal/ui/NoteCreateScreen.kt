@@ -16,8 +16,10 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.zIndex
@@ -34,14 +36,20 @@ import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.SelectedDate
+import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -55,6 +63,8 @@ internal fun NoteCreateScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val pageScreenState = rememberPageScreenState()
+    var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
+    val hazeState = remember { HazeState() }
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
@@ -63,10 +73,14 @@ internal fun NoteCreateScreen(
                 when (effect) {
                     is NoteCreateEffect.SaveCurrentNoteContent -> pageScreenState.saveContent()
                     is NoteCreateEffect.CloseScreen -> onCloseRequest()
+                    is NoteCreateEffect.ShowDateSelector -> {
+                        calendarDialogState = SelectedDate(effect.date)
+                    }
                 }
             }
     }
     ScreenContent(
+        modifier = Modifier.haze(hazeState),
         state = pageScreenState,
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -82,6 +96,15 @@ internal fun NoteCreateScreen(
             )
         },
     )
+
+    calendarDialogState?.let { dialogState ->
+        SingleChoiceCalendar(
+            selectedDate = dialogState,
+            hazeState = hazeState,
+            onDismissRequest = { calendarDialogState = null },
+            onDateSelected = { viewModel.onEvent(NoteCreateEvent.OnDateSelected(it.date)) },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -91,6 +114,7 @@ private fun ScreenContent(
     uiState: NoteCreateUiState,
     onEvent: (event: NoteCreateEvent) -> Unit,
     notePage: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
     val toolbarState = remember { MovableToolbarState() }
@@ -110,20 +134,23 @@ private fun ScreenContent(
     }
 
     MovableToolbarScaffold(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
         listState = state.listState,
         toolbar = {
+            val date = remember(uiState.note.date) {
+                uiState.note.date.toDateString()
+            }
             Toolbar(
                 modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
-                timestamp = uiState.note.timestamp,
+                date = date,
                 onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
                 onBackButtonClick = { onEvent(NoteCreateEvent.OnButtonBackClick) },
-                onDateClick = {},
+                onDateClick = { onEvent(NoteCreateEvent.OnButtonDateClick) },
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),
@@ -164,7 +191,7 @@ private fun Preview() {
         ScreenContent(
             state = rememberPageScreenState(),
             uiState = NoteCreateUiState(
-                note = NoteItem(id = "", timestamp = System.currentTimeMillis()),
+                note = NoteItem(id = "", date = ZonedDateTime.now()),
                 isInEditMode = true,
             ),
             onEvent = {},

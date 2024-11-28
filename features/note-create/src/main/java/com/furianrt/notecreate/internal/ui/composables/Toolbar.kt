@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -28,7 +27,6 @@ import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonEditAndDone
 import com.furianrt.uikit.components.ButtonMenu
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -36,14 +34,13 @@ private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
 @Composable
 internal fun Toolbar(
-    timestamp: Long,
+    date: String,
     isInEditMode: Boolean,
     onEditClick: () -> Unit,
     onBackButtonClick: () -> Unit,
     onDateClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val date = remember(timestamp) { timestamp.toDateString() }
     Box(
         modifier = modifier
             .height(ToolbarConstants.toolbarHeight)
@@ -114,7 +111,7 @@ private fun DateLabel(
 private fun ToolbarPreview() {
     SerenityTheme {
         Toolbar(
-            timestamp = Long.MAX_VALUE,
+            date = "25 Nov 2024",
             isInEditMode = false,
             onEditClick = {},
             onBackButtonClick = {},
@@ -128,7 +125,7 @@ private fun ToolbarPreview() {
 private fun ToolbarPreviewEditMode() {
     SerenityTheme {
         Toolbar(
-            timestamp = Long.MAX_VALUE,
+            date = "25 Nov 2024",
             isInEditMode = true,
             onEditClick = {},
             onBackButtonClick = {},

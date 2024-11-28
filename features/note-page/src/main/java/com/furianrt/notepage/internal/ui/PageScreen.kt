@@ -218,8 +218,8 @@ private fun SuccessScreen(
 
     val isListAtTop by remember {
         derivedStateOf {
-            state.listState.firstVisibleItemIndex == 0 &&
-                    state.listState.firstVisibleItemScrollOffset == 0
+            (state.listState.firstVisibleItemIndex == 0 &&
+                    state.listState.firstVisibleItemScrollOffset == 0)
         }
     }
 
@@ -248,6 +248,13 @@ private fun SuccessScreen(
                 }
                 return super.onPostScroll(consumed, available, source)
             }
+        }
+    }
+    
+    LaunchedEffect(state.listState.canScrollBackward, state.listState.canScrollForward) {
+        if (!state.listState.canScrollBackward && !state.listState.canScrollForward) {
+            totalScroll = 0f
+            bgOffset = 0f
         }
     }
 

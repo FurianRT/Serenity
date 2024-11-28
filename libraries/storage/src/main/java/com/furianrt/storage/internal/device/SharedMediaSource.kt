@@ -7,7 +7,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.DeviceMedia
-import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.LocalMedia
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -21,7 +21,7 @@ internal class SharedMediaSource @Inject constructor(
     private val dispatchers: DispatchersProvider,
 ) {
     suspend fun saveToGallery(
-        media: LocalNote.Content.Media,
+        media: LocalMedia,
     ): Boolean = withContext(dispatchers.default) {
         val values = ContentValues().apply {
             put(MediaStore.Files.FileColumns.DISPLAY_NAME, media.name)
@@ -134,9 +134,9 @@ internal class SharedMediaSource @Inject constructor(
         return@withContext filesList
     }
 
-    private val LocalNote.Content.Media.mediaType: Int
-        get() = when (this) {
-            is LocalNote.Content.Image -> MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
-            is LocalNote.Content.Video -> MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
+    private val LocalMedia.mediaType: Int
+        get() = when (this.type) {
+            LocalMedia.Type.IMAGE -> MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE
+            LocalMedia.Type.VIDEO -> MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO
         }
 }

@@ -10,11 +10,9 @@ import java.util.Locale
 private const val DATE_PATTERN = "dd LLL yyyy"
 private const val TIME_PATTERN = "m:ss"
 
-fun Long.toDateString(pattern: String = DATE_PATTERN): String {
-    val instant = Instant.ofEpochMilli(this)
-    val localDateTime = ZonedDateTime.ofInstant(instant, ZoneId.systemDefault())
+fun ZonedDateTime.toDateString(pattern: String = DATE_PATTERN): String {
     val formatter = DateTimeFormatter.ofPattern(pattern, Locale.US)
-    return localDateTime.format(formatter)
+    return format(formatter)
 }
 
 fun Int.toTimeString(pattern: String = TIME_PATTERN): String = toLong().toTimeString(pattern)

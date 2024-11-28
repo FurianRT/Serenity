@@ -69,6 +69,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 import com.furianrt.uikit.R as uiR
 
 private const val CONTENT_TRANSITION_DURATION = 400
@@ -572,7 +573,14 @@ private fun NoteContentOneMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.1f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.1f,
+                        )
+                    )
                 },
             ),
         )
@@ -587,8 +595,22 @@ private fun NoteContentTwoMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
                 },
             ),
         )
@@ -603,9 +625,30 @@ private fun NoteContentThreeMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "2",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 0.4f,
+                        )
+                    )
                 },
             ),
         )
@@ -620,10 +663,38 @@ private fun NoteContentFourMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 0.4f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.8f))
-                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 0.4f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.8f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "2",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "3",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
                 },
             ),
         )
@@ -638,11 +709,46 @@ private fun NoteContentFiveMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "2",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "3",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "4",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
                 },
             ),
         )
@@ -657,12 +763,54 @@ private fun NoteContentSixMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.9f))
-                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.5f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "2",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "3",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.9f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "4",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "5",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
                 },
             ),
         )
@@ -677,13 +825,62 @@ private fun NoteContentSevenMediaPreview() {
             block = MediaBlock(
                 id = "1",
                 media = buildImmutableList {
-                    add(MediaBlock.Image(name = "0", uri = Uri.EMPTY, addedTime = 0, ratio = 1.5f))
-                    add(MediaBlock.Image(name = "1", uri = Uri.EMPTY, addedTime = 0, ratio = 1f))
-                    add(MediaBlock.Image(name = "2", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "3", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "4", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "5", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
-                    add(MediaBlock.Image(name = "6", uri = Uri.EMPTY, addedTime = 0, ratio = 1.2f))
+                    add(
+                        MediaBlock.Image(
+                            name = "0",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.5f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "1",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "2",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "3",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "4",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "5",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
+                    add(
+                        MediaBlock.Image(
+                            name = "6",
+                            uri = Uri.EMPTY,
+                            addedDate = ZonedDateTime.now(),
+                            ratio = 1.2f,
+                        )
+                    )
                 },
             ),
         )

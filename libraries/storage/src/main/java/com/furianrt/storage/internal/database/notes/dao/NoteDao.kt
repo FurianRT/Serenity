@@ -8,6 +8,7 @@ import androidx.room.Transaction
 import androidx.room.Update
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import kotlinx.coroutines.flow.Flow
 
@@ -19,11 +20,14 @@ internal interface NoteDao {
     @Update(entity = EntryNote::class)
     suspend fun update(data: PartNoteText)
 
+    @Update(entity = EntryNote::class)
+    suspend fun update(data: PartNoteDate)
+
     @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     suspend fun delete(noteId: String)
 
     @Transaction
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} ORDER BY ${EntryNote.FIELD_TIMESTAMP} DESC")
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
     fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Transaction

@@ -39,12 +39,14 @@ fun ConfirmationDialog(
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    hideOnLock: Boolean = true,
     title: AnnotatedString? = null,
     hint: AnnotatedString? = null,
     onCancelClick: () -> Unit = {},
     onConfirmClick: () -> Unit = {},
 ) {
     ConfirmationDialog(
+        modifier = modifier,
         cancelButton = {
             ConfirmationDialogButton(
                 title = cancelText,
@@ -67,7 +69,7 @@ fun ConfirmationDialog(
         },
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        hideOnLock = hideOnLock,
         title = title,
         hint = hint,
     )
@@ -80,6 +82,7 @@ fun ConfirmationDialog(
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    hideOnLock: Boolean = true,
     title: String? = null,
     hint: String? = null,
     onCancelClick: () -> Unit = {},
@@ -109,6 +112,7 @@ fun ConfirmationDialog(
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
+        hideOnLock = hideOnLock,
         title = title?.let {
             buildAnnotatedString { append(it) }
         },
@@ -126,19 +130,22 @@ fun ConfirmationDialog(
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    hideOnLock: Boolean = true,
     title: AnnotatedString? = null,
     hint: AnnotatedString? = null,
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
 
-    LifecycleStartEffect(Unit) {
-        scope.launch {
-            if (!auth.isAuthorized()) {
-                onDismissRequest()
+    if (hideOnLock) {
+        LifecycleStartEffect(Unit) {
+            scope.launch {
+                if (!auth.isAuthorized()) {
+                    onDismissRequest()
+                }
             }
+            onStopOrDispose {}
         }
-        onStopOrDispose {}
     }
     BasicAlertDialog(
         modifier = modifier

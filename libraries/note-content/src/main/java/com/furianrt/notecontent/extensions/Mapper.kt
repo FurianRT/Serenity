@@ -30,14 +30,14 @@ fun UiNoteContent.MediaBlock.Image.toLocalNoteImage() = LocalNote.Content.Image(
     name = name,
     uri = uri,
     ratio = ratio,
-    addedTime = addedTime,
+    addedDate = addedDate,
 )
 
 fun UiNoteContent.MediaBlock.Video.toLocalNoteVideo() = LocalNote.Content.Video(
     name = name,
     uri = uri,
     ratio = ratio,
-    addedTime = addedTime,
+    addedDate = addedDate,
     duration = duration,
 )
 
@@ -84,7 +84,7 @@ fun LocalNote.Content.Image.toUiNoteImage() = UiNoteContent.MediaBlock.Image(
     name = name,
     uri = uri,
     ratio = ratio,
-    addedTime = addedTime,
+    addedDate = addedDate,
 )
 
 fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
@@ -92,7 +92,7 @@ fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
     uri = uri,
     ratio = ratio,
     duration = duration,
-    addedTime = addedTime,
+    addedDate = addedDate,
 )
 
 fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean) = UiNoteTag.Regular(

@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.time.ZonedDateTime
 
 @Entity(
     tableName = EntryNoteVideo.TABLE_NAME,
@@ -34,8 +35,8 @@ internal class EntryNoteVideo(
     @ColumnInfo(name = FIELD_DURATION)
     val duration: Int,
 
-    @ColumnInfo(name = FIELD_ADDED_TIME)
-    val addedTime: Long,
+    @ColumnInfo(name = FIELD_ADDED_DATE)
+    val addedDate: ZonedDateTime,
 
     @ColumnInfo(name = FIELD_IS_SAVED)
     val isSaved: Boolean,
@@ -47,7 +48,7 @@ internal class EntryNoteVideo(
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
         const val FIELD_DURATION = "duration"
-        const val FIELD_ADDED_TIME = "added_time"
+        const val FIELD_ADDED_DATE = "added_date"
         const val FIELD_IS_SAVED = "is_saved"
     }
 }

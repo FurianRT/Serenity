@@ -1,6 +1,7 @@
 package com.furianrt.domain.repositories
 
 import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import kotlinx.coroutines.flow.Flow
 
@@ -12,5 +13,5 @@ interface MediaRepository {
 
     suspend fun getDeviceMediaList(): List<DeviceMedia>
 
-    suspend fun saveToGallery(media: LocalNote.Content.Media): Boolean
+    suspend fun saveToGallery(media: LocalMedia): Boolean
 }

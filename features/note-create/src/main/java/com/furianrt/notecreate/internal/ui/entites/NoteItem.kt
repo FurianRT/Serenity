@@ -1,6 +1,10 @@
 package com.furianrt.notecreate.internal.ui.entites
 
+import androidx.compose.runtime.Immutable
+import java.time.ZonedDateTime
+
+@Immutable
 internal data class NoteItem(
     val id: String,
-    val timestamp: Long,
+    val date: ZonedDateTime,
 )

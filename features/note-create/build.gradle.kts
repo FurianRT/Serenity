@@ -13,7 +13,7 @@ android {
 dependencies {
     implementation(projects.features.notePage)
     implementation(projects.features.mediaSelector)
-    
+
     implementation(projects.libraries.core)
     implementation(projects.libraries.domain)
     implementation(projects.libraries.uikit)
@@ -41,4 +41,6 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.blur)
 }

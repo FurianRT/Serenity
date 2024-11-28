@@ -1,7 +1,6 @@
 package com.furianrt.lock.internal.ui.elements
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -106,7 +104,7 @@ private fun Key(
             .size(56.dp)
             .clickable(
                 onClick = { onClick(key) },
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = null,
                 indication = ripple(bounded = false, radius = 32.dp),
             ),
         contentAlignment = Alignment.Center,
@@ -130,7 +128,7 @@ private fun IconKey(
             .size(56.dp)
             .clickable(
                 onClick = onClick,
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = null,
                 indication = ripple(bounded = false, radius = 32.dp),
             ),
         contentAlignment = Alignment.Center,

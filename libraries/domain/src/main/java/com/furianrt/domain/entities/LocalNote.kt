@@ -1,10 +1,11 @@
 package com.furianrt.domain.entities
 
 import android.net.Uri
+import java.time.ZonedDateTime
 
 class LocalNote(
     val id: String,
-    val timestamp: Long,
+    val date: ZonedDateTime,
     val tags: List<Tag>,
     val content: List<Content>,
 ) {
@@ -23,22 +24,22 @@ class LocalNote(
             open val name: String,
             open val uri: Uri,
             open val ratio: Float,
-            open val addedTime: Long,
+            open val addedDate: ZonedDateTime,
         )
 
         data class Image(
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val addedTime: Long,
-        ) : Media(name, uri, ratio, addedTime)
+            override val addedDate: ZonedDateTime,
+        ) : Media(name, uri, ratio, addedDate)
 
         data class Video(
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val addedTime: Long,
+            override val addedDate: ZonedDateTime,
             val duration: Int,
-        ) : Media(name, uri, ratio, addedTime)
+        ) : Media(name, uri, ratio, addedDate)
     }
 }

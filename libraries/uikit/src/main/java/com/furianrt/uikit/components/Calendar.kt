@@ -95,7 +95,7 @@ import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.math.max
 
-private const val MIN_YEAR = 1910
+private const val MIN_YEAR = 1970
 private const val MAX_YEAR = 2050
 private const val SELECTION_DELAY = 100L
 private const val MODE_CHANGE_ANIM_DURATION = 250
@@ -105,7 +105,7 @@ private enum class Mode {
 }
 
 @Immutable
-private data class SelectedYearMonth(val yearMonth: YearMonth) {}
+private data class SelectedYearMonth(val yearMonth: YearMonth)
 
 @Immutable
 data class SelectedDate(val date: LocalDate)
@@ -372,6 +372,7 @@ private fun MonthYearList(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
+    val scope = rememberCoroutineScope()
     val listHeight = itemHeight * 5
     val listHeightPx = LocalDensity.current.run { listHeight.toPx() }
     val itemHeightPx = LocalDensity.current.run { itemHeight.toPx() }
@@ -427,6 +428,10 @@ private fun MonthYearList(
             Box(
                 modifier = Modifier
                     .height(itemHeight)
+                    .clickableNoRipple {
+                        userInteracted = true
+                        scope.launch { listState.animateScrollToItem(index) }
+                    }
                     .graphicsLayer {
                         val itemOffset = listState.layoutInfo
                             .visibleItemsInfo
@@ -449,7 +454,7 @@ private fun MonthYearList(
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = items[index % items.count()],
+                    text = items[index],
                     style = MaterialTheme.typography.titleMedium,
                 )
             }

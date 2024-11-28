@@ -7,6 +7,7 @@ import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
 import com.furianrt.notecontent.extensions.toRegularUiNoteTag
 import com.furianrt.notecontent.extensions.toUiNoteContent
+import java.time.ZonedDateTime
 import java.util.UUID
 
 internal fun LocalNote.toNoteItem() = NoteItem(
@@ -25,14 +26,14 @@ private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this
         name = UUID.randomUUID().toString() + name,
         uri = uri,
         ratio = ratio,
-        addedTime = System.currentTimeMillis(),
+        addedDate = ZonedDateTime.now(),
     )
 
     is MediaResult.Media.Video -> MediaBlock.Video(
         name = UUID.randomUUID().toString() + name,
         uri = uri,
         ratio = ratio,
-        addedTime = System.currentTimeMillis(),
+        addedDate = ZonedDateTime.now(),
         duration = duration,
     )
 }

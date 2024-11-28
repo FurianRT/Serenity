@@ -7,6 +7,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
+import java.time.ZonedDateTime
 
 sealed class UiNoteContent(open val id: String) {
 
@@ -21,27 +22,31 @@ sealed class UiNoteContent(open val id: String) {
         override val id: String,
         val media: ImmutableList<Media>,
     ) : UiNoteContent(id) {
+
+        @Immutable
         sealed class Media(
             open val name: String,
             open val uri: Uri,
             open val ratio: Float,
-            open val addedTime: Long,
+            open val addedDate: ZonedDateTime,
         )
 
+        @Immutable
         data class Image(
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val addedTime: Long,
-        ) : Media(name, uri, ratio, addedTime)
+            override val addedDate: ZonedDateTime,
+        ) : Media(name, uri, ratio, addedDate)
 
+        @Immutable
         data class Video(
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
-            override val addedTime: Long,
+            override val addedDate: ZonedDateTime,
             val duration: Int,
-        ) : Media(name, uri, ratio, addedTime)
+        ) : Media(name, uri, ratio, addedDate)
     }
 }
 

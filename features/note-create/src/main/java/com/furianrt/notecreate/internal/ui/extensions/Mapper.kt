@@ -5,5 +5,5 @@ import com.furianrt.notecreate.internal.ui.entites.NoteItem
 
 internal fun NoteItem.toSimpleNote() = SimpleNote(
     id = id,
-    timestamp = timestamp,
+    date = date,
 )

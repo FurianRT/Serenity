@@ -71,7 +71,7 @@ import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
-private const val TITLE_FOCUS_DELAY = 350L
+private const val TITLE_FOCUS_DELAY = 150L
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(

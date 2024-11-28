@@ -5,6 +5,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.time.ZonedDateTime
 
 @Entity(
     tableName = EntryNoteImage.TABLE_NAME,
@@ -31,8 +32,8 @@ internal class EntryNoteImage(
     @ColumnInfo(name = FIELD_RATIO)
     val ratio: Float,
 
-    @ColumnInfo(name = FIELD_ADDED_TIME)
-    val addedTime: Long,
+    @ColumnInfo(name = FIELD_ADDED_DATE)
+    val addedDate: ZonedDateTime,
 
     @ColumnInfo(name = FIELD_IS_SAVED)
     val isSaved: Boolean,
@@ -43,7 +44,7 @@ internal class EntryNoteImage(
         const val FIELD_NOTE_ID = "note_id"
         const val FIELD_URI = "uri"
         const val FIELD_RATIO = "ratio"
-        const val FIELD_ADDED_TIME = "added_time"
+        const val FIELD_ADDED_DATE = "added_date"
         const val FIELD_IS_SAVED = "is_saved"
     }
 }
