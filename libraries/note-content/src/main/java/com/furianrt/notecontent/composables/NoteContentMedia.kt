@@ -365,10 +365,11 @@ private fun MediaItem(
 ) {
     val haptic = LocalHapticFeedback.current
     var showDropDownMenu by remember { mutableStateOf(false) }
+    val dimColor = MaterialTheme.colorScheme.scrim
     val dimModifier = Modifier.drawWithContent {
         drawContent()
         if (offscreenImageCount > 0) {
-            drawRect(color = Color.Black, alpha = 0.4f)
+            drawRect(color = dimColor)
         }
     }
     Box(

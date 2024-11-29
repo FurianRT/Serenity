@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.viewer
 
 import android.net.Uri
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -34,7 +34,6 @@ import com.furianrt.mediaselector.internal.ui.viewer.composables.MediaPager
 import com.furianrt.mediaselector.internal.ui.viewer.composables.Toolbar
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.constants.SystemBarsConstants
-import com.furianrt.uikit.extensions.findActivity
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.SerenityTheme
@@ -86,20 +85,19 @@ private fun SuccessContent(
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
     val listState = rememberLazyListState()
     var isThumbDragging by remember { mutableStateOf(false) }
 
     DisposableEffect(showControls) {
-        val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
         if (showControls) {
-            window.showSystemUi()
+            activity?.window?.showSystemUi()
         } else {
-            window.hideSystemUi()
+            activity?.window?.hideSystemUi()
         }
         onDispose {
-            window.showSystemUi()
+            activity?.window?.showSystemUi()
         }
     }
 
@@ -173,7 +171,7 @@ private fun SuccessContent(
     }
 }
 
-@Preview(backgroundColor = 0xFF000000)
+@Preview
 @Composable
 private fun Preview() {
     SerenityTheme {

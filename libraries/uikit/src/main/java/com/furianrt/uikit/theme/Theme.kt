@@ -31,6 +31,8 @@ private val darkColorScheme = darkColorScheme(
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
     background = Colors.Green,
+    scrim = Color.Black.copy(alpha = 0.4f),
+    surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
 private val lightColorScheme = lightColorScheme(
@@ -49,6 +51,8 @@ private val lightColorScheme = lightColorScheme(
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
     background = Colors.Green,
+    scrim = Color.Black.copy(alpha = 0.4f),
+    surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

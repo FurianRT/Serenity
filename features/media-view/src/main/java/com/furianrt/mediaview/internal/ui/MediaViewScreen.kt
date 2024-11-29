@@ -2,6 +2,7 @@ package com.furianrt.mediaview.internal.ui
 
 import android.net.Uri
 import android.view.HapticFeedbackConstants
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,7 +26,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,7 +43,6 @@ import com.furianrt.mediaview.internal.ui.composables.Toolbar
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.SystemBarsConstants
-import com.furianrt.uikit.extensions.findActivity
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.Colors
@@ -122,21 +121,20 @@ private fun SuccessContent(
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
-    val context = LocalContext.current
+    val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
     val view = LocalView.current
     val listState = rememberLazyListState()
     var isThumbDragging by remember { mutableStateOf(false) }
 
     DisposableEffect(showControls) {
-        val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
         if (showControls) {
-            window.showSystemUi()
+            activity?.window?.showSystemUi()
         } else {
-            window.hideSystemUi()
+            activity?.window?.hideSystemUi()
         }
         onDispose {
-            window.showSystemUi()
+            activity?.window?.showSystemUi()
         }
     }
 
@@ -216,21 +214,9 @@ private fun Preview() {
             uiState = MediaViewUiState(
                 initialMediaIndex = 1,
                 media = persistentListOf(
-                    MediaItem.Image(
-                        name = "1",
-                        uri = Uri.EMPTY,
-                        ratio = 0.5f,
-                    ),
-                    MediaItem.Image(
-                        name = "2",
-                        uri = Uri.EMPTY,
-                        ratio = 0.5f,
-                    ),
-                    MediaItem.Image(
-                        name = "3",
-                        uri = Uri.EMPTY,
-                        ratio = 1.4f,
-                    ),
+                    MediaItem.Image(name = "1", uri = Uri.EMPTY, ratio = 0.5f),
+                    MediaItem.Image(name = "2", uri = Uri.EMPTY, ratio = 0.5f),
+                    MediaItem.Image(name = "3", uri = Uri.EMPTY, ratio = 1.4f),
                 ),
             ),
         )
