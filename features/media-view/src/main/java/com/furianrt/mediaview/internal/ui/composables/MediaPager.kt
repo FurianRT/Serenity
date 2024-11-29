@@ -139,8 +139,8 @@ internal fun VideoPage(
             .setLoadControl(
                 DefaultLoadControl.Builder()
                     .setBufferDurationsMs(
-                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS / 10,
-                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS / 10,
+                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS / 20,
+                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS / 20,
                         DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
                         DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
                     )
