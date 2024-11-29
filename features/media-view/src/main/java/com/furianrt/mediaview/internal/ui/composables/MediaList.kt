@@ -10,8 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -45,18 +45,18 @@ private const val HORIZONTAL_PADDING_DP = 12f
 
 @Composable
 internal fun MediaList(
+    state: LazyListState,
     media: ImmutableList<MediaItem>,
     currentItem: Int,
     onItemClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
     var listWidth by remember { mutableIntStateOf(0) }
     val itemWidth = LocalDensity.current.run {
         (SELECTED_ITEM_HEIGHT_DP + HORIZONTAL_PADDING_DP).dp.toPx().toInt()
     }
     LaunchedEffect(currentItem) {
-        listState.animateScrollToItem(
+        state.animateScrollToItem(
             index = currentItem,
             scrollOffset = (itemWidth - listWidth) / 2,
         )
@@ -66,11 +66,11 @@ internal fun MediaList(
             .fillMaxWidth()
             .height(90.dp)
             .onSizeChanged { listWidth = it.width },
-        state = listState,
+        state = state,
         contentPadding = PaddingValues(horizontal = HORIZONTAL_PADDING_DP.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
-        flingBehavior = rememberSnapFlingBehavior(listState),
+        flingBehavior = rememberSnapFlingBehavior(state),
     ) {
         items(
             count = media.count(),

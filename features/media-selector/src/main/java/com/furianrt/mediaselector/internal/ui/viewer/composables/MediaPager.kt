@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
 import android.view.HapticFeedbackConstants
+import androidx.annotation.OptIn
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -31,6 +32,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
@@ -55,6 +58,8 @@ internal fun MediaPager(
     media: ImmutableList<MediaItem>,
     state: PagerState,
     showControls: Boolean,
+    onThumbDrugStart: () -> Unit,
+    onThumbDrugEnd: () -> Unit,
     onMediaItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -77,6 +82,8 @@ internal fun MediaPager(
                     isPlaying = state.currentPage == page,
                     showControls = showControls,
                     onClick = onMediaItemClick,
+                    onThumbDrugStart = onThumbDrugStart,
+                    onThumbDrugEnd = onThumbDrugEnd,
                 )
             }
         }
@@ -114,29 +121,44 @@ private fun ImagePage(
     )
 }
 
+@OptIn(UnstableApi::class)
 @Composable
 internal fun VideoPage(
     item: MediaItem.Video,
     isPlaying: Boolean,
     showControls: Boolean,
+    onThumbDrugStart: () -> Unit,
+    onThumbDrugEnd: () -> Unit,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val view = LocalView.current
-    val exoPlayer = remember(item.name) { ExoPlayer.Builder(context).build() }
+    val exoPlayer = remember(item.name) {
+        ExoPlayer.Builder(view.context)
+            .setLoadControl(
+                DefaultLoadControl.Builder()
+                    .setBufferDurationsMs(
+                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS / 10,
+                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS / 10,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS / 10,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS / 10
+                    )
+                    .build(),
+            )
+            .build()
+    }
     val mediaSource = remember(item.name) { ExoMediaItem.fromUri(item.uri) }
-    var playing by rememberSaveable(isPlaying) { mutableStateOf(isPlaying) }
-    var isEnded by rememberSaveable { mutableStateOf(false) }
-    var currentPosition by rememberSaveable { mutableLongStateOf(0L) }
-    var isThumbDragging by remember { mutableStateOf(false) }
+    var playing by rememberSaveable(isPlaying, item.name) { mutableStateOf(isPlaying) }
+    var isEnded by rememberSaveable(item.name) { mutableStateOf(false) }
+    var currentPosition by rememberSaveable(item.name) { mutableLongStateOf(0L) }
+    var isThumbDragging by remember(item.name) { mutableStateOf(false) }
 
     val zoomableState = rememberZoomableState()
     LaunchedEffect(zoomableState) {
         zoomableState.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
     }
 
-    LaunchedEffect(mediaSource) {
+    LaunchedEffect(item.name) {
         exoPlayer.setMediaItem(mediaSource)
         exoPlayer.prepare()
         exoPlayer.seekTo(currentPosition)
@@ -150,7 +172,7 @@ internal fun VideoPage(
         }
     }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(item.name) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 isEnded = playbackState == ExoPlayer.STATE_ENDED
@@ -163,6 +185,7 @@ internal fun VideoPage(
         exoPlayer.addListener(listener)
         onDispose {
             exoPlayer.removeListener(listener)
+            exoPlayer.release()
         }
     }
 
@@ -186,8 +209,15 @@ internal fun VideoPage(
     LaunchedEffect(sliderInteractionSource) {
         sliderInteractionSource.interactions.collect { interaction ->
             when (interaction) {
-                is DragInteraction.Start -> isThumbDragging = true
-                is DragInteraction.Stop -> isThumbDragging = false
+                is DragInteraction.Start -> {
+                    onThumbDrugStart()
+                    isThumbDragging = true
+                }
+
+                is DragInteraction.Stop -> {
+                    onThumbDrugEnd()
+                    isThumbDragging = false
+                }
             }
         }
     }
@@ -201,7 +231,9 @@ internal fun VideoPage(
                 .fillMaxSize()
                 .zoom(zoomable = zoomableState, onTap = { onClick() })
                 .alpha(0.99f),
-            onRelease = { it.player?.release() },
+            onRelease = {
+                it.player?.release()
+            },
             factory = { ctx ->
                 PlayerView(ctx).apply {
                     player = exoPlayer

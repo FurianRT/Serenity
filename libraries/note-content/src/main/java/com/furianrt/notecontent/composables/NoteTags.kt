@@ -43,6 +43,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -59,7 +60,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notecontent.R
 import com.furianrt.notecontent.entities.UiNoteTag
-import com.furianrt.uikit.extensions.animatePlacement
+import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
@@ -88,34 +89,36 @@ fun NoteTags(
         }
     }
     FlowRow(modifier = modifier) {
-        tags.forEach { tag ->
-            key(tag.id) {
-                when (tag) {
-                    is UiNoteTag.Regular -> RegularNoteTagItem(
-                        modifier = Modifier.animatePlacement(),
-                        tag = tag,
-                        isRemovable = isEditable,
-                        onClick = onTagClick?.let { { onTagClick(tag) } },
-                        onRemoveClick = onTagRemoveClick,
-                    )
+        LookaheadScope {
+            tags.forEach { tag ->
+                key(tag.id) {
+                    when (tag) {
+                        is UiNoteTag.Regular -> RegularNoteTagItem(
+                            modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                            tag = tag,
+                            isRemovable = isEditable,
+                            onClick = onTagClick?.let { { onTagClick(tag) } },
+                            onRemoveClick = onTagRemoveClick,
+                        )
 
-                    is UiNoteTag.Template -> TemplateNoteTagItem(
-                        modifier = Modifier.animatePlacement(),
-                        tag = tag,
-                        onDoneEditing = onDoneEditing,
-                        onTextEntered = onTextEntered,
-                        onTextCleared = onTextCleared,
-                    )
+                        is UiNoteTag.Template -> TemplateNoteTagItem(
+                            modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                            tag = tag,
+                            onDoneEditing = onDoneEditing,
+                            onTextEntered = onTextEntered,
+                            onTextCleared = onTextCleared,
+                        )
+                    }
                 }
             }
-        }
 
-        if (date != null) {
-            NoteDateItem(
-                modifier = Modifier.weight(1f),
-                text = date,
-                topPadding = if (tags.isEmpty()) 12.dp else 10.dp,
-            )
+            if (date != null) {
+                NoteDateItem(
+                    modifier = Modifier.weight(1f),
+                    text = date,
+                    topPadding = if (tags.isEmpty()) 12.dp else 10.dp,
+                )
+            }
         }
     }
 }

@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -37,8 +39,11 @@ import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+
+private const val UI_HIDE_DELAY = 3000L
 
 @Composable
 internal fun MediaViewerScreen(
@@ -83,6 +88,8 @@ private fun SuccessContent(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     var showControls by rememberSaveable { mutableStateOf(true) }
+    val listState = rememberLazyListState()
+    var isThumbDragging by remember { mutableStateOf(false) }
 
     DisposableEffect(showControls) {
         val window = context.findActivity()?.window ?: return@DisposableEffect onDispose {}
@@ -93,6 +100,20 @@ private fun SuccessContent(
         }
         onDispose {
             window.showSystemUi()
+        }
+    }
+
+    LaunchedEffect(
+        listState.isScrollInProgress,
+        showControls,
+        pagerState.currentPage,
+        isThumbDragging,
+    ) {
+        val isVideoItem = uiState.media[pagerState.currentPage] is MediaItem.Video
+        val isScrollInProgress = listState.isScrollInProgress
+        if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging) {
+            delay(UI_HIDE_DELAY)
+            showControls = false
         }
     }
 
@@ -108,6 +129,8 @@ private fun SuccessContent(
             state = pagerState,
             showControls = showControls,
             onMediaItemClick = { showControls = !showControls },
+            onThumbDrugStart = { isThumbDragging = true },
+            onThumbDrugEnd = { isThumbDragging = false },
         )
         ControlsAnimatedVisibility(
             modifier = Modifier
@@ -141,6 +164,7 @@ private fun SuccessContent(
             MediaList(
                 modifier = Modifier.background(SystemBarsConstants.Color),
                 media = uiState.media,
+                state = listState,
                 initialMediaIndex = uiState.initialMediaIndex,
                 currentItem = pagerState.currentPage,
                 onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
