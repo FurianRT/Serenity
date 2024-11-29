@@ -41,6 +41,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -383,6 +384,12 @@ private fun MonthYearList(
     val isListDragging by listState.interactionSource.collectIsDraggedAsState()
     userInteracted = isListDragging || userInteracted
 
+    val performHaptic by remember {
+        derivedStateOf {
+            listState.firstVisibleItemScrollOffset == 0 && userInteracted
+        }
+    }
+
     LaunchedEffect(Unit) {
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
@@ -391,14 +398,6 @@ private fun MonthYearList(
                 }
                 onItemSelected(index)
             }
-    }
-
-    LaunchedEffect(listState.isScrollInProgress) {
-        if (!listState.isScrollInProgress) {
-            if (userInteracted) {
-                view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
-            }
-        }
     }
 
     LazyColumn(
@@ -412,17 +411,12 @@ private fun MonthYearList(
         }
         items(count = items.count(), key = { it }) { index ->
             val scale = remember { Animatable(1f) }
-            LaunchedEffect(listState.isScrollInProgress) {
+            LaunchedEffect(performHaptic) {
                 val isCurrentItem = index == listState.firstVisibleItemIndex
-                if (userInteracted && !listState.isScrollInProgress && isCurrentItem) {
-                    scale.animateTo(
-                        targetValue = 1.1f,
-                        animationSpec = tween(durationMillis = 100),
-                    )
-                    scale.animateTo(
-                        targetValue = 1f,
-                        animationSpec = tween(durationMillis = 100),
-                    )
+                if (performHaptic && isCurrentItem) {
+                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    scale.animateTo(targetValue = 1.1f, animationSpec = tween(durationMillis = 100))
+                    scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 100))
                 }
             }
             Box(

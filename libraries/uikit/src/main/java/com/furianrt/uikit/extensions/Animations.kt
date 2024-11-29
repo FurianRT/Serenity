@@ -4,7 +4,9 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.DeferredTargetAnimation
 import androidx.compose.animation.core.ExperimentalAnimatableApi
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Indication
 import androidx.compose.foundation.clickable
@@ -84,20 +86,24 @@ fun Modifier.animatePlacementInScope(lookaheadScope: LookaheadScope): Modifier {
 private class AnimatedPlacementModifierNode(
     var lookaheadScope: LookaheadScope,
 ) : ApproachLayoutModifierNode, Modifier.Node() {
+
+    private val animationSpec = spring<IntOffset>(stiffness = Spring.StiffnessMediumLow)
+
     private val offsetAnimation: DeferredTargetAnimation<IntOffset, AnimationVector2D> =
         DeferredTargetAnimation(IntOffset.VectorConverter)
 
-    override fun isMeasurementApproachInProgress(lookaheadSize: IntSize): Boolean {
-        return false
-    }
+    override fun isMeasurementApproachInProgress(lookaheadSize: IntSize) = false
 
     override fun Placeable.PlacementScope.isPlacementApproachInProgress(
         lookaheadCoordinates: LayoutCoordinates,
     ): Boolean {
-        val target = with(lookaheadScope) {
-            lookaheadScopeCoordinates.localLookaheadPositionOf(lookaheadCoordinates).round()
-        }
-        offsetAnimation.updateTarget(target, coroutineScope)
+        offsetAnimation.updateTarget(
+            target = with(lookaheadScope) {
+                lookaheadScopeCoordinates.localLookaheadPositionOf(lookaheadCoordinates).round()
+            },
+            coroutineScope = coroutineScope,
+            animationSpec = animationSpec,
+        )
         return !offsetAnimation.isIdle
     }
 
@@ -109,10 +115,13 @@ private class AnimatedPlacementModifierNode(
         return layout(placeable.width, placeable.height) {
             val coordinates = coordinates
             if (coordinates != null) {
-                val target: IntOffset = with(lookaheadScope) {
-                    lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round()
-                }
-                val animatedOffset = offsetAnimation.updateTarget(target, coroutineScope)
+                val animatedOffset = offsetAnimation.updateTarget(
+                    target = with(lookaheadScope) {
+                        lookaheadScopeCoordinates.localLookaheadPositionOf(coordinates).round()
+                    },
+                    coroutineScope = coroutineScope,
+                    animationSpec = animationSpec,
+                )
 
                 val placementOffset = with(lookaheadScope) {
                     lookaheadScopeCoordinates.localPositionOf(coordinates, Offset.Zero).round()
@@ -127,8 +136,9 @@ private class AnimatedPlacementModifierNode(
     }
 }
 
-private data class AnimatePlacementNodeElement(val lookaheadScope: LookaheadScope) :
-    ModifierNodeElement<AnimatedPlacementModifierNode>() {
+private data class AnimatePlacementNodeElement(
+    val lookaheadScope: LookaheadScope,
+) : ModifierNodeElement<AnimatedPlacementModifierNode>() {
 
     override fun update(node: AnimatedPlacementModifierNode) {
         node.lookaheadScope = lookaheadScope

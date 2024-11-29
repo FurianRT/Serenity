@@ -92,13 +92,7 @@ internal class NoteViewModel @Inject constructor(
                         date = currentState.notes[event.index].date,
                     )
                 }
-                dialogResultCoordinator.onDialogResult(
-                    dialogIdentifier = DialogIdentifier(
-                        requestId = route.requestId,
-                        dialogId = route.dialogId,
-                    ),
-                    code = DialogResult.Ok(data = event.index),
-                )
+                sendPageChangeResult(event.index)
             }
 
             is NoteViewEvent.OnDeleteClick -> {
@@ -122,6 +116,7 @@ internal class NoteViewModel @Inject constructor(
                         val currentPageIndex = notesItems.indexOfFirstOrNull {
                             it.id == localState.currentNote.id
                         } ?: min(localState.currentPageIndex, notesItems.lastIndex)
+
                         localState.copy(
                             initialPageIndex = initialPageIndex,
                             currentPageIndex = currentPageIndex,
@@ -144,6 +139,16 @@ internal class NoteViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun sendPageChangeResult(page: Int) {
+        dialogResultCoordinator.onDialogResult(
+            dialogIdentifier = DialogIdentifier(
+                requestId = route.requestId,
+                dialogId = route.dialogId,
+            ),
+            code = DialogResult.Ok(data = page),
+        )
     }
 
     private fun toggleEditMode() {
