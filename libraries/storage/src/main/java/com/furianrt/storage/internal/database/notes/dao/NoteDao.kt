@@ -31,6 +31,10 @@ internal interface NoteDao {
     fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Transaction
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_TEXT} LIKE :query")
+    fun getAllNotes(query: String): Flow<List<LinkedNote>>
+
+    @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     fun getNote(noteId: String): Flow<LinkedNote?>
 }

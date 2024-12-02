@@ -19,6 +19,15 @@ internal interface TagDao {
 
     @Transaction
     @Query(
+        "SELECT DISTINCT ${EntryNoteTag.TABLE_NAME}.${EntryNoteTag.FIELD_TITLE}, ${EntryNoteTag.TABLE_NAME}.${EntryNoteTag.FIELD_ID} " +
+                "FROM ${EntryNoteTag.TABLE_NAME} " +
+                "INNER JOIN ${EntryNoteToTag.TABLE_NAME} ON " +
+                "${EntryNoteTag.TABLE_NAME}.${EntryNoteTag.FIELD_ID} = ${EntryNoteToTag.FIELD_TAG_ID}"
+    )
+    fun getAllUniqueTags(): Flow<List<EntryNoteTag>>
+
+    @Transaction
+    @Query(
         "SELECT ${EntryNoteTag.TABLE_NAME}.* FROM ${EntryNoteTag.TABLE_NAME} " +
                 "INNER JOIN ${EntryNoteToTag.TABLE_NAME} ON " +
                 "${EntryNoteTag.TABLE_NAME}.${EntryNoteTag.FIELD_ID} = ${EntryNoteToTag.FIELD_TAG_ID} " +

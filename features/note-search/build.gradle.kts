@@ -1,5 +1,5 @@
 plugins {
-    id("convention.android-app")
+    id("convention.android")
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
@@ -7,40 +7,27 @@ plugins {
 }
 
 android {
-    namespace = "com.furianrt.serenity"
+    namespace = "com.furianrt.notesearch"
 }
 
 dependencies {
-    implementation(projects.features.noteView)
-    implementation(projects.features.noteCreate)
-    implementation(projects.features.settings)
-    implementation(projects.features.mediaSelector)
-    implementation(projects.features.mediaView)
-    implementation(projects.features.noteList)
-    implementation(projects.features.lock)
-    implementation(projects.features.noteSearch)
-
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
-    implementation(projects.libraries.storage)
-    implementation(projects.libraries.permissions)
+    implementation(projects.libraries.noteContent)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
     implementation(libs.material3)
 
     implementation(libs.composeActivity)
-    implementation(libs.composeFoundation)
     implementation(libs.composeUi)
     implementation(libs.composeAnimation)
-    implementation(libs.composeGraphics)
     implementation(libs.navAnimation)
+    implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
     implementation(libs.composeNavigation)
-
-    implementation(libs.splashScreen)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
@@ -49,7 +36,7 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.blur)
+    implementation(libs.immutableCollections)
 
-    implementation(libs.biometric)
+    implementation(libs.kotlinxSerializationJson)
 }

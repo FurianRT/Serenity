@@ -20,6 +20,8 @@ private val darkColorScheme = darkColorScheme(
     onPrimary = Color.White,
     secondary = Color.White,
     onSecondary = Color.White,
+    background = Colors.Green,
+    onBackground = Color.White,
     surface = Colors.Green,
     onSurface = Color.White,
     primaryContainer = Colors.GreenLight,
@@ -30,7 +32,6 @@ private val darkColorScheme = darkColorScheme(
     onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
-    background = Colors.Green,
     scrim = Color.Black.copy(alpha = 0.4f),
     surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
@@ -40,6 +41,8 @@ private val lightColorScheme = lightColorScheme(
     onPrimary = Color.White,
     secondary = Color.White,
     onSecondary = Color.White,
+    background = Colors.Green,
+    onBackground = Color.White,
     surface = Colors.Green,
     onSurface = Color.White,
     primaryContainer = Colors.GreenLight,
@@ -50,7 +53,6 @@ private val lightColorScheme = lightColorScheme(
     onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
-    background = Colors.Green,
     scrim = Color.Black.copy(alpha = 0.4f),
     surfaceDim = Color.Black.copy(alpha = 0.5f),
 )

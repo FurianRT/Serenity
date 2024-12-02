@@ -124,7 +124,7 @@ private fun DateLabel(
             enter = fadeIn(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
             exit = fadeOut(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
         ) {
-            Spacer(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp)),

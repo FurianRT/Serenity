@@ -39,6 +39,10 @@ internal class TagsRepositoryImp @Inject constructor(
         }
     }
 
+    override suspend fun getAllUniqueTags(): Flow<List<LocalNote.Tag>> {
+        return tagDao.getAllUniqueTags().deepMap(EntryNoteTag::toNoteContentTag)
+    }
+
     override suspend fun getTags(noteId: String): Flow<List<LocalNote.Tag>> {
         return tagDao.getTags(noteId).deepMap(EntryNoteTag::toNoteContentTag)
     }

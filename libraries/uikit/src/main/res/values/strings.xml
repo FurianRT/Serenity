@@ -32,4 +32,14 @@
         <item>December</item>
     </string-array>
 
+    <string-array name="weeks_array">
+        <item>Mon</item>
+        <item>Tue</item>
+        <item>Wed</item>
+        <item>Thu</item>
+        <item>Fri</item>
+        <item>Sat</item>
+        <item>Sun</item>
+    </string-array>
+
 </resources>

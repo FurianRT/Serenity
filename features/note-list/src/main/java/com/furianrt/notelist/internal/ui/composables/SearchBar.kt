@@ -35,7 +35,7 @@ internal fun SearchBar(
             modifier = Modifier
                 .alpha(0.6f)
                 .padding(horizontal = 16.dp),
-            text = stringResource(id = R.string.search_bar_title),
+            text = stringResource(R.string.notes_list_search_bar_title),
             style = MaterialTheme.typography.labelMedium,
         )
     }

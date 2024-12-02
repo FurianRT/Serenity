@@ -1,0 +1,4 @@
+<resources>
+    <string name="notes_search_bar_title">Search by text or tags</string>
+    <string name="notes_search_all_tags_title">All tags</string>
+</resources>

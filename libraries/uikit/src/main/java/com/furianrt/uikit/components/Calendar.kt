@@ -80,6 +80,7 @@ import com.kizitonwose.calendar.compose.rememberCalendarState
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.OutDateStyle
+import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.yearMonth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
@@ -92,6 +93,7 @@ import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
 import java.time.format.TextStyle
+import java.time.temporal.WeekFields
 import java.util.Locale
 import kotlin.math.absoluteValue
 import kotlin.math.max
@@ -269,6 +271,7 @@ private fun DayPickerContent(
         )
         HorizontalCalendar(
             state = state,
+            monthHeader = { WeekHeader() },
             dayContent = { day ->
                 DayCell(
                     day = day,
@@ -503,9 +506,10 @@ private fun MonthHeader(
     }
     Row(
         modifier = modifier
-            .padding(start = 20.dp)
+            .padding(start = 24.dp)
             .clip(RoundedCornerShape(8.dp))
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
@@ -521,6 +525,31 @@ private fun MonthHeader(
             tint = Color.Unspecified,
             contentDescription = null,
         )
+    }
+}
+
+@Composable
+private fun WeekHeader(
+    modifier: Modifier = Modifier,
+) {
+    val daysOfWeek = remember { daysOfWeek() }
+    val daysOfWeekStrings = stringArrayResource(R.array.weeks_array)
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .alpha(0.5f),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        daysOfWeek.forEach { day ->
+            Text(
+                modifier = Modifier.weight(1f),
+                textAlign = TextAlign.Center,
+                text = daysOfWeekStrings[day.value - 1],
+                style = MaterialTheme.typography.labelSmall,
+            )
+        }
     }
 }
 

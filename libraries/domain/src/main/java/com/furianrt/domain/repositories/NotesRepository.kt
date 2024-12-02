@@ -11,6 +11,7 @@ interface NotesRepository {
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
     suspend fun deleteNote(noteId: String)
     fun getAllNotes(): Flow<List<LocalNote>>
+    fun getAllNotes(query: String): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
 
     fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>)
