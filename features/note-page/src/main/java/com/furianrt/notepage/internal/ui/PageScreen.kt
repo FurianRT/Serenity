@@ -66,10 +66,10 @@ import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
-import com.furianrt.notecontent.composables.NoteContentMedia
-import com.furianrt.notecontent.composables.NoteContentTitle
-import com.furianrt.notecontent.composables.NoteTags
-import com.furianrt.notecontent.entities.UiNoteContent
+import com.furianrt.notelistui.composables.NoteContentMedia
+import com.furianrt.notelistui.composables.NoteContentTitle
+import com.furianrt.notelistui.composables.NoteTags
+import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState

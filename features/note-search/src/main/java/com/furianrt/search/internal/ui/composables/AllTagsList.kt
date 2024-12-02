@@ -1,5 +1,6 @@
 package com.furianrt.search.internal.ui.composables
 
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -12,8 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
+import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.R as uiR
-import com.furianrt.search.internal.ui.entities.TagsList
 import com.furianrt.uikit.components.FlowRowWithLimit
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.theme.SerenityTheme
@@ -29,7 +30,7 @@ internal fun AllTagsList(
     onShowAllClick: () -> Unit = {},
 ) {
     FlowRowWithLimit(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         maxRowsCount = maxRowsCount,
         verticalSpacing = 8.dp,
         horizontalSpacing = 4.dp,

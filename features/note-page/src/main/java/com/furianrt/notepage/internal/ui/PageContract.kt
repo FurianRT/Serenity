@@ -2,8 +2,8 @@ package com.furianrt.notepage.internal.ui
 
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
-import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
 

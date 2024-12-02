@@ -4,9 +4,9 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaselector.api.MediaResult
-import com.furianrt.notecontent.entities.UiNoteContent.MediaBlock
-import com.furianrt.notecontent.extensions.toRegularUiNoteTag
-import com.furianrt.notecontent.extensions.toUiNoteContent
+import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
+import com.furianrt.notelistui.extensions.toRegularUiNoteTag
+import com.furianrt.notelistui.extensions.toUiNoteContent
 import java.time.ZonedDateTime
 import java.util.UUID
 

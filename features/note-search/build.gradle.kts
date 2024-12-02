@@ -11,10 +11,11 @@ android {
 }
 
 dependencies {
+    implementation(projects.features.noteList.noteListUi)
+
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
-    implementation(projects.libraries.noteContent)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

@@ -1,7 +1,7 @@
 package com.furianrt.notepage.internal.ui.extensions
 
-import com.furianrt.notecontent.entities.UiNoteContent
-import com.furianrt.notecontent.entities.UiNoteTag
+import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList

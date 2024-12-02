@@ -1,16 +1,17 @@
 package com.furianrt.search.internal.ui.composables
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.furianrt.search.internal.ui.entities.TagsList
+import com.furianrt.core.buildImmutableList
+import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.toDateString
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 
 private const val DATE_PATTERN = "dd.MM.yy"
@@ -22,7 +23,7 @@ internal fun SelectedTagsList(
     onRemoveTagClick: (tag: TagsList.SelectableItem) -> Unit = {},
 ) {
     LazyRow(
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(
@@ -49,5 +50,24 @@ internal fun SelectedTagsList(
                 )
             }
         }
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun Preview() {
+    SerenityTheme {
+        SelectedTagsList(
+            tags = buildImmutableList {
+                repeat(10) { index ->
+                    add(
+                        TagsList.Tag(
+                            title = "Title $index",
+                            count = index + 1,
+                        )
+                    )
+                }
+            },
+        )
     }
 }

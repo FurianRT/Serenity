@@ -1,5 +1,5 @@
 plugins {
-    id("convention.android-app")
+    id("convention.android")
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
@@ -7,23 +7,15 @@ plugins {
 }
 
 android {
-    namespace = "com.furianrt.serenity"
+    namespace = "com.furianrt.notelist"
 }
 
 dependencies {
-    implementation(projects.features.noteView)
-    implementation(projects.features.noteCreate)
-    implementation(projects.features.settings)
-    implementation(projects.features.mediaSelector)
-    implementation(projects.features.mediaView)
-    implementation(projects.features.noteList.noteList)
-    implementation(projects.features.lock)
-    implementation(projects.features.noteSearch)
+    implementation(projects.features.noteList.noteListUi)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
-    implementation(projects.libraries.storage)
     implementation(projects.libraries.permissions)
 
     implementation(libs.coreKtx)
@@ -49,7 +41,9 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
+    implementation(libs.immutableCollections)
+
     implementation(libs.blur)
 
-    implementation(libs.biometric)
+    implementation(libs.kotlinxSerializationJson)
 }
