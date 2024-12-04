@@ -37,7 +37,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
 
             val tagsToDelete = tagsRepository.getTags(noteId)
                 .first()
-                .filterNot { tag -> tags.hasItem { tag.id == it.id } }
+                .filterNot { tag -> tags.hasItem { tag.title == it.title } }
 
             if (mediaToInsert.isNotEmpty()) {
                 mediaRepository.insert(noteId, mediaToInsert)
@@ -53,7 +53,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
                 tagsRepository.insert(noteId, tags)
             }
             if (tagsToDelete.isNotEmpty()) {
-                tagsRepository.deleteForNote(noteId, tagsToDelete.map(LocalNote.Tag::id))
+                tagsRepository.deleteForNote(noteId, tagsToDelete)
             }
 
             tagsRepository.deleteUnusedTags()

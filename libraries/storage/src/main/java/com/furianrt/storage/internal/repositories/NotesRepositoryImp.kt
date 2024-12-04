@@ -42,10 +42,12 @@ internal class NotesRepositoryImp @Inject constructor(
         .deepMap(LinkedNote::toLocalNote)
         .map { it.sortedByDescending(LocalNote::date) }
 
-    override fun getAllNotes(query: String): Flow<List<LocalNote>> {
-        return noteDao.getAllNotes("%$query%")
+    override fun getAllNotes(query: String): Flow<List<LocalNote>> = if (query.isNotEmpty()) {
+        noteDao.getAllNotes("%$query%")
             .deepMap(LinkedNote::toLocalNote)
             .map { it.sortedByDescending(LocalNote::date) }
+    } else {
+        getAllNotes()
     }
 
     override fun getNote(noteId: String): Flow<LocalNote?> =

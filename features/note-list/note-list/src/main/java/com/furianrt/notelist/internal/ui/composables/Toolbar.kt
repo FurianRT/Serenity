@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -39,8 +38,7 @@ internal fun Toolbar(
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
             .height(ToolbarConstants.bigToolbarHeight)
-            .fillMaxWidth()
-            .clickableNoRipple {},
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SearchBar(

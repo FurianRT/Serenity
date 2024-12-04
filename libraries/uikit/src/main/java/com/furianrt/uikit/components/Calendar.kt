@@ -482,7 +482,7 @@ private fun DayCell(
     ) {
         Text(
             text = day.date.dayOfMonth.toString(),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,
         )
     }
@@ -537,7 +537,7 @@ private fun WeekHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(start = 16.dp , end = 16.dp, top = 8.dp, bottom = 2.dp)
             .alpha(0.5f),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,

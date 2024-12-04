@@ -10,8 +10,7 @@ sealed class UiNoteTag(
     data class Regular(
         val title: String,
         val isRemovable: Boolean,
-        override val id: String = UUID.randomUUID().toString(),
-    ) : UiNoteTag(id)
+    ) : UiNoteTag(title)
 
     @Stable
     data class Template(

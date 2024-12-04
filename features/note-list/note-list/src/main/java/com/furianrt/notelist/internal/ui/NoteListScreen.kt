@@ -46,6 +46,7 @@ private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 internal fun NoteListScreen(
     openNoteViewScreen: (noteId: String, identifier: DialogIdentifier) -> Unit,
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
+    openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
 ) {
     val viewModel: NoteListViewModel = hiltViewModel()
@@ -61,6 +62,7 @@ internal fun NoteListScreen(
                 when (effect) {
                     is NoteListEffect.ScrollToTop -> screenState.scrollToTop()
                     is NoteListEffect.OpenSettingsScreen -> openSettingsScreen()
+                    is NoteListEffect.OpenNoteSearchScreen -> openNoteSearchScreen()
                     is NoteListEffect.OpenNoteViewScreen -> {
                         openNoteViewScreen(effect.noteId, effect.identifier)
                     }

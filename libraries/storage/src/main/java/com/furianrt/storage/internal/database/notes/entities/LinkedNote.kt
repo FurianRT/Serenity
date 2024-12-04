@@ -24,11 +24,11 @@ internal class LinkedNote(
 
     @Relation(
         entity = EntryNoteTag::class,
-        entityColumn = EntryNoteTag.FIELD_ID,
+        entityColumn = EntryNoteTag.FIELD_TITLE,
         parentColumn = EntryNote.FIELD_ID,
         associateBy = Junction(
             value = EntryNoteToTag::class,
-            entityColumn = EntryNoteToTag.FIELD_TAG_ID,
+            entityColumn = EntryNoteToTag.FIELD_TAG_TITLE,
             parentColumn = EntryNoteToTag.FIELD_NOTE_ID,
         ),
     )

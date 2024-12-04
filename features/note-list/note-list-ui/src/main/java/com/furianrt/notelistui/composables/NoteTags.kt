@@ -67,11 +67,6 @@ fun NoteTags(
     onTextCleared: () -> Unit = {},
 ) {
     val focusManager = LocalFocusManager.current
-    LaunchedEffect(isEditable) {
-        if (!isEditable) {
-            focusManager.clearFocus()
-        }
-    }
     FlowRow(modifier = modifier) {
         LookaheadScope {
             tags.forEach { tag ->
@@ -85,13 +80,20 @@ fun NoteTags(
                             onRemoveClick = { onTagRemoveClick(tag) },
                         )
 
-                        is UiNoteTag.Template -> TemplateNoteTagItem(
-                            modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
-                            tag = tag,
-                            onDoneEditing = onDoneEditing,
-                            onTextEntered = onTextEntered,
-                            onTextCleared = onTextCleared,
-                        )
+                        is UiNoteTag.Template -> {
+                            LaunchedEffect(isEditable) {
+                                if (!isEditable) {
+                                    focusManager.clearFocus()
+                                }
+                            }
+                            TemplateNoteTagItem(
+                                modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                                tag = tag,
+                                onDoneEditing = onDoneEditing,
+                                onTextEntered = onTextEntered,
+                                onTextCleared = onTextCleared,
+                            )
+                        }
                     }
                 }
             }
@@ -251,12 +253,12 @@ private fun NoteTagsPreview() {
 }
 
 private fun generatePreviewTags() = buildImmutableList {
-    add(UiNoteTag.Regular(id = "-1", title = "Programming", isRemovable = false))
-    add(UiNoteTag.Regular(id = "466", title = "Programming", isRemovable = false))
-    add(UiNoteTag.Regular(id = "4642", title = "Programming", isRemovable = false))
-    add(UiNoteTag.Regular(id = "1", title = "Android", isRemovable = true))
-    add(UiNoteTag.Regular(id = "2", title = "Android", isRemovable = true))
-    add(UiNoteTag.Regular(id = "3", title = "Android", isRemovable = true))
-    add(UiNoteTag.Regular(id = "4", title = "Kotlin", isRemovable = true))
+    add(UiNoteTag.Regular(title = "Programming", isRemovable = false))
+    add(UiNoteTag.Regular(title = "Programming", isRemovable = false))
+    add(UiNoteTag.Regular(title = "Programming", isRemovable = false))
+    add(UiNoteTag.Regular(title = "Android", isRemovable = true))
+    add(UiNoteTag.Regular(title = "Android", isRemovable = true))
+    add(UiNoteTag.Regular(title = "Android", isRemovable = true))
+    add(UiNoteTag.Regular(title = "Kotlin", isRemovable = true))
     add(UiNoteTag.Template())
 }

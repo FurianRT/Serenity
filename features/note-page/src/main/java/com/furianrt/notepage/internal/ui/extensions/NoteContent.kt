@@ -61,7 +61,7 @@ internal fun ImmutableList<UiNoteTag>.removeTagTemplate(
 internal fun ImmutableList<UiNoteTag>.removeTagTemplate(
     id: String,
 ): ImmutableList<UiNoteTag> = toPersistentList().removeAll { tag ->
-    tag is UiNoteTag.Template && tag.id == id
+    tag is UiNoteTag.Template && (tag.id == id || tag.textState.text.trim() == id)
 }
 
 internal fun ImmutableList<UiNoteTag>.addSecondTagTemplate(): ImmutableList<UiNoteTag> {

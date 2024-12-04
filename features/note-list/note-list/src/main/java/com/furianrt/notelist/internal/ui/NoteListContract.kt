@@ -33,6 +33,7 @@ internal sealed interface NoteListEvent {
 internal sealed interface NoteListEffect {
     data object ScrollToTop : NoteListEffect
     data object OpenSettingsScreen : NoteListEffect
+    data object OpenNoteSearchScreen : NoteListEffect
     data class OpenNoteCreateScreen(val identifier: DialogIdentifier) : NoteListEffect
     data class OpenNoteViewScreen(
         val noteId: String,

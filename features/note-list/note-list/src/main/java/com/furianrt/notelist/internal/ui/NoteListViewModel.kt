@@ -69,7 +69,7 @@ internal class NoteListViewModel @Inject constructor(
             is NoteListEvent.OnScrolledToItem -> scrollToNoteState.update { null }
             is NoteListEvent.OnScrollToTopClick -> _effect.tryEmit(NoteListEffect.ScrollToTop)
             is NoteListEvent.OnSettingsClick -> _effect.tryEmit(NoteListEffect.OpenSettingsScreen)
-            is NoteListEvent.OnSearchClick -> {}
+            is NoteListEvent.OnSearchClick -> _effect.tryEmit(NoteListEffect.OpenNoteSearchScreen)
             is NoteListEvent.OnAddNoteClick -> _effect.tryEmit(
                 NoteListEffect.OpenNoteCreateScreen(
                     identifier = DialogIdentifier(

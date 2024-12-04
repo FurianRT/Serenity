@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.ViewModel
+import com.furianrt.core.hasItem
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
@@ -415,9 +416,13 @@ internal class PageViewModel @AssistedInject constructor(
         tag: UiNoteTag.Regular,
         addTemplate: Boolean,
     ): PageUiState.Success {
-        val result = tags.toPersistentList()
-            .add(index = tags.lastIndexOf { it is UiNoteTag.Regular } + 1, element = tag)
-            .removeTagTemplate(tag.id)
+        val result = if (tags.hasItem { it.id == tag.id }) {
+            tags.removeTagTemplate(tag.id)
+        } else {
+            tags.toPersistentList()
+                .add(index = tags.lastIndexOf { it is UiNoteTag.Regular } + 1, element = tag)
+                .removeTagTemplate(tag.id)
+        }
         return copy(tags = if (addTemplate) result.addTagTemplate() else result)
     }
 

@@ -3,13 +3,16 @@ package com.furianrt.storage.internal.repositories
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
+import com.furianrt.storage.internal.database.notes.entities.TagWithRelatedNoteIds
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteTag
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteToTag
+import com.furianrt.storage.internal.database.notes.mappers.toLocalTag
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentTag
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
@@ -39,18 +42,18 @@ internal class TagsRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun getAllUniqueTags(): Flow<List<LocalNote.Tag>> {
-        return tagDao.getAllUniqueTags().deepMap(EntryNoteTag::toNoteContentTag)
+    override fun getAllTags(): Flow<List<LocalTag>> {
+        return tagDao.getAllTags().deepMap(TagWithRelatedNoteIds::toLocalTag)
     }
 
-    override suspend fun getTags(noteId: String): Flow<List<LocalNote.Tag>> {
+    override fun getTags(noteId: String): Flow<List<LocalNote.Tag>> {
         return tagDao.getTags(noteId).deepMap(EntryNoteTag::toNoteContentTag)
     }
 
     override suspend fun deleteForNote(
         noteId: String,
-        tagIds: List<String>,
-    ) = noteToTagDao.delete(tagIds.map { EntryNoteToTag(noteId, it) })
+        tags: List<LocalNote.Tag>,
+    ) = noteToTagDao.delete(tags.map { EntryNoteToTag(noteId, it.title) })
 
     override suspend fun deleteUnusedTags() = tagDao.deleteTagsWithoutNotes()
 }

@@ -19,12 +19,14 @@ fun NavController.navigateToNoteList(
 fun NavGraphBuilder.noteListScreen(
     openNoteViewScreen: (noteId: String, identifier: DialogIdentifier) -> Unit,
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
+    openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
 ) {
     composable<NoteListRoute> {
         NoteListScreen(
             openNoteViewScreen = openNoteViewScreen,
             openNoteCreateScreen = openNoteCreateScreen,
+            openNoteSearchScreen = openNoteSearchScreen,
             openSettingsScreen = openSettingsScreen,
         )
     }

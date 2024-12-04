@@ -4,39 +4,38 @@ import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
-import java.time.ZonedDateTime
+import java.time.LocalDate
 
 internal sealed class SearchListItem(
     open val id: String,
 ) {
     @Immutable
-    internal data class TagsList(
-        val items: ImmutableList<Tag>,
-        val rowsLimit: Int = DEFAULT_ROWS_LIMIT,
+    internal data class FiltersList(
+        val items: ImmutableList<Filter.Tag>,
     ) : SearchListItem(ID) {
-
-        internal sealed class SelectableItem(
-            open val id: String,
-        )
-
-        internal data class Tag(
-            val title: String,
-            val count: Int,
-        ) : SelectableItem(title)
-
-        @Immutable
-        internal data class DateRange(
-            val start: ZonedDateTime,
-            val end: ZonedDateTime?,
-        ) : SelectableItem(ID) {
-            companion object {
-                const val ID = "date_range"
-            }
-        }
 
         companion object {
             const val ID = "tags_list"
-            const val DEFAULT_ROWS_LIMIT = 3
+        }
+
+        internal sealed class Filter(
+            open val id: String,
+        ) {
+            internal data class Tag(
+                val title: String,
+                val count: Int,
+            ) : Filter(title)
+
+            @Immutable
+            internal data class DateRange(
+                val start: LocalDate,
+                val end: LocalDate?,
+            ) : Filter(ID) {
+
+                companion object {
+                    const val ID = "date_range"
+                }
+            }
         }
     }
 

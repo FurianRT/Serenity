@@ -5,6 +5,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
@@ -13,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
-import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
+import com.furianrt.search.internal.ui.entities.SearchListItem.FiltersList
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.FlowRowWithLimit
 import com.furianrt.uikit.components.TagItem
@@ -21,14 +25,15 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 
+private const val MAX_INITIAL_ROWS_COUNT = 3
+
 @Composable
 internal fun AllTagsList(
-    tags: ImmutableList<TagsList.Tag>,
-    maxRowsCount: Int,
+    tags: ImmutableList<FiltersList.Filter.Tag>,
     modifier: Modifier = Modifier,
-    onTagClick: (tag: TagsList.SelectableItem) -> Unit = {},
-    onShowAllClick: () -> Unit = {},
+    onTagClick: (tag: FiltersList.Filter.Tag) -> Unit = {},
 ) {
+    var maxRowsCount by rememberSaveable { mutableIntStateOf(MAX_INITIAL_ROWS_COUNT) }
     FlowRowWithLimit(
         modifier = modifier.fillMaxWidth(),
         maxRowsCount = maxRowsCount,
@@ -38,7 +43,7 @@ internal fun AllTagsList(
             TagItem(
                 title = stringResource(R.string.notes_search_all_tags_title),
                 isRemovable = false,
-                onClick = onShowAllClick,
+                onClick = { maxRowsCount = Int.MAX_VALUE },
                 icon = {
                     Icon(
                         modifier = Modifier.alpha(0.5f),
@@ -74,15 +79,9 @@ private fun Preview() {
         AllTagsList(
             tags = buildImmutableList {
                 repeat(20) { index ->
-                    add(
-                        TagsList.Tag(
-                            title = "Title",
-                            count = index + 1,
-                        )
-                    )
+                    add(FiltersList.Filter.Tag(title = "Title", count = index + 1))
                 }
             },
-            maxRowsCount = 3,
         )
     }
 }

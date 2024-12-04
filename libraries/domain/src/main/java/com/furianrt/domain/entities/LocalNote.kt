@@ -9,10 +9,7 @@ class LocalNote(
     val tags: List<Tag>,
     val content: List<Content>,
 ) {
-    class Tag(
-        val id: String,
-        val title: String,
-    )
+    class Tag(val title: String)
 
     sealed class Content(val id: String) {
 

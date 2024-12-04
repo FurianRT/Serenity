@@ -35,6 +35,8 @@ import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.search.api.navigateToNoteSearch
+import com.furianrt.search.api.noteSearchScreen
 import com.furianrt.serenity.navigation.SerenityNavHost
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
@@ -132,6 +134,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
+                            openNoteSearchScreen = {
+                                navController.navigateToNoteSearch()
+                            }
                         )
 
                         noteViewScreen(
@@ -167,6 +172,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         settingsNavigation(navController)
                         mediaViewScreen(onCloseRequest = navController::navigateUp)
                         mediaViewerScreen(onCloseRequest = navController::navigateUp)
+                        noteSearchScreen(onCloseRequest = navController::navigateUp)
                     }
                     AnimatedVisibility(
                         visible = uiState.isScreenLocked,

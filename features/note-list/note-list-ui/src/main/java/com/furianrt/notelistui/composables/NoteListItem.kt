@@ -44,6 +44,7 @@ fun NoteListItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
+    onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
 ) {
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
@@ -87,6 +88,7 @@ fun NoteListItem(
                     ),
                 tags = tags,
                 date = date,
+                onTagClick = onTagClick,
             )
         }
     }
@@ -99,8 +101,8 @@ private fun NoteItemPreview() {
         NoteListItem(
             date = "19.06.2023",
             tags = persistentListOf(
-                UiNoteTag.Regular(id = "0", title = "Programming", isRemovable = false),
-                UiNoteTag.Regular(id = "1", title = "Android", isRemovable = false),
+                UiNoteTag.Regular(title = "Programming", isRemovable = false),
+                UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
             ),
             content = persistentListOf(
