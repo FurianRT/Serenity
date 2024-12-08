@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
+    implementation(projects.libraries.common)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -38,7 +39,8 @@ internal fun Toolbar(
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
             .height(ToolbarConstants.bigToolbarHeight)
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .systemGestureExclusion(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         SearchBar(

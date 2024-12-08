@@ -3,9 +3,9 @@ package com.furianrt.search.internal.ui
 import android.net.Uri
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -47,6 +47,7 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.ui.composables.AllTagsList
 import com.furianrt.search.internal.ui.composables.NotesCountItem
 import com.furianrt.search.internal.ui.composables.Toolbar
@@ -57,6 +58,7 @@ import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
@@ -66,21 +68,21 @@ import java.time.ZonedDateTime
 
 @Composable
 internal fun SearchScreen(
+    openNoteViewScreen: (noteId: String, identifier: DialogIdentifier, data: QueryData) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SearchViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    val listState = rememberLazyListState()
     val toolbarState = remember { MovableToolbarState() }
 
     val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
     var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
 
     data class CalendarState(val start: SelectedDate?, val end: SelectedDate?)
-    var calendarState: CalendarState? by remember { mutableStateOf(null) }
 
+    var calendarState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
     LaunchedEffect(viewModel.effect) {
@@ -94,6 +96,12 @@ internal fun SearchScreen(
                         val endDate = effect.end?.let { SelectedDate(it) }
                         calendarState = CalendarState(startDate, endDate)
                     }
+
+                    is SearchEffect.OpenNoteViewScreen -> openNoteViewScreen(
+                        effect.noteId,
+                        effect.identifier,
+                        effect.queryData,
+                    )
                 }
             }
     }
@@ -109,7 +117,6 @@ internal fun SearchScreen(
         modifier = Modifier.haze(hazeState),
         uiState = uiState,
         onEvent = viewModel::onEvent,
-        listState = listState,
         toolbarState = toolbarState,
     )
 
@@ -131,14 +138,19 @@ private fun ScreenContent(
     uiState: SearchUiState,
     modifier: Modifier = Modifier,
     onEvent: (event: SearchEvent) -> Unit = {},
-    listState: LazyListState = rememberLazyListState(),
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
     val view = LocalView.current
     var toolbarHeight by remember { mutableIntStateOf(0) }
+    val listState = rememberLazyListState()
+
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
-        listState = listState,
+        listState = if (uiState.state is SearchUiState.State.Empty) {
+            rememberLazyListState()
+        } else {
+            listState
+        },
         state = toolbarState,
         toolbar = {
             Toolbar(
@@ -155,13 +167,14 @@ private fun ScreenContent(
                 onUnselectedTagClick = { tag ->
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                     onEvent(SearchEvent.OnTagClick(tag.title))
-                }
+                },
+                onDateFilterClick = { onEvent(SearchEvent.OnDateFilterClick(it)) },
             )
         },
     ) {
         AnimatedContent(
             targetState = uiState.state,
-            transitionSpec = { fadeIn().togetherWith(ExitTransition.None) },
+            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
             contentKey = { it::class.simpleName },
             label = "ContentAnim",
         ) { targetState ->
@@ -195,6 +208,13 @@ private fun SuccessContent(
     LaunchedEffect(listState.isScrollInProgress) {
         if (listState.isScrollInProgress) {
             focusManager.clearFocus()
+        }
+    }
+
+    LaunchedEffect(uiState.scrollToPosition) {
+        if (uiState.scrollToPosition != null) {
+            listState.scrollToItem(uiState.scrollToPosition)
+            onEvent(SearchEvent.OnScrolledToItem)
         }
     }
 
@@ -239,7 +259,7 @@ private fun SuccessContent(
                     content = item.content,
                     tags = item.tags,
                     date = item.date,
-                    onClick = {},
+                    onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = {},
                     onTagClick = {
                         view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)

@@ -2,6 +2,7 @@ plugins {
     id("convention.android")
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 android {
@@ -26,4 +27,6 @@ dependencies {
     implementation(libs.dataStore)
 
     implementation(libs.biometric)
+
+    implementation(libs.kotlinxSerializationJson)
 }

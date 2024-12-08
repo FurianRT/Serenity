@@ -63,6 +63,7 @@ internal fun Toolbar(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
+    onDateFilterClick: (date: SelectedFilter.DateRange) -> Unit = {},
     onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit = {},
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
     onClearQueryClick: () -> Unit = {},
@@ -71,7 +72,8 @@ internal fun Toolbar(
         modifier = modifier
             .statusBarsPadding()
             .fillMaxWidth()
-            .animateContentSize(),
+            .animateContentSize()
+            .systemGestureExclusion(),
     ) {
         Row(
             modifier = Modifier
@@ -91,6 +93,7 @@ internal fun Toolbar(
         if (selectedFilters.isNotEmpty()) {
             SelectedFiltersList(
                 filters = selectedFilters,
+                onDateFilterClick = onDateFilterClick,
                 onUnselectedTagClick = onUnselectedTagClick,
                 onRemoveFilterClick = onRemoveFilterClick,
             )
@@ -173,14 +176,13 @@ private fun SearchBar(
 @Composable
 private fun SelectedFiltersList(
     filters: ImmutableList<SelectedFilter>,
+    onDateFilterClick: (date: SelectedFilter.DateRange) -> Unit,
     onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit,
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyRow(
-        modifier = modifier
-            .fillMaxWidth()
-            .systemGestureExclusion(),
+        modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -218,6 +220,7 @@ private fun SelectedFiltersList(
                         filter.start.toDateString()
                     },
                     isRemovable = true,
+                    onClick = { onDateFilterClick(filter) },
                     onRemoveClick = { onRemoveFilterClick(filter) },
                 )
             }

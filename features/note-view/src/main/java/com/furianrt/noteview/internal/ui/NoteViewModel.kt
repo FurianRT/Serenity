@@ -10,7 +10,9 @@ import com.furianrt.core.updateState
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
+import com.furianrt.domain.usecase.GetFilteredNotesUseCase
 import com.furianrt.noteview.api.NoteViewRoute
+import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -28,6 +30,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlin.math.min
+import kotlin.reflect.typeOf
 
 @HiltViewModel
 internal class NoteViewModel @Inject constructor(
@@ -35,9 +38,12 @@ internal class NoteViewModel @Inject constructor(
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
 ) : ViewModel() {
 
-    private val route = savedStateHandle.toRoute<NoteViewRoute>()
+    private val route = savedStateHandle.toRoute<NoteViewRoute>(
+        typeMap = mapOf(typeOf<NoteViewRoute.SearchData?>() to SearchDataType),
+    )
 
     private val _state = MutableStateFlow<NoteViewUiState>(NoteViewUiState.Loading)
     val state = _state.asStateFlow()
@@ -103,7 +109,18 @@ internal class NoteViewModel @Inject constructor(
     }
 
     private fun observeNotes() = launch {
-        notesRepository.getAllNotes().collectLatest { notes ->
+        val notesFlow = if (route.searchData != null) {
+            getFilteredNotesUseCase(
+                query = route.searchData.query,
+                tagsNames = route.searchData.tags,
+                startDate = route.searchData.startDate,
+                endDate = route.searchData.endDate,
+            )
+        } else {
+            notesRepository.getAllNotes()
+        }
+
+        notesFlow.collectLatest { notes ->
             if (notes.isEmpty()) {
                 _effect.tryEmit(NoteViewEffect.CloseScreen)
                 return@collectLatest

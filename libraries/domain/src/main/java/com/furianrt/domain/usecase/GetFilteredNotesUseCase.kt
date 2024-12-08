@@ -1,4 +1,4 @@
-package com.furianrt.search.internal.domain
+package com.furianrt.domain.usecase
 
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.NotesRepository
@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 
-internal class GetFilteredNotesUseCase @Inject constructor(
+class GetFilteredNotesUseCase @Inject constructor(
     private val notesRepository: NotesRepository,
 ) {
     operator fun invoke(

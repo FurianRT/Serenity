@@ -1,42 +1,86 @@
 package com.furianrt.domain.entities
 
 import android.net.Uri
+import com.furianrt.common.UriSerializer
+import com.furianrt.common.ZonedDateTimeSerializer
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 import java.time.ZonedDateTime
 
-class LocalNote(
+@Serializable
+data class LocalNote(
     val id: String,
+    @Serializable(with = ZonedDateTimeSerializer::class)
     val date: ZonedDateTime,
     val tags: List<Tag>,
     val content: List<Content>,
 ) {
-    class Tag(val title: String)
+    @Serializable
+    data class Tag(val title: String)
 
-    sealed class Content(val id: String) {
+    @Serializable
+    sealed class Content(open val id: String) {
 
-        class Title(id: String, val text: String) : Content(id)
+        @Serializable
+        data class Title(
+            @SerialName("title_id")
+            override val id: String,
+            val text: String,
+        ) : Content(id)
 
-        class MediaBlock(id: String, val media: List<Media>) : Content(id)
+        @Serializable
+        data class MediaBlock(
+            @SerialName("media_block_id")
+            override val id: String,
+            val media: List<Media>,
+        ) : Content(id)
 
+        @Serializable
         sealed class Media(
             open val name: String,
-            open val uri: Uri,
             open val ratio: Float,
+
+            @Serializable(with = UriSerializer::class)
+            open val uri: Uri,
+
+            @Serializable(with = ZonedDateTimeSerializer::class)
             open val addedDate: ZonedDateTime,
         )
 
+        @Serializable
         data class Image(
+            @SerialName("image_name")
             override val name: String,
-            override val uri: Uri,
-            override val ratio: Float,
-            override val addedDate: ZonedDateTime,
-        ) : Media(name, uri, ratio, addedDate)
 
-        data class Video(
-            override val name: String,
+            @Serializable(with = UriSerializer::class)
+            @SerialName("image_uri")
             override val uri: Uri,
+
+            @SerialName("image_ratio")
             override val ratio: Float,
+
+            @Serializable(with = ZonedDateTimeSerializer::class)
+            @SerialName("image_date")
             override val addedDate: ZonedDateTime,
+        ) : Media(name, ratio, uri, addedDate)
+
+        @Serializable
+        data class Video(
+            @SerialName("video_name")
+            override val name: String,
+
+            @Serializable(with = UriSerializer::class)
+            @SerialName("video_uri")
+            override val uri: Uri,
+
+            @SerialName("video_ratio")
+            override val ratio: Float,
+
+            @Serializable(with = ZonedDateTimeSerializer::class)
+            @SerialName("video_date")
+            override val addedDate: ZonedDateTime,
+
             val duration: Int,
-        ) : Media(name, uri, ratio, addedDate)
+        ) : Media(name, ratio, uri, addedDate)
     }
 }

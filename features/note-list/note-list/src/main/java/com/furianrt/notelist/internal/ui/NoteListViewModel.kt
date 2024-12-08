@@ -101,7 +101,7 @@ internal class NoteListViewModel @Inject constructor(
             NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 val successState = state.value as? NoteListUiState.Success ?: return
                 val position = result.data as Int
-                scrollToNoteState.update { successState.notes[position].id }
+                scrollToNoteState.update { successState.notes.getOrNull(position)?.id }
             }
 
             NOTE_CREATE_DIALOG_ID -> if (result is DialogResult.Ok<*>) {

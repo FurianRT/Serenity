@@ -36,7 +36,7 @@ zoom = "1.1.0-beta01"
 
 exoplayer = "1.5.0"
 
-kotlinxSerializationJson = "1.6.3"
+kotlinxSerializationJson = "1.7.3"
 
 calendar = "2.6.0"
 

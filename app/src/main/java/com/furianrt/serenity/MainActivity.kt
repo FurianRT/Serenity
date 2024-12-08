@@ -172,7 +172,24 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         settingsNavigation(navController)
                         mediaViewScreen(onCloseRequest = navController::navigateUp)
                         mediaViewerScreen(onCloseRequest = navController::navigateUp)
-                        noteSearchScreen(onCloseRequest = navController::navigateUp)
+                        noteSearchScreen(
+                            openNoteViewScreen = { noteId, identifier, data ->
+                                navController.navigateToNoteView(
+                                    route = NoteViewRoute(
+                                        noteId = noteId,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                        searchData = NoteViewRoute.SearchData(
+                                            query = data.query,
+                                            tags = data.tags,
+                                            startDate = data.startDate,
+                                            endDate = data.endDate,
+                                        ),
+                                    ),
+                                )
+                            },
+                            onCloseRequest = navController::navigateUp
+                        )
                     }
                     AnimatedVisibility(
                         visible = uiState.isScreenLocked,
