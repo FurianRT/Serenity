@@ -48,6 +48,7 @@ import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -60,6 +61,7 @@ fun NoteTags(
     modifier: Modifier = Modifier,
     date: String? = null,
     isEditable: Boolean = false,
+    animateItemsPlacement: Boolean = false,
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
     onTagRemoveClick: (tag: UiNoteTag.Regular) -> Unit = {},
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit = {},
@@ -73,7 +75,9 @@ fun NoteTags(
                 key(tag.id) {
                     when (tag) {
                         is UiNoteTag.Regular -> TagItem(
-                            modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                            modifier = Modifier.applyIf(animateItemsPlacement) {
+                                Modifier.animatePlacementInScope(this@LookaheadScope)
+                            },
                             title = tag.title,
                             isRemovable = isEditable,
                             onClick = onTagClick?.let { { onTagClick(tag) } },
@@ -87,7 +91,9 @@ fun NoteTags(
                                 }
                             }
                             TemplateNoteTagItem(
-                                modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                                modifier = Modifier.applyIf(animateItemsPlacement) {
+                                    Modifier.animatePlacementInScope(this@LookaheadScope)
+                                },
                                 tag = tag,
                                 onDoneEditing = onDoneEditing,
                                 onTextEntered = onTextEntered,

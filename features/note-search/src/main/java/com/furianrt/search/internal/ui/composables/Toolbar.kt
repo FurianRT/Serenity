@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
@@ -62,7 +63,8 @@ internal fun Toolbar(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
-    onRemoveFilterClick: (tag: SelectedFilter) -> Unit = {},
+    onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit = {},
+    onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
     onClearQueryClick: () -> Unit = {},
 ) {
     Column(
@@ -89,6 +91,7 @@ internal fun Toolbar(
         if (selectedFilters.isNotEmpty()) {
             SelectedFiltersList(
                 filters = selectedFilters,
+                onUnselectedTagClick = onUnselectedTagClick,
                 onRemoveFilterClick = onRemoveFilterClick,
             )
         }
@@ -170,26 +173,41 @@ private fun SearchBar(
 @Composable
 private fun SelectedFiltersList(
     filters: ImmutableList<SelectedFilter>,
+    onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit,
+    onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
     modifier: Modifier = Modifier,
-    onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
 ) {
     LazyRow(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .systemGestureExclusion(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         items(
             count = filters.count(),
-            key = { filters[it].id },
+            key = { filters[it].id + filters[it].isSelected.toString() },
             contentType = { filters[it]::class.simpleName }
         ) { index ->
             when (val filter = filters[index]) {
-                is SelectedFilter.Tag -> TagItem(
-                    modifier = Modifier.animateItem(),
-                    title = filter.title,
-                    isRemovable = true,
-                    onRemoveClick = { onRemoveFilterClick(filter) },
-                )
+                is SelectedFilter.Tag -> if (filter.isSelected) {
+                    TagItem(
+                        modifier = Modifier.animateItem(),
+                        title = filter.title,
+                        isRemovable = true,
+                        onRemoveClick = { onRemoveFilterClick(filter) },
+                    )
+                } else {
+                    TagItem(
+                        modifier = Modifier
+                            .alpha(0.5f)
+                            .animateItem(),
+                        title = filter.title,
+                        isRemovable = false,
+                        onRemoveClick = { onRemoveFilterClick(filter) },
+                        onClick = { onUnselectedTagClick(filter) },
+                    )
+                }
 
                 is SelectedFilter.DateRange -> TagItem(
                     modifier = Modifier.animateItem(),
@@ -216,7 +234,7 @@ private fun PreviewWithTags() {
             selectedFilters = buildImmutableList {
                 add(SelectedFilter.DateRange(start = LocalDate.now(), end = LocalDate.now()))
                 repeat(5) { index ->
-                    add(SelectedFilter.Tag(title = "Title$index"))
+                    add(SelectedFilter.Tag(title = "Title$index", isSelected = index == 0))
                 }
             }
         )

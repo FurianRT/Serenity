@@ -6,10 +6,11 @@ import com.furianrt.domain.entities.LocalTag
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.search.internal.ui.entities.SearchListItem
+import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.extensions.toDateString
 
-internal fun List<LocalTag>.toFiltersList() = SearchListItem.FiltersList(
-    items = mapImmutable(LocalTag::toTagItem),
+internal fun List<LocalTag>.toTagsList() = SearchListItem.TagsList(
+    tags = mapImmutable(LocalTag::toTagsListItem),
 )
 
 internal fun LocalNote.toNoteItem() = SearchListItem.Note(
@@ -19,7 +20,12 @@ internal fun LocalNote.toNoteItem() = SearchListItem.Note(
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
 )
 
-private fun LocalTag.toTagItem() = SearchListItem.FiltersList.Filter.Tag(
+internal fun LocalTag.toSelectedTag(isSelected: Boolean = false) = SelectedFilter.Tag(
+    title = title,
+    isSelected = isSelected,
+)
+
+private fun LocalTag.toTagsListItem() = SearchListItem.TagsList.Tag(
     title = title,
     count = noteIds.count(),
 )

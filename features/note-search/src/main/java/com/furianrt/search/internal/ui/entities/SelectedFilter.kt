@@ -5,16 +5,18 @@ import java.time.LocalDate
 
 internal sealed class SelectedFilter(
     val id: String,
+    open val isSelected: Boolean,
 ) {
     internal data class Tag(
         val title: String,
-    ) : SelectedFilter(title)
+        override val isSelected: Boolean = true,
+    ) : SelectedFilter(title, isSelected)
 
     @Immutable
     internal data class DateRange(
         val start: LocalDate,
         val end: LocalDate?,
-    ) : SelectedFilter(ID) {
+    ) : SelectedFilter(ID, isSelected = true) {
 
         companion object {
             const val ID = "date_range"

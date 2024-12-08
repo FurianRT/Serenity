@@ -17,7 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
-import com.furianrt.search.internal.ui.entities.SearchListItem.FiltersList
+import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.FlowRowWithLimit
 import com.furianrt.uikit.components.TagItem
@@ -29,9 +29,9 @@ private const val MAX_INITIAL_ROWS_COUNT = 3
 
 @Composable
 internal fun AllTagsList(
-    tags: ImmutableList<FiltersList.Filter.Tag>,
+    tags: ImmutableList<TagsList.Tag>,
     modifier: Modifier = Modifier,
-    onTagClick: (tag: FiltersList.Filter.Tag) -> Unit = {},
+    onTagClick: (tag: TagsList.Tag) -> Unit = {},
 ) {
     var maxRowsCount by rememberSaveable { mutableIntStateOf(MAX_INITIAL_ROWS_COUNT) }
     FlowRowWithLimit(
@@ -79,7 +79,7 @@ private fun Preview() {
         AllTagsList(
             tags = buildImmutableList {
                 repeat(20) { index ->
-                    add(FiltersList.Filter.Tag(title = "Title", count = index + 1))
+                    add(TagsList.Tag(title = "Title", count = index + 1))
                 }
             },
         )

@@ -2,7 +2,11 @@ package com.furianrt.search.internal.ui
 
 import android.net.Uri
 import android.view.HapticFeedbackConstants
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,15 +21,19 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,6 +47,7 @@ import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.search.internal.ui.composables.AllTagsList
+import com.furianrt.search.internal.ui.composables.NotesCountItem
 import com.furianrt.search.internal.ui.composables.Toolbar
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
@@ -71,6 +80,16 @@ internal fun SearchScreen(
             }
     }
 
+    val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
+    var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
+
+    LaunchedEffect(filtersCount) {
+        if (filtersCount != prevFiltersCount) {
+            toolbarState.expand()
+            prevFiltersCount = filtersCount
+        }
+    }
+
     ScreenContent(
         uiState = uiState,
         onEvent = viewModel::onEvent,
@@ -101,23 +120,35 @@ private fun ScreenContent(
                 onBackClick = { onEvent(SearchEvent.OnButtonBackClick) },
                 onCalendarClick = { onEvent(SearchEvent.OnButtonCalendarClick) },
                 onClearQueryClick = { onEvent(SearchEvent.OnButtonClearQueryClick) },
-                onRemoveFilterClick = {
+                onRemoveFilterClick = { filter ->
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                    onEvent(SearchEvent.OnRemoveFilterClick(it))
+                    onEvent(SearchEvent.OnRemoveFilterClick(filter))
                 },
+                onUnselectedTagClick = { tag ->
+                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    onEvent(SearchEvent.OnTagClick(tag.title))
+                }
             )
         },
     ) {
-        when (uiState.state) {
-            is SearchUiState.State.Success -> SuccessContent(
-                uiState = uiState.state,
-                onEvent = onEvent,
-                listState = listState,
-                toolbarHeight = toolbarHeight,
-            )
+        AnimatedContent(
+            targetState = uiState.state,
+            transitionSpec = { fadeIn().togetherWith(ExitTransition.None) },
+            contentKey = { it::class.simpleName },
+            label = "ContentAnim",
+        ) { targetState ->
+            when (targetState) {
+                is SearchUiState.State.Success -> SuccessContent(
+                    uiState = targetState,
+                    onEvent = onEvent,
+                    listState = listState,
+                    toolbarHeight = toolbarHeight,
+                )
 
-            is SearchUiState.State.Loading -> LoadingContent()
-            is SearchUiState.State.Empty -> EmptyContent()
+                is SearchUiState.State.Empty -> EmptyContent(
+                    toolbarHeight = toolbarHeight,
+                )
+            }
         }
     }
 }
@@ -131,38 +162,51 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
+    val focusManager = LocalFocusManager.current
+
+    LaunchedEffect(listState.isScrollInProgress) {
+        if (listState.isScrollInProgress) {
+            focusManager.clearFocus()
+        }
+    }
+
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
-            start = 8.dp,
-            end = 8.dp,
             top = LocalDensity.current.run { toolbarHeight.toDp() } + 8.dp,
             bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp,
         ),
     ) {
         items(
             count = uiState.items.count(),
-            key = { uiState.items[it].id },
+            key = { index ->
+                when (uiState.items[index]){
+                    is SearchListItem.TagsList -> SearchListItem.TagsList.ID
+                    is SearchListItem.NotesCountTitle -> SearchListItem.NotesCountTitle.ID
+                    is SearchListItem.Note -> index
+                }
+            },
             contentType = { uiState.items[it]::class.simpleName },
         ) { index ->
             when (val item = uiState.items[index]) {
-                is SearchListItem.FiltersList -> AllTagsList(
+                is SearchListItem.TagsList -> AllTagsList(
                     modifier = Modifier
-                        .padding(horizontal = 4.dp)
+                        .padding(horizontal = 12.dp)
                         .animateItem()
                         .animateContentSize(),
-                    tags = item.items,
-                    onTagClick = {
+                    tags = item.tags,
+                    onTagClick = { tag ->
                         view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        onEvent(SearchEvent.OnTagClick(it.id))
+                        onEvent(SearchEvent.OnTagClick(tag.title))
                     },
                 )
 
                 is SearchListItem.Note -> NoteListItem(
                     modifier = Modifier
-                        .animateItem()
+                        .padding(horizontal = 8.dp)
+                        .animateItem(placementSpec = null)
                         .animateContentSize(),
                     content = item.content,
                     tags = item.tags,
@@ -174,23 +218,33 @@ private fun SuccessContent(
                         onEvent(SearchEvent.OnTagClick(it.title))
                     },
                 )
+
+                is SearchListItem.NotesCountTitle -> NotesCountItem(
+                    modifier = Modifier.padding(horizontal = 16.dp),
+                    count = item.count,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun LoadingContent(
-    modifier: Modifier = Modifier,
-) {
-    Box(modifier.fillMaxSize())
-}
-
-@Composable
 private fun EmptyContent(
+    toolbarHeight: Int,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier.fillMaxSize())
+    Box(
+        modifier = modifier
+            .padding(top = LocalDensity.current.run { toolbarHeight.toDp() })
+            .fillMaxSize(),
+        contentAlignment = Alignment.TopCenter,
+    ) {
+        Text(
+            modifier = Modifier.padding(top = 100.dp),
+            text = "No results found",
+            style = MaterialTheme.typography.titleMedium,
+        )
+    }
 }
 
 
@@ -198,11 +252,11 @@ private fun EmptyContent(
 @Preview
 private fun SuccessEmptyQueryPreview() {
     SerenityTheme {
-        val tagsItem = SearchListItem.FiltersList(
-            items = buildImmutableList {
+        val tagsItem = SearchListItem.TagsList(
+            tags = buildImmutableList {
                 repeat(20) { index ->
                     add(
-                        SearchListItem.FiltersList.Filter.Tag(
+                        SearchListItem.TagsList.Tag(
                             title = "Title $index",
                             count = index + 1,
                         ),
@@ -225,6 +279,7 @@ private fun SuccessEmptyQueryPreview() {
 private fun SuccessFilledQueryPreview() {
     SerenityTheme {
         val noteItems = buildImmutableList {
+            add(SearchListItem.NotesCountTitle(count = 5))
             repeat(5) { index ->
                 add(
                     SearchListItem.Note(
@@ -271,6 +326,25 @@ private fun SuccessFilledQueryPreview() {
                 state = SearchUiState.State.Success(
                     items = noteItems,
                 ),
+            ),
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun EmptyStatePreview() {
+    SerenityTheme {
+        ScreenContent(
+            uiState = SearchUiState(
+                searchQuery = TextFieldState("Test query"),
+                selectedFilters = persistentListOf(
+                    SelectedFilter.Tag("Programming"),
+                    SelectedFilter.DateRange(LocalDate.now(), LocalDate.now()),
+                    SelectedFilter.Tag("Kotlin"),
+                    SelectedFilter.Tag("Article"),
+                ),
+                state = SearchUiState.State.Empty,
             ),
         )
     }

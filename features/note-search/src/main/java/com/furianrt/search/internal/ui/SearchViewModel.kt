@@ -5,32 +5,40 @@ import androidx.compose.foundation.text.input.delete
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
+import com.furianrt.core.buildImmutableList
 import com.furianrt.core.findInstance
 import com.furianrt.core.hasItem
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.search.internal.domain.GetAllUniqueTagsUseCase
 import com.furianrt.search.internal.domain.GetFilteredNotesUseCase
+import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
-import com.furianrt.search.internal.ui.extensions.toFiltersList
 import com.furianrt.search.internal.ui.extensions.toNoteItem
+import com.furianrt.search.internal.ui.extensions.toSelectedTag
+import com.furianrt.search.internal.ui.extensions.toTagsList
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+
+private const val QUERY_DEBOUNCE_DURATION = 300L
 
 private class SearchData(
     val allTags: List<LocalTag>,
@@ -38,15 +46,17 @@ private class SearchData(
     val selectedFilters: ImmutableList<SelectedFilter>,
 )
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     getAllUniqueTagsUseCase: GetAllUniqueTagsUseCase,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
+    private val dispatchers: DispatchersProvider,
 ) : ViewModel() {
 
     private val queryState = TextFieldState()
     private val queryTextFlow = snapshotFlow { queryState.text.toString() }
+        .debounce(QUERY_DEBOUNCE_DURATION)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -101,7 +111,7 @@ internal class SearchViewModel @Inject constructor(
             }
 
             is SearchEvent.OnTagClick -> {
-                if (!selectedFiltersFlow.value.hasItem { it.id == event.title }) {
+                if (!state.value.selectedFilters.hasItem { it.isSelected && it.id == event.title }) {
                     selectedFiltersFlow.update { tags ->
                         tags.toPersistentList().add(SelectedFilter.Tag(event.title))
                     }
@@ -110,22 +120,41 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun buildState(
+    private suspend fun buildState(
         notes: List<LocalNote>,
         data: SearchData,
-    ) = SearchUiState(
-        searchQuery = queryState,
-        selectedFilters = data.selectedFilters,
-        state = if (notes.isEmpty()) {
+    ): SearchUiState = withContext(dispatchers.default) {
+        val hasFiltersOrQuery = data.queryText.isNotEmpty() || data.selectedFilters.isNotEmpty()
+        val state = if (notes.isEmpty()) {
             SearchUiState.State.Empty
         } else {
             SearchUiState.State.Success(
-                items = if (data.queryText.isEmpty() && data.selectedFilters.isEmpty()) {
-                    persistentListOf(data.allTags.toFiltersList())
+                items = if (hasFiltersOrQuery) {
+                    buildImmutableList {
+                        add(SearchListItem.NotesCountTitle(notes.count()))
+                        addAll(notes.map(LocalNote::toNoteItem))
+                    }
                 } else {
-                    notes.mapImmutable(LocalNote::toNoteItem)
+                    persistentListOf(data.allTags.toTagsList())
                 },
             )
-        },
-    )
+        }
+        val unselectedTags = if (hasFiltersOrQuery) {
+            val noteIds = notes.map(LocalNote::id).toSet()
+            data.allTags
+                .filter { tag ->
+                    tag.noteIds.intersect(noteIds).isNotEmpty() &&
+                            !data.selectedFilters.hasItem { it.id == tag.title }
+                }
+                .map(LocalTag::toSelectedTag)
+        } else {
+            emptyList()
+        }
+
+        return@withContext SearchUiState(
+            searchQuery = queryState,
+            selectedFilters = data.selectedFilters.toPersistentList().addAll(unselectedTags),
+            state = state,
+        )
+    }
 }

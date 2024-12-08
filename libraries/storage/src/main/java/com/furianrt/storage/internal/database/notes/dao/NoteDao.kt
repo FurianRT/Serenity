@@ -7,6 +7,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
@@ -31,7 +32,19 @@ internal interface NoteDao {
     fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Transaction
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_TEXT} LIKE :query")
+    @Query(
+        """
+    SELECT * 
+    FROM ${EntryNote.TABLE_NAME} 
+    WHERE ${EntryNote.FIELD_TEXT} LIKE :query 
+    OR EXISTS (
+        SELECT 1 
+        FROM ${EntryNoteToTag.TABLE_NAME} 
+        WHERE ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_NOTE_ID} = ${EntryNote.TABLE_NAME}.${EntryNote.FIELD_ID} 
+        AND ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_TAG_TITLE} LIKE :query
+    )
+"""
+    )
     fun getAllNotes(query: String): Flow<List<LinkedNote>>
 
     @Transaction

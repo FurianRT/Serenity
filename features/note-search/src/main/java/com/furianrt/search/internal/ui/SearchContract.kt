@@ -11,15 +11,11 @@ import kotlinx.collections.immutable.persistentListOf
 internal data class SearchUiState(
     val searchQuery: TextFieldState = TextFieldState(),
     val selectedFilters: ImmutableList<SelectedFilter> = persistentListOf(),
-    val state: State = State.Loading,
+    val state: State = State.Success(persistentListOf()),
 ) {
     sealed interface State {
         @Immutable
-        data class Success(
-            val items: ImmutableList<SearchListItem>,
-        ) : State
-
-        data object Loading : State
+        data class Success(val items: ImmutableList<SearchListItem>) : State
         data object Empty : State
     }
 }

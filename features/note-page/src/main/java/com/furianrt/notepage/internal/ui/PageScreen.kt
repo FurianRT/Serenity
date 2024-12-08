@@ -386,6 +386,7 @@ private fun SuccessScreen(
                                 .animateItem(),
                             tags = uiState.tags,
                             isEditable = uiState.isInEditMode,
+                            animateItemsPlacement = true,
                             onTagRemoveClick = {
                                 onEvent(PageEvent.OnTagRemoveClick(it))
                                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)

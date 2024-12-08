@@ -149,6 +149,20 @@ fun MovableToolbarScaffold(
         }
     }
 
+    val listCaScroll = listState.canScrollForward || listState.canScrollBackward
+
+    LaunchedEffect(listCaScroll) {
+        if (!listCaScroll) {
+            scope.launch {
+                AnimationState(toolbarOffset).animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(TOOLBAR_SNAP_DURATION % 2),
+                    block = { toolbarOffset = value },
+                )
+            }
+        }
+    }
+
     val showShadow by remember(listState) {
         derivedStateOf {
             (totalScroll - toolbarOffset).absoluteValue > 1 &&
