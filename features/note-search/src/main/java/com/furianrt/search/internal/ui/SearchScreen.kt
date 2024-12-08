@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -53,7 +54,11 @@ import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.MultiChoiceCalendar
+import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -70,18 +75,28 @@ internal fun SearchScreen(
     val listState = rememberLazyListState()
     val toolbarState = remember { MovableToolbarState() }
 
+    val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
+    var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
+
+    data class CalendarState(val start: SelectedDate?, val end: SelectedDate?)
+    var calendarState: CalendarState? by remember { mutableStateOf(null) }
+
+    val hazeState = remember { HazeState() }
+
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
                     is SearchEffect.CloseScreen -> onCloseRequest()
+                    is SearchEffect.ShowDateSelector -> {
+                        val startDate = effect.start?.let { SelectedDate(it) }
+                        val endDate = effect.end?.let { SelectedDate(it) }
+                        calendarState = CalendarState(startDate, endDate)
+                    }
                 }
             }
     }
-
-    val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
-    var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
 
     LaunchedEffect(filtersCount) {
         if (filtersCount != prevFiltersCount) {
@@ -91,11 +106,24 @@ internal fun SearchScreen(
     }
 
     ScreenContent(
+        modifier = Modifier.haze(hazeState),
         uiState = uiState,
         onEvent = viewModel::onEvent,
         listState = listState,
         toolbarState = toolbarState,
     )
+
+    calendarState?.let { state ->
+        MultiChoiceCalendar(
+            startDate = state.start,
+            endDate = state.end,
+            hazeState = hazeState,
+            onDismissRequest = { calendarState = null },
+            onDateSelected = { startDate, endDate ->
+                viewModel.onEvent(SearchEvent.OnDateRangeSelected(startDate.date, endDate?.date))
+            },
+        )
+    }
 }
 
 @Composable
@@ -182,7 +210,7 @@ private fun SuccessContent(
         items(
             count = uiState.items.count(),
             key = { index ->
-                when (uiState.items[index]){
+                when (uiState.items[index]) {
                     is SearchListItem.TagsList -> SearchListItem.TagsList.ID
                     is SearchListItem.NotesCountTitle -> SearchListItem.NotesCountTitle.ID
                     is SearchListItem.Note -> index

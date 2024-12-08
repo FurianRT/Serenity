@@ -2,6 +2,7 @@ package com.furianrt.uikit.components
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
@@ -53,6 +54,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -131,8 +134,11 @@ fun SingleChoiceCalendar(
     CalendarDialog(
         modifier = modifier,
         state = calendarState,
-        selectedDate = selected,
+        startDate = selected,
+        endDate = null,
         hazeState = hazeState,
+        showButtonDone = false,
+        onDoneClick = {},
         onDateSelected = { date ->
             scope.launch {
                 selected = date
@@ -145,12 +151,71 @@ fun SingleChoiceCalendar(
     )
 }
 
+@Composable
+fun MultiChoiceCalendar(
+    hazeState: HazeState,
+    modifier: Modifier = Modifier,
+    startDate: SelectedDate? = null,
+    endDate: SelectedDate? = null,
+    onDateSelected: (start: SelectedDate, end: SelectedDate?) -> Unit = { _, _ -> },
+    onDismissRequest: () -> Unit = {},
+) {
+    var startDateState: SelectedDate? by remember { mutableStateOf(startDate) }
+    var endDateState: SelectedDate? by remember { mutableStateOf(endDate) }
+
+    val calendarState = rememberCalendarState(
+        startMonth = YearMonth.of(MIN_YEAR, Month.JANUARY),
+        endMonth = YearMonth.of(MAX_YEAR, Month.DECEMBER),
+        firstVisibleMonth = YearMonth.now(),
+        outDateStyle = OutDateStyle.EndOfGrid,
+    )
+
+    CalendarDialog(
+        modifier = modifier,
+        state = calendarState,
+        startDate = startDateState,
+        endDate = endDateState,
+        hazeState = hazeState,
+        showButtonDone = startDateState != null,
+        onDoneClick = {
+            startDateState?.let { startDate ->
+                onDateSelected(startDate, endDateState)
+                onDismissRequest()
+            }
+        },
+        onDateSelected = { date ->
+            val start = startDateState?.date
+            val end = endDateState?.date
+            when {
+                start == null && end == null -> {
+                    startDateState = date
+                }
+
+                start != null && end == null -> if (start >= date.date) {
+                    startDateState = date
+                } else {
+                    endDateState = date
+                }
+
+                start != null && end != null -> {
+                    startDateState = date
+                    endDateState = null
+                }
+            }
+        },
+        onDismissRequest = onDismissRequest,
+    )
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CalendarDialog(
     state: CalendarState,
-    selectedDate: SelectedDate,
+    startDate: SelectedDate?,
+    endDate: SelectedDate?,
     hazeState: HazeState,
+    showButtonDone: Boolean,
+    onDoneClick: () -> Unit,
     onDateSelected: (date: SelectedDate) -> Unit,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
@@ -161,8 +226,8 @@ private fun CalendarDialog(
 
     var mode by remember { mutableStateOf(Mode.DAY_PICKER) }
 
-    var selectedYearMonth by remember(selectedDate) {
-        mutableStateOf(SelectedYearMonth(selectedDate.date.yearMonth))
+    var selectedYearMonth by remember {
+        mutableStateOf(SelectedYearMonth(startDate?.date?.yearMonth ?: YearMonth.now()))
     }
 
     var dialogSize by remember { mutableStateOf(IntSize.Zero) }
@@ -229,9 +294,12 @@ private fun CalendarDialog(
                         Mode.DAY_PICKER -> DayPickerContent(
                             modifier = Modifier.onSizeChanged { dialogSize = it },
                             state = state,
-                            selectedDate = selectedDate,
+                            startDate = startDate,
+                            endDate = endDate,
                             selectedYearMonth = selectedYearMonth,
+                            showButtonDone = showButtonDone,
                             onDateSelected = onDateSelected,
+                            onDoneClick = onDoneClick,
                             onMonthClick = { mode = Mode.YEAR_MONTH_PICKER },
                         )
 
@@ -253,18 +321,21 @@ private fun CalendarDialog(
 @Composable
 private fun DayPickerContent(
     state: CalendarState,
-    selectedDate: SelectedDate,
+    startDate: SelectedDate?,
+    endDate: SelectedDate?,
     selectedYearMonth: SelectedYearMonth,
+    showButtonDone: Boolean,
     onDateSelected: (date: SelectedDate) -> Unit,
     onMonthClick: () -> Unit,
+    onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier.padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         MonthHeader(
+            modifier = Modifier.padding(bottom = 16.dp),
             selected = selectedYearMonth,
             onClick = onMonthClick,
         )
@@ -272,9 +343,38 @@ private fun DayPickerContent(
             state = state,
             monthHeader = { WeekHeader() },
             dayContent = { day ->
+                val isSelected = when {
+                    startDate != null && endDate != null -> {
+                        day.date in startDate.date..endDate.date
+                    }
+
+                    startDate != null -> {
+                        day.date == startDate.date
+                    }
+
+                    else -> false
+                }
+
+
+                val shape = if (startDate != null && endDate != null) {
+                    when (day.date) {
+                        startDate.date -> RoundedCornerShape(
+                            topStart = 32.dp,
+                            bottomStart = 32.dp,
+                        )
+                        endDate.date -> RoundedCornerShape(
+                            topEnd = 32.dp,
+                            bottomEnd = 32.dp,
+                        )
+                        else -> RectangleShape
+                    }
+                } else {
+                    CircleShape
+                }
                 DayCell(
                     day = day,
-                    isSelected = day.date == selectedDate.date,
+                    shape = shape,
+                    isSelected = isSelected,
                     onClick = { onDateSelected(SelectedDate(it.date)) },
                 )
             },
@@ -286,6 +386,17 @@ private fun DayPickerContent(
                 )
             },
         )
+
+        AnimatedVisibility(
+            modifier = Modifier
+                .padding(end = 24.dp)
+                .align(Alignment.End),
+            visible = showButtonDone,
+        ) {
+            ButtonDone(
+                onClick = onDoneClick,
+            )
+        }
     }
 }
 
@@ -354,15 +465,26 @@ private fun YearMonthPickerContent(
                 )
             }
         }
-        TextButton(
+        ButtonDone(
             modifier = Modifier.padding(end = 24.dp, top = 8.dp, bottom = 12.dp),
             onClick = { onYearMonthSelected(selectedYearMonth) },
-        ) {
-            Text(
-                text = stringResource(R.string.action_done),
-                style = MaterialTheme.typography.titleMedium,
-            )
-        }
+        )
+    }
+}
+
+@Composable
+private fun ButtonDone(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    TextButton(
+        modifier = modifier,
+        onClick = onClick,
+    ) {
+        Text(
+            text = stringResource(R.string.action_done),
+            style = MaterialTheme.typography.titleMedium,
+        )
     }
 }
 
@@ -465,18 +587,20 @@ private fun MonthYearList(
 private fun DayCell(
     day: CalendarDay,
     isSelected: Boolean,
+    shape: Shape,
     onClick: (day: CalendarDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .alpha(if (day.position == DayPosition.MonthDate) 1f else 0.5f)
-            .padding(horizontal = 4.dp, vertical = 6.dp)
-            .clip(CircleShape)
+            .padding(vertical = 4.dp)
+            .clip(shape)
             .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = false)
             .fillMaxSize()
             .applyIf(isSelected) { Modifier.background(MaterialTheme.colorScheme.primaryContainer) }
-            .clickable { onClick(day) },
+            .padding(horizontal = 4.dp)
+            .clickableNoRipple { onClick(day) },
         contentAlignment = Alignment.Center,
     ) {
         Text(
@@ -536,7 +660,7 @@ private fun WeekHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(start = 16.dp , end = 16.dp, top = 8.dp, bottom = 2.dp)
+            .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 2.dp)
             .alpha(0.5f),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -558,6 +682,19 @@ private fun SingleChoicePreview() {
     SerenityTheme {
         SingleChoiceCalendar(
             selectedDate = SelectedDate(LocalDate.now()),
+            hazeState = HazeState(),
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun MultiChoicePreview() {
+    SerenityTheme {
+        val date = LocalDate.now()
+        MultiChoiceCalendar(
+            startDate = SelectedDate(date),
+            endDate = SelectedDate(date.plusDays(12)),
             hazeState = HazeState(),
         )
     }

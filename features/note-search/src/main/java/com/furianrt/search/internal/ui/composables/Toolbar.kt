@@ -215,7 +215,7 @@ private fun SelectedFiltersList(
                         filter.start.toDateString(DATE_PATTERN) +
                                 " - " + filter.end.toDateString(DATE_PATTERN)
                     } else {
-                        filter.start.toDateString(DATE_PATTERN)
+                        filter.start.toDateString()
                     },
                     isRemovable = true,
                     onRemoveClick = { onRemoveFilterClick(filter) },

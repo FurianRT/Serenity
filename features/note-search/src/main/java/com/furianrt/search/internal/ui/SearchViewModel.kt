@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import javax.inject.Inject
 
 private const val QUERY_DEBOUNCE_DURATION = 300L
@@ -100,24 +101,41 @@ internal class SearchViewModel @Inject constructor(
 
     fun onEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.OnButtonCalendarClick -> {}
+            is SearchEvent.OnButtonCalendarClick -> showDateSelector()
             is SearchEvent.OnButtonBackClick -> _effect.tryEmit(SearchEffect.CloseScreen)
-            is SearchEvent.OnButtonClearQueryClick -> {
-                queryState.edit { delete(0, originalText.length) }
-            }
-
-            is SearchEvent.OnRemoveFilterClick -> selectedFiltersFlow.update { tags ->
-                tags.toPersistentList().remove(event.filter)
-            }
-
-            is SearchEvent.OnTagClick -> {
-                if (!state.value.selectedFilters.hasItem { it.isSelected && it.id == event.title }) {
-                    selectedFiltersFlow.update { tags ->
-                        tags.toPersistentList().add(SelectedFilter.Tag(event.title))
-                    }
-                }
-            }
+            is SearchEvent.OnButtonClearQueryClick -> clearQuery()
+            is SearchEvent.OnRemoveFilterClick -> removeFilter(event.filter)
+            is SearchEvent.OnTagClick -> addTagFilter(event.title)
+            is SearchEvent.OnDateRangeSelected -> addDateFilter(event.start, event.end)
         }
+    }
+
+    private fun clearQuery() {
+        queryState.edit { delete(0, originalText.length) }
+    }
+
+    private fun removeFilter(filter: SelectedFilter) {
+        selectedFiltersFlow.update { it.toPersistentList().remove(filter) }
+    }
+
+    private fun addTagFilter(title: String) {
+        if (!state.value.selectedFilters.hasItem { it.isSelected && it.id == title }) {
+            selectedFiltersFlow.update { it.toPersistentList().add(SelectedFilter.Tag(title)) }
+        }
+    }
+
+    private fun addDateFilter(start: LocalDate, end: LocalDate?) {
+        val filterItem = SelectedFilter.DateRange(start, end)
+        selectedFiltersFlow.update { filters ->
+            filters.toPersistentList()
+                .removeAll { it.id == filterItem.id }
+                .add(filterItem)
+        }
+    }
+
+    private fun showDateSelector() {
+        val dateFilter = state.value.selectedFilters.findInstance<SelectedFilter.DateRange>()
+        _effect.tryEmit(SearchEffect.ShowDateSelector(dateFilter?.start, dateFilter?.end))
     }
 
     private suspend fun buildState(

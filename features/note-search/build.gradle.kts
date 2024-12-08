@@ -40,4 +40,6 @@ dependencies {
     implementation(libs.immutableCollections)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.blur)
 }
