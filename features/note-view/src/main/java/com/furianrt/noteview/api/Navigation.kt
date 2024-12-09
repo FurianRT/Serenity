@@ -2,12 +2,8 @@ package com.furianrt.noteview.api
 
 import android.net.Uri
 import android.os.Bundle
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
@@ -16,12 +12,13 @@ import androidx.navigation.compose.composable
 import com.furianrt.common.LocalDateSerializer
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.noteview.internal.ui.NoteViewScreen
+import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import kotlin.reflect.typeOf
-import kotlinx.serialization.encodeToString
 
 @Serializable
 data class NoteViewRoute(
@@ -87,16 +84,7 @@ fun NavGraphBuilder.noteViewScreen(
 ) {
     composable<NoteViewRoute>(
         exitTransition = { ExitTransition.None },
-        popExitTransition = {
-            slideOutOfContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Right,
-                targetOffset = { (it * 0.8f).toInt() },
-                animationSpec = tween(
-                    durationMillis = 400,
-                    easing = LinearEasing,
-                ),
-            ) + fadeOut(animationSpec = tween(300))
-        },
+        popExitTransition = { defaultPopExitTransition() },
         popEnterTransition = { EnterTransition.None },
         typeMap = mapOf(typeOf<NoteViewRoute.SearchData?>() to SearchDataType),
     ) {

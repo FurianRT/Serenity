@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.furianrt.domain.managers.LockManager
 import com.furianrt.lock.api.CheckPinScreen
@@ -30,16 +31,21 @@ import com.furianrt.mediaview.api.navigateToMediaView
 import com.furianrt.notecreate.api.NoteCreateRoute
 import com.furianrt.notecreate.api.navigateToNoteCreate
 import com.furianrt.notecreate.api.noteCreateScreen
+import com.furianrt.notelist.api.NoteListRoute
 import com.furianrt.notelist.api.noteListScreen
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
-import com.furianrt.serenity.navigation.SerenityNavHost
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
+import com.furianrt.uikit.anim.defaultEnterTransition
+import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
+import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
@@ -111,11 +117,17 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
             SerenityTheme {
                 CompositionLocalProvider(LocalAuth provides this) {
-                    SerenityNavHost(
+                    NavHost(
                         modifier = Modifier.haze(hazeState),
                         navController = navController,
+                        startDestination = NoteListRoute,
+                        enterTransition = { defaultEnterTransition() },
+                        exitTransition = { defaultExitTransition() },
+                        popExitTransition = { defaultPopExitTransition() },
+                        popEnterTransition = { defaultPopEnterTransition() },
                     ) {
                         noteListScreen(
+                            searchScreenRoute = NoteSearchRoute.javaClass.name,
                             openSettingsScreen = navController::navigateToSettings,
                             openNoteCreateScreen = { identifier ->
                                 navController.navigateToNoteCreate(

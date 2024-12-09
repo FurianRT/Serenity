@@ -1,8 +1,12 @@
 package com.furianrt.notelist.api
 
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.furianrt.notelist.internal.ui.NoteListScreen
+import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
 
@@ -14,8 +18,24 @@ fun NavGraphBuilder.noteListScreen(
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
     openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    searchScreenRoute: String,
 ) {
-    composable<NoteListRoute> {
+    composable<NoteListRoute>(
+        exitTransition = {
+            if (targetState.destination.route == searchScreenRoute) {
+                fadeOut()
+            } else {
+               defaultExitTransition()
+            }
+        },
+        popEnterTransition = {
+            if (initialState.destination.route == searchScreenRoute) {
+                fadeIn()
+            } else {
+                defaultPopEnterTransition()
+            }
+        },
+    ) {
         NoteListScreen(
             openNoteViewScreen = openNoteViewScreen,
             openNoteCreateScreen = openNoteCreateScreen,

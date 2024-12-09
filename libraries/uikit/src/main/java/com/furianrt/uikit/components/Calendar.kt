@@ -191,10 +191,12 @@ fun MultiChoiceCalendar(
                     startDateState = date
                 }
 
-                start != null && end == null -> if (start >= date.date) {
-                    startDateState = date
-                } else {
-                    endDateState = date
+                start != null && end == null -> when {
+                    start < date.date -> endDateState = date
+                    start > date.date -> {
+                        endDateState = startDateState
+                        startDateState = date
+                    }
                 }
 
                 start != null && end != null -> {
@@ -341,7 +343,7 @@ private fun DayPickerContent(
         )
         HorizontalCalendar(
             state = state,
-            monthHeader = { WeekHeader() },
+            monthHeader = { WeeksHeader() },
             dayContent = { day ->
                 val isSelected = when {
                     startDate != null && endDate != null -> {
@@ -362,10 +364,12 @@ private fun DayPickerContent(
                             topStart = 32.dp,
                             bottomStart = 32.dp,
                         )
+
                         endDate.date -> RoundedCornerShape(
                             topEnd = 32.dp,
                             bottomEnd = 32.dp,
                         )
+
                         else -> RectangleShape
                     }
                 } else {
@@ -375,6 +379,7 @@ private fun DayPickerContent(
                     day = day,
                     shape = shape,
                     isSelected = isSelected,
+                    isEdgeDate = startDate?.date == day.date || endDate?.date == day.date,
                     onClick = { onDateSelected(SelectedDate(it.date)) },
                 )
             },
@@ -587,6 +592,7 @@ private fun MonthYearList(
 private fun DayCell(
     day: CalendarDay,
     isSelected: Boolean,
+    isEdgeDate: Boolean,
     shape: Shape,
     onClick: (day: CalendarDay) -> Unit,
     modifier: Modifier = Modifier,
@@ -598,7 +604,12 @@ private fun DayCell(
             .clip(shape)
             .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = false)
             .fillMaxSize()
-            .applyIf(isSelected) { Modifier.background(MaterialTheme.colorScheme.primaryContainer) }
+            .applyIf(isSelected) {
+                Modifier.background(MaterialTheme.colorScheme.tertiary)
+            }
+            .applyIf(isEdgeDate) {
+                Modifier.background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+            }
             .padding(horizontal = 4.dp)
             .clickableNoRipple { onClick(day) },
         contentAlignment = Alignment.Center,
@@ -652,7 +663,7 @@ private fun MonthHeader(
 }
 
 @Composable
-private fun WeekHeader(
+private fun WeeksHeader(
     modifier: Modifier = Modifier,
 ) {
     val daysOfWeek = remember { daysOfWeek() }
