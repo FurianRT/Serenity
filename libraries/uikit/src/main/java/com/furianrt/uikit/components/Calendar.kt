@@ -599,7 +599,6 @@ private fun DayCell(
 ) {
     Box(
         modifier = modifier
-            .alpha(if (day.position == DayPosition.MonthDate) 1f else 0.5f)
             .padding(vertical = 4.dp)
             .clip(shape)
             .aspectRatio(ratio = 1f, matchHeightConstraintsFirst = false)
@@ -615,6 +614,7 @@ private fun DayCell(
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier.alpha(if (day.position == DayPosition.MonthDate) 1f else 0.5f),
             text = day.date.dayOfMonth.toString(),
             style = MaterialTheme.typography.bodyLarge,
             textAlign = TextAlign.Center,

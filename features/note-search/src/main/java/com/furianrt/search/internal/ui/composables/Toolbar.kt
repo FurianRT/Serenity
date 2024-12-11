@@ -1,8 +1,13 @@
 package com.furianrt.search.internal.ui.composables
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.shrinkHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -11,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
@@ -19,14 +25,16 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -41,20 +49,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.components.ButtonBack
+import com.furianrt.uikit.components.OneTimeEffect
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
+import com.furianrt.uikit.R as uiR
 
 private const val DATE_PATTERN = "dd.MM.yy"
+private const val BACK_BUTTON_ANIM_DURATION = 200
 
 @Composable
 internal fun Toolbar(
@@ -68,6 +79,10 @@ internal fun Toolbar(
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
     onClearQueryClick: () -> Unit = {},
 ) {
+    var showBackButton by rememberSaveable { mutableStateOf(false) }
+    OneTimeEffect {
+        showBackButton = true
+    }
     Column(
         modifier = modifier
             .statusBarsPadding()
@@ -82,13 +97,29 @@ internal fun Toolbar(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            ButtonBack(onClick = onBackClick)
+            Box(modifier = Modifier.widthIn(min = 8.dp)) {
+                this@Row.AnimatedVisibility(
+                    enter = expandHorizontally(tween(BACK_BUTTON_ANIM_DURATION)),
+                    exit = shrinkHorizontally(tween(BACK_BUTTON_ANIM_DURATION)),
+                    visible = showBackButton,
+                ) {
+                    ButtonBack(
+                        onClick = {
+                            showBackButton = false
+                            onBackClick()
+                        },
+                    )
+                }
+            }
             SearchBar(
                 modifier = Modifier.weight(1f),
                 state = queryState,
                 onClearClick = onClearQueryClick,
             )
-            ButtonCalendar(onClick = onCalendarClick)
+            ButtonCalendar(
+                modifier = Modifier.padding(horizontal = 2.dp),
+                onClick = onCalendarClick
+            )
         }
         if (selectedFilters.isNotEmpty()) {
             SelectedFiltersList(
@@ -106,11 +137,16 @@ private fun ButtonCalendar(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
+    Box(
+        modifier = modifier.clickableWithScaleAnim(
+            maxScale = 1.1f,
+            indication = ripple(bounded = false, radius = 20.dp),
+            onClick = onClick,
+        ),
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
+            modifier = modifier.padding(8.dp),
             painter = painterResource(R.drawable.ic_calendar),
             contentDescription = null,
             tint = Color.Unspecified,
@@ -126,7 +162,7 @@ private fun SearchBar(
 ) {
     val showCloseButton by remember { derivedStateOf { state.text.isNotEmpty() } }
     val focusRequester = remember { FocusRequester() }
-    LaunchedEffect(Unit) {
+    OneTimeEffect(Unit) {
         focusRequester.requestFocus()
     }
     Row(

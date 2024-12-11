@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
@@ -57,6 +58,7 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.SelectedDate
+import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
@@ -183,6 +185,7 @@ private fun ScreenContent(
                     uiState = targetState,
                     onEvent = onEvent,
                     listState = listState,
+                    toolbarState = toolbarState,
                     toolbarHeight = toolbarHeight,
                 )
 
@@ -199,6 +202,7 @@ private fun SuccessContent(
     uiState: SearchUiState.State.Success,
     onEvent: (event: SearchEvent) -> Unit,
     listState: LazyListState,
+    toolbarState: MovableToolbarState,
     toolbarHeight: Int,
     modifier: Modifier = Modifier,
 ) {
@@ -213,7 +217,18 @@ private fun SuccessContent(
 
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
-            listState.scrollToItem(uiState.scrollToPosition)
+            val visibleIndexes = listState.layoutInfo
+                .visibleItemsInfo(itemVisiblePercentThreshold = 90f)
+                .map(LazyListItemInfo::index)
+            if (uiState.scrollToPosition !in visibleIndexes) {
+                if (uiState.scrollToPosition == 1) {
+                    listState.scrollToItem(0)
+                } else {
+                    listState.scrollToItem(uiState.scrollToPosition)
+                }
+
+            }
+            toolbarState.expand(0)
             onEvent(SearchEvent.OnScrolledToItem)
         }
     }

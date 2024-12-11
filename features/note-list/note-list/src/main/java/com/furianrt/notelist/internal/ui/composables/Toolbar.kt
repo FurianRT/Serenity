@@ -45,7 +45,6 @@ internal fun Toolbar(
     ) {
         SearchBar(
             modifier = Modifier
-                .height(34.dp)
                 .padding(end = 16.dp)
                 .weight(1f),
             onClick = onSearchClick,
@@ -64,6 +63,7 @@ private fun SettingsButton(
 
     Icon(
         modifier = modifier
+            .padding(1.dp)
             .graphicsLayer { rotationZ = rotation.value }
             .clickableWithScaleAnim(ANIM_BUTTON_SETTINGS_DURATION) {
                 if (rotation.isRunning) {
