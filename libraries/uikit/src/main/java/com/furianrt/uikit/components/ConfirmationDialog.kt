@@ -157,7 +157,7 @@ fun ConfirmationDialog(
                     blurRadius = 20.dp,
                 ),
             )
-            .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
+            .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(start = 16.dp, end = 16.dp, top = 16.dp),
         onDismissRequest = onDismissRequest,
     ) {

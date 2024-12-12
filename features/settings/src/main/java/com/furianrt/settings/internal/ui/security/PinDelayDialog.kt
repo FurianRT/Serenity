@@ -75,7 +75,7 @@ internal fun PinDelayDialog(
                         blurRadius = 20.dp,
                     ),
                 )
-                .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f))
+                .background(MaterialTheme.colorScheme.surfaceTint)
                 .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

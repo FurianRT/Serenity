@@ -34,8 +34,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.GeneralButton
-import com.furianrt.settings.internal.ui.composables.Toolbar
 import com.furianrt.settings.internal.ui.main.SettingsUiState.Success.AppThemeColor
+import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
@@ -77,7 +77,7 @@ private fun ScreenContent(
             .fillMaxSize()
             .systemBarsPadding()
     ) {
-        Toolbar(
+        DefaultToolbar(
             modifier = Modifier.drawBehind {
                 if (scrollState.canScrollBackward) {
                     drawBottomShadow(elevation = 8.dp)

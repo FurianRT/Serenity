@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -57,8 +56,8 @@ fun MediaPermissionDialog(
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Surface(
             modifier = Modifier.wrapContentSize(),
-            shape = RoundedCornerShape(16.dp),
-            tonalElevation = AlertDialogDefaults.TonalElevation,
+            shape = RoundedCornerShape(24.dp),
+            tonalElevation = 4.dp,
         ) {
             Column(horizontalAlignment = Alignment.End) {
                 Header()

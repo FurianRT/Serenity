@@ -4,17 +4,20 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,14 +26,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.ImeAction
@@ -41,10 +45,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.lock.R
-import com.furianrt.lock.internal.ui.elements.ButtonClose
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
 import com.furianrt.uikit.anim.shakable
+import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.R as uiR
@@ -106,44 +110,42 @@ private fun ScreenContent(
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
-    Box(
+    Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(MaterialTheme.colorScheme.surface)
             .systemBarsPadding(),
+        verticalArrangement = Arrangement.spacedBy(40.dp),
     ) {
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(40.dp),
-        ) {
-            ButtonClose(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                onClick = {
-                    focusManager.clearFocus()
-                    onEvent(EmailEvent.OnCloseClick)
-                }
-            )
-            Title(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                text = stringResource(R.string.recovery_email_hint),
-            )
-            EmailInput(
-                modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .focusRequester(focusRequester)
-                    .shakable(emailShakeState),
-                state = uiState.email,
-                hint = stringResource(uiR.string.title_email),
-                showError = showErrorMessage,
-            )
-        }
+        DefaultToolbar(
+            title = stringResource(R.string.pin_recovery_email_title),
+            onBackClick = {
+                focusManager.clearFocus()
+                onEvent(EmailEvent.OnCloseClick)
+            }
+        )
+        Title(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
+            text = stringResource(R.string.recovery_email_hint),
+        )
+        EmailInput(
+            modifier = Modifier
+                .padding(horizontal = 24.dp)
+                .focusRequester(focusRequester)
+                .shakable(emailShakeState),
+            state = uiState.email,
+            hint = stringResource(uiR.string.title_email),
+            showError = showErrorMessage,
+        )
+
+        Spacer(Modifier.weight(1f))
+
         RegularButton(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp, vertical = 16.dp)
-                .align(Alignment.BottomCenter)
                 .imePadding(),
             text = stringResource(uiR.string.action_confirm),
             onClick = { onEvent(EmailEvent.OnConfirmClick) },
@@ -160,7 +162,7 @@ private fun Title(
     Text(
         modifier = modifier,
         text = text,
-        style = MaterialTheme.typography.titleSmall,
+        style = MaterialTheme.typography.bodyMedium,
         textAlign = TextAlign.Center,
     )
 }
@@ -176,31 +178,43 @@ private fun EmailInput(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        BasicTextField(
+        Row(
             modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp))
-                .padding(16.dp),
-            state = state,
-            textStyle = MaterialTheme.typography.bodyMedium,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Email,
-                imeAction = ImeAction.Done,
-                showKeyboardOnFocus = true,
-            ),
-            decorator = { innerTextField ->
-                if (state.text.isEmpty()) {
-                    Text(
-                        modifier = Modifier.alpha(0.5f),
-                        text = hint,
-                        style = MaterialTheme.typography.labelMedium,
-                        fontStyle = FontStyle.Italic,
-                    )
-                }
-                innerTextField()
-            },
-        )
+                .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(24.dp))
+                .padding(horizontal = 16.dp, vertical = 14.dp)
+        ) {
+            BasicTextField(
+                modifier = Modifier.weight(1f),
+                state = state,
+                textStyle = MaterialTheme.typography.bodyMedium,
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                lineLimits = TextFieldLineLimits.SingleLine,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Done,
+                    showKeyboardOnFocus = true,
+                ),
+                decorator = { innerTextField ->
+                    if (state.text.isEmpty()) {
+                        Text(
+                            modifier = Modifier.alpha(0.5f),
+                            text = hint,
+                            style = MaterialTheme.typography.labelMedium,
+                            fontStyle = FontStyle.Italic,
+                        )
+                    }
+                    innerTextField()
+                },
+            )
+            Icon(
+                modifier = Modifier
+                    .size(20.dp)
+                    .alpha(0.5f),
+                painter = painterResource(uiR.drawable.ic_email),
+                tint = Color.Unspecified,
+                contentDescription = null,
+            )
+        }
         if (showError) {
             Text(
                 modifier = Modifier.padding(horizontal = 8.dp),

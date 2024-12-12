@@ -28,26 +28,29 @@ private val defaultColorScheme = darkColorScheme(
     onTertiaryContainer = Color.White,
     errorContainer = Colors.Red,
     onErrorContainer = Color.White,
-    scrim = Color.Black.copy(alpha = 0.4f),
+    scrim = Color.Black.copy(alpha = 0.5f),
     surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
 private val greenColorScheme = defaultColorScheme.copy(
-    background = Color.Green,
-    surface = Color.Green,
+    background = Colors.Green,
+    surface = Colors.Green,
     primaryContainer = Colors.GreenLight,
+    surfaceTint = Colors.Green.copy(alpha = 0.3f),
 )
 
-private val blackColorScheme = greenColorScheme.copy(
+private val blackColorScheme = defaultColorScheme.copy(
     background = Color.Black,
     surface = Color.Black,
-    primaryContainer = Colors.GreenLight,
+    primaryContainer = Colors.Purple,
+    surfaceTint = defaultColorScheme.tertiary,
 )
 
-private val blueColorScheme = greenColorScheme.copy(
+private val blueColorScheme = defaultColorScheme.copy(
     background = Colors.FutureDusk,
     surface = Colors.FutureDusk,
-    primaryContainer = Colors.GreenLight,
+    primaryContainer = Color(0xFF2A386D), // TODO сменить цвет
+    surfaceTint = Colors.FutureDusk.copy(alpha = 0.3f),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)

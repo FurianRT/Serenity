@@ -25,6 +25,7 @@ import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -240,42 +241,36 @@ private fun SheetContent(
     listState: LazyGridState,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundModifier = Modifier
-        .background(MaterialTheme.colorScheme.surface)
-        .background(MaterialTheme.colorScheme.tertiary)
+    Surface(
+        modifier = modifier,
+        tonalElevation = 8.dp,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+    ) {
+        Column {
+            DragHandle()
+            AnimatedContent(
+                targetState = uiState,
+                transitionSpec = {
+                    fadeIn(tween(CONTENT_ANIM_DURATION))
+                        .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
+                },
+                contentKey = { it::class.simpleName },
+                label = "StateAnim",
+            ) { targetState ->
+                when (targetState) {
+                    is MediaSelectorUiState.Loading -> LoadingContent()
 
-    Column(modifier = modifier) {
-        DragHandle(
-            modifier = Modifier
-                .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
-                .then(backgroundModifier),
-        )
-        AnimatedContent(
-            targetState = uiState,
-            transitionSpec = {
-                fadeIn(tween(CONTENT_ANIM_DURATION))
-                    .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
-            },
-            contentKey = { it::class.simpleName },
-            label = "StateAnim",
-        ) { targetState ->
-            when (targetState) {
-                is MediaSelectorUiState.Loading -> LoadingContent(
-                    modifier = backgroundModifier,
-                )
+                    is MediaSelectorUiState.Empty -> EmptyContent(
+                        uiState = targetState,
+                        onEvent = onEvent,
+                    )
 
-                is MediaSelectorUiState.Empty -> EmptyContent(
-                    modifier = backgroundModifier,
-                    uiState = targetState,
-                    onEvent = onEvent,
-                )
-
-                is MediaSelectorUiState.Success -> SuccessContent(
-                    modifier = backgroundModifier,
-                    uiState = targetState,
-                    listState = listState,
-                    onEvent = onEvent,
-                )
+                    is MediaSelectorUiState.Success -> SuccessContent(
+                        uiState = targetState,
+                        listState = listState,
+                        onEvent = onEvent,
+                    )
+                }
             }
         }
     }

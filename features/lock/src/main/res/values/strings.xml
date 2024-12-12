@@ -10,6 +10,7 @@
     <string name="pin_recovery_dialog_title">We\'ll send an email with password recovery instructions to %s. If you don\'t receive it, check your spam folder - it might end up there.</string>
     <string name="pin_recovery_email_subject">PIN recovery</string>
     <string name="pin_recovery_email_content">Your PIN: %s</string>
+    <string name="pin_recovery_email_title">Email address</string>
     <string name="send_pin_recovery_email_failure">Something went wrong</string>
     <string name="send_pin_recovery_email_success">Recovery email sent</string>
 </resources>

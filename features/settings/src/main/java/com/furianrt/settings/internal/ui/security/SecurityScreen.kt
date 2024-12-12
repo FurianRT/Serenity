@@ -31,7 +31,7 @@ import com.furianrt.settings.R
 import com.furianrt.uikit.R as uiR
 import com.furianrt.settings.internal.ui.composables.GeneralButton
 import com.furianrt.settings.internal.ui.composables.SwitchButton
-import com.furianrt.settings.internal.ui.composables.Toolbar
+import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
@@ -90,7 +90,7 @@ private fun ScreenContent(
             .fillMaxSize()
             .systemBarsPadding()
     ) {
-        Toolbar(
+        DefaultToolbar(
             modifier = Modifier.drawBehind {
                 if (scrollState.canScrollBackward) {
                     drawBottomShadow(elevation = 8.dp)

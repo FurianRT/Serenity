@@ -18,4 +18,7 @@ object Colors {
 
     @Stable
     val FutureDusk = Color(0xFF474972)
+
+    @Stable
+    val Purple = Color(0xFF8D6EFD)
 }

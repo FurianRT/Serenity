@@ -149,7 +149,7 @@ internal fun SuccessContent(
         AnimatedVisibility(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(end = 16.dp, bottom = 24.dp)
+                .padding(end = 16.dp, bottom = 20.dp)
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd),
             visible = uiState.selectedCount > 0,
