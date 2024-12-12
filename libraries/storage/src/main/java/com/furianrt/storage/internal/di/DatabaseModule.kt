@@ -2,6 +2,7 @@ package com.furianrt.storage.internal.di
 
 import android.content.Context
 import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.SecurityRepository
@@ -13,6 +14,7 @@ import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.preferences.SerenityDataStore
+import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
 import com.furianrt.storage.internal.repositories.TagsRepositoryImp
@@ -43,6 +45,10 @@ internal interface DatabaseModule {
     @Binds
     @Singleton
     fun securityRepository(imp: SerenityDataStore): SecurityRepository
+
+    @Binds
+    @Singleton
+    fun appearanceRepository(imp: AppearanceRepositoryImp): AppearanceRepository
 
     companion object {
         @Provides

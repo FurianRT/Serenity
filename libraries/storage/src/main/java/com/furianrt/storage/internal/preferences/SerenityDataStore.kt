@@ -12,6 +12,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.storage.internal.encryption.SerenityCipher
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,6 +28,7 @@ private val KEY_PIN_REQUEST_DELAY = intPreferencesKey("pin_request_delay")
 private val KEY_IS_FINGERPRINT_ENABLED = booleanPreferencesKey("is_fingerprint_enabled")
 private val KEY_PIN_RECOVERY_EMAIL = stringPreferencesKey("pin_recovery_email")
 private val KEY_RECOVERY_EMAIL_SEND_TIME = longPreferencesKey("recovery_email_send_time")
+private val KEY_THEME_COLOR = stringPreferencesKey("theme_color")
 
 @Singleton
 internal class SerenityDataStore @Inject constructor(
@@ -81,5 +83,12 @@ internal class SerenityDataStore @Inject constructor(
 
     override suspend fun setLastEmailSendTime(time: Long) {
         dataStore.edit { prefs -> prefs[KEY_RECOVERY_EMAIL_SEND_TIME] = time }
+    }
+
+    fun getAppThemeColor(): Flow<ThemeColor> = dataStore.data
+        .map { prefs -> ThemeColor.fromString(prefs[KEY_THEME_COLOR]) ?: ThemeColor.GREEN }
+
+    suspend fun updateAppThemeColor(color: ThemeColor) {
+        dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = color.name }
     }
 }

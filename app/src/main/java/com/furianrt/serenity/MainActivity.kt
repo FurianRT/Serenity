@@ -12,6 +12,8 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -21,7 +23,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.managers.LockManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.lock.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
@@ -40,6 +44,7 @@ import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
+import com.furianrt.serenity.extensions.toUiThemeColor
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
@@ -47,6 +52,7 @@ import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.constants.SystemBarsConstants
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
@@ -54,6 +60,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
@@ -67,6 +74,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     @Inject
     lateinit var lockManager: LockManager
+
+    @Inject
+    lateinit var appearanceRepository: AppearanceRepository
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -114,11 +124,16 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
             val hazeState = remember { HazeState() }
+            val themeColor by appearanceRepository.getAppThemeColor()
+                .map(ThemeColor::toUiThemeColor)
+                .collectAsStateWithLifecycle(initialValue = UiThemeColor.GREEN)
 
-            SerenityTheme {
+            SerenityTheme(color = themeColor) {
                 CompositionLocalProvider(LocalAuth provides this) {
                     NavHost(
-                        modifier = Modifier.haze(hazeState),
+                        modifier = Modifier
+                            .background(MaterialTheme.colorScheme.surface)
+                            .haze(hazeState),
                         navController = navController,
                         startDestination = NoteListRoute,
                         enterTransition = { defaultEnterTransition() },

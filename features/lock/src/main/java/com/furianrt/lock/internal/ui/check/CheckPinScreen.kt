@@ -199,9 +199,7 @@ private fun ScreenContent(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint.Color(
-                        color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                    ),
+                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
                     blurRadius = 20.dp,
                 ),
             ),

@@ -166,7 +166,7 @@ fun MultiChoiceCalendar(
     val calendarState = rememberCalendarState(
         startMonth = YearMonth.of(MIN_YEAR, Month.JANUARY),
         endMonth = YearMonth.of(MAX_YEAR, Month.DECEMBER),
-        firstVisibleMonth = YearMonth.now(),
+        firstVisibleMonth = startDate?.date?.yearMonth ?: YearMonth.now(),
         outDateStyle = OutDateStyle.EndOfGrid,
     )
 

@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -154,6 +155,7 @@ private fun SuccessScreen(
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
     val pagerState = rememberPagerState(
         initialPage = uiState.initialPageIndex,
         pageCount = { uiState.notes.count() },
@@ -219,7 +221,10 @@ private fun SuccessScreen(
                 date = date,
                 dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
-                onBackButtonClick = { onEvent(NoteViewEvent.OnButtonBackClick) },
+                onBackButtonClick = {
+                    focusManager.clearFocus()
+                    onEvent(NoteViewEvent.OnButtonBackClick)
+                },
                 onDateClick = { onEvent(NoteViewEvent.OnButtonDateClick) },
                 onDeleteClick = {
                     val noteId = uiState.notes[pagerState.currentPage].id

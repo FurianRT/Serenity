@@ -29,7 +29,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastMinByOrNull
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
@@ -40,7 +39,6 @@ import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
-
 
 @Stable
 class MovableToolbarState {
@@ -175,9 +173,7 @@ fun MovableToolbarScaffold(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint.Color(
-                            color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
-                        ),
+                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
                     ),

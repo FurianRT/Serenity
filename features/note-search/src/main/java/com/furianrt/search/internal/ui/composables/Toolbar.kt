@@ -42,6 +42,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -79,6 +80,7 @@ internal fun Toolbar(
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
     onClearQueryClick: () -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
     var showBackButton by rememberSaveable { mutableStateOf(false) }
     OneTimeEffect {
         showBackButton = true
@@ -105,6 +107,7 @@ internal fun Toolbar(
                 ) {
                     ButtonBack(
                         onClick = {
+                            focusManager.clearFocus()
                             showBackButton = false
                             onBackClick()
                         },

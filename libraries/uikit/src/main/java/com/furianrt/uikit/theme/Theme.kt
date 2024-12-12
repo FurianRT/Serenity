@@ -1,30 +1,26 @@
 package com.furianrt.uikit.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
+import com.furianrt.uikit.entities.UiThemeColor
 
-private val darkColorScheme = darkColorScheme(
+private val defaultColorScheme = darkColorScheme(
     primary = Color.White,
     onPrimary = Color.White,
     secondary = Color.White,
     onSecondary = Color.White,
-    background = Colors.Green,
     onBackground = Color.White,
-    surface = Colors.Green,
     onSurface = Color.White,
-    primaryContainer = Colors.GreenLight,
     onPrimaryContainer = Color.White,
     tertiary = Color.White.copy(alpha = 0.1f),
     onTertiary = Color.White,
@@ -36,46 +32,52 @@ private val darkColorScheme = darkColorScheme(
     surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
-private val lightColorScheme = lightColorScheme(
-    primary = Color.White,
-    onPrimary = Color.White,
-    secondary = Color.White,
-    onSecondary = Color.White,
-    background = Colors.Green,
-    onBackground = Color.White,
-    surface = Colors.Green,
-    onSurface = Color.White,
+private val greenColorScheme = defaultColorScheme.copy(
+    background = Color.Green,
+    surface = Color.Green,
     primaryContainer = Colors.GreenLight,
-    onPrimaryContainer = Color.White,
-    tertiary = Color.White.copy(alpha = 0.1f),
-    onTertiary = Color.White,
-    tertiaryContainer = Color.White.copy(alpha = 0.2f),
-    onTertiaryContainer = Color.White,
-    errorContainer = Colors.Red,
-    onErrorContainer = Color.White,
-    scrim = Color.Black.copy(alpha = 0.4f),
-    surfaceDim = Color.Black.copy(alpha = 0.5f),
+)
+
+private val blackColorScheme = greenColorScheme.copy(
+    background = Color.Black,
+    surface = Color.Black,
+    primaryContainer = Colors.GreenLight,
+)
+
+private val blueColorScheme = greenColorScheme.copy(
+    background = Colors.FutureDusk,
+    surface = Colors.FutureDusk,
+    primaryContainer = Colors.GreenLight,
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = false,
+    color: UiThemeColor = UiThemeColor.GREEN,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when {
-        dynamicColor -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> darkColorScheme
-        else -> lightColorScheme
+    val colorScheme = when (color) {
+        UiThemeColor.GREEN -> greenColorScheme
+        UiThemeColor.BLACK -> blackColorScheme
+        UiThemeColor.BLUE -> blueColorScheme
     }
 
+    val animatedBackground by animateColorAsState(
+        animationSpec = tween(250),
+        targetValue = colorScheme.background,
+        label = "BackgroundColorAnim",
+    )
+    val animatedSurface by animateColorAsState(
+        animationSpec = tween(250),
+        targetValue = colorScheme.surface,
+        label = "SurfaceColorAnim",
+    )
+
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = colorScheme.copy(
+            background = animatedBackground,
+            surface = animatedSurface,
+        ),
         typography = Typography,
     ) {
         val rippleAlpha = RippleAlpha(

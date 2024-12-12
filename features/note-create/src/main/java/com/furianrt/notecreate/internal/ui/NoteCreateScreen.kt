@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -115,6 +116,7 @@ private fun ScreenContent(
     notePage: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     val toolbarState = remember { MovableToolbarState() }
     BackHandler(
@@ -148,7 +150,10 @@ private fun ScreenContent(
                 isInEditMode = uiState.isInEditMode,
                 date = date,
                 onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
-                onBackButtonClick = { onEvent(NoteCreateEvent.OnButtonBackClick) },
+                onBackButtonClick = {
+                    focusManager.clearFocus()
+                    onEvent(NoteCreateEvent.OnButtonBackClick)
+                },
                 onDateClick = { onEvent(NoteCreateEvent.OnButtonDateClick) },
             )
             AnimatedVisibility(

@@ -11,11 +11,11 @@ object Colors {
     val GreenLight = Color(0xFF558B2F)
 
     @Stable
-    val GreenDark = Color(0xFF50250A)
-
-    @Stable
     val Red = Color(0xFFF2402F)
 
     @Stable
     val DarkGray = Color(0xFF212121)
+
+    @Stable
+    val FutureDusk = Color(0xFF474972)
 }

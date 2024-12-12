@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -70,7 +71,7 @@ internal fun EmailScreen(
                 is EmailEffect.CloseScreen -> onCloseRequest()
                 is EmailEffect.ShowEmailFormatError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                    emailShakeState.shake(25)
+                    emailShakeState.shake(animationDuration = 25)
                     showErrorMessage = true
                 }
             }
@@ -101,6 +102,7 @@ private fun ScreenContent(
     onEvent: (event: EmailEvent) -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
     }
@@ -116,7 +118,10 @@ private fun ScreenContent(
         ) {
             ButtonClose(
                 modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                onClick = { onEvent(EmailEvent.OnCloseClick) }
+                onClick = {
+                    focusManager.clearFocus()
+                    onEvent(EmailEvent.OnCloseClick)
+                }
             )
             Title(
                 modifier = Modifier
