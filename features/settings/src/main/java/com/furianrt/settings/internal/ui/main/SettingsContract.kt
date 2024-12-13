@@ -12,9 +12,10 @@ internal sealed interface SettingsUiState {
         val selectedThemeColor: AppThemeColor,
     ) : SettingsUiState {
         enum class AppThemeColor(val value: Color) {
-            GREEN(Colors.Green),
-            BLACK(Color.Black),
-            BLUE(Colors.FutureDusk);
+            GREEN(Colors.Primary.Green),
+            BLACK(Colors.Primary.Black),
+            PURPLE(Colors.Primary.FutureDusk),
+            PURPLE_DARK(Colors.Primary.FutureDuskDark);
         }
     }
 }

@@ -19,6 +19,7 @@ internal class AppearanceRepositoryImp @Inject constructor(
     override fun getAppThemeColorsList(): List<ThemeColor> = listOf(
         ThemeColor.BLACK,
         ThemeColor.GREEN,
-        ThemeColor.BLUE,
+        ThemeColor.PURPLE,
+        ThemeColor.PURPLE_DARK,
     )
 }

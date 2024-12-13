@@ -1,10 +1,12 @@
 package com.furianrt.notelistui.extensions
 
 import androidx.compose.foundation.text.input.TextFieldState
+import com.furianrt.core.buildImmutableList
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
+import kotlinx.collections.immutable.ImmutableList
 
 fun UiNoteContent.toLocalNoteContent() = when (this) {
     is UiNoteContent.Title -> toLocalNoteTitle()
@@ -91,3 +93,31 @@ fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean = false) = UiNoteTag.R
     title = title,
     isRemovable = isRemovable,
 )
+
+fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = buildImmutableList {
+    val mediaBlock = this@getShortUiContent.firstOrNull { it is LocalNote.Content.MediaBlock }
+    if (mediaBlock != null) {
+        add(
+            UiNoteContent.MediaBlock(
+                id = mediaBlock.id,
+                media = this@getShortUiContent
+                    .filterIsInstance<LocalNote.Content.MediaBlock>()
+                    .flatMap(LocalNote.Content.MediaBlock::media)
+                    .mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
+            ),
+        )
+    }
+    val title = this@getShortUiContent.firstOrNull { it is LocalNote.Content.Title }
+    if (title != null) {
+        add(
+            UiNoteContent.Title(
+                id = title.id,
+                state = TextFieldState(
+                    initialText = this@getShortUiContent
+                        .filterIsInstance<LocalNote.Content.Title>()
+                        .joinToString(separator = "\n", transform = { it.text }),
+                ),
+            ),
+        )
+    }
+}

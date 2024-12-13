@@ -60,11 +60,13 @@ internal class SettingsViewModel @Inject constructor(
 private fun ThemeColor.toUiThemeColor() = when (this) {
     ThemeColor.BLACK -> AppThemeColor.BLACK
     ThemeColor.GREEN -> AppThemeColor.GREEN
-    ThemeColor.BLUE -> AppThemeColor.BLUE
+    ThemeColor.PURPLE -> AppThemeColor.PURPLE
+    ThemeColor.PURPLE_DARK -> AppThemeColor.PURPLE_DARK
 }
 
 private fun AppThemeColor.toThemeColor() = when (this) {
     AppThemeColor.BLACK -> ThemeColor.BLACK
     AppThemeColor.GREEN -> ThemeColor.GREEN
-    AppThemeColor.BLUE -> ThemeColor.BLUE
+    AppThemeColor.PURPLE -> ThemeColor.PURPLE
+    AppThemeColor.PURPLE_DARK -> ThemeColor.PURPLE_DARK
 }

@@ -1,24 +1,20 @@
 package com.furianrt.uikit.theme
 
-import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.Color
 
 object Colors {
-    @Stable
-    val Green = Color(0xFF193727)
+    object Primary {
+        val Green = Color(0xFF193727)
+        val Black = Color(0xFF000000)
+        val FutureDusk = Color(0xFF474972)
+        val FutureDuskDark = Color(0xFF2A2B41)
+    }
 
-    @Stable
-    val GreenLight = Color(0xFF558B2F)
+    object Accent {
+        val GreenLight = Color(0xFF558B2F)
+        val Purple = Color(0xFF8D6EFD)
+        val PurpleDark = Color(0xFF8D4BF6)
+    }
 
-    @Stable
-    val Red = Color(0xFFF2402F)
-
-    @Stable
     val DarkGray = Color(0xFF212121)
-
-    @Stable
-    val FutureDusk = Color(0xFF474972)
-
-    @Stable
-    val Purple = Color(0xFF8D6EFD)
 }

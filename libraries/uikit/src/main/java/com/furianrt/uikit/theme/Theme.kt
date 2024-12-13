@@ -26,31 +26,38 @@ private val defaultColorScheme = darkColorScheme(
     onTertiary = Color.White,
     tertiaryContainer = Color.White.copy(alpha = 0.2f),
     onTertiaryContainer = Color.White,
-    errorContainer = Colors.Red,
+    errorContainer = Color(0xFFF2402F),
     onErrorContainer = Color.White,
     scrim = Color.Black.copy(alpha = 0.5f),
     surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
 private val greenColorScheme = defaultColorScheme.copy(
-    background = Colors.Green,
-    surface = Colors.Green,
-    primaryContainer = Colors.GreenLight,
-    surfaceTint = Colors.Green.copy(alpha = 0.3f),
+    background = Colors.Primary.Green,
+    surface = Colors.Primary.Green,
+    primaryContainer = Colors.Accent.GreenLight,
+    surfaceTint = Colors.Primary.Green.copy(alpha = 0.3f),
 )
 
 private val blackColorScheme = defaultColorScheme.copy(
-    background = Color.Black,
-    surface = Color.Black,
-    primaryContainer = Colors.Purple,
+    background = Colors.Primary.Black,
+    surface = Colors.Primary.Black,
+    primaryContainer = Colors.Accent.Purple,
     surfaceTint = defaultColorScheme.tertiary,
 )
 
-private val blueColorScheme = defaultColorScheme.copy(
-    background = Colors.FutureDusk,
-    surface = Colors.FutureDusk,
-    primaryContainer = Color(0xFF2A386D), // TODO сменить цвет
-    surfaceTint = Colors.FutureDusk.copy(alpha = 0.3f),
+private val purpleColorScheme = defaultColorScheme.copy(
+    background = Colors.Primary.FutureDusk,
+    surface = Colors.Primary.FutureDusk,
+    primaryContainer = Colors.Accent.PurpleDark,
+    surfaceTint = Colors.Primary.FutureDusk.copy(alpha = 0.3f),
+)
+
+private val purpleDarkColorScheme = defaultColorScheme.copy(
+    background = Colors.Primary.FutureDuskDark,
+    surface = Colors.Primary.FutureDuskDark,
+    primaryContainer = Colors.Accent.Purple,
+    surfaceTint = Colors.Primary.FutureDuskDark.copy(alpha = 0.3f),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,7 +69,8 @@ fun SerenityTheme(
     val colorScheme = when (color) {
         UiThemeColor.GREEN -> greenColorScheme
         UiThemeColor.BLACK -> blackColorScheme
-        UiThemeColor.BLUE -> blueColorScheme
+        UiThemeColor.PURPLE -> purpleColorScheme
+        UiThemeColor.PURPLE_DARK -> purpleDarkColorScheme
     }
 
     val animatedBackground by animateColorAsState(

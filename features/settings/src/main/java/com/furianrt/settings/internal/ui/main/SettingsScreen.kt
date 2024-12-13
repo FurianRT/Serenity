@@ -42,7 +42,7 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -189,7 +189,9 @@ private fun ThemeSelector(
                         .size(50.dp)
                         .clip(shape)
                         .background(color.value)
-                        .applyIf(color == selected) { Modifier.border(1.dp, Color.White, shape) }
+                        .applyIf(color == selected) {
+                            Modifier.border(1.dp, MaterialTheme.colorScheme.primaryContainer, shape)
+                        }
                         .clickableNoRipple { onSelected(color) },
                 )
             }
@@ -239,11 +241,7 @@ private fun ScreenContentPreview() {
     SerenityTheme {
         ScreenContent(
             uiState = SettingsUiState.Success(
-                themeColors = persistentListOf(
-                    AppThemeColor.BLACK,
-                    AppThemeColor.GREEN,
-                    AppThemeColor.BLUE,
-                ),
+                themeColors = AppThemeColor.entries.toImmutableList(),
                 selectedThemeColor = AppThemeColor.GREEN,
             ),
             onEvent = {},
