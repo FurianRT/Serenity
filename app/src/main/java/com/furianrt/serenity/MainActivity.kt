@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.furianrt.domain.entities.ThemeColor
@@ -142,7 +143,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         popEnterTransition = { defaultPopEnterTransition() },
                     ) {
                         noteListScreen(
-                            searchScreenRoute = NoteSearchRoute.javaClass.name,
+                            hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
                             openSettingsScreen = navController::navigateToSettings,
                             openNoteCreateScreen = { identifier ->
                                 navController.navigateToNoteCreate(

@@ -43,7 +43,7 @@ import com.furianrt.notelist.R
 import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
 
-private const val ANIM_OFFSET_DURATION = 500
+private const val ANIM_OFFSET_DURATION = 400
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
 
 @Composable

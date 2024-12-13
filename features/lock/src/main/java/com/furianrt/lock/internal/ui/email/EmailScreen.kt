@@ -68,11 +68,15 @@ internal fun EmailScreen(
     var showErrorMessage by remember { mutableStateOf(false) }
 
     val view = LocalView.current
+    val focusManager = LocalFocusManager.current
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is EmailEffect.CloseScreen -> onCloseRequest()
+                is EmailEffect.CloseScreen -> {
+                    focusManager.clearFocus()
+                    onCloseRequest()
+                }
                 is EmailEffect.ShowEmailFormatError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                     emailShakeState.shake(animationDuration = 25)
