@@ -42,7 +42,7 @@ internal fun RegularPanel(
             )
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_undo),
+                painter = painterResource(id = R.drawable.ic_panel_undo),
                 contentDescription = null,
             )
         }
@@ -50,7 +50,7 @@ internal fun RegularPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_font),
+                painter = painterResource(id = R.drawable.ic_panel_font),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -59,7 +59,7 @@ internal fun RegularPanel(
             onClick = onSelectMediaClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_camera),
+                painter = painterResource(id = R.drawable.ic_panel_camera),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -68,7 +68,7 @@ internal fun RegularPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_stickers),
+                painter = painterResource(id = R.drawable.ic_panel_stickers),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -77,7 +77,7 @@ internal fun RegularPanel(
             onClick = onRecordVoiceClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_microphone),
+                painter = painterResource(id = R.drawable.ic_panel_microphone),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -91,7 +91,7 @@ internal fun RegularPanel(
             )
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_redo),
+                painter = painterResource(id = R.drawable.ic_panel_redo),
                 contentDescription = null,
             )
         }

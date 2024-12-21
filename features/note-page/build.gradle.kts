@@ -44,7 +44,5 @@ dependencies {
 
     implementation(libs.immutableCollections)
 
-    implementation(libs.permissions)
-
     implementation(libs.blur)
 }

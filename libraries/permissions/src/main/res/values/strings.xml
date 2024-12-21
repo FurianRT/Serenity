@@ -1,5 +1,9 @@
 <resources>
-    <string name="media_permission_message">Serenity needs storage access so you can save photos and videos. Tap Settings > Permissions, and turn Photos and videos on.</string>
+    <string name="media_permission_message">Serenity needs access to your storage to allow you to attach photos and videos. Tap Settings > Permissions, and turn Photos and videos on</string>
     <string name="media_permission_message_bold_part_1">Serenity</string>
     <string name="media_permission_message_bold_part_2">Photos and videos</string>
+
+    <string name="audio_record_permission_message">Serenity needs access to your microphone to allow voice recordings. Tap Settings > Permissions, and turn Microphone on</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Microphone</string>
 </resources>

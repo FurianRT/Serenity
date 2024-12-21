@@ -21,12 +21,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.AudioRecordPermissionDialog
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.internal.LineContent
 import com.furianrt.toolspanel.internal.RegularPanel
 import com.furianrt.toolspanel.internal.SelectedPanel
 import com.furianrt.toolspanel.internal.VoicePanel
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
@@ -38,6 +44,7 @@ private enum class PanelMode {
     VOICE_RECORD,
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun ActionsPanel(
     textFieldState: TextFieldState,
@@ -45,7 +52,20 @@ fun ActionsPanel(
     onSelectMediaClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     var isVoiceRecordingActive by remember { mutableStateOf(false) }
+    var showAudioRecordPermissionDialog by remember { mutableStateOf(false) }
+
+    val audioRecordPermissionsState = rememberPermissionState(
+        permission = PermissionsUtils.getAudioRecordPermission(),
+        onPermissionResult = { granted ->
+            isVoiceRecordingActive = granted
+            if (!granted) {
+                showAudioRecordPermissionDialog = true
+            }
+        },
+    )
+
     val hasMultiSelection by remember(textFieldState) {
         derivedStateOf {
             textFieldState.selection.min != textFieldState.selection.max
@@ -90,7 +110,7 @@ fun ActionsPanel(
                     modifier = heightModifier.clickableNoRipple {},
                     textFieldState = textFieldState,
                     onSelectMediaClick = onSelectMediaClick,
-                    onRecordVoiceClick = { isVoiceRecordingActive = true },
+                    onRecordVoiceClick = { audioRecordPermissionsState.launchPermissionRequest() },
                 )
 
                 PanelMode.FORMATTING -> SelectedPanel(
@@ -109,5 +129,12 @@ fun ActionsPanel(
                 )
             }
         }
+    }
+
+    if (showAudioRecordPermissionDialog) {
+        AudioRecordPermissionDialog(
+            onDismissRequest = { showAudioRecordPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
     }
 }

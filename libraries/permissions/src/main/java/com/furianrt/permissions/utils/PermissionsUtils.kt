@@ -1,5 +1,6 @@
 package com.furianrt.permissions.utils
 
+import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
@@ -36,6 +37,10 @@ class PermissionsUtils @Inject constructor(
             )
 
             else -> listOf(READ_EXTERNAL_STORAGE)
+        }
+
+        fun getAudioRecordPermission(): String {
+            return Manifest.permission.RECORD_AUDIO
         }
     }
 

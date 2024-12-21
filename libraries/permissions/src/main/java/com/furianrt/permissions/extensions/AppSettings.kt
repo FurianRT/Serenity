@@ -9,5 +9,7 @@ fun Context.openAppSettingsScreen() = startActivity(
     Intent(
         Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
         Uri.fromParts("package", packageName, null),
-    )
+    ).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
 )

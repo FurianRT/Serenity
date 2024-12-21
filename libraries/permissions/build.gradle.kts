@@ -28,4 +28,6 @@ dependencies {
     implementation(libs.composeGraphics)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
+
+    api(libs.permissions)
 }

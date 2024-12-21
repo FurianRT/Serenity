@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BasicAlertDialog
@@ -22,8 +23,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -31,14 +34,77 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.permissions.R
+import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MediaPermissionDialog(
+    onDismissRequest: () -> Unit,
+    onSettingsClick: () -> Unit,
+) {
+    PermissionDialog(
+        title = buildAnnotatedString {
+            val title = stringResource(R.string.media_permission_message)
+            val boldPartOne = stringResource(R.string.media_permission_message_bold_part_1)
+            val boldPartTwo = stringResource(R.string.media_permission_message_bold_part_2)
+            val boldPartOneIndex = title.indexOf(boldPartOne)
+            val boldPartTwoIndex = title.indexOf(boldPartTwo)
+            append(title)
+            addStyle(
+                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                start = boldPartOneIndex,
+                end = boldPartOneIndex + boldPartOne.length,
+            )
+            addStyle(
+                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                start = boldPartTwoIndex,
+                end = boldPartTwoIndex + boldPartTwo.length,
+            )
+        },
+        logo = painterResource(uiR.drawable.ic_folder),
+        onDismissRequest = onDismissRequest,
+        onSettingsClick = onSettingsClick,
+    )
+}
+
+@Composable
+fun AudioRecordPermissionDialog(
+    onDismissRequest: () -> Unit,
+    onSettingsClick: () -> Unit,
+) {
+    PermissionDialog(
+        title = buildAnnotatedString {
+            val title = stringResource(R.string.audio_record_permission_message)
+            val boldPartOne = stringResource(R.string.audio_record_permission_message_bold_part_1)
+            val boldPartTwo = stringResource(R.string.audio_record_permission_message_bold_part_2)
+            val boldPartOneIndex = title.indexOf(boldPartOne)
+            val boldPartTwoIndex = title.indexOf(boldPartTwo)
+            append(title)
+            addStyle(
+                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                start = boldPartOneIndex,
+                end = boldPartOneIndex + boldPartOne.length,
+            )
+            addStyle(
+                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                start = boldPartTwoIndex,
+                end = boldPartTwoIndex + boldPartTwo.length,
+            )
+        },
+        logo = painterResource(uiR.drawable.ic_microphone),
+        onDismissRequest = onDismissRequest,
+        onSettingsClick = onSettingsClick,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PermissionDialog(
+    title: AnnotatedString,
+    logo: Painter,
     onDismissRequest: () -> Unit,
     onSettingsClick: () -> Unit,
 ) {
@@ -57,11 +123,14 @@ fun MediaPermissionDialog(
         Surface(
             modifier = Modifier.wrapContentSize(),
             shape = RoundedCornerShape(24.dp),
-            tonalElevation = 4.dp,
+            tonalElevation = 8.dp,
         ) {
             Column(horizontalAlignment = Alignment.End) {
-                Header()
-                Title(modifier = Modifier.padding(16.dp))
+                Header(icon = logo)
+                Title(
+                    modifier = Modifier.padding(16.dp),
+                    title = title,
+                )
                 Row(
                     modifier = Modifier.padding(end = 16.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -84,7 +153,10 @@ fun MediaPermissionDialog(
 }
 
 @Composable
-private fun Header(modifier: Modifier = Modifier) {
+private fun Header(
+    icon: Painter,
+    modifier: Modifier = Modifier,
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -93,7 +165,10 @@ private fun Header(modifier: Modifier = Modifier) {
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_folder),
+            modifier = Modifier
+                .size(64.dp)
+                .clickableWithScaleAnim {},
+            painter = icon,
             tint = Color.Unspecified,
             contentDescription = null,
         )
@@ -101,27 +176,13 @@ private fun Header(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun Title(modifier: Modifier = Modifier) {
+private fun Title(
+    title: AnnotatedString,
+    modifier: Modifier = Modifier,
+) {
     Text(
         modifier = modifier,
-        text = buildAnnotatedString {
-            val title = stringResource(R.string.media_permission_message)
-            val boldPartOne = stringResource(R.string.media_permission_message_bold_part_1)
-            val boldPartTwo = stringResource(R.string.media_permission_message_bold_part_2)
-            val boldPartOneIndex = title.indexOf(boldPartOne)
-            val boldPartTwoIndex = title.indexOf(boldPartTwo)
-            append(title)
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartOneIndex,
-                end = boldPartOneIndex + boldPartOne.length,
-            )
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartTwoIndex,
-                end = boldPartTwoIndex + boldPartTwo.length,
-            )
-        },
+        text = title,
         style = MaterialTheme.typography.bodyMedium,
     )
 }
@@ -149,6 +210,17 @@ private fun ActionButton(
 private fun MediaPermissionDialogPreview() {
     SerenityTheme {
         MediaPermissionDialog(
+            onDismissRequest = {},
+            onSettingsClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun AudioRecordPermissionDialogPreview() {
+    SerenityTheme {
+        AudioRecordPermissionDialog(
             onDismissRequest = {},
             onSettingsClick = {},
         )

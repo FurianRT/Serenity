@@ -30,7 +30,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_bold),
+                painter = painterResource(id = R.drawable.ic_panel_bold),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -39,7 +39,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_italic),
+                painter = painterResource(id = R.drawable.ic_panel_italic),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -48,7 +48,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_underline),
+                painter = painterResource(id = R.drawable.ic_panel_underline),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -57,7 +57,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_strikethrough),
+                painter = painterResource(id = R.drawable.ic_panel_strikethrough),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -66,7 +66,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_size_plus),
+                painter = painterResource(id = R.drawable.ic_panel_size_plus),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -75,7 +75,7 @@ internal fun SelectedPanel(
             onClick = { },
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_size_minus),
+                painter = painterResource(id = R.drawable.ic_panel_size_minus),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
