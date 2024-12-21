@@ -17,7 +17,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun SelectedPanelInternal(
+internal fun SelectedPanel(
     modifier: Modifier = Modifier,
     textFieldState: TextFieldState,
 ) {
@@ -87,7 +87,7 @@ internal fun SelectedPanelInternal(
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
-        SelectedPanelInternal(
+        SelectedPanel(
             textFieldState = rememberTextFieldState(),
         )
     }

@@ -523,7 +523,7 @@ private fun MonthYearList(
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
                 if (userInteracted && listState.firstVisibleItemScrollOffset != 0) {
-                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                 }
                 onItemSelected(index)
             }
@@ -543,7 +543,7 @@ private fun MonthYearList(
             LaunchedEffect(performHaptic) {
                 val isCurrentItem = index == listState.firstVisibleItemIndex
                 if (performHaptic && isCurrentItem) {
-                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
                     scale.animateTo(targetValue = 1.1f, animationSpec = tween(durationMillis = 100))
                     scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 100))
                 }

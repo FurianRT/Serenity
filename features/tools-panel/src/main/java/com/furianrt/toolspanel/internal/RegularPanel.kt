@@ -15,21 +15,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.substring
-import androidx.compose.ui.text.withStyle
 import com.furianrt.toolspanel.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-internal fun RegularPanelInternal(
-    modifier: Modifier = Modifier,
+internal fun RegularPanel(
     textFieldState: TextFieldState,
-    onSelectMediaClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onSelectMediaClick: () -> Unit = {},
+    onRecordVoiceClick: () -> Unit = {},
 ) {
     val undoRedoState = remember(textFieldState) { textFieldState.undoState }
     Row(
@@ -78,7 +74,7 @@ internal fun RegularPanelInternal(
             )
         }
         IconButton(
-            onClick = { },
+            onClick = onRecordVoiceClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_microphone),
@@ -106,9 +102,8 @@ internal fun RegularPanelInternal(
 @Composable
 private fun RegularPanelPreview() {
     SerenityTheme {
-        RegularPanelInternal(
+        RegularPanel(
             textFieldState = rememberTextFieldState(),
-            onSelectMediaClick = {},
         )
     }
 }

@@ -1,0 +1,2 @@
+-keep class com.sun.mail.** { *; }
+-keepclassmembers class com.sun.mail.** { *; }
