@@ -29,7 +29,6 @@ private val defaultColorScheme = darkColorScheme(
     errorContainer = Color(0xFFF2402F),
     onErrorContainer = Color.White,
     scrim = Color.Black.copy(alpha = 0.5f),
-    surfaceDim = Color.Black.copy(alpha = 0.5f),
 )
 
 private val greenColorScheme = defaultColorScheme.copy(
@@ -98,6 +97,9 @@ fun SerenityTheme(
             pressedAlpha = 0.1f,
         )
         val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, rippleAlpha)
-        CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig, content)
+        CompositionLocalProvider(
+            value = LocalRippleConfiguration provides rippleConfig,
+            content = content,
+        )
     }
 }

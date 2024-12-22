@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -34,7 +35,16 @@ class PageScreenState(
     val hasContentChanged: Boolean
         get() = hasContentChangedState
 
+    val dimSurface: Boolean
+        get() = isBottomSheetVisible || isVoiceRecordActive
+
+    internal var isVoiceRecordActive by mutableStateOf(false)
+
     private var hasContentChangedState by mutableStateOf(hasContentChanged)
+
+    private val isBottomSheetVisible: Boolean
+        get() = bottomSheetState.isVisible ||
+                bottomSheetState.targetValue == SheetValue.Expanded
 
     private var onSaveContentRequest: () -> Unit = {}
 

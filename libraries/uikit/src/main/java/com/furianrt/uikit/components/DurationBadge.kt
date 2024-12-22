@@ -27,7 +27,7 @@ fun DurationBadge(
         modifier = modifier
             .requiredWidth(IntrinsicSize.Max)
             .background(
-                color = MaterialTheme.colorScheme.surfaceDim,
+                color = MaterialTheme.colorScheme.scrim,
                 shape = RoundedCornerShape(4.dp),
             )
             .padding(horizontal = 4.dp),

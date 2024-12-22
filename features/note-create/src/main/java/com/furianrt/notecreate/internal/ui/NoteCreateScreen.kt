@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -158,8 +157,7 @@ private fun ScreenContent(
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),
-                visible = state.bottomSheetState.isVisible ||
-                        state.bottomSheetState.targetValue == SheetValue.Expanded,
+                visible = state.dimSurface,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {

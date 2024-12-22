@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -60,6 +61,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
@@ -250,7 +252,7 @@ private fun SuccessScreen(
             }
         }
     }
-    
+
     LaunchedEffect(state.listState.canScrollBackward, state.listState.canScrollForward) {
         if (!state.listState.canScrollBackward && !state.listState.canScrollForward) {
             totalScroll = 0f
@@ -271,11 +273,9 @@ private fun SuccessScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 8.dp)
                 .drawNoteBackground(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.tertiary,
-                    density = LocalDensity.current,
                     translationY = { bgOffsetInverted.toPx() },
                     height = {
                         if (uiState.isInEditMode) {
@@ -290,6 +290,7 @@ private fun SuccessScreen(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(horizontal = 8.dp)
                     .nestedScroll(bgScrollConnection)
                     .drawWithCache {
                         val path = Path()
@@ -320,7 +321,7 @@ private fun SuccessScreen(
                 contentPadding = PaddingValues(
                     top = toolbarMargin,
                     bottom = if (uiState.isInEditMode) {
-                        LocalDensity.current.run { toolsPanelRect.height.toDp() } +
+                        density.run { toolsPanelRect.height.toDp() } +
                                 WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 32.dp
                     } else {
@@ -398,11 +399,23 @@ private fun SuccessScreen(
                     }
                 }
             }
+            AnimatedVisibility(
+                visible = state.dimSurface,
+                enter = fadeIn(),
+                exit = fadeOut(),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.scrim)
+                        .clickableNoRipple {},
+                )
+            }
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .navigationBarsPadding()
-                    .padding(bottom = 8.dp)
+                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                     .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
             ) {
                 AnimatedVisibility(
@@ -419,6 +432,11 @@ private fun SuccessScreen(
                             hazeState = hazeState,
                             textFieldState = titleState ?: TextFieldState(),
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+                            onVoiceRecordStart = { state.isVoiceRecordActive = true },
+                            onVoiceRecordEnd = { state.isVoiceRecordActive = false },
+                            onVoiceRecordCancel = {  },
+                            onVoiceRecordPause = {  },
+                            onVoiceRecordResume = {  },
                         )
                     }
                 )
@@ -430,20 +448,20 @@ private fun SuccessScreen(
 private fun Modifier.drawNoteBackground(
     shape: Shape,
     color: Color,
-    density: Density,
     translationY: CacheDrawScope.() -> Float,
     height: CacheDrawScope.() -> Float,
 ) = drawWithCache {
-    val resultSize = size.copy(height = height())
+    val padding = 8.dp.toPx()
+    val resultSize = size.copy(height = height(), width = size.width - padding * 2)
     onDrawBehind {
-        translate(top = translationY()) {
+        translate(top = translationY(), left = padding) {
             drawOutline(
                 outline = shape.createOutline(
                     size = resultSize,
                     layoutDirection = layoutDirection,
-                    density = density
+                    density = this,
                 ),
-                color = color
+                color = color,
             )
         }
     }

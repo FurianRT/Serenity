@@ -50,6 +50,11 @@ fun ActionsPanel(
     textFieldState: TextFieldState,
     hazeState: HazeState,
     onSelectMediaClick: () -> Unit,
+    onVoiceRecordStart: () -> Unit,
+    onVoiceRecordEnd: () -> Unit,
+    onVoiceRecordCancel: () -> Unit,
+    onVoiceRecordPause: () -> Unit,
+    onVoiceRecordResume: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -59,8 +64,10 @@ fun ActionsPanel(
     val audioRecordPermissionsState = rememberPermissionState(
         permission = PermissionsUtils.getAudioRecordPermission(),
         onPermissionResult = { granted ->
-            isVoiceRecordingActive = granted
-            if (!granted) {
+            if (granted) {
+                isVoiceRecordingActive = true
+                onVoiceRecordStart()
+            } else {
                 showAudioRecordPermissionDialog = true
             }
         },
@@ -119,11 +126,24 @@ fun ActionsPanel(
                 )
 
                 PanelMode.VOICE_RECORD -> VoicePanel(
-                    onDoneClick = { isVoiceRecordingActive = false },
+                    onDoneClick = {
+                        isVoiceRecordingActive = false
+                        onVoiceRecordEnd()
+                    },
                     lineContent = {
                         LineContent(
                             modifier = heightModifier.clickableNoRipple {},
-                            onCancelClick = { isVoiceRecordingActive = false },
+                            onCancelClick = {
+                                isVoiceRecordingActive = false
+                                onVoiceRecordCancel()
+                            },
+                            onPauseClick = { isPlaying ->
+                                if (isPlaying) {
+                                    onVoiceRecordResume()
+                                } else {
+                                    onVoiceRecordPause()
+                                }
+                            }
                         )
                     },
                 )

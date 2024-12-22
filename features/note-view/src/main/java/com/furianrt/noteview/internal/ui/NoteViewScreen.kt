@@ -16,7 +16,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -234,8 +233,7 @@ private fun SuccessScreen(
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),
-                visible = currentPageState?.bottomSheetState?.isVisible == true ||
-                        currentPageState?.bottomSheetState?.targetValue == SheetValue.Expanded,
+                visible = currentPageState?.dimSurface.orFalse(),
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {

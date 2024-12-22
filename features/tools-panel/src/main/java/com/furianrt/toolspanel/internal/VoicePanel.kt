@@ -64,6 +64,7 @@ internal fun VoicePanel(
 internal fun BoxScope.LineContent(
     modifier: Modifier = Modifier,
     onCancelClick: () -> Unit = {},
+    onPauseClick: (isPlaying: Boolean) -> Unit = {},
 ) {
     var isPlaying by remember { mutableStateOf(true) }
     Box(
@@ -77,7 +78,10 @@ internal fun BoxScope.LineContent(
                 .align(Alignment.CenterStart),
             timer = "0:16.7",
             isPlaying = isPlaying,
-            onClick = { isPlaying = !it },
+            onClick = {
+                isPlaying = !it
+                onPauseClick(isPlaying)
+            },
         )
         ButtonCancel(
             modifier = Modifier.align(Alignment.Center),

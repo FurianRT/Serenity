@@ -52,7 +52,7 @@ fun ButtonPlayPause(
         modifier = modifier
             .size(64.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.surfaceDim)
+            .background(MaterialTheme.colorScheme.scrim)
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
