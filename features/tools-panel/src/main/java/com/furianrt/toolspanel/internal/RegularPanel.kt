@@ -26,6 +26,7 @@ internal fun RegularPanel(
     modifier: Modifier = Modifier,
     onSelectMediaClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
+    onFontStyleClick: () -> Unit = {},
 ) {
     val undoRedoState = remember(textFieldState) { textFieldState.undoState }
     Row(
@@ -47,7 +48,7 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = { },
+            onClick = onFontStyleClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_panel_font),

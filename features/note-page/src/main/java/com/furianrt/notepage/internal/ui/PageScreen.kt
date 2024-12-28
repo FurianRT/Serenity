@@ -59,9 +59,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
@@ -79,6 +77,7 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.getStatusBarHeight
@@ -279,13 +278,13 @@ private fun SuccessScreen(
                     translationY = { bgOffsetInverted.toPx() },
                     height = {
                         if (uiState.isInEditMode) {
-                            toolsPanelRect.bottom - bgOffsetInverted.toPx()
+                            val toolsPanelHeight = ToolsPanelConstants.PANEL_HEIGHT.toPx()
+                            toolsPanelRect.top + toolsPanelHeight - bgOffsetInverted.toPx()
                         } else {
                             size.height - bgOffsetInverted.toPx()
                         }
                     }
-                )
-                .imePadding(),
+                ),
         ) {
             LazyColumn(
                 modifier = Modifier
@@ -300,7 +299,7 @@ private fun SuccessScreen(
                             RoundRect(
                                 rect = rect.copy(
                                     bottom = if (uiState.isInEditMode) {
-                                        toolsPanelRect.bottom
+                                        toolsPanelRect.top + ToolsPanelConstants.PANEL_HEIGHT.toPx()
                                     } else {
                                         size.height
                                     },
@@ -316,12 +315,13 @@ private fun SuccessScreen(
                         }
                     }
                     .haze(hazeState)
-                    .clickableNoRipple { focusManager.clearFocus() },
+                    .clickableNoRipple { focusManager.clearFocus() }
+                    .imePadding(),
                 state = state.listState,
                 contentPadding = PaddingValues(
                     top = toolbarMargin,
                     bottom = if (uiState.isInEditMode) {
-                        density.run { toolsPanelRect.height.toDp() } +
+                        ToolsPanelConstants.PANEL_HEIGHT +
                                 WindowInsets.navigationBars.asPaddingValues()
                                     .calculateBottomPadding() + 32.dp
                     } else {
@@ -434,9 +434,9 @@ private fun SuccessScreen(
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
                             onVoiceRecordEnd = { state.isVoiceRecordActive = false },
-                            onVoiceRecordCancel = {  },
-                            onVoiceRecordPause = {  },
-                            onVoiceRecordResume = {  },
+                            onVoiceRecordCancel = { state.isVoiceRecordActive = false },
+                            onVoiceRecordPause = { },
+                            onVoiceRecordResume = { },
                         )
                     }
                 )

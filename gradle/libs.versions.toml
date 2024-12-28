@@ -34,7 +34,7 @@ blur = "1.1.1"
 
 zoom = "1.1.0-beta01"
 
-exoplayer = "1.5.0"
+exoplayer = "1.5.1"
 
 kotlinxSerializationJson = "1.7.3"
 
