@@ -11,9 +11,11 @@ internal data class FontPanelUiState(
     val fontFamilies: ImmutableList<UiNoteFontFamily>,
     val selectedFontColor: UiNoteFontColor,
     val selectedFontFamily: UiNoteFontFamily,
+    val selectedFontSize: Int,
 )
 
 internal sealed interface FontPanelEvent {
     data class OnFontColorSelected(val color: UiNoteFontColor) : FontPanelEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily) : FontPanelEvent
+    data class OnFontSizeSelected(val size: Int) : FontPanelEvent
 }

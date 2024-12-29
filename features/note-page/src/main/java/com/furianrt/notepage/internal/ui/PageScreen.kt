@@ -60,6 +60,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
@@ -352,10 +353,11 @@ private fun SuccessScreen(
                             title = item,
                             color = uiState.fontColor.value,
                             fontFamily = uiState.fontFamily.value,
+                            fontSize = uiState.fontSize.sp,
                             hint = if (index == 0) {
-                                stringResource(id = R.string.note_title_hint_text)
+                                stringResource(R.string.note_title_hint_text)
                             } else {
-                                stringResource(id = R.string.note_title_hint_write_more_here)
+                                stringResource(R.string.note_title_hint_write_more_here)
                             },
                             isInEditMode = uiState.isInEditMode,
                             focusRequester = focusRequesters.getOrPut(index) { FocusRequester() },
@@ -436,6 +438,7 @@ private fun SuccessScreen(
                             noteId = uiState.noteId,
                             fontFamily = uiState.fontFamily,
                             fontColor = uiState.fontColor,
+                            fontSize = uiState.fontSize,
                             hazeState = hazeState,
                             textFieldState = titleState ?: TextFieldState(),
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
@@ -446,6 +449,7 @@ private fun SuccessScreen(
                             onVoiceRecordResume = { },
                             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
+                            onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
                         )
                     }
                 )

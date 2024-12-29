@@ -31,6 +31,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.uikit.constants.ToolbarConstants
@@ -50,6 +51,7 @@ fun NoteContentTitle(
     hint: String? = null,
     color: Color = MaterialTheme.typography.bodyMedium.color,
     fontFamily: FontFamily? = MaterialTheme.typography.bodyMedium.fontFamily,
+    fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
     isInEditMode: Boolean = false,
     onTitleFocused: (id: String) -> Unit = {},
     onTitleTextChange: (id: String) -> Unit = {},
@@ -105,8 +107,11 @@ fun NoteContentTitle(
         onTextLayout = { layoutResult = it() },
         state = title.state,
         textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = color ,
+            color = color,
             fontFamily = fontFamily,
+            fontSize = fontSize,
+            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
+                    (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value)
         ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
         keyboardOptions = KeyboardOptions(
@@ -115,7 +120,12 @@ fun NoteContentTitle(
         ),
         decorator = { innerTextField ->
             if (hint != null && title.state.text.isEmpty()) {
-                Placeholder(hint = hint, color = color, fontFamily = fontFamily)
+                Placeholder(
+                    hint = hint,
+                    color = color,
+                    fontFamily = fontFamily,
+                    fontSize = fontSize,
+                )
             }
             innerTextField()
         },
@@ -145,6 +155,7 @@ private fun Placeholder(
     hint: String,
     color: Color,
     fontFamily: FontFamily?,
+    fontSize: TextUnit,
 ) {
     Text(
         modifier = Modifier.alpha(0.5f),
@@ -152,6 +163,9 @@ private fun Placeholder(
         style = MaterialTheme.typography.labelMedium.copy(
             color = color,
             fontFamily = fontFamily,
+            fontSize = fontSize,
+            lineHeight = MaterialTheme.typography.labelMedium.lineHeight *
+                    (fontSize.value / MaterialTheme.typography.labelMedium.fontSize.value)
         ),
         fontStyle = FontStyle.Italic,
     )

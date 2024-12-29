@@ -32,6 +32,7 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     tags = tags.map(EntryNoteTag::toNoteContentTag),
     fontFamily = note.font,
     fontColor = note.fontColor,
+    fontSize = note.fontSize,
     content = getLocalNoteContent(),
 )
 

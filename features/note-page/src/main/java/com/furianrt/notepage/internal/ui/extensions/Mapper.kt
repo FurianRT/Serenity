@@ -18,6 +18,7 @@ internal fun LocalNote.toNoteItem() = NoteItem(
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
     fontColor = fontColor.toUiNoteFontColor(),
     fontFamily = fontFamily.toUiNoteFontFamily(),
+    fontSize = fontSize,
 )
 
 internal fun MediaResult.toMediaBlock() = MediaBlock(

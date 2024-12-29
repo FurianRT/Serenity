@@ -1,3 +1,4 @@
 <resources>
     <string name="font_panel_title">Font style</string>
+    <string name="font_panel_size_selector_title">Size</string>
 </resources>

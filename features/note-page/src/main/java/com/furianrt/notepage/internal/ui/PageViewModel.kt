@@ -30,6 +30,7 @@ import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.PageEvent.OnFontColorSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnFontFamilySelected
+import com.furianrt.notepage.internal.ui.PageEvent.OnFontSizeSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaRemoveClick
@@ -156,6 +157,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnMediaSelected -> handleMediaSelectorResult(event.result)
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
+            is OnFontSizeSelected -> updateFontSize(event.size)
         }
     }
 
@@ -466,6 +468,11 @@ internal class PageViewModel @AssistedInject constructor(
     private fun updateFontColor(color: UiNoteFontColor) {
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { it.copy(fontColor = color) }
+    }
+
+    private fun updateFontSize(size: Int) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { it.copy(fontSize = size) }
     }
 
     private fun PageUiState.Success.addTag(

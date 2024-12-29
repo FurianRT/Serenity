@@ -26,20 +26,24 @@ internal class FontViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
     @Assisted private val initialFontFamily: UiNoteFontFamily,
     @Assisted private val initialFontColor: UiNoteFontColor,
+    @Assisted private val initialFontSize: Int,
 ) : ViewModel() {
 
     private val selectedFontFamily = MutableStateFlow(initialFontFamily)
     private val selectedFontColor = MutableStateFlow(initialFontColor)
+    private val selectedFontSize = MutableStateFlow(initialFontSize)
 
     val state = combine(
         selectedFontFamily,
         selectedFontColor,
-    ) { fontFamily, fontColor ->
+        selectedFontSize,
+    ) { fontFamily, fontColor, fontSize ->
         buildState(
             fontFamilies = appearanceRepository.getNoteFontsList(),
             fontColors = appearanceRepository.getNoteFontColorsList(),
             fontFamily = fontFamily,
             fontColor = fontColor,
+            fontSize = fontSize,
         )
     }.stateIn(
         scope = viewModelScope,
@@ -47,6 +51,7 @@ internal class FontViewModel @AssistedInject constructor(
         initialValue = FontPanelUiState(
             selectedFontFamily = initialFontFamily,
             selectedFontColor = initialFontColor,
+            selectedFontSize = initialFontSize,
             fontFamilies = persistentListOf(initialFontFamily),
             fontColors = persistentListOf(initialFontColor),
         ),
@@ -56,6 +61,7 @@ internal class FontViewModel @AssistedInject constructor(
         when (event) {
             is FontPanelEvent.OnFontFamilySelected -> selectedFontFamily.update { event.family }
             is FontPanelEvent.OnFontColorSelected -> selectedFontColor.update { event.color }
+            is FontPanelEvent.OnFontSizeSelected -> selectedFontSize.update { event.size }
         }
     }
 
@@ -64,9 +70,11 @@ internal class FontViewModel @AssistedInject constructor(
         fontColors: List<NoteFontColor>,
         fontFamily: UiNoteFontFamily,
         fontColor: UiNoteFontColor,
+        fontSize: Int,
     ) = FontPanelUiState(
         selectedFontFamily = fontFamily,
         selectedFontColor = fontColor,
+        selectedFontSize = fontSize,
         fontFamilies = fontFamilies.mapImmutable(NoteFontFamily::toUiNoteFontFamily),
         fontColors = fontColors.mapImmutable(NoteFontColor::toUiNoteFontColor),
     )
@@ -76,6 +84,7 @@ internal class FontViewModel @AssistedInject constructor(
         fun create(
             initialFontFamily: UiNoteFontFamily,
             initialFontColor: UiNoteFontColor,
+            initialFontSize: Int,
         ): FontViewModel
     }
 }

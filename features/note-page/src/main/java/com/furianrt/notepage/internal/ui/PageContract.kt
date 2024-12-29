@@ -46,6 +46,7 @@ internal sealed interface PageEvent {
     data object OnOnSaveContentRequest : PageEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily) : PageEvent
     data class OnFontColorSelected(val color: UiNoteFontColor) : PageEvent
+    data class OnFontSizeSelected(val size: Int) : PageEvent
 }
 
 internal sealed interface PageEffect {

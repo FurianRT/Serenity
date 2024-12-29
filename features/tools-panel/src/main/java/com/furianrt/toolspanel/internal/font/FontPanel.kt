@@ -1,5 +1,6 @@
 package com.furianrt.toolspanel.internal.font
 
+import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,9 +29,11 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -41,8 +45,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -102,9 +109,11 @@ internal fun FontContent(
     noteId: String,
     fontFamily: UiNoteFontFamily,
     fontColor: UiNoteFontColor,
+    fontSize: Int,
     visible: Boolean,
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontSizeSelected: (size: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<FontViewModel, FontViewModel.Factory>(
@@ -113,6 +122,7 @@ internal fun FontContent(
             factory.create(
                 initialFontColor = fontColor,
                 initialFontFamily = fontFamily,
+                initialFontSize = fontSize,
             )
         },
     )
@@ -138,6 +148,12 @@ internal fun FontContent(
         }
     }
 
+    LaunchedEffect(visible) {
+        if (visible) {
+            listState.requestScrollToItem(0)
+        }
+    }
+
     if (isImeVisible && visible) {
         Content(
             modifier = modifier.height(contentHeight),
@@ -145,6 +161,7 @@ internal fun FontContent(
             onEvent = viewModel::onEvent,
             onFontFamilySelected = onFontFamilySelected,
             onFontColorSelected = onFontColorSelected,
+            onFontSizeSelected = onFontSizeSelected,
             listState = listState,
         )
     } else {
@@ -159,6 +176,7 @@ internal fun FontContent(
                 onEvent = viewModel::onEvent,
                 onFontFamilySelected = onFontFamilySelected,
                 onFontColorSelected = onFontColorSelected,
+                onFontSizeSelected = onFontSizeSelected,
                 listState = listState,
             )
         }
@@ -170,6 +188,7 @@ private fun Content(
     uiState: FontPanelUiState,
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontSizeSelected: (size: Int) -> Unit,
     onEvent: (event: FontPanelEvent) -> Unit,
     listState: LazyGridState,
     modifier: Modifier = Modifier,
@@ -192,8 +211,21 @@ private fun Content(
             },
         state = listState,
         columns = GridCells.Fixed(spanCount),
-        contentPadding = PaddingValues(top = 12.dp, bottom = 16.dp),
+        contentPadding = PaddingValues(bottom = 16.dp),
     ) {
+        item(
+            span = { GridItemSpan(spanCount) }
+        ) {
+            SizeSelector(
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                size = uiState.selectedFontSize,
+                onSizeSelected = { size ->
+                    onFontSizeSelected(size)
+                    onEvent(FontPanelEvent.OnFontSizeSelected(size))
+                },
+            )
+        }
+
         item(
             span = { GridItemSpan(spanCount) }
         ) {
@@ -202,7 +234,7 @@ private fun Content(
                 contentPadding = PaddingValues(
                     start = 8.dp,
                     end = 8.dp,
-                    bottom = 20.dp,
+                    bottom = 24.dp,
                 ),
             ) {
                 items(
@@ -245,6 +277,79 @@ private fun Content(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SizeSelector(
+    size: Int,
+    onSizeSelected: (size: Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val view = LocalView.current
+    val valueRange = 8f..32f
+    val progress = (size - valueRange.start) / (valueRange.endInclusive - valueRange.start)
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.font_panel_size_selector_title),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Slider(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .weight(1f),
+            value = size.toFloat(),
+            onValueChange = { value ->
+                val newValue = value.toInt()
+                if (size != newValue) {
+                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    onSizeSelected(newValue)
+                }
+            },
+            valueRange = valueRange,
+            steps = valueRange.endInclusive.toInt() - valueRange.start.toInt() + 1,
+            track = { SliderTrack(progress) },
+            thumb = { SliderThumb() },
+        )
+        Text(
+            text = size.toString(),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+}
+
+@Composable
+private fun SliderTrack(
+    progress: Float,
+) {
+    val trackColor = MaterialTheme.colorScheme.primary
+    Box(
+        modifier = Modifier
+            .padding(bottom = 2.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .height(4.dp)
+            .background(MaterialTheme.colorScheme.primary.copy(0.5f))
+            .drawWithCache {
+                onDrawBehind {
+                    drawRect(color = trackColor, size = size.copy(width = size.width * progress))
+                }
+            },
+    )
+}
+
+@Composable
+private fun SliderThumb() {
+    Box(
+        modifier = Modifier
+            .clip(CircleShape)
+            .size(14.dp)
+            .background(MaterialTheme.colorScheme.primary)
+    )
+}
+
 @Composable
 private fun ColorItem(
     color: UiNoteFontColor,
@@ -261,13 +366,10 @@ private fun ColorItem(
     ) {
         if (isSelected(color)) {
             Icon(
+                modifier = Modifier.size(28.dp),
                 painter = painterResource(uiR.drawable.ic_action_done),
                 contentDescription = null,
-                tint = if (color == UiNoteFontColor.WHITE) {
-                    Colors.Common.Gray
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
+                tint = Colors.Common.DarkGray,
             )
         }
     }
@@ -320,12 +422,14 @@ private fun ContentPreview() {
             uiState = FontPanelUiState(
                 selectedFontColor = UiNoteFontColor.WHITE,
                 selectedFontFamily = UiNoteFontFamily.QUICK_SAND,
+                selectedFontSize = 15,
                 fontFamilies = UiNoteFontFamily.entries.toImmutableList(),
                 fontColors = UiNoteFontColor.entries.toImmutableList(),
             ),
             onEvent = {},
             onFontFamilySelected = {},
             onFontColorSelected = {},
+            onFontSizeSelected = {},
             listState = rememberLazyGridState(),
         )
     }

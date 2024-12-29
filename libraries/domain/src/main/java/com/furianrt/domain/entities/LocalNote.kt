@@ -14,6 +14,7 @@ data class LocalNote(
     val date: ZonedDateTime,
     val fontFamily: NoteFontFamily,
     val fontColor: NoteFontColor,
+    val fontSize: Int,
     val tags: List<Tag>,
     val content: List<Content>,
 ) {

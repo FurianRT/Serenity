@@ -68,6 +68,7 @@ fun ActionsPanel(
     noteId: String,
     fontFamily: UiNoteFontFamily,
     fontColor: UiNoteFontColor,
+    fontSize: Int,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onVoiceRecordEnd: () -> Unit,
@@ -76,6 +77,7 @@ fun ActionsPanel(
     onVoiceRecordResume: () -> Unit,
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontSizeSelected: (size: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -208,9 +210,11 @@ fun ActionsPanel(
             noteId = noteId,
             fontColor = fontColor,
             fontFamily = fontFamily,
+            fontSize = fontSize,
             visible = isFontPanelVisible,
             onFontFamilySelected = onFontFamilySelected,
             onFontColorSelected = onFontColorSelected,
+            onFontSizeSelected = onFontSizeSelected,
         )
     }
 
