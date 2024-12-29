@@ -10,4 +10,5 @@ internal fun NoteItem.toSimpleNote() = SimpleNote(
     date = date,
     font = fontFamily.toNoteFontFamily(),
     fontColor = fontColor.toNoteFontColor(),
+    fontSize = fontSize,
 )

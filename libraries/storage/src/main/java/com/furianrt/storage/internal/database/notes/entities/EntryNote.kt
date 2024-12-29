@@ -22,6 +22,9 @@ internal class EntryNote(
     @ColumnInfo(name = FIELD_FONT_COLOR)
     val fontColor: NoteFontColor,
 
+    @ColumnInfo(name = FIELD_FONT_SIZE)
+    val fontSize: Int,
+
     @ColumnInfo(name = FIELD_DATE)
     val date: ZonedDateTime,
 ) {
@@ -31,6 +34,7 @@ internal class EntryNote(
         const val FIELD_TEXT = "text"
         const val FIELD_FONT = "font"
         const val FIELD_FONT_COLOR = "font_color"
+        const val FIELD_FONT_SIZE = "font_size"
         const val FIELD_DATE = "date"
     }
 }
@@ -63,4 +67,7 @@ internal class PartNoteFont(
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_COLOR)
     val fontColor: NoteFontColor,
+
+    @ColumnInfo(name = EntryNote.FIELD_FONT_SIZE)
+    val fontSize: Int,
 )

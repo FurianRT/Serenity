@@ -2,6 +2,8 @@ package com.furianrt.uikit.theme
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.text.selection.LocalTextSelectionColors
+import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
@@ -13,6 +15,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import com.furianrt.uikit.entities.UiThemeColor
+
+private const val BACKGROUND_COLOR_ANIM_DURATION = 250
 
 private val defaultColorScheme = darkColorScheme(
     primary = Color.White,
@@ -73,12 +77,12 @@ fun SerenityTheme(
     }
 
     val animatedBackground by animateColorAsState(
-        animationSpec = tween(250),
+        animationSpec = tween(BACKGROUND_COLOR_ANIM_DURATION),
         targetValue = colorScheme.background,
         label = "BackgroundColorAnim",
     )
     val animatedSurface by animateColorAsState(
-        animationSpec = tween(250),
+        animationSpec = tween(BACKGROUND_COLOR_ANIM_DURATION),
         targetValue = colorScheme.surface,
         label = "SurfaceColorAnim",
     )
@@ -96,9 +100,14 @@ fun SerenityTheme(
             hoveredAlpha = 0.1f,
             pressedAlpha = 0.1f,
         )
-        val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, rippleAlpha)
+        val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onSurface, rippleAlpha)
+        val textSelectionColors = TextSelectionColors(
+            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            handleColor = MaterialTheme.colorScheme.onSurface,
+        )
         CompositionLocalProvider(
-            value = LocalRippleConfiguration provides rippleConfig,
+            LocalRippleConfiguration provides rippleConfig,
+            LocalTextSelectionColors provides textSelectionColors,
             content = content,
         )
     }

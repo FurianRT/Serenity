@@ -8,6 +8,7 @@ import com.furianrt.core.hasItem
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -20,6 +21,8 @@ import com.furianrt.notelistui.extensions.toLocalNoteTag
 import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
+import com.furianrt.notelistui.extensions.toUiNoteFontColor
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.internal.domian.UpdateNoteContentUseCase
 import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
@@ -73,6 +76,8 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.util.UUID
@@ -86,6 +91,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val permissionsUtils: PermissionsUtils,
+    private val appearanceRepository: AppearanceRepository,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener {
@@ -125,7 +131,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     fun onEvent(event: PageEvent) {
         when (event) {
-            is OnEditModeStateChange -> changeEditModeState(event.isEnabled)
+            is OnEditModeStateChange -> launch { changeEditModeState(event.isEnabled) }
             is OnTagRemoveClick -> removeTag(event.tag)
             is OnTagDoneEditing -> addTag(event.tag)
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
@@ -244,10 +250,14 @@ internal class PageViewModel @AssistedInject constructor(
                 val titleSecondPart = focusedTitle.also { title ->
                     title.state.edit {
                         val text = title.state.text
-                        if (text.substring(selection, text.length).isBlank()) {
-                            delete(0, text.length)
+                        val tempPart = text.substring(selection, text.length)
+                        if (tempPart.isBlank()) {
+                            delete(start = 0, end = text.length)
                         } else {
-                            delete(start = 0, end = selection)
+                            delete(
+                                start = 0,
+                                end = selection + tempPart.indexOfFirst { it != ' ' },
+                            )
                         }
                         placeCursorBeforeCharAt(0)
                     }
@@ -349,7 +359,8 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun changeEditModeState(isEnabled: Boolean) {
+    private suspend fun changeEditModeState(isEnabled: Boolean) {
+        ensureSuccessState()
         if (!isEnabled) {
             focusedTitleId = null
             hasContentChanged = false
@@ -371,19 +382,30 @@ internal class PageViewModel @AssistedInject constructor(
         }
         val successState = getSuccessState()
         if (focusFirstTitle && isEnabled && successState?.isContentEmpty == true) {
-            launch {
-                delay(TITLE_FOCUS_DELAY)
-                _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
-                focusFirstTitle = false
-            }
+            delay(TITLE_FOCUS_DELAY)
+            _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
+            focusFirstTitle = false
         }
     }
 
+    private suspend fun ensureSuccessState() {
+        state.first { it is PageUiState.Success }
+    }
+
     private fun observeNote() {
-        if (isNoteCreationMode) {
-            handleNoteResult(NoteItem())   //TODO сделать дефолтный шрифт
-        } else {
-            launch {
+        launch {
+            if (isNoteCreationMode) {
+                val family = appearanceRepository.getDefaultNoteFont().firstOrNull()
+                val color = appearanceRepository.getDefaultNoteFontColor().firstOrNull()
+                val size = appearanceRepository.getDefaultNoteFontSize().firstOrNull()
+                handleNoteResult(
+                    NoteItem(
+                        fontFamily = family?.toUiNoteFontFamily() ?: UiNoteFontFamily.QUICK_SAND,
+                        fontColor = color?.toUiNoteFontColor() ?: UiNoteFontColor.WHITE,
+                        fontSize = size ?: 15,
+                    )
+                )
+            } else {
                 notesRepository.getNote(noteId)
                     .map { it?.toNoteItem() }
                     .distinctUntilChanged()
@@ -406,6 +428,7 @@ internal class PageViewModel @AssistedInject constructor(
                     tags = note.tags,
                     fontFamily = note.fontFamily,
                     fontColor = note.fontColor,
+                    fontSize = note.fontSize,
                     isInEditMode = false,
                 )
 
@@ -421,8 +444,18 @@ internal class PageViewModel @AssistedInject constructor(
             tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
             fontFamily = state.fontFamily.toNoteFontFamily(),
             fontColor = state.fontColor.toNoteFontColor(),
+            fontSize = state.fontSize,
         )
+        if (isNoteCreationMode) {
+            saveDefaultFontData(state)
+        }
         hasContentChanged = false
+    }
+
+    private suspend fun saveDefaultFontData(state: PageUiState.Success) {
+        appearanceRepository.setDefaultNoteFont(state.fontFamily.toNoteFontFamily())
+        appearanceRepository.setDefaultNoteFontColor(state.fontColor.toNoteFontColor())
+        appearanceRepository.setDefaultNoteFontSize(state.fontSize)
     }
 
     private fun updateFontFamily(family: UiNoteFontFamily) {

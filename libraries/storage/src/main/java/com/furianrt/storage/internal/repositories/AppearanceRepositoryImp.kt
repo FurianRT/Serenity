@@ -49,4 +49,10 @@ internal class AppearanceRepositoryImp @Inject constructor(
     override suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
         dataStore.setDefaultNoteFontColor(color)
     }
+
+    override fun getDefaultNoteFontSize(): Flow<Int> = dataStore.getDefaultNoteFontSize()
+
+    override suspend fun setDefaultNoteFontSize(size: Int) {
+        dataStore.setDefaultNoteFontSize(size)
+    }
 }

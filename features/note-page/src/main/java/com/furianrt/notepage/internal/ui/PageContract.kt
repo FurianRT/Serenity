@@ -18,6 +18,7 @@ internal sealed interface PageUiState {
         val tags: ImmutableList<UiNoteTag>,
         val fontFamily: UiNoteFontFamily,
         val fontColor: UiNoteFontColor,
+        val fontSize: Int,
         val isInEditMode: Boolean,
     ) : PageUiState {
         val isContentEmpty: Boolean

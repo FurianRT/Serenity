@@ -199,6 +199,7 @@ private fun Preview() {
                     id = "",
                     fontFamily = UiNoteFontFamily.QUICK_SAND,
                     fontColor = UiNoteFontColor.WHITE,
+                    fontSize = 15,
                     date = ZonedDateTime.now(),
                 ),
                 isInEditMode = true,

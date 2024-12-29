@@ -33,6 +33,7 @@ private val KEY_RECOVERY_EMAIL_SEND_TIME = longPreferencesKey("recovery_email_se
 private val KEY_THEME_COLOR = stringPreferencesKey("theme_color")
 private val KEY_DEFAULT_NOTE_FONT= stringPreferencesKey("default_note_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
+private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
 
 @Singleton
 internal class SerenityDataStore @Inject constructor(
@@ -108,5 +109,12 @@ internal class SerenityDataStore @Inject constructor(
 
     suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_COLOR] = color.name }
+    }
+
+    fun getDefaultNoteFontSize(): Flow<Int> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] ?: 15 }
+
+    suspend fun setDefaultNoteFontSize(size: Int) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] = size }
     }
 }

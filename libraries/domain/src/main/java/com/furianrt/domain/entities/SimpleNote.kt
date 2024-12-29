@@ -6,5 +6,6 @@ class SimpleNote(
     val id: String,
     val font: NoteFontFamily,
     val fontColor: NoteFontColor,
+    val fontSize: Int,
     val date: ZonedDateTime,
 )

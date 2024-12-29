@@ -2,12 +2,15 @@ package com.furianrt.notecreate.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.domain.InsertNoteUseCase
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.notelistui.extensions.toNoteFontColor
+import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -62,7 +65,9 @@ internal class NoteCreateViewModel @Inject constructor(
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
                 if (_state.value.isInEditMode) {
-                    launch { saveNote() }
+                    launch {
+                        saveNote()
+                    }
                 }
                 toggleEditMode()
             }
@@ -98,6 +103,7 @@ internal class NoteCreateViewModel @Inject constructor(
             date = ZonedDateTime.now(),
             fontFamily = UiNoteFontFamily.QUICK_SAND,
             fontColor = UiNoteFontColor.WHITE,  //TODO сделать дефолтный шрифт
+            fontSize = 15,
         ),
         isInEditMode = true,
     )

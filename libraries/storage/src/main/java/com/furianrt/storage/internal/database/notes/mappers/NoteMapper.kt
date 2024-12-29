@@ -22,6 +22,7 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     text = "",
     font = font,
     fontColor = fontColor,
+    fontSize = fontSize,
     date = date,
 )
 

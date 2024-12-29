@@ -499,6 +499,7 @@ private fun SuccessScreenPreview() {
                 tags = persistentListOf(),
                 fontFamily = UiNoteFontFamily.QUICK_SAND,
                 fontColor = UiNoteFontColor.WHITE,
+                fontSize = 15,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",

@@ -25,6 +25,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         tags: List<LocalNote.Tag>,
         fontFamily: NoteFontFamily,
         fontColor: NoteFontColor,
+        fontSize: Int,
     ) = withContext(NonCancellable) {
         val newMedia = content
             .filterIsInstance<LocalNote.Content.MediaBlock>()
@@ -53,7 +54,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
 
             notesRepository.updateNoteText(noteId, content)
 
-            notesRepository.updateNoteFont(noteId, fontColor, fontFamily)
+            notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
 
             if (tags.isNotEmpty()) {
                 tagsRepository.insert(noteId, tags)

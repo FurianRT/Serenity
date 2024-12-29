@@ -75,7 +75,7 @@ internal fun ImageItem(
         CheckBox(
             modifier = Modifier
                 .align(Alignment.TopEnd)
-                .padding(top = 8.dp, end = 8.dp),
+                .padding(top = 4.dp, end = 4.dp),
             state = item.state,
             onClick = { onSelectClick(item) },
         )

@@ -41,8 +41,9 @@ internal class NotesRepositoryImp @Inject constructor(
         noteId: String,
         color: NoteFontColor,
         family: NoteFontFamily,
+        size: Int,
     ) {
-        noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color))
+        noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
     }
 
     override suspend fun deleteNote(noteId: String) {

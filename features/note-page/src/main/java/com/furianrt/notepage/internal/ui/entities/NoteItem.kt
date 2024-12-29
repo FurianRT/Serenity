@@ -16,4 +16,5 @@ internal class NoteItem(
     val content: ImmutableList<UiNoteContent> = persistentListOf(),
     val fontFamily: UiNoteFontFamily = UiNoteFontFamily.QUICK_SAND,
     val fontColor: UiNoteFontColor = UiNoteFontColor.WHITE,
+    val fontSize: Int = 15,
 )
