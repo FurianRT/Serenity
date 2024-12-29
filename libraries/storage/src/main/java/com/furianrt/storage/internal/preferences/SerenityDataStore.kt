@@ -12,6 +12,8 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.storage.internal.encryption.SerenityCipher
@@ -29,6 +31,8 @@ private val KEY_IS_FINGERPRINT_ENABLED = booleanPreferencesKey("is_fingerprint_e
 private val KEY_PIN_RECOVERY_EMAIL = stringPreferencesKey("pin_recovery_email")
 private val KEY_RECOVERY_EMAIL_SEND_TIME = longPreferencesKey("recovery_email_send_time")
 private val KEY_THEME_COLOR = stringPreferencesKey("theme_color")
+private val KEY_DEFAULT_NOTE_FONT= stringPreferencesKey("default_note_font")
+private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
 
 @Singleton
 internal class SerenityDataStore @Inject constructor(
@@ -86,9 +90,23 @@ internal class SerenityDataStore @Inject constructor(
     }
 
     fun getAppThemeColor(): Flow<ThemeColor> = dataStore.data
-        .map { prefs -> ThemeColor.fromString(prefs[KEY_THEME_COLOR]) ?: ThemeColor.GREEN }
+        .map { prefs -> ThemeColor.fromString(prefs[KEY_THEME_COLOR]) }
 
     suspend fun updateAppThemeColor(color: ThemeColor) {
         dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = color.name }
+    }
+
+    fun getDefaultNoteFont(): Flow<NoteFontFamily> = dataStore.data
+        .map { prefs -> NoteFontFamily.fromString(prefs[KEY_DEFAULT_NOTE_FONT]) }
+
+    suspend fun setDefaultNoteFont(font: NoteFontFamily) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT] = font.name }
+    }
+
+    fun getDefaultNoteFontColor(): Flow<NoteFontColor> = dataStore.data
+        .map { prefs -> NoteFontColor.fromString(prefs[KEY_DEFAULT_NOTE_FONT_COLOR]) }
+
+    suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_COLOR] = color.name }
     }
 }

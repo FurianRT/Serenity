@@ -3,6 +3,8 @@ package com.furianrt.notepage.internal.domian
 import com.furianrt.core.hasItem
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.TagsRepository
@@ -21,6 +23,8 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         noteId: String,
         content: List<LocalNote.Content>,
         tags: List<LocalNote.Tag>,
+        fontFamily: NoteFontFamily,
+        fontColor: NoteFontColor,
     ) = withContext(NonCancellable) {
         val newMedia = content
             .filterIsInstance<LocalNote.Content.MediaBlock>()
@@ -48,6 +52,8 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             }
 
             notesRepository.updateNoteText(noteId, content)
+
+            notesRepository.updateNoteFont(noteId, fontColor, fontFamily)
 
             if (tags.isNotEmpty()) {
                 tagsRepository.insert(noteId, tags)

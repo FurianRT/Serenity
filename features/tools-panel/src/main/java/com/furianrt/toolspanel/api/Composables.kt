@@ -32,15 +32,17 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.toolspanel.internal.FontContent
 import com.furianrt.toolspanel.internal.LineContent
 import com.furianrt.toolspanel.internal.RegularPanel
 import com.furianrt.toolspanel.internal.SelectedPanel
-import com.furianrt.toolspanel.internal.FontTitleBar
 import com.furianrt.toolspanel.internal.VoicePanel
+import com.furianrt.toolspanel.internal.font.FontContent
+import com.furianrt.toolspanel.internal.font.FontTitleBar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
@@ -63,12 +65,17 @@ private enum class PanelMode {
 fun ActionsPanel(
     textFieldState: TextFieldState,
     hazeState: HazeState,
+    noteId: String,
+    fontFamily: UiNoteFontFamily,
+    fontColor: UiNoteFontColor,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onVoiceRecordEnd: () -> Unit,
     onVoiceRecordCancel: () -> Unit,
     onVoiceRecordPause: () -> Unit,
     onVoiceRecordResume: () -> Unit,
+    onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
+    onFontColorSelected: (color: UiNoteFontColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -108,7 +115,7 @@ fun ActionsPanel(
         .background(MaterialTheme.colorScheme.tertiaryContainer)
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
-    val imeBottom by rememberKeyboardOffsetState(minOffset = 300)
+    val imeBottom by rememberKeyboardOffsetState()
     val isImeVisible = WindowInsets.isImeVisible && imeBottom == imeTarget
 
     val panelMode = when {
@@ -141,8 +148,8 @@ fun ActionsPanel(
             AnimatedContent(
                 targetState = panelMode,
                 transitionSpec = {
-                    (fadeIn(animationSpec = tween(220, delayMillis = 90)))
-                        .togetherWith(fadeOut(animationSpec = tween(90)))
+                    (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)))
+                        .togetherWith(fadeOut(animationSpec = tween(durationMillis = 90)))
                 },
                 label = "ActionsPanel",
             ) { targetState ->
@@ -198,7 +205,12 @@ fun ActionsPanel(
 
         FontContent(
             modifier = hazeModifier,
+            noteId = noteId,
+            fontColor = fontColor,
+            fontFamily = fontFamily,
             visible = isFontPanelVisible,
+            onFontFamilySelected = onFontFamilySelected,
+            onFontColorSelected = onFontColorSelected,
         )
     }
 

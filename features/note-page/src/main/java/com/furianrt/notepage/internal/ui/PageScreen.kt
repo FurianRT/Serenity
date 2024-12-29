@@ -70,6 +70,8 @@ import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentTitle
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -348,6 +350,8 @@ private fun SuccessScreen(
                                 )
                                 .animateItem(),
                             title = item,
+                            color = uiState.fontColor.value,
+                            fontFamily = uiState.fontFamily.value,
                             hint = if (index == 0) {
                                 stringResource(id = R.string.note_title_hint_text)
                             } else {
@@ -429,6 +433,9 @@ private fun SuccessScreen(
                                 ?.state
                         }
                         ActionsPanel(
+                            noteId = uiState.noteId,
+                            fontFamily = uiState.fontFamily,
+                            fontColor = uiState.fontColor,
                             hazeState = hazeState,
                             textFieldState = titleState ?: TextFieldState(),
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
@@ -437,6 +444,8 @@ private fun SuccessScreen(
                             onVoiceRecordCancel = { state.isVoiceRecordActive = false },
                             onVoiceRecordPause = { },
                             onVoiceRecordResume = { },
+                            onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
+                            onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
                         )
                     }
                 )
@@ -485,8 +494,11 @@ private fun SuccessScreenPreview() {
         SuccessScreen(
             state = rememberPageScreenState(),
             uiState = PageUiState.Success(
+                noteId = "123",
                 isInEditMode = false,
                 tags = persistentListOf(),
+                fontFamily = UiNoteFontFamily.QUICK_SAND,
+                fontColor = UiNoteFontColor.WHITE,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",

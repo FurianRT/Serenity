@@ -4,7 +4,11 @@ import androidx.compose.foundation.text.input.TextFieldState
 import com.furianrt.core.buildImmutableList
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
 
@@ -120,4 +124,70 @@ fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = 
             ),
         )
     }
+}
+
+fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
+    NoteFontFamily.QUICK_SAND -> UiNoteFontFamily.QUICK_SAND
+    NoteFontFamily.TEST_FONT_1 -> UiNoteFontFamily.TEST_FONT_1
+    NoteFontFamily.TEST_FONT_2 -> UiNoteFontFamily.TEST_FONT_2
+    NoteFontFamily.TEST_FONT_3 -> UiNoteFontFamily.TEST_FONT_3
+    NoteFontFamily.TEST_FONT_4 -> UiNoteFontFamily.TEST_FONT_4
+    NoteFontFamily.TEST_FONT_5 -> UiNoteFontFamily.TEST_FONT_5
+    NoteFontFamily.TEST_FONT_6 -> UiNoteFontFamily.TEST_FONT_6
+    NoteFontFamily.TEST_FONT_7 -> UiNoteFontFamily.TEST_FONT_7
+    NoteFontFamily.TEST_FONT_8 -> UiNoteFontFamily.TEST_FONT_8
+    NoteFontFamily.TEST_FONT_9 -> UiNoteFontFamily.TEST_FONT_9
+    NoteFontFamily.TEST_FONT_10 -> UiNoteFontFamily.TEST_FONT_10
+    NoteFontFamily.TEST_FONT_11 -> UiNoteFontFamily.TEST_FONT_11
+    NoteFontFamily.TEST_FONT_12 -> UiNoteFontFamily.TEST_FONT_12
+    NoteFontFamily.TEST_FONT_13 -> UiNoteFontFamily.TEST_FONT_13
+    NoteFontFamily.TEST_FONT_14 -> UiNoteFontFamily.TEST_FONT_14
+    NoteFontFamily.TEST_FONT_15 -> UiNoteFontFamily.TEST_FONT_15
+    NoteFontFamily.TEST_FONT_16 -> UiNoteFontFamily.TEST_FONT_16
+    NoteFontFamily.TEST_FONT_17 -> UiNoteFontFamily.TEST_FONT_17
+    NoteFontFamily.TEST_FONT_18 -> UiNoteFontFamily.TEST_FONT_18
+}
+
+fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
+    UiNoteFontFamily.QUICK_SAND -> NoteFontFamily.QUICK_SAND
+    UiNoteFontFamily.TEST_FONT_1 -> NoteFontFamily.TEST_FONT_1
+    UiNoteFontFamily.TEST_FONT_2 -> NoteFontFamily.TEST_FONT_2
+    UiNoteFontFamily.TEST_FONT_3 -> NoteFontFamily.TEST_FONT_3
+    UiNoteFontFamily.TEST_FONT_4 -> NoteFontFamily.TEST_FONT_4
+    UiNoteFontFamily.TEST_FONT_5 -> NoteFontFamily.TEST_FONT_5
+    UiNoteFontFamily.TEST_FONT_6 -> NoteFontFamily.TEST_FONT_6
+    UiNoteFontFamily.TEST_FONT_7 -> NoteFontFamily.TEST_FONT_7
+    UiNoteFontFamily.TEST_FONT_8 -> NoteFontFamily.TEST_FONT_8
+    UiNoteFontFamily.TEST_FONT_9 -> NoteFontFamily.TEST_FONT_9
+    UiNoteFontFamily.TEST_FONT_10 -> NoteFontFamily.TEST_FONT_10
+    UiNoteFontFamily.TEST_FONT_11 -> NoteFontFamily.TEST_FONT_11
+    UiNoteFontFamily.TEST_FONT_12 -> NoteFontFamily.TEST_FONT_12
+    UiNoteFontFamily.TEST_FONT_13 -> NoteFontFamily.TEST_FONT_13
+    UiNoteFontFamily.TEST_FONT_14 -> NoteFontFamily.TEST_FONT_14
+    UiNoteFontFamily.TEST_FONT_15 -> NoteFontFamily.TEST_FONT_15
+    UiNoteFontFamily.TEST_FONT_16 -> NoteFontFamily.TEST_FONT_16
+    UiNoteFontFamily.TEST_FONT_17 -> NoteFontFamily.TEST_FONT_17
+    UiNoteFontFamily.TEST_FONT_18 -> NoteFontFamily.TEST_FONT_18
+}
+
+fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
+    NoteFontColor.WHITE -> UiNoteFontColor.WHITE
+    NoteFontColor.ORANGE -> UiNoteFontColor.ORANGE
+    NoteFontColor.GREEN -> UiNoteFontColor.GREEN
+    NoteFontColor.BLUE_LIGHT -> UiNoteFontColor.BLUE_LIGHT
+    NoteFontColor.BLUE -> UiNoteFontColor.BLUE
+    NoteFontColor.BLUE_DARK -> UiNoteFontColor.BLUE_DARK
+    NoteFontColor.PURPLE -> UiNoteFontColor.PURPLE
+    NoteFontColor.PURPLE_DARK -> UiNoteFontColor.PURPLE_DARK
+}
+
+fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
+    UiNoteFontColor.WHITE -> NoteFontColor.WHITE
+    UiNoteFontColor.ORANGE -> NoteFontColor.ORANGE
+    UiNoteFontColor.GREEN -> NoteFontColor.GREEN
+    UiNoteFontColor.BLUE_LIGHT -> NoteFontColor.BLUE_LIGHT
+    UiNoteFontColor.BLUE -> NoteFontColor.BLUE
+    UiNoteFontColor.BLUE_DARK -> NoteFontColor.BLUE_DARK
+    UiNoteFontColor.PURPLE -> NoteFontColor.PURPLE
+    UiNoteFontColor.PURPLE_DARK -> NoteFontColor.PURPLE_DARK
 }

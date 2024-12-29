@@ -1,12 +1,14 @@
 package com.furianrt.notepage.internal.ui.extensions
 
 import com.furianrt.core.mapImmutable
-import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
+import com.furianrt.notelistui.extensions.toUiNoteFontColor
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
+import com.furianrt.notepage.internal.ui.entities.NoteItem
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -14,6 +16,8 @@ internal fun LocalNote.toNoteItem() = NoteItem(
     id = id,
     tags = tags.mapImmutable { it.toRegularUiNoteTag(isRemovable = false) },
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
+    fontColor = fontColor.toUiNoteFontColor(),
+    fontFamily = fontFamily.toUiNoteFontFamily(),
 )
 
 internal fun MediaResult.toMediaBlock() = MediaBlock(

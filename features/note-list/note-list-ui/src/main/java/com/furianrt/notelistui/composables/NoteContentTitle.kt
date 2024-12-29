@@ -21,12 +21,14 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -46,6 +48,8 @@ fun NoteContentTitle(
     focusRequester: FocusRequester = FocusRequester(),
     scrollState: ScrollState = rememberScrollState(),
     hint: String? = null,
+    color: Color = MaterialTheme.typography.bodyMedium.color,
+    fontFamily: FontFamily? = MaterialTheme.typography.bodyMedium.fontFamily,
     isInEditMode: Boolean = false,
     onTitleFocused: (id: String) -> Unit = {},
     onTitleTextChange: (id: String) -> Unit = {},
@@ -100,7 +104,10 @@ fun NoteContentTitle(
             },
         onTextLayout = { layoutResult = it() },
         state = title.state,
-        textStyle = MaterialTheme.typography.bodyMedium,
+        textStyle = MaterialTheme.typography.bodyMedium.copy(
+            color = color ,
+            fontFamily = fontFamily,
+        ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -108,7 +115,7 @@ fun NoteContentTitle(
         ),
         decorator = { innerTextField ->
             if (hint != null && title.state.text.isEmpty()) {
-                Placeholder(hint = hint)
+                Placeholder(hint = hint, color = color, fontFamily = fontFamily)
             }
             innerTextField()
         },
@@ -134,11 +141,18 @@ suspend fun BringIntoViewRequester.bringIntoView(
 }
 
 @Composable
-private fun Placeholder(hint: String) {
+private fun Placeholder(
+    hint: String,
+    color: Color,
+    fontFamily: FontFamily?,
+) {
     Text(
         modifier = Modifier.alpha(0.5f),
         text = hint,
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.labelMedium.copy(
+            color = color,
+            fontFamily = fontFamily,
+        ),
         fontStyle = FontStyle.Italic,
     )
 }

@@ -20,3 +20,15 @@ fun DrawScope.drawBottomShadow(
         endY = size.height + elevation.toPx(),
     ),
 )
+
+fun DrawScope.drawTopInnerShadow(
+    color: Color = Color.Black,
+    elevation: Dp = 6.dp,
+) = drawRect(
+    size = Size(size.width, elevation.toPx()),
+    brush = Brush.verticalGradient(
+        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
+        startY = 0f,
+        endY = elevation.toPx(),
+    ),
+)

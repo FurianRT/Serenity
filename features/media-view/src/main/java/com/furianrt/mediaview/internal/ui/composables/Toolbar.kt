@@ -114,7 +114,7 @@ private fun Menu(
         onStopOrDispose {}
     }
     DropdownMenu(
-        modifier = Modifier.background(Colors.DarkGray.copy(alpha = 0.8f)),
+        modifier = Modifier.background(Colors.Common.DarkGray.copy(alpha = 0.8f)),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),

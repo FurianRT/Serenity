@@ -12,15 +12,21 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.extensions.toLocalNoteContent
 import com.furianrt.notelistui.extensions.toLocalNoteTag
+import com.furianrt.notelistui.extensions.toNoteFontColor
+import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notepage.internal.domian.UpdateNoteContentUseCase
 import com.furianrt.notepage.internal.ui.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.PageEffect.ShowPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.PageEvent.OnEditModeStateChange
+import com.furianrt.notepage.internal.ui.PageEvent.OnFontColorSelected
+import com.furianrt.notepage.internal.ui.PageEvent.OnFontFamilySelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaRemoveClick
@@ -142,6 +148,8 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnMediaSelected -> handleMediaSelectorResult(event.result)
+            is OnFontFamilySelected -> updateFontFamily(event.family)
+            is OnFontColorSelected -> updateFontColor(event.color)
         }
     }
 
@@ -373,7 +381,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun observeNote() {
         if (isNoteCreationMode) {
-            handleNoteResult(NoteItem())
+            handleNoteResult(NoteItem())   //TODO сделать дефолтный шрифт
         } else {
             launch {
                 notesRepository.getNote(noteId)
@@ -393,8 +401,11 @@ internal class PageViewModel @AssistedInject constructor(
         _state.update { localState ->
             when (localState) {
                 is PageUiState.Empty, PageUiState.Loading -> PageUiState.Success(
+                    noteId = note.id,
                     content = note.content,
                     tags = note.tags,
+                    fontFamily = note.fontFamily,
+                    fontColor = note.fontColor,
                     isInEditMode = false,
                 )
 
@@ -408,8 +419,20 @@ internal class PageViewModel @AssistedInject constructor(
             noteId = noteId,
             content = state.content.map(UiNoteContent::toLocalNoteContent),
             tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
+            fontFamily = state.fontFamily.toNoteFontFamily(),
+            fontColor = state.fontColor.toNoteFontColor(),
         )
         hasContentChanged = false
+    }
+
+    private fun updateFontFamily(family: UiNoteFontFamily) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { it.copy(fontFamily = family) }
+    }
+
+    private fun updateFontColor(color: UiNoteFontColor) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { it.copy(fontColor = color) }
     }
 
     private fun PageUiState.Success.addTag(

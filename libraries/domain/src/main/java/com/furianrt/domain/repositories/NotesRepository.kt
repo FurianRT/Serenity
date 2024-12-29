@@ -1,6 +1,8 @@
 package com.furianrt.domain.repositories
 
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.SimpleNote
 import kotlinx.coroutines.flow.Flow
 import java.time.ZonedDateTime
@@ -9,6 +11,7 @@ interface NotesRepository {
     suspend fun insetNote(note: SimpleNote)
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
+    suspend fun updateNoteFont(noteId: String, color: NoteFontColor, family: NoteFontFamily)
     suspend fun deleteNote(noteId: String)
     fun getAllNotes(): Flow<List<LocalNote>>
     fun getAllNotes(query: String): Flow<List<LocalNote>>

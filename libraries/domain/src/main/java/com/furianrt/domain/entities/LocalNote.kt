@@ -12,6 +12,8 @@ data class LocalNote(
     val id: String,
     @Serializable(with = ZonedDateTimeSerializer::class)
     val date: ZonedDateTime,
+    val fontFamily: NoteFontFamily,
+    val fontColor: NoteFontColor,
     val tags: List<Tag>,
     val content: List<Content>,
 ) {

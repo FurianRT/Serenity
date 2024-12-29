@@ -6,6 +6,8 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.domain.InsertNoteUseCase
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -94,6 +96,8 @@ internal class NoteCreateViewModel @Inject constructor(
         note = NoteItem(
             id = UUID.randomUUID().toString(),
             date = ZonedDateTime.now(),
+            fontFamily = UiNoteFontFamily.QUICK_SAND,
+            fontColor = UiNoteFontColor.WHITE,  //TODO сделать дефолтный шрифт
         ),
         isInEditMode = true,
     )

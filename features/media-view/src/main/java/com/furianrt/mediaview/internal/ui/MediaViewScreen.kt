@@ -94,7 +94,7 @@ internal fun MediaViewScreen(
                     SnackBar(
                         title = data.visuals.message,
                         icon = painterResource(R.drawable.ic_download),
-                        color = Colors.DarkGray.copy(alpha = 0.9f),
+                        color = Colors.Common.DarkGray.copy(alpha = 0.9f),
                     )
                 },
             )

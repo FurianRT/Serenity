@@ -3,6 +3,8 @@ package com.furianrt.notepage.internal.ui
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
@@ -11,8 +13,11 @@ internal sealed interface PageUiState {
     data object Loading : PageUiState
     data object Empty : PageUiState
     data class Success(
+        val noteId: String,
         val content: ImmutableList<UiNoteContent>,
         val tags: ImmutableList<UiNoteTag>,
+        val fontFamily: UiNoteFontFamily,
+        val fontColor: UiNoteFontColor,
         val isInEditMode: Boolean,
     ) : PageUiState {
         val isContentEmpty: Boolean
@@ -38,6 +43,8 @@ internal sealed interface PageEvent {
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
     data object OnOnSaveContentRequest : PageEvent
+    data class OnFontFamilySelected(val family: UiNoteFontFamily) : PageEvent
+    data class OnFontColorSelected(val color: UiNoteFontColor) : PageEvent
 }
 
 internal sealed interface PageEffect {

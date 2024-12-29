@@ -20,6 +20,8 @@ private enum class FirstTagType {
 internal fun SimpleNote.toEntryNote() = EntryNote(
     id = id,
     text = "",
+    font = font,
+    fontColor = fontColor,
     date = date,
 )
 
@@ -27,6 +29,8 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     id = note.id,
     date = note.date,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
+    fontFamily = note.font,
+    fontColor = note.fontColor,
     content = getLocalNoteContent(),
 )
 

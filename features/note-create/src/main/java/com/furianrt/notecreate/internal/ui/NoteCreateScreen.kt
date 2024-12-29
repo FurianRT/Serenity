@@ -30,6 +30,8 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
+import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -193,7 +195,12 @@ private fun Preview() {
         ScreenContent(
             state = rememberPageScreenState(),
             uiState = NoteCreateUiState(
-                note = NoteItem(id = "", date = ZonedDateTime.now()),
+                note = NoteItem(
+                    id = "",
+                    fontFamily = UiNoteFontFamily.QUICK_SAND,
+                    fontColor = UiNoteFontColor.WHITE,
+                    date = ZonedDateTime.now(),
+                ),
                 isInEditMode = true,
             ),
             onEvent = {},

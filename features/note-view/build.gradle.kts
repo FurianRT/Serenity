@@ -13,6 +13,7 @@ android {
 dependencies {
     implementation(projects.features.notePage)
     implementation(projects.features.mediaSelector)
+    implementation(projects.features.noteList.noteListUi)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

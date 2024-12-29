@@ -2,12 +2,15 @@ package com.furianrt.storage.internal.repositories
 
 import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
+import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
@@ -32,6 +35,14 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override suspend fun updateNoteDate(noteId: String, date: ZonedDateTime) {
         noteDao.update(PartNoteDate(id = noteId, date = date))
+    }
+
+    override suspend fun updateNoteFont(
+        noteId: String,
+        color: NoteFontColor,
+        family: NoteFontFamily,
+    ) {
+        noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color))
     }
 
     override suspend fun deleteNote(noteId: String) {
