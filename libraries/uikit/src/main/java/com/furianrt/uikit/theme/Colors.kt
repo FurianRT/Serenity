@@ -22,7 +22,7 @@ object Colors {
         val Grey = Color(0xFFBDBDBD)
         val GreyDark = Color(0xFF9E9E9E)
         val PinkLight = Color(0xFFFAD2E0)
-        val Pink = Color(0xFFFF8BCD0)
+        val Pink = Color(0xFFF8BCD0)
         val PinkDark = Color(0xFFF6A5C1)
         val YellowLight = Color(0xFFFEFEBE)
         val Yellow = Color(0xFFFDFD96)
@@ -42,7 +42,6 @@ object Colors {
     }
 
     object Common {
-        val Gray = Color(0xFFA8A8A8)
         val DarkGray = Color(0xFF212121)
     }
 }
