@@ -214,6 +214,7 @@ private fun SuccessScreen(
     modifier: Modifier = Modifier,
 ) {
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
+    var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
@@ -324,9 +325,13 @@ private fun SuccessScreen(
                 contentPadding = PaddingValues(
                     top = toolbarMargin,
                     bottom = if (uiState.isInEditMode) {
-                        ToolsPanelConstants.PANEL_HEIGHT +
-                                WindowInsets.navigationBars.asPaddingValues()
-                                    .calculateBottomPadding() + 32.dp
+                        val toolsPanelHeight = if (isToolsPanelMenuVisible) {
+                            density.run { toolsPanelRect.height.toDp() }
+                        } else {
+                            ToolsPanelConstants.PANEL_HEIGHT
+                        }
+                        toolsPanelHeight + WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 32.dp
                     } else {
                         WindowInsets.navigationBars.asPaddingValues()
                             .calculateBottomPadding() + 32.dp
@@ -441,6 +446,7 @@ private fun SuccessScreen(
                             fontSize = uiState.fontSize,
                             hazeState = hazeState,
                             textFieldState = titleState ?: TextFieldState(),
+                            onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
                             onVoiceRecordEnd = { state.isVoiceRecordActive = false },

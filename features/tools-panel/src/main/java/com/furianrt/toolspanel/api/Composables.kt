@@ -69,6 +69,7 @@ fun ActionsPanel(
     fontFamily: UiNoteFontFamily,
     fontColor: UiNoteFontColor,
     fontSize: Int,
+    onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onVoiceRecordEnd: () -> Unit,
@@ -131,6 +132,10 @@ fun ActionsPanel(
         if (isImeVisible) {
             isFontPanelVisible = false
         }
+    }
+
+    LaunchedEffect(isFontPanelVisible) {
+        onMenuVisibilityChange(isFontPanelVisible)
     }
 
     Column(
