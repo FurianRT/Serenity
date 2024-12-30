@@ -2,6 +2,9 @@ package com.furianrt.notelist.api
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
@@ -24,14 +27,20 @@ fun NavGraphBuilder.noteListScreen(
     composable<NoteListRoute>(
         exitTransition = {
             if (hasSearchScreenRoute(targetState.destination)) {
-                fadeOut()
+                fadeOut() + scaleOut(
+                    targetScale = 0.95f,
+                    transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f),
+                )
             } else {
-               defaultExitTransition()
+                defaultExitTransition()
             }
         },
         popEnterTransition = {
             if (hasSearchScreenRoute(initialState.destination)) {
-                fadeIn()
+                fadeIn() + scaleIn(
+                    initialScale = 0.95f,
+                    transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f),
+                )
             } else {
                 defaultPopEnterTransition()
             }

@@ -111,7 +111,7 @@ fun NoteContentTitle(
             fontFamily = fontFamily,
             fontSize = fontSize,
             lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
-                    (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value)
+                    (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value),
         ),
         cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
         keyboardOptions = KeyboardOptions(
