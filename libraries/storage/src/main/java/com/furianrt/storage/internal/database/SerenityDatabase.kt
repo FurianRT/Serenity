@@ -14,11 +14,13 @@ import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
+import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
 
 @Database(
     entities = [
@@ -27,6 +29,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
         EntryNoteVideo::class,
         EntryNoteTag::class,
         EntryNoteToTag::class,
+        EntryNoteVoice::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -38,6 +41,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun tagDao(): TagDao
     abstract fun imageDao(): ImageDao
     abstract fun videoDao(): VideoDao
+    abstract fun voiceDao(): VoiceDao
     abstract fun noteToTagDao(): NoteToTagDao
 
     companion object {

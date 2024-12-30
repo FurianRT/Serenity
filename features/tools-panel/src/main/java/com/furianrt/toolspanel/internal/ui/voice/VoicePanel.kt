@@ -1,4 +1,4 @@
-package com.furianrt.toolspanel.internal
+package com.furianrt.toolspanel.internal.ui.voice
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
@@ -25,10 +25,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -38,13 +36,99 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
+
+private const val TAG = "VoicePanel"
 
 @Composable
 internal fun VoicePanel(
+    noteId: String,
+    modifier: Modifier = Modifier,
+    onRecordComplete: () -> Unit = {},
+    lineContent: @Composable BoxScope.() -> Unit,
+) {
+    val viewModel: VoiceViewModel = hiltViewModel(key = TAG + noteId)
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(viewModel.effect) {
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is VoiceEffect.SendRecordCompleteEvent -> onRecordComplete()
+                }
+            }
+    }
+
+    VoicePanelContent(
+        modifier = modifier,
+        onDoneClick = {
+            viewModel.onEvent(VoiceEvent.OnDoneClick)
+        },
+        lineContent = lineContent,
+    )
+}
+
+@Composable
+internal fun BoxScope.LineContent(
+    noteId: String,
+    modifier: Modifier = Modifier,
+    onCancelClick: () -> Unit,
+) {
+    val viewModel: VoiceViewModel = hiltViewModel(key = TAG + noteId)
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
+
+    VoiceLineContent(
+        modifier = modifier,
+        state = uiState,
+        onCancelClick = {
+            viewModel.onEvent(VoiceEvent.OnCancelClick)
+            onCancelClick()
+        },
+        onRecordClick = {
+            viewModel.onEvent(VoiceEvent.OnRecordClick)
+        }
+    )
+}
+
+@Composable
+private fun BoxScope.VoiceLineContent(
+    state: VoiceUiState,
+    modifier: Modifier = Modifier,
+    onCancelClick: () -> Unit = {},
+    onRecordClick: () -> Unit = {},
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .align(Alignment.BottomCenter),
+    ) {
+        Timer(
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .align(Alignment.CenterStart),
+            timer = state.duration.toString(),
+            isRecording = state.isRecording,
+            onClick = onRecordClick,
+        )
+        ButtonCancel(
+            modifier = Modifier.align(Alignment.Center),
+            onClick = onCancelClick,
+        )
+    }
+}
+
+@Composable
+private fun VoicePanelContent(
     modifier: Modifier = Modifier,
     onDoneClick: () -> Unit = {},
     lineContent: @Composable BoxScope.() -> Unit,
@@ -61,48 +145,18 @@ internal fun VoicePanel(
 }
 
 @Composable
-internal fun BoxScope.LineContent(
-    modifier: Modifier = Modifier,
-    onCancelClick: () -> Unit = {},
-    onPauseClick: (isPlaying: Boolean) -> Unit = {},
-) {
-    var isPlaying by remember { mutableStateOf(true) }
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .align(Alignment.BottomCenter),
-    ) {
-        Timer(
-            modifier = Modifier
-                .padding(start = 8.dp)
-                .align(Alignment.CenterStart),
-            timer = "0:16.7",
-            isPlaying = isPlaying,
-            onClick = {
-                isPlaying = !it
-                onPauseClick(isPlaying)
-            },
-        )
-        ButtonCancel(
-            modifier = Modifier.align(Alignment.Center),
-            onClick = onCancelClick,
-        )
-    }
-}
-
-@Composable
 private fun Timer(
     timer: String,
-    isPlaying: Boolean,
+    isRecording: Boolean,
     modifier: Modifier = Modifier,
-    onClick: (isPlaying: Boolean) -> Unit,
+    onClick: () -> Unit,
 ) {
     val view = LocalView.current
     Row(
         modifier = modifier
             .clickableNoRipple {
                 view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-                onClick(isPlaying)
+                onClick()
             }
             .padding(start = 6.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -116,7 +170,7 @@ private fun Timer(
             modifier = Modifier
                 .size(22.dp)
                 .alpha(0.5f),
-            targetState = isPlaying,
+            targetState = isRecording,
             label = "PlayAnim",
         ) { targetState ->
             if (targetState) {
@@ -204,8 +258,10 @@ private fun ButtonCancel(
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
-        VoicePanel {
-            LineContent()
+        VoicePanelContent {
+            VoiceLineContent(
+                state = VoiceUiState(),
+            )
         }
     }
 }

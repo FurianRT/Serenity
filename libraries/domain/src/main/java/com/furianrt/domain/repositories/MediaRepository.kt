@@ -6,12 +6,16 @@ import com.furianrt.domain.entities.LocalNote
 import kotlinx.coroutines.flow.Flow
 
 interface MediaRepository {
-    suspend fun insert(noteId: String, media: List<LocalNote.Content.Media>)
-    suspend fun delete(noteId: String, media: List<LocalNote.Content.Media>)
+    suspend fun insertMedia(noteId: String, media: List<LocalNote.Content.Media>)
+    suspend fun deleteMedia(noteId: String, media: List<LocalNote.Content.Media>)
     suspend fun deleteMediaFiles(noteId: String)
     fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
 
     suspend fun getDeviceMediaList(): List<DeviceMedia>
 
     suspend fun saveToGallery(media: LocalMedia): Boolean
+
+    suspend fun insertVoice(noteId: String, voices: List<LocalNote.Content.Voice>)
+    suspend fun deleteVoice(noteId: String, voices: List<LocalNote.Content.Voice>)
+    fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>>
 }

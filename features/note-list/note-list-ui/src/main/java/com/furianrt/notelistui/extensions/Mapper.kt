@@ -15,6 +15,7 @@ import kotlinx.collections.immutable.ImmutableList
 fun UiNoteContent.toLocalNoteContent() = when (this) {
     is UiNoteContent.Title -> toLocalNoteTitle()
     is UiNoteContent.MediaBlock -> toLocalMediaBlock()
+    is UiNoteContent.Voice -> toLocalNoteVoice()
 }
 
 fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
@@ -25,6 +26,12 @@ fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
     id = id,
     text = state.text.toString(),
+)
+
+fun UiNoteContent.Voice.toLocalNoteVoice() = LocalNote.Content.Voice(
+    id = id,
+    uri = uri,
+    duration = duration,
 )
 
 fun UiNoteContent.MediaBlock.Media.toLocalMedia(): LocalNote.Content.Media = when (this) {
@@ -60,11 +67,18 @@ fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
 fun LocalNote.Content.toUiNoteContent() = when (this) {
     is LocalNote.Content.Title -> toUiNoteTitle()
     is LocalNote.Content.MediaBlock -> toUiMediaBlock()
+    is LocalNote.Content.Voice -> toUiVoice()
 }
 
 fun LocalNote.Content.MediaBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
     id = id,
     media = media.mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
+)
+
+fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
+    id = id,
+    uri = uri,
+    duration = duration,
 )
 
 

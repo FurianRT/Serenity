@@ -18,6 +18,13 @@ sealed class UiNoteContent(open val id: String) {
     ) : UiNoteContent(id)
 
     @Immutable
+    data class Voice(
+        override val id: String,
+        val uri: Uri,
+        val duration: Int,
+    ) : UiNoteContent(id)
+
+    @Immutable
     data class MediaBlock(
         override val id: String,
         val media: ImmutableList<Media>,

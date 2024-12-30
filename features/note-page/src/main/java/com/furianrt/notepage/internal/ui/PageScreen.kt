@@ -387,6 +387,8 @@ private fun SuccessScreen(
                             },
                             onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
                         )
+
+                        is UiNoteContent.Voice -> {} // TODO fix
                     }
                 }
                 if (uiState.tags.isNotEmpty()) {
@@ -449,10 +451,8 @@ private fun SuccessScreen(
                             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
-                            onVoiceRecordEnd = { state.isVoiceRecordActive = false },
+                            onRecordComplete = { state.isVoiceRecordActive = false },
                             onVoiceRecordCancel = { state.isVoiceRecordActive = false },
-                            onVoiceRecordPause = { },
-                            onVoiceRecordResume = { },
                             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
                             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },

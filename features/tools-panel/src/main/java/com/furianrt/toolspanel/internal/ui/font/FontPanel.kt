@@ -1,4 +1,4 @@
-package com.furianrt.toolspanel.internal.font
+package com.furianrt.toolspanel.internal.ui.font
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility

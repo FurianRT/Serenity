@@ -75,6 +75,8 @@ fun NoteListItem(
                         block = item,
                         clickable = false,
                     )
+
+                    is UiNoteContent.Voice -> {} // TODO fix
                 }
             }
             NoteTags(

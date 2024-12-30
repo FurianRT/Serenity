@@ -13,6 +13,7 @@ import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
+import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.preferences.SerenityDataStore
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
@@ -72,6 +73,10 @@ internal interface DatabaseModule {
         @Provides
         @Singleton
         fun videoDao(database: SerenityDatabase): VideoDao = database.videoDao()
+
+        @Provides
+        @Singleton
+        fun voiceDao(database: SerenityDatabase): VoiceDao = database.voiceDao()
 
         @Provides
         @Singleton

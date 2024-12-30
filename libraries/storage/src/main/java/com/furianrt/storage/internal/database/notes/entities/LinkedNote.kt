@@ -23,6 +23,13 @@ internal class LinkedNote(
     val videos: List<EntryNoteVideo>,
 
     @Relation(
+        entity = EntryNoteVoice::class,
+        entityColumn = EntryNoteVoice.FIELD_NOTE_ID,
+        parentColumn = EntryNote.FIELD_ID,
+    )
+    val voices: List<EntryNoteVoice>,
+
+    @Relation(
         entity = EntryNoteTag::class,
         entityColumn = EntryNoteTag.FIELD_TITLE,
         parentColumn = EntryNote.FIELD_ID,

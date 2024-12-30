@@ -1,4 +1,4 @@
-package com.furianrt.toolspanel.internal.font
+package com.furianrt.toolspanel.internal.ui.font
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.UiNoteFontColor

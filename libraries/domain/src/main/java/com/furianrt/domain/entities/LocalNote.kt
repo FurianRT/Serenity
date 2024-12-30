@@ -39,6 +39,18 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        data class Voice(
+            @SerialName("voice_id")
+            override val id: String,
+
+            @Serializable(with = UriSerializer::class)
+            @SerialName("voice_uri")
+            val uri: Uri,
+
+            val duration: Int,
+        ) : Content(id)
+
+        @Serializable
         sealed class Media(
             open val name: String,
             open val ratio: Float,

@@ -1,4 +1,4 @@
-package com.furianrt.toolspanel.internal
+package com.furianrt.toolspanel.internal.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

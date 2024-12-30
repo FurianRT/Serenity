@@ -10,11 +10,15 @@ import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 
 private const val TITLE_START_TAG = "{text}"
 private const val TITLE_END_TAG = "{/text}"
+
 private const val MEDIA_START_TAG = "{media}"
 private const val MEDIA_END_TAG = "{/media}"
 
+private const val VOICE_START_TAG = "{voice}"
+private const val VOICE_END_TAG = "{/voice}"
+
 private enum class FirstTagType {
-    TITLE, MEDIA, NONE
+    TITLE, MEDIA, VOICE, NONE
 }
 
 internal fun SimpleNote.toEntryNote() = EntryNote(
@@ -58,6 +62,12 @@ internal fun List<LocalNote.Content>.toEntryNoteText(): String {
                 builder.append(names)
                 builder.append(MEDIA_END_TAG)
             }
+
+            is LocalNote.Content.Voice -> {
+                builder.append(VOICE_START_TAG)
+                builder.append(content.id)
+                builder.append(VOICE_END_TAG)
+            }
         }
     }
     return builder.toString()
@@ -71,6 +81,10 @@ private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content
 
         FirstTagType.MEDIA -> {
             (text.indexOf(MEDIA_END_TAG) + MEDIA_END_TAG.length) to extractMedia(text)
+        }
+
+        FirstTagType.VOICE -> {
+            (text.indexOf(VOICE_END_TAG) + VOICE_END_TAG.length) to extractVoice(text)
         }
 
         FirstTagType.NONE -> return emptyList()
@@ -117,18 +131,26 @@ private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock?
     }
 }
 
-private fun getFirstTagType(text: String): FirstTagType {
-    val indexOfTitleTag = text.indexOf(TITLE_START_TAG)
-    val indexOfMediaTag = text.indexOf(MEDIA_START_TAG)
-    return when {
-        indexOfTitleTag != -1 && indexOfMediaTag != -1 -> if (indexOfTitleTag < indexOfMediaTag) {
-            FirstTagType.TITLE
-        } else {
-            FirstTagType.MEDIA
-        }
+private fun LinkedNote.extractVoice(text: String): LocalNote.Content.Voice? {
+    val indexOfTag = text.indexOf(VOICE_START_TAG)
+    val indexOfClosingTag = text.indexOf(VOICE_END_TAG)
+    val id = text.substring(indexOfTag + VOICE_START_TAG.length, indexOfClosingTag)
+    return voices.find { it.id == id }?.toNoteContentVoice()
+}
 
-        indexOfTitleTag != -1 && indexOfMediaTag == -1 -> FirstTagType.TITLE
-        indexOfTitleTag == -1 && indexOfMediaTag != -1 -> FirstTagType.MEDIA
-        else -> FirstTagType.NONE
-    }
+private fun getFirstTagType(text: String): FirstTagType {
+    class TypeIndex(val type: FirstTagType, val index: Int)
+
+    val typesList = listOf(
+        TypeIndex(FirstTagType.TITLE, text.indexOf(TITLE_START_TAG)),
+        TypeIndex(FirstTagType.MEDIA, text.indexOf(MEDIA_START_TAG)),
+        TypeIndex(FirstTagType.VOICE, text.indexOf(VOICE_START_TAG)),
+    )
+
+    val firstType = typesList
+        .filter { it.index != -1 }
+        .sortedBy(TypeIndex::index)
+        .firstOrNull()?.type
+
+    return firstType ?: FirstTagType.NONE
 }

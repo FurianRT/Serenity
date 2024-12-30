@@ -37,12 +37,12 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.toolspanel.internal.LineContent
-import com.furianrt.toolspanel.internal.RegularPanel
-import com.furianrt.toolspanel.internal.SelectedPanel
-import com.furianrt.toolspanel.internal.VoicePanel
-import com.furianrt.toolspanel.internal.font.FontContent
-import com.furianrt.toolspanel.internal.font.FontTitleBar
+import com.furianrt.toolspanel.internal.ui.voice.LineContent
+import com.furianrt.toolspanel.internal.ui.RegularPanel
+import com.furianrt.toolspanel.internal.ui.SelectedPanel
+import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
+import com.furianrt.toolspanel.internal.ui.font.FontContent
+import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
@@ -72,10 +72,8 @@ fun ActionsPanel(
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
-    onVoiceRecordEnd: () -> Unit,
+    onRecordComplete: () -> Unit,
     onVoiceRecordCancel: () -> Unit,
-    onVoiceRecordPause: () -> Unit,
-    onVoiceRecordResume: () -> Unit,
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
@@ -180,24 +178,19 @@ fun ActionsPanel(
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(
-                        onDoneClick = {
+                        noteId = noteId,
+                        onRecordComplete = {
                             isVoiceRecordingActive = false
-                            onVoiceRecordEnd()
+                            onRecordComplete()
                         },
                         lineContent = {
                             LineContent(
                                 modifier = heightModifier.clickableNoRipple {},
+                                noteId = noteId,
                                 onCancelClick = {
                                     isVoiceRecordingActive = false
                                     onVoiceRecordCancel()
                                 },
-                                onPauseClick = { isPlaying ->
-                                    if (isPlaying) {
-                                        onVoiceRecordResume()
-                                    } else {
-                                        onVoiceRecordPause()
-                                    }
-                                }
                             )
                         },
                     )

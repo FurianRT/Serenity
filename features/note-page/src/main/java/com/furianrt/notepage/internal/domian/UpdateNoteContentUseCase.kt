@@ -31,6 +31,8 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             .filterIsInstance<LocalNote.Content.MediaBlock>()
             .flatMap(LocalNote.Content.MediaBlock::media)
 
+        val newVoices = content.filterIsInstance<LocalNote.Content.Voice>()
+
         transactionsHelper.startTransaction {
             val mediaToDelete = mediaRepository.getMedia(noteId)
                 .first()
@@ -40,16 +42,30 @@ internal class UpdateNoteContentUseCase @Inject constructor(
                 .filterIsInstance<LocalNote.Content.MediaBlock>()
                 .flatMap(LocalNote.Content.MediaBlock::media)
 
+            val voicesToDelete = mediaRepository.getVoices(noteId)
+                .first()
+                .filterNot { voice -> newVoices.hasItem { it.id == voice.id } }
+
+            val voicesToInsert = content.filterIsInstance<LocalNote.Content.Voice>()
+
             val tagsToDelete = tagsRepository.getTags(noteId)
                 .first()
                 .filterNot { tag -> tags.hasItem { tag.title == it.title } }
 
             if (mediaToInsert.isNotEmpty()) {
-                mediaRepository.insert(noteId, mediaToInsert)
+                mediaRepository.insertMedia(noteId, mediaToInsert)
             }
 
             if (mediaToDelete.isNotEmpty()) {
-                mediaRepository.delete(noteId, mediaToDelete)
+                mediaRepository.deleteMedia(noteId, mediaToDelete)
+            }
+
+            if (voicesToInsert.isNotEmpty()) {
+                mediaRepository.insertVoice(noteId, voicesToInsert)
+            }
+
+            if (voicesToDelete.isNotEmpty()) {
+                mediaRepository.deleteVoice(noteId, voicesToDelete)
             }
 
             notesRepository.updateNoteText(noteId, content)
