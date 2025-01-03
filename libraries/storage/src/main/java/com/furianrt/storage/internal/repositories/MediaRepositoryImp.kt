@@ -1,13 +1,11 @@
 package com.furianrt.storage.internal.repositories
 
-import android.content.Context
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepMap
+import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
-import com.furianrt.domain.TransactionsHelper
-import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
@@ -26,7 +24,6 @@ import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVoice
 import com.furianrt.storage.internal.device.AppMediaSource
 import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -35,7 +32,6 @@ import java.io.File
 import javax.inject.Inject
 
 internal class MediaRepositoryImp @Inject constructor(
-    @ApplicationContext private val context: Context,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
@@ -43,7 +39,6 @@ internal class MediaRepositoryImp @Inject constructor(
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
-    private val dispatchers: DispatchersProvider,
 ) : MediaRepository {
 
     override suspend fun insertMedia(
