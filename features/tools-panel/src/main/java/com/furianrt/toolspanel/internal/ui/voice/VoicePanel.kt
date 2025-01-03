@@ -6,8 +6,10 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -74,7 +76,7 @@ internal fun VoicePanel(
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose {
-           viewModel.onEvent(VoiceEvent.OnScreenStopped)
+            viewModel.onEvent(VoiceEvent.OnScreenStopped)
         }
     }
 
@@ -160,7 +162,8 @@ private fun VoicePanelContent(
             modifier = Modifier
                 .offset(x = 20.dp, y = 17.dp)
                 .align(Alignment.CenterEnd),
-            showAnim = !state.isPaused,
+            volume = state.volume,
+            isPaused = state.isPaused,
             onClick = onDoneClick,
         )
     }
@@ -215,13 +218,14 @@ private fun Timer(
 @Composable
 private fun ButtonDone(
     modifier: Modifier = Modifier,
-    showAnim: Boolean,
+    volume: Float,
+    isPaused: Boolean,
     onClick: () -> Unit,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = if (showAnim) 0.85f else 0.7f,
-        targetValue = if (showAnim) 1f else 0.85f,
+    val dScale by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = 0.15f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = FAB_ANIM_DURATION,
@@ -231,6 +235,13 @@ private fun ButtonDone(
         ),
         label = "ActionButtonScaleAnim",
     )
+
+    val scale by animateFloatAsState(
+        targetValue = volume,
+        animationSpec = spring(stiffness = 200f),
+        label = "ActionButtonVolumeAnim",
+    )
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -238,8 +249,10 @@ private fun ButtonDone(
         Box(
             modifier = Modifier
                 .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
+                    val addScale = if (isPaused) 0f else dScale
+                    val result = (0.75f + 1.4f * scale + addScale).coerceAtMost(1.35f)
+                    scaleX = result
+                    scaleY = result
                 }
                 .size(84.dp)
                 .alpha(0.5f)
@@ -247,7 +260,13 @@ private fun ButtonDone(
         )
 
         FloatingActionButton(
-            modifier = Modifier.size(64.dp),
+            modifier = Modifier
+                .size(64.dp)
+                .graphicsLayer {
+                    val result = 1f + 0.6f * scale
+                    scaleX = result
+                    scaleY = result
+                },
             shape = CircleShape,
             elevation = FloatingActionButtonDefaults.elevation(0.dp),
             onClick = onClick,
@@ -284,6 +303,7 @@ private fun SelectedPanelPreview() {
         val state = VoiceUiState(
             isPaused = false,
             duration = "0:00:0",
+            volume = 0.5f,
         )
         VoicePanelContent(state = state) {
             VoiceLineContent(

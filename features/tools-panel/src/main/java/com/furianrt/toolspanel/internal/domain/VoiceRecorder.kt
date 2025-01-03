@@ -8,6 +8,8 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val MAX_VOLUME = 32767f
+
 @Singleton
 internal class VoiceRecorder @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -53,4 +55,6 @@ internal class VoiceRecorder @Inject constructor(
     fun pause() {
         recorder?.pause()
     }
+
+    fun getCurrentVolume(): Float = (recorder?.maxAmplitude ?: 0) / MAX_VOLUME
 }
