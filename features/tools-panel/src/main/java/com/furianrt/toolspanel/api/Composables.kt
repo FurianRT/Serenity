@@ -24,6 +24,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,7 +73,7 @@ fun ActionsPanel(
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
-    onRecordComplete: () -> Unit,
+    onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
@@ -81,9 +82,9 @@ fun ActionsPanel(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
-    var isVoiceRecordingActive by remember { mutableStateOf(false) }
-    var isFontPanelVisible by remember { mutableStateOf(false) }
-    var showAudioRecordPermissionDialog by remember { mutableStateOf(false) }
+    var isVoiceRecordingActive by rememberSaveable { mutableStateOf(false) }
+    var isFontPanelVisible by rememberSaveable { mutableStateOf(false) }
+    var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
 
     val audioRecordPermissionsState = rememberPermissionState(
         permission = PermissionsUtils.getAudioRecordPermission(),
@@ -179,18 +180,18 @@ fun ActionsPanel(
 
                     PanelMode.VOICE_RECORD -> VoicePanel(
                         noteId = noteId,
-                        onRecordComplete = {
+                        onRecordComplete = { record ->
                             isVoiceRecordingActive = false
-                            onRecordComplete()
+                            onRecordComplete(record)
+                        },
+                        onCancelRequest = {
+                            isVoiceRecordingActive = false
+                            onVoiceRecordCancel()
                         },
                         lineContent = {
                             LineContent(
                                 modifier = heightModifier.clickableNoRipple {},
                                 noteId = noteId,
-                                onCancelClick = {
-                                    isVoiceRecordingActive = false
-                                    onVoiceRecordCancel()
-                                },
                             )
                         },
                     )

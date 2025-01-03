@@ -148,7 +148,7 @@ internal fun VideoItem(
     val scaleValue by animateFloatAsState(
         targetValue = if (isSelected) SELECTED_ITEM_HEIGHT_DP else ITEM_SIZE_DP,
         animationSpec = tween(durationMillis = IMAGE_SCALE_ANIM_DURATION),
-        label = "ItemScale"
+        label = "ItemScale",
     )
     val context = LocalContext.current
     val request = remember(item.name) {

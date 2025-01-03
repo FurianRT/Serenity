@@ -1,7 +1,6 @@
 package com.furianrt.search.internal.ui
 
 import android.net.Uri
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -36,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -142,7 +140,6 @@ private fun ScreenContent(
     onEvent: (event: SearchEvent) -> Unit = {},
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
-    val view = LocalView.current
     var toolbarHeight by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
 
@@ -162,14 +159,8 @@ private fun ScreenContent(
                 onBackClick = { onEvent(SearchEvent.OnButtonBackClick) },
                 onCalendarClick = { onEvent(SearchEvent.OnButtonCalendarClick) },
                 onClearQueryClick = { onEvent(SearchEvent.OnButtonClearQueryClick) },
-                onRemoveFilterClick = { filter ->
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                    onEvent(SearchEvent.OnRemoveFilterClick(filter))
-                },
-                onUnselectedTagClick = { tag ->
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                    onEvent(SearchEvent.OnTagClick(tag.title))
-                },
+                onRemoveFilterClick = { onEvent(SearchEvent.OnRemoveFilterClick(it)) },
+                onUnselectedTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 onDateFilterClick = { onEvent(SearchEvent.OnDateFilterClick(it)) },
             )
         },
@@ -206,7 +197,6 @@ private fun SuccessContent(
     toolbarHeight: Int,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
     val focusManager = LocalFocusManager.current
 
     LaunchedEffect(listState.isScrollInProgress) {
@@ -260,10 +250,7 @@ private fun SuccessContent(
                         .animateItem()
                         .animateContentSize(),
                     tags = item.tags,
-                    onTagClick = { tag ->
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        onEvent(SearchEvent.OnTagClick(tag.title))
-                    },
+                    onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 )
 
                 is SearchListItem.Note -> NoteListItem(
@@ -276,10 +263,7 @@ private fun SuccessContent(
                     date = item.date,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = {},
-                    onTagClick = {
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        onEvent(SearchEvent.OnTagClick(it.title))
-                    },
+                    onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 )
 
                 is SearchListItem.NotesCountTitle -> NotesCountItem(

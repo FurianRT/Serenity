@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -61,7 +62,6 @@ import com.furianrt.toolspanel.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
-import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.toImmutableList
@@ -361,6 +361,9 @@ private fun ColorItem(
         modifier = modifier
             .size(40.dp)
             .background(color.value, CircleShape)
+            .applyIf(isSelected(color)) {
+                Modifier.background(Color.Black.copy(alpha = 0.2f), CircleShape)
+            }
             .clickableNoRipple { onClick(color) },
         contentAlignment = Alignment.Center,
     ) {
@@ -369,7 +372,7 @@ private fun ColorItem(
                 modifier = Modifier.size(28.dp),
                 painter = painterResource(uiR.drawable.ic_action_done),
                 contentDescription = null,
-                tint = Colors.Common.DarkGray,
+                tint = Color.Unspecified
             )
         }
     }

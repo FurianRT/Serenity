@@ -3,12 +3,14 @@ package com.furianrt.notepage.internal.ui.extensions
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.internal.ui.entities.NoteItem
+import com.furianrt.toolspanel.api.VoiceRecord
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -24,6 +26,12 @@ internal fun LocalNote.toNoteItem() = NoteItem(
 internal fun MediaResult.toMediaBlock() = MediaBlock(
     id = UUID.randomUUID().toString(),
     media = media.mapImmutable(MediaResult.Media::toMediaBlockMedia),
+)
+
+internal fun VoiceRecord.toUiVoice() = UiNoteContent.Voice(
+    id = id,
+    uri = uri,
+    duration = duration,
 )
 
 private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {

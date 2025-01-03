@@ -148,8 +148,8 @@ internal fun VideoPage(
             .build()
     }
     val mediaSource = remember(item.name) { ExoMediaItem.fromUri(item.uri) }
-    var playing by rememberSaveable(isPlaying, item.name) { mutableStateOf(isPlaying) }
     var isEnded by rememberSaveable(item.name) { mutableStateOf(false) }
+    var playing by rememberSaveable(isPlaying, item.name) { mutableStateOf(isPlaying && !isEnded) }
     var currentPosition by rememberSaveable(item.name) { mutableLongStateOf(0L) }
     var isThumbDragging by remember(item.name) { mutableStateOf(false) }
 
@@ -248,10 +248,12 @@ internal fun VideoPage(
             ButtonPlayPause(
                 isPlay = !playing || isEnded,
                 onClick = {
-                    if (!playing && isEnded) {
+                    if (isEnded) {
                         exoPlayer.seekTo(0)
+                        playing = true
+                    } else {
+                        playing = !playing
                     }
-                    playing = !playing
                 },
             )
         }

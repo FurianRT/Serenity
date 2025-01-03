@@ -1,5 +1,7 @@
 package com.furianrt.storage.internal.repositories
 
+import android.content.Context
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalNote
@@ -24,13 +26,16 @@ import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVoice
 import com.furianrt.storage.internal.device.AppMediaSource
 import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.withContext
+import java.io.File
 import javax.inject.Inject
 
 internal class MediaRepositoryImp @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
@@ -38,6 +43,7 @@ internal class MediaRepositoryImp @Inject constructor(
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
+    private val dispatchers: DispatchersProvider,
 ) : MediaRepository {
 
     override suspend fun insertMedia(
@@ -111,5 +117,13 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>> {
         return voiceDao.getVideos(noteId).deepMap(EntryNoteVoice::toNoteContentVoice)
+    }
+
+    override suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File? {
+        return appMediaSource.createVoiceFile(noteId, voiceId)
+    }
+
+    override suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean {
+        return appMediaSource.deleteVoiceFile(noteId, voiceId)
     }
 }

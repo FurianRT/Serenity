@@ -1,6 +1,7 @@
 package com.furianrt.toolspanel.internal.ui.voice
 
 import android.view.HapticFeedbackConstants
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -38,9 +39,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -48,32 +51,52 @@ import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private const val TAG = "VoicePanel"
+private const val FAB_ANIM_DURATION = 1000
 
 @Composable
 internal fun VoicePanel(
     noteId: String,
     modifier: Modifier = Modifier,
-    onRecordComplete: () -> Unit = {},
+    onRecordComplete: (record: VoiceRecord) -> Unit,
+    onCancelRequest: () -> Unit,
     lineContent: @Composable BoxScope.() -> Unit,
 ) {
-    val viewModel: VoiceViewModel = hiltViewModel(key = TAG + noteId)
+    val viewModel = hiltViewModel<VoiceViewModel, VoiceViewModel.Factory>(
+        key = TAG + noteId,
+        creationCallback = { it.create(noteId) },
+    )
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    LaunchedEffect(Unit) {
+        viewModel.onEvent(VoiceEvent.OnEnterComposition)
+    }
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose {
+           viewModel.onEvent(VoiceEvent.OnScreenStopped)
+        }
+    }
 
     LaunchedEffect(viewModel.effect) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is VoiceEffect.SendRecordCompleteEvent -> onRecordComplete()
+                    is VoiceEffect.SendRecordCompleteEvent -> onRecordComplete(effect.record)
+                    is VoiceEffect.CloseRecording -> onCancelRequest()
                 }
             }
     }
 
+    BackHandler {
+        viewModel.onEvent(VoiceEvent.OnCancelClick)
+    }
+
     VoicePanelContent(
         modifier = modifier,
-        onDoneClick = {
-            viewModel.onEvent(VoiceEvent.OnDoneClick)
-        },
+        state = uiState,
+        onDoneClick = { viewModel.onEvent(VoiceEvent.OnDoneClick) },
         lineContent = lineContent,
     )
 }
@@ -82,21 +105,18 @@ internal fun VoicePanel(
 internal fun BoxScope.LineContent(
     noteId: String,
     modifier: Modifier = Modifier,
-    onCancelClick: () -> Unit,
 ) {
-    val viewModel: VoiceViewModel = hiltViewModel(key = TAG + noteId)
+    val viewModel = hiltViewModel<VoiceViewModel, VoiceViewModel.Factory>(
+        key = TAG + noteId,
+        creationCallback = { it.create(noteId) },
+    )
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     VoiceLineContent(
         modifier = modifier,
         state = uiState,
-        onCancelClick = {
-            viewModel.onEvent(VoiceEvent.OnCancelClick)
-            onCancelClick()
-        },
-        onRecordClick = {
-            viewModel.onEvent(VoiceEvent.OnRecordClick)
-        }
+        onCancelClick = { viewModel.onEvent(VoiceEvent.OnCancelClick) },
+        onRecordClick = { viewModel.onEvent(VoiceEvent.OnPauseClick) }
     )
 }
 
@@ -116,8 +136,8 @@ private fun BoxScope.VoiceLineContent(
             modifier = Modifier
                 .padding(start = 8.dp)
                 .align(Alignment.CenterStart),
-            timer = state.duration.toString(),
-            isRecording = state.isRecording,
+            timer = state.duration,
+            isPaused = state.isPaused,
             onClick = onRecordClick,
         )
         ButtonCancel(
@@ -129,6 +149,7 @@ private fun BoxScope.VoiceLineContent(
 
 @Composable
 private fun VoicePanelContent(
+    state: VoiceUiState,
     modifier: Modifier = Modifier,
     onDoneClick: () -> Unit = {},
     lineContent: @Composable BoxScope.() -> Unit,
@@ -137,8 +158,9 @@ private fun VoicePanelContent(
         lineContent()
         ButtonDone(
             modifier = Modifier
-                .offset(x = 20.dp, y = 20.dp)
+                .offset(x = 20.dp, y = 17.dp)
                 .align(Alignment.CenterEnd),
+            showAnim = !state.isPaused,
             onClick = onDoneClick,
         )
     }
@@ -147,7 +169,7 @@ private fun VoicePanelContent(
 @Composable
 private fun Timer(
     timer: String,
-    isRecording: Boolean,
+    isPaused: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -162,46 +184,47 @@ private fun Timer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Text(
-            text = timer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
         AnimatedContent(
             modifier = Modifier
                 .size(22.dp)
                 .alpha(0.5f),
-            targetState = isRecording,
+            targetState = isPaused,
             label = "PlayAnim",
         ) { targetState ->
             if (targetState) {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_pause),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            } else {
                 Icon(
                     painter = painterResource(uiR.drawable.ic_play),
                     tint = Color.Unspecified,
                     contentDescription = null,
                 )
+            } else {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_pause),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
             }
         }
+        Text(
+            text = timer,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
 @Composable
 private fun ButtonDone(
     modifier: Modifier = Modifier,
+    showAnim: Boolean,
     onClick: () -> Unit,
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
     val scale by infiniteTransition.animateFloat(
-        initialValue = 0.85f,
-        targetValue = 1f,
+        initialValue = if (showAnim) 0.85f else 0.7f,
+        targetValue = if (showAnim) 1f else 0.85f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 1000,
+                durationMillis = FAB_ANIM_DURATION,
                 easing = LinearEasing,
             ),
             repeatMode = RepeatMode.Reverse,
@@ -258,9 +281,13 @@ private fun ButtonCancel(
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
-        VoicePanelContent {
+        val state = VoiceUiState(
+            isPaused = false,
+            duration = "0:00:0",
+        )
+        VoicePanelContent(state = state) {
             VoiceLineContent(
-                state = VoiceUiState(),
+                state = state,
             )
         }
     }

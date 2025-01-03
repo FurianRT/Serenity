@@ -10,9 +10,7 @@ import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
-import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
@@ -45,6 +43,7 @@ import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextEntered
 import com.furianrt.notepage.internal.ui.PageEvent.OnTitleFocusChange
 import com.furianrt.notepage.internal.ui.PageEvent.OnTitleTextChange
+import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -55,6 +54,7 @@ import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
+import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -154,7 +154,8 @@ internal class PageViewModel @AssistedInject constructor(
                 launch(NonCancellable) { saveNoteContent(successState) }
             }
 
-            is OnMediaSelected -> handleMediaSelectorResult(event.result)
+            is OnMediaSelected -> addNewBlock(event.result.toMediaBlock())
+            is OnVoiceRecorded -> addNewBlock(event.record.toUiVoice())
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
             is OnFontSizeSelected -> updateFontSize(event.size)
@@ -170,12 +171,11 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleMediaSelectorResult(result: MediaResult) {
+    private fun addNewBlock(newBlock: UiNoteContent) {
         hasContentChanged = true
         val titleIndexToFocus = findTitleIndex(focusedTitleId)?.let { it + 2 }
         _state.updateState<PageUiState.Success> { currentState ->
-            val newMediaBlock = result.toMediaBlock()
-            val newContent = buildContentWithNewMediaBlock(currentState.content, newMediaBlock)
+            val newContent = buildContentWithNewBlock(currentState.content, newBlock)
             if (currentState.isInEditMode) {
                 currentState.copy(content = newContent.addTitleTemplates())
             } else {
@@ -196,12 +196,12 @@ internal class PageViewModel @AssistedInject constructor(
         return index.takeIf { it != -1 }
     }
 
-    private fun buildContentWithNewMediaBlock(
+    private fun buildContentWithNewBlock(
         content: List<UiNoteContent>,
-        mediaBlock: MediaBlock,
+        newBlock: UiNoteContent,
     ): ImmutableList<UiNoteContent> {
         val focusedTitleIndex = findTitleIndex(focusedTitleId)
-            ?: return (content + mediaBlock).toImmutableList()
+            ?: return (content + newBlock).toImmutableList()
         val focusedTitle = content[focusedTitleIndex] as UiNoteContent.Title
         val selection = focusedTitle.state.selection.start
         return when {
@@ -209,7 +209,7 @@ internal class PageViewModel @AssistedInject constructor(
                 if (focusedTitle.state.text.startsWith(' ')) {
                     focusedTitle.state.edit { delete(0, 1) }
                 }
-                content.toPersistentList().add(focusedTitleIndex, mediaBlock)
+                content.toPersistentList().add(focusedTitleIndex, newBlock)
             }
 
             selection >= focusedTitle.state.text.length -> {
@@ -227,7 +227,7 @@ internal class PageViewModel @AssistedInject constructor(
                 val titleSecondPart = focusedTitle.also { it.state.clearText() }
                 val result = content.toMutableList()
                 result[focusedTitleIndex] = titleFirstPart
-                result.add(focusedTitleIndex + 1, mediaBlock)
+                result.add(focusedTitleIndex + 1, newBlock)
                 result.add(focusedTitleIndex + 2, titleSecondPart)
                 result.toImmutableList()
             }
@@ -266,7 +266,7 @@ internal class PageViewModel @AssistedInject constructor(
                 }
                 val result = content.toMutableList()
                 result[focusedTitleIndex] = titleFirstPart
-                result.add(focusedTitleIndex + 1, mediaBlock)
+                result.add(focusedTitleIndex + 1, newBlock)
                 result.add(focusedTitleIndex + 2, titleSecondPart)
                 result.toImmutableList()
             }

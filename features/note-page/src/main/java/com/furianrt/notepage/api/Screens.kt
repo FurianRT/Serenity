@@ -75,15 +75,17 @@ class PageScreenState(
             listState: LazyListState,
             titleScrollState: ScrollState,
             bottomScaffoldState: BottomSheetScaffoldState,
-        ): Saver<PageScreenState, Boolean> = Saver(
-            save = { it.hasContentChanged },
+        ): Saver<PageScreenState, Pair<Boolean, Boolean>> = Saver(
+            save = { it.hasContentChanged to it.isVoiceRecordActive },
             restore = {
                 PageScreenState(
                     listState = listState,
                     titleScrollState = titleScrollState,
                     bottomScaffoldState = bottomScaffoldState,
-                    hasContentChanged = it,
-                )
+                    hasContentChanged = it.first,
+                ).apply {
+                    this.isVoiceRecordActive = it.second
+                }
             },
         )
     }

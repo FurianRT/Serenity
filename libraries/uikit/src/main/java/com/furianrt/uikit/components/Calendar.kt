@@ -380,6 +380,7 @@ private fun DayPickerContent(
                     shape = shape,
                     isSelected = isSelected,
                     isEdgeDate = startDate?.date == day.date || endDate?.date == day.date,
+                    isCurrentDay = day.date == LocalDate.now(),
                     onClick = { onDateSelected(SelectedDate(it.date)) },
                 )
             },
@@ -593,6 +594,7 @@ private fun DayCell(
     day: CalendarDay,
     isSelected: Boolean,
     isEdgeDate: Boolean,
+    isCurrentDay: Boolean,
     shape: Shape,
     onClick: (day: CalendarDay) -> Unit,
     modifier: Modifier = Modifier,
@@ -617,6 +619,11 @@ private fun DayCell(
             modifier = Modifier.alpha(if (day.position == DayPosition.MonthDate) 1f else 0.5f),
             text = day.date.dayOfMonth.toString(),
             style = MaterialTheme.typography.bodyLarge,
+            color = if (isCurrentDay && !isEdgeDate) {
+                MaterialTheme.colorScheme.primaryContainer
+            } else {
+                MaterialTheme.typography.bodyLarge.color
+            },
             textAlign = TextAlign.Center,
         )
     }
@@ -692,7 +699,7 @@ private fun WeeksHeader(
 private fun SingleChoicePreview() {
     SerenityTheme {
         SingleChoiceCalendar(
-            selectedDate = SelectedDate(LocalDate.now()),
+            selectedDate = SelectedDate(LocalDate.now().plusDays(5)),
             hazeState = HazeState(),
         )
     }
@@ -702,7 +709,7 @@ private fun SingleChoicePreview() {
 @Preview
 private fun MultiChoicePreview() {
     SerenityTheme {
-        val date = LocalDate.now()
+        val date = LocalDate.now().minusDays(1)
         MultiChoiceCalendar(
             startDate = SelectedDate(date),
             endDate = SelectedDate(date.plusDays(12)),

@@ -451,7 +451,10 @@ private fun SuccessScreen(
                             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
-                            onRecordComplete = { state.isVoiceRecordActive = false },
+                            onRecordComplete = { record ->
+                                state.isVoiceRecordActive = false
+                                onEvent(PageEvent.OnVoiceRecorded(record))
+                            },
                             onVoiceRecordCancel = { state.isVoiceRecordActive = false },
                             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },

@@ -6,6 +6,7 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
 
@@ -41,6 +42,7 @@ internal sealed interface PageEvent {
     data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaShareClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaSelected(val result: MediaResult) : PageEvent
+    data class OnVoiceRecorded(val record: VoiceRecord) : PageEvent
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
     data object OnOnSaveContentRequest : PageEvent

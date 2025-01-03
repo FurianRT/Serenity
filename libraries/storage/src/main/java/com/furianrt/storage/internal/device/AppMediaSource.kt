@@ -12,6 +12,9 @@ import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val MEDIA_FOLDER = "media"
+private const val VOICE_FOLDER = "voice"
+
 @Singleton
 internal class AppMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -20,9 +23,9 @@ internal class AppMediaSource @Inject constructor(
     suspend fun saveMediaFile(
         noteId: String,
         media: LocalNote.Content.Media,
-    ): Uri? = withContext(dispatchers.default) {
+    ): Uri? = withContext(dispatchers.io) {
         try {
-            val destFile = File(context.filesDir, "$noteId/${media.name}")
+            val destFile = File(context.filesDir, "$noteId/$MEDIA_FOLDER/${media.name}")
             destFile.parentFile?.mkdirs()
             context.contentResolver.openInputStream(media.uri)?.use { inputStream ->
                 FileOutputStream(destFile).use { outputStream ->
@@ -36,13 +39,14 @@ internal class AppMediaSource @Inject constructor(
         }
     }
 
-    suspend fun deleteMediaFile(noteId: String, name: String): Boolean = withContext(dispatchers.io) {
-        return@withContext try {
-            File(context.filesDir, "$noteId/$name").delete()
-        } catch (e: Exception) {
-            false
+    suspend fun deleteMediaFile(noteId: String, name: String): Boolean =
+        withContext(dispatchers.io) {
+            return@withContext try {
+                File(context.filesDir, "$noteId/$MEDIA_FOLDER/$name").delete()
+            } catch (e: Exception) {
+                false
+            }
         }
-    }
 
     suspend fun deleteMediaFile(noteId: String, names: Set<String>) {
         names.forEach { deleteMediaFile(noteId, it) }
@@ -52,6 +56,32 @@ internal class AppMediaSource @Inject constructor(
         return@withContext try {
             File(context.filesDir, noteId).delete()
         } catch (e: Exception) {
+            false
+        }
+    }
+
+    suspend fun createVoiceFile(
+        noteId: String,
+        voiceId: String,
+    ): File? = withContext(dispatchers.io) {
+        return@withContext try {
+            File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId").apply {
+                parentFile?.mkdirs()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
+    suspend fun deleteVoiceFile(
+        noteId: String,
+        voiceId: String,
+    ): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId").delete()
+        } catch (e: Exception) {
+            e.printStackTrace()
             false
         }
     }
