@@ -7,7 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.toolspanel.api.VoiceRecord
-import com.furianrt.toolspanel.internal.domain.VoiceRecorder
+import com.furianrt.domain.voice.AudioRecorder
+import com.furianrt.toolspanel.internal.domain.VoiceVolumeHolder
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.extensions.toTimeString
 import dagger.assisted.Assisted
@@ -27,13 +28,14 @@ import java.util.UUID
 
 private const val TIME_PATTERN = "m:ss:S"
 private const val TIMER_STEP_MILLS = 100L
-private const val VOLUME_STEP_MILLS = 50L
+private const val VOLUME_STEP_MILLS = 100L
 
 private class RecordData(val id: String, val uri: Uri)
 
 @HiltViewModel(assistedFactory = VoiceViewModel.Factory::class)
 internal class VoiceViewModel @AssistedInject constructor(
-    private val voiceRecorder: VoiceRecorder,
+    private val audioRecorder: AudioRecorder,
+    private val volumeHolder: VoiceVolumeHolder,
     private val mediaRepository: MediaRepository,
     @Assisted private val noteId: String,
 ) : ViewModel() {
@@ -57,7 +59,7 @@ internal class VoiceViewModel @AssistedInject constructor(
         ),
     )
 
-    private val _effect = MutableSharedFlow<VoiceEffect>(extraBufferCapacity = 10)
+    private val _effect = MutableSharedFlow<VoiceEffect>(extraBufferCapacity = 5)
     val effect = _effect.asSharedFlow()
 
     private var recordData: RecordData? = null
@@ -81,7 +83,7 @@ internal class VoiceViewModel @AssistedInject constructor(
     }
 
     private fun startRecording() {
-        if (recordJob != null || voiceRecorder.isRecording) {
+        if (recordJob != null || audioRecorder.isRecording) {
             return
         }
         durationState.update { 0 }
@@ -98,7 +100,7 @@ internal class VoiceViewModel @AssistedInject constructor(
                 return@launch
             }
 
-            if (voiceRecorder.start(destinationFile)) {
+            if (audioRecorder.start(destinationFile)) {
                 recordData = RecordData(id = recordId, uri = destinationFile.toUri())
                 startTimer()
                 startVolume()
@@ -110,10 +112,10 @@ internal class VoiceViewModel @AssistedInject constructor(
     }
 
     private fun cancelRecording() {
-        if (!voiceRecorder.isRecording) {
+        if (!audioRecorder.isRecording) {
             return
         }
-        voiceRecorder.stop()
+        audioRecorder.stop()
         val recordId = recordData!!.id
         launch { mediaRepository.deleteVoiceFile(noteId, recordId) }
         reset()
@@ -121,7 +123,7 @@ internal class VoiceViewModel @AssistedInject constructor(
     }
 
     private fun completeRecording() {
-        if (!voiceRecorder.isRecording) {
+        if (!audioRecorder.isRecording) {
             return
         }
 
@@ -129,9 +131,10 @@ internal class VoiceViewModel @AssistedInject constructor(
             id = recordData!!.id,
             uri = recordData!!.uri,
             duration = durationState.value.toInt(),
+            volume = volumeHolder.getVolume(),
         )
 
-        if (voiceRecorder.stop()) {
+        if (audioRecorder.stop()) {
             _effect.tryEmit(VoiceEffect.SendRecordCompleteEvent(result))
         } else {
             launch { mediaRepository.deleteVoiceFile(noteId, result.id) }
@@ -141,8 +144,8 @@ internal class VoiceViewModel @AssistedInject constructor(
     }
 
     private fun pauseRecording() {
-        if (voiceRecorder.isRecording) {
-            voiceRecorder.pause()
+        if (audioRecorder.isRecording) {
+            audioRecorder.pause()
             stopTimer()
             isPausedState.update { true }
             stopVolume()
@@ -150,8 +153,8 @@ internal class VoiceViewModel @AssistedInject constructor(
     }
 
     private fun resumeRecording() {
-        if (voiceRecorder.isRecording) {
-            voiceRecorder.resume()
+        if (audioRecorder.isRecording) {
+            audioRecorder.resume()
             startTimer()
             isPausedState.update { false }
             startVolume()
@@ -179,7 +182,9 @@ internal class VoiceViewModel @AssistedInject constructor(
             volumeJob = launch {
                 while (true) {
                     delay(VOLUME_STEP_MILLS)
-                    volumeState.update { voiceRecorder.getCurrentVolume() }
+                    val volume = audioRecorder.getCurrentVolume()
+                    volumeState.update { volume }
+                    volumeHolder.add(volume)
                 }
             }
         }
@@ -197,6 +202,7 @@ internal class VoiceViewModel @AssistedInject constructor(
         stopTimer()
         stopVolume()
         recordData = null
+        volumeHolder.clear()
     }
 
     private fun buildState(

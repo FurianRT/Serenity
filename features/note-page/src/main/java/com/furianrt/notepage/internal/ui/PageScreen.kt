@@ -69,6 +69,7 @@ import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentTitle
+import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -103,6 +104,7 @@ internal fun NotePageScreenInternal(
     state: PageScreenState,
     noteId: String,
     isInEditMode: Boolean,
+    isSelected: Boolean,
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -164,6 +166,10 @@ internal fun NotePageScreenInternal(
         if (isInEditMode && isListAtTop) {
             state.listState.requestScrollToItem(0)
         }
+    }
+
+    LaunchedEffect(isSelected) {
+        viewModel.onEvent(PageEvent.OnIsSelectedChange(isSelected))
     }
 
     PageScreenContent(
@@ -381,14 +387,48 @@ private fun SuccessScreen(
                             dropDownHazeState = hazeState,
                             clickable = true,
                             onClick = { onEvent(PageEvent.OnMediaClick(it)) },
-                            onRemoveClick = {
-                                onEvent(PageEvent.OnMediaRemoveClick(it))
+                            onRemoveClick = { media ->
+                                onEvent(PageEvent.OnMediaRemoveClick(media))
                                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                             },
                             onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
                         )
 
-                        is UiNoteContent.Voice -> {} // TODO fix
+                        is UiNoteContent.Voice -> {
+                            val prevItem = uiState.content.getOrNull(index - 1)
+                            val nextItem = uiState.content.getOrNull(index + 1)
+                            val isPrevMediaBlock = prevItem is UiNoteContent.MediaBlock
+                            val isNextMediaBlock = nextItem is UiNoteContent.MediaBlock
+                            NoteContentVoice(
+                                modifier = Modifier
+                                    .padding(
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                        top = if (prevItem != null && isPrevMediaBlock) {
+                                            14.dp
+                                        } else {
+                                            0.dp
+                                        },
+                                        bottom = if (nextItem != null && isNextMediaBlock) {
+                                            14.dp
+                                        } else {
+                                            0.dp
+                                        },
+                                    )
+                                    .animateItem(),
+                                voice = item,
+                                isPlaying = item.id == uiState.playingVoiceId,
+                                isRemovable = uiState.isInEditMode,
+                                onRemoveClick = { voice ->
+                                    onEvent(PageEvent.OnVoiceRemoveClick(voice))
+                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                },
+                                onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
+                                onProgressSelected = { voice, value ->
+                                    onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
+                                },
+                            )
+                        }
                     }
                 }
                 if (uiState.tags.isNotEmpty()) {
@@ -510,6 +550,7 @@ private fun SuccessScreenPreview() {
                 noteId = "123",
                 isInEditMode = false,
                 tags = persistentListOf(),
+                playingVoiceId = null,
                 fontFamily = UiNoteFontFamily.QUICK_SAND,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 15,

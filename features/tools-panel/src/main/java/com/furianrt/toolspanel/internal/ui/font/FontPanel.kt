@@ -21,12 +21,14 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -139,6 +141,7 @@ internal fun FontContent(
     val contentHeight = imeHeight - density.run { navigationBarsHeight.toDp() }
 
     val listState = rememberLazyGridState()
+    val colorsListState = rememberLazyListState()
 
     LaunchedEffect(imeTarget, imeSource) {
         val imeMaxHeight = max(imeTarget, imeSource)
@@ -163,6 +166,7 @@ internal fun FontContent(
             onFontColorSelected = onFontColorSelected,
             onFontSizeSelected = onFontSizeSelected,
             listState = listState,
+            colorsListState = colorsListState,
         )
     } else {
         AnimatedVisibility(
@@ -178,6 +182,7 @@ internal fun FontContent(
                 onFontColorSelected = onFontColorSelected,
                 onFontSizeSelected = onFontSizeSelected,
                 listState = listState,
+                colorsListState = colorsListState,
             )
         }
     }
@@ -191,6 +196,7 @@ private fun Content(
     onFontSizeSelected: (size: Int) -> Unit,
     onEvent: (event: FontPanelEvent) -> Unit,
     listState: LazyGridState,
+    colorsListState: LazyListState,
     modifier: Modifier = Modifier,
 ) {
     val showShadow by remember {
@@ -230,6 +236,7 @@ private fun Content(
             span = { GridItemSpan(spanCount) }
         ) {
             LazyRow(
+                state = colorsListState,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 contentPadding = PaddingValues(
                     start = 8.dp,
@@ -434,6 +441,7 @@ private fun ContentPreview() {
             onFontColorSelected = {},
             onFontSizeSelected = {},
             listState = rememberLazyGridState(),
+            colorsListState = rememberLazyListState(),
         )
     }
 }

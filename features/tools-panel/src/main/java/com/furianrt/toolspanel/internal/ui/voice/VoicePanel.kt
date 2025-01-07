@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.FloatingActionButtonDefaults
@@ -30,14 +31,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -54,6 +58,7 @@ import com.furianrt.uikit.R as uiR
 
 private const val TAG = "VoicePanel"
 private const val FAB_ANIM_DURATION = 1000
+private const val VOLUME_MULTIPLIER = 2.5f
 
 @Composable
 internal fun VoicePanel(
@@ -177,6 +182,14 @@ private fun Timer(
     onClick: () -> Unit,
 ) {
     val view = LocalView.current
+    val textMeasurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.bodySmall
+    val density = LocalDensity.current
+    val timeWidth = remember {
+        density.run {
+            textMeasurer.measure(text = "88:88:8", style = style, maxLines = 1).size.width.toDp()
+        }
+    }
     Row(
         modifier = modifier
             .clickableNoRipple {
@@ -187,6 +200,11 @@ private fun Timer(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
+        Text(
+            modifier = Modifier.width(timeWidth),
+            text = timer,
+            style = style,
+        )
         AnimatedContent(
             modifier = Modifier
                 .size(22.dp)
@@ -208,10 +226,6 @@ private fun Timer(
                 )
             }
         }
-        Text(
-            text = timer,
-            style = MaterialTheme.typography.bodyMedium,
-        )
     }
 }
 
@@ -237,7 +251,7 @@ private fun ButtonDone(
     )
 
     val scale by animateFloatAsState(
-        targetValue = volume,
+        targetValue = (volume * VOLUME_MULTIPLIER).coerceAtMost(1f),
         animationSpec = spring(stiffness = 200f),
         label = "ActionButtonVolumeAnim",
     )

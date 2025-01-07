@@ -10,6 +10,8 @@ import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.voice.AudioPlayer
+import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -29,6 +31,7 @@ import com.furianrt.notepage.internal.ui.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.PageEvent.OnFontColorSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnFontFamilySelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnFontSizeSelected
+import com.furianrt.notepage.internal.ui.PageEvent.OnIsSelectedChange
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaRemoveClick
@@ -43,7 +46,10 @@ import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextEntered
 import com.furianrt.notepage.internal.ui.PageEvent.OnTitleFocusChange
 import com.furianrt.notepage.internal.ui.PageEvent.OnTitleTextChange
+import com.furianrt.notepage.internal.ui.PageEvent.OnVoicePlayClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceRecorded
+import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.entities.NoteItem
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -52,9 +58,11 @@ import com.furianrt.notepage.internal.ui.extensions.removeMedia
 import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
+import com.furianrt.notepage.internal.ui.extensions.removeVoice
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
+import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -93,9 +101,10 @@ internal class PageViewModel @AssistedInject constructor(
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val permissionsUtils: PermissionsUtils,
     private val appearanceRepository: AppearanceRepository,
+    private val audioPlayer: AudioPlayer,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
-) : ViewModel(), DialogResultListener {
+) : ViewModel(), DialogResultListener, AudioPlayerListener {
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
     val state: StateFlow<PageUiState> = _state.asStateFlow()
@@ -117,6 +126,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
+        audioPlayer.setProgressListener(this)
         observeNote()
     }
 
@@ -127,12 +137,14 @@ internal class PageViewModel @AssistedInject constructor(
             }
         }
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
+        audioPlayer.clearProgressListener()
         notesRepository.deleteNoteContentFromCache(noteId)
     }
 
     fun onEvent(event: PageEvent) {
         when (event) {
             is OnEditModeStateChange -> launch { changeEditModeState(event.isEnabled) }
+            is OnIsSelectedChange -> onIsSelectedChange(event.isSelected)
             is OnTagRemoveClick -> removeTag(event.tag)
             is OnTagDoneEditing -> addTag(event.tag)
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
@@ -159,6 +171,9 @@ internal class PageViewModel @AssistedInject constructor(
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
             is OnFontSizeSelected -> updateFontSize(event.size)
+            is OnVoicePlayClick -> onVoicePlayClick(event.voice)
+            is OnVoiceProgressSelected -> onVoiceProgressSelected(event.voice, event.value)
+            is OnVoiceRemoveClick -> removeVoiceRecord(event.voice)
         }
     }
 
@@ -168,6 +183,38 @@ internal class PageViewModel @AssistedInject constructor(
                 @Suppress("UNCHECKED_CAST")
                 removeMedia(result.data as Set<String>)
             }
+        }
+    }
+
+    override fun onAudioProgressChange(progress: Float) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            if (currentState.playingVoiceId != null) {
+                currentState.copy(
+                    content = currentState.content.updateVoiceProgress(
+                        id = currentState.playingVoiceId,
+                        progress = progress,
+                    ),
+                )
+            } else {
+                currentState
+            }
+        }
+    }
+
+    override fun onAudioPlayComplete() {
+        audioPlayer.stop()
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(
+                content = if (currentState.playingVoiceId != null) {
+                    currentState.content.updateVoiceProgress(
+                        id = currentState.playingVoiceId,
+                        progress = 0f,
+                    )
+                } else {
+                    currentState.content
+                },
+                playingVoiceId = null,
+            )
         }
     }
 
@@ -342,21 +389,84 @@ internal class PageViewModel @AssistedInject constructor(
         )
     }
 
-    private fun removeMedia(mediaNames: Set<String>) = launch(NonCancellable) {
+    private fun removeMedia(mediaNames: Set<String>) {
         if (mediaNames.isEmpty()) {
-            return@launch
+            return
         }
-        _state.updateState<PageUiState.Success> { currentState ->
-            var newContent = currentState.content
-            mediaNames.forEach {
-                newContent = newContent.removeMedia(it)
-            }
-            currentState.copy(content = newContent).also {
-                if (isInEditMode) {
-                    hasContentChanged = true
-                } else {
-                    saveNoteContent(it)
+        launch(NonCancellable) {
+            _state.updateState<PageUiState.Success> { currentState ->
+                var newContent = currentState.content
+                mediaNames.forEach { newContent = newContent.removeMedia(it) }
+                currentState.copy(content = newContent).also {
+                    if (isInEditMode) {
+                        hasContentChanged = true
+                    } else {
+                        saveNoteContent(it)
+                    }
                 }
+            }
+        }
+    }
+
+    private fun removeVoiceRecord(voice: UiNoteContent.Voice) {
+        launch(NonCancellable) {
+            _state.updateState<PageUiState.Success> { currentState ->
+                val playingVoiceId = if (currentState.playingVoiceId == voice.id) {
+                    audioPlayer.stop()
+                    null
+                } else {
+                    currentState.playingVoiceId
+                }
+                currentState.copy(
+                    content = currentState.content.removeVoice(voice.id),
+                    playingVoiceId = playingVoiceId,
+                ).also {
+                    if (isInEditMode) {
+                        hasContentChanged = true
+                    } else {
+                        saveNoteContent(it)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onVoicePlayClick(voice: UiNoteContent.Voice) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            when (currentState.playingVoiceId) {
+                voice.id -> {
+                    audioPlayer.stop()
+                    currentState.copy(playingVoiceId = null)
+                }
+                null -> {
+                    audioPlayer.play(voice.uri, voice.progress)
+                    currentState.copy(playingVoiceId = voice.id)
+                }
+                else -> {
+                    audioPlayer.stop()
+                    audioPlayer.play(voice.uri, voice.progress)
+                    currentState.copy(playingVoiceId = voice.id)
+                }
+            }
+        }
+    }
+
+    private fun onVoiceProgressSelected(voice: UiNoteContent.Voice, progress: Float) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            if (voice.id == currentState.playingVoiceId) {
+                audioPlayer.setProgress(progress)
+            }
+            currentState.copy(
+                content = currentState.content.updateVoiceProgress(voice.id, progress),
+            )
+        }
+    }
+
+    private fun onIsSelectedChange(isSelected: Boolean) {
+        if (!isSelected) {
+            audioPlayer.stop()
+            _state.updateState<PageUiState.Success> { currentState ->
+                currentState.copy(playingVoiceId = null)
             }
         }
     }
@@ -428,6 +538,7 @@ internal class PageViewModel @AssistedInject constructor(
                     noteId = note.id,
                     content = note.content,
                     tags = note.tags,
+                    playingVoiceId = null,
                     fontFamily = note.fontFamily,
                     fontColor = note.fontColor,
                     fontSize = note.fontSize,

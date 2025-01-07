@@ -24,6 +24,7 @@ internal fun EntryNoteVoice.toNoteContentVoice() = LocalNote.Content.Voice(
     id = id,
     uri = uri,
     duration = duration,
+    volume = volume,
 )
 
 internal fun LocalNote.Content.Image.toEntryImage(
@@ -56,4 +57,5 @@ internal fun LocalNote.Content.Voice.toEntryVoice(noteId: String) = EntryNoteVoi
     noteId = noteId,
     uri = uri,
     duration = duration,
+    volume = volume,
 )

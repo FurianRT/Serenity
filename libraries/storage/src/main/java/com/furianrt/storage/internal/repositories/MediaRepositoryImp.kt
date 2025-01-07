@@ -108,6 +108,10 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override suspend fun deleteVoice(noteId: String, voices: List<LocalNote.Content.Voice>) {
         voiceDao.delete(voices.map { PartVoiceId(it.id) })
+        appMediaSource.deleteVoiceFile(
+            noteId = noteId,
+            voiceIds = voices.map(LocalNote.Content.Voice::id).toSet(),
+        )
     }
 
     override fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>> {

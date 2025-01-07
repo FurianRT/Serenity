@@ -90,6 +90,7 @@ internal fun NoteCreateScreen(
                 state = pageScreenState,
                 noteId = uiState.note.id,
                 isInEditMode = uiState.isInEditMode,
+                isSelected = true,
                 isNoteCreationMode = true,
                 onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
                 openMediaViewScreen = openMediaViewScreen,

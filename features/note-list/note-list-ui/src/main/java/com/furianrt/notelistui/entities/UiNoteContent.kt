@@ -21,7 +21,9 @@ sealed class UiNoteContent(open val id: String) {
     data class Voice(
         override val id: String,
         val uri: Uri,
-        val duration: Int,
+        val duration: Long,
+        val progress: Float,
+        val volume: ImmutableList<Float>,
     ) : UiNoteContent(id)
 
     @Immutable

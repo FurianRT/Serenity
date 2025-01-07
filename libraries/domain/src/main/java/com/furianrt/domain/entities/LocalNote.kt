@@ -48,6 +48,7 @@ data class LocalNote(
             val uri: Uri,
 
             val duration: Int,
+            val volume: List<Float>,
         ) : Content(id)
 
         @Serializable

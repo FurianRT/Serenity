@@ -257,6 +257,7 @@ private fun SuccessScreen(
             NotePageScreen(
                 state = pageScreenState,
                 noteId = uiState.notes[index].id,
+                isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
                 onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },

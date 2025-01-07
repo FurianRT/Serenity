@@ -39,14 +39,16 @@ internal class AppMediaSource @Inject constructor(
         }
     }
 
-    suspend fun deleteMediaFile(noteId: String, name: String): Boolean =
-        withContext(dispatchers.io) {
-            return@withContext try {
-                File(context.filesDir, "$noteId/$MEDIA_FOLDER/$name").delete()
-            } catch (e: Exception) {
-                false
-            }
+    suspend fun deleteMediaFile(
+        noteId: String,
+        name: String,
+    ): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(context.filesDir, "$noteId/$MEDIA_FOLDER/$name").delete()
+        } catch (e: Exception) {
+            false
         }
+    }
 
     suspend fun deleteMediaFile(noteId: String, names: Set<String>) {
         names.forEach { deleteMediaFile(noteId, it) }
@@ -84,5 +86,9 @@ internal class AppMediaSource @Inject constructor(
             e.printStackTrace()
             false
         }
+    }
+
+    suspend fun deleteVoiceFile(noteId: String, voiceIds: Set<String>) {
+        voiceIds.forEach { deleteVoiceFile(noteId, it) }
     }
 }

@@ -30,6 +30,9 @@ internal class EntryNoteVoice(
 
     @ColumnInfo(name = FIELD_DURATION)
     val duration: Int,
+
+    @ColumnInfo(name = FIELD_VOLUME)
+    val volume: List<Float>,
 ) {
 
     companion object {
@@ -38,6 +41,7 @@ internal class EntryNoteVoice(
         const val FIELD_NOTE_ID = "note_id"
         const val FIELD_URI = "uri"
         const val FIELD_DURATION = "duration"
+        const val FIELD_VOLUME = "volume"
     }
 }
 

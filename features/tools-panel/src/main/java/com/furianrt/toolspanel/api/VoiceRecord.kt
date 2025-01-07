@@ -6,4 +6,5 @@ data class VoiceRecord(
     val id: String,
     val uri: Uri,
     val duration: Int,
+    val volume: List<Float>,
 )

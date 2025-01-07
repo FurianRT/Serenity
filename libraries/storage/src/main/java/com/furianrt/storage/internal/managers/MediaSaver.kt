@@ -16,7 +16,6 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.coroutines.CoroutineContext
 
 private class QueueEntry(
     val noteId: String,
@@ -47,8 +46,8 @@ internal class MediaSaver @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val appMediaSource: AppMediaSource,
-) : CoroutineScope {
-    override val coroutineContext: CoroutineContext = dispatchers.io + SupervisorJob()
+) {
+    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
     private val canceledEntries = mutableSetOf<QueueEntry>()
     private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = Int.MAX_VALUE)
 
@@ -62,11 +61,11 @@ internal class MediaSaver @Inject constructor(
                 }
             }
             .onEach(::saveMedia)
-            .launchIn(this)
+            .launchIn(scope)
     }
 
     fun save(noteId: String, media: List<LocalNote.Content.Media>) {
-        launch {
+        scope.launch {
             media
                 .sortedBy { it is LocalNote.Content.Video }
                 .forEach { queue.emit(QueueEntry(noteId, it)) }

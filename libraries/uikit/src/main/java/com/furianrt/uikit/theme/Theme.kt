@@ -29,7 +29,7 @@ private val defaultColorScheme = darkColorScheme(
     tertiary = Color.White.copy(alpha = 0.1f),
     onTertiary = Color.White,
     tertiaryContainer = Color.White.copy(alpha = 0.2f),
-    onTertiaryContainer = Color.White,
+    onTertiaryContainer = Color.White.copy(alpha = 0.3f),
     errorContainer = Color(0xFFF2402F),
     onErrorContainer = Color.White,
     scrim = Color.Black.copy(alpha = 0.5f),

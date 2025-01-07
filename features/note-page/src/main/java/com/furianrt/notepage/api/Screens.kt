@@ -119,6 +119,7 @@ fun NotePageScreen(
     state: PageScreenState,
     noteId: String,
     isInEditMode: Boolean,
+    isSelected: Boolean,
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -127,6 +128,7 @@ fun NotePageScreen(
     NotePageScreenInternal(
         state = state,
         noteId = noteId,
+        isSelected = isSelected,
         isInEditMode = isInEditMode,
         isNoteCreationMode = isNoteCreationMode,
         onFocusChange = onFocusChange,

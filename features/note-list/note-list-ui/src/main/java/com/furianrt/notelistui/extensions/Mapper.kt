@@ -11,6 +11,7 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 fun UiNoteContent.toLocalNoteContent() = when (this) {
     is UiNoteContent.Title -> toLocalNoteTitle()
@@ -31,7 +32,8 @@ fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
 fun UiNoteContent.Voice.toLocalNoteVoice() = LocalNote.Content.Voice(
     id = id,
     uri = uri,
-    duration = duration,
+    duration = duration.toInt(),
+    volume = volume,
 )
 
 fun UiNoteContent.MediaBlock.Media.toLocalMedia(): LocalNote.Content.Media = when (this) {
@@ -78,7 +80,9 @@ fun LocalNote.Content.MediaBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
 fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
     id = id,
     uri = uri,
-    duration = duration,
+    duration = duration.toLong(),
+    volume = volume.toImmutableList(),
+    progress = 0f,
 )
 
 

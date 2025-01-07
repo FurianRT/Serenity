@@ -72,7 +72,7 @@ internal fun BottomPanel(
         AnimatedVisibility(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(end = 16.dp, bottom = 20.dp)
+                .padding(end = 8.dp, bottom = 14.dp)
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd),
             visible = selectedCount > 0,
@@ -101,7 +101,7 @@ private fun SelectedCountHint(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 14.dp)
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {

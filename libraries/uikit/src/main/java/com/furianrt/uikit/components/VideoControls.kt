@@ -100,7 +100,7 @@ fun VideoSlider(
             onValueChangeFinished = onValueChangeFinished,
             valueRange = valueRange,
             interactionSource = interactionSource,
-            track = { SliderTrack(progress = value / valueRange.endInclusive) },
+            track = { SliderTrack(progress = it.value / it.valueRange.endInclusive) },
             thumb = { SliderThumb() },
         )
         SliderTime(

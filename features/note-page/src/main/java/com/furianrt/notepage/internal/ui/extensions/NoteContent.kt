@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.extensions
 
+import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
@@ -100,7 +101,22 @@ internal fun ImmutableList<UiNoteContent>.removeMedia(
     }
 }
 
-internal fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteContent> {
+internal fun ImmutableList<UiNoteContent>.removeVoice(
+    id: String,
+): ImmutableList<UiNoteContent> = toPersistentList()
+    .removeAll { it is UiNoteContent.Voice && it.id == id }
+    .joinTitles()
+
+internal fun ImmutableList<UiNoteContent>.updateVoiceProgress(
+    id: String,
+    progress: Float,
+): ImmutableList<UiNoteContent> {
+    val voiceIndex = indexOfFirstOrNull { it is UiNoteContent.Voice && it.id == id } ?: return this
+    val voice = this[voiceIndex] as UiNoteContent.Voice
+    return toPersistentList().set(voiceIndex, voice.copy(progress = progress))
+}
+
+private fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteContent> {
     var counter = 0
     val resultMap = mutableMapOf<Int, UiNoteContent>()
     forEach { content ->
@@ -110,7 +126,9 @@ internal fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteCont
 
             entry is UiNoteContent.Title && content is UiNoteContent.Title -> entry.state.edit {
                 if (content.state.text.isNotEmpty()) {
-                    appendLine()
+                    if (entry.state.text.isNotEmpty()) {
+                        appendLine()
+                    }
                     append(content.state.text)
                 }
             }

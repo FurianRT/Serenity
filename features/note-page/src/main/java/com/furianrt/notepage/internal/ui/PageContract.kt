@@ -17,6 +17,7 @@ internal sealed interface PageUiState {
         val noteId: String,
         val content: ImmutableList<UiNoteContent>,
         val tags: ImmutableList<UiNoteTag>,
+        val playingVoiceId: String?,
         val fontFamily: UiNoteFontFamily,
         val fontColor: UiNoteFontColor,
         val fontSize: Int,
@@ -31,6 +32,7 @@ internal sealed interface PageUiState {
 
 internal sealed interface PageEvent {
     data class OnEditModeStateChange(val isEnabled: Boolean) : PageEvent
+    data class OnIsSelectedChange(val isSelected: Boolean) : PageEvent
     data class OnTagRemoveClick(val tag: UiNoteTag.Regular) : PageEvent
     data class OnTagDoneEditing(val tag: UiNoteTag.Template) : PageEvent
     data object OnTagTextEntered : PageEvent
@@ -49,6 +51,12 @@ internal sealed interface PageEvent {
     data class OnFontFamilySelected(val family: UiNoteFontFamily) : PageEvent
     data class OnFontColorSelected(val color: UiNoteFontColor) : PageEvent
     data class OnFontSizeSelected(val size: Int) : PageEvent
+    data class OnVoiceRemoveClick(val voice: UiNoteContent.Voice) : PageEvent
+    data class OnVoicePlayClick(val voice: UiNoteContent.Voice) : PageEvent
+    data class OnVoiceProgressSelected(
+        val voice: UiNoteContent.Voice,
+        val value: Float,
+    ) : PageEvent
 }
 
 internal sealed interface PageEffect {
