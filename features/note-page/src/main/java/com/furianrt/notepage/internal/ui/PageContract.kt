@@ -71,4 +71,6 @@ internal sealed interface PageEffect {
         val mediaName: String,
         val identifier: DialogIdentifier,
     ) : PageEffect
+
+    data class BringContentToView(val index: Int) : PageEffect
 }

@@ -99,6 +99,7 @@ private fun VoiceContent(
     onProgressSelected: (voice: Voice, value: Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var wasStarted by remember { mutableStateOf(false) }
     Card(
         modifier = modifier.width(230.dp),
         shape = RoundedCornerShape(24),
@@ -114,7 +115,12 @@ private fun VoiceContent(
         ) {
             ButtonPlay(
                 isPaused = !isPlaying,
-                onClick = { onPlayClick(voice) },
+                onClick = {
+                    if (!isPlaying) {
+                        wasStarted = true
+                    }
+                    onPlayClick(voice)
+                },
             )
             VoiceSlider(
                 modifier = Modifier.weight(1f),
@@ -123,7 +129,11 @@ private fun VoiceContent(
                 onValueChangeFinished = { onProgressSelected(voice, it) },
             )
             Timer(
-                time = voice.duration.toTimeString(),
+                time = if (!wasStarted || voice.progress == 0f) {
+                    voice.duration.toTimeString()
+                } else {
+                    voice.currentDuration.toTimeString()
+                },
             )
         }
     }

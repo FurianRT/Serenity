@@ -3,6 +3,7 @@ package com.furianrt.uikit.components
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -169,11 +170,12 @@ fun MovableToolbarScaffold(
                 .zIndex(1f)
                 .graphicsLayer { translationY = toolbarOffset }
                 .onGloballyPositioned { toolbarHeight = it.boundsInParent().height }
+                .background(MaterialTheme.colorScheme.surface)
                 .hazeChild(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
+                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
                     ),

@@ -155,6 +155,8 @@ internal fun NotePageScreenInternal(
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
                 }
+
+                is PageEffect.BringContentToView -> state.bringContentToView(effect.index)
             }
         }
     }
@@ -219,26 +221,25 @@ private fun SuccessScreen(
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val scope = rememberCoroutineScope()
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
     var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
     val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-    state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
-
     val isListAtTop by remember {
         derivedStateOf {
             (state.listState.firstVisibleItemIndex == 0 &&
                     state.listState.firstVisibleItemScrollOffset == 0)
         }
     }
-
-    val view = LocalView.current
-    val density = LocalDensity.current
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
+    val toolbarMarginPx = density.run { toolbarMargin.toPx() }
     var bgOffset by rememberSaveable { mutableStateOf(0f) }
     val bgOffsetInverted = toolbarMargin - density.run { bgOffset.toDp() }
     var totalScroll by rememberSaveable { mutableStateOf(0f) }
@@ -249,16 +250,25 @@ private fun SuccessScreen(
                 available: Offset,
                 source: NestedScrollSource,
             ): Offset {
-                val delta = consumed.y
-                totalScroll += delta
+                totalScroll += consumed.y
                 if (isListAtTop) {
                     totalScroll = 0f
                 }
-                if (totalScroll in -density.run { toolbarMargin.toPx() }..0f) {
+                if (totalScroll in -toolbarMarginPx..0f) {
                     bgOffset = -totalScroll
                 }
                 return super.onPostScroll(consumed, available, source)
             }
+        }
+    }
+
+    state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
+    state.setOnBringContentToViewListener { position ->
+        scope.launch {
+            state.scrollToPosition(
+                position = position,
+                topOffset = toolbarMarginPx.toInt(),
+            )
         }
     }
 
@@ -394,41 +404,22 @@ private fun SuccessScreen(
                             onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
                         )
 
-                        is UiNoteContent.Voice -> {
-                            val prevItem = uiState.content.getOrNull(index - 1)
-                            val nextItem = uiState.content.getOrNull(index + 1)
-                            val isPrevMediaBlock = prevItem is UiNoteContent.MediaBlock
-                            val isNextMediaBlock = nextItem is UiNoteContent.MediaBlock
-                            NoteContentVoice(
-                                modifier = Modifier
-                                    .padding(
-                                        start = 8.dp,
-                                        end = 8.dp,
-                                        top = if (prevItem != null && isPrevMediaBlock) {
-                                            14.dp
-                                        } else {
-                                            0.dp
-                                        },
-                                        bottom = if (nextItem != null && isNextMediaBlock) {
-                                            14.dp
-                                        } else {
-                                            0.dp
-                                        },
-                                    )
-                                    .animateItem(),
-                                voice = item,
-                                isPlaying = item.id == uiState.playingVoiceId,
-                                isRemovable = uiState.isInEditMode,
-                                onRemoveClick = { voice ->
-                                    onEvent(PageEvent.OnVoiceRemoveClick(voice))
-                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                },
-                                onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
-                                onProgressSelected = { voice, value ->
-                                    onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
-                                },
-                            )
-                        }
+                        is UiNoteContent.Voice -> NoteContentVoice(
+                            modifier = Modifier
+                                .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 8.dp)
+                                .animateItem(),
+                            voice = item,
+                            isPlaying = item.id == uiState.playingVoiceId,
+                            isRemovable = uiState.isInEditMode,
+                            onRemoveClick = { voice ->
+                                onEvent(PageEvent.OnVoiceRemoveClick(voice))
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            },
+                            onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
+                            onProgressSelected = { voice, value ->
+                                onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
+                            },
+                        )
                     }
                 }
                 if (uiState.tags.isNotEmpty()) {

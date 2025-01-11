@@ -24,7 +24,10 @@ sealed class UiNoteContent(open val id: String) {
         val duration: Long,
         val progress: Float,
         val volume: ImmutableList<Float>,
-    ) : UiNoteContent(id)
+    ) : UiNoteContent(id) {
+        val currentDuration: Long
+            get() = (duration * progress).toLong()
+    }
 
     @Immutable
     data class MediaBlock(

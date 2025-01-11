@@ -5,6 +5,7 @@ import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.hasItem
+import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
@@ -109,7 +110,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
     val state: StateFlow<PageUiState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<PageEffect>(extraBufferCapacity = 1)
+    private val _effect = MutableSharedFlow<PageEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
     private val isInEditMode: Boolean
@@ -229,11 +230,15 @@ internal class PageViewModel @AssistedInject constructor(
                 currentState.copy(content = newContent)
             }
         }
-        if (titleIndexToFocus != null) {
-            launch {
-                delay(TITLE_FOCUS_DELAY)
+        launch {
+            delay(TITLE_FOCUS_DELAY)
+            if (titleIndexToFocus != null) {
                 _effect.tryEmit(PageEffect.FocusFirstTitle(titleIndexToFocus))
             }
+            val successState = getSuccessState() ?: return@launch
+            val blockIndex = successState.content
+                .indexOfFirstOrNull { it.id == newBlock.id } ?: return@launch
+            _effect.tryEmit(PageEffect.BringContentToView(blockIndex))
         }
     }
 

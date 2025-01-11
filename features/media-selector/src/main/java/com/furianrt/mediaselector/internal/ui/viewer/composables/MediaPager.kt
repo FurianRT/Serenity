@@ -1,5 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
 import androidx.annotation.OptIn
 import androidx.compose.foundation.LocalOverscrollFactory
@@ -238,6 +240,9 @@ internal fun VideoPage(
                 PlayerView(ctx).apply {
                     player = exoPlayer
                     useController = false
+                    artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
+                    defaultArtwork = ColorDrawable(Color.BLACK)
+                    setEnableComposeSurfaceSyncWorkaround(true)
                 }
             },
         )
