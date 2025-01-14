@@ -1,11 +1,11 @@
 package com.furianrt.notelistui.entities
 
 import android.net.Uri
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.furianrt.notelistui.composables.NoteTitleState
 import kotlinx.collections.immutable.ImmutableList
 import java.time.ZonedDateTime
 
@@ -14,7 +14,7 @@ sealed class UiNoteContent(open val id: String) {
     @Stable
     data class Title(
         override val id: String,
-        val state: TextFieldState = TextFieldState(),
+        val state: NoteTitleState = NoteTitleState(),
     ) : UiNoteContent(id)
 
     @Immutable
@@ -25,8 +25,8 @@ sealed class UiNoteContent(open val id: String) {
         val progress: Float,
         val volume: ImmutableList<Float>,
     ) : UiNoteContent(id) {
-        val currentDuration: Long
-            get() = (duration * progress).toLong()
+
+        val currentDuration = (duration * progress).toLong()
     }
 
     @Immutable

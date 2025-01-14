@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.room.TypeConverter
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteTextSpan
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import kotlinx.serialization.encodeToString
@@ -39,4 +40,10 @@ internal class TypeConverter {
 
     @TypeConverter
     fun listOfFloatToString(list: List<Float>): String = Json.encodeToString(list)
+
+    @TypeConverter
+    fun stringToNoteTextSpans(value: String): List<NoteTextSpan> = Json.decodeFromString(value)
+
+    @TypeConverter
+    fun noteTextSpansToString(spans: List<NoteTextSpan>): String = Json.encodeToString(spans)
 }

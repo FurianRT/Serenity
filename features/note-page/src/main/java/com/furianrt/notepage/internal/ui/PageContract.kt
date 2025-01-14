@@ -25,7 +25,7 @@ internal sealed interface PageUiState {
     ) : PageUiState {
         val isContentEmpty: Boolean
             get() = content.all { content ->
-                content is UiNoteContent.Title && content.state.text.isEmpty()
+                content is UiNoteContent.Title && content.state.annotatedString.isEmpty()
             }
     }
 }

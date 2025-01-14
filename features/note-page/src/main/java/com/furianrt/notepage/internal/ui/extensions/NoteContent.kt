@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.extensions
 
+import androidx.compose.ui.text.AnnotatedString
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
@@ -42,7 +43,7 @@ internal fun List<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteConten
 }
 
 internal fun ImmutableList<UiNoteContent>.removeTitleTemplates(): ImmutableList<UiNoteContent> =
-    toPersistentList().removeAll { it is UiNoteContent.Title && it.state.text.isEmpty() }
+    toPersistentList().removeAll { it is UiNoteContent.Title && it.state.annotatedString.isEmpty() }
 
 internal fun ImmutableList<UiNoteTag>.addTagTemplate(): ImmutableList<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }
@@ -124,12 +125,13 @@ private fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteConte
         when {
             entry == null && content is UiNoteContent.Title -> resultMap[counter] = content
 
-            entry is UiNoteContent.Title && content is UiNoteContent.Title -> entry.state.edit {
-                if (content.state.text.isNotEmpty()) {
-                    if (entry.state.text.isNotEmpty()) {
-                        appendLine()
+            entry is UiNoteContent.Title && content is UiNoteContent.Title -> {
+                if (content.state.annotatedString.isNotEmpty()) {
+                    entry.state.annotatedString =  if (entry.state.annotatedString.isNotEmpty()) {
+                        entry.state.annotatedString + AnnotatedString("\n") + content.state.annotatedString
+                    } else {
+                        content.state.annotatedString
                     }
-                    append(content.state.text)
                 }
             }
 

@@ -49,6 +49,7 @@ import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
+import com.furianrt.uikit.extensions.bringIntoView
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground

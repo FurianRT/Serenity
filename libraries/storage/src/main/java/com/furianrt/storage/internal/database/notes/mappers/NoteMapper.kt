@@ -24,6 +24,7 @@ private enum class FirstTagType {
 internal fun SimpleNote.toEntryNote() = EntryNote(
     id = id,
     text = "",
+    textSpans = emptyList(),
     font = font,
     fontColor = fontColor,
     fontSize = fontSize,
@@ -96,7 +97,7 @@ private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content
     }
 }
 
-private fun extractTitle(text: String): LocalNote.Content.Title {
+private fun LinkedNote.extractTitle(text: String): LocalNote.Content.Title {
     val indexOfTag = text.indexOf(TITLE_START_TAG)
     val indexOfClosingTag = text.indexOf(TITLE_END_TAG)
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
@@ -104,7 +105,11 @@ private fun extractTitle(text: String): LocalNote.Content.Title {
         startIndex = indexOfTag + TITLE_START_TAG.length + id.length + 2,
         endIndex = indexOfClosingTag,
     )
-    return LocalNote.Content.Title(id = id, text = title)
+    return LocalNote.Content.Title(
+        id = id,
+        text = title,
+        spans = note.textSpans.filter { it.titleId == id },
+    )
 }
 
 private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock? {

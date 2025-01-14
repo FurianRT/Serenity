@@ -30,7 +30,15 @@ internal class NotesRepositoryImp @Inject constructor(
     }
 
     override suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>) {
-        noteDao.update(PartNoteText(id = noteId, text = content.toEntryNoteText()))
+        noteDao.update(
+            PartNoteText(
+                id = noteId,
+                text = content.toEntryNoteText(),
+                textSpans = content
+                    .filterIsInstance<LocalNote.Content.Title>()
+                    .flatMap(LocalNote.Content.Title::spans),
+            )
+        )
     }
 
     override suspend fun updateNoteDate(noteId: String, date: ZonedDateTime) {

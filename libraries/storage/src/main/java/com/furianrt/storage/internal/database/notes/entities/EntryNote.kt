@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteTextSpan
 import java.time.ZonedDateTime
 
 @Entity(tableName = EntryNote.TABLE_NAME)
@@ -15,6 +16,9 @@ internal class EntryNote(
 
     @ColumnInfo(name = FIELD_TEXT)
     val text: String,
+
+    @ColumnInfo(name = FIELD_TEXT_SPANS)
+    val textSpans: List<NoteTextSpan>,
 
     @ColumnInfo(name = FIELD_FONT)
     val font: NoteFontFamily,
@@ -32,6 +36,7 @@ internal class EntryNote(
         const val TABLE_NAME = "Notes"
         const val FIELD_ID = "id"
         const val FIELD_TEXT = "text"
+        const val FIELD_TEXT_SPANS = "text_spans"
         const val FIELD_FONT = "font"
         const val FIELD_FONT_COLOR = "font_color"
         const val FIELD_FONT_SIZE = "font_size"
@@ -46,6 +51,9 @@ internal class PartNoteText(
 
     @ColumnInfo(name = EntryNote.FIELD_TEXT)
     val text: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_TEXT_SPANS)
+    val textSpans: List<NoteTextSpan>,
 )
 
 @Entity

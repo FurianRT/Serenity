@@ -5,7 +5,6 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -18,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -64,7 +64,7 @@ fun NoteListItem(
                 when (item) {
                     is UiNoteContent.Title -> Text(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                        text = item.state.text.toString(),
+                        text = item.state.annotatedString.text,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium,
@@ -110,10 +110,12 @@ private fun NoteItemPreview() {
             content = persistentListOf(
                 UiNoteContent.Title(
                     id = "1",
-                    state = TextFieldState(
-                        initialText = "Kotlin is a modern programming language with a " +
-                                "lot more syntactic sugar compared to Java, and as such " +
-                                "there is equally more black magic",
+                    state = NoteTitleState(
+                        initialText = AnnotatedString(
+                            text = "Kotlin is a modern programming language with a " +
+                                    "lot more syntactic sugar compared to Java, and as such " +
+                                    "there is equally more black magic",
+                        ),
                     ),
                 ),
                 UiNoteContent.MediaBlock(

@@ -1,10 +1,8 @@
 package com.furianrt.notepage.api
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -29,7 +27,6 @@ private const val ITEM_VISIBILITY_THRESHOLD = 90f
 @Stable
 class PageScreenState(
     val listState: LazyListState,
-    val titleScrollState: ScrollState,
     val bottomScaffoldState: BottomSheetScaffoldState,
     hasContentChanged: Boolean,
 ) {
@@ -95,14 +92,12 @@ class PageScreenState(
     companion object {
         fun saver(
             listState: LazyListState,
-            titleScrollState: ScrollState,
             bottomScaffoldState: BottomSheetScaffoldState,
         ): Saver<PageScreenState, Pair<Boolean, Boolean>> = Saver(
             save = { it.hasContentChanged to it.isVoiceRecordActive },
             restore = {
                 PageScreenState(
                     listState = listState,
-                    titleScrollState = titleScrollState,
                     bottomScaffoldState = bottomScaffoldState,
                     hasContentChanged = it.first,
                 ).apply {
@@ -117,20 +112,17 @@ class PageScreenState(
 @Composable
 fun rememberPageScreenState(
     listState: LazyListState = rememberLazyListState(),
-    titleScrollState: ScrollState = rememberScrollState(),
     bottomScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ),
 ): PageScreenState = rememberSaveable(
     saver = PageScreenState.saver(
         listState = listState,
-        titleScrollState = titleScrollState,
         bottomScaffoldState = bottomScaffoldState,
     ),
 ) {
     PageScreenState(
         listState = listState,
-        titleScrollState = titleScrollState,
         bottomScaffoldState = bottomScaffoldState,
         hasContentChanged = false,
     )

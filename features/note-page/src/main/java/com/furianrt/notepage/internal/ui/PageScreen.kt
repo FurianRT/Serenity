@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -59,6 +58,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -71,6 +71,7 @@ import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentTitle
 import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -388,7 +389,6 @@ private fun SuccessScreen(
                                 onFocusChange()
                             },
                             onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
-                            scrollState = state.titleScrollState,
                         )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
@@ -478,7 +478,7 @@ private fun SuccessScreen(
                             fontColor = uiState.fontColor,
                             fontSize = uiState.fontSize,
                             hazeState = hazeState,
-                            textFieldState = titleState ?: TextFieldState(),
+                            noteTitleState = titleState ?: NoteTitleState(),
                             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
@@ -548,10 +548,12 @@ private fun SuccessScreenPreview() {
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",
-                        state = TextFieldState(
-                            initialText = "Kotlin is a modern programming language with a " +
-                                    "lot more syntactic sugar compared to Java, and as such " +
-                                    "there is equally more black magic",
+                        state = NoteTitleState(
+                            initialText = AnnotatedString(
+                                text = "Kotlin is a modern programming language with a " +
+                                        "lot more syntactic sugar compared to Java, and as such " +
+                                        "there is equally more black magic",
+                            ),
                         ),
                     ),
                 ),

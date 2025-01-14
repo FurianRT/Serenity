@@ -29,6 +29,7 @@ data class LocalNote(
             @SerialName("title_id")
             override val id: String,
             val text: String,
+            val spans: List<NoteTextSpan>,
         ) : Content(id)
 
         @Serializable

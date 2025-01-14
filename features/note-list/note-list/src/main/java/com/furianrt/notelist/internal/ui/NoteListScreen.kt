@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -33,6 +33,7 @@ import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.NoteListItem
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
@@ -211,10 +212,12 @@ private fun generatePreviewNotes() = buildImmutableList {
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = index.toString(),
-                        state = TextFieldState(
-                            initialText = "Kotlin is a modern programming language with a " +
-                                    "lot more syntactic sugar compared to Java, and as such " +
-                                    "there is equally more black magic",
+                        state = NoteTitleState(
+                            initialText = AnnotatedString(
+                                text = "Kotlin is a modern programming language with a " +
+                                        "lot more syntactic sugar compared to Java, and as such " +
+                                        "there is equally more black magic",
+                            ),
                         ),
                     ),
                 ),

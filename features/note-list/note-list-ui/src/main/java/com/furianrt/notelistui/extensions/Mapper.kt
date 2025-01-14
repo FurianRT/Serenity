@@ -1,15 +1,26 @@
 package com.furianrt.notelistui.extensions
 
-import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.util.fastForEach
 import com.furianrt.core.buildImmutableList
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextSpan
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.uikit.extensions.join
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -26,7 +37,8 @@ fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
 
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
     id = id,
-    text = state.text.toString(),
+    text = state.annotatedString.text,
+    spans = state.annotatedString.spanStyles.mapNotNull { it.toNoteTextSpan(titleId = id) },
 )
 
 fun UiNoteContent.Voice.toLocalNoteVoice() = LocalNote.Content.Voice(
@@ -88,7 +100,7 @@ fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
 
 fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
     id = id,
-    state = TextFieldState(initialText = text),
+    state = NoteTitleState(initialText = getAnnotatedString()),
 )
 
 fun LocalNote.Content.Media.toUiNoteMedia(): UiNoteContent.MediaBlock.Media = when (this) {
@@ -134,10 +146,11 @@ fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = 
         add(
             UiNoteContent.Title(
                 id = title.id,
-                state = TextFieldState(
+                state = NoteTitleState(
                     initialText = this@getShortUiContent
                         .filterIsInstance<LocalNote.Content.Title>()
-                        .joinToString(separator = "\n", transform = { it.text }),
+                        .map { it.getAnnotatedString() }
+                        .join(separator = "\n")
                 ),
             ),
         )
@@ -236,4 +249,91 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.RED_LIGHT -> NoteFontColor.RED_LIGHT
     UiNoteFontColor.RED -> NoteFontColor.RED
     UiNoteFontColor.RED_DARK -> NoteFontColor.RED_DARK
+}
+
+private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
+    titleId: String,
+): NoteTextSpan? = when {
+    item.fontWeight != null -> NoteTextSpan.Bold(
+        titleId = titleId,
+        start = start,
+        end = end,
+    )
+
+    item.fontStyle == FontStyle.Italic -> NoteTextSpan.Italic(
+        titleId = titleId,
+        start = start,
+        end = end,
+    )
+
+    item.textDecoration == TextDecoration.Underline -> NoteTextSpan.Underline(
+        titleId = titleId,
+        start = start,
+        end = end,
+    )
+
+    item.textDecoration == TextDecoration.LineThrough -> NoteTextSpan.Strikethrough(
+        titleId = titleId,
+        start = start,
+        end = end,
+    )
+
+    item.color != Color.Unspecified -> NoteTextSpan.FontColor(
+        titleId = titleId,
+        color = item.color.toArgb(),
+        start = start,
+        end = end,
+    )
+
+    item.background != Color.Unspecified -> NoteTextSpan.FillColor(
+        titleId = titleId,
+        color = item.background.toArgb(),
+        start = start,
+        end = end,
+    )
+
+    else -> null
+}
+
+private fun LocalNote.Content.Title.getAnnotatedString() = buildAnnotatedString {
+    append(text)
+    spans.fastForEach { span ->
+        when (span) {
+            is NoteTextSpan.Bold -> addStyle(
+                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.Italic -> addStyle(
+                style = SpanStyle(fontStyle = FontStyle.Italic),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.Underline -> addStyle(
+                style = SpanStyle(textDecoration = TextDecoration.Underline),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.Strikethrough -> addStyle(
+                style = SpanStyle(textDecoration = TextDecoration.LineThrough),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.FontColor -> addStyle(
+                style = SpanStyle(color = Color(span.color)),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.FillColor -> addStyle(
+                style = SpanStyle(background = Color(span.color)),
+                start = span.start,
+                end = span.end,
+            )
+        }
+    }
 }

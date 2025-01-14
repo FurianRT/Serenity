@@ -1,8 +1,7 @@
 package com.furianrt.notepage.internal.ui
 
-import androidx.compose.foundation.text.input.TextFieldState
-import androidx.compose.foundation.text.input.clearText
-import androidx.compose.foundation.text.input.delete
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.hasItem
 import com.furianrt.core.indexOfFirstOrNull
@@ -13,6 +12,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -258,25 +258,32 @@ internal class PageViewModel @AssistedInject constructor(
         val selection = focusedTitle.state.selection.start
         return when {
             selection == 0 -> {
-                if (focusedTitle.state.text.startsWith(' ')) {
-                    focusedTitle.state.edit { delete(0, 1) }
+                if (focusedTitle.state.annotatedString.startsWith(' ')) {
+                    focusedTitle.state.annotatedString = focusedTitle.state.annotatedString
+                        .subSequence(1, focusedTitle.state.annotatedString.length)
                 }
                 content.toPersistentList().add(focusedTitleIndex, newBlock)
             }
 
-            selection >= focusedTitle.state.text.length -> {
-                val titleFirstPartText = if (focusedTitle.state.text.endsWith('\n') ||
-                    focusedTitle.state.text.endsWith(' ')
+            selection >= focusedTitle.state.annotatedString.length -> {
+                val titleFirstPartText = if (focusedTitle.state.annotatedString.endsWith('\n') ||
+                    focusedTitle.state.annotatedString.endsWith(' ')
                 ) {
-                    focusedTitle.state.text.dropLast(1)
+                    focusedTitle.state.annotatedString.subSequence(
+                        startIndex = 0,
+                        endIndex = focusedTitle.state.annotatedString.lastIndex,
+                    )
                 } else {
-                    focusedTitle.state.text
+                    focusedTitle.state.annotatedString
                 }
                 val titleFirstPart = UiNoteContent.Title(
                     id = UUID.randomUUID().toString(),
-                    state = TextFieldState(initialText = titleFirstPartText.toString())
+                    state = NoteTitleState(initialText = titleFirstPartText)
                 )
-                val titleSecondPart = focusedTitle.also { it.state.clearText() }
+
+                val titleSecondPart = focusedTitle.also { title ->
+                    title.state.annotatedString = AnnotatedString("")
+                }
                 val result = content.toMutableList()
                 result[focusedTitleIndex] = titleFirstPart
                 result.add(focusedTitleIndex + 1, newBlock)
@@ -285,36 +292,34 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             else -> {
-                val firstPartText = focusedTitle.state.text.substring(
+                val firstPartText = focusedTitle.state.annotatedString.subSequence(
                     startIndex = 0,
                     endIndex = selection,
                 )
                 val titleFirstPart = UiNoteContent.Title(
                     id = UUID.randomUUID().toString(),
-                    state = TextFieldState(
+                    state = NoteTitleState(
                         initialText = if (firstPartText.endsWith('\n') ||
                             firstPartText.endsWith(' ')
                         ) {
-                            firstPartText.dropLast(1)
+                            firstPartText.subSequence(0, firstPartText.text.lastIndex)
                         } else {
                             firstPartText
                         },
                     )
                 )
                 val titleSecondPart = focusedTitle.also { title ->
-                    title.state.edit {
-                        val text = title.state.text
-                        val tempPart = text.substring(selection, text.length)
-                        if (tempPart.isBlank()) {
-                            delete(start = 0, end = text.length)
-                        } else {
-                            delete(
-                                start = 0,
-                                end = selection + tempPart.indexOfFirst { it != ' ' },
-                            )
-                        }
-                        placeCursorBeforeCharAt(0)
+                    val text = title.state.annotatedString
+                    val tempPart = text.subSequence(selection, text.length)
+                    title.state.annotatedString = if (tempPart.isBlank()) {
+                        AnnotatedString("")
+                    } else {
+                        title.state.annotatedString.subSequence(
+                            startIndex = selection + tempPart.indexOfFirst { it != ' ' },
+                            endIndex = title.state.annotatedString.length,
+                        )
                     }
+                    title.state.selection = TextRange(0)
                 }
                 val result = content.toMutableList()
                 result[focusedTitleIndex] = titleFirstPart
@@ -443,10 +448,12 @@ internal class PageViewModel @AssistedInject constructor(
                     audioPlayer.stop()
                     currentState.copy(playingVoiceId = null)
                 }
+
                 null -> {
                     audioPlayer.play(voice.uri, voice.progress)
                     currentState.copy(playingVoiceId = voice.id)
                 }
+
                 else -> {
                     audioPlayer.stop()
                     audioPlayer.play(voice.uri, voice.progress)

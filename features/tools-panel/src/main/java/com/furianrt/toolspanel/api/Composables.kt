@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,6 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
@@ -64,7 +64,7 @@ private enum class PanelMode {
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ActionsPanel(
-    textFieldState: TextFieldState,
+    noteTitleState: NoteTitleState,
     hazeState: HazeState,
     noteId: String,
     fontFamily: UiNoteFontFamily,
@@ -98,9 +98,9 @@ fun ActionsPanel(
         },
     )
 
-    val hasMultiSelection by remember(textFieldState) {
+    val hasMultiSelection by remember(noteTitleState) {
         derivedStateOf {
-            textFieldState.selection.min != textFieldState.selection.max
+            noteTitleState.selection.min != noteTitleState.selection.max
         }
     }
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
@@ -162,7 +162,6 @@ fun ActionsPanel(
                 when (targetState) {
                     PanelMode.REGULAR -> RegularPanel(
                         modifier = heightModifier.clickableNoRipple {},
-                        textFieldState = textFieldState,
                         onSelectMediaClick = onSelectMediaClick,
                         onRecordVoiceClick = {
                             audioRecordPermissionsState.launchPermissionRequest()
@@ -175,7 +174,7 @@ fun ActionsPanel(
 
                     PanelMode.FORMATTING -> SelectedPanel(
                         modifier = heightModifier.clickableNoRipple {},
-                        textFieldState = textFieldState,
+                        noteTitleState = noteTitleState,
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(

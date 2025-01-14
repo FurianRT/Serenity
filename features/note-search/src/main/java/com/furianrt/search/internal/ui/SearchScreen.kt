@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -44,6 +45,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.composables.NoteListItem
+import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.search.api.entities.QueryData
@@ -339,10 +341,12 @@ private fun SuccessFilledQueryPreview() {
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",
-                                state = TextFieldState(
-                                    initialText = "Kotlin is a modern programming language with a " +
-                                            "lot more syntactic sugar compared to Java, and as such " +
-                                            "there is equally more black magic",
+                                state = NoteTitleState(
+                                    initialText = AnnotatedString(
+                                        text = "Kotlin is a modern programming language with a " +
+                                                "lot more syntactic sugar compared to Java, and as such " +
+                                                "there is equally more black magic",
+                                    ),
                                 ),
                             ),
                             UiNoteContent.MediaBlock(
