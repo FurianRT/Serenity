@@ -10,13 +10,13 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
@@ -33,7 +33,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
@@ -76,12 +79,12 @@ fun ButtonPlayPause(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VideoSlider(
-    value: Float,
-    valueRange: ClosedFloatingPointRange<Float>,
+    progress: Float,
+    duration: Int,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    onValueChange: (Float) -> Unit = {},
-    onValueChangeFinished: () -> Unit = {},
+    onProgressChange: (Float) -> Unit = {},
+    onProgressChangeFinished: () -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -90,23 +93,23 @@ fun VideoSlider(
             .draggable(state = rememberDraggableState {}, orientation = Orientation.Horizontal)
             .systemGestureExclusion()
             .padding(horizontal = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Slider(
             modifier = Modifier.weight(1f),
-            value = value,
-            onValueChange = onValueChange,
-            onValueChangeFinished = onValueChangeFinished,
-            valueRange = valueRange,
+            value = progress,
+            onValueChange = onProgressChange,
+            onValueChangeFinished = onProgressChangeFinished,
+            valueRange = 0f..1f,
+            steps = 250,
             interactionSource = interactionSource,
             track = { SliderTrack(progress = it.value / it.valueRange.endInclusive) },
             thumb = { SliderThumb() },
         )
         SliderTime(
             modifier = Modifier.padding(bottom = 5.dp),
-            current = value.toInt(),
-            total = valueRange.endInclusive.toInt(),
+            current = (duration * progress).toInt(),
+            total = duration,
         )
     }
 }
@@ -164,11 +167,31 @@ private fun SliderTime(
     total: Int,
     modifier: Modifier = Modifier,
 ) {
-    Text(
+    val textMeasurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.bodySmall
+    val density = LocalDensity.current
+    val timeWidth = remember {
+        density.run {
+            textMeasurer.measure(text = "88:88", style = style, maxLines = 1).size.width.toDp()
+        }
+    }
+    Row(
         modifier = modifier,
-        text = "${current.toTimeString()}/${total.toTimeString()}",
-        style = MaterialTheme.typography.bodySmall,
-    )
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.width(timeWidth),
+            textAlign = TextAlign.End,
+            text = current.toTimeString(),
+            style = style,
+            maxLines = 1
+        )
+        Text(
+            text = "/${total.toTimeString()}",
+            style = style,
+            maxLines = 1
+        )
+    }
 }
 
 @Preview
@@ -187,8 +210,8 @@ private fun ButtonPlayPausePreview() {
 private fun VideoSliderPreview() {
     SerenityTheme {
         VideoSlider(
-            value = 5f,
-            valueRange = 0f..10f,
+            progress = 0.5f,
+            duration = 60 * 1000 * 55,
         )
     }
 }

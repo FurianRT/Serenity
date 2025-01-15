@@ -272,14 +272,14 @@ internal fun VideoPage(
             label = "VideoSliderAnim",
         ) {
             VideoSlider(
-                value = currentPosition.toFloat(),
-                valueRange = 0f..item.duration.toFloat(),
+                progress = currentPosition.toFloat() / item.duration,
+                duration = item.duration,
                 interactionSource = sliderInteractionSource,
-                onValueChange = {
+                onProgressChange = { progress ->
                     view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
-                    currentPosition = it.toLong()
+                    currentPosition = (item.duration * progress).toLong()
                 },
-                onValueChangeFinished = { exoPlayer.seekTo(currentPosition) },
+                onProgressChangeFinished = { exoPlayer.seekTo(currentPosition) },
             )
         }
     }

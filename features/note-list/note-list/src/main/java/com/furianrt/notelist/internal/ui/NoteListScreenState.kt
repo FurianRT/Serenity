@@ -11,7 +11,7 @@ import com.furianrt.uikit.extensions.visibleItemsInfo
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
-private const val ITEM_VISIBILITY_THRESHOLD = 90f
+private const val ITEM_VISIBILITY_THRESHOLD = 30f
 private const val ANIMATED_SCROLL_INDEX = 10
 private const val TOOLBAR_EXPAND_DURATION = 150
 

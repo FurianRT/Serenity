@@ -61,13 +61,13 @@ fun NoteContentTitle(
     var hasFocus by remember { mutableStateOf(false) }
 
     val view = LocalView.current
-    val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
     val topFocusMargin = with(LocalDensity.current) {
         (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight()).toInt()
     }
     val bottomFocusMargin = with(LocalDensity.current) { 64.dp.toPx().toInt() }
-    LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
-        if (hasFocus) {
+    if (hasFocus) {
+        val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
+        LaunchedEffect(title.state.selection, keyboardOffset, hasFocus) {
             delay(50)
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,

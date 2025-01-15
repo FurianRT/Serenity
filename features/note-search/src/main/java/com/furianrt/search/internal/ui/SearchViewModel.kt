@@ -200,7 +200,7 @@ internal class SearchViewModel @Inject constructor(
         notes: List<LocalNote>,
         data: SearchData,
     ): SearchUiState = withContext(dispatchers.default) {
-        val hasFiltersOrQuery = data.queryText.isNotEmpty() || data.selectedFilters.isNotEmpty()
+        val hasFiltersOrQuery = data.queryText.isNotBlank() || data.selectedFilters.isNotEmpty()
         val state = if (notes.isEmpty()) {
             SearchUiState.State.Empty
         } else {

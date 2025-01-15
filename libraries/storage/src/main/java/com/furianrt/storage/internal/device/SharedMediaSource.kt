@@ -15,6 +15,8 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
+private const val MAX_VIDEO_DURATION = 60 * 60 * 1000 // 1 hour
+
 @Singleton
 internal class SharedMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -81,12 +83,22 @@ internal class SharedMediaSource @Inject constructor(
             MediaStore.Files.FileColumns.DISPLAY_NAME,
             MediaStore.Files.FileColumns.MIME_TYPE,
         )
+
+        val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR " +
+                "${MediaStore.Files.FileColumns.MEDIA_TYPE} = ?) AND " +
+                "(${MediaStore.Files.FileColumns.DURATION} < ? OR " +
+                "${MediaStore.Files.FileColumns.DURATION} IS NULL)"
+        val selectionArgs = arrayOf(
+            MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE.toString(),
+            MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO.toString(),
+            MAX_VIDEO_DURATION.toString(),
+        )
         val sortOrder = "${MediaStore.Files.FileColumns.DATE_ADDED} DESC"
         val query = context.contentResolver.query(
             collection,
             projection,
-            null,
-            null,
+            selection,
+            selectionArgs,
             sortOrder,
         )
         query?.use { cursor ->
