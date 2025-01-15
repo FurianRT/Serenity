@@ -39,8 +39,8 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
-import com.furianrt.toolspanel.internal.ui.RegularPanel
-import com.furianrt.toolspanel.internal.ui.SelectedPanel
+import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
+import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.toolspanel.internal.ui.font.FontContent
 import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
@@ -64,7 +64,7 @@ private enum class PanelMode {
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ActionsPanel(
-    noteTitleState: NoteTitleState,
+    titleState: NoteTitleState,
     hazeState: HazeState,
     noteId: String,
     fontFamily: UiNoteFontFamily,
@@ -82,6 +82,11 @@ fun ActionsPanel(
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
+    val hasMultiSelection by remember(titleState) {
+        derivedStateOf {
+            titleState.selection.min != titleState.selection.max
+        }
+    }
     var isVoiceRecordingActive by rememberSaveable { mutableStateOf(false) }
     var isFontPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
@@ -98,11 +103,6 @@ fun ActionsPanel(
         },
     )
 
-    val hasMultiSelection by remember(noteTitleState) {
-        derivedStateOf {
-            noteTitleState.selection.min != noteTitleState.selection.max
-        }
-    }
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
     val hazeModifier = Modifier
         .hazeChild(
@@ -125,6 +125,12 @@ fun ActionsPanel(
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
         else -> PanelMode.REGULAR
+    }
+
+    LaunchedEffect(hasMultiSelection) {
+        if (hasMultiSelection) {
+            keyboardController?.show()
+        }
     }
 
     LaunchedEffect(isImeVisible) {
@@ -174,7 +180,7 @@ fun ActionsPanel(
 
                     PanelMode.FORMATTING -> SelectedPanel(
                         modifier = heightModifier.clickableNoRipple {},
-                        noteTitleState = noteTitleState,
+                        titleState = titleState,
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(

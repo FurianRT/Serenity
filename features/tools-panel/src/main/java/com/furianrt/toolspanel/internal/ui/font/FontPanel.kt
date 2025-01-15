@@ -50,7 +50,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -61,6 +60,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -73,6 +73,8 @@ import com.furianrt.uikit.R as uiR
 
 private var cachedImeHeight = 300.dp
 private const val FONT_CONTENT_TAG = "font_content"
+private const val MIN_FONT_SIZE = 8f
+private const val MAX_FONT_SIZE = 32f
 
 @Composable
 internal fun FontTitleBar(
@@ -153,7 +155,12 @@ internal fun FontContent(
 
     LaunchedEffect(visible) {
         if (visible) {
-            listState.requestScrollToItem(0)
+            val itemHalfSize = colorsListState.layoutInfo.visibleItemsInfo
+                .firstOrNull()?.size?.div(-2) ?: 0
+            colorsListState.requestScrollToItem(
+                index = uiState.fontColors.indexOf(uiState.selectedFontColor),
+                scrollOffset = itemHalfSize,
+            )
         }
     }
 
@@ -249,6 +256,7 @@ private fun Content(
                     key = { uiState.fontColors[it] },
                 ) { index ->
                     ColorItem(
+                        modifier = Modifier.size(40.dp),
                         color = uiState.fontColors[index],
                         isSelected = { it == uiState.selectedFontColor },
                         onClick = { color ->
@@ -292,8 +300,6 @@ private fun SizeSelector(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    val valueRange = 8f..32f
-    val progress = (size - valueRange.start) / (valueRange.endInclusive - valueRange.start)
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -315,9 +321,14 @@ private fun SizeSelector(
                     onSizeSelected(newValue)
                 }
             },
-            valueRange = valueRange,
-            steps = valueRange.endInclusive.toInt() - valueRange.start.toInt() + 1,
-            track = { SliderTrack(progress) },
+            valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
+            steps = MAX_FONT_SIZE.toInt() - MIN_FONT_SIZE.toInt() + 1,
+            track = { state ->
+                SliderTrack(
+                    progress = (state.value - state.valueRange.start) /
+                            (state.valueRange.endInclusive - state.valueRange.start),
+                )
+            },
             thumb = { SliderThumb() },
         )
         Text(
@@ -355,34 +366,6 @@ private fun SliderThumb() {
             .size(14.dp)
             .background(MaterialTheme.colorScheme.primary)
     )
-}
-
-@Composable
-private fun ColorItem(
-    color: UiNoteFontColor,
-    isSelected: (color: UiNoteFontColor) -> Boolean,
-    onClick: (color: UiNoteFontColor) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .size(40.dp)
-            .background(color.value, CircleShape)
-            .applyIf(isSelected(color)) {
-                Modifier.background(Color.Black.copy(alpha = 0.2f), CircleShape)
-            }
-            .clickableNoRipple { onClick(color) },
-        contentAlignment = Alignment.Center,
-    ) {
-        if (isSelected(color)) {
-            Icon(
-                modifier = Modifier.size(28.dp),
-                painter = painterResource(uiR.drawable.ic_action_done),
-                contentDescription = null,
-                tint = Color.Unspecified
-            )
-        }
-    }
 }
 
 @Composable

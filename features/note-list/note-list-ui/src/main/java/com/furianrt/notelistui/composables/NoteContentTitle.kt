@@ -113,7 +113,7 @@ fun NoteContentTitle(
             lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
                     (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value),
         ),
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
             showKeyboardOnFocus = true,
@@ -145,7 +145,7 @@ class NoteTitleState(
     var annotatedString: AnnotatedString
         get() = textValueState.annotatedString
         set(value) {
-            textValueState = textValue.copy(annotatedString = value)
+            textValueState = textValueState.copy(annotatedString = value)
         }
 
     val text: String

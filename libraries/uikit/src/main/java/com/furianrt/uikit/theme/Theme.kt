@@ -102,7 +102,7 @@ fun SerenityTheme(
         )
         val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onSurface, rippleAlpha)
         val textSelectionColors = TextSelectionColors(
-            backgroundColor = MaterialTheme.colorScheme.tertiary,
+            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
             handleColor = MaterialTheme.colorScheme.onSurface,
         )
         CompositionLocalProvider(

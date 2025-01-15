@@ -1,7 +1,9 @@
 package com.furianrt.notelistui.entities
 
+import androidx.annotation.ColorInt
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.furianrt.uikit.theme.Colors
 
 @Immutable
@@ -35,4 +37,10 @@ enum class UiNoteFontColor(val value: Color) {
     RED_LIGHT(Colors.Font.RedLight),
     RED(Colors.Font.Red),
     RED_DARK(Colors.Font.RedDark);
+
+    companion object {
+        fun fromColor(@ColorInt color: Int): UiNoteFontColor {
+            return entries.find { it.value.toArgb() == color } ?: WHITE
+        }
+    }
 }

@@ -18,37 +18,9 @@ internal class AppearanceRepositoryImp @Inject constructor(
 
     override fun getAppThemeColor(): Flow<ThemeColor> = dataStore.getAppThemeColor()
 
-    override fun getAppThemeColorsList(): List<ThemeColor> = listOf(
-        ThemeColor.BLACK,
-        ThemeColor.GREEN,
-        ThemeColor.PURPLE,
-        ThemeColor.PURPLE_DARK,
-    )
+    override fun getAppThemeColorsList(): List<ThemeColor> = ThemeColor.entries
 
-    override fun getNoteFontColorsList(): List<NoteFontColor> = listOf(
-        NoteFontColor.WHITE,
-        NoteFontColor.GREY_LIGHT,
-        NoteFontColor.GREY,
-        NoteFontColor.GREY_DARK,
-        NoteFontColor.PINK_LIGHT,
-        NoteFontColor.PINK,
-        NoteFontColor.PINK_DARK,
-        NoteFontColor.YELLOW_LIGHT,
-        NoteFontColor.YELLOW,
-        NoteFontColor.YELLOW_DARK,
-        NoteFontColor.GREEN_LIGHT,
-        NoteFontColor.GREEN,
-        NoteFontColor.GREEN_DARK,
-        NoteFontColor.BLUE_LIGHT,
-        NoteFontColor.BLUE,
-        NoteFontColor.BLUE_DARK,
-        NoteFontColor.PURPLE_LIGHT,
-        NoteFontColor.PURPLE,
-        NoteFontColor.PURPLE_DARK,
-        NoteFontColor.RED_LIGHT,
-        NoteFontColor.RED,
-        NoteFontColor.RED_DARK,
-    )
+    override fun getNoteFontColorsList(): List<NoteFontColor> = NoteFontColor.entries
 
     override fun getNoteFontsList(): List<NoteFontFamily> = NoteFontFamily.entries
 

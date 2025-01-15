@@ -478,7 +478,7 @@ private fun SuccessScreen(
                             fontColor = uiState.fontColor,
                             fontSize = uiState.fontSize,
                             hazeState = hazeState,
-                            noteTitleState = titleState ?: NoteTitleState(),
+                            titleState = titleState ?: NoteTitleState(),
                             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
                             onVoiceRecordStart = { state.isVoiceRecordActive = true },
