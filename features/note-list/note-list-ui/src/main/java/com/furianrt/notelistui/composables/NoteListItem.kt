@@ -21,6 +21,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -40,6 +41,7 @@ private val cardRippleAlpha = RippleAlpha(
 fun NoteListItem(
     content: ImmutableList<UiNoteContent>,
     tags: ImmutableList<UiNoteTag>,
+    fontColor: UiNoteFontColor,
     date: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
@@ -64,10 +66,11 @@ fun NoteListItem(
                 when (item) {
                     is UiNoteContent.Title -> Text(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                        text = item.state.annotatedString.text,
+                        text = item.state.annotatedString,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium,
+                        color = fontColor.value,
                     )
 
                     is UiNoteContent.MediaBlock -> NoteContentMedia(
@@ -107,6 +110,7 @@ private fun NoteItemPreview() {
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
             ),
+            fontColor = UiNoteFontColor.WHITE,
             content = persistentListOf(
                 UiNoteContent.Title(
                     id = "1",

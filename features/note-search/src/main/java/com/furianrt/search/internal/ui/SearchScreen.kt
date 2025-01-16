@@ -47,6 +47,7 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.ui.composables.AllTagsList
@@ -263,6 +264,7 @@ private fun SuccessContent(
                     content = item.content,
                     tags = item.tags,
                     date = item.date,
+                    fontColor = item.fontColor,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = {},
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
@@ -338,6 +340,7 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Programming", isRemovable = false),
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
+                        fontColor = UiNoteFontColor.WHITE,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",

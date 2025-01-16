@@ -34,6 +34,7 @@ import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
@@ -167,6 +168,7 @@ private fun MainSuccess(
                 content = note.content,
                 tags = note.tags,
                 date = note.date,
+                fontColor = note.fontColor,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },
             )
@@ -209,6 +211,7 @@ private fun generatePreviewNotes() = buildImmutableList {
                 id = index.toString(),
                 date = "19.06.2023",
                 tags = persistentListOf(),
+                fontColor = UiNoteFontColor.WHITE,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = index.toString(),

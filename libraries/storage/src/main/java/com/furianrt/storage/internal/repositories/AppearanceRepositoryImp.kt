@@ -30,7 +30,8 @@ internal class AppearanceRepositoryImp @Inject constructor(
         dataStore.setDefaultNoteFont(font)
     }
 
-    override fun getDefaultNoteFontColor(): Flow<NoteFontColor> = dataStore.getDefaultNoteFontColor()
+    override fun getDefaultNoteFontColor(): Flow<NoteFontColor> =
+        dataStore.getDefaultNoteFontColor()
 
     override suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
         dataStore.setDefaultNoteFontColor(color)
