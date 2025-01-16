@@ -6,6 +6,7 @@ import com.furianrt.domain.entities.LocalTag
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.extensions.toDateString
@@ -19,6 +20,8 @@ internal fun LocalNote.toNoteItem() = SearchListItem.Note(
     date = date.toDateString(),
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
     fontColor = fontColor.toUiNoteFontColor(),
+    fontFamily = fontFamily.toUiNoteFontFamily(),
+    fontSize = fontSize,
     content = content.getShortUiContent(),
 )
 

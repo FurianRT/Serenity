@@ -300,7 +300,7 @@ private fun LocalNote.Content.Title.getAnnotatedString() = buildAnnotatedString 
     spans.fastForEach { span ->
         when (span) {
             is NoteTextSpan.Bold -> addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                style = SpanStyle(fontWeight = FontWeight.Black),
                 start = span.start,
                 end = span.end,
             )

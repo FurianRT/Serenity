@@ -19,9 +19,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -42,6 +45,8 @@ fun NoteListItem(
     content: ImmutableList<UiNoteContent>,
     tags: ImmutableList<UiNoteTag>,
     fontColor: UiNoteFontColor,
+    fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
     date: String,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
@@ -69,7 +74,14 @@ fun NoteListItem(
                         text = item.state.annotatedString,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
+                        style = MaterialTheme.typography.bodyMedium.copy(
+                            color = fontColor.value,
+                            fontFamily = fontFamily.value,
+                            fontSize = fontSize,
+                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
+                                    (fontSize.value /
+                                            MaterialTheme.typography.bodyMedium.fontSize.value),
+                        ),
                         color = fontColor.value,
                     )
 
@@ -111,6 +123,8 @@ private fun NoteItemPreview() {
                 UiNoteTag.Template(id = "2"),
             ),
             fontColor = UiNoteFontColor.WHITE,
+            fontFamily = UiNoteFontFamily.QUICK_SAND,
+            fontSize = 15.sp,
             content = persistentListOf(
                 UiNoteContent.Title(
                     id = "1",

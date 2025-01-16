@@ -156,7 +156,7 @@ private fun SelectedStateContent(
                     )
                     if (!hasBoldStyles) {
                         addStyle(
-                            style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                            style = SpanStyle(fontWeight = FontWeight.Black),
                             start = titleState.selection.min,
                             end = titleState.selection.max,
                         )

@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -35,6 +36,7 @@ import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
@@ -169,6 +171,8 @@ private fun MainSuccess(
                 tags = note.tags,
                 date = note.date,
                 fontColor = note.fontColor,
+                fontFamily = note.fontFamily,
+                fontSize = note.fontSize.sp,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },
             )
@@ -212,6 +216,8 @@ private fun generatePreviewNotes() = buildImmutableList {
                 date = "19.06.2023",
                 tags = persistentListOf(),
                 fontColor = UiNoteFontColor.WHITE,
+                fontFamily = UiNoteFontFamily.QUICK_SAND,
+                fontSize = 15,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = index.toString(),

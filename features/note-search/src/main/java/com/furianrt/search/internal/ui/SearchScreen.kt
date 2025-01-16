@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -48,6 +49,7 @@ import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.ui.composables.AllTagsList
@@ -265,6 +267,8 @@ private fun SuccessContent(
                     tags = item.tags,
                     date = item.date,
                     fontColor = item.fontColor,
+                    fontFamily = item.fontFamily,
+                    fontSize = item.fontSize.sp,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = {},
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
@@ -341,6 +345,8 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
                         fontColor = UiNoteFontColor.WHITE,
+                        fontFamily = UiNoteFontFamily.QUICK_SAND,
+                        fontSize = 15,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",

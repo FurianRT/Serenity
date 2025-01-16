@@ -6,6 +6,7 @@ import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.uikit.extensions.toDateString
 
 internal fun List<LocalNote>.toMainScreenNotes() = mapImmutable(LocalNote::toMainScreenNote)
@@ -15,5 +16,7 @@ internal fun LocalNote.toMainScreenNote() = NoteListScreenNote(
     date = date.toDateString(),
     tags = tags.take(3).mapImmutable { it.toRegularUiNoteTag(isRemovable = false) },
     fontColor = fontColor.toUiNoteFontColor(),
+    fontFamily = fontFamily.toUiNoteFontFamily(),
+    fontSize = fontSize,
     content = content.getShortUiContent(),
 )
