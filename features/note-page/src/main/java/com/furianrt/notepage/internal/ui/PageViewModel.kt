@@ -406,7 +406,7 @@ internal class PageViewModel @AssistedInject constructor(
         launch(NonCancellable) {
             _state.updateState<PageUiState.Success> { currentState ->
                 var newContent = currentState.content
-                mediaNames.forEach { newContent = newContent.removeMedia(it) }
+                mediaNames.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
                 currentState.copy(content = newContent).also {
                     if (isInEditMode) {
                         hasContentChanged = true
@@ -428,7 +428,7 @@ internal class PageViewModel @AssistedInject constructor(
                     currentState.playingVoiceId
                 }
                 currentState.copy(
-                    content = currentState.content.removeVoice(voice.id),
+                    content = currentState.content.removeVoice(voice.id, focusedTitleId),
                     playingVoiceId = playingVoiceId,
                 ).also {
                     if (isInEditMode) {

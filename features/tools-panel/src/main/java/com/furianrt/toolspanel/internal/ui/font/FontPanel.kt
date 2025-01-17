@@ -161,6 +161,7 @@ internal fun FontContent(
                 index = uiState.fontColors.indexOf(uiState.selectedFontColor),
                 scrollOffset = itemHalfSize,
             )
+            listState.requestScrollToItem(0)
         }
     }
 

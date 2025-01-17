@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextRange
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
@@ -84,6 +85,7 @@ internal fun ImmutableList<UiNoteTag>.removeSecondTagTemplate(): ImmutableList<U
 
 internal fun ImmutableList<UiNoteContent>.removeMedia(
     name: String,
+    focusedTitleId: String?,
 ): ImmutableList<UiNoteContent> {
     val mediaBlockIndex = indexOfFirst { content ->
         content is UiNoteContent.MediaBlock && content.media.any { it.name == name }
@@ -96,17 +98,18 @@ internal fun ImmutableList<UiNoteContent>.removeMedia(
         media = mediaBlock.media.toPersistentList().removeAll { it.name == name },
     )
     return if (newMediaBlock.media.isEmpty()) {
-        toPersistentList().removeAt(mediaBlockIndex).joinTitles()
+        toPersistentList().removeAt(mediaBlockIndex).joinTitles(focusedTitleId)
     } else {
-        toPersistentList().set(mediaBlockIndex, newMediaBlock).joinTitles()
+        toPersistentList().set(mediaBlockIndex, newMediaBlock).joinTitles(focusedTitleId)
     }
 }
 
 internal fun ImmutableList<UiNoteContent>.removeVoice(
     id: String,
+    focusedTitleId: String?,
 ): ImmutableList<UiNoteContent> = toPersistentList()
     .removeAll { it is UiNoteContent.Voice && it.id == id }
-    .joinTitles()
+    .joinTitles(focusedTitleId)
 
 internal fun ImmutableList<UiNoteContent>.updateVoiceProgress(
     id: String,
@@ -117,7 +120,9 @@ internal fun ImmutableList<UiNoteContent>.updateVoiceProgress(
     return toPersistentList().set(voiceIndex, voice.copy(progress = progress))
 }
 
-private fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteContent> {
+private fun ImmutableList<UiNoteContent>.joinTitles(
+    focusedTitleId: String?,
+): ImmutableList<UiNoteContent> {
     var counter = 0
     val resultMap = mutableMapOf<Int, UiNoteContent>()
     forEach { content ->
@@ -126,11 +131,17 @@ private fun ImmutableList<UiNoteContent>.joinTitles(): ImmutableList<UiNoteConte
             entry == null && content is UiNoteContent.Title -> resultMap[counter] = content
 
             entry is UiNoteContent.Title && content is UiNoteContent.Title -> {
-                if (content.state.annotatedString.isNotEmpty()) {
-                    entry.state.annotatedString =  if (entry.state.annotatedString.isNotEmpty()) {
-                        entry.state.annotatedString + AnnotatedString("\n") + content.state.annotatedString
+                val contentText = content.state.annotatedString
+                val entryText = entry.state.annotatedString
+                if (contentText.isNotEmpty() && entryText.isNotEmpty()) {
+                    if (content.id == focusedTitleId) {
+                        content.state.annotatedString =
+                            entryText + AnnotatedString("\n") + contentText
+                        content.state.selection =
+                            TextRange(entryText.length + content.state.selection.max + 1)
+                        resultMap[counter] = content
                     } else {
-                        content.state.annotatedString
+                        entry.state.annotatedString += AnnotatedString("\n") + contentText
                     }
                 }
             }
