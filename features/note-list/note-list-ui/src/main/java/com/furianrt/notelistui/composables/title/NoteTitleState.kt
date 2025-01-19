@@ -148,20 +148,20 @@ class NoteTitleState(
 
     internal fun updateValue(value: TextFieldValue) {
         val result = textValueState.differSpans(value)
-        if (result.annotatedString != textValueState.annotatedString) {
-            recordUndo(oldValue = textValueState, newValue = result)
-        }
+        recordUndo(oldValue = textValueState, newValue = result)
         textValueState = result
     }
 
     private fun recordUndo(oldValue: TextFieldValue, newValue: TextFieldValue) {
-        val operation = UndoRedoOperation(
-            preText = oldValue.annotatedString,
-            postText = newValue.annotatedString,
-            preSelection = oldValue.selection,
-            postSelection = newValue.selection,
-        )
-        undoRedoManager.record(operation)
+        if (oldValue.annotatedString != newValue.annotatedString) {
+            val operation = UndoRedoOperation(
+                preText = oldValue.annotatedString,
+                postText = newValue.annotatedString,
+                preSelection = oldValue.selection,
+                postSelection = newValue.selection,
+            )
+            undoRedoManager.record(operation)
+        }
     }
 }
 
@@ -171,7 +171,7 @@ fun SpanStyle.toSpanType(): SpanType? = when {
     textDecoration == TextDecoration.Underline -> SpanType.Underline
     textDecoration == TextDecoration.LineThrough -> SpanType.Strikethrough
     color != Color.Unspecified -> SpanType.FontColor(color)
-    background != Color.Unspecified -> SpanType.FillColor(color)
+    background != Color.Unspecified -> SpanType.FillColor(background)
     else -> null
 }
 
