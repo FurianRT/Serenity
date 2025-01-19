@@ -34,7 +34,7 @@ import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.NoteListItem
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold

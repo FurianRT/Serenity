@@ -1,4 +1,4 @@
-package com.furianrt.notelistui.composables
+package com.furianrt.notelistui.composables.title
 
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
@@ -8,7 +8,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,17 +24,14 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.bringIntoView
-import com.furianrt.uikit.extensions.differSpans
 import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
@@ -130,36 +126,6 @@ fun NoteContentTitle(
             innerTextField()
         },
     )
-}
-
-@Stable
-class NoteTitleState(
-    initialText: AnnotatedString = AnnotatedString(""),
-    initialSelection: TextRange = TextRange(initialText.length),
-) {
-    private var textValueState by mutableStateOf(TextFieldValue(initialText, initialSelection))
-
-    internal val textValue: TextFieldValue
-        get() = textValueState
-
-    var annotatedString: AnnotatedString
-        get() = textValueState.annotatedString
-        set(value) {
-            textValueState = textValueState.copy(annotatedString = value)
-        }
-
-    val text: String
-        get() = annotatedString.text
-
-    var selection: TextRange
-        get() = textValueState.selection
-        set(value) {
-            textValueState = textValueState.copy(selection = value)
-        }
-
-    internal fun updateValue(value: TextFieldValue) {
-        textValueState = textValueState.differSpans(value)
-    }
 }
 
 @Composable

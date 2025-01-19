@@ -68,10 +68,10 @@ import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.NoteContentMedia
-import com.furianrt.notelistui.composables.NoteContentTitle
+import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily

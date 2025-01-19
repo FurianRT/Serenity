@@ -12,7 +12,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily

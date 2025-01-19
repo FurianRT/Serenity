@@ -6,7 +6,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.util.fastForEach
 import com.furianrt.core.buildImmutableList
@@ -15,7 +14,8 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextSpan
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.composables.title.toSpanStyle
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -300,37 +300,37 @@ private fun LocalNote.Content.Title.getAnnotatedString() = buildAnnotatedString 
     spans.fastForEach { span ->
         when (span) {
             is NoteTextSpan.Bold -> addStyle(
-                style = SpanStyle(fontWeight = FontWeight.Black),
+                style = NoteTitleState.SpanType.Bold.toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Italic -> addStyle(
-                style = SpanStyle(fontStyle = FontStyle.Italic),
+                style = NoteTitleState.SpanType.Italic.toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Underline -> addStyle(
-                style = SpanStyle(textDecoration = TextDecoration.Underline),
+                style = NoteTitleState.SpanType.Underline.toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Strikethrough -> addStyle(
-                style = SpanStyle(textDecoration = TextDecoration.LineThrough),
+                style = NoteTitleState.SpanType.Strikethrough.toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FontColor -> addStyle(
-                style = SpanStyle(color = Color(span.color)),
+                style = NoteTitleState.SpanType.FontColor(Color(span.color)).toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FillColor -> addStyle(
-                style = SpanStyle(background = Color(span.color)),
+                style = NoteTitleState.SpanType.FillColor(Color(span.color)).toSpanStyle(),
                 start = span.start,
                 end = span.end,
             )

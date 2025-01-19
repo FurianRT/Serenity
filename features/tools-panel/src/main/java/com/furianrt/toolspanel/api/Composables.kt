@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
@@ -168,6 +168,7 @@ fun ActionsPanel(
                 when (targetState) {
                     PanelMode.REGULAR -> RegularPanel(
                         modifier = heightModifier.clickableNoRipple {},
+                        titleState = titleState,
                         onSelectMediaClick = onSelectMediaClick,
                         onRecordVoiceClick = {
                             audioRecordPermissionsState.launchPermissionRequest()

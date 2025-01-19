@@ -5,7 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import kotlinx.collections.immutable.ImmutableList
 import java.time.ZonedDateTime
 

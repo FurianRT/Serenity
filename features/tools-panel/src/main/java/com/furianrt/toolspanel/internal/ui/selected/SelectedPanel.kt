@@ -18,39 +18,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.AnnotatedString.Range
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import com.furianrt.notelistui.composables.NoteTitleState
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.toolspanel.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.toImmutableList
 
-private enum class SpanType {
-    BOLD, ITALIC, UNDERLINE, STRIKETHROUGH, FONT_COLOR, FILL_COLOR,
-}
-
 private enum class PanelState {
     DEFAULT, FONT_COLOR, FILL_COLOR,
-}
-
-private fun SpanStyle.toSpanType(): SpanType? = when {
-    fontWeight != null -> SpanType.BOLD
-    fontStyle == FontStyle.Italic -> SpanType.ITALIC
-    textDecoration == TextDecoration.Underline -> SpanType.UNDERLINE
-    textDecoration == TextDecoration.LineThrough -> SpanType.STRIKETHROUGH
-    color != Color.Unspecified -> SpanType.FONT_COLOR
-    background != Color.Unspecified -> SpanType.FILL_COLOR
-    else -> null
 }
 
 @Composable
@@ -98,45 +76,43 @@ private fun SelectedStateContent(
     onFillColorsClick: () -> Unit,
 ) {
     val hasBoldStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.BOLD
+            spanType = NoteTitleState.SpanType.Bold
         )
     }
     val hasItalicStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.ITALIC
+            spanType = NoteTitleState.SpanType.Italic
         )
     }
     val hasUnderlineStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.UNDERLINE
+            spanType = NoteTitleState.SpanType.Underline
         )
     }
     val hasStrikeThroughStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.STRIKETHROUGH
+            spanType = NoteTitleState.SpanType.Strikethrough
         )
     }
     val hasFontColorStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasAnyFontColorSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.FONT_COLOR
         )
     }
     val hasFillColorStyles = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString.hasSpans(
+        titleState.hasAnyFillColorSpan(
             start = titleState.selection.min,
             end = titleState.selection.max,
-            spanType = SpanType.FILL_COLOR
         )
     }
     Row(
@@ -146,21 +122,18 @@ private fun SelectedStateContent(
     ) {
         IconButton(
             onClick = {
-                titleState.annotatedString = buildAnnotatedString {
-                    append(
-                        titleState.annotatedString.removeSpansFromSelection(
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                            spanType = SpanType.BOLD,
-                        )
+                if (hasBoldStyles) {
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Bold,
                     )
-                    if (!hasBoldStyles) {
-                        addStyle(
-                            style = SpanStyle(fontWeight = FontWeight.Black),
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                        )
-                    }
+                } else {
+                    titleState.addSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Bold,
+                    )
                 }
             },
         ) {
@@ -176,21 +149,18 @@ private fun SelectedStateContent(
         }
         IconButton(
             onClick = {
-                titleState.annotatedString = buildAnnotatedString {
-                    append(
-                        titleState.annotatedString.removeSpansFromSelection(
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                            spanType = SpanType.ITALIC,
-                        )
+                if (hasItalicStyles) {
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Italic,
                     )
-                    if (!hasItalicStyles) {
-                        addStyle(
-                            style = SpanStyle(fontStyle = FontStyle.Italic),
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                        )
-                    }
+                } else {
+                    titleState.addSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Italic,
+                    )
                 }
             },
         ) {
@@ -206,21 +176,18 @@ private fun SelectedStateContent(
         }
         IconButton(
             onClick = {
-                titleState.annotatedString = buildAnnotatedString {
-                    append(
-                        titleState.annotatedString.removeSpansFromSelection(
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                            spanType = SpanType.UNDERLINE,
-                        )
+                if (hasUnderlineStyles) {
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Underline,
                     )
-                    if (!hasUnderlineStyles) {
-                        addStyle(
-                            style = SpanStyle(textDecoration = TextDecoration.Underline),
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                        )
-                    }
+                } else {
+                    titleState.addSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Underline,
+                    )
                 }
             },
         ) {
@@ -236,21 +203,18 @@ private fun SelectedStateContent(
         }
         IconButton(
             onClick = {
-                titleState.annotatedString = buildAnnotatedString {
-                    append(
-                        titleState.annotatedString.removeSpansFromSelection(
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                            spanType = SpanType.STRIKETHROUGH,
-                        )
+                if (hasStrikeThroughStyles) {
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Strikethrough,
                     )
-                    if (!hasStrikeThroughStyles) {
-                        addStyle(
-                            style = SpanStyle(textDecoration = TextDecoration.LineThrough),
-                            start = titleState.selection.min,
-                            end = titleState.selection.max,
-                        )
-                    }
+                } else {
+                    titleState.addSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.Strikethrough,
+                    )
                 }
             },
         ) {
@@ -267,15 +231,11 @@ private fun SelectedStateContent(
         IconButton(
             onClick = {
                 if (hasFontColorStyles) {
-                    titleState.annotatedString = buildAnnotatedString {
-                        append(
-                            titleState.annotatedString.removeSpansFromSelection(
-                                start = titleState.selection.min,
-                                end = titleState.selection.max,
-                                spanType = SpanType.FONT_COLOR,
-                            )
-                        )
-                    }
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.FontColor(),
+                    )
                 } else {
                     onFontColorsClick()
                 }
@@ -294,15 +254,11 @@ private fun SelectedStateContent(
         IconButton(
             onClick = {
                 if (hasFillColorStyles) {
-                    titleState.annotatedString = buildAnnotatedString {
-                        append(
-                            titleState.annotatedString.removeSpansFromSelection(
-                                start = titleState.selection.min,
-                                end = titleState.selection.max,
-                                spanType = SpanType.FILL_COLOR,
-                            )
-                        )
-                    }
+                    titleState.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.FillColor(),
+                    )
                 } else {
                     onFillColorsClick()
                 }
@@ -329,13 +285,14 @@ private fun FontColorsStateContent(
 ) {
     val colors = remember { UiNoteFontColor.entries.toImmutableList() }
     val selectedColor = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString
-            .getSpansStyles(
+        titleState
+            .getSpans(
                 start = titleState.selection.min,
                 end = titleState.selection.max,
+                spanType = NoteTitleState.SpanType.FontColor(),
             )
-            .filter { it.item.color != Color.Unspecified }
-            .map { UiNoteFontColor.fromColor(it.item.color.toArgb()) }
+            .filterIsInstance<NoteTitleState.SpanType.FontColor>()
+            .map { UiNoteFontColor.fromColor(it.color.toArgb()) }
             .takeIf { it.count() == 1 }
             ?.firstOrNull()
     }
@@ -345,21 +302,18 @@ private fun FontColorsStateContent(
         selectedColor = selectedColor,
         onCloseClick = onCloseClick,
         onColorSelected = { color ->
-            titleState.annotatedString = buildAnnotatedString {
-                append(
-                    titleState.annotatedString.removeSpansFromSelection(
-                        start = titleState.selection.min,
-                        end = titleState.selection.max,
-                        spanType = SpanType.FONT_COLOR,
-                    )
+            if (color == null) {
+                titleState.removeSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FontColor(),
                 )
-                if (color != null) {
-                    addStyle(
-                        style = SpanStyle(color = color.value),
-                        start = titleState.selection.min,
-                        end = titleState.selection.max,
-                    )
-                }
+            } else {
+                titleState.addSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FontColor(color = color.value),
+                )
             }
         },
     )
@@ -373,13 +327,14 @@ private fun FillColorsStateContent(
 ) {
     val colors = remember { UiNoteFontColor.entries.toImmutableList() }
     val selectedColor = remember(titleState.annotatedString, titleState.selection) {
-        titleState.annotatedString
-            .getSpansStyles(
+        titleState
+            .getSpans(
                 start = titleState.selection.min,
                 end = titleState.selection.max,
+                spanType = NoteTitleState.SpanType.FillColor(),
             )
-            .filter { it.item.background != Color.Unspecified }
-            .map { UiNoteFontColor.fromColor(it.item.background.toArgb()) }
+            .filterIsInstance<NoteTitleState.SpanType.FillColor>()
+            .map { UiNoteFontColor.fromColor(it.color.toArgb()) }
             .takeIf { it.count() == 1 }
             ?.firstOrNull()
     }
@@ -389,93 +344,22 @@ private fun FillColorsStateContent(
         selectedColor = selectedColor,
         onCloseClick = onCloseClick,
         onColorSelected = { color ->
-            titleState.annotatedString = buildAnnotatedString {
-                append(
-                    titleState.annotatedString.removeSpansFromSelection(
-                        start = titleState.selection.min,
-                        end = titleState.selection.max,
-                        spanType = SpanType.FILL_COLOR,
-                    )
+            if (color == null) {
+                titleState.removeSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FillColor(),
                 )
-                if (color != null) {
-                    addStyle(
-                        style = SpanStyle(background = color.value),
-                        start = titleState.selection.min,
-                        end = titleState.selection.max,
-                    )
-                }
+            } else {
+                titleState.addSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FillColor(color = color.value),
+                )
             }
         },
     )
 }
-
-private fun AnnotatedString.removeSpansFromSelection(
-    start: Int,
-    end: Int,
-    spanType: SpanType,
-): AnnotatedString = flatMapAnnotations { span ->
-    if (text.isEmpty()) {
-        return@flatMapAnnotations emptyList()
-    }
-    val item = span.item
-    if (item !is SpanStyle || item.toSpanType() != spanType) {
-        return@flatMapAnnotations listOf(span)
-    }
-
-    if (span.start >= span.end) {
-        return@flatMapAnnotations emptyList()
-    }
-
-    if ((start..end).intersect(span.start..span.end).isEmpty()) {
-        return@flatMapAnnotations listOf(span)
-    }
-
-    val adjustedSpans = when {
-        // If the change is within the range, adjust the end of the range
-        start in span.start..span.end && end in span.start..span.end -> {
-            listOf(
-                span.copy(end = start),
-                span.copy(start = end),
-            )
-        }
-        // If the change overlaps the start of the range, adjust the start
-        start !in span.start..span.end && end in span.start..span.end -> {
-            listOf(span.copy(start = end))
-        }
-        // If the change overlaps the end of the range, adjust the end
-        start in span.start..span.end && end !in span.start..span.end -> {
-            listOf(span.copy(end = start))
-        }
-        // If the change completely overlaps the range, remove the range
-        start <= span.start && end >= span.end -> {
-            emptyList()
-        }
-
-        else -> {
-            listOf(span)
-        }
-    }
-    return@flatMapAnnotations adjustedSpans
-        .map {
-            it.copy(
-                start = it.start.coerceAtLeast(0),
-                end = it.end.coerceAtMost(text.length),
-            )
-        }
-        .filter { it.start >= 0 && it.start < it.end }
-}
-
-private fun AnnotatedString.getSpansStyles(
-    start: Int,
-    end: Int,
-): List<Range<SpanStyle>> = spanStyles.filter { start >= it.start && end <= it.end }
-
-private fun AnnotatedString.hasSpans(
-    start: Int,
-    end: Int,
-    spanType: SpanType,
-): Boolean = getSpansStyles(start = start, end = end)
-    .any { it.item.toSpanType() == spanType }
 
 @PreviewWithBackground
 @Composable
