@@ -3,6 +3,8 @@ package com.furianrt.notepage.internal.ui
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
+import com.furianrt.core.doWithState
+import com.furianrt.core.getState
 import com.furianrt.core.hasItem
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.lastIndexOf
@@ -114,7 +116,7 @@ internal class PageViewModel @AssistedInject constructor(
     val effect = _effect.asSharedFlow()
 
     private val isInEditMode: Boolean
-        get() = getSuccessState()?.isInEditMode.orFalse()
+        get() = _state.getState<PageUiState.Success>()?.isInEditMode.orFalse()
 
     private var focusedTitleId: String? = null
     private var hasContentChanged = false
@@ -133,7 +135,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     override fun onCleared() {
         if (isInEditMode && hasContentChanged) {
-            getSuccessState()?.let { successState ->
+            _state.doWithState<PageUiState.Success> { successState ->
                 launch(NonCancellable) { saveNoteContent(successState) }
             }
         }
@@ -162,8 +164,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnMediaShareClick -> {}
             is OnOpenMediaViewerRequest -> _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
-            is OnOnSaveContentRequest -> {
-                val successState = getSuccessState() ?: return
+            is OnOnSaveContentRequest -> _state.doWithState<PageUiState.Success> { successState ->
                 launch(NonCancellable) { saveNoteContent(successState) }
             }
 
@@ -235,15 +236,17 @@ internal class PageViewModel @AssistedInject constructor(
             if (titleIndexToFocus != null) {
                 _effect.tryEmit(PageEffect.FocusFirstTitle(titleIndexToFocus))
             }
-            val successState = getSuccessState() ?: return@launch
-            val blockIndex = successState.content
-                .indexOfFirstOrNull { it.id == newBlock.id } ?: return@launch
-            _effect.tryEmit(PageEffect.BringContentToView(blockIndex))
+            _state.doWithState<PageUiState.Success> { successState ->
+                val blockIndex = successState.content.indexOfFirstOrNull { it.id == newBlock.id }
+                if (blockIndex != null) {
+                    _effect.tryEmit(PageEffect.BringContentToView(blockIndex))
+                }
+            }
         }
     }
 
     private fun findTitleIndex(id: String?): Int? {
-        val successState = getSuccessState() ?: return null
+        val successState = _state.getState<PageUiState.Success>() ?: return null
         val index = successState.content.indexOfFirst { it.id == id }
         return index.takeIf { it != -1 }
     }
@@ -354,7 +357,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryToRemoveSecondTagTemplate() {
-        val tags = getSuccessState()?.tags ?: return
+        val tags = _state.getState<PageUiState.Success>()?.tags ?: return
         val hasTemplateTagWithText = tags.any { tag ->
             tag is UiNoteTag.Template && tag.textState.text.isNotBlank()
         }
@@ -382,21 +385,22 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun openMediaViewScreen(mediaName: String) {
-        val successState = getSuccessState() ?: return
-        notesRepository.cacheNoteContent(
-            noteId = noteId,
-            content = successState.content.map(UiNoteContent::toLocalNoteContent)
-        )
-        _effect.tryEmit(
-            PageEffect.OpenMediaViewScreen(
+        _state.doWithState<PageUiState.Success> { successState ->
+            notesRepository.cacheNoteContent(
                 noteId = noteId,
-                mediaName = mediaName,
-                identifier = DialogIdentifier(
-                    dialogId = MEDIA_VIEW_DIALOG_ID,
-                    requestId = noteId,
+                content = successState.content.map(UiNoteContent::toLocalNoteContent),
+            )
+            _effect.tryEmit(
+                PageEffect.OpenMediaViewScreen(
+                    noteId = noteId,
+                    mediaName = mediaName,
+                    identifier = DialogIdentifier(
+                        dialogId = MEDIA_VIEW_DIALOG_ID,
+                        requestId = noteId,
+                    ),
                 ),
-            ),
-        )
+            )
+        }
     }
 
     private fun removeMedia(mediaNames: Set<String>) {
@@ -504,11 +508,12 @@ internal class PageViewModel @AssistedInject constructor(
             }
             return@updateState newState
         }
-        val successState = getSuccessState()
-        if (focusFirstTitle && isEnabled && successState?.isContentEmpty == true) {
-            delay(TITLE_FOCUS_DELAY)
-            _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
-            focusFirstTitle = false
+        _state.doWithState<PageUiState.Success> { successState ->
+            if (focusFirstTitle && isEnabled && successState.isContentEmpty) {
+                delay(TITLE_FOCUS_DELAY)
+                _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
+                focusFirstTitle = false
+            }
         }
     }
 
@@ -615,8 +620,6 @@ internal class PageViewModel @AssistedInject constructor(
     private fun PageUiState.Success.removeTag(tag: UiNoteTag) = copy(
         tags = tags.toPersistentList().remove(tag),
     )
-
-    private fun getSuccessState() = _state.value as? PageUiState.Success
 
     @AssistedFactory
     interface Factory {
