@@ -10,9 +10,10 @@ import kotlinx.collections.immutable.persistentListOf
 import java.util.UUID
 
 @Immutable
-internal class NoteItem(
+internal data class NoteItem(
     val id: String = UUID.randomUUID().toString(),
     val tags: ImmutableList<UiNoteTag> = persistentListOf(),
+    val stickers: ImmutableList<StickerItem> = persistentListOf(),
     val content: ImmutableList<UiNoteContent> = persistentListOf(),
     val fontFamily: UiNoteFontFamily = UiNoteFontFamily.QUICK_SAND,
     val fontColor: UiNoteFontColor = UiNoteFontColor.WHITE,

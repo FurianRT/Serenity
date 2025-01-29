@@ -10,6 +10,8 @@ import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.internal.ui.entities.NoteItem
+import com.furianrt.notepage.internal.ui.entities.StickerItem
+import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.toolspanel.api.VoiceRecord
 import kotlinx.collections.immutable.toImmutableList
 import java.time.ZonedDateTime
@@ -17,7 +19,8 @@ import java.util.UUID
 
 internal fun LocalNote.toNoteItem() = NoteItem(
     id = id,
-    tags = tags.mapImmutable { it.toRegularUiNoteTag(isRemovable = false) },
+    tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
+    stickers = stickers.mapImmutable(LocalNote.Sticker::toStickerItem),
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
     fontColor = fontColor.toUiNoteFontColor(),
     fontFamily = fontFamily.toUiNoteFontFamily(),
@@ -35,6 +38,29 @@ internal fun VoiceRecord.toUiVoice() = UiNoteContent.Voice(
     duration = duration.toLong(),
     volume = volume.toImmutableList(),
     progress = 0f,
+)
+
+internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
+    id = id,
+    type = type,
+    scale = state.scale,
+    rotation = state.rotation,
+    anchorId = state.anchorId,
+    biasX = state.biasX,
+    biasY = state.biasY,
+)
+
+private fun LocalNote.Sticker.toStickerItem() = StickerItem(
+    id = id,
+    type = type,
+    isEditing = false,
+    state = StickerState(
+        initialScale = scale,
+        initialRotation = rotation,
+        initialAnchorId = anchorId,
+        initialBiasX = biasX,
+        initialBiasY = biasY,
+    ),
 )
 
 private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {

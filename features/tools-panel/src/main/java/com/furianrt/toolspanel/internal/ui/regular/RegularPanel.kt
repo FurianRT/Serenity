@@ -23,6 +23,7 @@ internal fun RegularPanel(
     onSelectMediaClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
     onFontStyleClick: () -> Unit = {},
+    onOnStickersClick: () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -61,7 +62,7 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = { },
+            onClick = onOnStickersClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_panel_stickers),

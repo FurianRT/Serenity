@@ -16,10 +16,22 @@ data class LocalNote(
     val fontColor: NoteFontColor,
     val fontSize: Int,
     val tags: List<Tag>,
+    val stickers: List<Sticker>,
     val content: List<Content>,
 ) {
     @Serializable
     data class Tag(val title: String)
+
+    @Serializable
+    data class Sticker(
+        val id: String,
+        val type: Int,
+        val scale: Float,
+        val rotation: Float,
+        val anchorId: String?,
+        val biasX: Float,
+        val biasY: Float,
+    )
 
     @Serializable
     sealed class Content(open val id: String) {

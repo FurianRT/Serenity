@@ -6,6 +6,7 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notepage.internal.ui.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
@@ -17,6 +18,7 @@ internal sealed interface PageUiState {
         val noteId: String,
         val content: ImmutableList<UiNoteContent>,
         val tags: ImmutableList<UiNoteTag>,
+        val stickers: ImmutableList<StickerItem>,
         val playingVoiceId: String?,
         val fontFamily: UiNoteFontFamily,
         val fontColor: UiNoteFontColor,
@@ -56,6 +58,14 @@ internal sealed interface PageEvent {
     data class OnVoiceProgressSelected(
         val voice: UiNoteContent.Voice,
         val value: Float,
+    ) : PageEvent
+
+    data class OnStickerSelected(
+        val sticker: StickerItem,
+    ) : PageEvent
+
+    data class OnRemoveStickerClick(
+        val sticker: StickerItem,
     ) : PageEvent
 }
 

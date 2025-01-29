@@ -4,6 +4,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
@@ -35,6 +36,7 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     id = note.id,
     date = note.date,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
+    stickers = stickers.map(EntryNoteSticker::toNoteContentSticker),
     fontFamily = note.font,
     fontColor = note.fontColor,
     fontSize = note.fontSize,

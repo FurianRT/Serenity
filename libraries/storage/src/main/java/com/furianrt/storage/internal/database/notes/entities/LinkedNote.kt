@@ -40,4 +40,11 @@ internal class LinkedNote(
         ),
     )
     val tags: List<EntryNoteTag>,
+
+    @Relation(
+        entity = EntryNoteSticker::class,
+        entityColumn = EntryNoteSticker.FIELD_NOTE_ID,
+        parentColumn = EntryNote.FIELD_ID,
+    )
+    val stickers: List<EntryNoteSticker>,
 )

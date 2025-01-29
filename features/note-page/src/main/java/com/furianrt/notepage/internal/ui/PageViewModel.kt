@@ -42,7 +42,9 @@ import com.furianrt.notepage.internal.ui.PageEvent.OnMediaSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnMediaShareClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnOnSaveContentRequest
 import com.furianrt.notepage.internal.ui.PageEvent.OnOpenMediaViewerRequest
+import com.furianrt.notepage.internal.ui.PageEvent.OnRemoveStickerClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnSelectMediaClick
+import com.furianrt.notepage.internal.ui.PageEvent.OnStickerSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnTagDoneEditing
 import com.furianrt.notepage.internal.ui.PageEvent.OnTagRemoveClick
 import com.furianrt.notepage.internal.ui.PageEvent.OnTagTextCleared
@@ -54,6 +56,7 @@ import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.entities.NoteItem
+import com.furianrt.notepage.internal.ui.entities.StickerItem
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTitleTemplates
@@ -62,6 +65,7 @@ import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.removeVoice
+import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
@@ -176,6 +180,8 @@ internal class PageViewModel @AssistedInject constructor(
             is OnVoicePlayClick -> onVoicePlayClick(event.voice)
             is OnVoiceProgressSelected -> onVoiceProgressSelected(event.voice, event.value)
             is OnVoiceRemoveClick -> removeVoiceRecord(event.voice)
+            is OnStickerSelected -> addSticker(event.sticker)
+            is OnRemoveStickerClick -> removeSticker(event.sticker)
         }
     }
 
@@ -478,6 +484,21 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
+    private fun addSticker(sticker: StickerItem) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
+        }
+    }
+
+    private fun removeSticker(sticker: StickerItem) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(
+                stickers = currentState.stickers.toPersistentList()
+                    .removeAll { it.id == sticker.id },
+            )
+        }
+    }
+
     private fun onIsSelectedChange(isSelected: Boolean) {
         if (!isSelected) {
             audioPlayer.stop()
@@ -555,6 +576,7 @@ internal class PageViewModel @AssistedInject constructor(
                     noteId = note.id,
                     content = note.content,
                     tags = note.tags,
+                    stickers = note.stickers,
                     playingVoiceId = null,
                     fontFamily = note.fontFamily,
                     fontColor = note.fontColor,
@@ -572,6 +594,7 @@ internal class PageViewModel @AssistedInject constructor(
             noteId = noteId,
             content = state.content.map(UiNoteContent::toLocalNoteContent),
             tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
+            stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
             fontFamily = state.fontFamily.toNoteFontFamily(),
             fontColor = state.fontColor.toNoteFontColor(),
             fontSize = state.fontSize,

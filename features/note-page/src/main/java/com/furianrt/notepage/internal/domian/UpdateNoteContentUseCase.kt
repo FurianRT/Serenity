@@ -7,6 +7,7 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
@@ -18,11 +19,13 @@ internal class UpdateNoteContentUseCase @Inject constructor(
     private val notesRepository: NotesRepository,
     private val tagsRepository: TagsRepository,
     private val mediaRepository: MediaRepository,
+    private val stickersRepository: StickersRepository,
 ) {
     suspend operator fun invoke(
         noteId: String,
         content: List<LocalNote.Content>,
         tags: List<LocalNote.Tag>,
+        stickers: List<LocalNote.Sticker>,
         fontFamily: NoteFontFamily,
         fontColor: NoteFontColor,
         fontSize: Int,
@@ -37,7 +40,6 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             val mediaToDelete = mediaRepository.getMedia(noteId)
                 .first()
                 .filterNot { media -> newMedia.hasItem { it.name == media.name } }
-
             val mediaToInsert = content
                 .filterIsInstance<LocalNote.Content.MediaBlock>()
                 .flatMap(LocalNote.Content.MediaBlock::media)
@@ -45,17 +47,24 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             val voicesToDelete = mediaRepository.getVoices(noteId)
                 .first()
                 .filterNot { voice -> newVoices.hasItem { it.id == voice.id } }
-
             val voicesToInsert = content.filterIsInstance<LocalNote.Content.Voice>()
 
             val tagsToDelete = tagsRepository.getTags(noteId)
                 .first()
                 .filterNot { tag -> tags.hasItem { tag.title == it.title } }
 
+            val savedStickers = stickersRepository.getStickers(noteId).first()
+            val stickersToDelete = savedStickers.filterNot { sticker ->
+                stickers.hasItem { sticker.id == it.id }
+            }
+            val stickersToUpdate = stickers.filter { sticker ->
+                val savedSticker = savedStickers.find { sticker.id == it.id }
+                savedSticker != null && savedSticker != sticker
+            }
+
             if (mediaToInsert.isNotEmpty()) {
                 mediaRepository.insertMedia(noteId, mediaToInsert)
             }
-
             if (mediaToDelete.isNotEmpty()) {
                 mediaRepository.deleteMedia(noteId, mediaToDelete)
             }
@@ -63,13 +72,11 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             if (voicesToInsert.isNotEmpty()) {
                 mediaRepository.insertVoice(noteId, voicesToInsert)
             }
-
             if (voicesToDelete.isNotEmpty()) {
                 mediaRepository.deleteVoice(noteId, voicesToDelete)
             }
 
             notesRepository.updateNoteText(noteId, content)
-
             notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
 
             if (tags.isNotEmpty()) {
@@ -78,8 +85,17 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             if (tagsToDelete.isNotEmpty()) {
                 tagsRepository.deleteForNote(noteId, tagsToDelete)
             }
-
             tagsRepository.deleteUnusedTags()
+
+            if (stickers.isNotEmpty()) {
+                stickersRepository.insert(noteId, stickers)
+            }
+            if (stickersToDelete.isNotEmpty()) {
+                stickersRepository.delete(stickersToDelete)
+            }
+            if (stickersToUpdate.isNotEmpty()) {
+                stickersRepository.update(stickersToDelete)
+            }
         }
     }
 }

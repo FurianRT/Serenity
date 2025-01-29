@@ -6,11 +6,13 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.SecurityRepository
+import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
+import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
@@ -18,6 +20,7 @@ import com.furianrt.storage.internal.preferences.SerenityDataStore
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
+import com.furianrt.storage.internal.repositories.StickersRepositoryImp
 import com.furianrt.storage.internal.repositories.TagsRepositoryImp
 import dagger.Binds
 import dagger.Module
@@ -51,6 +54,10 @@ internal interface DatabaseModule {
     @Singleton
     fun appearanceRepository(imp: AppearanceRepositoryImp): AppearanceRepository
 
+    @Binds
+    @Singleton
+    fun stickersRepository(imp: StickersRepositoryImp): StickersRepository
+
     companion object {
         @Provides
         @Singleton
@@ -81,6 +88,10 @@ internal interface DatabaseModule {
         @Provides
         @Singleton
         fun noteToTagDao(database: SerenityDatabase): NoteToTagDao = database.noteToTagDao()
+
+        @Provides
+        @Singleton
+        fun stickerDao(database: SerenityDatabase): StickerDao = database.stickerDao()
 
         @Provides
         @Singleton
