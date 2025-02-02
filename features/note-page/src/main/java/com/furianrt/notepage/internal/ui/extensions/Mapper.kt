@@ -9,8 +9,8 @@ import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
-import com.furianrt.notepage.internal.ui.entities.NoteItem
-import com.furianrt.notepage.internal.ui.entities.StickerItem
+import com.furianrt.notepage.internal.ui.page.entities.NoteItem
+import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.toolspanel.api.VoiceRecord
 import kotlinx.collections.immutable.toImmutableList

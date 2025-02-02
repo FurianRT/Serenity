@@ -17,7 +17,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.furianrt.mediaselector.api.MediaViewerRoute
-import com.furianrt.notepage.internal.ui.NotePageScreenInternal
+import com.furianrt.notepage.internal.ui.page.NotePageScreenInternal
 import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.utils.DialogIdentifier
 

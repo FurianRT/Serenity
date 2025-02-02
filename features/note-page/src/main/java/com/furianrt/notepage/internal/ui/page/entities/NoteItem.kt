@@ -1,10 +1,11 @@
-package com.furianrt.notepage.internal.ui.entities
+package com.furianrt.notepage.internal.ui.page.entities
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.util.UUID

@@ -1,4 +1,4 @@
-package com.furianrt.notepage.internal.ui.entities
+package com.furianrt.notepage.internal.ui.stickers.entities
 
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Stable

@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
@@ -26,7 +25,7 @@ import androidx.compose.ui.unit.IntSize
 import com.furianrt.core.hasItem
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notepage.internal.ui.entities.StickerItem
+import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
 
 @Composable

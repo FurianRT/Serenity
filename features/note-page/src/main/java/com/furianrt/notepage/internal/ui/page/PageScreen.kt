@@ -1,4 +1,4 @@
-package com.furianrt.notepage.internal.ui
+package com.furianrt.notepage.internal.ui.page
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
@@ -78,7 +78,7 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
-import com.furianrt.notepage.internal.ui.entities.StickerItem
+import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
