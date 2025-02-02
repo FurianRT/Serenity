@@ -2,12 +2,13 @@ package com.furianrt.notepage.internal.ui.stickers
 
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
-import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
@@ -38,9 +39,7 @@ internal fun StickersBox(
     modifier: Modifier = Modifier,
 ) {
     val toolbarHeightPx = LocalDensity.current.run { toolbarHeight.toPx() }
-    BoxWithConstraints(
-        modifier = modifier,
-    ) {
+    Box(modifier = modifier) {
         stickers.forEach { sticker ->
             key(sticker.id) {
                 StickerElement(
@@ -48,7 +47,6 @@ internal fun StickersBox(
                     sticker = sticker,
                     toolbarHeightPx = toolbarHeightPx,
                     listState = listState,
-                    parentWidthPx = LocalDensity.current.run { maxWidth.toPx() },
                     onRemoveStickerClick = onRemoveStickerClick,
                     onDragStopped = {
                         sticker.calculateAnchor(noteContent, listState, toolbarHeightPx)
@@ -65,7 +63,6 @@ private fun StickerElement(
     sticker: StickerItem,
     listState: LazyListState,
     toolbarHeightPx: Float,
-    parentWidthPx: Float,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     onDragStopped: () -> Unit,
     modifier: Modifier = Modifier,
@@ -108,9 +105,12 @@ private fun StickerElement(
     }
 
     if (isVisible) {
+        val viewPortWidth by remember {
+            derivedStateOf { listState.layoutInfo.viewportSize.width.toFloat() }
+        }
         var stickerSize by remember { mutableStateOf(IntSize.Zero) }
         val draggableState = rememberDraggable2DState { delta ->
-            sticker.state.biasX += delta.x / parentWidthPx.coerceAtLeast(1f)
+            sticker.state.biasX += delta.x / viewPortWidth.coerceAtLeast(1f)
             sticker.state.biasY += delta.y / anchorSize.coerceAtLeast(1)
         }
         StickerScreenItem(
@@ -121,7 +121,7 @@ private fun StickerElement(
                     val stickerCenterX = stickerSize.width / 2
                     val stickerCenterY = stickerSize.height / 2
                     IntOffset(
-                        x = (parentWidthPx * biasX - stickerCenterX).toInt(),
+                        x = (viewPortWidth * biasX - stickerCenterX).toInt(),
                         y = (anchorOffset + anchorSize * biasY - stickerCenterY).toInt(),
                     )
                 }

@@ -94,7 +94,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
                 stickersRepository.delete(stickersToDelete)
             }
             if (stickersToUpdate.isNotEmpty()) {
-                stickersRepository.update(stickersToDelete)
+                stickersRepository.update(stickersToUpdate)
             }
         }
     }

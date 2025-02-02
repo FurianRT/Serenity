@@ -17,4 +17,8 @@ sealed class UiNoteTag(
         val textState: TextFieldState = TextFieldState(),
         override val id: String = UUID.randomUUID().toString(),
     ) : UiNoteTag(id)
+
+    companion object {
+        const val BLOCK_ID = "tags_block"
+    }
 }

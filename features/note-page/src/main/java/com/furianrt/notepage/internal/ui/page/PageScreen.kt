@@ -75,6 +75,7 @@ import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -99,7 +100,6 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.launch
 
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
-private const val TAGS_ITEM_KEY = "tags"
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -429,7 +429,7 @@ private fun SuccessScreen(
                         }
                     }
                     if (uiState.tags.isNotEmpty()) {
-                        item(key = TAGS_ITEM_KEY) {
+                        item(key = UiNoteTag.BLOCK_ID) {
                             NoteTags(
                                 modifier = Modifier
                                     .padding(start = 4.dp, end = 4.dp, top = 20.dp)
@@ -510,6 +510,7 @@ private fun SuccessScreen(
                                     type = 0,
                                     noteContent = uiState.content,
                                     listState = state.listState,
+                                    toolbarHeightPx = density.run { toolbarMargin.toPx() }.toInt(),
                                 )
                                 onEvent(PageEvent.OnStickerSelected(sticker))
                             },
