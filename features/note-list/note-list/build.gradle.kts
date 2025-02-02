@@ -27,7 +27,6 @@ dependencies {
     implementation(libs.composeUi)
     implementation(libs.composeAnimation)
     implementation(libs.composeGraphics)
-    implementation(libs.navAnimation)
     implementation(libs.composeToolingPreview)
     implementation(libs.composeTooling)
     implementation(libs.composeNavigation)
