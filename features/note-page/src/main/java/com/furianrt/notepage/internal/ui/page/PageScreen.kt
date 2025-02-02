@@ -449,14 +449,16 @@ private fun SuccessScreen(
                         }
                     }
                 }
-                StickersBox(
-                    modifier = Modifier.fillMaxSize(),
-                    listState = state.listState,
-                    noteContent = uiState.content,
-                    stickers = uiState.stickers,
-                    toolbarHeight = toolbarMargin,
-                    onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
-                )
+                if (uiState.stickers.isNotEmpty()) {
+                    StickersBox(
+                        modifier = Modifier.fillMaxSize(),
+                        listState = state.listState,
+                        noteContent = uiState.content,
+                        stickers = uiState.stickers,
+                        toolbarHeight = toolbarMargin,
+                        onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
+                    )
+                }
             }
             AnimatedVisibility(
                 visible = state.dimSurface,

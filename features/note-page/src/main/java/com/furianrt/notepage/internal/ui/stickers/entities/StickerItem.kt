@@ -19,6 +19,8 @@ internal data class StickerItem(
     val state: StickerState = StickerState(),
 ) {
     companion object {
+        private const val OFFSET_PERCENT = 0.06f
+
         fun build(
             type: Int,
             noteContent: List<UiNoteContent>,
@@ -40,26 +42,36 @@ internal data class StickerItem(
                 }
 
             val stickerId = UUID.randomUUID().toString()
+            val randomOffset = Random.nextDouble(
+                from = 1.0 - OFFSET_PERCENT,
+                until = 1.0 + OFFSET_PERCENT,
+            ).toFloat()
 
             return if (anchor != null) {
-                val randomOffset = Random.nextDouble(0.95, 1.05).toFloat()
-                val itemStart = anchor.offset + toolbarHeightPx
+                val itemStart = (anchor.offset + toolbarHeightPx)
                 val itemEnd = itemStart + anchor.size
                 val visibleStart = max(0, min(viewPortSize, itemEnd))
                 val visibleEnd = max(0, min(viewPortSize, itemStart))
                 val visibleMiddle = (visibleStart + visibleEnd) / 2f
-                val biasY = (visibleMiddle * randomOffset - itemStart) / anchor.size
+                val minVisibleMiddle = visibleMiddle.coerceAtLeast(viewportCenter * 0.8f)
                 StickerItem(
                     id = stickerId,
                     type = type,
                     state = StickerState(
                         initialAnchorId = noteContent[anchor.index].id,
                         initialBiasX = 0.5f * randomOffset,
-                        initialBiasY = biasY,
+                        initialBiasY = (minVisibleMiddle * randomOffset - itemStart) / anchor.size,
                     ),
                 )
             } else {
-                StickerItem(id = stickerId, type = type)
+                StickerItem(
+                    id = stickerId,
+                    type = type,
+                    state = StickerState(
+                        initialBiasX = 0.5f * randomOffset,
+                        initialBiasY = 0.4f * randomOffset,
+                    ),
+                )
             }
         }
     }
