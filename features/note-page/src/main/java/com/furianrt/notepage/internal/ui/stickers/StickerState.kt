@@ -5,23 +5,32 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Stable
 internal class StickerState(
     initialScale: Float = 1f,
     initialRotation: Float = 0f,
-    initialAnchorId: String? = null,
-    initialBiasX: Float = 0.5f,
-    initialBiasY: Float = 0.5f,
+    initialAnchors: ImmutableList<Anchor> = persistentListOf(),
 ) {
 
     var scale: Float by mutableFloatStateOf(initialScale)
 
     var rotation: Float by mutableFloatStateOf(initialRotation)
 
-    var anchorId: String? by mutableStateOf(initialAnchorId)
+    var anchors: ImmutableList<Anchor> by mutableStateOf(initialAnchors)
 
-    var biasX: Float by mutableFloatStateOf(initialBiasX)
+    sealed interface Anchor {
+        data class Item(
+            val id: String,
+            val biasX: Float = 0.5f,
+            val biasY: Float = 0.5f,
+        ) : Anchor
 
-    var biasY: Float by mutableFloatStateOf(initialBiasY)
+        data class ViewPort(
+            val biasX: Float = 0.5f,
+            val biasY: Float = 0.4f,
+        ) : Anchor
+    }
 }

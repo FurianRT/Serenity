@@ -1,5 +1,7 @@
 package com.furianrt.notepage.internal.ui.stickers
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.layout.Box
@@ -19,20 +21,14 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
-import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.core.hasItem
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
-import kotlin.math.max
-import kotlin.math.min
-
-private val STUB_HEIGHT = 300.dp
+import kotlinx.coroutines.delay
 
 @Composable
 internal fun StickersBox(
@@ -76,53 +72,49 @@ private fun StickerElement(
     var stickerHeight by remember { mutableIntStateOf(0) }
     var isVisible by remember { mutableStateOf(false) }
 
-    val anchorContent = remember(sticker.state.anchorId) {
-        noteContent.find { it.id == sticker.state.anchorId }
-    }
-
-    val isEmptyTitleAnchor =
-        (anchorContent as? UiNoteContent.Title)?.state?.text?.isEmpty() ?: false
-
-    LaunchedEffect(
-        noteContent,
-        sticker.state.anchorId,
-        sticker.state.biasX,
-        sticker.state.biasY,
-        isEmptyTitleAnchor,
-    ) {
+    LaunchedEffect(noteContent, sticker.state.anchors) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->
+                val firstAnchor = sticker.state.anchors.first()
                 when {
-                    sticker.state.anchorId == null -> {
-                        val biasYOffset = density.run { STUB_HEIGHT.toPx() } * sticker.state.biasY
+                    firstAnchor is StickerState.Anchor.ViewPort -> {
+                        val biasYOffset = density
+                            .run { StickerItem.STUB_HEIGHT.toPx() } * firstAnchor.biasY
                         stickerOffset = IntOffset(
-                            x = (viewPortWidth * sticker.state.biasX).toInt(),
-                            y = (biasYOffset + layoutInfo.viewportStartOffset + toolbarHeightPx).toInt(),
+                            x = (viewPortWidth * firstAnchor.biasX).toInt(),
+                            y = (biasYOffset + toolbarHeightPx).toInt(),
                         )
                         isVisible = true
                     }
 
-                    !noteContent.hasSuitableContent(sticker) || isEmptyTitleAnchor -> {
+                    !noteContent.hasSuitableContent(sticker) -> {
                         sticker.calculateAnchor(
                             noteContent = noteContent,
                             listState = listState,
-                            toolbarHeightPx = toolbarHeightPx,
+                            toolbarHeight = toolbarHeightPx,
                             stickerOffset = stickerOffset,
+                            stickerHeight = stickerHeight.toFloat(),
                             density = density,
-                            stickerHeight = stickerHeight,
                         )
                     }
 
                     else -> {
                         val info = layoutInfo.visibleItemsInfo.findInfoForAnchorId(
-                            noteContent = noteContent,
-                            anchorId = sticker.state.anchorId,
+                            anchorIds = sticker.state.anchors
+                                .filterIsInstance<StickerState.Anchor.Item>()
+                                .map(StickerState.Anchor.Item::id),
+                            stickerOffset = stickerOffset.y,
+                            stickerHeight = stickerHeight,
                         )
 
                         if (info != null) {
-                            val biasYOffset = info.size * sticker.state.biasY
+                            val anchor = sticker.state.anchors.first {
+                                it is StickerState.Anchor.Item && it.id == info.key
+                            } as StickerState.Anchor.Item
+
+                            val biasYOffset = info.size * anchor.biasY
                             stickerOffset = IntOffset(
-                                x = (viewPortWidth * sticker.state.biasX).toInt(),
+                                x = (viewPortWidth * anchor.biasX).toInt(),
                                 y = (biasYOffset + info.offset + toolbarHeightPx).toInt(),
                             )
                         }
@@ -141,19 +133,42 @@ private fun StickerElement(
                 y = (stickerOffset.y + delta.y).toInt(),
             )
         }
+        val valueX by animateIntAsState(targetValue = stickerOffset.x, label = "valueX")
+        val valueY by animateIntAsState(targetValue = stickerOffset.y, label = "valueY")
+
+        var isDragging by remember { mutableStateOf(false) }
+        var animateOffset by remember { mutableStateOf(false) }
+
+        LaunchedEffect(listState.isScrollInProgress, isDragging) {
+            if (listState.isScrollInProgress || isDragging) {
+                animateOffset = false
+            } else {
+                delay(1000)
+                animateOffset = true
+            }
+        }
+
         StickerScreenItem(
             modifier = modifier
-                .offset { stickerOffset }
+                .offset {
+                    if (animateOffset) {
+                        IntOffset(valueX, valueY)
+                    } else {
+                        stickerOffset
+                    }
+                }
                 .draggable2D(
                     state = draggableState,
+                    onDragStarted = { isDragging = true },
                     onDragStopped = {
+                        isDragging = false
                         sticker.calculateAnchor(
                             noteContent = noteContent,
                             listState = listState,
-                            toolbarHeightPx = toolbarHeightPx,
+                            toolbarHeight = toolbarHeightPx,
                             stickerOffset = stickerOffset,
+                            stickerHeight = stickerHeight.toFloat(),
                             density = density,
-                            stickerHeight = stickerHeight,
                         )
                     },
                 )
@@ -165,53 +180,24 @@ private fun StickerElement(
 }
 
 private fun List<LazyListItemInfo>.findInfoForAnchorId(
-    noteContent: List<UiNoteContent>,
-    anchorId: String?,
-): LazyListItemInfo? {
-    val anchorIndex = noteContent.indexOfFirstOrNull { it.id == anchorId }
-    return find { it.index == anchorIndex }
-}
-
-private fun StickerItem.calculateAnchor(
-    noteContent: List<UiNoteContent>,
-    listState: LazyListState,
-    toolbarHeightPx: Float,
-    stickerOffset: IntOffset,
+    anchorIds: List<String>,
+    stickerOffset: Int,
     stickerHeight: Int,
-    density: Density,
-) {
-    val viewPortHeight = listState.layoutInfo.viewportSize.height
-    val viewPortWidth = listState.layoutInfo.viewportSize.width
+): LazyListItemInfo? {
+    val list = filter { anchorIds.contains(it.key) }
 
-    val availableAnchors = listState.layoutInfo.visibleItemsInfo.filter { info ->
-        val content = noteContent.getOrNull(info.index)
-        val emptyTitle = content is UiNoteContent.Title && content.state.text.isEmpty()
-        val isTagsBlock = info.key == UiNoteTag.BLOCK_ID
-        !emptyTitle && !isTagsBlock
-    }
 
-    val suitableAnchor = availableAnchors.maxByOrNull { anchor ->
-        val itemStart = anchor.offset + toolbarHeightPx.toInt()
-        val itemEnd = itemStart + anchor.size
-        val visibleStart = max(0, min(viewPortHeight, itemStart))
-        val visibleEnd = max(0, min(viewPortHeight, itemEnd))
-        val stickerBottom = stickerOffset.y + stickerHeight
-        maxOf(0, min(stickerBottom, visibleEnd) - max(stickerOffset.y, visibleStart))
-    }
 
-    state.biasX = stickerOffset.x / viewPortWidth.toFloat()
-    if (suitableAnchor != null) {
-        state.anchorId = noteContent[suitableAnchor.index].id
-        state.biasY =
-            (stickerOffset.y - suitableAnchor.offset - toolbarHeightPx) / suitableAnchor.size.toFloat()
-
-    } else {
-        state.anchorId = null
-        state.biasY = stickerOffset.y / density.run { STUB_HEIGHT.toPx() }
+    return list.maxByOrNull { info ->
+        val stickerBottom = stickerOffset + stickerHeight
+        val infoBottom = info.offset + info.size
+        maxOf(0, minOf(stickerBottom, infoBottom) - maxOf(stickerOffset, info.offset))
     }
 }
 
 private fun List<UiNoteContent>.hasSuitableContent(sticker: StickerItem): Boolean {
-    val content = find { it.id == sticker.state.anchorId }
-    return content != null && !content.isEmptyTitle()
+    val content = filter { content ->
+        sticker.state.anchors.hasItem { it is StickerState.Anchor.Item && it.id == content.id }
+    }
+    return content.any { !it.isEmptyTitle() }
 }

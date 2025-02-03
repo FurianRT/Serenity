@@ -45,9 +45,7 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     type = type,
     scale = state.scale,
     rotation = state.rotation,
-    anchorId = state.anchorId,
-    biasX = state.biasX,
-    biasY = state.biasY,
+    anchors = state.anchors.map(StickerState.Anchor::toLocalNoteStickerAnchor),
 )
 
 private fun LocalNote.Sticker.toStickerItem() = StickerItem(
@@ -57,9 +55,7 @@ private fun LocalNote.Sticker.toStickerItem() = StickerItem(
     state = StickerState(
         initialScale = scale,
         initialRotation = rotation,
-        initialAnchorId = anchorId,
-        initialBiasX = biasX,
-        initialBiasY = biasY,
+        initialAnchors = anchors.mapImmutable(LocalNote.Sticker.Anchor::toStickerStateAnchor),
     ),
 )
 
@@ -78,4 +74,34 @@ private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this
         addedDate = ZonedDateTime.now(),
         duration = duration,
     )
+}
+
+private fun StickerState.Anchor.toLocalNoteStickerAnchor() = when (this) {
+    is StickerState.Anchor.Item -> LocalNote.Sticker.Anchor(
+        id = id,
+        biasX = biasX,
+        biasY = biasY,
+    )
+
+    is StickerState.Anchor.ViewPort -> LocalNote.Sticker.Anchor(
+        id = null,
+        biasX = biasX,
+        biasY = biasY,
+    )
+}
+
+private fun LocalNote.Sticker.Anchor.toStickerStateAnchor(): StickerState.Anchor {
+    val anchorId = id
+    return if (anchorId == null) {
+        StickerState.Anchor.ViewPort(
+            biasX = biasX,
+            biasY = biasY,
+        )
+    } else {
+        StickerState.Anchor.Item(
+            id = anchorId,
+            biasX = biasX,
+            biasY = biasY,
+        )
+    }
 }

@@ -315,7 +315,7 @@ private fun SuccessScreen(
                     .fillMaxSize()
                     .padding(horizontal = 8.dp)
                     .applyIf(uiState.isInEditMode) {
-                        Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top } )
+                        Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                     }
                     .haze(hazeState)
                     .imePadding(),
@@ -493,7 +493,9 @@ private fun SuccessScreen(
                                     type = 0,
                                     noteContent = uiState.content,
                                     listState = state.listState,
-                                    toolbarHeightPx = density.run { toolbarMargin.toPx() }.toInt(),
+                                    stickerSize = density.run { StickerItem.DEFAULT_SIZE.toPx() },
+                                    toolbarHeight = density.run { toolbarMargin.toPx() },
+                                    density = density,
                                 )
                                 onEvent(PageEvent.OnStickerSelected(sticker))
                             },
