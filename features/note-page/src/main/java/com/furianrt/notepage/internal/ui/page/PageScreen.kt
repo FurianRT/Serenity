@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.CornerRadius
@@ -317,6 +318,7 @@ private fun SuccessScreen(
                     .applyIf(uiState.isInEditMode) {
                         Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                     }
+                    .clipToBounds()
                     .haze(hazeState)
                     .imePadding(),
             ) {

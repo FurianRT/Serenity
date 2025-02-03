@@ -1,7 +1,7 @@
 package com.furianrt.notepage.internal.ui.stickers
 
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.layout.Box
@@ -29,6 +29,9 @@ import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
+
+private const val STICKER_ANIM_DELAY = 500L
+private const val STICKER_ANIM_DURATION = 250
 
 @Composable
 internal fun StickersBox(
@@ -72,7 +75,23 @@ private fun StickerElement(
     var stickerHeight by remember { mutableIntStateOf(0) }
     var isVisible by remember { mutableStateOf(false) }
 
-    LaunchedEffect(noteContent, sticker.state.anchors) {
+    var prevContentCount by remember { mutableIntStateOf(noteContent.count { !it.isEmptyTitle() }) }
+    LaunchedEffect(noteContent) {
+        val newContentCount = noteContent.count { !it.isEmptyTitle() }
+        if (newContentCount != prevContentCount) {
+            sticker.calculateAnchor(
+                noteContent = noteContent,
+                listState = listState,
+                toolbarHeight = toolbarHeightPx,
+                stickerOffset = stickerOffset,
+                stickerHeight = stickerHeight.toFloat(),
+                density = density,
+            )
+            prevContentCount = newContentCount
+        }
+    }
+
+    LaunchedEffect(sticker.state.anchors) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->
                 val firstAnchor = sticker.state.anchors.first()
@@ -130,11 +149,19 @@ private fun StickerElement(
         val draggableState = rememberDraggable2DState { delta ->
             stickerOffset = IntOffset(
                 x = (stickerOffset.x + delta.x).toInt(),
-                y = (stickerOffset.y + delta.y).toInt(),
+                y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2).toInt(),
             )
         }
-        val valueX by animateIntAsState(targetValue = stickerOffset.x, label = "valueX")
-        val valueY by animateIntAsState(targetValue = stickerOffset.y, label = "valueY")
+        val valueX by animateIntAsState(
+            targetValue = stickerOffset.x,
+            animationSpec = tween(STICKER_ANIM_DURATION),
+            label = "valueX",
+        )
+        val valueY by animateIntAsState(
+            targetValue = stickerOffset.y,
+            animationSpec = tween(STICKER_ANIM_DURATION),
+            label = "valueY",
+        )
 
         var isDragging by remember { mutableStateOf(false) }
         var animateOffset by remember { mutableStateOf(false) }
@@ -143,7 +170,7 @@ private fun StickerElement(
             if (listState.isScrollInProgress || isDragging) {
                 animateOffset = false
             } else {
-                delay(1000)
+                delay(STICKER_ANIM_DELAY)
                 animateOffset = true
             }
         }
@@ -185,9 +212,6 @@ private fun List<LazyListItemInfo>.findInfoForAnchorId(
     stickerHeight: Int,
 ): LazyListItemInfo? {
     val list = filter { anchorIds.contains(it.key) }
-
-
-
     return list.maxByOrNull { info ->
         val stickerBottom = stickerOffset + stickerHeight
         val infoBottom = info.offset + info.size

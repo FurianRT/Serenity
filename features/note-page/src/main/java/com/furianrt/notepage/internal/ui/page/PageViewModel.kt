@@ -324,7 +324,7 @@ internal class PageViewModel @AssistedInject constructor(
                         AnnotatedString("")
                     } else {
                         title.state.annotatedString.subSequence(
-                            startIndex = selection + tempPart.indexOfFirst { it != ' ' },
+                            startIndex = selection + tempPart.indexOfFirst { it != ' ' && it != '\n' },
                             endIndex = title.state.annotatedString.length,
                         )
                     }

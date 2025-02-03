@@ -10,6 +10,7 @@ sealed class NoteTextSpan(
     open val end: Int,
 ) {
     @Serializable
+    @SerialName("Bold")
     data class Bold(
         @SerialName("bold_id")
         override val titleId: String,
@@ -20,6 +21,7 @@ sealed class NoteTextSpan(
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
+    @SerialName("Italic")
     data class Italic(
         @SerialName("italic_id")
         override val titleId: String,
@@ -30,6 +32,7 @@ sealed class NoteTextSpan(
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
+    @SerialName("Underline")
     data class Underline(
         @SerialName("underline_id")
         override val titleId: String,
@@ -40,6 +43,7 @@ sealed class NoteTextSpan(
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
+    @SerialName("Strikethrough")
     data class Strikethrough(
         @SerialName("strikethrough_id")
         override val titleId: String,
@@ -50,6 +54,7 @@ sealed class NoteTextSpan(
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
+    @SerialName("FontColor")
     data class FontColor(
         @SerialName("font_color_id")
         override val titleId: String,
@@ -61,6 +66,7 @@ sealed class NoteTextSpan(
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
+    @SerialName("FillColor")
     data class FillColor(
         @SerialName("fill_color_id")
         override val titleId: String,

@@ -42,6 +42,7 @@ data class LocalNote(
     sealed class Content(open val id: String) {
 
         @Serializable
+        @SerialName("Title")
         data class Title(
             @SerialName("title_id")
             override val id: String,
@@ -50,6 +51,7 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        @SerialName("MediaBlock")
         data class MediaBlock(
             @SerialName("media_block_id")
             override val id: String,
@@ -57,6 +59,7 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        @SerialName("Voice")
         data class Voice(
             @SerialName("voice_id")
             override val id: String,
@@ -82,6 +85,7 @@ data class LocalNote(
         )
 
         @Serializable
+        @SerialName("Image")
         data class Image(
             @SerialName("image_name")
             override val name: String,
@@ -99,6 +103,7 @@ data class LocalNote(
         ) : Media(name, ratio, uri, addedDate)
 
         @Serializable
+        @SerialName("Video")
         data class Video(
             @SerialName("video_name")
             override val name: String,
