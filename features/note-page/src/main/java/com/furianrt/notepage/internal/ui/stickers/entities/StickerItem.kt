@@ -37,8 +37,12 @@ internal data class StickerItem(
                     !emptyTitle && !isTagsBlock
                 }
                 .minByOrNull { info ->
-                    val itemCenter = info.offset + info.size + toolbarHeightPx
-                    (viewportCenter - itemCenter).absoluteValue
+                    val itemStart = info.offset + toolbarHeightPx
+                    val itemEnd = itemStart + info.size
+                    val visibleStart = max(0, min(viewPortSize, itemEnd))
+                    val visibleEnd = max(0, min(viewPortSize, itemStart))
+                    val visibleMiddle = (visibleStart + visibleEnd) / 2f
+                    (viewportCenter - visibleMiddle).absoluteValue
                 }
 
             val stickerId = UUID.randomUUID().toString()

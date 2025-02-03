@@ -21,7 +21,7 @@ internal fun StickerScreenItem(
 ) {
     Box(
         modifier = modifier
-            .size(100.dp)
+            .size(150.dp)
             .background(Color.Red)
             .border(2.dp, Color.Blue)
             .clickableNoRipple { onRemoveClick(item) }

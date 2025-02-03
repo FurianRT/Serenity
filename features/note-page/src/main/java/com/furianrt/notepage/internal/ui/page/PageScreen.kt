@@ -87,6 +87,7 @@ import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.theme.SerenityTheme
@@ -312,28 +313,9 @@ private fun SuccessScreen(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .drawWithCache {
-                        val path = Path()
-                        val rect = size.toRect()
-                        val cornerRadius = CornerRadius(8.dp.toPx())
-                        path.addRoundRect(
-                            RoundRect(
-                                rect = rect.copy(
-                                    bottom = if (uiState.isInEditMode) {
-                                        toolsPanelRect.top + ToolsPanelConstants.PANEL_HEIGHT.toPx()
-                                    } else {
-                                        size.height
-                                    },
-                                ),
-                                bottomLeft = cornerRadius,
-                                bottomRight = cornerRadius,
-                            )
-                        )
-                        onDrawWithContent {
-                            clipPath(path) {
-                                this@onDrawWithContent.drawContent()
-                            }
-                        }
+                    .padding(horizontal = 8.dp)
+                    .applyIf(uiState.isInEditMode) {
+                        Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top } )
                     }
                     .haze(hazeState)
                     .imePadding(),
@@ -341,7 +323,6 @@ private fun SuccessScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 8.dp)
                         .nestedScroll(bgScrollConnection)
                         .clickableNoRipple { focusManager.clearFocus() },
                     state = state.listState,
@@ -545,6 +526,30 @@ private fun Modifier.drawNoteBackground(
         }
     }
 }
+
+private fun Modifier.clipPanel(
+    toolsPanelTop: () -> Float,
+): Modifier = then(
+    Modifier.drawWithCache {
+        val path = Path()
+        val rect = size.toRect()
+        val cornerRadius = CornerRadius(8.dp.toPx())
+        path.addRoundRect(
+            RoundRect(
+                rect = rect.copy(
+                    bottom = toolsPanelTop() + ToolsPanelConstants.PANEL_HEIGHT.toPx(),
+                ),
+                bottomLeft = cornerRadius,
+                bottomRight = cornerRadius,
+            )
+        )
+        onDrawWithContent {
+            clipPath(path) {
+                this@onDrawWithContent.drawContent()
+            }
+        }
+    }
+)
 
 @Composable
 private fun LoadingScreen(modifier: Modifier = Modifier) {
