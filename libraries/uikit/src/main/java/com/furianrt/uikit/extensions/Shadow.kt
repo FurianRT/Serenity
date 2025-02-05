@@ -32,3 +32,16 @@ fun DrawScope.drawTopInnerShadow(
         endY = elevation.toPx(),
     ),
 )
+
+fun DrawScope.drawLeftShadow(
+    color: Color = Color.Black,
+    elevation: Dp = 6.dp,
+) = drawRect(
+    topLeft = Offset(-elevation.toPx(), 0f),
+    size = Size(elevation.toPx(), size.height),
+    brush = Brush.horizontalGradient(
+        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
+        startX = elevation.toPx(),
+        endX = -elevation.toPx(),
+    ),
+)

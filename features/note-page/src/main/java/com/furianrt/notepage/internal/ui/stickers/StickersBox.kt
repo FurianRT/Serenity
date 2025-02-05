@@ -5,12 +5,16 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.draggable2D
 import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imeAnimationSource
+import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyListItemInfo
+import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,6 +25,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import com.furianrt.core.hasItem
@@ -31,7 +36,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 
 private const val STICKER_ANIM_DELAY = 500L
-private const val STICKER_ANIM_DURATION = 250
+private const val STICKER_ANIM_DURATION = 300
 
 @Composable
 internal fun StickersBox(
@@ -58,6 +63,7 @@ internal fun StickersBox(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun StickerElement(
     noteContent: ImmutableList<UiNoteContent>,
@@ -68,9 +74,6 @@ private fun StickerElement(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
-    val viewPortWidth by remember {
-        derivedStateOf { listState.layoutInfo.viewportSize.width.toFloat() }
-    }
     var stickerOffset by remember { mutableStateOf(IntOffset.Zero) }
     var stickerHeight by remember { mutableIntStateOf(0) }
     var isVisible by remember { mutableStateOf(false) }
@@ -79,14 +82,19 @@ private fun StickerElement(
     LaunchedEffect(noteContent) {
         val newContentCount = noteContent.count { !it.isEmptyTitle() }
         if (newContentCount != prevContentCount) {
-            sticker.calculateAnchor(
-                noteContent = noteContent,
-                listState = listState,
-                toolbarHeight = toolbarHeightPx,
-                stickerOffset = stickerOffset,
-                stickerHeight = stickerHeight.toFloat(),
-                density = density,
-            )
+            val isAnchorChanged = sticker.state.anchors.any { anchor ->
+                !noteContent.hasItem { (anchor as? StickerState.Anchor.Item)?.id == it.id }
+            }
+            if (isAnchorChanged) {
+                sticker.calculateAnchor(
+                    noteContent = noteContent,
+                    listState = listState,
+                    toolbarHeight = toolbarHeightPx,
+                    stickerOffset = stickerOffset,
+                    stickerHeight = stickerHeight.toFloat(),
+                    density = density,
+                )
+            }
             prevContentCount = newContentCount
         }
     }
@@ -94,56 +102,19 @@ private fun StickerElement(
     LaunchedEffect(sticker.state.anchors) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->
-                val firstAnchor = sticker.state.anchors.first()
-                when {
-                    firstAnchor is StickerState.Anchor.ViewPort -> {
-                        val biasYOffset = density
-                            .run { StickerItem.STUB_HEIGHT.toPx() } * firstAnchor.biasY
-                        stickerOffset = IntOffset(
-                            x = (viewPortWidth * firstAnchor.biasX).toInt(),
-                            y = (biasYOffset + toolbarHeightPx).toInt(),
-                        )
-                        isVisible = true
-                    }
-
-                    !noteContent.hasSuitableContent(sticker) -> {
-                        sticker.calculateAnchor(
-                            noteContent = noteContent,
-                            listState = listState,
-                            toolbarHeight = toolbarHeightPx,
-                            stickerOffset = stickerOffset,
-                            stickerHeight = stickerHeight.toFloat(),
-                            density = density,
-                        )
-                    }
-
-                    else -> {
-                        val info = layoutInfo.visibleItemsInfo.findInfoForAnchorId(
-                            anchorIds = sticker.state.anchors
-                                .filterIsInstance<StickerState.Anchor.Item>()
-                                .map(StickerState.Anchor.Item::id),
-                            stickerOffset = stickerOffset.y,
-                            stickerHeight = stickerHeight,
-                        )
-
-                        if (info != null) {
-                            val anchor = sticker.state.anchors.first {
-                                it is StickerState.Anchor.Item && it.id == info.key
-                            } as StickerState.Anchor.Item
-
-                            val biasYOffset = info.size * anchor.biasY
-                            stickerOffset = IntOffset(
-                                x = (viewPortWidth * anchor.biasX).toInt(),
-                                y = (biasYOffset + info.offset + toolbarHeightPx).toInt(),
-                            )
-                        }
-
-                        isVisible = info != null
-                    }
-                }
+                sticker.calculatePosition(
+                    noteContent = noteContent,
+                    stickerOffset = stickerOffset,
+                    stickerHeight = stickerHeight,
+                    toolbarHeight = toolbarHeightPx,
+                    listState = listState,
+                    layoutInfo = layoutInfo,
+                    density = density,
+                    changeStickerOffset = { stickerOffset = it },
+                    changeStickerVisibility = { isVisible = it },
+                )
             }
     }
-
 
     if (isVisible) {
         val draggableState = rememberDraggable2DState { delta ->
@@ -166,8 +137,12 @@ private fun StickerElement(
         var isDragging by remember { mutableStateOf(false) }
         var animateOffset by remember { mutableStateOf(false) }
 
-        LaunchedEffect(listState.isScrollInProgress, isDragging) {
-            if (listState.isScrollInProgress || isDragging) {
+        val imeTargetBottom = WindowInsets.imeAnimationTarget.getBottom(density)
+        val imeSourceBottom = WindowInsets.imeAnimationSource.getBottom(density)
+        val isImeInProgress = imeTargetBottom != imeSourceBottom
+
+        LaunchedEffect(listState.isScrollInProgress, isDragging, isImeInProgress) {
+            if (listState.isScrollInProgress || isDragging || isImeInProgress) {
                 animateOffset = false
             } else {
                 delay(STICKER_ANIM_DELAY)
@@ -210,10 +185,11 @@ private fun List<LazyListItemInfo>.findInfoForAnchorId(
     anchorIds: List<String>,
     stickerOffset: Int,
     stickerHeight: Int,
+    toolbarHeight: Int,
 ): LazyListItemInfo? {
     val list = filter { anchorIds.contains(it.key) }
     return list.maxByOrNull { info ->
-        val stickerBottom = stickerOffset + stickerHeight
+        val stickerBottom = stickerOffset + stickerHeight - toolbarHeight
         val infoBottom = info.offset + info.size
         maxOf(0, minOf(stickerBottom, infoBottom) - maxOf(stickerOffset, info.offset))
     }
@@ -224,4 +200,69 @@ private fun List<UiNoteContent>.hasSuitableContent(sticker: StickerItem): Boolea
         sticker.state.anchors.hasItem { it is StickerState.Anchor.Item && it.id == content.id }
     }
     return content.any { !it.isEmptyTitle() }
+}
+
+private fun StickerItem.calculatePosition(
+    noteContent: List<UiNoteContent>,
+    stickerOffset: IntOffset,
+    stickerHeight: Int,
+    toolbarHeight: Float,
+    listState: LazyListState,
+    layoutInfo: LazyListLayoutInfo,
+    density: Density,
+    changeStickerOffset: (IntOffset) -> Unit,
+    changeStickerVisibility: (Boolean) -> Unit,
+) {
+    val viewPortWidth = layoutInfo.viewportSize.width
+    val firstAnchor = state.anchors.first()
+    when {
+        firstAnchor is StickerState.Anchor.ViewPort -> {
+            val biasYOffset = density
+                .run { StickerItem.STUB_HEIGHT.toPx() } * firstAnchor.biasY
+            changeStickerOffset(
+                IntOffset(
+                    x = (viewPortWidth * firstAnchor.biasX).toInt(),
+                    y = (biasYOffset + toolbarHeight).toInt(),
+                )
+            )
+            changeStickerVisibility(true)
+        }
+
+        !noteContent.hasSuitableContent(this) -> {
+            calculateAnchor(
+                noteContent = noteContent,
+                listState = listState,
+                toolbarHeight = toolbarHeight,
+                stickerOffset = stickerOffset,
+                stickerHeight = stickerHeight.toFloat(),
+                density = density,
+            )
+        }
+
+        else -> {
+            val info = layoutInfo.visibleItemsInfo.findInfoForAnchorId(
+                anchorIds = state.anchors
+                    .filterIsInstance<StickerState.Anchor.Item>()
+                    .map(StickerState.Anchor.Item::id),
+                stickerOffset = stickerOffset.y,
+                stickerHeight = stickerHeight,
+                toolbarHeight = toolbarHeight.toInt(),
+            )
+
+            if (info != null) {
+                val anchor = state.anchors.first {
+                    it is StickerState.Anchor.Item && it.id == info.key
+                } as StickerState.Anchor.Item
+
+                val biasYOffset = info.size * anchor.biasY
+                changeStickerOffset(
+                    IntOffset(
+                        x = (viewPortWidth * anchor.biasX).toInt(),
+                        y = (biasYOffset + info.offset + toolbarHeight).toInt(),
+                    )
+                )
+            }
+            changeStickerVisibility(info != null)
+        }
+    }
 }
