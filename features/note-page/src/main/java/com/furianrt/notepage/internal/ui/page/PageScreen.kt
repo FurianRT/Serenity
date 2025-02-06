@@ -440,6 +440,7 @@ private fun SuccessScreen(
                         stickers = uiState.stickers,
                         toolbarHeight = toolbarMargin,
                         onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
+                        onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
                     )
                 }
             }

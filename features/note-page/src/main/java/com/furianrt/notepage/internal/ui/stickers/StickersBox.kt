@@ -45,6 +45,7 @@ internal fun StickersBox(
     listState: LazyListState,
     toolbarHeight: Dp,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
+    onStickerChanged: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val toolbarHeightPx = LocalDensity.current.run { toolbarHeight.toPx() }
@@ -57,6 +58,7 @@ internal fun StickersBox(
                     toolbarHeightPx = toolbarHeightPx,
                     listState = listState,
                     onRemoveStickerClick = onRemoveStickerClick,
+                    onStickerChanged = onStickerChanged,
                 )
             }
         }
@@ -70,6 +72,7 @@ private fun StickerElement(
     sticker: StickerItem,
     listState: LazyListState,
     toolbarHeightPx: Float,
+    onStickerChanged: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -153,11 +156,7 @@ private fun StickerElement(
         StickerScreenItem(
             modifier = modifier
                 .offset {
-                    if (animateOffset) {
-                        IntOffset(valueX, valueY)
-                    } else {
-                        stickerOffset
-                    }
+                    stickerOffset
                 }
                 .draggable2D(
                     state = draggableState,
@@ -172,6 +171,7 @@ private fun StickerElement(
                             stickerHeight = stickerHeight.toFloat(),
                             density = density,
                         )
+                        onStickerChanged(sticker)
                     },
                 )
                 .onSizeChanged { stickerHeight = it.height },
@@ -185,11 +185,10 @@ private fun List<LazyListItemInfo>.findInfoForAnchorId(
     anchorIds: List<String>,
     stickerOffset: Int,
     stickerHeight: Int,
-    toolbarHeight: Int,
 ): LazyListItemInfo? {
     val list = filter { anchorIds.contains(it.key) }
     return list.maxByOrNull { info ->
-        val stickerBottom = stickerOffset + stickerHeight - toolbarHeight
+        val stickerBottom = stickerOffset + stickerHeight
         val infoBottom = info.offset + info.size
         maxOf(0, minOf(stickerBottom, infoBottom) - maxOf(stickerOffset, info.offset))
     }
@@ -244,9 +243,8 @@ private fun StickerItem.calculatePosition(
                 anchorIds = state.anchors
                     .filterIsInstance<StickerState.Anchor.Item>()
                     .map(StickerState.Anchor.Item::id),
-                stickerOffset = stickerOffset.y,
+                stickerOffset = stickerOffset.y - toolbarHeight.toInt(),
                 stickerHeight = stickerHeight,
-                toolbarHeight = toolbarHeight.toInt(),
             )
 
             if (info != null) {

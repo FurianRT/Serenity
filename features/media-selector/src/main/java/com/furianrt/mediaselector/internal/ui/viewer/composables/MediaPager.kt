@@ -4,7 +4,6 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
 import androidx.annotation.OptIn
-import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -65,29 +64,28 @@ internal fun MediaPager(
     onMediaItemClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    CompositionLocalProvider(LocalOverscrollFactory provides null) {
-        HorizontalPager(
-            modifier = modifier,
-            state = state,
-            key = { media[it].name },
-            pageSpacing = 8.dp,
-            beyondViewportPageCount = 1,
-        ) { page ->
-            when (val item = media[page]) {
-                is MediaItem.Image -> ImagePage(
-                    item = item,
-                    onClick = onMediaItemClick,
-                )
+    HorizontalPager(
+        modifier = modifier,
+        state = state,
+        key = { media[it].name },
+        pageSpacing = 8.dp,
+        beyondViewportPageCount = 1,
+        overscrollEffect = null,
+    ) { page ->
+        when (val item = media[page]) {
+            is MediaItem.Image -> ImagePage(
+                item = item,
+                onClick = onMediaItemClick,
+            )
 
-                is MediaItem.Video -> VideoPage(
-                    item = item,
-                    isPlaying = state.currentPage == page,
-                    showControls = showControls,
-                    onClick = onMediaItemClick,
-                    onThumbDrugStart = onThumbDrugStart,
-                    onThumbDrugEnd = onThumbDrugEnd,
-                )
-            }
+            is MediaItem.Video -> VideoPage(
+                item = item,
+                isPlaying = state.currentPage == page,
+                showControls = showControls,
+                onClick = onMediaItemClick,
+                onThumbDrugStart = onThumbDrugStart,
+                onThumbDrugEnd = onThumbDrugEnd,
+            )
         }
     }
 }

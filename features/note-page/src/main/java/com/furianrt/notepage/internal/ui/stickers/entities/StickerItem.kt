@@ -32,8 +32,9 @@ internal data class StickerItem(
         density: Density,
         randomOffset: Float = 1f,
     ) {
+        val stickerOffsetY = stickerOffset.y - toolbarHeight
         val viewPortSize = listState.layoutInfo.viewportSize
-        val stickerBottom = stickerOffset.y + stickerHeight
+        val stickerBottom = stickerOffsetY + stickerHeight
 
         var anchors = listState.layoutInfo.visibleItemsInfo.filter { info ->
             val content = noteContent.getOrNull(info.index)
@@ -43,19 +44,19 @@ internal data class StickerItem(
         }
 
         val inBoundsAnchors = anchors.filter { info ->
-            val infoTop = info.offset + toolbarHeight
+            val infoTop = info.offset
             val infoBottom = infoTop + info.size
-            stickerOffset.y <= infoBottom && stickerBottom >= infoTop
+            stickerOffsetY <= infoBottom && stickerBottom >= infoTop
         }
 
         if (inBoundsAnchors.isEmpty()) {
             val closestAnchor = anchors.minByOrNull { info ->
-                val itemStart = info.offset + toolbarHeight.toInt()
+                val itemStart = info.offset
                 val itemEnd = itemStart + info.size
                 val visibleStart = max(0, min(viewPortSize.height, itemEnd))
                 val visibleEnd = max(0, min(viewPortSize.height, itemStart))
                 val visibleMiddle = (visibleStart + visibleEnd) / 2f
-                (stickerOffset.y - visibleMiddle).absoluteValue
+                (stickerOffsetY - visibleMiddle).absoluteValue
             }
             anchors = closestAnchor?.let { listOf(it) } ?: emptyList()
         } else {
@@ -67,7 +68,7 @@ internal data class StickerItem(
                 StickerState.Anchor.Item(
                     id = noteContent[anchor.index].id,
                     biasX = (stickerOffset.x.toFloat() / viewPortSize.width) * randomOffset,
-                    biasY = (stickerOffset.y - anchor.offset - toolbarHeight) / anchor.size.toFloat(),
+                    biasY = (stickerOffsetY - anchor.offset) / anchor.size.toFloat(),
                 )
             }
         } else {
@@ -75,7 +76,7 @@ internal data class StickerItem(
             persistentListOf(
                 StickerState.Anchor.ViewPort(
                     biasX = stickerOffset.x.toFloat() / viewPortSize.width * randomOffset,
-                    biasY = (stickerOffset.y.toFloat() - toolbarHeight) / stubHeightPx * randomOffset,
+                    biasY = stickerOffsetY / stubHeightPx * randomOffset,
                 ),
             )
         }

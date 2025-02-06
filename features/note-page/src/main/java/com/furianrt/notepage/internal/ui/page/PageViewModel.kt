@@ -12,6 +12,7 @@ import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -70,6 +71,7 @@ import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -104,6 +106,7 @@ private const val TITLE_FOCUS_DELAY = 150L
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
+    private val stickersRepository: StickersRepository,
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val permissionsUtils: PermissionsUtils,
@@ -182,6 +185,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnVoiceRemoveClick -> removeVoiceRecord(event.voice)
             is OnStickerSelected -> addSticker(event.sticker)
             is OnRemoveStickerClick -> removeSticker(event.sticker)
+            is OnStickerChanged -> updateSticker(event.sticker)
         }
     }
 
@@ -485,17 +489,29 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun addSticker(sticker: StickerItem) {
+        hasContentChanged = true
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
         }
     }
 
     private fun removeSticker(sticker: StickerItem) {
+        hasContentChanged = true
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(
                 stickers = currentState.stickers.toPersistentList()
                     .removeAll { it.id == sticker.id },
             )
+        }
+    }
+
+    private fun updateSticker(sticker: StickerItem) {
+        if (isInEditMode) {
+            hasContentChanged = true
+        } else {
+            launch {
+                stickersRepository.update(listOf(sticker.toLocalNoteSticker()))
+            }
         }
     }
 

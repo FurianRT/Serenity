@@ -16,7 +16,7 @@ internal interface StickerDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(stickers: List<EntryNoteSticker>)
 
-    @Update(entity = EntryNoteSticker::class)
+    @Update(entity = EntryNoteSticker::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: List<PartStickerTransformations>)
 
     @Delete(entity = EntryNoteSticker::class)
