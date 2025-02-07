@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteFontColor
-import com.furianrt.uikit.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 
@@ -35,7 +35,7 @@ internal fun ColorItem(
         if (isSelected(color)) {
             Icon(
                 modifier = Modifier.size(28.dp),
-                painter = painterResource(R.drawable.ic_action_done),
+                painter = painterResource(uiR.drawable.ic_action_done),
                 contentDescription = null,
                 tint = Color.Unspecified
             )

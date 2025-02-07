@@ -14,6 +14,7 @@ import java.util.UUID
 import kotlin.math.absoluteValue
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @Stable
@@ -100,7 +101,7 @@ internal data class StickerItem(
             density: Density,
         ): StickerItem {
             val viewPortSize = listState.layoutInfo.viewportSize
-            val viewPortCenter = viewPortSize.height / 2
+            val viewPortCenter = viewPortSize.height / 2f
             val item = StickerItem(
                 id = UUID.randomUUID().toString(),
                 type = type,
@@ -111,8 +112,8 @@ internal data class StickerItem(
                 listState = listState,
                 stickerHeight = stickerSize,
                 stickerOffset = IntOffset(
-                    x = viewPortSize.width / 2 - stickerSize.toInt() / 2,
-                    y = (viewPortCenter - stickerSize / 2).toInt(),
+                    x = (viewPortSize.width / 2f - stickerSize.toInt() / 2f).roundToInt(),
+                    y = (viewPortCenter - stickerSize / 2f).roundToInt(),
                 ),
                 toolbarHeight = toolbarHeight,
                 density = density,

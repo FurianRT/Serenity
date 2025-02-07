@@ -44,6 +44,8 @@ import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.toolspanel.internal.ui.font.FontContent
 import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
+import com.furianrt.toolspanel.internal.ui.stickers.StickersContent
+import com.furianrt.toolspanel.internal.ui.stickers.StickersTitleBar
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
@@ -59,6 +61,7 @@ private enum class PanelMode {
     FORMATTING,
     VOICE_RECORD,
     FONT,
+    STICKERS,
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
@@ -90,6 +93,7 @@ fun ActionsPanel(
     }
     var isVoiceRecordingActive by rememberSaveable { mutableStateOf(false) }
     var isFontPanelVisible by rememberSaveable { mutableStateOf(false) }
+    var isStickersPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
 
     val audioRecordPermissionsState = rememberPermissionState(
@@ -123,6 +127,7 @@ fun ActionsPanel(
 
     val panelMode = when {
         isFontPanelVisible -> PanelMode.FONT
+        isStickersPanelVisible -> PanelMode.STICKERS
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
         else -> PanelMode.REGULAR
@@ -137,16 +142,19 @@ fun ActionsPanel(
     LaunchedEffect(isImeVisible) {
         if (isImeVisible) {
             isFontPanelVisible = false
+            isStickersPanelVisible = false
         }
     }
 
-    LaunchedEffect(isFontPanelVisible) {
-        onMenuVisibilityChange(isFontPanelVisible)
+    LaunchedEffect(isFontPanelVisible, isStickersPanelVisible) {
+        onMenuVisibilityChange(isFontPanelVisible || isStickersPanelVisible)
     }
 
     Column(
         modifier = modifier
-            .applyIf(!isFontPanelVisible) { Modifier.imePadding() }
+            .applyIf(!isFontPanelVisible && !isStickersPanelVisible) {
+                Modifier.imePadding()
+            }
             .fillMaxWidth()
             .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)),
     ) {
@@ -176,9 +184,12 @@ fun ActionsPanel(
                         },
                         onFontStyleClick = {
                             keyboardController?.hide()
-                            isFontPanelVisible = true
+                            isFontPanelVisible = !isStickersPanelVisible
                         },
-                        onOnStickersClick = onTestStickerClick,
+                        onOnStickersClick = {
+                            keyboardController?.hide()
+                            isStickersPanelVisible = !isFontPanelVisible
+                        },
                     )
 
                     PanelMode.FORMATTING -> SelectedPanel(
@@ -208,6 +219,10 @@ fun ActionsPanel(
                         modifier = heightModifier,
                         onDoneClick = { isFontPanelVisible = false },
                     )
+
+                    PanelMode.STICKERS -> StickersTitleBar(
+                        modifier = heightModifier,
+                    )
                 }
             }
         }
@@ -222,6 +237,11 @@ fun ActionsPanel(
             onFontFamilySelected = onFontFamilySelected,
             onFontColorSelected = onFontColorSelected,
             onFontSizeSelected = onFontSizeSelected,
+        )
+
+        StickersContent(
+            modifier = hazeModifier,
+            visible = isStickersPanelVisible,
         )
     }
 

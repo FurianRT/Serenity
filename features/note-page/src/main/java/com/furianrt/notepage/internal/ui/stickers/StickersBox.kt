@@ -34,6 +34,7 @@ import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
+import kotlin.math.roundToInt
 
 private const val STICKER_ANIM_DELAY = 500L
 private const val STICKER_ANIM_DURATION = 300
@@ -122,8 +123,8 @@ private fun StickerElement(
     if (isVisible) {
         val draggableState = rememberDraggable2DState { delta ->
             stickerOffset = IntOffset(
-                x = (stickerOffset.x + delta.x).toInt(),
-                y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2).toInt(),
+                x = (stickerOffset.x + delta.x).roundToInt(),
+                y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2f).roundToInt(),
             )
         }
         val valueX by animateIntAsState(
@@ -156,7 +157,11 @@ private fun StickerElement(
         StickerScreenItem(
             modifier = modifier
                 .offset {
-                    stickerOffset
+                    if (animateOffset) {
+                        IntOffset(valueX, valueY)
+                    } else {
+                        stickerOffset
+                    }
                 }
                 .draggable2D(
                     state = draggableState,
@@ -183,15 +188,9 @@ private fun StickerElement(
 
 private fun List<LazyListItemInfo>.findInfoForAnchorId(
     anchorIds: List<String>,
-    stickerOffset: Int,
-    stickerHeight: Int,
 ): LazyListItemInfo? {
     val list = filter { anchorIds.contains(it.key) }
-    return list.maxByOrNull { info ->
-        val stickerBottom = stickerOffset + stickerHeight
-        val infoBottom = info.offset + info.size
-        maxOf(0, minOf(stickerBottom, infoBottom) - maxOf(stickerOffset, info.offset))
-    }
+    return list.getOrNull(list.lastIndex / 2)
 }
 
 private fun List<UiNoteContent>.hasSuitableContent(sticker: StickerItem): Boolean {
@@ -220,8 +219,8 @@ private fun StickerItem.calculatePosition(
                 .run { StickerItem.STUB_HEIGHT.toPx() } * firstAnchor.biasY
             changeStickerOffset(
                 IntOffset(
-                    x = (viewPortWidth * firstAnchor.biasX).toInt(),
-                    y = (biasYOffset + toolbarHeight).toInt(),
+                    x = (viewPortWidth * firstAnchor.biasX).roundToInt(),
+                    y = (biasYOffset + toolbarHeight).roundToInt(),
                 )
             )
             changeStickerVisibility(true)
@@ -243,8 +242,6 @@ private fun StickerItem.calculatePosition(
                 anchorIds = state.anchors
                     .filterIsInstance<StickerState.Anchor.Item>()
                     .map(StickerState.Anchor.Item::id),
-                stickerOffset = stickerOffset.y - toolbarHeight.toInt(),
-                stickerHeight = stickerHeight,
             )
 
             if (info != null) {
@@ -255,8 +252,8 @@ private fun StickerItem.calculatePosition(
                 val biasYOffset = info.size * anchor.biasY
                 changeStickerOffset(
                     IntOffset(
-                        x = (viewPortWidth * anchor.biasX).toInt(),
-                        y = (biasYOffset + info.offset + toolbarHeight).toInt(),
+                        x = (viewPortWidth * anchor.biasX).roundToInt(),
+                        y = (biasYOffset + info.offset + toolbarHeight).roundToInt(),
                     )
                 )
             }

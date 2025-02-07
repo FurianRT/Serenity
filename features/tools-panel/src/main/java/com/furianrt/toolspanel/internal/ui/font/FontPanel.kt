@@ -71,7 +71,7 @@ import java.util.Locale
 import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
-private var cachedImeHeight = 300.dp
+internal var cachedImeHeight = 300.dp
 private const val FONT_CONTENT_TAG = "font_content"
 private const val MIN_FONT_SIZE = 8f
 private const val MAX_FONT_SIZE = 32f
