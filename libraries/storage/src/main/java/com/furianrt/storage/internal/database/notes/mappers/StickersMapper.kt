@@ -7,7 +7,7 @@ import com.furianrt.storage.internal.database.notes.entities.PartStickerTransfor
 
 internal fun EntryNoteSticker.toNoteContentSticker() = LocalNote.Sticker(
     id = id,
-    type = type,
+    typeId = typeId,
     scale = scale,
     rotation = rotation,
     anchors = anchors.map(EntryNoteSticker.Anchor::toLocalNoteAnchor),
@@ -16,7 +16,7 @@ internal fun EntryNoteSticker.toNoteContentSticker() = LocalNote.Sticker(
 internal fun LocalNote.Sticker.toEntryNoteToSticker(noteId: String) = EntryNoteSticker(
     id = id,
     noteId = noteId,
-    type = type,
+    typeId = typeId,
     scale = scale,
     rotation = rotation,
     anchors = anchors.map(LocalNote.Sticker.Anchor::toEntryNoteStickerAnchor),

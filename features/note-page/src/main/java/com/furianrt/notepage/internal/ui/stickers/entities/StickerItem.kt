@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.stickers.entities
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.unit.Density
@@ -20,7 +21,8 @@ import kotlin.random.Random
 @Stable
 internal data class StickerItem(
     val id: String,
-    val type: Int,
+    val typeId: String,
+    @DrawableRes val icon: Int,
     val isEditing: Boolean = false,
     val state: StickerState = StickerState(),
 ) {
@@ -69,7 +71,7 @@ internal data class StickerItem(
                 StickerState.Anchor.Item(
                     id = noteContent[anchor.index].id,
                     biasX = (stickerOffset.x.toFloat() / viewPortSize.width) * randomOffset,
-                    biasY = (stickerOffsetY - anchor.offset) / anchor.size.toFloat(),
+                    biasY = (stickerOffsetY - anchor.offset) / anchor.size.toFloat() * randomOffset,
                 )
             }
         } else {
@@ -84,7 +86,7 @@ internal data class StickerItem(
     }
 
     companion object {
-        private const val OFFSET_PERCENT = 0.06f
+        private const val OFFSET_PERCENT = 0.2f
 
         val DEFAULT_SIZE = 100.dp
         val MIN_SIZE = 40.dp
@@ -93,19 +95,18 @@ internal data class StickerItem(
         val STUB_HEIGHT = 300.dp
 
         fun build(
-            type: Int,
+            typeId: String,
+            @DrawableRes icon: Int,
             noteContent: List<UiNoteContent>,
             listState: LazyListState,
             stickerSize: Float,
             toolbarHeight: Float,
+            toolsPanelHeight: Float,
             density: Density,
         ): StickerItem {
             val viewPortSize = listState.layoutInfo.viewportSize
-            val viewPortCenter = viewPortSize.height / 2f
-            val item = StickerItem(
-                id = UUID.randomUUID().toString(),
-                type = type,
-            )
+            val viewPortCenter = (viewPortSize.height - toolsPanelHeight) / 2f
+            val item = StickerItem(id = UUID.randomUUID().toString(), typeId = typeId, icon = icon)
 
             item.calculateAnchor(
                 noteContent = noteContent,
@@ -117,10 +118,10 @@ internal data class StickerItem(
                 ),
                 toolbarHeight = toolbarHeight,
                 density = density,
-                 randomOffset = Random.nextDouble(
-                     from = 1.0 - OFFSET_PERCENT,
-                     until = 1.0 + OFFSET_PERCENT,
-                 ).toFloat(),
+                randomOffset = Random.nextDouble(
+                    from = 1.0 - OFFSET_PERCENT,
+                    until = 1.0 + OFFSET_PERCENT,
+                ).toFloat(),
             )
 
             return item

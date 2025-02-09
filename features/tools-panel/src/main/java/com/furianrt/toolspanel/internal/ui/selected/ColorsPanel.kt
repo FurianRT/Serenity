@@ -56,7 +56,7 @@ internal fun ColorsPanel(
         IconButton(
             modifier = Modifier.drawBehind {
                 if (listState.canScrollForward) {
-                    drawLeftShadow(elevation = 4.dp)
+                    drawLeftShadow(elevation = 2.dp)
                 }
             },
             onClick = onCloseClick,

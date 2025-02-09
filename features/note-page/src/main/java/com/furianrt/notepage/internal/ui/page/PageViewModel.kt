@@ -73,6 +73,7 @@ import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -112,6 +113,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val permissionsUtils: PermissionsUtils,
     private val appearanceRepository: AppearanceRepository,
     private val audioPlayer: AudioPlayer,
+    private val stickerIconProvider: StickerIconProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
@@ -573,7 +575,9 @@ internal class PageViewModel @AssistedInject constructor(
                 )
             } else {
                 notesRepository.getNote(noteId)
-                    .map { it?.toNoteItem() }
+                    .map { note ->
+                        note?.toNoteItem(stickerIconProvider = { stickerIconProvider.getIcon(it) })
+                    }
                     .distinctUntilChanged()
                     .collectLatest(::handleNoteResult)
             }

@@ -38,6 +38,7 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
 import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
 import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
@@ -81,7 +82,7 @@ fun ActionsPanel(
     onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
-    onTestStickerClick: () -> Unit,
+    onStickerSelected: (sticker: Sticker) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -222,6 +223,7 @@ fun ActionsPanel(
 
                     PanelMode.STICKERS -> StickersTitleBar(
                         modifier = heightModifier,
+                        onDoneClick = { isStickersPanelVisible = false },
                     )
                 }
             }
@@ -242,6 +244,7 @@ fun ActionsPanel(
         StickersContent(
             modifier = hazeModifier,
             visible = isStickersPanelVisible,
+            onStickerSelected = onStickerSelected,
         )
     }
 

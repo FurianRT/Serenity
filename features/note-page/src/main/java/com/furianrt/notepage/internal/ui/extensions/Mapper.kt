@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.extensions
 
+import androidx.annotation.DrawableRes
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaselector.api.MediaResult
@@ -17,10 +18,12 @@ import kotlinx.collections.immutable.toImmutableList
 import java.time.ZonedDateTime
 import java.util.UUID
 
-internal fun LocalNote.toNoteItem() = NoteItem(
+internal suspend fun LocalNote.toNoteItem(
+    stickerIconProvider: suspend (id: String) -> Int,
+) = NoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
-    stickers = stickers.mapImmutable(LocalNote.Sticker::toStickerItem),
+    stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.id)) },
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
     fontColor = fontColor.toUiNoteFontColor(),
     fontFamily = fontFamily.toUiNoteFontFamily(),
@@ -42,15 +45,16 @@ internal fun VoiceRecord.toUiVoice() = UiNoteContent.Voice(
 
 internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     id = id,
-    type = type,
+    typeId = typeId,
     scale = state.scale,
     rotation = state.rotation,
     anchors = state.anchors.map(StickerState.Anchor::toLocalNoteStickerAnchor),
 )
 
-private fun LocalNote.Sticker.toStickerItem() = StickerItem(
+private fun LocalNote.Sticker.toStickerItem(@DrawableRes icon: Int) = StickerItem(
     id = id,
-    type = type,
+    typeId = typeId,
+    icon = icon,
     isEditing = false,
     state = StickerState(
         initialScale = scale,

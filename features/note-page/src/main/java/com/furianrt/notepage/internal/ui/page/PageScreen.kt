@@ -491,13 +491,15 @@ private fun SuccessScreen(
                             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
                             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
-                            onTestStickerClick = {
+                            onStickerSelected = { selectedSticker ->
                                 val sticker = StickerItem.build(
-                                    type = 0,
+                                    typeId = selectedSticker.id,
+                                    icon = selectedSticker.icon,
                                     noteContent = uiState.content,
                                     listState = state.listState,
                                     stickerSize = density.run { StickerItem.DEFAULT_SIZE.toPx() },
                                     toolbarHeight = density.run { toolbarMargin.toPx() },
+                                    toolsPanelHeight = toolsPanelRect.height,
                                     density = density,
                                 )
                                 onEvent(PageEvent.OnStickerSelected(sticker))

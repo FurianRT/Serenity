@@ -1,16 +1,14 @@
 package com.furianrt.toolspanel.internal.entities
 
-import androidx.compose.ui.graphics.Color
+import androidx.annotation.DrawableRes
+import androidx.compose.runtime.Immutable
+import com.furianrt.toolspanel.api.entities.Sticker
 import kotlinx.collections.immutable.ImmutableList
 
-/*
-internal sealed class StickerPack(
-    val iconRes: Color,
-    val stickers: ImmutableList<>
-) {
-    class Recent(
-        val
-    ) : StickerPack(Color.Red)
-
-
-}*/
+@Immutable
+internal class StickerPack(
+    val id: String,
+    val isPremium: Boolean,
+    @DrawableRes val icon: Int,
+    val stickers: ImmutableList<Sticker>,
+)

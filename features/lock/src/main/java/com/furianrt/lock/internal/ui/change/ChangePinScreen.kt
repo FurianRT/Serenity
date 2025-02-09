@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -77,7 +78,8 @@ private fun ScreenContent(
         ButtonClose(
             modifier = Modifier
                 .align(Alignment.TopStart)
-                .padding(8.dp),
+                .padding(8.dp)
+                .systemGestureExclusion(),
             onClick = { onEvent(ChangePinEvent.OnCloseClick) },
         )
         Column(

@@ -25,7 +25,7 @@ data class LocalNote(
     @Serializable
     data class Sticker(
         val id: String,
-        val type: Int,
+        val typeId: String,
         val scale: Float,
         val rotation: Float,
         val anchors: List<Anchor>,

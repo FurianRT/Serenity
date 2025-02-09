@@ -26,8 +26,8 @@ internal class EntryNoteSticker(
     @ColumnInfo(name = FIELD_NOTE_ID, index = true)
     val noteId: String,
 
-    @ColumnInfo(name = FIELD_TYPE)
-    val type: Int,
+    @ColumnInfo(name = FIELD_TYPE_ID)
+    val typeId: String,
 
     @ColumnInfo(name = FIELD_SCALE)
     val scale: Float,
@@ -49,7 +49,7 @@ internal class EntryNoteSticker(
         const val TABLE_NAME = "Stickers"
         const val FIELD_ID = "id"
         const val FIELD_NOTE_ID = "note_id"
-        const val FIELD_TYPE = "type"
+        const val FIELD_TYPE_ID = "type_id"
         const val FIELD_SCALE = "scale"
         const val FIELD_ROTATION = "rotation"
         const val FIELD_ANCHORS = "anchors"
