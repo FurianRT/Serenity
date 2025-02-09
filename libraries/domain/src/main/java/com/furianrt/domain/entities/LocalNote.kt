@@ -28,7 +28,9 @@ data class LocalNote(
         val typeId: String,
         val scale: Float,
         val rotation: Float,
+        val isFlipped: Boolean,
         val anchors: List<Anchor>,
+        val editTime: Long,
     ) {
         @Serializable
         data class Anchor(

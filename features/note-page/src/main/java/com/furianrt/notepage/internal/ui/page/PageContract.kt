@@ -60,9 +60,10 @@ internal sealed interface PageEvent {
         val value: Float,
     ) : PageEvent
 
-    data class OnStickerSelected(val sticker: StickerItem, ) : PageEvent
-    data class OnRemoveStickerClick(val sticker: StickerItem, ) : PageEvent
-    data class OnStickerChanged(val sticker: StickerItem, ) : PageEvent
+    data class OnStickerSelected(val sticker: StickerItem) : PageEvent
+    data class OnRemoveStickerClick(val sticker: StickerItem) : PageEvent
+    data class OnStickerChanged(val sticker: StickerItem) : PageEvent
+    data class OnStickerClick(val sticker: StickerItem) : PageEvent
 }
 
 internal sealed interface PageEffect {

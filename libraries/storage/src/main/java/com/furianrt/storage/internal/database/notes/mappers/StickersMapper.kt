@@ -10,7 +10,9 @@ internal fun EntryNoteSticker.toNoteContentSticker() = LocalNote.Sticker(
     typeId = typeId,
     scale = scale,
     rotation = rotation,
+    isFlipped = isFlipped,
     anchors = anchors.map(EntryNoteSticker.Anchor::toLocalNoteAnchor),
+    editTime = editTime,
 )
 
 internal fun LocalNote.Sticker.toEntryNoteToSticker(noteId: String) = EntryNoteSticker(
@@ -19,14 +21,18 @@ internal fun LocalNote.Sticker.toEntryNoteToSticker(noteId: String) = EntryNoteS
     typeId = typeId,
     scale = scale,
     rotation = rotation,
+    isFlipped = isFlipped,
     anchors = anchors.map(LocalNote.Sticker.Anchor::toEntryNoteStickerAnchor),
+    editTime = editTime,
 )
 
 internal fun LocalNote.Sticker.toEntryTransformationsPart() = PartStickerTransformations(
     id = id,
     scale = scale,
     rotation = rotation,
+    isFlipped = isFlipped,
     anchors = anchors.map(LocalNote.Sticker.Anchor::toEntryNoteStickerAnchor),
+    editTime = editTime,
 )
 
 internal fun LocalNote.Sticker.toEntryIdPart() = PartStickerId(

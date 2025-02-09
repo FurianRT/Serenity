@@ -35,8 +35,14 @@ internal class EntryNoteSticker(
     @ColumnInfo(name = FIELD_ROTATION)
     val rotation: Float,
 
+    @ColumnInfo(name = FIELD_IS_FLIPPED)
+    val isFlipped: Boolean,
+
     @ColumnInfo(name = FIELD_ANCHORS)
     val anchors: List<Anchor>,
+
+    @ColumnInfo(name = FIELD_EDIT_TIME)
+    val editTime: Long,
 ) {
     @Serializable
     class Anchor(
@@ -52,7 +58,9 @@ internal class EntryNoteSticker(
         const val FIELD_TYPE_ID = "type_id"
         const val FIELD_SCALE = "scale"
         const val FIELD_ROTATION = "rotation"
+        const val FIELD_IS_FLIPPED = "is_flipped"
         const val FIELD_ANCHORS = "anchors"
+        const val FIELD_EDIT_TIME = "edit_time"
     }
 }
 
@@ -67,8 +75,14 @@ internal class PartStickerTransformations(
     @ColumnInfo(name = EntryNoteSticker.FIELD_ROTATION)
     val rotation: Float,
 
+    @ColumnInfo(name = EntryNoteSticker.FIELD_IS_FLIPPED)
+    val isFlipped: Boolean,
+
     @ColumnInfo(name = EntryNoteSticker.FIELD_ANCHORS)
     val anchors: List<Anchor>,
+
+    @ColumnInfo(name = EntryNoteSticker.FIELD_EDIT_TIME)
+    val editTime: Long,
 )
 
 @Entity

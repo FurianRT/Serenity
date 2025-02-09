@@ -2,8 +2,6 @@ package com.furianrt.notepage.internal.ui.stickers
 
 import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.gestures.draggable2D
-import androidx.compose.foundation.gestures.rememberDraggable2DState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -45,6 +43,7 @@ internal fun StickersBox(
     stickers: ImmutableList<StickerItem>,
     listState: LazyListState,
     toolbarHeight: Dp,
+    onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     onStickerChanged: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
@@ -58,6 +57,7 @@ internal fun StickersBox(
                     sticker = sticker,
                     toolbarHeightPx = toolbarHeightPx,
                     listState = listState,
+                    onStickerClick = onStickerClick,
                     onRemoveStickerClick = onRemoveStickerClick,
                     onStickerChanged = onStickerChanged,
                 )
@@ -74,6 +74,7 @@ private fun StickerElement(
     listState: LazyListState,
     toolbarHeightPx: Float,
     onStickerChanged: (sticker: StickerItem) -> Unit,
+    onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -121,12 +122,6 @@ private fun StickerElement(
     }
 
     if (isVisible) {
-        val draggableState = rememberDraggable2DState { delta ->
-            stickerOffset = IntOffset(
-                x = (stickerOffset.x + delta.x).roundToInt(),
-                y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2f).roundToInt(),
-            )
-        }
         val valueX by animateIntAsState(
             targetValue = stickerOffset.x,
             animationSpec = tween(STICKER_ANIM_DURATION),
@@ -163,25 +158,31 @@ private fun StickerElement(
                         stickerOffset
                     }
                 }
-                .draggable2D(
-                    state = draggableState,
-                    onDragStarted = { isDragging = true },
-                    onDragStopped = {
-                        isDragging = false
-                        sticker.calculateAnchor(
-                            noteContent = noteContent,
-                            listState = listState,
-                            toolbarHeight = toolbarHeightPx,
-                            stickerOffset = stickerOffset,
-                            stickerHeight = stickerHeight.toFloat(),
-                            density = density,
-                        )
-                        onStickerChanged(sticker)
-                    },
-                )
                 .onSizeChanged { stickerHeight = it.height },
             item = sticker,
             onRemoveClick = onRemoveStickerClick,
+            onDragged = { delta ->
+                stickerOffset = IntOffset(
+                    x = (stickerOffset.x + delta.x).roundToInt(),
+                    y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2f)
+                        .roundToInt(),
+                )
+            },
+            onDragStarted = { isDragging = true },
+            onDragStopped = {
+                isDragging = false
+                sticker.calculateAnchor(
+                    noteContent = noteContent,
+                    listState = listState,
+                    toolbarHeight = toolbarHeightPx,
+                    stickerOffset = stickerOffset,
+                    stickerHeight = stickerHeight.toFloat(),
+                    density = density,
+                )
+                onStickerChanged(sticker)
+            },
+            onFlipped = { onStickerChanged(sticker) },
+            onClick = onStickerClick,
         )
     }
 }

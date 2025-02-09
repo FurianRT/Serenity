@@ -441,6 +441,7 @@ private fun SuccessScreen(
                         toolbarHeight = toolbarMargin,
                         onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
                         onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
+                        onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     )
                 }
             }

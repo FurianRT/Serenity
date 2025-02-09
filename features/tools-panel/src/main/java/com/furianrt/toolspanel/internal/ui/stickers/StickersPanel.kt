@@ -193,6 +193,7 @@ private fun TitleItem(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight(fraction = 0.6f)
+                    .clip(RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp))
                     .drawSelection(underlineColor)
             )
         }

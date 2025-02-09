@@ -23,7 +23,6 @@ internal data class StickerItem(
     val id: String,
     val typeId: String,
     @DrawableRes val icon: Int,
-    val isEditing: Boolean = false,
     val state: StickerState = StickerState(),
 ) {
     fun calculateAnchor(
@@ -71,7 +70,7 @@ internal data class StickerItem(
                 StickerState.Anchor.Item(
                     id = noteContent[anchor.index].id,
                     biasX = (stickerOffset.x.toFloat() / viewPortSize.width) * randomOffset,
-                    biasY = (stickerOffsetY - anchor.offset) / anchor.size.toFloat() * randomOffset,
+                    biasY = (stickerOffsetY - anchor.offset) / anchor.size.toFloat(),
                 )
             }
         } else {
@@ -88,9 +87,9 @@ internal data class StickerItem(
     companion object {
         private const val OFFSET_PERCENT = 0.2f
 
-        val DEFAULT_SIZE = 100.dp
-        val MIN_SIZE = 40.dp
-        val MAX_SIZE = 300.dp
+        val DEFAULT_SIZE = 120.dp
+        const val MIN_SIZE_PERCENT = 0.6f
+        const val MAX_SIZE_PERCENT = 2.0f
 
         val STUB_HEIGHT = 300.dp
 

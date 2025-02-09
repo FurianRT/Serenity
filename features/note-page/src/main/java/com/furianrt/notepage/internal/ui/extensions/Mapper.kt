@@ -19,11 +19,11 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 internal suspend fun LocalNote.toNoteItem(
-    stickerIconProvider: suspend (id: String) -> Int,
+    stickerIconProvider: suspend (typeId: String) -> Int,
 ) = NoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
-    stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.id)) },
+    stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.typeId)) },
     content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
     fontColor = fontColor.toUiNoteFontColor(),
     fontFamily = fontFamily.toUiNoteFontFamily(),
@@ -48,18 +48,21 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     typeId = typeId,
     scale = state.scale,
     rotation = state.rotation,
+    isFlipped = state.isFlipped,
     anchors = state.anchors.map(StickerState.Anchor::toLocalNoteStickerAnchor),
+    editTime = state.editTime,
 )
 
 private fun LocalNote.Sticker.toStickerItem(@DrawableRes icon: Int) = StickerItem(
     id = id,
     typeId = typeId,
     icon = icon,
-    isEditing = false,
     state = StickerState(
         initialScale = scale,
         initialRotation = rotation,
+        initialIsFlipped = isFlipped,
         initialAnchors = anchors.mapImmutable(LocalNote.Sticker.Anchor::toStickerStateAnchor),
+        initialEditTime = editTime,
     ),
 )
 

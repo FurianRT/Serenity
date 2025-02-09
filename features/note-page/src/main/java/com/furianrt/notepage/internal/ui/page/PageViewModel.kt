@@ -72,6 +72,7 @@ import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
@@ -167,7 +168,10 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnSelectMediaClick -> tryRequestMediaPermissions()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
-            is OnTitleFocusChange -> focusedTitleId = event.id
+            is OnTitleFocusChange -> {
+                resetStickersEditing()
+                focusedTitleId = event.id
+            }
             is OnMediaClick -> openMediaViewScreen(event.media.name)
             is OnMediaRemoveClick -> removeMedia(setOf(event.media.name))
             is OnMediaShareClick -> {}
@@ -188,6 +192,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnStickerSelected -> addSticker(event.sticker)
             is OnRemoveStickerClick -> removeSticker(event.sticker)
             is OnStickerChanged -> updateSticker(event.sticker)
+            is OnStickerClick -> changeStickerEditing(event.sticker)
         }
     }
 
@@ -492,6 +497,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun addSticker(sticker: StickerItem) {
         hasContentChanged = true
+        resetStickersEditing()
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
         }
@@ -517,6 +523,33 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
+    private fun resetStickersEditing() {
+        _state.getState<PageUiState.Success>()?.stickers?.forEach { sticker ->
+            sticker.state.isEditing = false
+        }
+    }
+
+    private fun changeStickerEditing(sticker: StickerItem) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.stickers.forEach { item ->
+                if (item.id == sticker.id) {
+                    if (!item.state.isEditing) {
+                        item.state.editTime = System.currentTimeMillis()
+                    }
+                    item.state.isEditing = !item.state.isEditing
+                } else {
+                    item.state.isEditing = false
+                }
+            }
+            currentState.copy(
+                stickers = currentState.stickers
+                    .sortedBy { it.state.editTime }
+                    .toImmutableList(),
+            )
+        }
+        updateSticker(sticker)
+    }
+
     private fun onIsSelectedChange(isSelected: Boolean) {
         if (!isSelected) {
             audioPlayer.stop()
@@ -529,6 +562,7 @@ internal class PageViewModel @AssistedInject constructor(
     private suspend fun changeEditModeState(isEnabled: Boolean) {
         ensureSuccessState()
         if (!isEnabled) {
+            resetStickersEditing()
             focusedTitleId = null
             hasContentChanged = false
         }
