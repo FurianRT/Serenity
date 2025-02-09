@@ -6,9 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
-import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
-import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.PartStickerId
 import com.furianrt.storage.internal.database.notes.entities.PartStickerTransformations
 import kotlinx.coroutines.flow.Flow
