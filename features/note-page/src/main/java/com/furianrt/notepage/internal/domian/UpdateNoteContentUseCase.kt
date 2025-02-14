@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.domian
 
-import com.furianrt.core.hasItem
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
@@ -39,23 +38,23 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         transactionsHelper.startTransaction {
             val mediaToDelete = mediaRepository.getMedia(noteId)
                 .first()
-                .filterNot { media -> newMedia.hasItem { it.name == media.name } }
+                .filterNot { media -> newMedia.any { it.name == media.name } }
             val mediaToInsert = content
                 .filterIsInstance<LocalNote.Content.MediaBlock>()
                 .flatMap(LocalNote.Content.MediaBlock::media)
 
             val voicesToDelete = mediaRepository.getVoices(noteId)
                 .first()
-                .filterNot { voice -> newVoices.hasItem { it.id == voice.id } }
+                .filterNot { voice -> newVoices.any { it.id == voice.id } }
             val voicesToInsert = content.filterIsInstance<LocalNote.Content.Voice>()
 
             val tagsToDelete = tagsRepository.getTags(noteId)
                 .first()
-                .filterNot { tag -> tags.hasItem { tag.title == it.title } }
+                .filterNot { tag -> tags.any { tag.title == it.title } }
 
             val savedStickers = stickersRepository.getStickers(noteId).first()
             val stickersToDelete = savedStickers.filterNot { sticker ->
-                stickers.hasItem { sticker.id == it.id }
+                stickers.any { sticker.id == it.id }
             }
             val stickersToUpdate = stickers.filter { sticker ->
                 val savedSticker = savedStickers.find { sticker.id == it.id }

@@ -344,6 +344,7 @@ private fun SuccessScreen(
                         },
                     ),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
+                    overscrollEffect = null,
                 ) {
                     itemsIndexed(
                         items = uiState.content,

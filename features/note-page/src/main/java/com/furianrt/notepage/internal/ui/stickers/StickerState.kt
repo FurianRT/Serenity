@@ -16,7 +16,7 @@ internal class StickerState(
     initialIsFlipped: Boolean = false,
     initialAnchors: ImmutableList<Anchor> = persistentListOf(),
     initialEditTime: Long = System.currentTimeMillis(),
-    initialIsEditing: Boolean = false,
+    initialIsEditing: Boolean = true,
 ) {
     var isFlipped: Boolean by mutableStateOf(initialIsFlipped)
 

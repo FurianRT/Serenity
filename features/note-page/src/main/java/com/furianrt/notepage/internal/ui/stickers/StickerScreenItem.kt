@@ -48,7 +48,7 @@ internal fun StickerScreenItem(
                 .padding(8.dp)
                 .applyIf(item.state.isEditing) {
                     Modifier
-                        .border(2.dp, MaterialTheme.colorScheme.primaryContainer)
+                        .border(1.5.dp, MaterialTheme.colorScheme.primaryContainer)
                         .draggable2D(
                             state = rememberDraggable2DState(onDragged),
                             onDragStarted = { onDragStarted() },

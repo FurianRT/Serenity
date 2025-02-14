@@ -112,7 +112,9 @@ fun MovableToolbarScaffold(
         }
     }
 
-    totalScroll = if (isListAtTop) 0f else totalScroll
+    LaunchedEffect(isListAtTop) {
+        totalScroll = if (isListAtTop) 0f else totalScroll
+    }
 
     state.setExpandRequestListener { duration ->
         scope.launch {

@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
-import com.furianrt.core.hasItem
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
@@ -88,7 +87,7 @@ private fun StickerElement(
         val newContentCount = noteContent.count { !it.isEmptyTitle() }
         if (newContentCount != prevContentCount) {
             val isAnchorChanged = sticker.state.anchors.any { anchor ->
-                !noteContent.hasItem { (anchor as? StickerState.Anchor.Item)?.id == it.id }
+                !noteContent.any { (anchor as? StickerState.Anchor.Item)?.id == it.id }
             }
             if (isAnchorChanged) {
                 sticker.calculateAnchor(
@@ -196,7 +195,7 @@ private fun List<LazyListItemInfo>.findInfoForAnchorId(
 
 private fun List<UiNoteContent>.hasSuitableContent(sticker: StickerItem): Boolean {
     val content = filter { content ->
-        sticker.state.anchors.hasItem { it is StickerState.Anchor.Item && it.id == content.id }
+        sticker.state.anchors.any { it is StickerState.Anchor.Item && it.id == content.id }
     }
     return content.any { !it.isEmptyTitle() }
 }

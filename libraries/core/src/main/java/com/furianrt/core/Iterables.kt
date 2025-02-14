@@ -18,19 +18,8 @@ inline fun <reified R> Iterable<*>.findInstance(predicate: (R) -> Boolean = { tr
     return null
 }
 
-fun <T> Iterable<T>.lastIndexOf(predicate: (T) -> Boolean): Int {
-    var lastIndex = -1
-    for ((index, item) in this.withIndex()) {
-        if (predicate(item))
-            lastIndex = index
-    }
-    return lastIndex
-}
-
 inline fun <T> List<T>.indexOfFirstOrNull(predicate: (T) -> Boolean): Int? =
     indexOfFirst(predicate).takeIf { it != -1 }
-
-inline fun <T> Iterable<T>.hasItem(predicate: (T) -> Boolean): Boolean = find(predicate) != null
 
 fun <T> Collection<T>?.deepEqualTo(
     other: Collection<T>?,

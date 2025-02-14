@@ -1,7 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.lifecycle.ViewModel
-import com.furianrt.core.hasItem
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
@@ -136,7 +135,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
-                        mediaCoordinator.unselectMedia { !media.hasItem { item -> item.id == it.id } }
+                        mediaCoordinator.unselectMedia { !media.any { item -> item.id == it.id } }
                         MediaSelectorUiState.Success(
                             items = media.toMediaItems(
                                 state = { id ->

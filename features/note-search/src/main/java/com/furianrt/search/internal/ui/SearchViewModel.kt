@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.buildImmutableList
 import com.furianrt.core.findInstance
-import com.furianrt.core.hasItem
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
@@ -153,7 +152,7 @@ internal class SearchViewModel @Inject constructor(
     }
 
     private fun addTagFilter(title: String) {
-        if (!state.value.selectedFilters.hasItem { it.isSelected && it.id == title }) {
+        if (!state.value.selectedFilters.any { it.isSelected && it.id == title }) {
             selectedFiltersFlow.update { it.toPersistentList().add(SelectedFilter.Tag(title)) }
         }
     }
@@ -224,7 +223,7 @@ internal class SearchViewModel @Inject constructor(
             data.allTags
                 .filter { tag ->
                     tag.noteIds.intersect(noteIds).isNotEmpty() &&
-                            !data.selectedFilters.hasItem { it.id == tag.title }
+                            !data.selectedFilters.any { it.id == tag.title }
                 }
                 .map(LocalTag::toSelectedTag)
         } else {

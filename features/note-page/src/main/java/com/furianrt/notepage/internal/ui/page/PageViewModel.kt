@@ -5,9 +5,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
-import com.furianrt.core.hasItem
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.core.lastIndexOf
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -684,11 +682,11 @@ internal class PageViewModel @AssistedInject constructor(
         tag: UiNoteTag.Regular,
         addTemplate: Boolean,
     ): PageUiState.Success {
-        val result = if (tags.hasItem { it.id == tag.id }) {
+        val result = if (tags.any { it.id == tag.id }) {
             tags.removeTagTemplate(tag.id)
         } else {
             tags.toPersistentList()
-                .add(index = tags.lastIndexOf { it is UiNoteTag.Regular } + 1, element = tag)
+                .add(index = tags.indexOfLast { it is UiNoteTag.Regular } + 1, element = tag)
                 .removeTagTemplate(tag.id)
         }
         return copy(tags = if (addTemplate) result.addTagTemplate() else result)
