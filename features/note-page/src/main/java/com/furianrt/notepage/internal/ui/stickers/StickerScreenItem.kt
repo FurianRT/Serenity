@@ -43,7 +43,7 @@ internal fun StickerScreenItem(
     Box(
         modifier = modifier,
     ) {
-        Box(
+        Sticker(
             modifier = Modifier
                 .padding(8.dp)
                 .applyIf(item.state.isEditing) {
@@ -55,13 +55,10 @@ internal fun StickerScreenItem(
                             onDragStopped = { onDragStopped() },
                         )
                 },
-        ) {
-            Sticker(
-                icon = painterResource(item.icon),
-                isFlipped = item.state.isFlipped,
-                onClick = { onClick(item) },
-            )
-        }
+            icon = painterResource(item.icon),
+            isFlipped = item.state.isFlipped,
+            onClick = { onClick(item) },
+        )
 
         if (item.state.isEditing) {
             ButtonClose(
