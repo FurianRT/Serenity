@@ -1,5 +1,8 @@
 package com.furianrt.notepage.internal.ui.page
 
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.ui.unit.Density
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -60,7 +63,14 @@ internal sealed interface PageEvent {
         val value: Float,
     ) : PageEvent
 
-    data class OnStickerSelected(val sticker: StickerItem) : PageEvent
+    data class OnStickerSelected(
+        val typeId: String,
+        @DrawableRes val icon: Int,
+        val listState: LazyListState,
+        val toolbarHeight: Float,
+        val toolsPanelHeight: Float,
+        val density: Density,
+    ) : PageEvent
     data class OnRemoveStickerClick(val sticker: StickerItem) : PageEvent
     data class OnStickerChanged(val sticker: StickerItem) : PageEvent
     data class OnStickerClick(val sticker: StickerItem) : PageEvent

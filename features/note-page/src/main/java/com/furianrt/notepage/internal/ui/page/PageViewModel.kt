@@ -170,6 +170,7 @@ internal class PageViewModel @AssistedInject constructor(
                 resetStickersEditing()
                 focusedTitleId = event.id
             }
+
             is OnMediaClick -> openMediaViewScreen(event.media.name)
             is OnMediaRemoveClick -> removeMedia(setOf(event.media.name))
             is OnMediaShareClick -> {}
@@ -187,7 +188,20 @@ internal class PageViewModel @AssistedInject constructor(
             is OnVoicePlayClick -> onVoicePlayClick(event.voice)
             is OnVoiceProgressSelected -> onVoiceProgressSelected(event.voice, event.value)
             is OnVoiceRemoveClick -> removeVoiceRecord(event.voice)
-            is OnStickerSelected -> addSticker(event.sticker)
+            is OnStickerSelected -> _state.doWithState<PageUiState.Success> { currentState ->
+                val sticker = StickerItem.build(
+                    typeId = event.typeId,
+                    icon = event.icon,
+                    noteContent = currentState.content,
+                    listState = event.listState,
+                    stickerSize = event.density.run { StickerItem.DEFAULT_SIZE.toPx() },
+                    toolbarHeight = event.toolbarHeight,
+                    toolsPanelHeight = event.toolsPanelHeight,
+                    density = event.density
+                )
+                addSticker(sticker)
+            }
+
             is OnRemoveStickerClick -> removeSticker(event.sticker)
             is OnStickerChanged -> updateSticker(event.sticker)
             is OnStickerClick -> changeStickerEditing(event.sticker)

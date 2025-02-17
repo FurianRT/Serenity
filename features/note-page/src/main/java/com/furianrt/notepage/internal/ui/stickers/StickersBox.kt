@@ -13,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyListLayoutInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -30,14 +32,26 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentSet
+import kotlinx.collections.immutable.persistentSetOf
 import kotlinx.coroutines.delay
 import kotlin.math.roundToInt
 
 private const val STICKER_ANIM_DELAY = 500L
 private const val STICKER_ANIM_DURATION = 300
 
+@Stable
+internal data class StickersBoxState(
+    private val initialVisibleStickers: PersistentSet<String> = persistentSetOf(),
+) {
+    var visibleStickers by mutableStateOf(initialVisibleStickers)
+
+    val hasVisibleStickers by derivedStateOf { visibleStickers.isNotEmpty() }
+}
+
 @Composable
 internal fun StickersBox(
+    state: StickersBoxState,
     noteContent: ImmutableList<UiNoteContent>,
     stickers: ImmutableList<StickerItem>,
     listState: LazyListState,
@@ -54,6 +68,7 @@ internal fun StickersBox(
                 StickerElement(
                     noteContent = noteContent,
                     sticker = sticker,
+                    state = state,
                     toolbarHeightPx = toolbarHeightPx,
                     listState = listState,
                     onStickerClick = onStickerClick,
@@ -72,6 +87,7 @@ private fun StickerElement(
     sticker: StickerItem,
     listState: LazyListState,
     toolbarHeightPx: Float,
+    state: StickersBoxState,
     onStickerChanged: (sticker: StickerItem) -> Unit,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
@@ -115,7 +131,14 @@ private fun StickerElement(
                     layoutInfo = layoutInfo,
                     density = density,
                     changeStickerOffset = { stickerOffset = it },
-                    changeStickerVisibility = { isVisible = it },
+                    changeStickerVisibility = { visible ->
+                        state.visibleStickers = if (visible) {
+                            state.visibleStickers.add(sticker.id)
+                        } else {
+                            state.visibleStickers.remove(sticker.id)
+                        }
+                        isVisible = visible
+                    },
                 )
             }
     }
@@ -159,11 +182,15 @@ private fun StickerElement(
                 }
                 .onSizeChanged { stickerHeight = it.height },
             item = sticker,
-            onRemoveClick = onRemoveStickerClick,
+            onRemoveClick = { item ->
+                state.visibleStickers = state.visibleStickers.remove(item.id)
+                onRemoveStickerClick(item)
+            },
             onDragged = { delta ->
                 stickerOffset = IntOffset(
                     x = (stickerOffset.x + delta.x).roundToInt(),
-                    y = (stickerOffset.y + delta.y).coerceAtLeast(toolbarHeightPx / 2f)
+                    y = (stickerOffset.y + delta.y)
+                        .coerceAtLeast(toolbarHeightPx / 2f)
                         .roundToInt(),
                 )
             },

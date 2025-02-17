@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberOverscrollEffect
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -80,8 +81,8 @@ import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
-import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
+import com.furianrt.notepage.internal.ui.stickers.StickersBoxState
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -277,6 +278,8 @@ private fun SuccessScreen(
         }
     }
 
+    val stickerBoxState = remember { StickersBoxState() }
+
     LaunchedEffect(state.listState.canScrollBackward, state.listState.canScrollForward) {
         if (!state.listState.canScrollBackward && !state.listState.canScrollForward) {
             totalScroll = 0f
@@ -344,7 +347,11 @@ private fun SuccessScreen(
                         },
                     ),
                     verticalArrangement = Arrangement.spacedBy(2.dp),
-                    overscrollEffect = null,
+                    overscrollEffect = if (stickerBoxState.hasVisibleStickers) {
+                        null
+                    } else {
+                        rememberOverscrollEffect()
+                    },
                 ) {
                     itemsIndexed(
                         items = uiState.content,
@@ -436,6 +443,7 @@ private fun SuccessScreen(
                 if (uiState.stickers.isNotEmpty()) {
                     StickersBox(
                         modifier = Modifier.fillMaxSize(),
+                        state = stickerBoxState,
                         listState = state.listState,
                         noteContent = uiState.content,
                         stickers = uiState.stickers,
@@ -494,17 +502,16 @@ private fun SuccessScreen(
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
                             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
                             onStickerSelected = { selectedSticker ->
-                                val sticker = StickerItem.build(
-                                    typeId = selectedSticker.id,
-                                    icon = selectedSticker.icon,
-                                    noteContent = uiState.content,
-                                    listState = state.listState,
-                                    stickerSize = density.run { StickerItem.DEFAULT_SIZE.toPx() },
-                                    toolbarHeight = density.run { toolbarMargin.toPx() },
-                                    toolsPanelHeight = toolsPanelRect.height,
-                                    density = density,
+                                onEvent(
+                                    PageEvent.OnStickerSelected(
+                                        typeId = selectedSticker.id,
+                                        icon = selectedSticker.icon,
+                                        listState = state.listState,
+                                        toolbarHeight = density.run { toolbarMargin.toPx() },
+                                        toolsPanelHeight = toolsPanelRect.height,
+                                        density = density,
+                                    )
                                 )
-                                onEvent(PageEvent.OnStickerSelected(sticker))
                             },
                         )
                     }
