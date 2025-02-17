@@ -89,7 +89,8 @@ internal data class StickerItem(
 
         val DEFAULT_SIZE = 120.dp
         const val MIN_SIZE_PERCENT = 0.6f
-        const val MAX_SIZE_PERCENT = 2.0f
+        const val MAX_SIZE_PERCENT = 2f
+        const val MIN_ANGLE = 3f
 
         val STUB_HEIGHT = 300.dp
 

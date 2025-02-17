@@ -103,7 +103,7 @@ private fun StickerElement(
         }
     }
 
-    LaunchedEffect(sticker.state.anchors) {
+    LaunchedEffect(sticker.state.anchors, noteContent) {
         snapshotFlow { listState.layoutInfo }
             .collect { layoutInfo ->
                 sticker.calculatePosition(
@@ -180,7 +180,7 @@ private fun StickerElement(
                 )
                 onStickerChanged(sticker)
             },
-            onFlipped = { onStickerChanged(sticker) },
+            onTransformed = { onStickerChanged(sticker) },
             onClick = onStickerClick,
         )
     }
