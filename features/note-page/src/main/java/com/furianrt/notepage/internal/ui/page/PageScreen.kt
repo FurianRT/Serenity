@@ -25,13 +25,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.CacheDrawScope
@@ -39,7 +40,6 @@ import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.toRect
@@ -49,9 +49,6 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -236,36 +233,23 @@ private fun SuccessScreen(
     val hazeState = remember { HazeState() }
     val focusManager = LocalFocusManager.current
     val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
-    val isListAtTop by remember {
-        derivedStateOf {
-            (state.listState.firstVisibleItemIndex == 0 &&
-                    state.listState.firstVisibleItemScrollOffset == 0)
-        }
-    }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
     val toolbarMarginPx = density.run { toolbarMargin.toPx() }
-    var bgOffset by rememberSaveable { mutableStateOf(0f) }
-    val bgOffsetInverted = toolbarMargin - density.run { bgOffset.toDp() }
-    var totalScroll by rememberSaveable { mutableStateOf(0f) }
-    val bgScrollConnection = remember {
-        object : NestedScrollConnection {
-            override fun onPostScroll(
-                consumed: Offset,
-                available: Offset,
-                source: NestedScrollSource,
-            ): Offset {
-                totalScroll += consumed.y
-                if (isListAtTop) {
-                    totalScroll = 0f
+    var bgOffset by rememberSaveable { mutableFloatStateOf(0f) }
+
+    LaunchedEffect(state.listState) {
+        snapshotFlow { state.listState.layoutInfo }
+            .collect { layoutInfo ->
+                val firstItem = layoutInfo.visibleItemsInfo.find { it.index == 0 }
+                bgOffset = when {
+                    layoutInfo.visibleItemsInfo.isEmpty() -> toolbarMarginPx
+                    firstItem == null -> 0f
+                    else -> (toolbarMarginPx + firstItem.offset.toFloat())
+                        .coerceAtLeast(-toolbarMarginPx)
                 }
-                if (totalScroll in -toolbarMarginPx..0f) {
-                    bgOffset = -totalScroll
-                }
-                return super.onPostScroll(consumed, available, source)
             }
-        }
     }
 
     state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
@@ -279,13 +263,6 @@ private fun SuccessScreen(
     }
 
     val stickerBoxState = remember { StickersBoxState() }
-
-    LaunchedEffect(state.listState.canScrollBackward, state.listState.canScrollForward) {
-        if (!state.listState.canScrollBackward && !state.listState.canScrollForward) {
-            totalScroll = 0f
-            bgOffset = 0f
-        }
-    }
 
     MediaSelectorBottomSheet(
         modifier = modifier,
@@ -303,13 +280,13 @@ private fun SuccessScreen(
                 .drawNoteBackground(
                     shape = RoundedCornerShape(8.dp),
                     color = MaterialTheme.colorScheme.tertiary,
-                    translationY = { bgOffsetInverted.toPx() },
+                    translationY = { bgOffset },
                     height = {
                         if (uiState.isInEditMode) {
                             val toolsPanelHeight = ToolsPanelConstants.PANEL_HEIGHT.toPx()
-                            toolsPanelRect.top + toolsPanelHeight - bgOffsetInverted.toPx()
+                            toolsPanelRect.top + toolsPanelHeight - bgOffset
                         } else {
-                            size.height - bgOffsetInverted.toPx()
+                            size.height - bgOffset
                         }
                     }
                 ),
@@ -328,7 +305,6 @@ private fun SuccessScreen(
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .nestedScroll(bgScrollConnection)
                         .clickableNoRipple { focusManager.clearFocus() },
                     state = state.listState,
                     contentPadding = PaddingValues(
