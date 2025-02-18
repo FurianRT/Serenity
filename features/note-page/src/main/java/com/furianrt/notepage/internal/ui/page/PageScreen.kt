@@ -252,6 +252,13 @@ private fun SuccessScreen(
             }
     }
 
+    LaunchedEffect(focusedTitleId) {
+        val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
+            ?: return@LaunchedEffect
+        snapshotFlow { title.state.selection }
+            .collect { onEvent(PageEvent.OnFocusedTitleSelectionChange) }
+    }
+
     state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
     state.setOnBringContentToViewListener { position ->
         scope.launch {
@@ -468,7 +475,10 @@ private fun SuccessScreen(
                             titleState = titleState ?: NoteTitleState(),
                             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
                             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
-                            onVoiceRecordStart = { state.isVoiceRecordActive = true },
+                            onVoiceRecordStart = {
+                                onEvent(PageEvent.OnVoiceStarted)
+                                state.isVoiceRecordActive = true
+                            },
                             onRecordComplete = { record ->
                                 state.isVoiceRecordActive = false
                                 onEvent(PageEvent.OnVoiceRecorded(record))
@@ -477,6 +487,8 @@ private fun SuccessScreen(
                             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
                             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
                             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
+                            onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
+                            onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
                             onStickerSelected = { selectedSticker ->
                                 onEvent(
                                     PageEvent.OnStickerSelected(

@@ -69,6 +69,9 @@ import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -155,26 +158,52 @@ internal class PageViewModel @AssistedInject constructor(
     fun onEvent(event: PageEvent) {
         when (event) {
             is OnEditModeStateChange -> launch { changeEditModeState(event.isEnabled) }
-            is OnIsSelectedChange -> onIsSelectedChange(event.isSelected)
-            is OnTagRemoveClick -> removeTag(event.tag)
+            is OnIsSelectedChange -> {
+                resetStickersEditing()
+                onIsSelectedChange(event.isSelected)
+            }
+
+            is OnTagRemoveClick -> {
+                resetStickersEditing()
+                removeTag(event.tag)
+            }
+
             is OnTagDoneEditing -> addTag(event.tag)
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
             is OnTagTextEntered -> {
                 hasContentChanged = true
+                resetStickersEditing()
                 addSecondTagTemplate()
             }
 
-            is OnSelectMediaClick -> tryRequestMediaPermissions()
+            is OnSelectMediaClick -> {
+                resetStickersEditing()
+                tryRequestMediaPermissions()
+            }
+
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> {
                 resetStickersEditing()
                 focusedTitleId = event.id
             }
 
-            is OnMediaClick -> openMediaViewScreen(event.media.name)
-            is OnMediaRemoveClick -> removeMedia(setOf(event.media.name))
+            is OnFocusedTitleSelectionChange -> resetStickersEditing()
+            is OnMediaClick -> {
+                resetStickersEditing()
+                openMediaViewScreen(event.media.name)
+            }
+
+            is OnMediaRemoveClick -> {
+                resetStickersEditing()
+                removeMedia(setOf(event.media.name))
+            }
+
             is OnMediaShareClick -> {}
-            is OnOpenMediaViewerRequest -> _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))
+            is OnOpenMediaViewerRequest -> {
+                resetStickersEditing()
+                _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))
+            }
+
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
             is OnOnSaveContentRequest -> _state.doWithState<PageUiState.Success> { successState ->
                 launch(NonCancellable) { saveNoteContent(successState) }
@@ -182,12 +211,27 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnMediaSelected -> addNewBlock(event.result.toMediaBlock())
             is OnVoiceRecorded -> addNewBlock(event.record.toUiVoice())
+            is OnSelectFontClick -> resetStickersEditing()
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
             is OnFontSizeSelected -> updateFontSize(event.size)
-            is OnVoicePlayClick -> onVoicePlayClick(event.voice)
-            is OnVoiceProgressSelected -> onVoiceProgressSelected(event.voice, event.value)
-            is OnVoiceRemoveClick -> removeVoiceRecord(event.voice)
+            is PageEvent.OnVoiceStarted -> resetStickersEditing()
+            is OnVoicePlayClick -> {
+                resetStickersEditing()
+                onVoicePlayClick(event.voice)
+            }
+
+            is OnVoiceProgressSelected -> {
+                resetStickersEditing()
+                onVoiceProgressSelected(event.voice, event.value)
+            }
+
+            is OnVoiceRemoveClick -> {
+                resetStickersEditing()
+                removeVoiceRecord(event.voice)
+            }
+
+            is OnSelectStickersClick -> resetStickersEditing()
             is OnStickerSelected -> _state.doWithState<PageUiState.Success> { currentState ->
                 val sticker = StickerItem.build(
                     typeId = event.typeId,

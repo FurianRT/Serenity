@@ -83,6 +83,8 @@ fun ActionsPanel(
     onFontColorSelected: (color: UiNoteFontColor) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
+    onFontStyleClick: () -> Unit,
+    onOnStickersClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -186,10 +188,12 @@ fun ActionsPanel(
                         onFontStyleClick = {
                             keyboardController?.hide()
                             isFontPanelVisible = !isStickersPanelVisible
+                            onFontStyleClick()
                         },
                         onOnStickersClick = {
                             keyboardController?.hide()
                             isStickersPanelVisible = !isFontPanelVisible
+                            onOnStickersClick()
                         },
                     )
 

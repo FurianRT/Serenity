@@ -45,10 +45,12 @@ internal sealed interface PageEvent {
     data object OnSelectMediaClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
     data class OnTitleFocusChange(val id: String) : PageEvent
+    data object OnFocusedTitleSelectionChange : PageEvent
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaShareClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaSelected(val result: MediaResult) : PageEvent
+    data object OnVoiceStarted : PageEvent
     data class OnVoiceRecorded(val record: VoiceRecord) : PageEvent
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
@@ -71,6 +73,8 @@ internal sealed interface PageEvent {
         val toolsPanelHeight: Float,
         val density: Density,
     ) : PageEvent
+    data object OnSelectStickersClick : PageEvent
+    data object OnSelectFontClick : PageEvent
     data class OnRemoveStickerClick(val sticker: StickerItem) : PageEvent
     data class OnStickerChanged(val sticker: StickerItem) : PageEvent
     data class OnStickerClick(val sticker: StickerItem) : PageEvent
