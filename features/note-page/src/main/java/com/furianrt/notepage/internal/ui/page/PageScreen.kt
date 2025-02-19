@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -20,12 +21,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberOverscrollEffect
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +53,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.drawOutline
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.drawscope.translate
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
@@ -86,6 +91,7 @@ import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.getStatusBarHeight
@@ -237,20 +243,6 @@ private fun SuccessScreen(
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
     val toolbarMarginPx = density.run { toolbarMargin.toPx() }
-    var bgOffset by rememberSaveable { mutableFloatStateOf(0f) }
-
-    LaunchedEffect(state.listState) {
-        snapshotFlow { state.listState.layoutInfo }
-            .collect { layoutInfo ->
-                val firstItem = layoutInfo.visibleItemsInfo.find { it.index == 0 }
-                bgOffset = when {
-                    layoutInfo.visibleItemsInfo.isEmpty() -> toolbarMarginPx
-                    firstItem == null -> 0f
-                    else -> (toolbarMarginPx + firstItem.offset.toFloat())
-                        .coerceAtLeast(-toolbarMarginPx)
-                }
-            }
-    }
 
     LaunchedEffect(focusedTitleId) {
         val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
@@ -269,8 +261,6 @@ private fun SuccessScreen(
         }
     }
 
-    val stickerBoxState = remember { StickersBoxState() }
-
     MediaSelectorBottomSheet(
         modifier = modifier,
         state = state.bottomScaffoldState,
@@ -282,133 +272,112 @@ private fun SuccessScreen(
         },
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .drawNoteBackground(
-                    shape = RoundedCornerShape(8.dp),
-                    color = MaterialTheme.colorScheme.tertiary,
-                    translationY = { bgOffset },
-                    height = {
-                        if (uiState.isInEditMode) {
-                            val toolsPanelHeight = ToolsPanelConstants.PANEL_HEIGHT.toPx()
-                            toolsPanelRect.top + toolsPanelHeight - bgOffset
-                        } else {
-                            size.height - bgOffset
-                        }
-                    }
-                ),
+            modifier = Modifier.fillMaxSize(),
         ) {
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = 8.dp)
                     .applyIf(uiState.isInEditMode) {
                         Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                     }
-                    .clipToBounds()
                     .haze(hazeState)
-                    .imePadding(),
-            ) {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickableNoRipple { focusManager.clearFocus() },
-                    state = state.listState,
-                    contentPadding = PaddingValues(
+                    .verticalScroll(rememberScrollState())
+                    .clickableNoRipple { focusManager.clearFocus() }
+                    .padding(
                         top = toolbarMargin,
-                        bottom = if (uiState.isInEditMode) {
-                            val toolsPanelHeight = if (isToolsPanelMenuVisible) {
-                                density.run { toolsPanelRect.height.toDp() }
-                            } else {
-                                ToolsPanelConstants.PANEL_HEIGHT
+                        bottom = WindowInsets.navigationBars.asPaddingValues()
+                            .calculateBottomPadding() + 8.dp,
+                    )
+                    .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
+                    .padding(
+                        bottom = when {
+                            !uiState.isInEditMode -> 0.dp
+                            isToolsPanelMenuVisible -> density.run { toolsPanelRect.height.toDp() }
+                            else -> ToolsPanelConstants.PANEL_HEIGHT
+                        } + 24.dp,
+                    )
+                    .imePadding(),
+                verticalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                LookaheadScope {
+                    uiState.content.forEachIndexed { index, item ->
+                        key(item.id) {
+                            when (item) {
+                                is UiNoteContent.Title -> NoteContentTitle(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            top = if (index == 0) 8.dp else 14.dp,
+                                            bottom = 14.dp,
+                                            start = 8.dp,
+                                            end = 8.dp,
+                                        )
+                                        .animatePlacementInScope(this@LookaheadScope),
+                                    title = item,
+                                    color = uiState.fontColor.value,
+                                    fontFamily = uiState.fontFamily.value,
+                                    fontSize = uiState.fontSize.sp,
+                                    hint = if (index == 0) {
+                                        stringResource(R.string.note_title_hint_text)
+                                    } else {
+                                        stringResource(R.string.note_title_hint_write_more_here)
+                                    },
+                                    isInEditMode = uiState.isInEditMode,
+                                    focusRequester = focusRequesters.getOrPut(index) { FocusRequester() },
+                                    onTitleFocused = { id ->
+                                        onEvent(PageEvent.OnTitleFocusChange(id))
+                                        focusedTitleId = id
+                                        onFocusChange()
+                                    },
+                                    onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
+                                )
+
+                                is UiNoteContent.MediaBlock -> NoteContentMedia(
+                                    modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                                    block = item,
+                                    dropDownHazeState = hazeState,
+                                    clickable = true,
+                                    onClick = { onEvent(PageEvent.OnMediaClick(it)) },
+                                    onRemoveClick = { media ->
+                                        onEvent(PageEvent.OnMediaRemoveClick(media))
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    },
+                                    onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
+                                )
+
+                                is UiNoteContent.Voice -> NoteContentVoice(
+                                    modifier = Modifier
+                                        .padding(
+                                            start = 8.dp,
+                                            end = 8.dp,
+                                            top = 4.dp,
+                                            bottom = 8.dp
+                                        )
+                                        .animatePlacementInScope(this@LookaheadScope),
+                                    voice = item,
+                                    isPlaying = item.id == uiState.playingVoiceId,
+                                    isRemovable = uiState.isInEditMode,
+                                    onRemoveClick = { voice ->
+                                        onEvent(PageEvent.OnVoiceRemoveClick(voice))
+                                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                    },
+                                    onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
+                                    onProgressSelected = { voice, value ->
+                                        onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
+                                    },
+                                )
                             }
-                            toolsPanelHeight + WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 32.dp
-                        } else {
-                            WindowInsets.navigationBars.asPaddingValues()
-                                .calculateBottomPadding() + 32.dp
-                        },
-                    ),
-                    verticalArrangement = Arrangement.spacedBy(2.dp),
-                    overscrollEffect = if (stickerBoxState.hasVisibleStickers) {
-                        null
-                    } else {
-                        rememberOverscrollEffect()
-                    },
-                ) {
-                    itemsIndexed(
-                        items = uiState.content,
-                        key = { _, item -> item.id },
-                        contentType = { _, item -> item.javaClass.simpleName },
-                    ) { index, item ->
-                        when (item) {
-                            is UiNoteContent.Title -> NoteContentTitle(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        top = if (index == 0) 8.dp else 14.dp,
-                                        bottom = 14.dp,
-                                        start = 8.dp,
-                                        end = 8.dp,
-                                    )
-                                    .animateItem(),
-                                title = item,
-                                color = uiState.fontColor.value,
-                                fontFamily = uiState.fontFamily.value,
-                                fontSize = uiState.fontSize.sp,
-                                hint = if (index == 0) {
-                                    stringResource(R.string.note_title_hint_text)
-                                } else {
-                                    stringResource(R.string.note_title_hint_write_more_here)
-                                },
-                                isInEditMode = uiState.isInEditMode,
-                                focusRequester = focusRequesters.getOrPut(index) { FocusRequester() },
-                                onTitleFocused = { id ->
-                                    onEvent(PageEvent.OnTitleFocusChange(id))
-                                    focusedTitleId = id
-                                    onFocusChange()
-                                },
-                                onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
-                            )
-
-                            is UiNoteContent.MediaBlock -> NoteContentMedia(
-                                modifier = Modifier.animateItem(),
-                                block = item,
-                                dropDownHazeState = hazeState,
-                                clickable = true,
-                                onClick = { onEvent(PageEvent.OnMediaClick(it)) },
-                                onRemoveClick = { media ->
-                                    onEvent(PageEvent.OnMediaRemoveClick(media))
-                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                },
-                                onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
-                            )
-
-                            is UiNoteContent.Voice -> NoteContentVoice(
-                                modifier = Modifier
-                                    .padding(start = 8.dp, end = 8.dp, top = 4.dp, bottom = 8.dp)
-                                    .animateItem(),
-                                voice = item,
-                                isPlaying = item.id == uiState.playingVoiceId,
-                                isRemovable = uiState.isInEditMode,
-                                onRemoveClick = { voice ->
-                                    onEvent(PageEvent.OnVoiceRemoveClick(voice))
-                                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                                },
-                                onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
-                                onProgressSelected = { voice, value ->
-                                    onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
-                                },
-                            )
                         }
                     }
+
                     if (uiState.tags.isNotEmpty()) {
-                        item(key = UiNoteTag.BLOCK_ID) {
+                        key(UiNoteTag.BLOCK_ID) {
                             NoteTags(
                                 modifier = Modifier
                                     .padding(start = 4.dp, end = 4.dp, top = 20.dp)
                                     .fillMaxWidth()
-                                    .animateItem(),
+                                    .animatePlacementInScope(this@LookaheadScope),
                                 tags = uiState.tags,
                                 isEditable = uiState.isInEditMode,
                                 animateItemsPlacement = true,
@@ -423,88 +392,75 @@ private fun SuccessScreen(
                         }
                     }
                 }
-                if (uiState.stickers.isNotEmpty()) {
-                    StickersBox(
-                        modifier = Modifier.fillMaxSize(),
-                        state = stickerBoxState,
-                        listState = state.listState,
-                        noteContent = uiState.content,
-                        stickers = uiState.stickers,
-                        toolbarHeight = toolbarMargin,
-                        onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
-                        onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
-                        onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
-                    )
-                }
             }
-            AnimatedVisibility(
-                visible = state.dimSurface,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.scrim)
-                        .clickableNoRipple {},
-                )
-            }
+        }
+        AnimatedVisibility(
+            visible = state.dimSurface,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
             Box(
                 modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                    .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
-            ) {
-                AnimatedVisibility(
-                    visible = uiState.isInEditMode,
-                    enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                    exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                    content = {
-                        val titleState = remember(uiState.content, focusedTitleId) {
-                            uiState.content
-                                .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
-                                ?.state
-                        }
-                        ActionsPanel(
-                            noteId = uiState.noteId,
-                            fontFamily = uiState.fontFamily,
-                            fontColor = uiState.fontColor,
-                            fontSize = uiState.fontSize,
-                            hazeState = hazeState,
-                            titleState = titleState ?: NoteTitleState(),
-                            onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
-                            onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
-                            onVoiceRecordStart = {
-                                onEvent(PageEvent.OnVoiceStarted)
-                                state.isVoiceRecordActive = true
-                            },
-                            onRecordComplete = { record ->
-                                state.isVoiceRecordActive = false
-                                onEvent(PageEvent.OnVoiceRecorded(record))
-                            },
-                            onVoiceRecordCancel = { state.isVoiceRecordActive = false },
-                            onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
-                            onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
-                            onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
-                            onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
-                            onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
-                            onStickerSelected = { selectedSticker ->
-                                onEvent(
-                                    PageEvent.OnStickerSelected(
-                                        typeId = selectedSticker.id,
-                                        icon = selectedSticker.icon,
-                                        listState = state.listState,
-                                        toolbarHeight = density.run { toolbarMargin.toPx() },
-                                        toolsPanelHeight = toolsPanelRect.height,
-                                        density = density,
-                                    )
-                                )
-                            },
-                        )
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim)
+                    .clickableNoRipple {},
+            )
+        }
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
+                .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
+        ) {
+            AnimatedVisibility(
+                visible = uiState.isInEditMode,
+                enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+                content = {
+                    val titleState = remember(uiState.content, focusedTitleId) {
+                        uiState.content
+                            .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
+                            ?.state
                     }
-                )
-            }
+                    ActionsPanel(
+                        noteId = uiState.noteId,
+                        fontFamily = uiState.fontFamily,
+                        fontColor = uiState.fontColor,
+                        fontSize = uiState.fontSize,
+                        hazeState = hazeState,
+                        titleState = titleState ?: NoteTitleState(),
+                        onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
+                        onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+                        onVoiceRecordStart = {
+                            onEvent(PageEvent.OnVoiceStarted)
+                            state.isVoiceRecordActive = true
+                        },
+                        onRecordComplete = { record ->
+                            state.isVoiceRecordActive = false
+                            onEvent(PageEvent.OnVoiceRecorded(record))
+                        },
+                        onVoiceRecordCancel = { state.isVoiceRecordActive = false },
+                        onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
+                        onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
+                        onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
+                        onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
+                        onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
+                        onStickerSelected = { selectedSticker ->
+                            onEvent(
+                                PageEvent.OnStickerSelected(
+                                    typeId = selectedSticker.id,
+                                    icon = selectedSticker.icon,
+                                    listState = state.listState,
+                                    toolbarHeight = density.run { toolbarMargin.toPx() },
+                                    toolsPanelHeight = toolsPanelRect.height,
+                                    density = density,
+                                )
+                            )
+                        },
+                    )
+                }
+            )
         }
     }
 }

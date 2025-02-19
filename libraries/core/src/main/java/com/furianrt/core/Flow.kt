@@ -10,6 +10,10 @@ inline fun <T, R> Flow<Iterable<T>>.deepMap(
     crossinline transform: (value: T) -> R,
 ): Flow<List<R>> = map { it.map(transform) }
 
+inline fun <T> Flow<Iterable<T>>.deepFilter(
+    crossinline predicate: (T) -> Boolean,
+): Flow<List<T>> = map { it.filter(predicate) }
+
 inline fun <reified T> MutableStateFlow<in T>.updateState(function: (T) -> T) {
     val state = value
     if (state is T) {

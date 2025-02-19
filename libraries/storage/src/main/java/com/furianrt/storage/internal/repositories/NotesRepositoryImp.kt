@@ -1,5 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
+import com.furianrt.core.deepFilter
 import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
@@ -65,6 +66,12 @@ internal class NotesRepositoryImp @Inject constructor(
     override fun getAllNotes(query: String): Flow<List<LocalNote>> = if (query.isNotEmpty()) {
         noteDao.getAllNotes("%$query%")
             .deepMap(LinkedNote::toLocalNote)
+            .deepFilter { note ->
+                note.content.any { content ->
+                    content is LocalNote.Content.Title &&
+                            content.text.contains(query, ignoreCase = true)
+                }
+            }
             .map { it.sortedByDescending(LocalNote::date) }
     } else {
         getAllNotes()

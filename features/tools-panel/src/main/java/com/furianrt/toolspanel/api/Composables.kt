@@ -113,6 +113,7 @@ fun ActionsPanel(
 
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
     val hazeModifier = Modifier
+        .background(MaterialTheme.colorScheme.tertiaryContainer)
         .hazeChild(
             state = hazeState,
             style = HazeDefaults.style(

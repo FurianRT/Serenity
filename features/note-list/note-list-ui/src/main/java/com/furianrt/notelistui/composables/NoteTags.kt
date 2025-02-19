@@ -1,8 +1,11 @@
 package com.furianrt.notelistui.composables
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -21,6 +24,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -53,6 +57,8 @@ import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.debounce
 
 @Composable
 fun NoteTags(
@@ -114,6 +120,7 @@ fun NoteTags(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class, FlowPreview::class)
 @Composable
 private fun TemplateNoteTagItem(
     tag: UiNoteTag.Template,
@@ -128,15 +135,31 @@ private fun TemplateNoteTagItem(
     var hasFocus by remember { mutableStateOf(false) }
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
 
-    val keyboardOffset by rememberKeyboardOffsetState(minOffset = 300)
     val focusMargin = with(LocalDensity.current) { 108.dp.toPx().toInt() }
-    LaunchedEffect(tag.textState.selection, keyboardOffset, hasFocus) {
+    val keyboardOffset by rememberKeyboardOffsetState()
+    val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
+
+    LaunchedEffect(imeTarget, hasFocus) {
+        snapshotFlow { keyboardOffset }
+            .debounce(50)
+            .collect { offset ->
+                if (imeTarget != 0 && hasFocus) {
+                    bringIntoViewRequester.bringIntoView(
+                        textResult = layoutResult,
+                        selection = tag.textState.selection,
+                        additionalTopOffset = 0,
+                        additionalBottomOffset = offset + focusMargin,
+                    )
+                }
+            }
+    }
+    LaunchedEffect(tag.textState.selection, hasFocus) {
         if (hasFocus) {
             bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = tag.textState.selection,
                 additionalTopOffset = 0,
-                additionalBottomOffset = focusMargin,
+                additionalBottomOffset = keyboardOffset + focusMargin,
             )
         }
     }
