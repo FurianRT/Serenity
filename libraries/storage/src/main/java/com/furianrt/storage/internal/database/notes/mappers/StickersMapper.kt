@@ -11,7 +11,8 @@ internal fun EntryNoteSticker.toNoteContentSticker() = LocalNote.Sticker(
     scale = scale,
     rotation = rotation,
     isFlipped = isFlipped,
-    anchors = anchors.map(EntryNoteSticker.Anchor::toLocalNoteAnchor),
+    biasX = biasX,
+    dpOffsetY = dpOffsetY,
     editTime = editTime,
 )
 
@@ -22,7 +23,8 @@ internal fun LocalNote.Sticker.toEntryNoteToSticker(noteId: String) = EntryNoteS
     scale = scale,
     rotation = rotation,
     isFlipped = isFlipped,
-    anchors = anchors.map(LocalNote.Sticker.Anchor::toEntryNoteStickerAnchor),
+    biasX = biasX,
+    dpOffsetY = dpOffsetY,
     editTime = editTime,
 )
 
@@ -31,22 +33,11 @@ internal fun LocalNote.Sticker.toEntryTransformationsPart() = PartStickerTransfo
     scale = scale,
     rotation = rotation,
     isFlipped = isFlipped,
-    anchors = anchors.map(LocalNote.Sticker.Anchor::toEntryNoteStickerAnchor),
+    biasX = biasX,
+    dpOffsetY = dpOffsetY,
     editTime = editTime,
 )
 
 internal fun LocalNote.Sticker.toEntryIdPart() = PartStickerId(
     id = id,
-)
-
-private fun EntryNoteSticker.Anchor.toLocalNoteAnchor() = LocalNote.Sticker.Anchor(
-    id = id,
-    biasX = biasX,
-    biasY = biasY,
-)
-
-private fun LocalNote.Sticker.Anchor.toEntryNoteStickerAnchor() = EntryNoteSticker.Anchor(
-    id = id,
-    biasX = biasX,
-    biasY = biasY,
 )

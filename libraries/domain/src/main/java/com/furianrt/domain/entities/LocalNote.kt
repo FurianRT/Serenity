@@ -29,16 +29,10 @@ data class LocalNote(
         val scale: Float,
         val rotation: Float,
         val isFlipped: Boolean,
-        val anchors: List<Anchor>,
+        val biasX: Float,
+        val dpOffsetY: Float,
         val editTime: Long,
-    ) {
-        @Serializable
-        data class Anchor(
-            val id: String?,
-            val biasX: Float,
-            val biasY: Float,
-        )
-    }
+    )
 
     @Serializable
     sealed class Content(open val id: String) {

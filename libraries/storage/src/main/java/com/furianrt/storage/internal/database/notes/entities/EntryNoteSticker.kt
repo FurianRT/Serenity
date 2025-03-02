@@ -4,8 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker.Anchor
-import kotlinx.serialization.Serializable
 
 @Entity(
     tableName = EntryNoteSticker.TABLE_NAME,
@@ -38,19 +36,15 @@ internal class EntryNoteSticker(
     @ColumnInfo(name = FIELD_IS_FLIPPED)
     val isFlipped: Boolean,
 
-    @ColumnInfo(name = FIELD_ANCHORS)
-    val anchors: List<Anchor>,
+    @ColumnInfo(name = FIELD_BIAS_X)
+    val biasX: Float,
+
+    @ColumnInfo(name = FIELD_DP_OFFSET_Y)
+    val dpOffsetY: Float,
 
     @ColumnInfo(name = FIELD_EDIT_TIME)
     val editTime: Long,
 ) {
-    @Serializable
-    class Anchor(
-        val id: String?,
-        val biasX: Float,
-        val biasY: Float,
-    )
-
     companion object {
         const val TABLE_NAME = "Stickers"
         const val FIELD_ID = "id"
@@ -59,7 +53,8 @@ internal class EntryNoteSticker(
         const val FIELD_SCALE = "scale"
         const val FIELD_ROTATION = "rotation"
         const val FIELD_IS_FLIPPED = "is_flipped"
-        const val FIELD_ANCHORS = "anchors"
+        const val FIELD_BIAS_X = "bias_x"
+        const val FIELD_DP_OFFSET_Y = "dp_offset_y"
         const val FIELD_EDIT_TIME = "edit_time"
     }
 }
@@ -78,8 +73,11 @@ internal class PartStickerTransformations(
     @ColumnInfo(name = EntryNoteSticker.FIELD_IS_FLIPPED)
     val isFlipped: Boolean,
 
-    @ColumnInfo(name = EntryNoteSticker.FIELD_ANCHORS)
-    val anchors: List<Anchor>,
+    @ColumnInfo(name = EntryNoteSticker.FIELD_BIAS_X)
+    val biasX: Float,
+
+    @ColumnInfo(name = EntryNoteSticker.FIELD_DP_OFFSET_Y)
+    val dpOffsetY: Float,
 
     @ColumnInfo(name = EntryNoteSticker.FIELD_EDIT_TIME)
     val editTime: Long,

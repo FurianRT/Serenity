@@ -1,8 +1,8 @@
 package com.furianrt.notepage.api
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.lazy.LazyListItemInfo
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SheetState
@@ -26,7 +26,7 @@ private const val ITEM_VISIBILITY_THRESHOLD = 90f
 @OptIn(ExperimentalMaterial3Api::class)
 @Stable
 class PageScreenState(
-    val listState: LazyListState,
+    val listState: ScrollState,
     val bottomScaffoldState: BottomSheetScaffoldState,
     hasContentChanged: Boolean,
 ) {
@@ -81,17 +81,17 @@ class PageScreenState(
     }
 
     suspend fun scrollToPosition(position: Int, topOffset: Int) {
-        val visibleIndexes = listState.layoutInfo
+        /*val visibleIndexes = listState.layoutInfo
             .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD, topOffset)
             .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {
             listState.animateScrollToItem(position)
-        }
+        }*/
     }
 
     companion object {
         fun saver(
-            listState: LazyListState,
+            listState: ScrollState,
             bottomScaffoldState: BottomSheetScaffoldState,
         ): Saver<PageScreenState, Pair<Boolean, Boolean>> = Saver(
             save = { it.hasContentChanged to it.isVoiceRecordActive },
@@ -111,7 +111,7 @@ class PageScreenState(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun rememberPageScreenState(
-    listState: LazyListState = rememberLazyListState(),
+    listState: ScrollState = rememberScrollState(),
     bottomScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ),

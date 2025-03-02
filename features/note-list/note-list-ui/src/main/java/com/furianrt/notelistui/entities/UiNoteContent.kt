@@ -62,7 +62,7 @@ sealed class UiNoteContent(open val id: String) {
     }
 }
 
-fun UiNoteContent.isEmptyTitle() = this is UiNoteContent.Title && state.text.isEmpty()
+fun UiNoteContent?.isEmptyTitle() = this is UiNoteContent.Title && state.text.isEmpty()
 
 val UiNoteContent.MediaBlock.contentHeight: Dp
     get() = when (media.count()) {

@@ -58,11 +58,10 @@ import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.addTitleTemplates
+import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.removeMedia
 import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.removeTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.removeVoice
 import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
@@ -74,6 +73,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
@@ -215,7 +215,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
             is OnFontSizeSelected -> updateFontSize(event.size)
-            is PageEvent.OnVoiceStarted -> resetStickersEditing()
+            is OnVoiceStarted -> resetStickersEditing()
             is OnVoicePlayClick -> {
                 resetStickersEditing()
                 onVoicePlayClick(event.voice)
@@ -232,20 +232,7 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnSelectStickersClick -> resetStickersEditing()
-            is OnStickerSelected -> _state.doWithState<PageUiState.Success> { currentState ->
-                val sticker = StickerItem.build(
-                    typeId = event.typeId,
-                    icon = event.icon,
-                    noteContent = currentState.content,
-                    listState = event.listState,
-                    stickerSize = event.density.run { StickerItem.DEFAULT_SIZE.toPx() },
-                    toolbarHeight = event.toolbarHeight,
-                    toolsPanelHeight = event.toolsPanelHeight,
-                    density = event.density
-                )
-                addSticker(sticker)
-            }
-
+            is OnStickerSelected -> addSticker(event.sticker)
             is OnRemoveStickerClick -> removeSticker(event.sticker)
             is OnStickerChanged -> updateSticker(event.sticker)
             is OnStickerClick -> changeStickerEditing(event.sticker)
@@ -295,20 +282,13 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun addNewBlock(newBlock: UiNoteContent) {
         hasContentChanged = true
-        val titleIndexToFocus = findTitleIndex(focusedTitleId)?.let { it + 2 }
         _state.updateState<PageUiState.Success> { currentState ->
             val newContent = buildContentWithNewBlock(currentState.content, newBlock)
-            if (currentState.isInEditMode) {
-                currentState.copy(content = newContent.addTitleTemplates())
-            } else {
-                currentState.copy(content = newContent)
-            }
+            currentState.copy(
+                content = newContent.refreshTitleTemplates(addTopTemplate = currentState.isInEditMode),
+            )
         }
         launch {
-            delay(TITLE_FOCUS_DELAY)
-            if (titleIndexToFocus != null) {
-                _effect.tryEmit(PageEffect.FocusFirstTitle(titleIndexToFocus))
-            }
             _state.doWithState<PageUiState.Success> { successState ->
                 val blockIndex = successState.content.indexOfFirstOrNull { it.id == newBlock.id }
                 if (blockIndex != null) {
@@ -484,7 +464,11 @@ internal class PageViewModel @AssistedInject constructor(
             _state.updateState<PageUiState.Success> { currentState ->
                 var newContent = currentState.content
                 mediaNames.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
-                currentState.copy(content = newContent).also {
+                currentState.copy(
+                    content = newContent.refreshTitleTemplates(
+                        addTopTemplate = currentState.isInEditMode,
+                    )
+                ).also {
                     if (isInEditMode) {
                         hasContentChanged = true
                     } else {
@@ -622,11 +606,10 @@ internal class PageViewModel @AssistedInject constructor(
             focusedTitleId = null
             hasContentChanged = false
         }
+
         _state.updateState<PageUiState.Success> { currentState ->
             val newState = currentState.copy(
-                content = with(currentState.content) {
-                    if (isEnabled) addTitleTemplates() else removeTitleTemplates()
-                },
+                content = currentState.content.refreshTitleTemplates(addTopTemplate = isEnabled),
                 tags = with(currentState.tags) {
                     if (isEnabled) addTagTemplate() else removeTagTemplate(onlyEmpty = true)
                 },
@@ -684,7 +667,7 @@ internal class PageViewModel @AssistedInject constructor(
             when (localState) {
                 is PageUiState.Empty, PageUiState.Loading -> PageUiState.Success(
                     noteId = note.id,
-                    content = note.content,
+                    content = note.content.refreshTitleTemplates(addTopTemplate = isInEditMode),
                     tags = note.tags,
                     stickers = note.stickers,
                     playingVoiceId = null,

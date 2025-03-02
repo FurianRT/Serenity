@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.unit.dp
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.mediaselector.api.MediaResult
@@ -49,7 +50,8 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     scale = state.scale,
     rotation = state.rotation,
     isFlipped = state.isFlipped,
-    anchors = state.anchors.map(StickerState.Anchor::toLocalNoteStickerAnchor),
+    biasX = state.biasX,
+    dpOffsetY = state.dpOffsetY.value,
     editTime = state.editTime,
 )
 
@@ -61,8 +63,10 @@ private fun LocalNote.Sticker.toStickerItem(@DrawableRes icon: Int) = StickerIte
         initialScale = scale,
         initialRotation = rotation,
         initialIsFlipped = isFlipped,
-        initialAnchors = anchors.mapImmutable(LocalNote.Sticker.Anchor::toStickerStateAnchor),
+        initialBiasX = biasX,
+        initialDpOffsetY = dpOffsetY.dp,
         initialEditTime = editTime,
+        initialIsEditing = false,
     ),
 )
 
@@ -81,34 +85,4 @@ private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this
         addedDate = ZonedDateTime.now(),
         duration = duration,
     )
-}
-
-private fun StickerState.Anchor.toLocalNoteStickerAnchor() = when (this) {
-    is StickerState.Anchor.Item -> LocalNote.Sticker.Anchor(
-        id = id,
-        biasX = biasX,
-        biasY = biasY,
-    )
-
-    is StickerState.Anchor.ViewPort -> LocalNote.Sticker.Anchor(
-        id = null,
-        biasX = biasX,
-        biasY = biasY,
-    )
-}
-
-private fun LocalNote.Sticker.Anchor.toStickerStateAnchor(): StickerState.Anchor {
-    val anchorId = id
-    return if (anchorId == null) {
-        StickerState.Anchor.ViewPort(
-            biasX = biasX,
-            biasY = biasY,
-        )
-    } else {
-        StickerState.Anchor.Item(
-            id = anchorId,
-            biasX = biasX,
-            biasY = biasY,
-        )
-    }
 }

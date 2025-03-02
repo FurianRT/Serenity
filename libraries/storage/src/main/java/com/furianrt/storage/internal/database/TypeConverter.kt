@@ -5,7 +5,6 @@ import androidx.room.TypeConverter
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteTextSpan
-import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import kotlinx.serialization.encodeToString
@@ -47,14 +46,4 @@ internal class TypeConverter {
 
     @TypeConverter
     fun noteTextSpansToString(spans: List<NoteTextSpan>): String = Json.encodeToString(spans)
-
-    @TypeConverter
-    fun stringToAnchors(
-        value: String,
-    ): List<EntryNoteSticker.Anchor> = Json.decodeFromString(value)
-
-    @TypeConverter
-    fun anchorsFloatToString(
-        list: List<EntryNoteSticker.Anchor>,
-    ): String = Json.encodeToString(list)
 }

@@ -5,19 +5,25 @@ import androidx.compose.ui.text.TextRange
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notelistui.entities.isEmptyTitle
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import java.util.UUID
 
-internal fun List<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteContent> {
+internal fun List<UiNoteContent>.refreshTitleTemplates(
+    addTopTemplate: Boolean,
+): ImmutableList<UiNoteContent> {
     val result = toMutableList()
+    if (!addTopTemplate && result.firstOrNull().isEmptyTitle()) {
+        result.removeAt(0)
+    }
     forEachIndexed { index, content ->
         if (content is UiNoteContent.Title) {
             return@forEachIndexed
         }
 
-        if (index == 0) {
+        if (index == 0 && addTopTemplate) {
             result.add(index, UiNoteContent.Title(id = UUID.randomUUID().toString()))
         }
 
@@ -43,8 +49,13 @@ internal fun List<UiNoteContent>.addTitleTemplates(): ImmutableList<UiNoteConten
     return result.toImmutableList()
 }
 
-internal fun ImmutableList<UiNoteContent>.removeTitleTemplates(): ImmutableList<UiNoteContent> =
-    toPersistentList().removeAll { it is UiNoteContent.Title && it.state.annotatedString.isEmpty() }
+internal fun ImmutableList<UiNoteContent>.removeFirstTitleTemplate(): ImmutableList<UiNoteContent> {
+    return if (firstOrNull().isEmptyTitle()) {
+        toPersistentList().removeAt(0)
+    } else {
+        this
+    }
+}
 
 internal fun ImmutableList<UiNoteTag>.addTagTemplate(): ImmutableList<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }

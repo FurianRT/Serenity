@@ -4,6 +4,7 @@ import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -61,7 +62,7 @@ class MovableToolbarState {
 
 @Composable
 fun MovableToolbarScaffold(
-    listState: LazyListState,
+    listState: ScrollableState,
     toolbar: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
     state: MovableToolbarState = MovableToolbarState(),
@@ -105,15 +106,8 @@ fun MovableToolbarScaffold(
         }
     }
 
-    val isListAtTop by remember(listState) {
-        derivedStateOf {
-            listState.firstVisibleItemIndex == 0 &&
-                    listState.firstVisibleItemScrollOffset == 0
-        }
-    }
-
-    LaunchedEffect(isListAtTop) {
-        totalScroll = if (isListAtTop) 0f else totalScroll
+    LaunchedEffect(listState.canScrollBackward) {
+        totalScroll = if (listState.canScrollBackward) totalScroll else 0f
     }
 
     state.setExpandRequestListener { duration ->
@@ -129,17 +123,17 @@ fun MovableToolbarScaffold(
     val hazeState = remember { HazeState() }
 
     LaunchedEffect(listState.isScrollInProgress) {
-        val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+       /* val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
         val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull(LazyListItemInfo::index) ?: 0
         val scrollOffset = listState.firstVisibleItemScrollOffset
-        val forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
+        val forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0*/
         val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
         when {
             !isToolbarInHalfState || listState.isScrollInProgress -> {
                 return@LaunchedEffect
             }
 
-            toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || isListAtTop -> {
+            toolbarOffset > -toolbarHeight / 2 || /*forceShowToolbar ||*/ !listState.canScrollBackward -> {
                 AnimationState(toolbarOffset).animateTo(
                     targetValue = 0f,
                     animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
@@ -160,8 +154,8 @@ fun MovableToolbarScaffold(
     val showShadow by remember(listState) {
         derivedStateOf {
             (totalScroll - toolbarOffset).absoluteValue > 1 &&
-                    !isListAtTop ||
-                    (toolbarOffset == 0f && !isListAtTop)
+                    listState.canScrollBackward ||
+                    (toolbarOffset == 0f && listState.canScrollBackward)
         }
     }
 

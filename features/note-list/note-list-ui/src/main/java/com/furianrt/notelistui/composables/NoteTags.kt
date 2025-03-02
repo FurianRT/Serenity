@@ -65,6 +65,7 @@ fun NoteTags(
     tags: ImmutableList<UiNoteTag>,
     modifier: Modifier = Modifier,
     date: String? = null,
+    showStub: Boolean = false,
     isEditable: Boolean = false,
     animateItemsPlacement: Boolean = false,
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
@@ -73,6 +74,19 @@ fun NoteTags(
     onTextEntered: () -> Unit = {},
     onTextCleared: () -> Unit = {},
 ) {
+
+    if (tags.isEmpty() && showStub) {
+        TemplateNoteTagItem(
+            modifier = modifier.alpha(0f),
+            tag = UiNoteTag.Template(),
+            enabled = false,
+            onDoneEditing = {},
+            onTextEntered = {},
+            onTextCleared = {},
+        )
+        return
+    }
+
     val focusManager = LocalFocusManager.current
     FlowRow(modifier = modifier) {
         LookaheadScope {
@@ -124,10 +138,11 @@ fun NoteTags(
 @Composable
 private fun TemplateNoteTagItem(
     tag: UiNoteTag.Template,
-    modifier: Modifier = Modifier,
     onTextEntered: () -> Unit,
     onTextCleared: () -> Unit,
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
@@ -153,15 +168,18 @@ private fun TemplateNoteTagItem(
                 }
             }
     }
-    LaunchedEffect(tag.textState.selection, hasFocus) {
-        if (hasFocus) {
-            bringIntoViewRequester.bringIntoView(
-                textResult = layoutResult,
-                selection = tag.textState.selection,
-                additionalTopOffset = 0,
-                additionalBottomOffset = keyboardOffset + focusMargin,
-            )
-        }
+    LaunchedEffect(hasFocus) {
+        snapshotFlow { tag.textState.selection }
+            .collect { selection ->
+                if (hasFocus) {
+                    bringIntoViewRequester.bringIntoView(
+                        textResult = layoutResult,
+                        selection = selection,
+                        additionalTopOffset = 0,
+                        additionalBottomOffset = keyboardOffset + focusMargin,
+                    )
+                }
+            }
     }
 
     val hasText by remember { derivedStateOf { tag.textState.text.isNotBlank() } }
@@ -205,6 +223,7 @@ private fun TemplateNoteTagItem(
                     }
                 },
             state = tag.textState,
+            enabled = enabled,
             textStyle = MaterialTheme.typography.labelSmall,
             lineLimits = TextFieldLineLimits.SingleLine,
             cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
