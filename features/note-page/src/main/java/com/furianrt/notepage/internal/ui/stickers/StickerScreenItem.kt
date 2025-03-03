@@ -4,8 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.draggable2D
-import androidx.compose.foundation.gestures.rememberDraggable2DState
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -15,11 +14,14 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,19 +43,21 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.debounce
 import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.hypot
 import kotlin.math.sqrt
 import com.furianrt.uikit.R as uiR
 
+@OptIn(FlowPreview::class)
 @Composable
 internal fun StickerScreenItem(
     item: StickerItem,
     onRemoveClick: (item: StickerItem) -> Unit = {},
     onDragged: (delta: Offset) -> Unit = {},
-    onDragStarted: () -> Unit = {},
-    onDragStopped: () -> Unit = {},
     onTransformed: () -> Unit = {},
     onClick: (tem: StickerItem) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -64,14 +68,38 @@ internal fun StickerScreenItem(
     var initialDragOffset by remember { mutableStateOf<Offset?>(null) }
     var initialAngle by remember { mutableFloatStateOf(item.state.rotation) }
     var initialScale by remember { mutableFloatStateOf(item.state.scale) }
+
+    var transformTrigger by remember { mutableIntStateOf(0) }
+    var isFirstLaunch by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        snapshotFlow { transformTrigger }
+            .debounce(100)
+            .collect {
+                if (!isFirstLaunch) {
+                    onTransformed()
+                }
+                isFirstLaunch = false
+            }
+    }
+
     Box(
         modifier = modifier
             .applyIf(item.state.isEditing) {
-                Modifier.draggable2D(
-                    state = rememberDraggable2DState(onDragged),
-                    onDragStarted = { onDragStarted() },
-                    onDragStopped = { onDragStopped() },
-                )
+                Modifier.pointerInput(Unit) {
+                    detectTransformGestures { _, pan, scale, rotation ->
+                        val resultRotation = (item.state.rotation + rotation) % 360
+                        val resultScale = (item.state.scale * scale).coerceIn(
+                            minimumValue = StickerItem.MIN_SIZE_PERCENT,
+                            maximumValue = StickerItem.MAX_SIZE_PERCENT,
+                        )
+                        initialAngle = resultRotation
+                        initialScale = resultScale
+                        item.state.rotation = resultRotation
+                        item.state.scale = resultScale
+                        onDragged(pan)
+                        transformTrigger++
+                    }
+                }
             }
             .onGloballyPositioned { parentCoordinates = it }
             .graphicsLayer {

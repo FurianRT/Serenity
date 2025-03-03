@@ -160,6 +160,7 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.BringContentToView -> state.bringContentToView(effect.index)
+                is PageEffect.ClearFocus -> focusManager.clearFocus()
             }
         }
     }
@@ -238,7 +239,6 @@ private fun SuccessScreen(
     }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
-    val focusManager = LocalFocusManager.current
     val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
@@ -284,7 +284,7 @@ private fun SuccessScreen(
                 }
                 .haze(hazeState)
                 .verticalScroll(state.listState)
-                .clickableNoRipple { focusManager.clearFocus() }
+                .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin, bottom = navBarPadding)
                 .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
                 .padding(bottom = toolsPanelHeight)

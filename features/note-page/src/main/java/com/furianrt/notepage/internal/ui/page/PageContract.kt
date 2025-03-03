@@ -68,6 +68,7 @@ internal sealed interface PageEvent {
     data class OnRemoveStickerClick(val sticker: StickerItem) : PageEvent
     data class OnStickerChanged(val sticker: StickerItem) : PageEvent
     data class OnStickerClick(val sticker: StickerItem) : PageEvent
+    data object OnClickOutside : PageEvent
 }
 
 internal sealed interface PageEffect {
@@ -84,4 +85,5 @@ internal sealed interface PageEffect {
     ) : PageEffect
 
     data class BringContentToView(val index: Int) : PageEffect
+    data object ClearFocus : PageEffect
 }

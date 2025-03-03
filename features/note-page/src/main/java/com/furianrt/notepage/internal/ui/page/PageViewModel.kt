@@ -68,6 +68,7 @@ import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
@@ -236,6 +237,10 @@ internal class PageViewModel @AssistedInject constructor(
             is OnRemoveStickerClick -> removeSticker(event.sticker)
             is OnStickerChanged -> updateSticker(event.sticker)
             is OnStickerClick -> changeStickerEditing(event.sticker)
+            is OnClickOutside -> {
+                resetStickersEditing()
+                _effect.tryEmit(PageEffect.ClearFocus)
+            }
         }
     }
 

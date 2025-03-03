@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.stickers
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
@@ -53,7 +54,10 @@ private fun StickerElement(
     val maxWidthPx = containerSize.width
     val maxHeightPx = containerSize.height
     val density = LocalDensity.current
-    val addOffset by animateFloatAsState(emptyTitleHeight)
+    val addOffset by animateFloatAsState(
+        targetValue = emptyTitleHeight,
+        animationSpec = tween(250),
+    )
     StickerScreenItem(
         modifier = modifier.offset {
             val stickerSize = StickerItem.DEFAULT_SIZE.toPx()
@@ -75,8 +79,6 @@ private fun StickerElement(
                 (sticker.state.dpOffsetY + delta.y.toDp()).coerceAtLeast(0.dp)
             }
         },
-        onDragStarted = { },
-        onDragStopped = { onStickerChanged(sticker) },
         onTransformed = { onStickerChanged(sticker) },
         onClick = onStickerClick,
     )
