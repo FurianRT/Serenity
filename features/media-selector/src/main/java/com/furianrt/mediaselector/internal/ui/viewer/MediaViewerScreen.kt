@@ -131,11 +131,21 @@ private fun SuccessContent(
             onMediaItemClick = { showControls = !showControls },
             onThumbDrugStart = { isThumbDragging = true },
             onThumbDrugEnd = { isThumbDragging = false },
-            onPause = { isPlaying = false },
-            onResume = { isPlaying = true },
-            onEnded = {
-                showControls = true
-                isPlaying = false
+            onPause = { index ->
+                if (index == pagerState.currentPage) {
+                    isPlaying = false
+                }
+            },
+            onResume = { index ->
+                if (index == pagerState.currentPage) {
+                    isPlaying = true
+                }
+            },
+            onEnded = { index ->
+                if (index == pagerState.currentPage) {
+                    showControls = true
+                    isPlaying = false
+                }
             },
         )
         ControlsAnimatedVisibility(

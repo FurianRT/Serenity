@@ -61,9 +61,9 @@ internal fun MediaPager(
     onThumbDrugStart: () -> Unit,
     onThumbDrugEnd: () -> Unit,
     onMediaItemClick: () -> Unit,
-    onPause: () -> Unit,
-    onResume: () -> Unit,
-    onEnded: () -> Unit,
+    onPause: (index: Int) -> Unit,
+    onResume: (index: Int) -> Unit,
+    onEnded: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
@@ -87,9 +87,9 @@ internal fun MediaPager(
                 onClick = onMediaItemClick,
                 onThumbDrugStart = onThumbDrugStart,
                 onThumbDrugEnd = onThumbDrugEnd,
-                onPause = onPause,
-                onResume = onResume,
-                onEnded = onEnded,
+                onPause = { onPause(page) },
+                onResume = { onResume(page) },
+                onEnded = { onEnded(page) },
             )
         }
     }
@@ -185,10 +185,15 @@ internal fun VideoPage(
     DisposableEffect(item.name) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
+                if (isEnded && playbackState == ExoPlayer.STATE_BUFFERING) {
+                    playing = true
+                    onResume()
+                }
                 isEnded = playbackState == ExoPlayer.STATE_ENDED
                 if (isEnded) {
                     currentPosition = exoPlayer.currentPosition
                     playing = false
+                    onPause()
                     onEnded()
                 }
             }
