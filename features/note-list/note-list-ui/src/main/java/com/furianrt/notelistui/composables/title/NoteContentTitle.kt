@@ -142,6 +142,7 @@ fun NoteContentTitle(
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
             showKeyboardOnFocus = true,
+            autoCorrectEnabled = true,
         ),
         decorationBox = { innerTextField ->
             AnimatedVisibility(

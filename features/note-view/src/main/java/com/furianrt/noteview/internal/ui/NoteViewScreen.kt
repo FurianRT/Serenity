@@ -27,6 +27,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -166,8 +167,19 @@ private fun SuccessScreen(
 
     state.setOnSaveContentListener { currentPageState?.saveContent() }
 
-    LaunchedEffect(pagerState.currentPage) {
-        onEvent(NoteViewEvent.OnPageChange(pagerState.currentPage))
+    val toolbarState = remember { MovableToolbarState() }
+    var skipToolbarExpand by remember { mutableStateOf(true) }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { pagerState.currentPage }
+            .collectLatest { currentPage ->
+                onEvent(NoteViewEvent.OnPageChange(currentPage))
+                if (!skipToolbarExpand) {
+                    toolbarState.expand()
+                } else {
+                    skipToolbarExpand = false
+                }
+            }
     }
 
     LaunchedEffect(uiState.currentPageIndex) {
@@ -187,21 +199,11 @@ private fun SuccessScreen(
 
     val hazeState = remember { HazeState() }
     val scope = rememberCoroutineScope()
-    val toolbarState = remember { MovableToolbarState() }
     val view = LocalView.current
 
     LaunchedEffect(uiState.isInEditMode) {
         if (uiState.isInEditMode) {
             toolbarState.expand()
-        }
-    }
-
-    var skipToolbarExpand by remember { mutableStateOf(true) }
-    LaunchedEffect(pagerState.currentPage) {
-        if (!skipToolbarExpand) {
-            toolbarState.expand()
-        } else {
-            skipToolbarExpand = false
         }
     }
 

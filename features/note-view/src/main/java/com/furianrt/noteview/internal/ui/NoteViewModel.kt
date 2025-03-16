@@ -32,9 +32,11 @@ import javax.inject.Inject
 import kotlin.math.min
 import kotlin.reflect.typeOf
 
+private const val EXTRA_CURRENT_PAGE = "current_page"
+
 @HiltViewModel
 internal class NoteViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
@@ -93,6 +95,7 @@ internal class NoteViewModel @Inject constructor(
 
             is NoteViewEvent.OnPageChange -> {
                 _state.updateState<NoteViewUiState.Success> { currentState ->
+                    savedStateHandle[EXTRA_CURRENT_PAGE] = event.index
                     currentState.copy(
                         currentPageIndex = event.index,
                         date = currentState.notes[event.index].date,
@@ -147,7 +150,8 @@ internal class NoteViewModel @Inject constructor(
                         val notesItems = notes.mapImmutable(LocalNote::toNoteItem)
                         NoteViewUiState.Success(
                             initialPageIndex = initialPageIndex,
-                            currentPageIndex = initialPageIndex,
+                            currentPageIndex = savedStateHandle[EXTRA_CURRENT_PAGE]
+                                ?: initialPageIndex,
                             notes = notesItems,
                             date = notesItems[initialPageIndex].date,
                             isInEditMode = false,
