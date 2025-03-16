@@ -14,7 +14,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,6 +61,9 @@ internal fun MediaPager(
     onThumbDrugStart: () -> Unit,
     onThumbDrugEnd: () -> Unit,
     onMediaItemClick: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onEnded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
@@ -85,6 +87,9 @@ internal fun MediaPager(
                 onClick = onMediaItemClick,
                 onThumbDrugStart = onThumbDrugStart,
                 onThumbDrugEnd = onThumbDrugEnd,
+                onPause = onPause,
+                onResume = onResume,
+                onEnded = onEnded,
             )
         }
     }
@@ -130,6 +135,9 @@ internal fun VideoPage(
     onThumbDrugStart: () -> Unit,
     onThumbDrugEnd: () -> Unit,
     onClick: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onEnded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -167,8 +175,10 @@ internal fun VideoPage(
     LaunchedEffect(playing) {
         if (playing) {
             exoPlayer.play()
+            onResume()
         } else {
             exoPlayer.pause()
+            onPause()
         }
     }
 
@@ -179,6 +189,7 @@ internal fun VideoPage(
                 if (isEnded) {
                     currentPosition = exoPlayer.currentPosition
                     playing = false
+                    onEnded()
                 }
             }
         }

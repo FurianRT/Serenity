@@ -39,6 +39,7 @@ internal sealed interface PageEvent {
     data class OnTagDoneEditing(val tag: UiNoteTag.Template) : PageEvent
     data object OnTagTextEntered : PageEvent
     data object OnTagTextCleared : PageEvent
+    data object OnTagFocusChanged : PageEvent
     data object OnSelectMediaClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
     data class OnTitleFocusChange(val id: String) : PageEvent

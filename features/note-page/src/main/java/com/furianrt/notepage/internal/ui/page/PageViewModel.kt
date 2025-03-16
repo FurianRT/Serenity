@@ -74,6 +74,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagFocusChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.StickerIconProvider
@@ -171,6 +172,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnTagDoneEditing -> addTag(event.tag)
             is OnTagTextCleared -> tryToRemoveSecondTagTemplate()
+            is OnTagFocusChanged -> resetStickersEditing()
             is OnTagTextEntered -> {
                 hasContentChanged = true
                 resetStickersEditing()

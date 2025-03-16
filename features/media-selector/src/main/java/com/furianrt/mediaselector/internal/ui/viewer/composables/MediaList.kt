@@ -1,6 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
@@ -17,15 +17,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
@@ -39,9 +36,9 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import kotlinx.collections.immutable.ImmutableList
 
 private const val IMAGE_SCALE_ANIM_DURATION = 300
-private const val SELECTED_ITEM_HEIGHT_DP = 70f
-private const val ITEM_SIZE_DP = 60f
-private const val HORIZONTAL_PADDING_DP = 12f
+private val SELECTED_ITEM_HEIGHT = 70.dp
+private val ITEM_SIZE = 60.dp
+private val HORIZONTAL_PADDING = 12.dp
 
 @Composable
 internal fun MediaList(
@@ -52,29 +49,28 @@ internal fun MediaList(
     onItemClick: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var listWidth by remember { mutableIntStateOf(0) }
     val itemWidth = LocalDensity.current.run {
-        (SELECTED_ITEM_HEIGHT_DP + HORIZONTAL_PADDING_DP).dp.toPx().toInt()
+        (SELECTED_ITEM_HEIGHT + HORIZONTAL_PADDING).toPx().toInt()
     }
     LaunchedEffect(initialMediaIndex) {
         state.scrollToItem(
             index = currentItem,
-            scrollOffset = (itemWidth - listWidth) / 2,
+            scrollOffset = (itemWidth - state.layoutInfo.viewportSize.width) / 2,
         )
     }
+
     LaunchedEffect(currentItem) {
         state.animateScrollToItem(
             index = currentItem,
-            scrollOffset = (itemWidth - listWidth) / 2,
+            scrollOffset = (itemWidth - state.layoutInfo.viewportSize.width) / 2,
         )
     }
     LazyRow(
         modifier = modifier
             .fillMaxWidth()
-            .height(90.dp)
-            .onSizeChanged { listWidth = it.width },
+            .height(90.dp),
         state = state,
-        contentPadding = PaddingValues(horizontal = HORIZONTAL_PADDING_DP.dp),
+        contentPadding = PaddingValues(horizontal = HORIZONTAL_PADDING),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center,
         flingBehavior = rememberSnapFlingBehavior(state),
@@ -110,8 +106,8 @@ internal fun ImageItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scaleValue by animateFloatAsState(
-        targetValue = if (isSelected) SELECTED_ITEM_HEIGHT_DP else ITEM_SIZE_DP,
+    val scaleValue by animateDpAsState(
+        targetValue = if (isSelected) SELECTED_ITEM_HEIGHT else ITEM_SIZE,
         animationSpec = tween(durationMillis = IMAGE_SCALE_ANIM_DURATION),
         label = "ItemScale"
     )
@@ -127,7 +123,7 @@ internal fun ImageItem(
     }
     AsyncImage(
         modifier = modifier
-            .size(width = 60.dp, height = scaleValue.dp)
+            .size(width = 60.dp, height = scaleValue)
             .clip(RoundedCornerShape(4.dp))
             .clickableNoRipple(onClick = onClick),
         model = request,
@@ -145,8 +141,8 @@ internal fun VideoItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scaleValue by animateFloatAsState(
-        targetValue = if (isSelected) SELECTED_ITEM_HEIGHT_DP else ITEM_SIZE_DP,
+    val scaleValue by animateDpAsState(
+        targetValue = if (isSelected) SELECTED_ITEM_HEIGHT else ITEM_SIZE,
         animationSpec = tween(durationMillis = IMAGE_SCALE_ANIM_DURATION),
         label = "ItemScale",
     )
@@ -164,7 +160,7 @@ internal fun VideoItem(
     Box(modifier = modifier) {
         AsyncImage(
             modifier = Modifier
-                .size(width = 60.dp, height = scaleValue.dp)
+                .size(width = 60.dp, height = scaleValue)
                 .clip(RoundedCornerShape(4.dp))
                 .clickableNoRipple(onClick = onClick),
             model = request,

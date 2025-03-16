@@ -89,6 +89,7 @@ private fun SuccessContent(
     var showControls by rememberSaveable { mutableStateOf(true) }
     val listState = rememberLazyListState()
     var isThumbDragging by remember { mutableStateOf(false) }
+    var isPlaying by remember { mutableStateOf(false) }
 
     DisposableEffect(showControls) {
         if (showControls) {
@@ -106,10 +107,11 @@ private fun SuccessContent(
         showControls,
         pagerState.currentPage,
         isThumbDragging,
+        isPlaying,
     ) {
         val isVideoItem = uiState.media[pagerState.currentPage] is MediaItem.Video
         val isScrollInProgress = listState.isScrollInProgress
-        if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging) {
+        if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging && isPlaying) {
             delay(UI_HIDE_DELAY)
             showControls = false
         }
@@ -129,6 +131,12 @@ private fun SuccessContent(
             onMediaItemClick = { showControls = !showControls },
             onThumbDrugStart = { isThumbDragging = true },
             onThumbDrugEnd = { isThumbDragging = false },
+            onPause = { isPlaying = false },
+            onResume = { isPlaying = true },
+            onEnded = {
+                showControls = true
+                isPlaying = false
+            },
         )
         ControlsAnimatedVisibility(
             modifier = Modifier

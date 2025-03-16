@@ -61,6 +61,9 @@ internal fun MediaPager(
     onThumbDrugStart: () -> Unit,
     onThumbDrugEnd: () -> Unit,
     onMediaItemClick: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onEnded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     HorizontalPager(
@@ -84,6 +87,9 @@ internal fun MediaPager(
                 onClick = onMediaItemClick,
                 onThumbDrugStart = onThumbDrugStart,
                 onThumbDrugEnd = onThumbDrugEnd,
+                onPause = onPause,
+                onResume = onResume,
+                onEnded = onEnded,
             )
         }
     }
@@ -129,6 +135,9 @@ internal fun VideoPage(
     onClick: () -> Unit,
     onThumbDrugStart: () -> Unit,
     onThumbDrugEnd: () -> Unit,
+    onPause: () -> Unit,
+    onResume: () -> Unit,
+    onEnded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -167,8 +176,10 @@ internal fun VideoPage(
     LaunchedEffect(playing) {
         if (playing) {
             exoPlayer.play()
+            onResume()
         } else {
             exoPlayer.pause()
+            onPause()
         }
     }
 
@@ -179,6 +190,7 @@ internal fun VideoPage(
                 if (isEnded) {
                     currentPosition = exoPlayer.currentPosition
                     playing = false
+                    onEnded()
                 }
             }
         }

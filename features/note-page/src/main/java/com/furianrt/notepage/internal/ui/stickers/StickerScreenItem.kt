@@ -72,7 +72,7 @@ internal fun StickerScreenItem(
     var isFirstLaunch by remember { mutableStateOf(true) }
     LaunchedEffect(Unit) {
         snapshotFlow { transformTrigger }
-            .debounce(100)
+            .debounce(150)
             .collect {
                 if (!isFirstLaunch) {
                     onTransformed()

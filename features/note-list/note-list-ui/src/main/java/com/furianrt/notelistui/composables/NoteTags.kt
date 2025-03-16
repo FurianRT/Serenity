@@ -73,6 +73,7 @@ fun NoteTags(
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit = {},
     onTextEntered: () -> Unit = {},
     onTextCleared: () -> Unit = {},
+    onFocusChanged: () -> Unit = {},
 ) {
 
     if (tags.isEmpty() && showStub) {
@@ -83,6 +84,7 @@ fun NoteTags(
             onDoneEditing = {},
             onTextEntered = {},
             onTextCleared = {},
+            onFocusChanged ={},
         )
         return
     }
@@ -117,6 +119,7 @@ fun NoteTags(
                                 onDoneEditing = onDoneEditing,
                                 onTextEntered = onTextEntered,
                                 onTextCleared = onTextCleared,
+                                onFocusChanged = onFocusChanged,
                             )
                         }
                     }
@@ -141,6 +144,7 @@ private fun TemplateNoteTagItem(
     onTextEntered: () -> Unit,
     onTextCleared: () -> Unit,
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit,
+    onFocusChanged: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
@@ -217,6 +221,7 @@ private fun TemplateNoteTagItem(
                 .width(IntrinsicSize.Min)
                 .padding(horizontal = 10.dp, vertical = 6.dp)
                 .onFocusChanged { focusState ->
+                    onFocusChanged()
                     hasFocus = focusState.hasFocus
                     if (!focusState.hasFocus) {
                         onDoneEditing(tag)

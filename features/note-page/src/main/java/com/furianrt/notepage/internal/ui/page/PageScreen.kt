@@ -36,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.CornerRadius
@@ -279,6 +280,7 @@ private fun SuccessScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
+                .clipToBounds()
                 .applyIf(uiState.isInEditMode) {
                     Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                 }
@@ -290,24 +292,20 @@ private fun SuccessScreen(
                 .padding(bottom = toolsPanelHeight)
                 .imePadding(),
         ) {
-            Column(
+            ContentItems(
                 modifier = Modifier
                     .fillMaxSize()
                     .onSizeChanged { listSize = it },
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                ContentItems(
-                    uiState = uiState,
-                    hazeState = hazeState,
-                    titleFocusRequester = { focusRequesters.getOrPut(it) { FocusRequester() } },
-                    onEvent = onEvent,
-                    onTitleFocusChange = { id ->
-                        focusedTitleId = id
-                        onFocusChange()
-                    },
-                    onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
-                )
-            }
+                uiState = uiState,
+                hazeState = hazeState,
+                titleFocusRequester = { focusRequesters.getOrPut(it) { FocusRequester() } },
+                onEvent = onEvent,
+                onTitleFocusChange = { id ->
+                    focusedTitleId = id
+                    onFocusChange()
+                },
+                onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
+            )
             if (uiState.stickers.isNotEmpty()) {
                 val showStickersPadding = uiState.isInEditMode &&
                         uiState.content.firstOrNull().isEmptyTitle()
@@ -317,11 +315,7 @@ private fun SuccessScreen(
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
                         .height(density.run { listSize.height.toDp() }),
                     stickers = uiState.stickers,
-                    emptyTitleHeight = if (showStickersPadding) {
-                        topEmptyTitleHeight
-                    } else {
-                        0f
-                    },
+                    emptyTitleHeight = if (showStickersPadding) topEmptyTitleHeight else 0f,
                     containerSize = listSize,
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
@@ -413,115 +407,122 @@ private fun ContentItems(
     onTitleFocusChange: (id: String) -> Unit,
     onEmptyTitleHeightChange: (height: Float) -> Unit,
     onEvent: (event: PageEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
     val topTitlePadding = 8.dp
-    val testPadding = density.run { topTitlePadding.toPx() + 6.dp.toPx() }
-    LookaheadScope {
-        uiState.content.forEachIndexed { index, item ->
-            val nextItem = uiState.content.getOrNull(index + 1)
-            key(item.id) {
-                when (item) {
-                    is UiNoteContent.Title -> NoteContentTitle(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(
-                                top = when {
-                                    index == 0 -> topTitlePadding
-                                    item.isEmptyTitle() -> 0.dp
-                                    else -> 14.dp
-                                },
-                                bottom = when {
-                                    index == 0 && item.isEmptyTitle() -> 4.dp
-                                    item.isEmptyTitle() -> 0.dp
-                                    else -> 14.dp
-                                },
-                                start = 8.dp,
-                                end = 8.dp,
-                            )
-                            .applyIf(index == 0 && item.state.text.isEmpty()) {
-                                Modifier.onSizeChanged { size ->
-                                    density.run {
-                                        onEmptyTitleHeightChange(size.height + testPadding)
+    val topPadding = density.run { topTitlePadding.toPx() + 6.dp.toPx() }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        LookaheadScope {
+            uiState.content.forEachIndexed { index, item ->
+                val nextItem = uiState.content.getOrNull(index + 1)
+                key(item.id) {
+                    when (item) {
+                        is UiNoteContent.Title -> NoteContentTitle(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    top = when {
+                                        index == 0 -> topTitlePadding
+                                        item.isEmptyTitle() -> 0.dp
+                                        else -> 14.dp
+                                    },
+                                    bottom = when {
+                                        index == 0 && item.isEmptyTitle() -> 4.dp
+                                        item.isEmptyTitle() -> 0.dp
+                                        else -> 14.dp
+                                    },
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                )
+                                .applyIf(index == 0 && item.state.text.isEmpty()) {
+                                    Modifier.onSizeChanged { size ->
+                                        density.run {
+                                            onEmptyTitleHeightChange(size.height + topPadding)
+                                        }
                                     }
                                 }
-                            }
-                            .animatePlacementInScope(this@LookaheadScope),
-                        title = item,
-                        color = uiState.fontColor.value,
-                        fontFamily = uiState.fontFamily.value,
-                        fontSize = uiState.fontSize.sp,
-                        hint = if (index == 0) {
-                            stringResource(R.string.note_title_hint_text)
-                        } else {
-                            stringResource(R.string.note_title_hint_write_more_here)
-                        },
-                        isInEditMode = uiState.isInEditMode,
-                        focusRequester = titleFocusRequester(index),
-                        onTitleFocused = { id ->
-                            onEvent(PageEvent.OnTitleFocusChange(id))
-                            onTitleFocusChange(id)
-                        },
-                        onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
-                    )
+                                .animatePlacementInScope(this@LookaheadScope),
+                            title = item,
+                            color = uiState.fontColor.value,
+                            fontFamily = uiState.fontFamily.value,
+                            fontSize = uiState.fontSize.sp,
+                            hint = if (index == 0) {
+                                stringResource(R.string.note_title_hint_text)
+                            } else {
+                                stringResource(R.string.note_title_hint_write_more_here)
+                            },
+                            isInEditMode = uiState.isInEditMode,
+                            focusRequester = titleFocusRequester(index),
+                            onTitleFocused = { id ->
+                                onEvent(PageEvent.OnTitleFocusChange(id))
+                                onTitleFocusChange(id)
+                            },
+                            onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
+                        )
 
-                    is UiNoteContent.MediaBlock -> NoteContentMedia(
-                        modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
-                        block = item,
-                        dropDownHazeState = hazeState,
-                        clickable = true,
-                        onClick = { onEvent(PageEvent.OnMediaClick(it)) },
-                        onRemoveClick = { media ->
-                            onEvent(PageEvent.OnMediaRemoveClick(media))
-                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        },
-                        onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
-                    )
+                        is UiNoteContent.MediaBlock -> NoteContentMedia(
+                            modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                            block = item,
+                            dropDownHazeState = hazeState,
+                            clickable = true,
+                            onClick = { onEvent(PageEvent.OnMediaClick(it)) },
+                            onRemoveClick = { media ->
+                                onEvent(PageEvent.OnMediaRemoveClick(media))
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            },
+                            onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
+                        )
 
-                    is UiNoteContent.Voice -> NoteContentVoice(
-                        modifier = Modifier
-                            .padding(
-                                start = 8.dp,
-                                end = 8.dp,
-                                top = 0.dp,
-                                bottom = if (nextItem.isEmptyTitle()) 0.dp else 4.dp,
-                            )
-                            .animatePlacementInScope(this@LookaheadScope),
-                        voice = item,
-                        isPlaying = item.id == uiState.playingVoiceId,
-                        isRemovable = uiState.isInEditMode,
-                        onRemoveClick = { voice ->
-                            onEvent(PageEvent.OnVoiceRemoveClick(voice))
-                            view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                        },
-                        onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
-                        onProgressSelected = { voice, value ->
-                            onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
-                        },
-                    )
+                        is UiNoteContent.Voice -> NoteContentVoice(
+                            modifier = Modifier
+                                .padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    top = 0.dp,
+                                    bottom = if (nextItem.isEmptyTitle()) 0.dp else 4.dp,
+                                )
+                                .animatePlacementInScope(this@LookaheadScope),
+                            voice = item,
+                            isPlaying = item.id == uiState.playingVoiceId,
+                            isRemovable = uiState.isInEditMode,
+                            onRemoveClick = { voice ->
+                                onEvent(PageEvent.OnVoiceRemoveClick(voice))
+                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                            },
+                            onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
+                            onProgressSelected = { voice, value ->
+                                onEvent(PageEvent.OnVoiceProgressSelected(voice, value))
+                            },
+                        )
+                    }
                 }
             }
-        }
 
-        key(UiNoteTag.BLOCK_ID) {
-            NoteTags(
-                modifier = Modifier
-                    .padding(start = 4.dp, end = 4.dp, top = 20.dp)
-                    .fillMaxWidth()
-                    .animatePlacementInScope(this@LookaheadScope),
-                tags = uiState.tags,
-                isEditable = uiState.isInEditMode,
-                animateItemsPlacement = true,
-                showStub = true,
-                onTagRemoveClick = {
-                    onEvent(PageEvent.OnTagRemoveClick(it))
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                },
-                onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
-                onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
-                onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
-            )
+            key(UiNoteTag.BLOCK_ID + uiState.noteId) {
+                NoteTags(
+                    modifier = Modifier
+                        .padding(start = 4.dp, end = 4.dp, top = 20.dp)
+                        .fillMaxWidth()
+                        .animatePlacementInScope(this@LookaheadScope),
+                    tags = uiState.tags,
+                    isEditable = uiState.isInEditMode,
+                    animateItemsPlacement = true,
+                    showStub = true,
+                    onTagRemoveClick = {
+                        onEvent(PageEvent.OnTagRemoveClick(it))
+                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    },
+                    onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
+                    onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
+                    onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
+                    onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
+                )
+            }
         }
     }
 }
