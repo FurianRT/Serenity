@@ -24,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.managers.LockManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.lock.api.CheckPinScreen
@@ -45,7 +44,6 @@ import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
-import com.furianrt.serenity.extensions.toUiThemeColor
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
@@ -125,9 +123,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
             val hazeState = remember { HazeState() }
-            val themeColor by appearanceRepository.getAppThemeColor()
-                .map(ThemeColor::toUiThemeColor)
-                .collectAsStateWithLifecycle(initialValue = UiThemeColor.GREEN)
+            val themeColor by appearanceRepository.getAppThemeColorId()
+                .map(UiThemeColor::fromId)
+                .collectAsStateWithLifecycle(initialValue = UiThemeColor.DISTANT_CASTLE_GREEN)
 
             SerenityTheme(color = themeColor) {
                 CompositionLocalProvider(LocalAuth provides this) {

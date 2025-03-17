@@ -14,7 +14,6 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
-import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.storage.internal.encryption.SerenityCipher
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -90,11 +89,11 @@ internal class SerenityDataStore @Inject constructor(
         dataStore.edit { prefs -> prefs[KEY_RECOVERY_EMAIL_SEND_TIME] = time }
     }
 
-    fun getAppThemeColor(): Flow<ThemeColor> = dataStore.data
-        .map { prefs -> ThemeColor.fromString(prefs[KEY_THEME_COLOR]) }
+    fun getAppThemeColorId(): Flow<String?> = dataStore.data
+        .map { prefs -> prefs[KEY_THEME_COLOR] }
 
-    suspend fun updateAppThemeColor(color: ThemeColor) {
-        dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = color.name }
+    suspend fun updateAppThemeColor(colorId: String) {
+        dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = colorId }
     }
 
     fun getDefaultNoteFont(): Flow<NoteFontFamily> = dataStore.data

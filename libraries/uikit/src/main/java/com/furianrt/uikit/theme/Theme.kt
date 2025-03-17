@@ -35,46 +35,18 @@ private val defaultColorScheme = darkColorScheme(
     scrim = Color.Black.copy(alpha = 0.5f),
 )
 
-private val greenColorScheme = defaultColorScheme.copy(
-    background = Colors.Primary.Green,
-    surface = Colors.Primary.Green,
-    primaryContainer = Colors.Accent.GreenLight,
-    surfaceTint = Colors.Primary.Green.copy(alpha = 0.3f),
-)
-
-private val blackColorScheme = defaultColorScheme.copy(
-    background = Colors.Primary.Black,
-    surface = Colors.Primary.Black,
-    primaryContainer = Colors.Accent.Purple,
-    surfaceTint = defaultColorScheme.tertiary,
-)
-
-private val purpleColorScheme = defaultColorScheme.copy(
-    background = Colors.Primary.FutureDusk,
-    surface = Colors.Primary.FutureDusk,
-    primaryContainer = Colors.Accent.PurpleDark,
-    surfaceTint = Colors.Primary.FutureDusk.copy(alpha = 0.3f),
-)
-
-private val purpleDarkColorScheme = defaultColorScheme.copy(
-    background = Colors.Primary.FutureDuskDark,
-    surface = Colors.Primary.FutureDuskDark,
-    primaryContainer = Colors.Accent.Purple,
-    surfaceTint = Colors.Primary.FutureDuskDark.copy(alpha = 0.3f),
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
-    color: UiThemeColor = UiThemeColor.GREEN,
+    color: UiThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = when (color) {
-        UiThemeColor.GREEN -> greenColorScheme
-        UiThemeColor.BLACK -> blackColorScheme
-        UiThemeColor.PURPLE -> purpleColorScheme
-        UiThemeColor.PURPLE_DARK -> purpleDarkColorScheme
-    }
+    val colorScheme = defaultColorScheme.copy(
+        background = color.primary,
+        surface = color.primary,
+        primaryContainer = color.accent,
+        surfaceTint = color.surfaceTint,
+    )
 
     val animatedBackground by animateColorAsState(
         animationSpec = tween(BACKGROUND_COLOR_ANIM_DURATION),

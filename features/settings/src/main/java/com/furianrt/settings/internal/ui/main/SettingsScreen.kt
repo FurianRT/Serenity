@@ -4,18 +4,21 @@ import androidx.annotation.IntRange
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -23,7 +26,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -32,17 +37,19 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.furianrt.core.buildImmutableList
 import com.furianrt.settings.R
+import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.settings.internal.ui.composables.GeneralButton
-import com.furianrt.settings.internal.ui.main.SettingsUiState.Success.AppThemeColor
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -68,7 +75,7 @@ internal fun SettingsScreen(
 @Composable
 private fun ScreenContent(
     uiState: SettingsUiState,
-    onEvent: (event: SettingsEvent) -> Unit,
+    onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     Column(
@@ -103,47 +110,53 @@ private fun SuccessScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(8.dp),
+            .padding(vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_security_title),
             iconPainter = painterResource(id = R.drawable.ic_lock),
             onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
         )
         GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_backup_title),
             iconPainter = painterResource(id = R.drawable.ic_cloud),
             onClick = {},
         )
         ThemeSelector(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-            colors = uiState.themeColors,
+            modifier = Modifier.padding(vertical = 4.dp),
+            themes = uiState.themes,
             selected = uiState.selectedThemeColor,
             onSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
         )
         GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
             hint = "English",
             onClick = {},
         )
         Rating(
+            modifier = Modifier.padding(horizontal = 8.dp),
             rating = 4,
             onSelected = {},
         )
         GeneralButton(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
             title = stringResource(id = R.string.settings_donate_title),
             iconPainter = painterResource(id = R.drawable.ic_hart),
             onClick = {},
         )
         GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_feedback_title),
             iconPainter = painterResource(id = R.drawable.ic_mail),
             onClick = {},
         )
         GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_about_title),
             iconPainter = painterResource(id = R.drawable.ic_info),
             onClick = {},
@@ -153,19 +166,22 @@ private fun SuccessScreen(
 
 @Composable
 private fun ThemeSelector(
-    colors: ImmutableList<AppThemeColor>,
-    selected: AppThemeColor,
-    onSelected: (color: AppThemeColor) -> Unit,
+    themes: ImmutableList<AppTheme>,
+    selected: UiThemeColor,
+    onSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val initialIndex = remember(themes) {
+        themes.indexOfFirst { it.colors.any { it.id == selected.id } }
+    }
     Column(
         modifier = modifier
-            .padding(4.dp)
+            .padding(vertical = 4.dp)
             .fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.dp),
+            modifier = Modifier.padding(vertical = 12.dp, horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Icon(
@@ -178,19 +194,53 @@ private fun ThemeSelector(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
+        LazyRow(
+            modifier = Modifier.systemGestureExclusion(),
+            state = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex),
+            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            contentPadding = PaddingValues(horizontal = 20.dp),
+        ) {
+            items(count = themes.count()) { index ->
+                ThemeItem(
+                    theme = themes[index],
+                    selected = selected,
+                    onSelected = onSelected,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ThemeItem(
+    theme: AppTheme,
+    selected: UiThemeColor?,
+    onSelected: (color: UiThemeColor) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .alpha(0.5f),
+            text = theme.title,
+            style = MaterialTheme.typography.labelSmall,
+        )
         Row(
-            modifier = Modifier.horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val shape = RoundedCornerShape(16.dp)
-            colors.forEach { color ->
+            theme.colors.forEach { color ->
                 Box(
                     modifier = Modifier
                         .size(50.dp)
                         .clip(shape)
-                        .background(color.value)
+                        .background(color.primary)
                         .applyIf(color == selected) {
-                            Modifier.border(1.dp, MaterialTheme.colorScheme.primaryContainer, shape)
+                            Modifier.border(1.dp, color.accent, shape)
                         }
                         .clickableNoRipple { onSelected(color) },
                 )
@@ -241,10 +291,32 @@ private fun ScreenContentPreview() {
     SerenityTheme {
         ScreenContent(
             uiState = SettingsUiState.Success(
-                themeColors = AppThemeColor.entries.toImmutableList(),
-                selectedThemeColor = AppThemeColor.GREEN,
+                themes = buildImmutableList {
+                    add(
+                        AppTheme(
+                            title = stringResource(R.string.settings_app_theme_scandi_grandpa_title),
+                            colors = persistentListOf(
+                                UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
+                                UiThemeColor.SCANDI_GRANDPA_BROWN,
+                                UiThemeColor.SCANDI_GRANDPA_YELLOW,
+                                UiThemeColor.SCANDI_GRANDPA_GRAY,
+                            ),
+                        )
+                    )
+                    add(
+                        AppTheme(
+                            title = stringResource(R.string.settings_app_theme_distant_castle_title),
+                            colors = persistentListOf(
+                                UiThemeColor.DISTANT_CASTLE_BROWN,
+                                UiThemeColor.DISTANT_CASTLE_PINK,
+                                UiThemeColor.DISTANT_CASTLE_GREEN,
+                                UiThemeColor.DISTANT_CASTLE_BLUE,
+                            ),
+                        )
+                    )
+                },
+                selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
             ),
-            onEvent = {},
         )
     }
 }

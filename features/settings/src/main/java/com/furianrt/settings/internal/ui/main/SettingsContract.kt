@@ -1,29 +1,21 @@
 package com.furianrt.settings.internal.ui.main
 
-import androidx.compose.ui.graphics.Color
-import com.furianrt.settings.internal.ui.main.SettingsUiState.Success.AppThemeColor
-import com.furianrt.uikit.theme.Colors
+import com.furianrt.settings.internal.entities.AppTheme
+import com.furianrt.uikit.entities.UiThemeColor
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface SettingsUiState {
     data object Loading : SettingsUiState
     data class Success(
-        val themeColors: ImmutableList<AppThemeColor>,
-        val selectedThemeColor: AppThemeColor,
-    ) : SettingsUiState {
-        enum class AppThemeColor(val value: Color) {
-            GREEN(Colors.Primary.Green),
-            BLACK(Colors.Primary.Black),
-            PURPLE(Colors.Primary.FutureDusk),
-            PURPLE_DARK(Colors.Primary.FutureDuskDark);
-        }
-    }
+        val themes: ImmutableList<AppTheme>,
+        val selectedThemeColor: UiThemeColor,
+    ) : SettingsUiState
 }
 
 internal sealed interface SettingsEvent {
     data object OnButtonBackClick : SettingsEvent
     data object OnButtonSecurityClick : SettingsEvent
-    data class OnAppThemeColorSelected(val color: AppThemeColor) : SettingsEvent
+    data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {

@@ -2,12 +2,13 @@ package com.furianrt.settings.internal.ui.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.core.mapImmutable
-import com.furianrt.domain.entities.ThemeColor
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.settings.internal.ui.main.SettingsUiState.Success.AppThemeColor
+import com.furianrt.settings.internal.domain.GetAppThemeListUseCase
+import com.furianrt.settings.internal.entities.AppTheme
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
@@ -18,13 +19,14 @@ import javax.inject.Inject
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     private val appearanceRepository: AppearanceRepository,
+    private val getAppThemeListUseCase: GetAppThemeListUseCase,
 ) : ViewModel() {
 
-    val state = appearanceRepository.getAppThemeColor()
-        .map { color ->
+    val state = appearanceRepository.getAppThemeColorId()
+        .map { colorId ->
             buildState(
-                themeColors = appearanceRepository.getAppThemeColorsList(),
-                selectedThemeColor = color,
+                themes = getAppThemeListUseCase(),
+                selectedThemeColor = UiThemeColor.fromId(colorId),
             )
         }.stateIn(
             scope = viewModelScope,
@@ -43,30 +45,16 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnAppThemeColorSelected -> launch {
-                appearanceRepository.updateAppThemeColor(event.color.toThemeColor())
+                appearanceRepository.updateAppThemeColor(event.color.id)
             }
         }
     }
 
     private fun buildState(
-        themeColors: List<ThemeColor>,
-        selectedThemeColor: ThemeColor,
+        themes: ImmutableList<AppTheme>,
+        selectedThemeColor: UiThemeColor,
     ) = SettingsUiState.Success(
-        themeColors = themeColors.mapImmutable(ThemeColor::toUiThemeColor),
-        selectedThemeColor = selectedThemeColor.toUiThemeColor(),
+        themes = themes,
+        selectedThemeColor = selectedThemeColor,
     )
-}
-
-private fun ThemeColor.toUiThemeColor() = when (this) {
-    ThemeColor.BLACK -> AppThemeColor.BLACK
-    ThemeColor.GREEN -> AppThemeColor.GREEN
-    ThemeColor.PURPLE -> AppThemeColor.PURPLE
-    ThemeColor.PURPLE_DARK -> AppThemeColor.PURPLE_DARK
-}
-
-private fun AppThemeColor.toThemeColor() = when (this) {
-    AppThemeColor.BLACK -> ThemeColor.BLACK
-    AppThemeColor.GREEN -> ThemeColor.GREEN
-    AppThemeColor.PURPLE -> ThemeColor.PURPLE
-    AppThemeColor.PURPLE_DARK -> ThemeColor.PURPLE_DARK
 }

@@ -22,4 +22,17 @@
         <item quantity="one">%d minute</item>
         <item quantity="other">%d minutes</item>
     </plurals>
+
+    <string name="settings_app_theme_scandi_grandpa_title">Scandi Grandpa</string>
+    <string name="settings_app_theme_cleopatra_title">Cleopatra</string>
+    <string name="settings_app_theme_vampire_title">Vampire</string>
+    <string name="settings_app_theme_euphoria_title">Euphoria</string>
+    <string name="settings_app_theme_iris_title">Iris</string>
+    <string name="settings_app_theme_storm_in_the_night_title">Storm in the Night</string>
+    <string name="settings_app_theme_unicorn_2012_title">Unicorn 2012</string>
+    <string name="settings_app_theme_space_cowboy_title">Space Cowboy</string>
+    <string name="settings_app_theme_distant_castle_title">Distant Castle</string>
+    <string name="settings_app_theme_olive_tree_title">Olive Tree</string>
+    <string name="settings_app_theme_beige_censorship_title">Beige Censorship</string>
+
 </resources>
