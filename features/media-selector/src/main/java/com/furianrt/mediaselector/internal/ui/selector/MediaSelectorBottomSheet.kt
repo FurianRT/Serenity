@@ -176,11 +176,6 @@ internal fun MediaSelectorBottomSheetInternal(
         content = { paddingValues ->
             Box {
                 content(paddingValues)
-                DimLayout(
-                    isVisible = isBottomSheetVisible ||
-                            state.bottomSheetState.targetValue == SheetValue.Expanded,
-                    onClick = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
-                )
             }
         },
         sheetContent = {

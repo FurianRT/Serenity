@@ -1,6 +1,6 @@
 [versions]
 
-agp = "8.7.3"
+agp = "8.8.2"
 kotlin = "2.1.10"
 
 ksp = "2.1.10-1.0.29"
@@ -9,13 +9,13 @@ coreKtx = "1.15.0"
 lifecycle = "2.8.7"
 material3 = "1.3.1"
 
-compose = "1.8.0-beta01"
-composeActivity = "1.10.0"
-composeNavigation = "2.8.6"
+compose = "1.8.0-rc02"
+composeActivity = "1.10.1"
+composeNavigation = "2.8.9"
 
 accompanist = "0.37.0"
 
-splashScreen = "1.2.0-alpha02"
+splashScreen = "1.2.0-beta01"
 
 coroutines = "1.10.1"
 
@@ -34,13 +34,13 @@ blur = "1.1.1"
 
 zoom = "1.1.1"
 
-exoplayer = "1.5.1"
+exoplayer = "1.6.0"
 
 kotlinxSerializationJson = "1.7.3"
 
 calendar = "2.6.0"
 
-dataStore = "1.1.2"
+dataStore = "1.1.4"
 
 biometric = "1.4.0-alpha02"
 

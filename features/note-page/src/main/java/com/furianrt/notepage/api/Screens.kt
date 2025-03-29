@@ -39,7 +39,8 @@ class PageScreenState(
     val dimSurface: Boolean
         get() = isBottomSheetVisible || isVoiceRecordActive
 
-    internal var isVoiceRecordActive by mutableStateOf(false)
+    var isVoiceRecordActive by mutableStateOf(false)
+        internal set
 
     private var hasContentChangedState by mutableStateOf(hasContentChanged)
 

@@ -59,6 +59,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
@@ -323,24 +324,13 @@ private fun SuccessScreen(
                 )
             }
         }
-        AnimatedVisibility(
-            visible = state.dimSurface,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.scrim)
-                    .clickableNoRipple {},
-            )
-        }
         Box(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                .onGloballyPositioned { toolsPanelRect = it.boundsInParent() },
+                .onGloballyPositioned { toolsPanelRect = it.boundsInParent() }
+                .applyIf(state.isVoiceRecordActive) { Modifier.zIndex(1f) },
         ) {
             AnimatedVisibility(
                 visible = uiState.isInEditMode,
@@ -394,6 +384,18 @@ private fun SuccessScreen(
                         },
                     )
                 }
+            )
+        }
+        AnimatedVisibility(
+            visible = state.dimSurface,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim)
+                    .clickableNoRipple {},
             )
         }
     }
