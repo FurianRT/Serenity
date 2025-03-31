@@ -1,0 +1,30 @@
+<resources>
+    <string name="backup_google_drive_title">Google Drive</string>
+    <string name="backup_auto_backup_title">Auto backup</string>
+    <string name="backup_auto_backup_period_title">Auto backup period</string>
+    <string name="backup_backup_title">Backup</string>
+    <string name="backup_restore_title">Restore</string>
+    <string name="backup_last_sync_time_title">Last sync time: %s</string>
+    <string name="backup_last_sync_time_none_title">None</string>
+    <string name="backup_tap_to_sing_in_title">Tap to Sign In</string>
+    <string name="backup_tap_to_sing_in_underline_part">Sign In</string>
+    <string name="backup_tap_to_sing_out_title">Tap to Sign Out</string>
+    <string name="backup_tap_to_sing_out_underline_part">Sign Out</string>
+
+    <string name="backup_popular_question_1_title">How does synchronization with Google Drive work</string>
+    <string name="backup_popular_question_1_answer">Your notes are automatically backed up to your personal Google Drive account. This ensures that your data is securely stored and can be accessed from multiple devices</string>
+    <string name="backup_popular_question_2_title">Where are my notes stored in Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Your notes are stored in a hidden app-specific folder in your Google Drive, which means they won’t appear in your regular Drive file list. This folder is private and only accessible by you—no one else, including the app developer, has access to your notes</string>
+    <string name="backup_popular_question_3_title">Do I need a Google account to use synchronization</string>
+    <string name="backup_popular_question_3_answer">Yes, you must sign in with a Google account to enable cloud synchronization</string>
+    <string name="backup_popular_question_4_title">Can I access my notes directly from Google Drive?</string>
+    <string name="backup_popular_question_4_answer">No, the notes are stored in a private app folder that is not visible through the Google Drive interface. You can only access them through the app</string>
+    <string name="backup_popular_question_5_title">What happens if I uninstall the app? Will my notes be deleted?</string>
+    <string name="backup_popular_question_5_answer">Uninstalling the app does not delete your notes from Google Drive. When you reinstall the app and sign in with the same Google account, your notes will be restored</string>
+    <string name="backup_popular_question_6_title">Can I sync my notes across multiple devices?</string>
+    <string name="backup_popular_question_6_answer">Yes! As long as you sign in with the same Google account on all devices, your notes will be synchronized</string>
+    <string name="backup_popular_question_7_title">Is my data secure</string>
+    <string name="backup_popular_question_7_answer">Yes. Your notes are stored in a private, app-specific Google Drive folder, and the app does not share your data with anyone</string>
+    <string name="backup_popular_question_8_title">What happens if I change my Google account</string>
+    <string name="backup_popular_question_8_answer">If you switch to a different Google account, your notes from the previous account won’t be available. To access them, you need to switch back to the original Google account</string>
+</resources>

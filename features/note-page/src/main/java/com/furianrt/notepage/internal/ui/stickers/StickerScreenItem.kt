@@ -182,8 +182,8 @@ internal fun StickerScreenItem(
                             )
 
                             val angle = initialAngle + newAngle
-                            val gip = hypot(currentOffset.x - center.x, currentOffset.y - center.y)
-                            val newSize = sqrt(gip * gip * 4 / 2)
+                            val hypot = hypot(currentOffset.x - center.x, currentOffset.y - center.y)
+                            val newSize = sqrt(hypot * hypot * 2)
                             val defaultSize = StickerItem.DEFAULT_SIZE.toPx()
 
                             if (angle.absoluteValue >= StickerItem.MIN_ANGLE) {

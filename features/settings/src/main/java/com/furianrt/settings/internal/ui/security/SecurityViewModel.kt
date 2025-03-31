@@ -2,7 +2,6 @@ package com.furianrt.settings.internal.ui.security
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.settings.internal.ui.security.SecurityEvent.*
 import com.furianrt.uikit.extensions.launch
@@ -42,17 +41,15 @@ internal class SecurityViewModel @Inject constructor(
         when (event) {
             is OnButtonBackClick -> _effect.tryEmit(SecurityEffect.CloseScreen)
             is OnChangeEmailClick -> _effect.tryEmit(SecurityEffect.OpenChangeEmailScreen)
-            is OnEnablePinCheckChanged -> state.doWithState<SecurityUiState.Success> { success ->
-                if (success.isPinEnabled) {
-                    clearPin()
-                } else {
-                    openChangePinScreen()
-                }
+            is OnEnablePinCheckChanged -> if (event.isChecked) {
+                openChangePinScreen()
+            } else {
+                clearPin()
             }
 
             is OnFingerprintCheckChanged -> {
                 if (fingerprintJob?.isCompleted != false) {
-                    fingerprintJob = toggleFingerprint()
+                    fingerprintJob = enableFingerprint(event.isChecked)
                 }
 
             }
@@ -64,10 +61,8 @@ internal class SecurityViewModel @Inject constructor(
         }
     }
 
-    private fun toggleFingerprint() = launch {
-        state.doWithState<SecurityUiState.Success> { success ->
-            securityRepository.setFingerprintEnabled(!success.isFingerprintEnabled)
-        }
+    private fun enableFingerprint(isEnabled: Boolean) = launch {
+        securityRepository.setFingerprintEnabled(isEnabled)
     }
 
     private fun clearPin() {

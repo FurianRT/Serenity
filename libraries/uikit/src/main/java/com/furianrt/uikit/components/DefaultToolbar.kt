@@ -24,13 +24,13 @@ fun DefaultToolbar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(ToolbarConstants.toolbarHeight)
-            .systemGestureExclusion(),
+            .height(ToolbarConstants.toolbarHeight),
     ) {
         ButtonBack(
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(start = 4.dp),
+                .padding(start = 4.dp)
+                .systemGestureExclusion(),
             onClick = onBackClick,
         )
         Text(

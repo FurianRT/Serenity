@@ -18,3 +18,15 @@ fun OneTimeEffect(key: Any? = Unit, block: suspend CoroutineScope.() -> Unit) {
         }
     }
 }
+
+@Composable
+fun SkipFirstEffect(key: Any? = Unit, block: suspend CoroutineScope.() -> Unit) {
+    var isFirstComposition by rememberSaveable { mutableStateOf(true) }
+    LaunchedEffect(key) {
+        if (isFirstComposition) {
+            isFirstComposition = false
+        } else {
+            block()
+        }
+    }
+}

@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui.composables
+package com.furianrt.uikit.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,10 +21,10 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun SwitchButton(
+fun SwitchWithLabel(
     title: String,
-    checked: Boolean,
-    onCheckedChange: () -> Unit,
+    isChecked: Boolean,
+    onCheckedChange: (isChecked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
@@ -32,7 +32,7 @@ internal fun SwitchButton(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable(enabled = enabled, onClick = onCheckedChange)
+            .clickable(enabled = enabled, onClick = { onCheckedChange(!isChecked) })
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -44,12 +44,12 @@ internal fun SwitchButton(
         )
         Switch(
             modifier = Modifier.padding(start = 8.dp),
-            checked = checked,
-            onCheckedChange = { onCheckedChange() },
+            checked = isChecked,
+            onCheckedChange = onCheckedChange,
             enabled = enabled,
             colors = SwitchDefaults.colors(
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedTrackColor = MaterialTheme.colorScheme.primary,
+                uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
             )
         )
     }
@@ -59,9 +59,9 @@ internal fun SwitchButton(
 @Composable
 private fun PreviewChecked() {
     SerenityTheme {
-        SwitchButton(
+        SwitchWithLabel(
             title = "Test title",
-            checked = true,
+            isChecked = true,
             onCheckedChange = {},
         )
     }
@@ -71,9 +71,9 @@ private fun PreviewChecked() {
 @Composable
 private fun PreviewUnchecked() {
     SerenityTheme {
-        SwitchButton(
+        SwitchWithLabel(
             title = "Test title",
-            checked = false,
+            isChecked = false,
             onCheckedChange = {},
         )
     }
@@ -83,9 +83,9 @@ private fun PreviewUnchecked() {
 @Composable
 private fun PreviewDisabled() {
     SerenityTheme {
-        SwitchButton(
+        SwitchWithLabel(
             title = "Test title",
-            checked = false,
+            isChecked = false,
             enabled = false,
             onCheckedChange = {},
         )

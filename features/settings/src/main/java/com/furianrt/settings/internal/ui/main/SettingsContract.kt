@@ -15,10 +15,12 @@ internal sealed interface SettingsUiState {
 internal sealed interface SettingsEvent {
     data object OnButtonBackClick : SettingsEvent
     data object OnButtonSecurityClick : SettingsEvent
+    data object OnButtonBackupClick : SettingsEvent
     data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
     data object CloseScreen : SettingsEffect
     data object OpenSecurityScreen : SettingsEffect
+    data object OpenBackupScreen : SettingsEffect
 }

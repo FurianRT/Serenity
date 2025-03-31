@@ -5,6 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.navigation
+import com.furianrt.backup.api.backupNavigation
+import com.furianrt.backup.api.navigateToBackup
 import com.furianrt.lock.api.changeEmailScreen
 import com.furianrt.lock.api.changePinNavigation
 import com.furianrt.lock.api.navigateToChangeEmail
@@ -31,6 +33,7 @@ fun NavGraphBuilder.settingsNavigation(
     ) {
         settingsScreen(
             openSecurityScreen = navController::navigateToSecurity,
+            openBackupScreen = navController::navigateToBackup,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -45,6 +48,9 @@ fun NavGraphBuilder.settingsNavigation(
         )
         changeEmailScreen(
             onCloseRequest = navController::navigateUp,
+        )
+        backupNavigation(
+            navController = navController,
         )
     }
 }

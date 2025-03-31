@@ -12,9 +12,9 @@ internal sealed interface SecurityUiState {
 
 internal sealed interface SecurityEvent {
     data object OnButtonBackClick : SecurityEvent
-    data object OnEnablePinCheckChanged : SecurityEvent
+    data class OnEnablePinCheckChanged(val isChecked: Boolean) : SecurityEvent
     data object OnChangeEmailClick : SecurityEvent
-    data object OnFingerprintCheckChanged : SecurityEvent
+    data class OnFingerprintCheckChanged(val isChecked: Boolean) : SecurityEvent
     data object OnPinDelayClick : SecurityEvent
     data class OnPinDelaySelected(val delay: Int) : SecurityEvent
 }

@@ -26,6 +26,7 @@ private val defaultColorScheme = darkColorScheme(
     onBackground = Color.White,
     onSurface = Color.White,
     onPrimaryContainer = Color.White,
+    outlineVariant = Color.White.copy(alpha = 0.05f),
     tertiary = Color.White.copy(alpha = 0.1f),
     onTertiary = Color.White,
     tertiaryContainer = Color.White.copy(alpha = 0.2f),

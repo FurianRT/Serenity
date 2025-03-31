@@ -2,7 +2,6 @@ package com.furianrt.settings.internal.ui.security
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,14 +27,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.settings.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.settings.internal.ui.composables.GeneralButton
-import com.furianrt.settings.internal.ui.composables.SwitchButton
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun SecurityScreen(
@@ -84,24 +83,31 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .fillMaxSize()
-            .systemBarsPadding()
-    ) {
-        DefaultToolbar(
-            modifier = Modifier.drawBehind {
-                if (scrollState.canScrollBackward) {
-                    drawBottomShadow(elevation = 8.dp)
-                }
-            },
-            title = stringResource(uiR.string.security_title),
-            onBackClick = { onEvent(SecurityEvent.OnButtonBackClick) },
-        )
+    Scaffold(
+        modifier = modifier.systemBarsPadding(),
+        topBar = {
+            DefaultToolbar(
+                modifier = Modifier.drawBehind {
+                    if (scrollState.canScrollBackward) {
+                        drawBottomShadow(elevation = 8.dp)
+                    }
+                },
+                title = stringResource(uiR.string.security_title),
+                onBackClick = { onEvent(SecurityEvent.OnButtonBackClick) },
+            )
+        },
+    ) { paddingValues ->
         when (uiState) {
-            is SecurityUiState.Success -> SuccessScreen(uiState, scrollState, onEvent)
-            is SecurityUiState.Loading -> LoadingScreen()
+            is SecurityUiState.Success -> SuccessScreen(
+                modifier = Modifier.padding(paddingValues),
+                uiState = uiState,
+                scrollState = scrollState,
+                onEvent = onEvent
+            )
+
+            is SecurityUiState.Loading -> LoadingScreen(
+                modifier = Modifier.padding(paddingValues),
+            )
         }
     }
 }
@@ -111,23 +117,24 @@ private fun SuccessScreen(
     uiState: SecurityUiState.Success,
     scrollState: ScrollState,
     onEvent: (event: SecurityEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        SwitchButton(
+        SwitchWithLabel(
             title = stringResource(R.string.settings_enable_pin_title),
-            checked = uiState.isPinEnabled,
-            onCheckedChange = {
+            isChecked = uiState.isPinEnabled,
+            onCheckedChange = { isChecked ->
                 if (uiState.isPinEnabled) {
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 }
-                onEvent(SecurityEvent.OnEnablePinCheckChanged)
+                onEvent(SecurityEvent.OnEnablePinCheckChanged(isChecked))
             },
         )
         GeneralButton(
@@ -154,22 +161,23 @@ private fun SuccessScreen(
             enabled = uiState.isPinEnabled,
             onClick = { onEvent(SecurityEvent.OnPinDelayClick) },
         )
-        SwitchButton(
+        SwitchWithLabel(
             title = stringResource(R.string.settings_enable_fingerprint_title),
-            checked = uiState.isFingerprintEnabled,
+            isChecked = uiState.isFingerprintEnabled,
             enabled = uiState.isPinEnabled,
-            onCheckedChange = {
+            onCheckedChange = { isChecked ->
                 view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
-                onEvent(SecurityEvent.OnFingerprintCheckChanged)
+                onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
             },
         )
     }
 }
 
 @Composable
-private fun LoadingScreen() {
-    Box(modifier = Modifier.fillMaxSize()) {
-    }
+private fun LoadingScreen(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @Preview

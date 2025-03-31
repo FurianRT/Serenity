@@ -22,6 +22,7 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,6 +56,7 @@ import com.furianrt.uikit.R as uiR
 @Composable
 internal fun SettingsScreen(
     openSecurityScreen: () -> Unit,
+    openBackupScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -65,6 +67,7 @@ internal fun SettingsScreen(
             when (effect) {
                 is SettingsEffect.CloseScreen -> onCloseRequest()
                 is SettingsEffect.OpenSecurityScreen -> openSecurityScreen()
+                is SettingsEffect.OpenBackupScreen -> openBackupScreen()
             }
         }
     }
@@ -78,24 +81,30 @@ private fun ScreenContent(
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
-    Column(
-        modifier = Modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .fillMaxSize()
-            .systemBarsPadding()
-    ) {
-        DefaultToolbar(
-            modifier = Modifier.drawBehind {
-                if (scrollState.canScrollBackward) {
-                    drawBottomShadow(elevation = 8.dp)
-                }
-            },
-            title = stringResource(uiR.string.settings_title),
-            onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
-        )
+    Scaffold(
+        modifier = Modifier.systemBarsPadding(),
+        topBar = {
+            DefaultToolbar(
+                modifier = Modifier.drawBehind {
+                    if (scrollState.canScrollBackward) {
+                        drawBottomShadow(elevation = 8.dp)
+                    }
+                },
+                title = stringResource(uiR.string.settings_title),
+                onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
+            )
+        }
+    ) { paddingValues ->
         when (uiState) {
-            is SettingsUiState.Success -> SuccessScreen(uiState, scrollState, onEvent)
-            is SettingsUiState.Loading -> LoadingScreen()
+            is SettingsUiState.Success -> SuccessScreen(
+                modifier = Modifier.padding(paddingValues),
+                uiState = uiState,
+                scrollState = scrollState,
+                onEvent = onEvent,
+            )
+            is SettingsUiState.Loading -> LoadingScreen(
+                modifier = Modifier.padding(paddingValues),
+            )
         }
     }
 }
@@ -105,9 +114,10 @@ private fun SuccessScreen(
     uiState: SettingsUiState.Success,
     scrollState: ScrollState,
     onEvent: (event: SettingsEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
             .padding(vertical = 8.dp),
@@ -123,7 +133,7 @@ private fun SuccessScreen(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_backup_title),
             iconPainter = painterResource(id = R.drawable.ic_cloud),
-            onClick = {},
+            onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
         )
         ThemeSelector(
             modifier = Modifier.padding(vertical = 4.dp),
@@ -281,8 +291,10 @@ private fun Rating(
 }
 
 @Composable
-private fun LoadingScreen() {
-    Box(modifier = Modifier.fillMaxSize())
+private fun LoadingScreen(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize())
 }
 
 @Composable

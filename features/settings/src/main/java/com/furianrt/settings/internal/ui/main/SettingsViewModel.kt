@@ -44,6 +44,10 @@ internal class SettingsViewModel @Inject constructor(
                 _effect.tryEmit(SettingsEffect.OpenSecurityScreen)
             }
 
+            is SettingsEvent.OnButtonBackupClick -> {
+                _effect.tryEmit(SettingsEffect.OpenBackupScreen)
+            }
+
             is SettingsEvent.OnAppThemeColorSelected -> launch {
                 appearanceRepository.updateAppThemeColor(event.color.id)
             }
