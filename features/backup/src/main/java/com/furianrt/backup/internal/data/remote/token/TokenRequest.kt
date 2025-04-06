@@ -14,6 +14,7 @@ internal class TokenRequest(
     @SerialName("grant_type")
     val grantType: GrandType,
 ) {
+    @Serializable
     enum class GrandType {
         @SerialName("refresh_token")
         REFRESH_TOKEN,

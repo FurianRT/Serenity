@@ -3,12 +3,9 @@ package com.furianrt.backup.internal.ui
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.backup.BuildConfig
-import com.furianrt.backup.internal.data.remote.token.TokenApiService
-import com.furianrt.backup.internal.data.remote.token.TokenRequest
 import com.furianrt.backup.internal.domain.AuthorizeUseCase
-import com.furianrt.backup.internal.domain.GetPopularQuestionsUseCase
 import com.furianrt.backup.internal.domain.GetBackupProfileUseCase
+import com.furianrt.backup.internal.domain.GetPopularQuestionsUseCase
 import com.furianrt.backup.internal.domain.SignInUseCase
 import com.furianrt.backup.internal.domain.SignOutUseCase
 import com.furianrt.backup.internal.domain.entities.AuthResult
@@ -28,11 +25,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import com.furianrt.uikit.R as uiR
 import javax.inject.Inject
+import com.furianrt.uikit.R as uiR
 
 @HiltViewModel
 internal class BackupViewModel @Inject constructor(
@@ -43,7 +39,6 @@ internal class BackupViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val authorizeUseCase: AuthorizeUseCase,
     private val resourcesManager: ResourcesManager,
-    private val tokenApiService: TokenApiService,
 ) : ViewModel() {
 
     private val expandedQuestionsState = MutableStateFlow(emptySet<String>())
@@ -71,19 +66,7 @@ internal class BackupViewModel @Inject constructor(
                 backupRepository.setAutoBackupEnabled(event.isChecked)
             }
 
-            is BackupScreenEvent.OnButtonBackupClick -> launch {
-                try {
-                    tokenApiService.refreshAccessToken(
-                        request = TokenRequest(
-                            clientId = BuildConfig.OAUTH_CLIENT_ID,
-                            refreshToken = backupRepository.getGoogleAccessToken().first()!!,
-                            grantType = TokenRequest.GrandType.REFRESH_TOKEN,
-                        )
-                    )
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+            is BackupScreenEvent.OnButtonBackupClick -> {}
             is BackupScreenEvent.OnButtonRestoreClick -> {}
             is BackupScreenEvent.OnBackupPeriodClick -> {}
             is BackupScreenEvent.OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
