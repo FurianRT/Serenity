@@ -34,11 +34,11 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ConfirmationDialog(
-    cancelText: String = stringResource(R.string.action_cancel),
-    confirmText: String = stringResource(R.string.action_confirm),
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    cancelText: String = stringResource(R.string.action_cancel),
+    confirmText: String = stringResource(R.string.action_confirm),
     hideOnLock: Boolean = true,
     title: AnnotatedString? = null,
     hint: AnnotatedString? = null,
@@ -77,11 +77,11 @@ fun ConfirmationDialog(
 
 @Composable
 fun ConfirmationDialog(
-    cancelText: String = stringResource(R.string.action_cancel),
-    confirmText: String = stringResource(R.string.action_confirm),
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    cancelText: String = stringResource(R.string.action_cancel),
+    confirmText: String = stringResource(R.string.action_confirm),
     hideOnLock: Boolean = true,
     title: String? = null,
     hint: String? = null,

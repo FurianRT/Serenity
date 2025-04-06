@@ -59,7 +59,7 @@ internal fun NoteListScreen(
 
     val screenState = rememberMainState()
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->

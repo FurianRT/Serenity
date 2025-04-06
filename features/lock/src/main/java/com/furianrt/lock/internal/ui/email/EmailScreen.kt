@@ -70,7 +70,7 @@ internal fun EmailScreen(
     val view = LocalView.current
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is EmailEffect.CloseScreen -> {

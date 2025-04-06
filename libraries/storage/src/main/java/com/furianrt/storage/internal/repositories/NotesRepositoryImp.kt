@@ -2,13 +2,16 @@ package com.furianrt.storage.internal.repositories
 
 import com.furianrt.core.deepFilter
 import com.furianrt.core.deepMap
+import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
+import com.furianrt.storage.internal.database.notes.dao.DeletedNoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
+import com.furianrt.storage.internal.database.notes.entities.EntryDeletedNote
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
@@ -23,7 +26,9 @@ import javax.inject.Inject
 
 internal class NotesRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
+    private val deletedNoteDao: DeletedNoteDao,
     private val noteCache: NoteCache,
+    private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
     override suspend fun insetNote(note: SimpleNote) {
@@ -55,8 +60,9 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
     }
 
-    override suspend fun deleteNote(noteId: String) {
+    override suspend fun deleteNote(noteId: String) = transactionsHelper.startTransaction {
         noteDao.delete(noteId)
+        deletedNoteDao.insert(EntryDeletedNote((noteId)))
     }
 
     override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllNotes()
@@ -90,5 +96,9 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun deleteNoteContentFromCache(noteId: String) {
         noteCache.deleteCache(noteId)
+    }
+
+    override suspend fun clearDeletedNotesList() {
+        deletedNoteDao.clear()
     }
 }

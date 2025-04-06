@@ -64,7 +64,7 @@ private fun Preview() {
     SerenityTheme {
         SnackBar(
             title = "Test tiles",
-            icon = painterResource(R.drawable.ic_share),
+            icon = painterResource(R.drawable.ic_error),
             tonalColor = MaterialTheme.colorScheme.tertiary,
         )
     }

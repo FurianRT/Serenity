@@ -108,7 +108,7 @@ internal fun CheckPinScreenInternal(
     val emailFailureText = stringResource(R.string.send_pin_recovery_email_failure)
     val emailSuccessText = stringResource(R.string.send_pin_recovery_email_success)
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)

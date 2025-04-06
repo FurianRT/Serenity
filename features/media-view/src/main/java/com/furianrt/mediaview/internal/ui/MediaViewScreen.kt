@@ -67,7 +67,7 @@ internal fun MediaViewScreen(
     val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
     val imageNotSavedMessage = stringResource(uiR.string.general_error)
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->

@@ -94,7 +94,7 @@ internal fun StickersTitleBar(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->
@@ -243,7 +243,7 @@ internal fun StickersContent(
     )
     val pageScreensStates = remember { mutableStateMapOf<Int, LazyGridState>() }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->

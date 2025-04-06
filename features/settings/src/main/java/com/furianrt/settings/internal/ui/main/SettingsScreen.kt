@@ -62,7 +62,7 @@ internal fun SettingsScreen(
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SettingsEffect.CloseScreen -> onCloseRequest()

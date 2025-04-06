@@ -1,20 +1,13 @@
 package com.furianrt.backup.internal.ui
 
+import android.content.ActivityNotFoundException
+import android.content.IntentSender
 import android.view.HapticFeedbackConstants
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.IntentSenderRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,18 +19,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,37 +38,32 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.backup.R
+import com.furianrt.backup.internal.domain.exceptions.AuthException
+import com.furianrt.backup.internal.ui.composables.BackupButton
+import com.furianrt.backup.internal.ui.composables.BackupDate
+import com.furianrt.backup.internal.ui.composables.BackupPeriod
+import com.furianrt.backup.internal.ui.composables.Header
+import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.entities.Question
+import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.components.DefaultToolbar
-import com.furianrt.uikit.components.SkipFirstEffect
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.extensions.applyIf
-import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
-import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun BackupScreen(
@@ -85,28 +72,79 @@ internal fun BackupScreen(
     val viewModel: BackupViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    LaunchedEffect(viewModel.effect) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is BackupEffect.CloseScreen -> onCloseRequest()
-            }
+    val view = LocalView.current
+    val hazeState = remember { HazeState() }
+    var showSignOutConfirmationDialog by remember { mutableStateOf(false) }
+
+    val authLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartIntentSenderForResult()
+    ) { result ->
+        if (result.resultCode == android.app.Activity.RESULT_OK) {
+            viewModel.onEvent(BackupScreenEvent.OnBackupResolutionComplete(result.data))
         }
     }
 
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    LaunchedEffect(Unit) {
+        viewModel.effect.collect { effect ->
+            when (effect) {
+                is BackupEffect.CloseScreen -> onCloseRequest()
+                is BackupEffect.ShowConfirmSignOutDialog -> showSignOutConfirmationDialog = true
+                is BackupEffect.ShowBackupResolution -> {
+                    try {
+                        val intentSenderRequest = IntentSenderRequest
+                            .Builder(effect.intentSender)
+                            .build()
+                        authLauncher.launch(intentSenderRequest)
+                    } catch (e: IntentSender.SendIntentException) {
+                        val error = AuthException.SendIntentException()
+                        viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
+                    } catch (e: ActivityNotFoundException) {
+                        val error = AuthException.ActivityNotFoundException()
+                        viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
+                    }
+                }
+
+                is BackupEffect.ShowErrorToast -> {
+                    snackBarHostState.currentSnackbarData?.dismiss()
+                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    snackBarHostState.showSnackbar(
+                        message = effect.text,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+            }
+        }
+    }
     ScreenContent(
+        modifier = Modifier.haze(hazeState),
         uiState = uiState,
+        snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
     )
+    if (showSignOutConfirmationDialog) {
+        ConfirmationDialog(
+            hazeState = hazeState,
+            title = stringResource(R.string.backup_confirm_sign_out_title),
+            hint = stringResource(R.string.backup_confirm_sign_out_message),
+            confirmText = stringResource(R.string.backup_sign_out_title),
+            onDismissRequest = { showSignOutConfirmationDialog = false },
+            onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnSignOutConfirmClick) },
+        )
+    }
 }
 
 @Composable
 private fun ScreenContent(
     uiState: BackupUiState,
+    modifier: Modifier = Modifier,
+    snackBarHostState: SnackbarHostState = SnackbarHostState(),
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     Scaffold(
-        modifier = Modifier,
+        modifier = modifier,
         topBar = {
             DefaultToolbar(
                 modifier = Modifier
@@ -118,6 +156,18 @@ private fun ScreenContent(
                     .statusBarsPadding(),
                 title = stringResource(R.string.backup_google_drive_title),
                 onBackClick = { onEvent(BackupScreenEvent.OnButtonBackClick) },
+            )
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(uiR.drawable.ic_error),
+                        tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    )
+                },
             )
         },
         contentWindowInsets = WindowInsets.statusBars,
@@ -153,9 +203,10 @@ private fun SuccessContent(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Header(
+            modifier = Modifier.padding(top = 4.dp),
             authState = uiState.authState,
             onSingInClick = { onEvent(BackupScreenEvent.OnSignInClick) },
-            onSingOutClick = { onEvent(BackupScreenEvent.OnSignOunClick) },
+            onSingOutClick = { onEvent(BackupScreenEvent.OnSignOutClick) },
         )
         Column(
             modifier = Modifier
@@ -183,7 +234,7 @@ private fun SuccessContent(
                     .fillMaxWidth()
                     .padding(horizontal = 12.dp),
                 period = uiState.backupPeriod,
-                isEnabled = uiState.isSignedIn,
+                isEnabled = uiState.isSignedIn && uiState.isAutoBackupEnabled,
                 onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
             )
             Spacer(Modifier.height(40.dp))
@@ -197,14 +248,14 @@ private fun SuccessContent(
                 BackupButton(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.backup_backup_title),
-                    enabled = uiState.isSignedIn,
-                    onClick = {},
+                    isEnabled = uiState.isSignedIn,
+                    onClick = { onEvent(BackupScreenEvent.OnButtonBackupClick) },
                 )
                 BackupButton(
                     modifier = Modifier.weight(1f),
                     text = stringResource(R.string.backup_restore_title),
-                    enabled = uiState.isSignedIn,
-                    onClick = {},
+                    isEnabled = uiState.isSignedIn,
+                    onClick = { onEvent(BackupScreenEvent.OnButtonRestoreClick) },
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -236,269 +287,7 @@ private fun LoadingContent(
 }
 
 @Composable
-private fun Header(
-    authState: BackupUiState.Success.AuthState,
-    onSingInClick: () -> Unit,
-    onSingOutClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    var isPlaying by remember { mutableStateOf(true) }
-    val composition by rememberLottieComposition(
-        LottieCompositionSpec.RawRes(R.raw.anim_backup_profile),
-    )
-    val lottieState = animateLottieCompositionAsState(
-        composition = composition,
-        isPlaying = isPlaying,
-    )
-    SkipFirstEffect(lottieState.isPlaying) {
-        isPlaying = lottieState.isPlaying
-    }
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 8.dp, top = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        LottieAnimation(
-            modifier = Modifier
-                .size(64.dp)
-                .clickableWithScaleAnim { isPlaying = true },
-            composition = composition,
-            progress = { lottieState.progress },
-        )
-        when (authState) {
-            is BackupUiState.Success.AuthState.SignedOut -> SignedOutHeader(
-                onSingInClick = onSingInClick,
-            )
-
-            is BackupUiState.Success.AuthState.SignedIn -> SignedInHeader(
-                email = authState.email,
-                onSingOutClick = onSingOutClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun BackupPeriod(
-    period: String,
-    isEnabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
-            .clickable(enabled = isEnabled, onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 8.dp)
-            .applyIf(!isEnabled) { Modifier.alpha(0.5f) },
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.backup_auto_backup_period_title),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Text(
-            modifier = Modifier.alpha(0.5f),
-            text = period,
-            style = MaterialTheme.typography.labelMedium,
-        )
-    }
-}
-
-@Composable
-private fun BackupButton(
-    text: String,
-    onClick: () -> Unit,
-    enabled: Boolean,
-    modifier: Modifier = Modifier,
-) {
-    Button(
-        modifier = modifier.applyIf(!enabled) { Modifier.alpha(0.5f) },
-        onClick = onClick,
-        enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
-        ),
-    ) {
-        Text(
-            modifier = Modifier.padding(vertical = 4.dp),
-            text = text,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-    }
-}
-
-@Composable
-private fun BackupDate(
-    date: String?,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        modifier = modifier.alpha(0.5f),
-        text = stringResource(
-            R.string.backup_last_sync_time_title,
-            date ?: stringResource(R.string.backup_last_sync_time_none_title),
-        ),
-        style = MaterialTheme.typography.labelMedium,
-    )
-}
-
-@Composable
-private fun QuestionsList(
-    questions: ImmutableList<Question>,
-    isSignedIn: Boolean,
-    onQuestionClick: (question: Question) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(24.dp),
-    ) {
-        questions.forEachIndexed { index, question ->
-            QuestionItem(
-                question = question,
-                index = index,
-                isSignedIn = isSignedIn,
-                onClick = onQuestionClick,
-            )
-        }
-    }
-}
-
-@Composable
-private fun QuestionItem(
-    question: Question,
-    index: Int,
-    isSignedIn: Boolean,
-    onClick: (question: Question) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val alpha by animateFloatAsState(
-        targetValue = if (question.isExpanded || !isSignedIn) 1f else 0.5f,
-    )
-    Column(
-        modifier = modifier
-            .animateContentSize()
-            .clickableNoRipple { onClick(question) },
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Text(
-            modifier = Modifier.alpha(alpha),
-            text = "${index + 1}. ${question.title}",
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.ExtraBold,
-        )
-        AnimatedVisibility(
-            modifier = Modifier.alpha(alpha),
-            visible = question.isExpanded,
-            enter = fadeIn(),
-            exit = ExitTransition.None,
-        ) {
-            Text(
-                text = question.answer,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
-}
-
-@Composable
-private fun SignedInHeader(
-    email: String,
-    onSingOutClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val wholeText = stringResource(R.string.backup_tap_to_sing_out_title)
-    val underlinePart = stringResource(R.string.backup_tap_to_sing_out_underline_part)
-    val underlinePartIndex = wholeText.indexOf(underlinePart)
-    val title = remember {
-        buildAnnotatedString {
-            append(wholeText)
-            addStyle(
-                style = SpanStyle(
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.ExtraBold,
-                ),
-                start = underlinePartIndex,
-                end = underlinePartIndex + underlinePart.length,
-            )
-        }
-    }
-    Column(
-        modifier = modifier
-            .alpha(0.5f)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onSingOutClick)
-            .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = email,
-            style = MaterialTheme.typography.bodySmall,
-        )
-        Text(
-            text = title,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
-}
-
-@Composable
-private fun SignedOutHeader(
-    onSingInClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val infiniteTransition = rememberInfiniteTransition()
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.06f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 250,
-                delayMillis = 1000,
-                easing = LinearEasing,
-            ),
-            repeatMode = RepeatMode.Reverse,
-        ),
-    )
-    val wholeText = stringResource(R.string.backup_tap_to_sing_in_title)
-    val underlinePart = stringResource(R.string.backup_tap_to_sing_in_underline_part)
-    val underlinePartIndex = wholeText.indexOf(underlinePart)
-    val title = remember {
-        buildAnnotatedString {
-            append(wholeText)
-            addStyle(
-                style = SpanStyle(
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.ExtraBold,
-                ),
-                start = underlinePartIndex,
-                end = underlinePartIndex + underlinePart.length,
-            )
-        }
-    }
-    Text(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onSingInClick)
-            .padding(horizontal = 8.dp, vertical = 16.dp)
-            .graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            },
-        text = title,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-}
-
-@Composable
-@PreviewWithBackground
+@Preview
 private fun PreviewSignedIn() {
     SerenityTheme {
         ScreenContent(
@@ -528,6 +317,7 @@ private fun PreviewSignedIn() {
                 ),
                 authState = BackupUiState.Success.AuthState.SignedIn(
                     email = "felmemfmelflmfe",
+                    isLoading = false,
                 ),
             ),
         )
@@ -535,7 +325,7 @@ private fun PreviewSignedIn() {
 }
 
 @Composable
-@PreviewWithBackground
+@Preview
 private fun PreviewSignedOut() {
     SerenityTheme {
         ScreenContent(
@@ -563,7 +353,26 @@ private fun PreviewSignedOut() {
                         isExpanded = false,
                     ),
                 ),
-                authState = BackupUiState.Success.AuthState.SignedOut,
+                authState = BackupUiState.Success.AuthState.SignedOut(isLoading = false),
+            ),
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewLoading() {
+    SerenityTheme {
+        ScreenContent(
+            uiState = BackupUiState.Success(
+                isAutoBackupEnabled = true,
+                backupPeriod = "1 day",
+                lastSyncDateTime = null,
+                questions = persistentListOf(),
+                authState = BackupUiState.Success.AuthState.SignedIn(
+                    email = "felmemfmelflmfe",
+                    isLoading = true,
+                ),
             ),
         )
     }

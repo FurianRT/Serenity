@@ -49,7 +49,7 @@ internal fun SecurityScreen(
 
     val hazeState = remember { HazeState() }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is SecurityEffect.CloseScreen -> onCloseRequest()

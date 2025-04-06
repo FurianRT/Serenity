@@ -32,9 +32,23 @@ dependencies {
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
+    implementation(libs.dataStore)
+
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.immutableCollections)
 
     implementation(libs.lottie)
+
+    implementation(libs.blur)
+
+    implementation(libs.googleAuth)
+    implementation(libs.credentials)
+    implementation(libs.googleid)
+
+    implementation(libs.retrofit)
+    implementation(libs.loggingInterceptor)
+    implementation(libs.kotlinSerializationConverter)
+
+    implementation(libs.googleDrive)
 }

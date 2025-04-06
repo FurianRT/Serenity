@@ -6,9 +6,11 @@ import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.storage.internal.database.notes.dao.DeletedFilesDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
+import com.furianrt.storage.internal.database.notes.entities.EntryDeletedFile
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
@@ -35,6 +37,7 @@ internal class MediaRepositoryImp @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
+    private val deletedFilesDao: DeletedFilesDao,
     private val sharedMediaSource: SharedMediaSource,
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
@@ -79,6 +82,9 @@ internal class MediaRepositoryImp @Inject constructor(
             transactionsHelper.startTransaction {
                 imageDao.delete(images)
                 videoDao.delete(videos)
+                deletedFilesDao.insert(
+                    media = media.map { EntryDeletedFile(id = it.name, noteId = noteId) },
+                )
             }
             appMediaSource.deleteMediaFile(
                 noteId = noteId,
@@ -107,11 +113,21 @@ internal class MediaRepositoryImp @Inject constructor(
     }
 
     override suspend fun deleteVoice(noteId: String, voices: List<LocalNote.Content.Voice>) {
-        voiceDao.delete(voices.map { PartVoiceId(it.id) })
-        appMediaSource.deleteVoiceFile(
-            noteId = noteId,
-            voiceIds = voices.map(LocalNote.Content.Voice::id).toSet(),
-        )
+        if (voices.isEmpty()) {
+            return
+        }
+        withContext(NonCancellable) {
+            transactionsHelper.startTransaction {
+                voiceDao.delete(voices.map { PartVoiceId(it.id) })
+                deletedFilesDao.insert(
+                    media = voices.map { EntryDeletedFile(id = it.id, noteId = noteId) },
+                )
+            }
+            appMediaSource.deleteVoiceFile(
+                noteId = noteId,
+                voiceIds = voices.map(LocalNote.Content.Voice::id).toSet(),
+            )
+        }
     }
 
     override fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>> {
@@ -124,5 +140,9 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean {
         return appMediaSource.deleteVoiceFile(noteId, voiceId)
+    }
+
+    override suspend fun clearDeletedFilesList() {
+        deletedFilesDao.clear()
     }
 }

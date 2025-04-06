@@ -140,7 +140,7 @@ internal fun NotePageScreenInternal(
 
     state.setOnSaveContentListener { viewModel.onEvent(PageEvent.OnOnSaveContentRequest) }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true

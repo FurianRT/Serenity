@@ -67,7 +67,7 @@ internal fun NoteCreateScreen(
     var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->

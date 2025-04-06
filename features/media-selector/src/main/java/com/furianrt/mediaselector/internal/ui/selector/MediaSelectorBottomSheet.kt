@@ -3,18 +3,15 @@ package com.furianrt.mediaselector.internal.ui.selector
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -23,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -52,7 +48,6 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -87,7 +82,7 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val listState = rememberLazyGridState()
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
@@ -267,26 +262,5 @@ private fun SheetContent(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun DimLayout(
-    isVisible: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    AnimatedVisibility(
-        modifier = modifier,
-        visible = isVisible,
-        enter = fadeIn(),
-        exit = fadeOut(),
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.scrim)
-                .clickableNoRipple(onClick = onClick),
-        )
     }
 }

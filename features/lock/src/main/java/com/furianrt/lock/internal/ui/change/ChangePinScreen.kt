@@ -46,7 +46,7 @@ internal fun ChangePinScreen(
         direction = ShakingState.Direction.LEFT_THEN_RIGHT,
     )
 
-    LaunchedEffect(viewModel.effect) {
+    LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is ChangePinEffect.CloseScreen -> onCloseRequest()

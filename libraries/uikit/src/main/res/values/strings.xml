@@ -16,6 +16,8 @@
 
     <string name="media_counter_pattern">%d of %d</string>
     <string name="general_error">Something went wrong</string>
+    <string name="general_error_with_code">%d Something went wrong</string>
+    <string name="network_error">No internet connection</string>
 
     <string-array name="months_array">
         <item>January</item>

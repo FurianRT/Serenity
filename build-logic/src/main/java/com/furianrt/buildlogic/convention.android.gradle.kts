@@ -27,6 +27,7 @@ android {
             buildConfigField("String", "PREFS_PASSWORD", "\"${properties.getProperty("PREFS_PASSWORD")}\"")
             buildConfigField("String", "GMAIL_APP_PASSWORD", "\"${properties.getProperty("GMAIL_APP_PASSWORD")}\"")
             buildConfigField("String", "SUPPORT_EMAIL", "\"${properties.getProperty("SUPPORT_EMAIL")}\"")
+            buildConfigField("String", "OAUTH_CLIENT_ID", "\"${properties.getProperty("OAUTH_CLIENT_ID")}\"")
         }
         release {
             isMinifyEnabled = false
@@ -47,6 +48,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += "/META-INF/NOTICE.md"
             excludes += "/META-INF/LICENSE.md"
+            excludes += "/META-INF/DEPENDENCIES"
         }
     }
 }

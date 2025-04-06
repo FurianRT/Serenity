@@ -3,11 +3,13 @@ package com.furianrt.backup.internal.domain
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.domain.entities.PopularQuestion
 import com.furianrt.domain.managers.ResourcesManager
+import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.util.UUID
 import javax.inject.Inject
 
+@ViewModelScoped
 internal class GetPopularQuestionsUseCase @Inject constructor(
     private val resourcesManager: ResourcesManager,
 ) {

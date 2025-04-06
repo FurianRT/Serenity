@@ -22,4 +22,6 @@ interface MediaRepository {
 
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?
     suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean
+
+    suspend fun clearDeletedFilesList()
 }
