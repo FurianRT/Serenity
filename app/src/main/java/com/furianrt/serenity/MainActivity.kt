@@ -24,9 +24,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.furianrt.domain.managers.LockManager
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.lock.api.CheckPinScreen
+import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
 import com.furianrt.mediaview.api.MediaViewRoute
@@ -40,10 +39,10 @@ import com.furianrt.notelist.api.noteListScreen
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
-import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
+import com.furianrt.security.api.LockAuthorizer
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
@@ -69,10 +68,7 @@ private const val SPLASH_SCREEN_DELAY = 400L
 internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     @Inject
-    lateinit var permissionsUtils: PermissionsUtils
-
-    @Inject
-    lateinit var lockManager: LockManager
+    lateinit var lockAuthorizer: LockAuthorizer
 
     @Inject
     lateinit var appearanceRepository: AppearanceRepository
@@ -81,7 +77,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     private var keepSplashScreen = true
 
-    override suspend fun isAuthorized(): Boolean = lockManager.isAuthorized().first()
+    override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
 
     override fun onCreateView(
         parent: View?,

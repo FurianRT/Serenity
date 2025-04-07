@@ -8,20 +8,6 @@
     <string name="settings_feedback_title">Feedback</string>
     <string name="settings_about_title">About</string>
     <string name="settings_app_version_title">App version: %s</string>
-    <string name="settings_enable_pin_title">Enable PIN</string>
-    <string name="settings_email_to_recover_pin_title">Email to recover PIN</string>
-    <string name="settings_pin_request_title">PIN request delay</string>
-    <string name="settings_enable_fingerprint_title">Enable Fingerprint</string>
-
-    <plurals name="settings_pin_delay_seconds_plural">
-        <item quantity="one">%d second</item>
-        <item quantity="other">%d seconds</item>
-    </plurals>
-
-    <plurals name="settings_pin_delay_minutes_plural">
-        <item quantity="one">%d minute</item>
-        <item quantity="other">%d minutes</item>
-    </plurals>
 
     <string name="settings_app_theme_scandi_grandpa_title">Scandi Grandpa</string>
     <string name="settings_app_theme_cleopatra_title">Cleopatra</string>

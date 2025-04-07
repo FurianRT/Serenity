@@ -7,13 +7,10 @@ plugins {
 }
 
 android {
-    namespace = "com.furianrt.settings"
+    namespace = "com.furianrt.security"
 }
 
 dependencies {
-    implementation(projects.features.security)
-    implementation(projects.features.backup)
-
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
@@ -23,6 +20,7 @@ dependencies {
     implementation(libs.material3)
 
     implementation(libs.composeActivity)
+    implementation(libs.composeFoundation)
     implementation(libs.composeUi)
     implementation(libs.composeAnimation)
     implementation(libs.composeGraphics)
@@ -30,16 +28,22 @@ dependencies {
     implementation(libs.composeTooling)
     implementation(libs.composeNavigation)
 
-    implementation(libs.coroutinesCore)
-    implementation(libs.coroutinesAndroid)
-
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)
 
-    implementation(libs.immutableCollections)
+    implementation(libs.biometric)
+
+    implementation(libs.dataStore)
+
+    implementation(libs.blur)
 
     implementation(libs.kotlinxSerializationJson)
 
-    implementation(libs.blur)
+    implementation(libs.immutableCollections)
+
+    implementation(libs.mail)
+    implementation(libs.mailActivaliton)
+
+    implementation(libs.lottie)
 }

@@ -2,7 +2,7 @@ package com.furianrt.serenity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.domain.managers.LockManager
+import com.furianrt.security.api.LockAuthorizer
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -11,10 +11,10 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class MainViewModel @Inject constructor(
-    private val lockManager: LockManager,
+    private val lockAuthorizer: LockAuthorizer,
 ) : ViewModel() {
 
-    val state = lockManager.isAuthorized().map { isAuthorized ->
+    val state = lockAuthorizer.isAuthorized().map { isAuthorized ->
         MainState(isScreenLocked = !isAuthorized)
     }.stateIn(
         scope = viewModelScope,
@@ -24,7 +24,7 @@ internal class MainViewModel @Inject constructor(
 
     fun onEvent(event: MainEvent) {
         when (event) {
-            is MainEvent.OnUnlockScreenRequest -> lockManager.authorize()
+            is MainEvent.OnUnlockScreenRequest -> lockAuthorizer.authorize()
         }
     }
 }

@@ -7,14 +7,14 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.navigation
 import com.furianrt.backup.api.backupNavigation
 import com.furianrt.backup.api.navigateToBackup
-import com.furianrt.lock.api.changeEmailScreen
-import com.furianrt.lock.api.changePinNavigation
-import com.furianrt.lock.api.navigateToChangeEmail
-import com.furianrt.lock.api.navigateToChangePin
+import com.furianrt.security.api.changeEmailScreen
+import com.furianrt.security.api.changePinNavigation
+import com.furianrt.security.api.navigateToChangeEmail
+import com.furianrt.security.api.navigateToChangePin
+import com.furianrt.security.api.navigateToSecurity
+import com.furianrt.security.api.securityScreen
 import com.furianrt.settings.internal.ui.main.MainRoute
 import com.furianrt.settings.internal.ui.main.settingsScreen
-import com.furianrt.settings.internal.ui.security.navigateToSecurity
-import com.furianrt.settings.internal.ui.security.securityScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

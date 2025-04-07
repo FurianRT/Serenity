@@ -7,7 +7,6 @@ import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.ProfileRepository
-import com.furianrt.domain.repositories.SecurityRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
@@ -21,7 +20,6 @@ import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
-import com.furianrt.storage.internal.preferences.SecurityDataStore
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.DeviceInfoRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
@@ -52,10 +50,6 @@ internal interface DatabaseModule {
     @Binds
     @Singleton
     fun mediaRepository(imp: MediaRepositoryImp): MediaRepository
-
-    @Binds
-    @Singleton
-    fun securityRepository(imp: SecurityDataStore): SecurityRepository
 
     @Binds
     @Singleton

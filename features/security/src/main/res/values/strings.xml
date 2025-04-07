@@ -1,0 +1,32 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Enter your PIN</string>
+    <string name="lock_enter_new_pin_title">Enter new PIN</string>
+    <string name="lock_repeat_your_pin_title">Repeat your PIN</string>
+    <string name="lock_forgot_pin_title">Forgot your PIN?</string>
+    <string name="lock_fingerprint_title">Only awesome people allowed</string>
+    <string name="lock_use_pin_title">Use PIN</string>
+    <string name="recovery_email_hint">Please enter your email address to receive your forgotten PIN code</string>
+    <string name="recovery_email_format_error">Invalid email</string>
+    <string name="pin_recovery_dialog_title">We\'ll send an email with password recovery instructions to %s. If you don\'t receive it, check your spam folder - it might end up there.</string>
+    <string name="pin_recovery_email_subject">PIN recovery</string>
+    <string name="pin_recovery_email_content">Your PIN: %s</string>
+    <string name="pin_recovery_email_title">Email address</string>
+    <string name="send_pin_recovery_email_failure">Something went wrong</string>
+    <string name="send_pin_recovery_email_success">Recovery email sent</string>
+
+    <string name="security_enable_pin_title">Enable PIN</string>
+    <string name="security_email_to_recover_pin_title">Email to recover PIN</string>
+    <string name="security_pin_request_title">PIN request delay</string>
+    <string name="security_enable_fingerprint_title">Enable Fingerprint</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d second</item>
+        <item quantity="other">%d seconds</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minute</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+
+</resources>

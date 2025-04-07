@@ -26,7 +26,5 @@ dependencies {
 
     implementation(libs.dataStore)
 
-    implementation(libs.biometric)
-
     implementation(libs.kotlinxSerializationJson)
 }

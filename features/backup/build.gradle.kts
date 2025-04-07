@@ -45,10 +45,12 @@ dependencies {
     implementation(libs.googleAuth)
     implementation(libs.credentials)
     implementation(libs.googleid)
+    implementation(libs.credentialsAuth)
 
     implementation(libs.retrofit)
     implementation(libs.loggingInterceptor)
     implementation(libs.kotlinSerializationConverter)
 
     implementation(libs.googleDrive)
+    implementation(libs.googleDriveGms)
 }

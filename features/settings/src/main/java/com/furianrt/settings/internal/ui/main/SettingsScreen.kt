@@ -41,8 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.buildImmutableList
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.entities.AppTheme
-import com.furianrt.settings.internal.ui.composables.GeneralButton
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -168,7 +168,7 @@ private fun SuccessScreen(
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_about_title),
-            iconPainter = painterResource(id = R.drawable.ic_info),
+            iconPainter = painterResource(id = uiR.drawable.ic_error),
             onClick = {},
         )
     }
