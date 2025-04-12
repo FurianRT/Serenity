@@ -1,4 +1,4 @@
-package com.furianrt.notepage.internal.domian
+package com.furianrt.domain.usecase
 
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class UpdateNoteContentUseCase @Inject constructor(
+class UpdateNoteContentUseCase @Inject constructor(
     private val transactionsHelper: TransactionsHelper,
     private val notesRepository: NotesRepository,
     private val tagsRepository: TagsRepository,
@@ -28,25 +28,27 @@ internal class UpdateNoteContentUseCase @Inject constructor(
         fontFamily: NoteFontFamily,
         fontColor: NoteFontColor,
         fontSize: Int,
+        updateMediaFiles: Boolean = true,
     ) = withContext(NonCancellable) {
-        val newMedia = content
+        val allMedia = content
             .filterIsInstance<LocalNote.Content.MediaBlock>()
             .flatMap(LocalNote.Content.MediaBlock::media)
 
         val newVoices = content.filterIsInstance<LocalNote.Content.Voice>()
 
         transactionsHelper.startTransaction {
-            val mediaToDelete = mediaRepository.getMedia(noteId)
-                .first()
-                .filterNot { media -> newMedia.any { it.name == media.name } }
-            val mediaToInsert = content
-                .filterIsInstance<LocalNote.Content.MediaBlock>()
-                .flatMap(LocalNote.Content.MediaBlock::media)
+            val existingMedia = mediaRepository.getMedia(noteId).first()
+            val mediaToDelete = existingMedia
+                .filterNot { media -> allMedia.any { it.name == media.name } }
+            val mediaToInsert = allMedia
+                .filter { media -> existingMedia.none { it.name == media.name } }
 
-            val voicesToDelete = mediaRepository.getVoices(noteId)
-                .first()
+            val existingVoices = mediaRepository.getVoices(noteId).first()
+            val voicesToDelete = existingVoices
                 .filterNot { voice -> newVoices.any { it.id == voice.id } }
-            val voicesToInsert = content.filterIsInstance<LocalNote.Content.Voice>()
+            val voicesToInsert = content
+                .filterIsInstance<LocalNote.Content.Voice>()
+                .filter { voice -> existingVoices.none { it.id == voice.id } }
 
             val tagsToDelete = tagsRepository.getTags(noteId)
                 .first()
@@ -62,7 +64,7 @@ internal class UpdateNoteContentUseCase @Inject constructor(
             }
 
             if (mediaToInsert.isNotEmpty()) {
-                mediaRepository.insertMedia(noteId, mediaToInsert)
+                mediaRepository.insertMedia(noteId, mediaToInsert, updateMediaFiles)
             }
             if (mediaToDelete.isNotEmpty()) {
                 mediaRepository.deleteMedia(noteId, mediaToDelete)

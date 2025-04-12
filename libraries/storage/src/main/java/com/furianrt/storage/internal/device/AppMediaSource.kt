@@ -2,9 +2,10 @@ package com.furianrt.storage.internal.device
 
 import android.content.Context
 import android.net.Uri
-import androidx.core.net.toUri
+import androidx.core.content.FileProvider
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.storage.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -25,14 +26,14 @@ internal class AppMediaSource @Inject constructor(
         media: LocalNote.Content.Media,
     ): Uri? = withContext(dispatchers.io) {
         try {
-            val destFile = File(context.filesDir, "$noteId/$MEDIA_FOLDER/${media.name}")
-            destFile.parentFile?.mkdirs()
+            val destFile = createMediaFile(noteId, media.name) ?: return@withContext null
             context.contentResolver.openInputStream(media.uri)?.use { inputStream ->
                 FileOutputStream(destFile).use { outputStream ->
                     inputStream.copyTo(outputStream)
                 }
             }
-            return@withContext destFile.toUri()
+
+            return@withContext getRelativeUri(destFile)
         } catch (e: Exception) {
             e.printStackTrace()
             null
@@ -62,13 +63,47 @@ internal class AppMediaSource @Inject constructor(
         }
     }
 
+    suspend fun createMediaFile(
+        noteId: String,
+        mediaId: String,
+    ): File? = withContext(dispatchers.io) {
+        try {
+            val file = File(context.filesDir, "$noteId/$MEDIA_FOLDER/$mediaId")
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                return@withContext null
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
+    }
+
     suspend fun createVoiceFile(
         noteId: String,
         voiceId: String,
     ): File? = withContext(dispatchers.io) {
-        return@withContext try {
-            File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId").apply {
-                parentFile?.mkdirs()
+        try {
+            val file = File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId")
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                return@withContext null
             }
         } catch (e: Exception) {
             e.printStackTrace()
@@ -90,5 +125,9 @@ internal class AppMediaSource @Inject constructor(
 
     suspend fun deleteVoiceFile(noteId: String, voiceIds: Set<String>) {
         voiceIds.forEach { deleteVoiceFile(noteId, it) }
+    }
+
+    fun getRelativeUri(file: File): Uri {
+        return FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, file)
     }
 }

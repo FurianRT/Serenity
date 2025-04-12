@@ -9,6 +9,7 @@ import java.time.ZonedDateTime
 
 interface NotesRepository {
     suspend fun insetNote(note: SimpleNote)
+    suspend fun upsertNote(note: SimpleNote)
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
     suspend fun updateNoteFont(
@@ -26,6 +27,4 @@ interface NotesRepository {
     fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>)
     fun deleteNoteContentFromCache(noteId: String)
     fun getNoteContentFromCache(noteId: String): List<LocalNote.Content>
-
-    suspend fun clearDeletedNotesList()
 }

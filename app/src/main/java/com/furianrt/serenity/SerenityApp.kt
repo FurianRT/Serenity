@@ -1,10 +1,42 @@
 package com.furianrt.serenity
 
 import android.app.Application
+import android.os.StrictMode
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
-internal class SerenityApp : Application()
+internal class SerenityApp : Application() {
+
+    override fun onCreate() {
+        super.onCreate()
+        if (BuildConfig.DEBUG) {
+            initStrictMode()
+        }
+    }
+
+    private fun initStrictMode() {
+        StrictMode.setThreadPolicy(
+            StrictMode.ThreadPolicy.Builder()
+                .detectNetwork()
+                .detectResourceMismatches()
+                .detectUnbufferedIo()
+                .penaltyLog()
+                .penaltyDeath()
+                .build()
+        )
+
+        StrictMode.setVmPolicy(
+            StrictMode.VmPolicy.Builder()
+                .detectLeakedSqlLiteObjects()
+                .detectLeakedClosableObjects()
+                .detectActivityLeaks()
+                .detectContentUriWithoutPermission()
+                .detectFileUriExposure()
+                .penaltyLog()
+                .build()
+        )
+    }
+}
 
 /*
 * TODO Главный экран

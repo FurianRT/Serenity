@@ -34,6 +34,7 @@ android {
             buildConfigField("String", "GMAIL_APP_PASSWORD", "\"${properties.getProperty("GMAIL_APP_PASSWORD")}\"")
             buildConfigField("String", "SUPPORT_EMAIL", "\"${properties.getProperty("SUPPORT_EMAIL")}\"")
             buildConfigField("String", "OAUTH_CLIENT_ID", "\"${properties.getProperty("OAUTH_CLIENT_ID")}\"")
+            buildConfigField("String", "FILE_PROVIDER_AUTHORITY", "\"SerenityFileProvider\"")
         }
 
         release {

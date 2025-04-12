@@ -2,7 +2,9 @@ package com.furianrt.domain.voice
 
 import android.content.Context
 import android.media.MediaRecorder
+import com.furianrt.core.DispatchersProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import javax.inject.Inject
@@ -14,41 +16,46 @@ private const val ENCODING_BIT_RATE = 128000
 
 class AudioRecorder @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val dispatchers: DispatchersProvider,
 ) {
     private var recorder: MediaRecorder? = null
 
     var isRecording = false
         private set
 
-    fun start(outputFile: File): Boolean = try {
-        recorder = MediaRecorder(context).apply {
-            setAudioSource(MediaRecorder.AudioSource.MIC)
-            setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
-            setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
-            setAudioEncodingBitRate(ENCODING_BIT_RATE)
-            setAudioSamplingRate(SAMPLING_RATE)
-            setOutputFile(FileOutputStream(outputFile).fd)
-            prepare()
-            start()
+    suspend fun start(outputFile: File): Boolean = withContext(dispatchers.io) {
+        try {
+            recorder = MediaRecorder(context).apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.MPEG_4)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AAC)
+                setAudioEncodingBitRate(ENCODING_BIT_RATE)
+                setAudioSamplingRate(SAMPLING_RATE)
+                setOutputFile(outputFile.absolutePath)
+                prepare()
+                start()
+            }
+            isRecording = true
+            true
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            false
         }
-        isRecording = true
-        true
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        false
     }
 
-    fun stop() = try {
-        recorder?.stop()
-        recorder?.reset()
-        recorder?.release()
-        recorder = null
-        isRecording = false
-        true
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        isRecording = false
-        false
+    suspend fun stop() = withContext(dispatchers.io) {
+        try {
+            recorder?.stop()
+            recorder?.reset()
+            recorder?.release()
+            recorder = null
+            isRecording = false
+            true
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            isRecording = false
+            false
+        }
     }
 
     fun resume() {

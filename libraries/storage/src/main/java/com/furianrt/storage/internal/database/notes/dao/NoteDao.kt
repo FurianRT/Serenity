@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import androidx.room.Upsert
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
@@ -19,13 +20,16 @@ internal interface NoteDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(note: EntryNote)
 
-    @Update(entity = EntryNote::class)
+    @Upsert
+    suspend fun upsert(note: EntryNote)
+
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteText)
 
-    @Update(entity = EntryNote::class)
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteDate)
 
-    @Update(entity = EntryNote::class)
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteFont)
 
     @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
@@ -54,4 +58,5 @@ internal interface NoteDao {
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     fun getNote(noteId: String): Flow<LinkedNote?>
+
 }

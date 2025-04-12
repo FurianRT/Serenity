@@ -1,14 +1,18 @@
 package com.furianrt.backup.internal.ui
 
 import android.content.Intent
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.backup.internal.domain.AuthorizeUseCase
-import com.furianrt.backup.internal.domain.GetBackupProfileUseCase
-import com.furianrt.backup.internal.domain.GetPopularQuestionsUseCase
-import com.furianrt.backup.internal.domain.SignInUseCase
-import com.furianrt.backup.internal.domain.SignOutUseCase
+import com.furianrt.backup.internal.domain.BackupDataManager
+import com.furianrt.backup.internal.domain.RestoreDataManager
+import com.furianrt.backup.internal.domain.usecases.AuthorizeUseCase
+import com.furianrt.backup.internal.domain.usecases.GetBackupProfileUseCase
+import com.furianrt.backup.internal.domain.usecases.GetPopularQuestionsUseCase
+import com.furianrt.backup.internal.domain.usecases.SignInUseCase
+import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
 import com.furianrt.backup.internal.domain.entities.AuthResult
+import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.entities.PopularQuestion
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
@@ -39,10 +43,48 @@ internal class BackupViewModel @Inject constructor(
     private val signOutUseCase: SignOutUseCase,
     private val authorizeUseCase: AuthorizeUseCase,
     private val resourcesManager: ResourcesManager,
+    private val backupDataManager: BackupDataManager,
+    private val restoreDataManager: RestoreDataManager,
 ) : ViewModel() {
 
     private val expandedQuestionsState = MutableStateFlow(emptySet<String>())
     private val isAuthInProgressState = MutableStateFlow(false)
+
+    init {
+        launch {
+            backupDataManager.state
+                .collect { result ->
+                    when (result) {
+                        is SyncState.Idle -> Log.e("fenfefnjefn", "Backup Idle")
+                        is SyncState.Starting -> Log.e("fenfefnjefn", "Backup Starting")
+                        is SyncState.Progress -> Log.e(
+                            "fenfefnjefn",
+                            "Backup ${result.syncedNotesCount}/${result.totalNotesCount}"
+                        )
+
+                        is SyncState.Failure -> Log.e("fenfefnjefn", "Backup Failure")
+                    }
+
+                }
+        }
+
+        launch {
+            restoreDataManager.state
+                .collect { result ->
+                    when (result) {
+                        is SyncState.Idle -> Log.e("fenfefnjefn", "Restore Idle")
+                        is SyncState.Starting -> Log.e("fenfefnjefn", "Restore Starting")
+                        is SyncState.Progress -> Log.e(
+                            "fenfefnjefn",
+                            "Restore ${result.syncedNotesCount}/${result.totalNotesCount}"
+                        )
+
+                        is SyncState.Failure -> Log.e("fenfefnjefn", "Restore Failure")
+                    }
+
+                }
+        }
+    }
 
     val state = combine(
         getPopularQuestionsUseCase(),
@@ -66,8 +108,14 @@ internal class BackupViewModel @Inject constructor(
                 backupRepository.setAutoBackupEnabled(event.isChecked)
             }
 
-            is BackupScreenEvent.OnButtonBackupClick -> {}
-            is BackupScreenEvent.OnButtonRestoreClick -> {}
+            is BackupScreenEvent.OnButtonBackupClick -> launch {
+                backupDataManager.startBackup()
+            }
+
+            is BackupScreenEvent.OnButtonRestoreClick -> launch {
+                restoreDataManager.startRestore()
+            }
+
             is BackupScreenEvent.OnBackupPeriodClick -> {}
             is BackupScreenEvent.OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
             is BackupScreenEvent.OnQuestionClick -> toggleQuestionExpandedState(event.question)

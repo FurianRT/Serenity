@@ -9,6 +9,7 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import android.net.Uri
+import androidx.core.net.toUri
 
 @OptIn(ExperimentalSerializationApi::class)
 @Serializer(forClass = LocalDate::class)
@@ -46,6 +47,6 @@ object UriSerializer : KSerializer<Uri> {
     }
 
     override fun deserialize(decoder: Decoder): Uri {
-        return Uri.parse(decoder.decodeString())
+        return decoder.decodeString().toUri()
     }
 }

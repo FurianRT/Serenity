@@ -1,4 +1,4 @@
-package com.furianrt.backup.internal.data.remote.info
+package com.furianrt.backup.internal.data.remote.google.info
 
 import retrofit2.http.GET
 import retrofit2.http.Query

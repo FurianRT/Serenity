@@ -17,7 +17,7 @@ internal interface ImageDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(images: List<EntryNoteImage>)
 
-    @Update(entity = EntryNoteImage::class)
+    @Update(entity = EntryNoteImage::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartImageUri)
 
     @Delete(entity = EntryNoteImage::class)
@@ -25,6 +25,9 @@ internal interface ImageDao {
 
     @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NOTE_ID} = :noteId")
     fun getImages(noteId: String): Flow<List<EntryNoteImage>>
+
+    @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME}")
+    fun getAllImages(): Flow<List<EntryNoteImage>>
 
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NAME} = :imageName AND ${EntryNoteImage.FIELD_IS_SAVED} = 1)")
     suspend fun isSaved(imageName: String): Boolean

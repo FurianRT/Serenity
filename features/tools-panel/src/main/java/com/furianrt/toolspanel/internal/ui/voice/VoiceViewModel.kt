@@ -2,7 +2,6 @@ package com.furianrt.toolspanel.internal.ui.voice
 
 import android.net.Uri
 import androidx.annotation.FloatRange
-import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.repositories.MediaRepository
@@ -70,14 +69,20 @@ internal class VoiceViewModel @AssistedInject constructor(
     fun onEvent(event: VoiceEvent) {
         when (event) {
             is VoiceEvent.OnEnterComposition -> startRecording()
-            is VoiceEvent.OnCancelClick -> cancelRecording()
+            is VoiceEvent.OnCancelClick -> launch {
+                cancelRecording()
+            }
+
             is VoiceEvent.OnPauseClick -> if (isPausedState.value) {
                 resumeRecording()
             } else {
                 pauseRecording()
             }
 
-            is VoiceEvent.OnDoneClick -> completeRecording()
+            is VoiceEvent.OnDoneClick -> launch {
+                completeRecording()
+            }
+
             is VoiceEvent.OnScreenStopped -> pauseRecording()
         }
     }
@@ -101,7 +106,10 @@ internal class VoiceViewModel @AssistedInject constructor(
             }
 
             if (audioRecorder.start(destinationFile)) {
-                recordData = RecordData(id = recordId, uri = destinationFile.toUri())
+                recordData = RecordData(
+                    id = recordId,
+                    uri = mediaRepository.getRelativeUri(destinationFile),
+                )
                 startTimer()
                 startVolume()
             } else {
@@ -111,7 +119,7 @@ internal class VoiceViewModel @AssistedInject constructor(
         }
     }
 
-    private fun cancelRecording() {
+    private suspend fun cancelRecording() {
         if (!audioRecorder.isRecording) {
             return
         }
@@ -122,7 +130,7 @@ internal class VoiceViewModel @AssistedInject constructor(
         _effect.tryEmit(VoiceEffect.CloseRecording)
     }
 
-    private fun completeRecording() {
+    private suspend fun completeRecording() {
         if (!audioRecorder.isRecording) {
             return
         }

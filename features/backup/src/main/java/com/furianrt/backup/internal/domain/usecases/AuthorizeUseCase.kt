@@ -1,11 +1,9 @@
-package com.furianrt.backup.internal.domain
+package com.furianrt.backup.internal.domain.usecases
 
 import com.furianrt.backup.internal.domain.entities.AuthResult
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
 
-@ViewModelScoped
 internal class AuthorizeUseCase @Inject constructor(
     private val backupRepository: BackupRepository,
 ) {

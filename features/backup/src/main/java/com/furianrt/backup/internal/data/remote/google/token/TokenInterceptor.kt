@@ -1,14 +1,14 @@
-package com.furianrt.backup.internal.data.remote.token
+package com.furianrt.backup.internal.data.remote.google.token
 
 import com.furianrt.backup.internal.data.local.BackupDataStore
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ViewModelScoped
+@Singleton
 internal class TokenInterceptor @Inject constructor(
     private val backupDataStore: BackupDataStore,
 ) : Interceptor {

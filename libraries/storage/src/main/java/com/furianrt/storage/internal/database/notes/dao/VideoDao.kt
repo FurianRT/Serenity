@@ -16,7 +16,7 @@ internal interface VideoDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(videos: List<EntryNoteVideo>)
 
-    @Update(entity = EntryNoteVideo::class)
+    @Update(entity = EntryNoteVideo::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartVideoUri)
 
     @Delete(entity = EntryNoteVideo::class)
@@ -24,6 +24,9 @@ internal interface VideoDao {
 
     @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NOTE_ID} = :noteId")
     fun getVideos(noteId: String): Flow<List<EntryNoteVideo>>
+
+    @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME}")
+    fun getAllVideos(): Flow<List<EntryNoteVideo>>
 
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NAME} = :videoName AND ${EntryNoteVideo.FIELD_IS_SAVED} = 1)")
     suspend fun isSaved(videoName: String): Boolean

@@ -5,15 +5,15 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
-import dagger.hilt.android.scopes.ViewModelScoped
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
+import javax.inject.Singleton
 
 private val KEY_GOOGLE_ACCESS_TOKEN = stringPreferencesKey("google_access_token")
 private val KEY_AUTO_BACKUP = booleanPreferencesKey("auto_backup")
 
-@ViewModelScoped
+@Singleton
 internal class BackupDataStore @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) {

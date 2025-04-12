@@ -11,8 +11,6 @@ import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
-import com.furianrt.storage.internal.database.notes.dao.DeletedFilesDao
-import com.furianrt.storage.internal.database.notes.dao.DeletedNoteDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
@@ -107,16 +105,6 @@ internal interface DatabaseModule {
         fun backupProfileDao(
             database: SerenityDatabase,
         ): BackupProfileDao = database.backupProfileDao()
-
-        @Provides
-        @Singleton
-        fun deletedNoteDao(database: SerenityDatabase): DeletedNoteDao = database.deletedNoteDao()
-
-        @Provides
-        @Singleton
-        fun deletedFilesDao(
-            database: SerenityDatabase,
-        ): DeletedFilesDao = database.deletedFilesDao()
 
         @Provides
         @Singleton

@@ -1,4 +1,4 @@
-package com.furianrt.backup.internal.data.remote.info
+package com.furianrt.backup.internal.data.remote.google.info
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 internal class GetUserInfoResponse(
     @SerialName("emailAddresses")
-    val emailAddresses: List<EmailAddress>?,
+    val emailAddresses: List<EmailAddress>? = null,
 ) {
     @Serializable
     class EmailAddress(

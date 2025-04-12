@@ -1,16 +1,15 @@
 package com.furianrt.storage.internal.repositories
 
+import android.net.Uri
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
-import com.furianrt.storage.internal.database.notes.dao.DeletedFilesDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
-import com.furianrt.storage.internal.database.notes.entities.EntryDeletedFile
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
@@ -37,7 +36,6 @@ internal class MediaRepositoryImp @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
-    private val deletedFilesDao: DeletedFilesDao,
     private val sharedMediaSource: SharedMediaSource,
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
@@ -47,6 +45,7 @@ internal class MediaRepositoryImp @Inject constructor(
     override suspend fun insertMedia(
         noteId: String,
         media: List<LocalNote.Content.Media>,
+        updateFile: Boolean,
     ) = withContext(NonCancellable) {
         val images = media
             .filterIsInstance<LocalNote.Content.Image>()
@@ -62,7 +61,7 @@ internal class MediaRepositoryImp @Inject constructor(
             videoDao.insert(videos)
         }
 
-        if (media.isNotEmpty()) {
+        if (media.isNotEmpty() && updateFile) {
             mediaSaver.save(noteId, media)
         }
     }
@@ -82,9 +81,6 @@ internal class MediaRepositoryImp @Inject constructor(
             transactionsHelper.startTransaction {
                 imageDao.delete(images)
                 videoDao.delete(videos)
-                deletedFilesDao.insert(
-                    media = media.map { EntryDeletedFile(id = it.name, noteId = noteId) },
-                )
             }
             appMediaSource.deleteMediaFile(
                 noteId = noteId,
@@ -100,6 +96,11 @@ internal class MediaRepositoryImp @Inject constructor(
     override fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>> = combine(
         imageDao.getImages(noteId).deepMap(EntryNoteImage::toNoteContentImage),
         videoDao.getVideos(noteId).deepMap(EntryNoteVideo::toNoteContentVideo),
+    ) { images, videos -> images + videos }
+
+    override fun getAllMedia(): Flow<List<LocalNote.Content.Media>> = combine(
+        imageDao.getAllImages().deepMap(EntryNoteImage::toNoteContentImage),
+        videoDao.getAllVideos().deepMap(EntryNoteVideo::toNoteContentVideo),
     ) { images, videos -> images + videos }
 
     override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
@@ -119,9 +120,6 @@ internal class MediaRepositoryImp @Inject constructor(
         withContext(NonCancellable) {
             transactionsHelper.startTransaction {
                 voiceDao.delete(voices.map { PartVoiceId(it.id) })
-                deletedFilesDao.insert(
-                    media = voices.map { EntryDeletedFile(id = it.id, noteId = noteId) },
-                )
             }
             appMediaSource.deleteVoiceFile(
                 noteId = noteId,
@@ -131,7 +129,15 @@ internal class MediaRepositoryImp @Inject constructor(
     }
 
     override fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>> {
-        return voiceDao.getVideos(noteId).deepMap(EntryNoteVoice::toNoteContentVoice)
+        return voiceDao.getVoices(noteId).deepMap(EntryNoteVoice::toNoteContentVoice)
+    }
+
+    override fun getAllVoices(): Flow<List<LocalNote.Content.Voice>> {
+        return voiceDao.getAllVoices().deepMap(EntryNoteVoice::toNoteContentVoice)
+    }
+
+    override suspend fun createMediaDestinationFile(noteId: String, mediaId: String): File? {
+        return appMediaSource.createMediaFile(noteId, mediaId)
     }
 
     override suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File? {
@@ -142,7 +148,5 @@ internal class MediaRepositoryImp @Inject constructor(
         return appMediaSource.deleteVoiceFile(noteId, voiceId)
     }
 
-    override suspend fun clearDeletedFilesList() {
-        deletedFilesDao.clear()
-    }
+    override fun getRelativeUri(file: File): Uri = appMediaSource.getRelativeUri(file)
 }

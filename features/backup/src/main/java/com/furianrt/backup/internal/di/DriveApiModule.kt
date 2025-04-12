@@ -1,30 +1,30 @@
 package com.furianrt.backup.internal.di
 
 import com.furianrt.backup.BuildConfig
-import com.furianrt.backup.internal.data.remote.drive.DriveApiService
-import com.furianrt.backup.internal.data.remote.token.TokenAuthenticator
-import com.furianrt.backup.internal.data.remote.token.TokenInterceptor
+import com.furianrt.backup.internal.data.remote.google.drive.DriveApiService
+import com.furianrt.backup.internal.data.remote.google.token.TokenAuthenticator
+import com.furianrt.backup.internal.data.remote.google.token.TokenInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ViewModelComponent
-import dagger.hilt.android.scopes.ViewModelScoped
+import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import javax.inject.Qualifier
+import javax.inject.Singleton
 
-private const val BASE_URL = "https://www.googleapis.com/drive/v3"
+private const val BASE_URL = "https://www.googleapis.com/"
 
 @Module
-@InstallIn(ViewModelComponent::class)
+@InstallIn(SingletonComponent::class)
 internal object DriveApiModule {
     @Provides
     @DriveApiQualifier
-    @ViewModelScoped
+    @Singleton
     fun provideDriveOkHttpClient(
         tokenAuthenticator: TokenAuthenticator,
         tokenInterceptor: TokenInterceptor,
@@ -41,13 +41,15 @@ internal object DriveApiModule {
 
     @Provides
     @DriveApiQualifier
-    @ViewModelScoped
+    @Singleton
     fun provideDriveRetrofit(
         @DriveApiQualifier okHttpClient: OkHttpClient,
     ): Retrofit {
         val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
+            encodeDefaults = true
+            coerceInputValues = true
         }
         return Retrofit.Builder()
             .client(okHttpClient)
@@ -57,7 +59,7 @@ internal object DriveApiModule {
     }
 
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideDriveApiService(
         @DriveApiQualifier retrofit: Retrofit,
     ): DriveApiService = retrofit.create(DriveApiService::class.java)

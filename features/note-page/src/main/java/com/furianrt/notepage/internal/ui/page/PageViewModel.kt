@@ -11,6 +11,7 @@ import com.furianrt.core.updateState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
+import com.furianrt.domain.usecase.UpdateNoteContentUseCase
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -25,7 +26,6 @@ import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
-import com.furianrt.notepage.internal.domian.UpdateNoteContentUseCase
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog

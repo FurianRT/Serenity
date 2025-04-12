@@ -11,8 +11,6 @@ import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
-import com.furianrt.storage.internal.database.notes.dao.DeletedFilesDao
-import com.furianrt.storage.internal.database.notes.dao.DeletedNoteDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
@@ -20,8 +18,6 @@ import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
-import com.furianrt.storage.internal.database.notes.entities.EntryDeletedFile
-import com.furianrt.storage.internal.database.notes.entities.EntryDeletedNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
@@ -40,8 +36,6 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
         EntryNoteVoice::class,
         EntryNoteSticker::class,
         EntryBackupProfile::class,
-        EntryDeletedNote::class,
-        EntryDeletedFile::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -57,8 +51,6 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun noteToTagDao(): NoteToTagDao
     abstract fun stickerDao(): StickerDao
     abstract fun backupProfileDao(): BackupProfileDao
-    abstract fun deletedNoteDao(): DeletedNoteDao
-    abstract fun deletedFilesDao(): DeletedFilesDao
 
     companion object {
         private const val NAME = "Serenity.db"

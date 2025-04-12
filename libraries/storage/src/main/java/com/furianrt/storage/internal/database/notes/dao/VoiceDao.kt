@@ -18,5 +18,8 @@ internal interface VoiceDao {
     suspend fun delete(data: List<PartVoiceId>)
 
     @Query("SELECT * FROM ${EntryNoteVoice.TABLE_NAME} WHERE ${EntryNoteVoice.FIELD_NOTE_ID} = :noteId")
-    fun getVideos(noteId: String): Flow<List<EntryNoteVoice>>
+    fun getVoices(noteId: String): Flow<List<EntryNoteVoice>>
+
+    @Query("SELECT * FROM ${EntryNoteVoice.TABLE_NAME}")
+    fun getAllVoices(): Flow<List<EntryNoteVoice>>
 }
