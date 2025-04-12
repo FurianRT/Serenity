@@ -8,5 +8,4 @@ class SimpleNote(
     val fontColor: NoteFontColor,
     val fontSize: Int,
     val date: ZonedDateTime,
-    val wasSynced: Boolean,
 )

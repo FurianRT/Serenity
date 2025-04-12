@@ -6,7 +6,6 @@ import com.furianrt.core.DispatchersProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 import kotlin.math.min
 

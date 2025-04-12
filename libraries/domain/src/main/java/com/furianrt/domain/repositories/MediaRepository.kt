@@ -1,7 +1,6 @@
 package com.furianrt.domain.repositories
 
 import android.net.Uri
-import com.furianrt.domain.entities.DeletedFile
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
