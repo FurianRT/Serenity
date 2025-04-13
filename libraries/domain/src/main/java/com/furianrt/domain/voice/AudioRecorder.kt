@@ -44,11 +44,11 @@ class AudioRecorder @Inject constructor(
 
     suspend fun stop() = withContext(dispatchers.io) {
         try {
+            isRecording = false
             recorder?.stop()
             recorder?.reset()
             recorder?.release()
             recorder = null
-            isRecording = false
             true
         } catch (e: Throwable) {
             e.printStackTrace()
@@ -65,5 +65,9 @@ class AudioRecorder @Inject constructor(
         recorder?.pause()
     }
 
-    fun getCurrentVolume(): Float = min((recorder?.maxAmplitude ?: 0) / MAX_VOLUME, 1f)
+    fun getCurrentVolume(): Float = if (isRecording) {
+        min((recorder?.maxAmplitude ?: 0) / MAX_VOLUME, 1f)
+    } else {
+        0f
+    }
 }

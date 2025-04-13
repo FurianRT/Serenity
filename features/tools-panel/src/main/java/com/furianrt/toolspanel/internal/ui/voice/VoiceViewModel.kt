@@ -15,6 +15,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,6 +66,12 @@ internal class VoiceViewModel @AssistedInject constructor(
     private var recordJob: Job? = null
     private var timerJob: Job? = null
     private var volumeJob: Job? = null
+
+    override fun onCleared() {
+        launch(NonCancellable) {
+            cancelRecording()
+        }
+    }
 
     fun onEvent(event: VoiceEvent) {
         when (event) {

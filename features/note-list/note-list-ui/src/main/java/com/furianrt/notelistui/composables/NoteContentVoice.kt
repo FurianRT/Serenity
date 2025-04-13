@@ -2,8 +2,14 @@ package com.furianrt.notelistui.composables
 
 import android.net.Uri
 import android.view.HapticFeedbackConstants
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.animateIntAsState
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -34,11 +40,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -56,6 +66,7 @@ import com.furianrt.uikit.R as uiR
 
 private const val VOLUME_MULTIPLIER = 2.5f
 private const val ANIM_EDIT_MODE_DURATION = 250
+private const val ANIM_PLAY_BUTTON_DURATION = 350
 private const val PLAY_BUTTON_DEBOUNCE = 200L
 
 @Composable
@@ -99,9 +110,9 @@ private fun VoiceContent(
     onProgressSelected: (voice: Voice, value: Float) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var wasStarted by remember { mutableStateOf(false) }
+    var wasStarted by rememberSaveable { mutableStateOf(false) }
     Card(
-        modifier = modifier.width(230.dp),
+        modifier = modifier.width(240.dp),
         shape = RoundedCornerShape(24),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary),
         elevation = CardDefaults.cardElevation(0.dp),
@@ -109,8 +120,8 @@ private fun VoiceContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 8.dp, end = 4.dp, top = 8.dp, bottom = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                .padding(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             ButtonPlay(
@@ -145,38 +156,80 @@ private fun ButtonPlay(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .size(36.dp)
-            .background(MaterialTheme.colorScheme.primary, CircleShape)
-            .debounceClickable(
-                debounceInterval = PLAY_BUTTON_DEBOUNCE,
-                indication = null,
-                onClick = onClick,
+    val rotation by animateIntAsState(
+        targetValue = if (isPaused) 0 else 90,
+        animationSpec = tween(ANIM_PLAY_BUTTON_DURATION)
+    )
+
+    val scaleModifier = if (isPaused) {
+        Modifier.scale(0.7f)
+    } else {
+        val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
+        val scale by infiniteTransition.animateFloat(
+            initialValue = 0.8f,
+            targetValue = 1f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(
+                    durationMillis = 1000,
+                    easing = LinearEasing,
+                ),
+                repeatMode = RepeatMode.Reverse,
             ),
+            label = "ActionButtonScaleAnim",
+        )
+        Modifier.graphicsLayer {
+            scaleX = scale
+            scaleY = scale
+        }
+    }
+
+    Box(
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
-        AnimatedContent(
-            modifier = Modifier.size(24.dp),
-            targetState = isPaused,
-            label = "PlayAnim",
-        ) { targetState ->
-            if (targetState) {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_play),
-                    tint = MaterialTheme.colorScheme.tertiaryContainer
-                        .compositeOver(MaterialTheme.colorScheme.surface)
-                        .compositeOver(MaterialTheme.colorScheme.tertiary),
-                    contentDescription = null,
-                )
-            } else {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_pause),
-                    tint = MaterialTheme.colorScheme.tertiaryContainer
-                        .compositeOver(MaterialTheme.colorScheme.surface)
-                        .compositeOver(MaterialTheme.colorScheme.tertiary),
-                    contentDescription = null,
-                )
+        Box(
+            Modifier
+                .size(50.dp)
+                .then(scaleModifier)
+                .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
+        )
+        Box(
+            modifier = Modifier
+                .size(36.dp)
+                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                .debounceClickable(
+                    debounceInterval = PLAY_BUTTON_DEBOUNCE,
+                    indication = null,
+                    onClick = onClick,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Crossfade(
+                modifier = Modifier
+                    .size(24.dp)
+                    .graphicsLayer { rotationZ = rotation.toFloat() },
+                targetState = isPaused,
+                animationSpec = tween(200),
+                label = "PlayAnim",
+            ) { targetState ->
+                if (targetState) {
+                    Icon(
+                        painter = painterResource(uiR.drawable.ic_play),
+                        tint = MaterialTheme.colorScheme.tertiaryContainer
+                            .compositeOver(MaterialTheme.colorScheme.surface)
+                            .compositeOver(MaterialTheme.colorScheme.tertiary),
+                        contentDescription = null,
+                    )
+                } else {
+                    Icon(
+                        modifier = Modifier.rotate(-90f),
+                        painter = painterResource(uiR.drawable.ic_pause),
+                        tint = MaterialTheme.colorScheme.tertiaryContainer
+                            .compositeOver(MaterialTheme.colorScheme.surface)
+                            .compositeOver(MaterialTheme.colorScheme.tertiary),
+                        contentDescription = null,
+                    )
+                }
             }
         }
     }

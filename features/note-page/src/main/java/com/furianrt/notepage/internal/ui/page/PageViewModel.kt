@@ -155,6 +155,7 @@ internal class PageViewModel @AssistedInject constructor(
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
         audioPlayer.clearProgressListener()
         notesRepository.deleteNoteContentFromCache(noteId)
+        stopCurrentVoicePlaying()
     }
 
     fun onEvent(event: PageEvent) {
@@ -510,24 +511,34 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onVoicePlayClick(voice: UiNoteContent.Voice) {
-        _state.updateState<PageUiState.Success> { currentState ->
+        _state.doWithState<PageUiState.Success> { currentState ->
             when (currentState.playingVoiceId) {
-                voice.id -> {
-                    audioPlayer.stop()
-                    currentState.copy(playingVoiceId = null)
-                }
-
-                null -> {
-                    audioPlayer.play(voice.uri, voice.progress)
-                    currentState.copy(playingVoiceId = voice.id)
-                }
-
-                else -> {
-                    audioPlayer.stop()
-                    audioPlayer.play(voice.uri, voice.progress)
-                    currentState.copy(playingVoiceId = voice.id)
-                }
+                voice.id -> stopCurrentVoicePlaying()
+                null -> playVoice(voice)
+                else -> playNextVoice(voice)
             }
+        }
+    }
+
+    private fun playVoice(voice: UiNoteContent.Voice) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            audioPlayer.play(voice.uri, voice.progress)
+            currentState.copy(playingVoiceId = voice.id)
+        }
+    }
+
+    private fun playNextVoice(voice: UiNoteContent.Voice) {
+        _state.updateState<PageUiState.Success> { currentState ->
+            audioPlayer.stop()
+            audioPlayer.play(voice.uri, voice.progress)
+            currentState.copy(playingVoiceId = voice.id)
+        }
+    }
+
+    private fun stopCurrentVoicePlaying() {
+        _state.updateState<PageUiState.Success> { currentState ->
+            audioPlayer.stop()
+            currentState.copy(playingVoiceId = null)
         }
     }
 
@@ -599,7 +610,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun onIsSelectedChange(isSelected: Boolean) {
         if (!isSelected) {
-            audioPlayer.stop()
+            stopCurrentVoicePlaying()
             _state.updateState<PageUiState.Success> { currentState ->
                 currentState.copy(playingVoiceId = null)
             }
