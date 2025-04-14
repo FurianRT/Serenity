@@ -177,10 +177,12 @@ private fun ButtonPlay(
             ),
             label = "ActionButtonScaleAnim",
         )
-        Modifier.graphicsLayer {
-            scaleX = scale
-            scaleY = scale
-        }
+        Modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape)
     }
 
     Box(
@@ -188,10 +190,9 @@ private fun ButtonPlay(
         contentAlignment = Alignment.Center,
     ) {
         Box(
-            Modifier
+            modifier = Modifier
                 .size(50.dp)
-                .then(scaleModifier)
-                .background(MaterialTheme.colorScheme.tertiaryContainer, CircleShape),
+                .then(scaleModifier),
         )
         Box(
             modifier = Modifier
