@@ -47,10 +47,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.backup.R
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.composables.BackupButton
 import com.furianrt.backup.internal.ui.composables.BackupDate
 import com.furianrt.backup.internal.ui.composables.BackupPeriod
+import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.entities.Question
@@ -85,12 +87,14 @@ internal fun BackupScreen(
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
+    var showBackupPeriodDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is BackupEffect.CloseScreen -> onCloseRequest()
                 is BackupEffect.ShowConfirmSignOutDialog -> showSignOutConfirmationDialog = true
+                is BackupEffect.ShowBackupPeriodDialog -> showBackupPeriodDialog = true
                 is BackupEffect.ShowBackupResolution -> {
                     try {
                         val intentSenderRequest = IntentSenderRequest
@@ -131,6 +135,15 @@ internal fun BackupScreen(
             confirmText = stringResource(R.string.backup_sign_out_title),
             onDismissRequest = { showSignOutConfirmationDialog = false },
             onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnSignOutConfirmClick) },
+        )
+    }
+    if (showBackupPeriodDialog) {
+        BackupPeriodDialog(
+            selectedPeriod = (viewModel.state.value as? BackupUiState.Success)?.backupPeriod
+                ?: BackupPeriod.TreeDays,
+            hazeState = hazeState,
+            onPeriodSelected = { viewModel.onEvent(BackupScreenEvent.OnBackupPeriodSelected(it)) },
+            onDismissRequest = { showBackupPeriodDialog = false },
         )
     }
 }
@@ -260,7 +273,7 @@ private fun SuccessContent(
             }
             Spacer(Modifier.height(24.dp))
             BackupDate(
-                date = uiState.lastSyncDateTime,
+                date = uiState.lastSyncTimeTitle,
             )
             if (uiState.questions.isNotEmpty()) {
                 HorizontalDivider(
@@ -293,28 +306,9 @@ private fun PreviewSignedIn() {
         ScreenContent(
             uiState = BackupUiState.Success(
                 isAutoBackupEnabled = true,
-                backupPeriod = "1 day",
-                lastSyncDateTime = null,
-                questions = persistentListOf(
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_1_title),
-                        answer = stringResource(R.string.backup_popular_question_1_answer),
-                        isExpanded = false,
-                    ),
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_2_title),
-                        answer = stringResource(R.string.backup_popular_question_2_answer),
-                        isExpanded = true,
-                    ),
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_3_title),
-                        answer = stringResource(R.string.backup_popular_question_3_answer),
-                        isExpanded = false,
-                    ),
-                ),
+                backupPeriod = BackupPeriod.TreeDays,
+                lastSyncTimeTitle = null,
+                questions = buildPreviewQuestionsList(expandedIndex = 0),
                 authState = BackupUiState.Success.AuthState.SignedIn(
                     email = "felmemfmelflmfe",
                     isLoading = false,
@@ -331,28 +325,9 @@ private fun PreviewSignedOut() {
         ScreenContent(
             uiState = BackupUiState.Success(
                 isAutoBackupEnabled = true,
-                backupPeriod = "1 day",
-                lastSyncDateTime = null,
-                questions = persistentListOf(
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_1_title),
-                        answer = stringResource(R.string.backup_popular_question_1_answer),
-                        isExpanded = true,
-                    ),
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_2_title),
-                        answer = stringResource(R.string.backup_popular_question_2_answer),
-                        isExpanded = false,
-                    ),
-                    Question(
-                        id = "",
-                        title = stringResource(R.string.backup_popular_question_3_title),
-                        answer = stringResource(R.string.backup_popular_question_3_answer),
-                        isExpanded = false,
-                    ),
-                ),
+                backupPeriod = BackupPeriod.TreeDays,
+                lastSyncTimeTitle = null,
+                questions = buildPreviewQuestionsList(expandedIndex = 1),
                 authState = BackupUiState.Success.AuthState.SignedOut(isLoading = false),
             ),
         )
@@ -365,10 +340,10 @@ private fun PreviewLoading() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState.Success(
-                isAutoBackupEnabled = true,
-                backupPeriod = "1 day",
-                lastSyncDateTime = null,
-                questions = persistentListOf(),
+                isAutoBackupEnabled = false,
+                backupPeriod = BackupPeriod.TreeDays,
+                lastSyncTimeTitle = null,
+                questions = buildPreviewQuestionsList(expandedIndex = null),
                 authState = BackupUiState.Success.AuthState.SignedIn(
                     email = "felmemfmelflmfe",
                     isLoading = true,
@@ -377,3 +352,25 @@ private fun PreviewLoading() {
         )
     }
 }
+
+@Composable
+private fun buildPreviewQuestionsList(expandedIndex: Int?) = persistentListOf(
+    Question(
+        id = "",
+        title = stringResource(R.string.backup_popular_question_1_title),
+        answer = stringResource(R.string.backup_popular_question_1_answer),
+        isExpanded = expandedIndex == 0,
+    ),
+    Question(
+        id = "",
+        title = stringResource(R.string.backup_popular_question_2_title),
+        answer = stringResource(R.string.backup_popular_question_2_answer),
+        isExpanded = expandedIndex == 1,
+    ),
+    Question(
+        id = "",
+        title = stringResource(R.string.backup_popular_question_3_title),
+        answer = stringResource(R.string.backup_popular_question_3_answer),
+        isExpanded = expandedIndex == 2,
+    ),
+)

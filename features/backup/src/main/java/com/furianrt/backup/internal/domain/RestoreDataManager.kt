@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -68,6 +69,8 @@ internal class RestoreDataManager @Inject constructor(
         }
 
         saveNotesData(remoteNotes)
+
+        backupRepository.setLastSyncDate(ZonedDateTime.now())
 
         progressState.update { SyncState.Idle }
     }

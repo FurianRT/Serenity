@@ -6,24 +6,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
+import com.furianrt.backup.internal.domain.entities.AuthResult
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
+import com.furianrt.backup.internal.domain.entities.SyncState
+import com.furianrt.backup.internal.domain.exceptions.AuthException
+import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.domain.usecases.AuthorizeUseCase
 import com.furianrt.backup.internal.domain.usecases.GetBackupProfileUseCase
 import com.furianrt.backup.internal.domain.usecases.GetPopularQuestionsUseCase
 import com.furianrt.backup.internal.domain.usecases.SignInUseCase
 import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
-import com.furianrt.backup.internal.domain.entities.AuthResult
-import com.furianrt.backup.internal.domain.entities.SyncState
-import com.furianrt.backup.internal.domain.entities.PopularQuestion
-import com.furianrt.backup.internal.domain.exceptions.AuthException
-import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.extensions.toQuestion
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.core.doWithState
 import com.furianrt.core.mapImmutable
-import com.furianrt.domain.entities.BackupProfile
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.extensions.toDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -31,8 +32,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import com.furianrt.uikit.R as uiR
+
+private const val LAST_SYNC_DATE_PATTERN = "dd/MM/yyyy hh:mm a"
 
 @HiltViewModel
 internal class BackupViewModel @Inject constructor(
@@ -49,6 +53,32 @@ internal class BackupViewModel @Inject constructor(
 
     private val expandedQuestionsState = MutableStateFlow(emptySet<String>())
     private val isAuthInProgressState = MutableStateFlow(false)
+    private val questionsListFlow = combine(
+        getPopularQuestionsUseCase(),
+        expandedQuestionsState,
+    ) { allQuestions, expandedQuestions ->
+        allQuestions.mapImmutable { popularQuestion ->
+            popularQuestion.toQuestion(
+                isExpanded = expandedQuestions.contains(popularQuestion.id),
+            )
+        }
+    }
+
+    private val authStatusFlow = combine(
+        getBackupProfileUseCase(),
+        isAuthInProgressState,
+    ) { profile, isInProgress ->
+        if (profile != null) {
+            BackupUiState.Success.AuthState.SignedIn(
+                email = profile.email,
+                isLoading = isInProgress,
+            )
+        } else {
+            BackupUiState.Success.AuthState.SignedOut(
+                isLoading = isInProgress,
+            )
+        }
+    }
 
     init {
         launch {
@@ -87,11 +117,11 @@ internal class BackupViewModel @Inject constructor(
     }
 
     val state = combine(
-        getPopularQuestionsUseCase(),
-        expandedQuestionsState,
-        getBackupProfileUseCase(),
-        isAuthInProgressState,
+        questionsListFlow,
+        authStatusFlow,
         backupRepository.isAutoBackupEnabled(),
+        backupRepository.getAutoBackupPeriod(),
+        backupRepository.getLastSyncDate(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
@@ -116,7 +146,14 @@ internal class BackupViewModel @Inject constructor(
                 restoreDataManager.startRestore()
             }
 
-            is BackupScreenEvent.OnBackupPeriodClick -> {}
+            is BackupScreenEvent.OnBackupPeriodClick -> {
+                _effect.tryEmit(BackupEffect.ShowBackupPeriodDialog)
+            }
+
+            is BackupScreenEvent.OnBackupPeriodSelected -> launch {
+                backupRepository.setAutoBackupPeriod(event.period)
+            }
+
             is BackupScreenEvent.OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
             is BackupScreenEvent.OnQuestionClick -> toggleQuestionExpandedState(event.question)
             is BackupScreenEvent.OnSignInClick -> authorize()
@@ -205,29 +242,16 @@ internal class BackupViewModel @Inject constructor(
     }
 
     private fun buildState(
-        questions: List<PopularQuestion>,
-        expandedQuestions: Set<String>,
-        backupProfile: BackupProfile?,
-        isAuthInProgress: Boolean,
+        questions: ImmutableList<Question>,
+        authState: BackupUiState.Success.AuthState,
         isAutoBackupEnabled: Boolean,
+        backupPeriod: BackupPeriod,
+        lastSyncDate: ZonedDateTime?,
     ): BackupUiState = BackupUiState.Success(
         isAutoBackupEnabled = isAutoBackupEnabled,
-        backupPeriod = "1 day",
-        lastSyncDateTime = null,
-        questions = questions.mapImmutable { popularQuestion ->
-            popularQuestion.toQuestion(
-                isExpanded = expandedQuestions.contains(popularQuestion.id),
-            )
-        },
-        authState = if (backupProfile != null) {
-            BackupUiState.Success.AuthState.SignedIn(
-                email = backupProfile.email,
-                isLoading = isAuthInProgress,
-            )
-        } else {
-            BackupUiState.Success.AuthState.SignedOut(
-                isLoading = isAuthInProgress,
-            )
-        },
+        backupPeriod = backupPeriod,
+        lastSyncTimeTitle = lastSyncDate?.toDateString(LAST_SYNC_DATE_PATTERN),
+        questions = questions,
+        authState = authState,
     )
 }

@@ -12,6 +12,7 @@ import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import com.furianrt.uikit.utils.DialogResultListener
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -105,7 +106,10 @@ internal class NoteListViewModel @Inject constructor(
             }
 
             NOTE_CREATE_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
-                scrollToNoteState.update { result.data as String }
+                launch {
+                    delay(500)
+                    scrollToNoteState.update { result.data as String }
+                }
             } else {
                 scrollToNoteState.update { null }
             }

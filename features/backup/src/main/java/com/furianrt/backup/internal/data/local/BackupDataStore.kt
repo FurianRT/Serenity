@@ -4,14 +4,20 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private val KEY_GOOGLE_ACCESS_TOKEN = stringPreferencesKey("google_access_token")
 private val KEY_AUTO_BACKUP = booleanPreferencesKey("auto_backup")
+private val KEY_AUTO_BACKUP_PERIOD = longPreferencesKey("auto_backup_period")
+private val KEY_LAST_SYNC_DATE = stringPreferencesKey("last_sync_date")
 
 @Singleton
 internal class BackupDataStore @Inject constructor(
@@ -29,5 +35,27 @@ internal class BackupDataStore @Inject constructor(
 
     suspend fun setAutoBackupEnabled(enabled: Boolean) {
         dataStore.edit { prefs -> prefs[KEY_AUTO_BACKUP] = enabled }
+    }
+
+    fun getAutoBackupPeriod(): Flow<BackupPeriod> = dataStore.data
+        .map { prefs ->
+            BackupPeriod.fromValue(prefs[KEY_AUTO_BACKUP_PERIOD]) ?: BackupPeriod.TreeDays
+        }
+
+    suspend fun setAutoBackupPeriod(period: BackupPeriod) {
+        dataStore.edit { prefs -> prefs[KEY_AUTO_BACKUP_PERIOD] = period.value }
+    }
+
+    fun getLastSyncDate(): Flow<ZonedDateTime?> = dataStore.data
+        .map { prefs ->
+            prefs[KEY_LAST_SYNC_DATE]?.let { value ->
+                ZonedDateTime.parse(value, DateTimeFormatter.ISO_ZONED_DATE_TIME)
+            }
+        }
+
+    suspend fun setLastSyncDate(date: ZonedDateTime) {
+        dataStore.edit { prefs ->
+            prefs[KEY_LAST_SYNC_DATE] = date.format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+        }
     }
 }

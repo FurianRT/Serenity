@@ -16,12 +16,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.backup.R
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun BackupPeriod(
-    period: String,
+    period: BackupPeriod,
     isEnabled: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -41,7 +42,7 @@ internal fun BackupPeriod(
         )
         Text(
             modifier = Modifier.alpha(0.5f),
-            text = period,
+            text = getBackupPeriodTitle(period),
             style = MaterialTheme.typography.labelMedium,
         )
     }
@@ -52,7 +53,7 @@ internal fun BackupPeriod(
 private fun Preview() {
     SerenityTheme {
         BackupPeriod(
-            period = "1 day",
+            period = BackupPeriod.TreeDays,
             isEnabled = true,
             onClick = {},
         )

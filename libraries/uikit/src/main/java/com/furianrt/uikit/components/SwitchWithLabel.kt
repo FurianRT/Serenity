@@ -49,7 +49,9 @@ fun SwitchWithLabel(
             enabled = enabled,
             colors = SwitchDefaults.colors(
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,
-                uncheckedTrackColor = MaterialTheme.colorScheme.tertiary,
+                uncheckedTrackColor = MaterialTheme.colorScheme.outlineVariant,
+                uncheckedBorderColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                uncheckedThumbColor = MaterialTheme.colorScheme.onTertiaryContainer,
             )
         )
     }

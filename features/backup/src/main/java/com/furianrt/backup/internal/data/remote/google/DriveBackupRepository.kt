@@ -10,6 +10,7 @@ import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.data.remote.google.drive.DriveApiService
 import com.furianrt.backup.internal.data.remote.google.info.UserInfoApiService
 import com.furianrt.backup.internal.data.remote.google.info.primaryEmail
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
@@ -39,10 +40,12 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStreamReader
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
 private const val USER_INFO_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email"
+private const val USER_PROFILE_SCOPE = "profile"
 
 @Singleton
 internal class DriveBackupRepository @Inject constructor(
@@ -61,6 +64,7 @@ internal class DriveBackupRepository @Inject constructor(
             val scopes = listOf(
                 Scope(DriveScopes.DRIVE_APPDATA),
                 Scope(USER_INFO_EMAIL_SCOPE),
+                Scope(USER_PROFILE_SCOPE),
             )
             val authRequest = AuthorizationRequest.Builder()
                 .setRequestedScopes(scopes)
@@ -99,6 +103,18 @@ internal class DriveBackupRepository @Inject constructor(
 
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
         backupDataStore.setAutoBackupEnabled(enabled)
+    }
+
+    override fun getAutoBackupPeriod(): Flow<BackupPeriod> = backupDataStore.getAutoBackupPeriod()
+
+    override suspend fun setAutoBackupPeriod(period: BackupPeriod) {
+        backupDataStore.setAutoBackupPeriod(period)
+    }
+
+    override fun getLastSyncDate(): Flow<ZonedDateTime?> = backupDataStore.getLastSyncDate()
+
+    override suspend fun setLastSyncDate(date: ZonedDateTime) {
+        backupDataStore.setLastSyncDate(date)
     }
 
     override suspend fun getUserEmail(): Result<String?> {

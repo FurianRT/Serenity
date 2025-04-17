@@ -14,6 +14,11 @@
     <string name="backup_confirm_sign_out_title">Leaving so soon?</string>
     <string name="backup_confirm_sign_out_message">You can sign back in anytime, but please note that backups will be paused until then</string>
     <string name="backup_unknown_profile_email_title">Unknown email</string>
+    <string name="backup_period_one_day_title">1 day</string>
+    <string name="backup_period_three_days_title">3 days</string>
+    <string name="backup_period_one_week_title">1 week</string>
+    <string name="backup_period_two_weeks_title">2 weeks</string>
+    <string name="backup_period_one_month_title">1 month</string>
 
     <string name="backup_popular_question_1_title">How does synchronization with Google Drive work</string>
     <string name="backup_popular_question_1_answer">Your notes are automatically backed up to your personal Google Drive account. This ensures that your data is securely stored and can be accessed from multiple devices</string>

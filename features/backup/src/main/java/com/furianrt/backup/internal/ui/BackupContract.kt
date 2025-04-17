@@ -2,6 +2,7 @@ package com.furianrt.backup.internal.ui
 
 import android.content.Intent
 import android.content.IntentSender
+import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.entities.Question
 import kotlinx.collections.immutable.ImmutableList
@@ -10,8 +11,8 @@ internal sealed interface BackupUiState {
 
     data class Success(
         val isAutoBackupEnabled: Boolean,
-        val backupPeriod: String,
-        val lastSyncDateTime: String?,
+        val backupPeriod: BackupPeriod,
+        val lastSyncTimeTitle: String?,
         val questions: ImmutableList<Question>,
         val authState: AuthState,
     ) : BackupUiState {
@@ -38,6 +39,7 @@ internal sealed interface BackupScreenEvent {
     data object OnButtonBackupClick : BackupScreenEvent
     data object OnButtonRestoreClick : BackupScreenEvent
     data object OnBackupPeriodClick : BackupScreenEvent
+    data class OnBackupPeriodSelected(val period: BackupPeriod) : BackupScreenEvent
     data class OnAutoBackupCheckChange(val isChecked: Boolean) : BackupScreenEvent
     data class OnQuestionClick(val question: Question) : BackupScreenEvent
     data object OnSignInClick : BackupScreenEvent
@@ -50,6 +52,7 @@ internal sealed interface BackupScreenEvent {
 internal sealed interface BackupEffect {
     data object CloseScreen : BackupEffect
     data object ShowConfirmSignOutDialog : BackupEffect
+    data object ShowBackupPeriodDialog : BackupEffect
     data class ShowBackupResolution(val intentSender: IntentSender) : BackupEffect
     data class ShowErrorToast(val text: String) : BackupEffect
 }
