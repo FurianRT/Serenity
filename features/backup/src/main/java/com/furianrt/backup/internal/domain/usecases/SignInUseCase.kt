@@ -12,6 +12,7 @@ internal class SignInUseCase @Inject constructor(
     private val backupRepository: BackupRepository,
     private val profileRepository: ProfileRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val signOutUseCase: SignOutUseCase,
 ) {
     suspend operator fun invoke(accessToken: String?): Result<Unit> {
         if (accessToken == null) {
@@ -26,7 +27,12 @@ internal class SignInUseCase @Inject constructor(
 
         val email = backupRepository.getUserEmail()
             .onFailure { it.printStackTrace() }
-            .getOrNull() ?: return Result.failure(AuthException.FetchEmailException())
+            .getOrNull()
+
+        if (email == null) {
+            signOutUseCase(email = null)
+            return Result.failure(AuthException.FetchEmailException())
+        }
 
         profileRepository.saveBackupProfile(BackupProfile(email))
 
