@@ -33,8 +33,8 @@ private enum class PanelState {
 
 @Composable
 internal fun SelectedPanel(
-    titleState: NoteTitleState = NoteTitleState(),
     modifier: Modifier = Modifier,
+    titleState: NoteTitleState = NoteTitleState(),
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
     AnimatedContent(

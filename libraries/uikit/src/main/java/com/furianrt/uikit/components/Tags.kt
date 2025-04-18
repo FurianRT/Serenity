@@ -35,9 +35,9 @@ private const val ANIM_EDIT_MODE_DURATION = 250
 fun TagItem(
     title: String,
     isRemovable: Boolean,
+    modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     onRemoveClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
     icon: (@Composable () -> Unit)? = null,
 ) {
     Box(

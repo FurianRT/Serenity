@@ -29,9 +29,9 @@ import com.furianrt.uikit.R as uiR
 internal fun ColorsPanel(
     colors: ImmutableList<UiNoteFontColor>,
     selectedColor: UiNoteFontColor?,
+    modifier: Modifier = Modifier,
     onColorSelected: (color: UiNoteFontColor?) -> Unit = {},
     onCloseClick: () -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyListState()
     Row(

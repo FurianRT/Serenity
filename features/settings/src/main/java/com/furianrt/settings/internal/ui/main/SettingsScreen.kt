@@ -182,7 +182,7 @@ private fun ThemeSelector(
     modifier: Modifier = Modifier,
 ) {
     val initialIndex = remember(themes) {
-        themes.indexOfFirst { it.colors.any { it.id == selected.id } }
+        themes.indexOfFirst { theme -> theme.colors.any { it.id == selected.id } }
     }
     Column(
         modifier = modifier

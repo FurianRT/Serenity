@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.composed
 
 operator fun RippleAlpha.div(value: Float) = RippleAlpha(
     draggedAlpha = draggedAlpha / value,
@@ -22,12 +21,10 @@ operator fun RippleAlpha.times(value: Float) = RippleAlpha(
 
 fun Modifier.clickableNoRipple(
     onClick: () -> Unit,
-) = this.composed {
-    clickableNoRipple(
-        onClick = onClick,
-        interactionSource = null,
-    )
-}
+) = this.clickableNoRipple(
+    onClick = onClick,
+    interactionSource = null,
+)
 
 fun Modifier.clickableNoRipple(
     interactionSource: MutableInteractionSource?,

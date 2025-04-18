@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -55,11 +56,11 @@ import com.furianrt.uikit.R as uiR
 @Composable
 internal fun StickerScreenItem(
     item: StickerItem,
+    modifier: Modifier = Modifier,
     onRemoveClick: (item: StickerItem) -> Unit = {},
     onDragged: (delta: Offset) -> Unit = {},
     onTransformed: () -> Unit = {},
     onClick: (tem: StickerItem) -> Unit = {},
-    modifier: Modifier = Modifier,
 ) {
     var parentCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var childCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
@@ -70,12 +71,15 @@ internal fun StickerScreenItem(
 
     var transformTrigger by remember { mutableIntStateOf(0) }
     var isFirstLaunch by remember { mutableStateOf(true) }
+
+    val onTransformedState by rememberUpdatedState(onTransformed)
+
     LaunchedEffect(Unit) {
         snapshotFlow { transformTrigger }
             .debounce(150)
             .collect {
                 if (!isFirstLaunch) {
-                    onTransformed()
+                    onTransformedState()
                 }
                 isFirstLaunch = false
             }
@@ -163,7 +167,7 @@ internal fun StickerScreenItem(
                                 initialDragOffset = null
                                 initialAngle = item.state.rotation
                                 initialScale = item.state.scale
-                                onTransformed()
+                                onTransformedState()
                             }
                         ) { change, _ ->
                             change.consume()
@@ -212,7 +216,7 @@ internal fun StickerScreenItem(
                     .offset { IntOffset(offsetPx.toInt(), -offsetPx.toInt()) },
                 onClick = {
                     item.state.isFlipped = !item.state.isFlipped
-                    onTransformed()
+                    onTransformedState()
                 },
             )
         }

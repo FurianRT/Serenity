@@ -49,7 +49,7 @@ internal class MediaSaver @Inject constructor(
 ) {
     private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
     private val canceledEntries = mutableSetOf<QueueEntry>()
-    private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = Int.MAX_VALUE)
+    private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = 1000)
 
     init {
         queue
@@ -116,7 +116,7 @@ internal class MediaSaver @Inject constructor(
 
     @Synchronized
     private fun addCanceledEntry(entry: QueueEntry) {
-        canceledEntries.remove(entry)
+        canceledEntries.add(entry)
     }
 
     @Synchronized
