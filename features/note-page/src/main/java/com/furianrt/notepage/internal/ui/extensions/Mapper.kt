@@ -72,14 +72,16 @@ private fun LocalNote.Sticker.toStickerItem(@DrawableRes icon: Int) = StickerIte
 
 private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {
     is MediaResult.Media.Image -> MediaBlock.Image(
-        name = UUID.randomUUID().toString() + name,
+        id = UUID.randomUUID().toString(),
+        name = name,
         uri = uri,
         ratio = ratio,
         addedDate = ZonedDateTime.now(),
     )
 
     is MediaResult.Media.Video -> MediaBlock.Video(
-        name = UUID.randomUUID().toString() + name,
+        id = UUID.randomUUID().toString(),
+        name = name,
         uri = uri,
         ratio = ratio,
         addedDate = ZonedDateTime.now(),

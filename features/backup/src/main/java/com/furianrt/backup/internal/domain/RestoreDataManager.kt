@@ -126,7 +126,7 @@ internal class RestoreDataManager @Inject constructor(
             .filterIsInstance<LocalNote.Content.Voice>()
 
         val mediaToSave = remoteMedia
-            .filter { remote -> localMedia.none { it.name == remote.name } }
+            .filter { remote -> localMedia.none { it.id == remote.id } }
         val voicesToSave = remoteVoices
             .filter { remote -> localVoices.none { it.id == remote.id } }
 
@@ -150,8 +150,8 @@ internal class RestoreDataManager @Inject constructor(
         media: LocalNote.Content.Media,
         remoteFiles: List<RemoteFile>,
     ): Boolean {
-        val remoteFileId = remoteFiles.find { it.name == media.name }?.id ?: return true
-        val localFile = mediaRepository.createMediaDestinationFile(noteId, media.name)
+        val remoteFileId = remoteFiles.find { it.name == media.id }?.id ?: return true
+        val localFile = mediaRepository.createMediaDestinationFile(noteId, media.id, media.name)
             ?: return false
         return backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
             .map { true }

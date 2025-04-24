@@ -233,9 +233,9 @@ private fun Preview() {
             uiState = MediaViewUiState(
                 initialMediaIndex = 1,
                 media = persistentListOf(
-                    MediaItem.Image(name = "1", uri = Uri.EMPTY, ratio = 0.5f),
-                    MediaItem.Image(name = "2", uri = Uri.EMPTY, ratio = 0.5f),
-                    MediaItem.Image(name = "3", uri = Uri.EMPTY, ratio = 1.4f),
+                    MediaItem.Image(id = "1", name = "1", uri = Uri.EMPTY, ratio = 0.5f),
+                    MediaItem.Image(id = "2", name = "2", uri = Uri.EMPTY, ratio = 0.5f),
+                    MediaItem.Image(id = "3", name = "3", uri = Uri.EMPTY, ratio = 1.4f),
                 ),
             ),
         )

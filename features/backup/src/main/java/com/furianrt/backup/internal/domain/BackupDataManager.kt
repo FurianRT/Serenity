@@ -66,7 +66,7 @@ internal class BackupDataManager @Inject constructor(
     }
 
     private suspend fun getLocalFilesIds(): Set<String> {
-        val mediaIds = mediaRepository.getAllMedia().first().map(LocalNote.Content.Media::name)
+        val mediaIds = mediaRepository.getAllMedia().first().map(LocalNote.Content.Media::id)
         val voicesIds = mediaRepository.getAllVoices().first().map(LocalNote.Content.Voice::id)
         return buildSet {
             addAll(mediaIds)
@@ -127,7 +127,7 @@ internal class BackupDataManager @Inject constructor(
                 }
 
                 is LocalNote.Content.MediaBlock -> content.media.forEach { media ->
-                    if (remoteFiles.any { it.name == media.name }) {
+                    if (remoteFiles.any { it.name == media.id }) {
                         return@forEach
                     }
                     when (media) {
@@ -150,54 +150,4 @@ internal class BackupDataManager @Inject constructor(
         }
         return true
     }
-
-
-    /* private suspend fun backupAllNotesData(
-         notes: List<LocalNote>,
-     ): Boolean = if (backupNotesJson(notes)) {
-         notes.forEachIndexed { index, note ->
-             if (backupNoteFiles(note)) {
-                 progressState.update {
-                     BackupState.Progress(value = index.toFloat() / notes.count())
-                 }
-             } else {
-                 return false
-             }
-         }
-         true
-     } else {
-         false
-     }
- */
-
-
-    /* private suspend fun backupNoteFiles(note: LocalNote): Boolean {
-
-         driveApiService.createFolder(folderMetadata = buildFolderMetadata(note.id))
-
-         note.content.forEach { content ->
-             when (content) {
-                 is LocalNote.Content.Voice -> {
-                     if (!backupVoice(note.id, content)) {
-                         return false
-                     }
-                 }
-
-                 is LocalNote.Content.MediaBlock -> {
-                     content.media.forEach { media ->
-                         val isSuccess = when (media) {
-                             is LocalNote.Content.Image -> backupImage(note.id, media)
-                             is LocalNote.Content.Video -> backupVideo(note.id, media)
-                         }
-                         if (!isSuccess) {
-                             return false
-                         }
-                     }
-                 }
-
-                 is LocalNote.Content.Title -> Unit
-             }
-         }
-         return true
-     }*/
 }

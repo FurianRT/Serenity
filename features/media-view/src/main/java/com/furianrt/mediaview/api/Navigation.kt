@@ -13,7 +13,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class MediaViewRoute(
     val noteId: String,
-    val mediaName: String,
+    val mediaId: String,
     val dialogId: Int,
     val requestId: String,
 )

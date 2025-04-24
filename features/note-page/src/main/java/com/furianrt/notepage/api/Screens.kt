@@ -87,7 +87,7 @@ class PageScreenState(
             .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {
             listState.animateScrollToItem(position)
-        }*/
+        }*/ // TODO
     }
 
     companion object {
@@ -138,7 +138,7 @@ fun NotePageScreen(
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
 ) {
     NotePageScreenInternal(
         state = state,

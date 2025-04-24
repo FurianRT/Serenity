@@ -40,16 +40,16 @@ internal class MediaViewModel @Inject constructor(
     private val _effect = MutableSharedFlow<MediaViewEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
 
-    private val deletedMediaNames = mutableSetOf<String>()
+    private val deletedMediaIds = mutableSetOf<String>()
 
     override fun onCleared() {
-        if (deletedMediaNames.isNotEmpty()) {
+        if (deletedMediaIds.isNotEmpty()) {
             dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = DialogIdentifier(
                     requestId = route.requestId,
                     dialogId = route.dialogId,
                 ),
-                code = DialogResult.Ok(data = deletedMediaNames),
+                code = DialogResult.Ok(data = deletedMediaIds),
             )
         }
     }
@@ -62,7 +62,7 @@ internal class MediaViewModel @Inject constructor(
 
             is MediaViewEvent.OnButtonDeleteClick -> {
                 val media = _state.value.media.getOrNull(event.mediaIndex) ?: return
-                deletedMediaNames.add(media.name)
+                deletedMediaIds.add(media.id)
                 val resultMedia = _state.value.media.toPersistentList().removeAt(event.mediaIndex)
                 if (resultMedia.isEmpty()) {
                     _effect.tryEmit(MediaViewEffect.CloseScreen)
@@ -88,7 +88,7 @@ internal class MediaViewModel @Inject constructor(
         val media = getNoteMediaUseCase(route.noteId)
         return MediaViewUiState(
             media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
-            initialMediaIndex = media.indexOfFirstOrNull { it.name == route.mediaName } ?: 0,
+            initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
         )
     }
 }

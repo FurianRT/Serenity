@@ -7,7 +7,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
-import com.furianrt.storage.internal.database.notes.entities.PartVideoName
+import com.furianrt.storage.internal.database.notes.entities.PartVideoId
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
 import kotlinx.coroutines.flow.Flow
 
@@ -20,7 +20,7 @@ internal interface VideoDao {
     suspend fun update(data: PartVideoUri)
 
     @Delete(entity = EntryNoteVideo::class)
-    suspend fun delete(data: List<PartVideoName>)
+    suspend fun delete(data: List<PartVideoId>)
 
     @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NOTE_ID} = :noteId")
     fun getVideos(noteId: String): Flow<List<EntryNoteVideo>>
@@ -28,6 +28,6 @@ internal interface VideoDao {
     @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME}")
     fun getAllVideos(): Flow<List<EntryNoteVideo>>
 
-    @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NAME} = :videoName AND ${EntryNoteVideo.FIELD_IS_SAVED} = 1)")
-    suspend fun isSaved(videoName: String): Boolean
+    @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_ID} = :videoId AND ${EntryNoteVideo.FIELD_IS_SAVED} = 1)")
+    suspend fun isSaved(videoId: String): Boolean
 }

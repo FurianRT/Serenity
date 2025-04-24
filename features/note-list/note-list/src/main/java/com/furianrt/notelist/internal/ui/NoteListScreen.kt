@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -142,9 +143,13 @@ private fun MainSuccess(
     onEvent: (event: NoteListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
-            screenState.scrollToPosition(uiState.scrollToPosition)
+            screenState.scrollToPosition(
+                position = uiState.scrollToPosition,
+                toolbarHeight = density.run { ToolbarConstants.bigToolbarHeight.toPx().toInt() },
+            )
             onEvent(NoteListEvent.OnScrolledToItem)
         }
     }

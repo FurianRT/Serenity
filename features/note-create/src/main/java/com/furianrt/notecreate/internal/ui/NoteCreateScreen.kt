@@ -55,7 +55,7 @@ import java.time.ZonedDateTime
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun NoteCreateScreen(
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {

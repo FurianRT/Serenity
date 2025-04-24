@@ -168,7 +168,7 @@ internal class DriveBackupRepository @Inject constructor(
     }
 
     override suspend fun uploadMedia(media: LocalNote.Content.Media): Result<Unit> = uploadFile(
-        name = media.name,
+        name = media.id,
         fileUri = media.uri,
         mimeType = when (media) {
             is LocalNote.Content.Image -> "image/*"

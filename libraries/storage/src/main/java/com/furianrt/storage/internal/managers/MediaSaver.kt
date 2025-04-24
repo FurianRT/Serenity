@@ -28,14 +28,14 @@ private class QueueEntry(
         other as QueueEntry
 
         if (noteId != other.noteId) return false
-        if (media.name != other.media.name) return false
+        if (media.id != other.media.id) return false
 
         return true
     }
 
     override fun hashCode(): Int {
         var result = noteId.hashCode()
-        result = 31 * result + media.name.hashCode()
+        result = 31 * result + media.id.hashCode()
         return result
     }
 }
@@ -86,20 +86,22 @@ internal class MediaSaver @Inject constructor(
         if (isMediaSaved(entry.media)) {
             return
         }
-        val resultUri = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
+        val savedMediaData = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
         when (entry.media) {
             is LocalNote.Content.Image -> imageDao.update(
                 PartImageUri(
-                    name = entry.media.name,
-                    uri = resultUri,
+                    id = entry.media.id,
+                    name = savedMediaData.name,
+                    uri = savedMediaData.uri,
                     isSaved = true,
                 ),
             )
 
             is LocalNote.Content.Video -> videoDao.update(
                 PartVideoUri(
-                    name = entry.media.name,
-                    uri = resultUri,
+                    id = entry.media.id,
+                    name = savedMediaData.name,
+                    uri = savedMediaData.uri,
                     isSaved = true,
                 ),
             )
@@ -107,8 +109,8 @@ internal class MediaSaver @Inject constructor(
     }
 
     private suspend fun isMediaSaved(media: LocalNote.Content.Media): Boolean = when (media) {
-        is LocalNote.Content.Image -> imageDao.isSaved(media.name)
-        is LocalNote.Content.Video -> videoDao.isSaved(media.name)
+        is LocalNote.Content.Image -> imageDao.isSaved(media.id)
+        is LocalNote.Content.Video -> videoDao.isSaved(media.id)
     }
 
     @Synchronized

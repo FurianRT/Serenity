@@ -37,6 +37,7 @@ sealed class UiNoteContent(open val id: String) {
 
         @Immutable
         sealed class Media(
+            open val id: String,
             open val name: String,
             open val uri: Uri,
             open val ratio: Float,
@@ -45,20 +46,22 @@ sealed class UiNoteContent(open val id: String) {
 
         @Immutable
         data class Image(
+            override val id: String,
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
             override val addedDate: ZonedDateTime,
-        ) : Media(name, uri, ratio, addedDate)
+        ) : Media(id, name, uri, ratio, addedDate)
 
         @Immutable
         data class Video(
+            override val id: String,
             override val name: String,
             override val uri: Uri,
             override val ratio: Float,
             override val addedDate: ZonedDateTime,
             val duration: Int,
-        ) : Media(name, uri, ratio, addedDate)
+        ) : Media(id, name, uri, ratio, addedDate)
     }
 }
 

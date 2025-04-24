@@ -113,7 +113,7 @@ internal fun NotePageScreenInternal(
     isNoteCreationMode: Boolean,
     onFocusChange: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
@@ -151,7 +151,7 @@ internal fun NotePageScreenInternal(
 
                 is PageEffect.OpenMediaViewScreen -> {
                     keyboardController?.hide()
-                    openMediaViewScreen(effect.noteId, effect.mediaName, effect.identifier)
+                    openMediaViewScreen(effect.noteId, effect.mediaId, effect.identifier)
                 }
 
                 is PageEffect.OpenMediaViewer -> openMediaViewer(effect.route)

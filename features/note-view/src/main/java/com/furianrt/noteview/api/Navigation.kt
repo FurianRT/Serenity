@@ -78,7 +78,7 @@ fun NavController.navigateToNoteView(
 ) = navigate(route = route, builder = navOptions)
 
 fun NavGraphBuilder.noteViewScreen(
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {

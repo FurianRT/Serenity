@@ -1,7 +1,11 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
+import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,14 +15,13 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
@@ -38,6 +41,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -55,6 +59,8 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.size.Precision
 import coil3.video.VideoFrameDecoder
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
@@ -73,6 +79,10 @@ import java.time.ZonedDateTime
 import com.furianrt.uikit.R as uiR
 
 private const val CONTENT_TRANSITION_DURATION = 400
+private const val LONG_CLICK_SCALE = 0.95f
+private const val LONG_CLICK_SCALE_DURATION = 350
+private const val CROSS_FADE_DURATION = 150
+private const val BLURRED_MEDIA_KEY_POSTFIX = "blurred"
 
 @Composable
 fun NoteContentMedia(
@@ -96,7 +106,7 @@ fun NoteContentMedia(
     ) { targetState ->
         when (targetState.media.count()) {
             1 -> OneMediaHolder(
-                modifier = Modifier.sizeIn(maxHeight = targetState.contentHeight),
+                modifier = Modifier.height(targetState.contentHeight),
                 media = targetState.media[0],
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
@@ -176,12 +186,27 @@ private fun OneMediaHolder(
             onRemoveClick = onRemoveClick,
         )
     } else {
+        val interpolator = remember { OvershootInterpolator(5.0f) }
         val haptic = LocalHapticFeedback.current
         var showDropDownMenu by remember { mutableStateOf(false) }
+        val longClickScale by animateFloatAsState(
+            targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
+            animationSpec = tween(
+                durationMillis = LONG_CLICK_SCALE_DURATION,
+                easing = if (showDropDownMenu) {
+                    Easing { interpolator.getInterpolation(it) }
+                } else {
+                    FastOutSlowInEasing
+                }
+            ),
+        )
         Box(
             modifier = modifier
-                .fillMaxWidth()
-                .height(IntrinsicSize.Min)
+                .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = longClickScale
+                    scaleY = longClickScale
+                }
                 .clip(RoundedCornerShape(8.dp))
                 .applyIf(clickable) {
                     Modifier.combinedClickable(
@@ -196,17 +221,20 @@ private fun OneMediaHolder(
         ) {
             MediaItem(
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .blur(32.dp),
                 media = media,
                 cornerRadius = 0.dp,
+                cacheExtraKey = BLURRED_MEDIA_KEY_POSTFIX,
             )
             Box {
                 MediaItem(
-                    modifier = Modifier.aspectRatio(
-                        ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
-                        matchHeightConstraintsFirst = true,
-                    ),
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .aspectRatio(
+                            ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
+                            matchHeightConstraintsFirst = true,
+                        ),
                     media = media,
                     cornerRadius = 0.dp,
                     contentScale = ContentScale.Crop,
@@ -245,7 +273,9 @@ private fun RowMediaHolder(
         subList.forEachIndexed { index, item ->
             val weight = if (media.count() >= maxImagesCount) 1f else item.ratio / ratioSum
             MediaItem(
-                modifier = Modifier.weight(weight),
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(weight),
                 media = item,
                 dropDownHazeState = dropDownHazeState,
                 offscreenImageCount = if (index == subList.lastIndex) {
@@ -277,7 +307,9 @@ private fun FourMediaHolder(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         MediaItem(
-            modifier = Modifier.weight(0.55f),
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(0.55f),
             media = media[0],
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,
@@ -286,11 +318,15 @@ private fun FourMediaHolder(
             onRemoveClick = onRemoveClick,
         )
         Column(
-            modifier = Modifier.weight(0.45f),
+            modifier = Modifier
+                .fillMaxHeight()
+                .weight(0.45f),
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             MediaItem(
-                modifier = Modifier.weight(0.6f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.6f),
                 media = media[1],
                 dropDownHazeState = dropDownHazeState,
                 clickable = clickable,
@@ -299,7 +335,9 @@ private fun FourMediaHolder(
                 onRemoveClick = onRemoveClick,
             )
             RowMediaHolder(
-                modifier = Modifier.weight(0.4f),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(0.4f),
                 media = media.subList(2, 4),
                 dropDownHazeState = dropDownHazeState,
                 clickable = clickable,
@@ -322,7 +360,9 @@ private fun ManyMediaHolder(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.clip(RoundedCornerShape(8.dp)),
+        modifier = modifier
+            .fillMaxHeight()
+            .clip(RoundedCornerShape(8.dp)),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         RowMediaHolder(
@@ -362,6 +402,7 @@ private fun MediaItem(
     contentScale: ContentScale = ContentScale.Crop,
     cornerRadius: Dp = 4.dp,
     offscreenImageCount: Int = 0,
+    cacheExtraKey: String? = null,
 ) {
     val haptic = LocalHapticFeedback.current
     var showDropDownMenu by remember { mutableStateOf(false) }
@@ -372,8 +413,24 @@ private fun MediaItem(
             drawRect(color = dimColor)
         }
     }
+    val interpolator = remember { OvershootInterpolator(5.0f) }
+    val longClickScale by animateFloatAsState(
+        targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
+        animationSpec = tween(
+            durationMillis = LONG_CLICK_SCALE_DURATION,
+            easing = if (showDropDownMenu) {
+                Easing { interpolator.getInterpolation(it) }
+            } else {
+                FastOutSlowInEasing
+            }
+        ),
+    )
     Box(
         modifier = modifier
+            .graphicsLayer {
+                scaleY = longClickScale
+                scaleX = longClickScale
+            }
             .clip(RoundedCornerShape(cornerRadius))
             .applyIf(clickable) {
                 Modifier.combinedClickable(
@@ -393,12 +450,14 @@ private fun MediaItem(
                 modifier = dimModifier,
                 image = media,
                 contentScale = contentScale,
+                cacheExtraKey = cacheExtraKey,
             )
 
             is MediaBlock.Video -> VideoItem(
                 modifier = dimModifier,
-                image = media,
+                video = media,
                 contentScale = contentScale,
+                cacheExtraKey = cacheExtraKey,
             )
         }
         if (offscreenImageCount > 0) {
@@ -425,16 +484,21 @@ private fun MediaItem(
 @Composable
 private fun ImageItem(
     image: MediaBlock.Image,
+    cacheExtraKey: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     val context = LocalContext.current
-    val request = remember(image.name) {
+    val request = remember(image.id, cacheExtraKey) {
         ImageRequest.Builder(context)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(image.name)
+            .diskCachePolicy(CachePolicy.DISABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(image.name)
+            .memoryCacheKey(image.id)
+            .apply {
+                if (cacheExtraKey != null) memoryCacheKeyExtra(image.id, cacheExtraKey)
+            }
+            .precision(Precision.INEXACT)
+            .crossfade(CROSS_FADE_DURATION)
             .data(image.uri)
             .build()
     }
@@ -451,20 +515,25 @@ private fun ImageItem(
 
 @Composable
 private fun VideoItem(
-    image: MediaBlock.Video,
+    video: MediaBlock.Video,
+    cacheExtraKey: String?,
     modifier: Modifier = Modifier,
     contentScale: ContentScale = ContentScale.Crop,
 ) {
     var badgeSize by remember { mutableStateOf(IntSize.Zero) }
     var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
-    val request = remember(image.name) {
+    val request = remember(video.id, cacheExtraKey) {
         ImageRequest.Builder(context)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(image.name)
+            .diskCachePolicy(CachePolicy.DISABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(image.name)
-            .data(image.uri)
+            .memoryCacheKey(video.id)
+            .apply {
+                if (cacheExtraKey != null) memoryCacheKeyExtra(video.id, cacheExtraKey)
+            }
+            .precision(Precision.INEXACT)
+            .crossfade(CROSS_FADE_DURATION)
+            .data(video.uri)
             .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
             .build()
     }
@@ -483,7 +552,7 @@ private fun VideoItem(
                     .align(Alignment.BottomStart)
                     .padding(start = 4.dp, bottom = 4.dp)
                     .onSizeChanged { badgeSize = it },
-                duration = image.duration,
+                duration = video.duration,
             )
         }
     }
@@ -517,9 +586,9 @@ private fun PopUpMenu(
                     blurRadius = 12.dp,
                 ),
             )
-            .background(MaterialTheme.colorScheme.tertiaryContainer.copy(alpha = 0.15f)),
+            .background(MaterialTheme.colorScheme.tertiaryContainer),
         containerColor = Color.Transparent,
-        offset = DpOffset(x = 0.dp, y = -(8).dp),
+        offset = DpOffset(x = 8.dp, y = -(32).dp),
         shape = RoundedCornerShape(8.dp),
         shadowElevation = 0.dp,
         expanded = expanded,
@@ -576,6 +645,7 @@ private fun NoteContentOneMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -598,6 +668,7 @@ private fun NoteContentTwoMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -606,6 +677,7 @@ private fun NoteContentTwoMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -628,6 +700,7 @@ private fun NoteContentThreeMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -636,6 +709,7 @@ private fun NoteContentThreeMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -644,6 +718,7 @@ private fun NoteContentThreeMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "2",
                             name = "2",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -666,6 +741,7 @@ private fun NoteContentFourMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -674,6 +750,7 @@ private fun NoteContentFourMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -682,6 +759,7 @@ private fun NoteContentFourMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "2",
                             name = "2",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -690,6 +768,7 @@ private fun NoteContentFourMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "3",
                             name = "3",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -712,6 +791,7 @@ private fun NoteContentFiveMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -720,6 +800,7 @@ private fun NoteContentFiveMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -728,6 +809,7 @@ private fun NoteContentFiveMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "2",
                             name = "2",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -736,6 +818,7 @@ private fun NoteContentFiveMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "3",
                             name = "3",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -744,6 +827,7 @@ private fun NoteContentFiveMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "4",
                             name = "4",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -766,6 +850,7 @@ private fun NoteContentSixMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -774,6 +859,7 @@ private fun NoteContentSixMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -782,6 +868,7 @@ private fun NoteContentSixMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "2",
                             name = "2",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -790,6 +877,7 @@ private fun NoteContentSixMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "3",
                             name = "3",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -798,6 +886,7 @@ private fun NoteContentSixMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "4",
                             name = "4",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -806,6 +895,7 @@ private fun NoteContentSixMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "5",
                             name = "5",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -828,6 +918,7 @@ private fun NoteContentSevenMediaPreview() {
                 media = buildImmutableList {
                     add(
                         MediaBlock.Image(
+                            id = "0",
                             name = "0",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -836,6 +927,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "1",
                             name = "1",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -844,6 +936,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "2",
                             name = "2",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -852,6 +945,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "3",
                             name = "3",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -860,6 +954,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "4",
                             name = "4",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -868,6 +963,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "5",
                             name = "5",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),
@@ -876,6 +972,7 @@ private fun NoteContentSevenMediaPreview() {
                     )
                     add(
                         MediaBlock.Image(
+                            id = "6",
                             name = "6",
                             uri = Uri.EMPTY,
                             addedDate = ZonedDateTime.now(),

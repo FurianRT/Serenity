@@ -70,6 +70,7 @@ data class LocalNote(
 
         @Serializable
         sealed class Media(
+            open val id: String,
             open val name: String,
             open val ratio: Float,
 
@@ -83,6 +84,9 @@ data class LocalNote(
         @Serializable
         @SerialName("Image")
         data class Image(
+            @SerialName("image_id")
+            override val id: String,
+
             @SerialName("image_name")
             override val name: String,
 
@@ -96,11 +100,14 @@ data class LocalNote(
             @Serializable(with = ZonedDateTimeSerializer::class)
             @SerialName("image_date")
             override val addedDate: ZonedDateTime,
-        ) : Media(name, ratio, uri, addedDate)
+        ) : Media(id, name, ratio, uri, addedDate)
 
         @Serializable
         @SerialName("Video")
         data class Video(
+            @SerialName("video_id")
+            override val id: String,
+
             @SerialName("video_name")
             override val name: String,
 
@@ -116,6 +123,6 @@ data class LocalNote(
             override val addedDate: ZonedDateTime,
 
             val duration: Int,
-        ) : Media(name, ratio, uri, addedDate)
+        ) : Media(id, name, ratio, uri, addedDate)
     }
 }

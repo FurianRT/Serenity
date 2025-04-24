@@ -81,7 +81,7 @@ internal sealed interface PageEffect {
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
     data class OpenMediaViewScreen(
         val noteId: String,
-        val mediaName: String,
+        val mediaId: String,
         val identifier: DialogIdentifier,
     ) : PageEffect
 

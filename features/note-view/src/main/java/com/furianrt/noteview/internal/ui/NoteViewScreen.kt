@@ -79,7 +79,7 @@ internal fun rememberSuccessScreenState(): SuccessScreenState = remember { Succe
 
 @Composable
 internal fun NoteViewScreen(
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
@@ -127,7 +127,7 @@ private fun ScreenContent(
     state: SuccessScreenState,
     uiState: NoteViewUiState,
     onEvent: (event: NoteViewEvent) -> Unit,
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -151,7 +151,7 @@ private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
     modifier: Modifier = Modifier,
     state: SuccessScreenState = rememberSuccessScreenState(),
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {

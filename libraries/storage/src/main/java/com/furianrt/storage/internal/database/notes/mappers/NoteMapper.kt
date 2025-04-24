@@ -61,8 +61,8 @@ internal fun List<LocalNote.Content>.toEntryNoteText(): String {
             is LocalNote.Content.MediaBlock -> {
                 builder.append(MEDIA_START_TAG)
                 builder.append("[${content.id}]")
-                val names = content.media.joinToString(separator = ",", transform = { it.name })
-                builder.append(names)
+                val ids = content.media.joinToString(separator = ",", transform = { it.id })
+                builder.append(ids)
                 builder.append(MEDIA_END_TAG)
             }
 
@@ -118,11 +118,11 @@ private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock?
     val indexOfTag = text.indexOf(MEDIA_START_TAG)
     val indexOfClosingTag = text.indexOf(MEDIA_END_TAG)
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
-    val mediaNames = text
+    val mediaIds = text
         .substring(indexOfTag + MEDIA_START_TAG.length + id.length + 2, indexOfClosingTag)
         .split(",")
-    val media = mediaNames.mapNotNull { mediaName ->
-        images.find { it.name == mediaName } ?: videos.find { it.name == mediaName }
+    val media = mediaIds.mapNotNull { mediaId ->
+        images.find { it.id == mediaId } ?: videos.find { it.id == mediaId }
     }
     val localMedia = media.map { item ->
         when (item) {

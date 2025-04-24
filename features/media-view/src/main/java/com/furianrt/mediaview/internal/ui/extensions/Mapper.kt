@@ -19,12 +19,14 @@ internal fun MediaItem.toLocalMedia() = LocalMedia(
 )
 
 private fun LocalNote.Content.Image.toImageItem() = MediaItem.Image(
+    id = id,
     name = name,
     uri = uri,
     ratio = ratio,
 )
 
 private fun LocalNote.Content.Video.toVideoItem() = MediaItem.Video(
+    id = id,
     name = name,
     uri = uri,
     ratio = ratio,

@@ -28,12 +28,12 @@ internal class NoteListScreenState(
         toolbarState.expand(TOOLBAR_EXPAND_DURATION)
     }
 
-    fun scrollToPosition(position: Int) {
+    suspend fun scrollToPosition(position: Int, toolbarHeight: Int) {
         val visibleIndexes = listState.layoutInfo
-            .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD)
+            .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD, toolbarHeight)
             .map(LazyListItemInfo::index)
         if (position !in visibleIndexes) {
-            listState.requestScrollToItem(position)
+            listState.animateScrollToItem(position)
             toolbarState.expand(TOOLBAR_EXPAND_DURATION)
         }
     }

@@ -194,12 +194,12 @@ internal class PageViewModel @AssistedInject constructor(
             is OnFocusedTitleSelectionChange -> resetStickersEditing()
             is OnMediaClick -> {
                 resetStickersEditing()
-                openMediaViewScreen(event.media.name)
+                openMediaViewScreen(event.media.id)
             }
 
             is OnMediaRemoveClick -> {
                 resetStickersEditing()
-                removeMedia(setOf(event.media.name))
+                removeMedia(setOf(event.media.id))
             }
 
             is OnMediaShareClick -> {}
@@ -445,7 +445,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun openMediaViewScreen(mediaName: String) {
+    private fun openMediaViewScreen(mediaId: String) {
         _state.doWithState<PageUiState.Success> { successState ->
             notesRepository.cacheNoteContent(
                 noteId = noteId,
@@ -454,7 +454,7 @@ internal class PageViewModel @AssistedInject constructor(
             _effect.tryEmit(
                 PageEffect.OpenMediaViewScreen(
                     noteId = noteId,
-                    mediaName = mediaName,
+                    mediaId = mediaId,
                     identifier = DialogIdentifier(
                         dialogId = MEDIA_VIEW_DIALOG_ID,
                         requestId = noteId,
@@ -464,14 +464,14 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun removeMedia(mediaNames: Set<String>) {
-        if (mediaNames.isEmpty()) {
+    private fun removeMedia(mediaIds: Set<String>) {
+        if (mediaIds.isEmpty()) {
             return
         }
         launch(NonCancellable) {
             _state.updateState<PageUiState.Success> { currentState ->
                 var newContent = currentState.content
-                mediaNames.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
+                mediaIds.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
                 currentState.copy(
                     content = newContent.refreshTitleTemplates(
                         addTopTemplate = currentState.isInEditMode,

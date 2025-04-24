@@ -213,9 +213,6 @@ internal fun VideoPage(
     }
 
     LifecycleStartEffect(playing) {
-        if (playing) {
-            exoPlayer.play()
-        }
         onStopOrDispose {
             exoPlayer.pause()
         }

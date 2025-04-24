@@ -20,6 +20,9 @@ import java.time.ZonedDateTime
 )
 internal class EntryNoteVideo(
     @PrimaryKey
+    @ColumnInfo(name = FIELD_ID)
+    val id: String,
+
     @ColumnInfo(name = FIELD_NAME)
     val name: String,
 
@@ -43,6 +46,7 @@ internal class EntryNoteVideo(
 ) {
     companion object {
         const val TABLE_NAME = "Videos"
+        const val FIELD_ID = "id"
         const val FIELD_NAME = "name"
         const val FIELD_NOTE_ID = "note_id"
         const val FIELD_URI = "uri"
@@ -55,6 +59,9 @@ internal class EntryNoteVideo(
 
 @Entity
 internal class PartVideoUri(
+    @ColumnInfo(name = EntryNoteVideo.FIELD_ID)
+    val id: String,
+
     @ColumnInfo(name = EntryNoteVideo.FIELD_NAME)
     val name: String,
 
@@ -66,7 +73,7 @@ internal class PartVideoUri(
 )
 
 @Entity
-internal class PartVideoName(
-    @ColumnInfo(name = EntryNoteVideo.FIELD_NAME)
-    val name: String,
+internal class PartVideoId(
+    @ColumnInfo(name = EntryNoteVideo.FIELD_ID)
+    val id: String,
 )

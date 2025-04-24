@@ -49,14 +49,6 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
     return result.toImmutableList()
 }
 
-internal fun ImmutableList<UiNoteContent>.removeFirstTitleTemplate(): ImmutableList<UiNoteContent> {
-    return if (firstOrNull().isEmptyTitle()) {
-        toPersistentList().removeAt(0)
-    } else {
-        this
-    }
-}
-
 internal fun ImmutableList<UiNoteTag>.addTagTemplate(): ImmutableList<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }
     return if (hasTemplate) {
@@ -95,18 +87,18 @@ internal fun ImmutableList<UiNoteTag>.removeSecondTagTemplate(): ImmutableList<U
 }
 
 internal fun ImmutableList<UiNoteContent>.removeMedia(
-    name: String,
+    id: String,
     focusedTitleId: String?,
 ): ImmutableList<UiNoteContent> {
     val mediaBlockIndex = indexOfFirst { content ->
-        content is UiNoteContent.MediaBlock && content.media.any { it.name == name }
+        content is UiNoteContent.MediaBlock && content.media.any { it.id == id }
     }
     if (mediaBlockIndex == -1) {
         return this
     }
     val mediaBlock = this[mediaBlockIndex] as UiNoteContent.MediaBlock
     val newMediaBlock = mediaBlock.copy(
-        media = mediaBlock.media.toPersistentList().removeAll { it.name == name },
+        media = mediaBlock.media.toPersistentList().removeAll { it.id == id },
     )
     return if (newMediaBlock.media.isEmpty()) {
         toPersistentList().removeAt(mediaBlockIndex).joinTitles(focusedTitleId)

@@ -27,4 +27,6 @@ dependencies {
     implementation(libs.dataStore)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.exifinterface)
 }

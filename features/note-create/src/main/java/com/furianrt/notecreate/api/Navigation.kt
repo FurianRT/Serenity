@@ -24,7 +24,7 @@ fun NavController.navigateToNoteCreate(
 ) = navigate(route = route, navOptions = navOptions)
 
 fun NavGraphBuilder.noteCreateScreen(
-    openMediaViewScreen: (noteId: String, mediaName: String, identifier: DialogIdentifier) -> Unit,
+    openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {

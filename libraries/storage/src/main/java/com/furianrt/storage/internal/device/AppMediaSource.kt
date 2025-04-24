@@ -1,6 +1,9 @@
 package com.furianrt.storage.internal.device
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.core.content.FileProvider
 import com.furianrt.core.DispatchersProvider
@@ -15,6 +18,12 @@ import javax.inject.Singleton
 
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
+private const val IMAGE_COMPRESS_AMOUNT = 80
+
+internal class SavedMediaData(
+    val name: String,
+    val uri: Uri,
+)
 
 @Singleton
 internal class AppMediaSource @Inject constructor(
@@ -24,35 +33,29 @@ internal class AppMediaSource @Inject constructor(
     suspend fun saveMediaFile(
         noteId: String,
         media: LocalNote.Content.Media,
-    ): Uri? = withContext(dispatchers.io) {
-        try {
-            val destFile = createMediaFile(noteId, media.name) ?: return@withContext null
-            context.contentResolver.openInputStream(media.uri)?.use { inputStream ->
-                FileOutputStream(destFile).use { outputStream ->
-                    inputStream.copyTo(outputStream)
-                }
-            }
-
-            return@withContext getRelativeUri(destFile)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            null
+    ): SavedMediaData? = try {
+        when (media) {
+            is LocalNote.Content.Image -> saveImage(media, noteId)
+            is LocalNote.Content.Video -> saveVideo(media, noteId)
         }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 
     suspend fun deleteMediaFile(
         noteId: String,
-        name: String,
+        media: LocalNote.Content.Media,
     ): Boolean = withContext(dispatchers.io) {
         return@withContext try {
-            File(context.filesDir, "$noteId/$MEDIA_FOLDER/$name").delete()
+            File(context.filesDir, "$noteId/$MEDIA_FOLDER/${media.id}${media.name}").delete()
         } catch (e: Exception) {
             false
         }
     }
 
-    suspend fun deleteMediaFile(noteId: String, names: Set<String>) {
-        names.forEach { deleteMediaFile(noteId, it) }
+    suspend fun deleteMediaFile(noteId: String, media: Set<LocalNote.Content.Media>) {
+        media.forEach { deleteMediaFile(noteId, it) }
     }
 
     suspend fun deleteAllMediaFiles(noteId: String): Boolean = withContext(dispatchers.io) {
@@ -66,9 +69,10 @@ internal class AppMediaSource @Inject constructor(
     suspend fun createMediaFile(
         noteId: String,
         mediaId: String,
+        mediaName: String,
     ): File? = withContext(dispatchers.io) {
         try {
-            val file = File(context.filesDir, "$noteId/$MEDIA_FOLDER/$mediaId")
+            val file = File(context.filesDir, "$noteId/$MEDIA_FOLDER/$mediaId$mediaName")
 
             file.parentFile?.mkdirs()
 
@@ -129,5 +133,87 @@ internal class AppMediaSource @Inject constructor(
 
     fun getRelativeUri(file: File): Uri {
         return FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, file)
+    }
+
+    private suspend fun saveImage(
+        image: LocalNote.Content.Image,
+        noteId: String,
+    ): SavedMediaData? = withContext(dispatchers.io) {
+        val destFile = createMediaFile(
+            noteId = noteId,
+            mediaId = image.id,
+            mediaName = image.name.replaceFileExtension(".webp"),
+        ) ?: return@withContext null
+
+        val bitmap = context.contentResolver.openInputStream(image.uri)
+            ?.use(BitmapFactory::decodeStream)
+            ?: return@withContext null
+
+        FileOutputStream(destFile).use { outputStream ->
+            bitmap.compress(
+                Bitmap.CompressFormat.WEBP_LOSSY,
+                IMAGE_COMPRESS_AMOUNT,
+                outputStream,
+            )
+        }
+
+        try {
+            getExifInterface(image.uri)?.let { sourceExif ->
+                val destExif = ExifInterface(destFile)
+                destExif.setAttribute(
+                    ExifInterface.TAG_ORIENTATION,
+                    sourceExif.getAttribute(ExifInterface.TAG_ORIENTATION),
+                )
+                destExif.saveAttributes()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        return@withContext SavedMediaData(
+            name = destFile.name,
+            uri = getRelativeUri(destFile),
+        )
+    }
+
+    private suspend fun saveVideo(
+        video: LocalNote.Content.Video,
+        noteId: String,
+    ): SavedMediaData? = withContext(dispatchers.io) {
+        val destFile = createMediaFile(
+            noteId = noteId,
+            mediaId = video.id,
+            mediaName = video.name,
+        ) ?: return@withContext null
+
+        context.contentResolver.openInputStream(video.uri)?.use { inputStream ->
+            FileOutputStream(destFile).use { outputStream ->
+                inputStream.copyTo(outputStream)
+            }
+        }
+
+        return@withContext SavedMediaData(
+            name = destFile.name,
+            uri = getRelativeUri(destFile),
+        )
+    }
+
+    private fun getExifInterface(uri: Uri): ExifInterface? = try {
+        context.contentResolver.openInputStream(uri)?.use { inputStream ->
+            ExifInterface(inputStream)
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+
+    private fun String.replaceFileExtension(newExtension: String): String {
+        val lastDotIndex = lastIndexOf('.')
+        val withoutExtension = if (lastDotIndex != -1) {
+            substring(0, lastDotIndex)
+        } else {
+            this
+        }
+        return withoutExtension + newExtension
     }
 }

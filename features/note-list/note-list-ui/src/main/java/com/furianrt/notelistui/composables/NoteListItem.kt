@@ -141,6 +141,7 @@ private fun NoteItemPreview() {
                     id = "1",
                     media = persistentListOf(
                         UiNoteContent.MediaBlock.Image(
+                            id = "",
                             name = "",
                             addedDate = ZonedDateTime.now(),
                             ratio = 1.5f,

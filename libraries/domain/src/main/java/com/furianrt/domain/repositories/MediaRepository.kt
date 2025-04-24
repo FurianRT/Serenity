@@ -27,7 +27,11 @@ interface MediaRepository {
     fun getVoices(noteId: String): Flow<List<LocalNote.Content.Voice>>
     fun getAllVoices(): Flow<List<LocalNote.Content.Voice>>
 
-    suspend fun createMediaDestinationFile(noteId: String, mediaId: String): File?
+    suspend fun createMediaDestinationFile(
+        noteId: String,
+        mediaId: String,
+        mediaName: String,
+    ): File?
 
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?
     suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean

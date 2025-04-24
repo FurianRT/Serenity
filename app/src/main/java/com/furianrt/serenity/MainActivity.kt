@@ -162,11 +162,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
 
                         noteViewScreen(
-                            openMediaViewScreen = { noteId, mediaName, identifier ->
+                            openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
                                         noteId = noteId,
-                                        mediaName = mediaName,
+                                        mediaId = mediaId,
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -177,11 +177,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
 
                         noteCreateScreen(
-                            openMediaViewScreen = { noteId, mediaName, identifier ->
+                            openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
                                         noteId = noteId,
-                                        mediaName = mediaName,
+                                        mediaId = mediaId,
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),

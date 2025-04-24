@@ -13,8 +13,8 @@ import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
-import com.furianrt.storage.internal.database.notes.entities.PartImageName
-import com.furianrt.storage.internal.database.notes.entities.PartVideoName
+import com.furianrt.storage.internal.database.notes.entities.PartImageId
+import com.furianrt.storage.internal.database.notes.entities.PartVideoId
 import com.furianrt.storage.internal.database.notes.entities.PartVoiceId
 import com.furianrt.storage.internal.database.notes.mappers.toEntryImage
 import com.furianrt.storage.internal.database.notes.mappers.toEntryVideo
@@ -74,17 +74,17 @@ internal class MediaRepositoryImp @Inject constructor(
             mediaSaver.cancel(noteId, media)
             val images = media
                 .filterIsInstance<LocalNote.Content.Image>()
-                .map { PartImageName(it.name) }
+                .map { PartImageId(it.id) }
             val videos = media
                 .filterIsInstance<LocalNote.Content.Video>()
-                .map { PartVideoName(it.name) }
+                .map { PartVideoId(it.id) }
             transactionsHelper.startTransaction {
                 imageDao.delete(images)
                 videoDao.delete(videos)
             }
             appMediaSource.deleteMediaFile(
                 noteId = noteId,
-                names = media.map(LocalNote.Content.Media::name).toSet(),
+                media = media.toSet(),
             )
         }
     }
@@ -136,8 +136,12 @@ internal class MediaRepositoryImp @Inject constructor(
         return voiceDao.getAllVoices().deepMap(EntryNoteVoice::toNoteContentVoice)
     }
 
-    override suspend fun createMediaDestinationFile(noteId: String, mediaId: String): File? {
-        return appMediaSource.createMediaFile(noteId, mediaId)
+    override suspend fun createMediaDestinationFile(
+        noteId: String,
+        mediaId: String,
+        mediaName: String,
+    ): File? {
+        return appMediaSource.createMediaFile(noteId, mediaId, mediaName)
     }
 
     override suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File? {

@@ -39,9 +39,9 @@ class UpdateNoteContentUseCase @Inject constructor(
         transactionsHelper.startTransaction {
             val existingMedia = mediaRepository.getMedia(noteId).first()
             val mediaToDelete = existingMedia
-                .filterNot { media -> allMedia.any { it.name == media.name } }
+                .filterNot { media -> allMedia.any { it.id == media.id } }
             val mediaToInsert = allMedia
-                .filter { media -> existingMedia.none { it.name == media.name } }
+                .filter { media -> existingMedia.none { it.id == media.id } }
 
             val existingVoices = mediaRepository.getVoices(noteId).first()
             val voicesToDelete = existingVoices
