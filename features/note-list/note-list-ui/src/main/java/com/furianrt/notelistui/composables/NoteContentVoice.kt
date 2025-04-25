@@ -20,6 +20,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -56,6 +57,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteContent.Voice
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
@@ -74,18 +76,18 @@ fun NoteContentVoice(
     voice: Voice,
     isPlaying: Boolean,
     isRemovable: Boolean,
-    onRemoveClick: (voice: Voice) -> Unit,
-    onPlayClick: (voice: Voice) -> Unit,
-    onProgressSelected: (voice: Voice, value: Float) -> Unit,
+    isPayable: Boolean,
     modifier: Modifier = Modifier,
+    onRemoveClick: (voice: Voice) -> Unit = {},
+    onPlayClick: (voice: Voice) -> Unit = {},
+    onProgressSelected: (voice: Voice, value: Float) -> Unit = { _, _ -> },
 ) {
-    Box(
-        modifier = modifier,
-    ) {
+    Box(modifier = modifier) {
         VoiceContent(
             modifier = Modifier.padding(top = 4.dp, end = 2.dp),
             voice = voice,
             isPlaying = isPlaying,
+            isPayable = isPayable,
             onPlayClick = onPlayClick,
             onProgressSelected = onProgressSelected,
         )
@@ -106,6 +108,7 @@ fun NoteContentVoice(
 private fun VoiceContent(
     voice: Voice,
     isPlaying: Boolean,
+    isPayable: Boolean,
     onPlayClick: (voice: Voice) -> Unit,
     onProgressSelected: (voice: Voice, value: Float) -> Unit,
     modifier: Modifier = Modifier,
@@ -124,17 +127,22 @@ private fun VoiceContent(
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ButtonPlay(
-                isPaused = !isPlaying,
-                onClick = {
-                    if (!isPlaying) {
-                        wasStarted = true
-                    }
-                    onPlayClick(voice)
-                },
-            )
+            if (isPayable) {
+                ButtonPlay(
+                    isPaused = !isPlaying,
+                    onClick = {
+                        if (!isPlaying) {
+                            wasStarted = true
+                        }
+                        onPlayClick(voice)
+                    },
+                )
+            } else {
+                Spacer(Modifier.width(6.dp))
+            }
             VoiceSlider(
                 modifier = Modifier.weight(1f),
+                enabled = isPayable,
                 value = voice.progress,
                 volume = voice.volume,
                 onValueChangeFinished = { onProgressSelected(voice, it) },
@@ -262,6 +270,7 @@ private fun Timer(
 private fun VoiceSlider(
     value: Float,
     volume: ImmutableList<Float>,
+    enabled: Boolean,
     modifier: Modifier = Modifier,
     onValueChangeFinished: (value: Float) -> Unit,
 ) {
@@ -281,7 +290,8 @@ private fun VoiceSlider(
     }
 
     Slider(
-        modifier = modifier,
+        modifier = modifier.applyIf(!enabled) { Modifier.height(32.dp) },
+        enabled = enabled,
         value = currentPosition,
         onValueChange = { position ->
             view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
@@ -359,7 +369,7 @@ private fun ButtonRemove(
 
 @Composable
 @PreviewWithBackground
-private fun Preview() {
+private fun PreviewWithPlayButton() {
     SerenityTheme {
         NoteContentVoice(
             voice = Voice(
@@ -375,9 +385,30 @@ private fun Preview() {
             ),
             isRemovable = true,
             isPlaying = false,
-            onRemoveClick = {},
-            onPlayClick = {},
-            onProgressSelected = { _, _ -> },
+            isPayable = true,
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun PreviewWithoutPlayButton() {
+    SerenityTheme {
+        NoteContentVoice(
+            voice = Voice(
+                id = "",
+                uri = Uri.EMPTY,
+                duration = 10000,
+                progress = 0.5f,
+                volume = buildImmutableList {
+                    repeat(42) {
+                        add(Random.nextDouble(0.0, 0.7).toFloat())
+                    }
+                },
+            ),
+            isRemovable = false,
+            isPlaying = false,
+            isPayable = false,
         )
     }
 }

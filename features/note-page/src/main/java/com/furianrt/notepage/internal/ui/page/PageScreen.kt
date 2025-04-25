@@ -492,6 +492,7 @@ private fun ContentItems(
                                 )
                                 .animatePlacementInScope(this@LookaheadScope),
                             voice = item,
+                            isPayable = true,
                             isPlaying = item.id == uiState.playingVoiceId,
                             isRemovable = uiState.isInEditMode,
                             onRemoveClick = { voice ->

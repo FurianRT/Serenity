@@ -12,4 +12,5 @@ internal data class NoteItem(
     val fontColor: UiNoteFontColor,
     val fontSize: Int,
     val date: ZonedDateTime,
+    val isPinned: Boolean,
 )

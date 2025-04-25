@@ -1,6 +1,7 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -50,13 +52,14 @@ fun NoteListItem(
     fontSize: TextUnit,
     date: String,
     modifier: Modifier = Modifier,
+    showBorder: Boolean = false,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
 ) {
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
-        Card(
+        OutlinedCard(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp))
@@ -66,7 +69,11 @@ fun NoteListItem(
                 ),
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+            border = if (showBorder) {
+                BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
+            } else {
+                CardDefaults.outlinedCardBorder()
+            }
         ) {
             content.forEachIndexed { index, item ->
                 when (item) {
@@ -92,7 +99,16 @@ fun NoteListItem(
                         clickable = false,
                     )
 
-                    is UiNoteContent.Voice -> {} // TODO fix
+                    is UiNoteContent.Voice -> NoteContentVoice(
+                        modifier = Modifier.padding(
+                            start = 8.dp,
+                            top = if (index == 0) 4.dp else 12.dp,
+                        ),
+                        voice = item,
+                        isPayable = false,
+                        isPlaying = false,
+                        isRemovable = false,
+                    )
                 }
             }
             NoteTags(

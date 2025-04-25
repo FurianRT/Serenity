@@ -12,6 +12,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
+import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import kotlinx.coroutines.flow.Flow
 
@@ -31,6 +32,9 @@ internal interface NoteDao {
 
     @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteFont)
+
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteIsPinned)
 
     @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     suspend fun delete(noteId: String)

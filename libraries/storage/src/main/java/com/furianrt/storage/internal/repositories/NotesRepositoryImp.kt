@@ -13,6 +13,7 @@ import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
+import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
@@ -52,6 +53,10 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteDate(id = noteId, date = date))
     }
 
+    override suspend fun updateNoteIsPinned(noteId: String, isPinned: Boolean) {
+        noteDao.update(PartNoteIsPinned(noteId, isPinned))
+    }
+
     override suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor,
@@ -67,7 +72,12 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllNotes()
         .deepMap(LinkedNote::toLocalNote)
-        .map { it.sortedByDescending(LocalNote::date) }
+        .map { notes ->
+            notes.sortedWith(
+                compareByDescending(LocalNote::isPinned)
+                    .thenByDescending(LocalNote::date)
+            )
+        }
 
     override fun getAllNotes(query: String): Flow<List<LocalNote>> = if (query.isNotEmpty()) {
         noteDao.getAllNotes("%$query%")

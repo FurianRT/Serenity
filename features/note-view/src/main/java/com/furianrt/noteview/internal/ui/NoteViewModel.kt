@@ -108,6 +108,10 @@ internal class NoteViewModel @Inject constructor(
                 disableEditMode()
                 launch { deleteNoteUseCase(event.noteId) }
             }
+
+            is NoteViewEvent.OnPinClick -> launch {
+                toggleNotePinnedState(event.noteId, event.isPinned)
+            }
         }
     }
 
@@ -182,5 +186,9 @@ internal class NoteViewModel @Inject constructor(
 
     private fun disableEditMode() {
         _state.updateState<NoteViewUiState.Success> { it.copy(isInEditMode = false) }
+    }
+
+    private suspend fun toggleNotePinnedState(noteId: String, isPinned: Boolean) {
+        notesRepository.updateNoteIsPinned(noteId, !isPinned)
     }
 }

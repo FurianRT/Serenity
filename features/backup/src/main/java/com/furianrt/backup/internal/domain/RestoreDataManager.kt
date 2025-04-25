@@ -180,6 +180,7 @@ internal class RestoreDataManager @Inject constructor(
                     fontColor = note.fontColor,
                     fontSize = note.fontSize,
                     date = note.date,
+                    isPinned = note.isPinned,
                 )
             )
             updateNoteContentUseCase(

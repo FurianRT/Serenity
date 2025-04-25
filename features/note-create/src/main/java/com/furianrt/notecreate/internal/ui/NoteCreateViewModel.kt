@@ -101,6 +101,7 @@ internal class NoteCreateViewModel @Inject constructor(
             fontFamily = UiNoteFontFamily.QUICK_SAND,
             fontColor = UiNoteFontColor.WHITE,  //TODO сделать дефолтный шрифт
             fontSize = 15,
+            isPinned = false,
         ),
         isInEditMode = true,
     )

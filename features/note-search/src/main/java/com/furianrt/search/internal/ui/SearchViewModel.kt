@@ -199,11 +199,12 @@ internal class SearchViewModel @Inject constructor(
         notes: List<LocalNote>,
         data: SearchData,
     ): SearchUiState = withContext(dispatchers.default) {
-        val hasFiltersOrQuery = data.queryText.isNotBlank() || data.selectedFilters.isNotEmpty()
+        val hasFilters = data.selectedFilters.isNotEmpty()
+        val hasQuery = data.queryText.isNotBlank()
         val state = if (notes.isEmpty()) {
             SearchUiState.State.Empty
         } else {
-            val items: ImmutableList<SearchListItem> = if (hasFiltersOrQuery) {
+            val items: ImmutableList<SearchListItem> = if (hasFilters || hasQuery) {
                 buildImmutableList {
                     add(SearchListItem.NotesCountTitle(notes.count()))
                     addAll(notes.map(LocalNote::toNoteItem))
@@ -218,13 +219,11 @@ internal class SearchViewModel @Inject constructor(
                 },
             )
         }
-        val unselectedTags = if (hasFiltersOrQuery) {
+        val unselectedTags = if (hasFilters) {
             val noteIds = notes.map(LocalNote::id).toSet()
             data.allTags
-                .filter { tag ->
-                    tag.noteIds.intersect(noteIds).isNotEmpty() &&
-                            !data.selectedFilters.any { it.id == tag.title }
-                }
+                .filter { tag -> data.selectedFilters.none { it.id == tag.title } }
+                .sortedBy { it.noteIds.intersect(noteIds).isEmpty() }
                 .map(LocalTag::toSelectedTag)
         } else {
             emptyList()

@@ -7,4 +7,5 @@ import java.time.ZonedDateTime
 internal data class NoteItem(
     val id: String,
     val date: ZonedDateTime,
+    val isPinned: Boolean,
 )

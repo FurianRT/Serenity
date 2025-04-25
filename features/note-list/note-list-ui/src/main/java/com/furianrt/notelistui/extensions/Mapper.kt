@@ -159,6 +159,13 @@ fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = 
             ),
         )
     }
+    if (mediaBlock == null) {
+        val voices = this@getShortUiContent
+            .filterIsInstance<LocalNote.Content.Voice>()
+            .take(2)
+            .map(LocalNote.Content.Voice::toUiVoice)
+        addAll(voices)
+    }
 }
 
 fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {

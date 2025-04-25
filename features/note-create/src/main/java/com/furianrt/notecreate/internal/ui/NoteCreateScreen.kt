@@ -202,6 +202,7 @@ private fun Preview() {
                     fontColor = UiNoteFontColor.WHITE,
                     fontSize = 15,
                     date = ZonedDateTime.now(),
+                    isPinned = false,
                 ),
                 isInEditMode = true,
             ),

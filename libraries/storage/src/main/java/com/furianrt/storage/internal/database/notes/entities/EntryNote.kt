@@ -31,6 +31,9 @@ internal class EntryNote(
 
     @ColumnInfo(name = FIELD_DATE)
     val date: ZonedDateTime,
+
+    @ColumnInfo(name = FIELD_IS_PINNED)
+    val isPinned: Boolean,
 ) {
     companion object {
         const val TABLE_NAME = "Notes"
@@ -41,6 +44,7 @@ internal class EntryNote(
         const val FIELD_FONT_COLOR = "font_color"
         const val FIELD_FONT_SIZE = "font_size"
         const val FIELD_DATE = "date"
+        const val FIELD_IS_PINNED = "is_pinned"
     }
 }
 
@@ -78,4 +82,13 @@ internal class PartNoteFont(
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_SIZE)
     val fontSize: Int,
+)
+
+@Entity
+internal class PartNoteIsPinned(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_IS_PINNED)
+    val isPinned: Boolean,
 )

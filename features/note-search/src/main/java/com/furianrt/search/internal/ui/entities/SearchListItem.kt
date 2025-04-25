@@ -37,11 +37,17 @@ internal sealed class SearchListItem(
     @Immutable
     data class Note(
         override val id: String,
-        val date: String,
+        val date: Date,
         val tags: ImmutableList<UiNoteTag>,
         val fontColor: UiNoteFontColor,
         val fontFamily: UiNoteFontFamily,
         val fontSize: Int,
         val content: ImmutableList<UiNoteContent>,
-    ) : SearchListItem(id)
+    ) : SearchListItem(id) {
+        sealed interface Date {
+            data object Today : Date
+            data object Yesterday : Date
+            data class Other(val text: String) : Date
+        }
+    }
 }

@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,6 +31,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.core.buildImmutableList
+import com.furianrt.uikit.R as uiR
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
@@ -174,10 +176,23 @@ private fun MainSuccess(
                     .animateContentSize(),
                 content = note.content,
                 tags = note.tags,
-                date = note.date,
+                date = when (note.date) {
+                    is NoteListScreenNote.Date.Today -> {
+                        stringResource(uiR.string.today_title)
+                    }
+
+                    is NoteListScreenNote.Date.Yesterday -> {
+                        stringResource(uiR.string.yesterday_title)
+                    }
+
+                    is NoteListScreenNote.Date.Other -> {
+                        note.date.text
+                    }
+                },
                 fontColor = note.fontColor,
                 fontFamily = note.fontFamily,
                 fontSize = note.fontSize.sp,
+                showBorder = note.isPinned,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },
             )
@@ -218,11 +233,12 @@ private fun generatePreviewNotes() = buildImmutableList {
         add(
             NoteListScreenNote(
                 id = index.toString(),
-                date = "19.06.2023",
+                date = NoteListScreenNote.Date.Other("19.06.2023"),
                 tags = persistentListOf(),
                 fontColor = UiNoteFontColor.WHITE,
                 fontFamily = UiNoteFontFamily.QUICK_SAND,
                 fontSize = 15,
+                isPinned = false,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = index.toString(),

@@ -92,16 +92,17 @@ private fun DateLabel(
             enter = fadeIn(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
             exit = fadeOut(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
         ) {
-            Spacer(
+            Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.tertiary)
-                    .clickable(onClick = onClick),
+                    .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp)),
             )
         }
         Text(
-            modifier = Modifier.padding(vertical = 6.dp, horizontal = 12.dp),
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .clickable(onClick = onClick)
+                .padding(vertical = 6.dp, horizontal = 12.dp),
             text = date,
             style = MaterialTheme.typography.bodyMedium,
         )

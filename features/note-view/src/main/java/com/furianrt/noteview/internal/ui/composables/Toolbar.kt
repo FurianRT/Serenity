@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
@@ -34,10 +35,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.uikit.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonEditAndDone
 import com.furianrt.uikit.components.ButtonMenu
@@ -56,6 +58,7 @@ private const val ANIM_DATE_VISIBILITY_DURATION = 250
 internal fun Toolbar(
     isInEditMode: Boolean,
     date: String?,
+    isPinned: Boolean,
     dropDownHazeState: HazeState,
     modifier: Modifier = Modifier,
     onEditClick: () -> Unit = {},
@@ -63,6 +66,7 @@ internal fun Toolbar(
     onDateClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
+    onPinClick: () -> Unit = {},
 ) {
     var showDropDownMenu by remember { mutableStateOf(false) }
     Box(
@@ -97,9 +101,11 @@ internal fun Toolbar(
                 ButtonMenu(onClick = { showDropDownMenu = true })
                 Menu(
                     expanded = showDropDownMenu,
+                    isPinned = isPinned,
                     hazeState = dropDownHazeState,
                     onDeleteClick = onDeleteClick,
                     onShareClick = onShareClick,
+                    onPinClick = onPinClick,
                     onDismissRequest = { showDropDownMenu = false },
                 )
             }
@@ -146,10 +152,12 @@ private fun DateLabel(
 @Composable
 private fun Menu(
     expanded: Boolean,
+    isPinned: Boolean,
     hazeState: HazeState,
-    onDeleteClick: () -> Unit,
-    onShareClick: () -> Unit,
-    onDismissRequest: () -> Unit,
+    onDeleteClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
+    onPinClick: () -> Unit = {},
+    onDismissRequest: () -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
@@ -182,38 +190,67 @@ private fun Menu(
         DropdownMenuItem(
             text = {
                 Text(
-                    text = stringResource(R.string.action_delete),
+                    text = if (isPinned) {
+                        stringResource(uiR.string.action_unpin)
+                    } else {
+                        stringResource(uiR.string.action_pin)
+                    },
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
             leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_delete),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
+                Box(
+                    modifier = Modifier.size(24.dp),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        modifier = Modifier.size(20.dp),
+                        painter = painterResource(uiR.drawable.ic_pin),
+                        tint = Color.Unspecified,
+                        contentDescription = null,
+                    )
+                }
             },
             onClick = {
-                onDeleteClick()
+                onPinClick()
                 onDismissRequest()
             }
         )
         DropdownMenuItem(
             text = {
                 Text(
-                    text = stringResource(R.string.action_share),
+                    text = stringResource(uiR.string.action_share),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             },
             leadingIcon = {
                 Icon(
-                    painter = painterResource(R.drawable.ic_share),
+                    painter = painterResource(uiR.drawable.ic_share),
                     tint = Color.Unspecified,
                     contentDescription = null,
                 )
             },
             onClick = {
                 onShareClick()
+                onDismissRequest()
+            }
+        )
+        DropdownMenuItem(
+            text = {
+                Text(
+                    text = stringResource(uiR.string.action_delete),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_delete),
+                    tint = Color.Unspecified,
+                    contentDescription = null,
+                )
+            },
+            onClick = {
+                onDeleteClick()
                 onDismissRequest()
             }
         )
@@ -227,6 +264,7 @@ private fun ToolbarPreview() {
         Toolbar(
             isInEditMode = false,
             date = "30 Sep 1992",
+            isPinned = false,
             dropDownHazeState = HazeState(),
         )
     }
@@ -239,7 +277,20 @@ private fun ToolbarPreviewEditMode() {
         Toolbar(
             isInEditMode = true,
             date = "30 Sep 1992",
+            isPinned = false,
             dropDownHazeState = HazeState(),
+        )
+    }
+}
+
+@Preview(heightDp = 200, widthDp = 150)
+@Composable
+private fun MenuPreview() {
+    SerenityTheme {
+        Menu(
+            expanded = true,
+            isPinned = false,
+            hazeState = HazeState(),
         )
     }
 }

@@ -220,6 +220,7 @@ private fun SuccessScreen(
                 modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
                 date = date,
+                isPinned = uiState.notes[pagerState.currentPage].isPinned,
                 dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
                 onBackButtonClick = {
@@ -232,6 +233,15 @@ private fun SuccessScreen(
                     onEvent(NoteViewEvent.OnDeleteClick(noteId))
                     view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 },
+                onPinClick = {
+                    val note = uiState.notes[pagerState.currentPage]
+                    onEvent(
+                        NoteViewEvent.OnPinClick(
+                            noteId = note.id,
+                            isPinned = note.isPinned,
+                        )
+                    )
+                }
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),

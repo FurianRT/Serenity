@@ -6,4 +6,5 @@ import com.furianrt.domain.entities.LocalNote
 internal fun LocalNote.toNoteItem() = NoteItem(
     id = id,
     date = date,
+    isPinned = isPinned,
 )

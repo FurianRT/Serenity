@@ -12,6 +12,7 @@ interface NotesRepository {
     suspend fun upsertNote(note: SimpleNote)
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
+    suspend fun updateNoteIsPinned(noteId: String, isPinned: Boolean)
     suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor,

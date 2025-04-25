@@ -101,7 +101,7 @@ private fun DeleteTagButton(
 private fun NoteTagsPreview() {
     SerenityTheme {
         TagItem(
-            title = "Title",
+            title = "Tag title",
             isRemovable = true,
         )
     }

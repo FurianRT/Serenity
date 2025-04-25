@@ -35,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -57,6 +58,7 @@ import com.furianrt.search.internal.ui.composables.NotesCountItem
 import com.furianrt.search.internal.ui.composables.Toolbar
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
@@ -265,7 +267,19 @@ private fun SuccessContent(
                         .animateContentSize(),
                     content = item.content,
                     tags = item.tags,
-                    date = item.date,
+                    date = when (item.date) {
+                        is SearchListItem.Note.Date.Today -> {
+                            stringResource(uiR.string.today_title)
+                        }
+
+                        is SearchListItem.Note.Date.Yesterday -> {
+                            stringResource(uiR.string.yesterday_title)
+                        }
+
+                        is SearchListItem.Note.Date.Other -> {
+                            item.date.text
+                        }
+                    },
                     fontColor = item.fontColor,
                     fontFamily = item.fontFamily,
                     fontSize = item.fontSize.sp,
@@ -339,7 +353,7 @@ private fun SuccessFilledQueryPreview() {
                 add(
                     SearchListItem.Note(
                         id = index.toString(),
-                        date = "19.06.2023",
+                        date = SearchListItem.Note.Date.Other("19.06.2023"),
                         tags = persistentListOf(
                             UiNoteTag.Regular(title = "Programming", isRemovable = false),
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
