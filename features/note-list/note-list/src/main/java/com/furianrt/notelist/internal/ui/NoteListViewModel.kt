@@ -21,7 +21,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "MainViewModel"
@@ -36,16 +35,20 @@ internal class NoteListViewModel @Inject constructor(
 ) : ViewModel(), DialogResultListener {
 
     private val scrollToNoteState = MutableStateFlow<String?>(null)
+    private val selectedNotesState = MutableStateFlow<Set<String>>(emptySet())
+
     val state: StateFlow<NoteListUiState> = combine(
         notesRepository.getAllNotes(),
         scrollToNoteState,
-    ) { notes, noteId ->
+        selectedNotesState,
+    ) { notes, noteId, selectedNotes ->
         if (notes.isEmpty()) {
             NoteListUiState.Empty
         } else {
             NoteListUiState.Success(
-                notes = notes.toMainScreenNotes(),
+                notes = notes.toMainScreenNotes(selectedNotes),
                 scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
+                selectedNotesCount = selectedNotes.count(),
             )
         }
     }.stateIn(
@@ -69,31 +72,22 @@ internal class NoteListViewModel @Inject constructor(
         when (event) {
             is NoteListEvent.OnScrolledToItem -> scrollToNoteState.update { null }
             is NoteListEvent.OnScrollToTopClick -> _effect.tryEmit(NoteListEffect.ScrollToTop)
-            is NoteListEvent.OnSettingsClick -> _effect.tryEmit(NoteListEffect.OpenSettingsScreen)
-            is NoteListEvent.OnSearchClick -> _effect.tryEmit(NoteListEffect.OpenNoteSearchScreen)
-            is NoteListEvent.OnAddNoteClick -> _effect.tryEmit(
-                NoteListEffect.OpenNoteCreateScreen(
-                    identifier = DialogIdentifier(
-                        dialogId = NOTE_CREATE_DIALOG_ID,
-                        requestId = TAG,
-                    ),
-                )
-            )
-
-            is NoteListEvent.OnNoteClick -> _effect.tryEmit(
-                NoteListEffect.OpenNoteViewScreen(
-                    noteId = event.note.id,
-                    identifier = DialogIdentifier(
-                        dialogId = NOTE_VIEW_DIALOG_ID,
-                        requestId = TAG,
-                    ),
-                )
-            )
-
-            is NoteListEvent.OnNoteLongClick -> launch {
-                this.launch {  }
-                deleteNoteUseCase(event.note.id)
+            is NoteListEvent.OnSettingsClick -> openSettingsScreen()
+            is NoteListEvent.OnSearchClick -> openSearchScreen()
+            is NoteListEvent.OnAddNoteClick -> openCreateNoteScreen()
+            is NoteListEvent.OnNoteClick -> if (selectedNotesState.value.isEmpty()) {
+                openNoteViewScreen(event.note.id)
+            } else {
+                addOrRemoveSelectedNote(event.note.id)
             }
+
+            is NoteListEvent.OnNoteLongClick -> addOrRemoveSelectedNote(event.note.id)
+            is NoteListEvent.OnDeleteSelectedNotesClick -> showConfirmNotesDeleteDialog()
+            is NoteListEvent.OnConfirmDeleteSelectedNotesClick -> launch {
+                deleteSelectedNotes(selectedNotesState.value)
+            }
+
+            is NoteListEvent.OnCloseSelectionClick -> clearSelectedNotes()
         }
     }
 
@@ -114,5 +108,64 @@ internal class NoteListViewModel @Inject constructor(
                 scrollToNoteState.update { null }
             }
         }
+    }
+
+    private fun addOrRemoveSelectedNote(noteId: String) {
+        selectedNotesState.update { selectedNotes ->
+            if (selectedNotes.contains(noteId)) {
+                selectedNotes.toMutableSet().apply { remove(noteId) }
+            } else {
+                selectedNotes.toMutableSet().apply { add(noteId) }
+            }
+
+        }
+    }
+
+    private suspend fun deleteSelectedNotes(notes: Set<String>) {
+        clearSelectedNotes()
+        deleteNoteUseCase(notes)
+    }
+
+    private fun clearSelectedNotes() {
+        selectedNotesState.update { emptySet() }
+    }
+
+    private fun openSettingsScreen() {
+        clearSelectedNotes()
+        _effect.tryEmit(NoteListEffect.OpenSettingsScreen)
+    }
+
+    private fun openSearchScreen() {
+        clearSelectedNotes()
+        _effect.tryEmit(NoteListEffect.OpenNoteSearchScreen)
+    }
+
+    private fun openCreateNoteScreen() {
+        clearSelectedNotes()
+        _effect.tryEmit(
+            NoteListEffect.OpenNoteCreateScreen(
+                identifier = DialogIdentifier(
+                    dialogId = NOTE_CREATE_DIALOG_ID,
+                    requestId = TAG,
+                ),
+            )
+        )
+    }
+
+    private fun openNoteViewScreen(noteId: String) {
+        clearSelectedNotes()
+        _effect.tryEmit(
+            NoteListEffect.OpenNoteViewScreen(
+                noteId = noteId,
+                identifier = DialogIdentifier(
+                    dialogId = NOTE_VIEW_DIALOG_ID,
+                    requestId = TAG,
+                ),
+            )
+        )
+    }
+
+    private fun showConfirmNotesDeleteDialog() {
+        _effect.tryEmit(NoteListEffect.ShowConfirmNoteDeleteDialog)
     }
 }

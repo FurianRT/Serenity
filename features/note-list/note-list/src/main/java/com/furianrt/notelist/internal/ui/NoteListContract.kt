@@ -14,6 +14,7 @@ internal sealed interface NoteListUiState {
     data class Success(
         val notes: ImmutableList<NoteListScreenNote>,
         val scrollToPosition: Int?,
+        val selectedNotesCount: Int,
     ) : NoteListUiState
 }
 
@@ -28,6 +29,9 @@ internal sealed interface NoteListEvent {
     data object OnSearchClick : NoteListEvent
     data object OnAddNoteClick : NoteListEvent
     data object OnScrolledToItem : NoteListEvent
+    data object OnDeleteSelectedNotesClick : NoteListEvent
+    data object OnConfirmDeleteSelectedNotesClick : NoteListEvent
+    data object OnCloseSelectionClick : NoteListEvent
 }
 
 internal sealed interface NoteListEffect {
@@ -40,4 +44,5 @@ internal sealed interface NoteListEffect {
         val identifier: DialogIdentifier,
     ) : NoteListEffect
 
+    data object ShowConfirmNoteDeleteDialog : NoteListEffect
 }

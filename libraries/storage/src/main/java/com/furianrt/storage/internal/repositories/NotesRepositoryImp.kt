@@ -13,6 +13,7 @@ import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
+import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
@@ -57,6 +58,10 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteIsPinned(noteId, isPinned))
     }
 
+    override suspend fun updateNoteIsPinned(noteIds: Set<String>, isPinned: Boolean) {
+        noteDao.update(noteIds.map { PartNoteIsPinned(it, isPinned) })
+    }
+
     override suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor,
@@ -67,7 +72,11 @@ internal class NotesRepositoryImp @Inject constructor(
     }
 
     override suspend fun deleteNote(noteId: String) = transactionsHelper.startTransaction {
-        noteDao.delete(noteId)
+        noteDao.delete(PartNoteId(noteId))
+    }
+
+    override suspend fun deleteNotes(noteIds: Set<String>) {
+        noteDao.delete(noteIds.map { PartNoteId(it) }.toList())
     }
 
     override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllNotes()

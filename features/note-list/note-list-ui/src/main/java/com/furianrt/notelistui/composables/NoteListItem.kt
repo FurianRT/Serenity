@@ -1,13 +1,17 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
+import android.view.animation.OvershootInterpolator
+import androidx.compose.animation.core.Easing
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
@@ -17,8 +21,11 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
@@ -34,6 +41,9 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import java.time.ZonedDateTime
+
+private const val SELECTED_SCALE = 0.98f
+private const val SELECTED_SCALE_DURATION = 350
 
 private val cardRippleAlpha = RippleAlpha(
     draggedAlpha = 0.05f,
@@ -53,22 +63,45 @@ fun NoteListItem(
     date: String,
     modifier: Modifier = Modifier,
     showBorder: Boolean = false,
+    isSelected: Boolean = false,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
 ) {
+    val interpolator = remember { OvershootInterpolator(5.0f) }
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) SELECTED_SCALE else 1f,
+        animationSpec = tween(
+            durationMillis = SELECTED_SCALE_DURATION,
+            easing = if (isSelected) {
+                Easing { interpolator.getInterpolation(it) }
+            } else {
+                FastOutSlowInEasing
+            }
+        ),
+    )
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         OutlinedCard(
             modifier = modifier
                 .fillMaxWidth()
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
                 .clip(RoundedCornerShape(8.dp))
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
             shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiary),
+            colors = CardDefaults.cardColors(
+                containerColor = if (isSelected) {
+                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                } else {
+                    MaterialTheme.colorScheme.tertiary
+                },
+            ),
             border = if (showBorder) {
                 BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
             } else {

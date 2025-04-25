@@ -1,6 +1,7 @@
 package com.furianrt.storage.internal.database.notes.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
@@ -12,6 +13,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
+import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import kotlinx.coroutines.flow.Flow
@@ -36,8 +38,14 @@ internal interface NoteDao {
     @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteIsPinned)
 
-    @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
-    suspend fun delete(noteId: String)
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: List<PartNoteIsPinned>)
+
+    @Delete(entity = EntryNote::class)
+    suspend fun delete(data: PartNoteId)
+
+    @Delete(entity = EntryNote::class)
+    suspend fun delete(data: List<PartNoteId>)
 
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")

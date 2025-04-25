@@ -16,6 +16,7 @@ internal data class NoteListScreenNote(
     val fontFamily: UiNoteFontFamily,
     val fontSize: Int,
     val isPinned: Boolean,
+    val isSelected: Boolean,
     val content: ImmutableList<UiNoteContent>,
 ) {
     sealed interface Date {

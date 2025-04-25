@@ -16,7 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
@@ -31,21 +33,24 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.core.buildImmutableList
-import com.furianrt.uikit.R as uiR
-import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
+import com.furianrt.notelist.internal.ui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import com.furianrt.uikit.R as uiR
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
 
@@ -59,8 +64,11 @@ internal fun NoteListScreen(
     val viewModel: NoteListViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val hazeState = remember { HazeState() }
 
     val screenState = rememberMainState()
+
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -77,21 +85,33 @@ internal fun NoteListScreen(
                     is NoteListEffect.OpenNoteCreateScreen -> {
                         openNoteCreateScreen(effect.identifier)
                     }
+
+                    is NoteListEffect.ShowConfirmNoteDeleteDialog -> showDeleteConfirmDialog = true
                 }
             }
     }
 
     MainScreenContent(
+        modifier = Modifier.haze(hazeState),
         uiState = uiState,
         screenState = screenState,
         onEvent = viewModel::onEvent,
     )
+
+    if (showDeleteConfirmDialog) {
+        ConfirmNotesDeleteDialog(
+            hazeState = hazeState,
+            onConfirmClick = { viewModel.onEvent(NoteListEvent.OnConfirmDeleteSelectedNotesClick) },
+            onDismissRequest = { showDeleteConfirmDialog = false },
+        )
+    }
 }
 
 @Composable
 private fun MainScreenContent(
     uiState: NoteListUiState,
     onEvent: (event: NoteListEvent) -> Unit,
+    modifier: Modifier = Modifier,
     screenState: NoteListScreenState = rememberMainState(),
 ) {
     val needToShowScrollUpButton by remember {
@@ -100,14 +120,22 @@ private fun MainScreenContent(
         }
     }
 
+    val successState = uiState as? NoteListUiState.Success
+    val selectedNotesCount = successState?.selectedNotesCount ?: 0
+
     MovableToolbarScaffold(
-        modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         listState = screenState.listState,
         state = screenState.toolbarState,
+        enabled = selectedNotesCount == 0,
         toolbar = {
             Toolbar(
+                notesCount = successState?.notes?.count() ?: 0,
+                selectedNotesCount = selectedNotesCount,
                 onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
                 onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
+                onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
+                onCloseSelectionClick = { onEvent(NoteListEvent.OnCloseSelectionClick) },
             )
         },
     ) {
@@ -176,23 +204,12 @@ private fun MainSuccess(
                     .animateContentSize(),
                 content = note.content,
                 tags = note.tags,
-                date = when (note.date) {
-                    is NoteListScreenNote.Date.Today -> {
-                        stringResource(uiR.string.today_title)
-                    }
-
-                    is NoteListScreenNote.Date.Yesterday -> {
-                        stringResource(uiR.string.yesterday_title)
-                    }
-
-                    is NoteListScreenNote.Date.Other -> {
-                        note.date.text
-                    }
-                },
+                date = note.date.getTitle(),
                 fontColor = note.fontColor,
                 fontFamily = note.fontFamily,
                 fontSize = note.fontSize.sp,
                 showBorder = note.isPinned,
+                isSelected = note.isSelected,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },
             )
@@ -214,21 +231,44 @@ private fun NoteListLoading(
     Box(modifier = modifier.fillMaxSize())
 }
 
+@Composable
+private fun NoteListScreenNote.Date.getTitle() = when (this) {
+    is NoteListScreenNote.Date.Today -> stringResource(uiR.string.today_title)
+    is NoteListScreenNote.Date.Yesterday -> stringResource(uiR.string.yesterday_title)
+    is NoteListScreenNote.Date.Other -> text
+}
+
 @Preview
 @Composable
 private fun SuccessPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState.Success(
-                notes = generatePreviewNotes(),
+                notes = generatePreviewNotes(withSelected = false),
                 scrollToPosition = null,
+                selectedNotesCount = 0
             ),
             onEvent = {},
         )
     }
 }
 
-private fun generatePreviewNotes() = buildImmutableList {
+@Preview
+@Composable
+private fun SuccessWithSelectedPreview() {
+    SerenityTheme {
+        MainScreenContent(
+            uiState = NoteListUiState.Success(
+                notes = generatePreviewNotes(withSelected = true),
+                scrollToPosition = null,
+                selectedNotesCount = 3
+            ),
+            onEvent = {},
+        )
+    }
+}
+
+private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
     repeat(5) { index ->
         add(
             NoteListScreenNote(
@@ -239,6 +279,7 @@ private fun generatePreviewNotes() = buildImmutableList {
                 fontFamily = UiNoteFontFamily.QUICK_SAND,
                 fontSize = 15,
                 isPinned = false,
+                isSelected = withSelected && index % 2 == 0,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = index.toString(),

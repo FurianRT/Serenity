@@ -49,6 +49,12 @@ internal class EntryNote(
 }
 
 @Entity
+internal class PartNoteId(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+)
+
+@Entity
 internal class PartNoteText(
     @ColumnInfo(name = EntryNote.FIELD_ID)
     val id: String,

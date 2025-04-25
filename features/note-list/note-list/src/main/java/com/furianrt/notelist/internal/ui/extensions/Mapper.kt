@@ -10,9 +10,15 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.uikit.extensions.toDateString
 import java.time.LocalDate
 
-internal fun List<LocalNote>.toMainScreenNotes() = mapImmutable(LocalNote::toMainScreenNote)
+internal fun List<LocalNote>.toMainScreenNotes(
+    selectedNotes: Set<String>,
+) = mapImmutable { note ->
+    note.toMainScreenNote(isSelected = selectedNotes.contains(note.id))
+}
 
-internal fun LocalNote.toMainScreenNote(): NoteListScreenNote {
+internal fun LocalNote.toMainScreenNote(
+    isSelected: Boolean,
+): NoteListScreenNote {
     val localDateNow = LocalDate.now()
     val localDate = date.toLocalDate()
     return NoteListScreenNote(
@@ -27,6 +33,7 @@ internal fun LocalNote.toMainScreenNote(): NoteListScreenNote {
         fontFamily = fontFamily.toUiNoteFontFamily(),
         fontSize = fontSize,
         isPinned = isPinned,
+        isSelected = isSelected,
         content = content.getShortUiContent(),
     )
 }

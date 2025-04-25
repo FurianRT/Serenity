@@ -205,7 +205,11 @@ private fun Menu(
                 ) {
                     Icon(
                         modifier = Modifier.size(20.dp),
-                        painter = painterResource(uiR.drawable.ic_pin),
+                        painter = if (isPinned) {
+                            painterResource(uiR.drawable.ic_unpin)
+                        } else {
+                            painterResource(uiR.drawable.ic_pin)
+                        },
                         tint = Color.Unspecified,
                         contentDescription = null,
                     )

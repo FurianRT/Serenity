@@ -19,4 +19,12 @@ class DeleteNoteUseCase @Inject constructor(
         }
         mediaRepository.deleteMediaFiles(noteId)
     }
+
+    suspend operator fun invoke(noteIds: Set<String>) {
+        transactionsHelper.startTransaction {
+            notesRepository.deleteNotes(noteIds)
+            tagsRepository.deleteUnusedTags()
+        }
+        noteIds.forEach {  mediaRepository.deleteMediaFiles(it) }
+    }
 }

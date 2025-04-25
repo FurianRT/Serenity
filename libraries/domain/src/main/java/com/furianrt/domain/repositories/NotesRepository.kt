@@ -13,6 +13,7 @@ interface NotesRepository {
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
     suspend fun updateNoteIsPinned(noteId: String, isPinned: Boolean)
+    suspend fun updateNoteIsPinned(noteIds: Set<String>, isPinned: Boolean)
     suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor,
@@ -21,6 +22,7 @@ interface NotesRepository {
     )
 
     suspend fun deleteNote(noteId: String)
+    suspend fun deleteNotes(noteIds: Set<String>)
     fun getAllNotes(): Flow<List<LocalNote>>
     fun getAllNotes(query: String): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
