@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
@@ -89,8 +88,10 @@ import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
+import com.furianrt.uikit.extensions.bringIntoView
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.getStatusBarHeight
+import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -140,6 +141,15 @@ internal fun NotePageScreenInternal(
 
     state.setOnSaveContentListener { viewModel.onEvent(PageEvent.OnOnSaveContentRequest) }
 
+    val view = LocalView.current
+    val density = LocalDensity.current
+    val keyboardOffset by rememberKeyboardOffsetState()
+    val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
+    val statusBarHeightDp = density.run { statusBarHeight.toDp() }
+    val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 16.dp
+    val toolbarMarginPx = density.run { toolbarMargin.toPx() }
+    val bottomFocusMargin = with(LocalDensity.current) { 90.dp.toPx().toInt() }
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -156,12 +166,17 @@ internal fun NotePageScreenInternal(
 
                 is PageEffect.OpenMediaViewer -> openMediaViewer(effect.route)
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
-                is PageEffect.FocusFirstTitle -> state.focusTitle(effect.index)
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
                 }
 
-                is PageEffect.BringContentToView -> state.bringContentToView(effect.index)
+                is PageEffect.BringContentToView -> {
+                    effect.content.bringIntoViewRequester.bringIntoView(
+                        additionalTopOffset = toolbarMarginPx,
+                        additionalBottomOffset = keyboardOffset.toFloat() + bottomFocusMargin,
+                    )
+                }
+
                 is PageEffect.ClearFocus -> focusManager.clearFocus()
             }
         }
@@ -223,7 +238,6 @@ private fun SuccessScreen(
 ) {
     val view = LocalView.current
     val density = LocalDensity.current
-    val scope = rememberCoroutineScope()
     var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
     var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
     val toolsPanelHeight by remember(
@@ -241,11 +255,9 @@ private fun SuccessScreen(
     }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
-    val focusRequesters = remember { mutableMapOf<Int, FocusRequester>() }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
-    val toolbarMarginPx = density.run { toolbarMargin.toPx() }
     var listSize by remember { mutableStateOf(IntSize.Zero) }
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
         .calculateBottomPadding() + 8.dp
@@ -257,13 +269,6 @@ private fun SuccessScreen(
         if (title != null) {
             snapshotFlow { title.state.selection }
                 .collect { onEvent(PageEvent.OnFocusedTitleSelectionChange) }
-        }
-    }
-
-    state.setOnTitleFocusRequestListener { focusRequesters[it]?.requestFocus() }
-    state.setOnBringContentToViewListener { position ->
-        scope.launch {
-            state.scrollToPosition(position = position, topOffset = toolbarMarginPx.toInt())
         }
     }
 
@@ -299,7 +304,6 @@ private fun SuccessScreen(
                     .onSizeChanged { listSize = it },
                 uiState = uiState,
                 hazeState = hazeState,
-                titleFocusRequester = { focusRequesters.getOrPut(it) { FocusRequester() } },
                 onEvent = onEvent,
                 onTitleFocusChange = { id ->
                     focusedTitleId = id
@@ -405,7 +409,6 @@ private fun SuccessScreen(
 private fun ContentItems(
     uiState: PageUiState.Success,
     hazeState: HazeState,
-    titleFocusRequester: (index: Int) -> FocusRequester,
     onTitleFocusChange: (id: String) -> Unit,
     onEmptyTitleHeightChange: (height: Float) -> Unit,
     onEvent: (event: PageEvent) -> Unit,
@@ -459,7 +462,6 @@ private fun ContentItems(
                                 stringResource(R.string.note_title_hint_write_more_here)
                             },
                             isInEditMode = uiState.isInEditMode,
-                            focusRequester = titleFocusRequester(index),
                             onTitleFocused = { id ->
                                 onEvent(PageEvent.OnTitleFocusChange(id))
                                 onTitleFocusChange(id)

@@ -1,7 +1,6 @@
 package com.furianrt.notepage.api
 
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -18,10 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notepage.internal.ui.page.NotePageScreenInternal
-import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.utils.DialogIdentifier
-
-private const val ITEM_VISIBILITY_THRESHOLD = 90f
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Stable
@@ -50,9 +46,6 @@ class PageScreenState(
 
     private var onSaveContentRequest: () -> Unit = {}
 
-    private var onTitleFocusRequest: (index: Int) -> Unit = {}
-    private var onBringContentToViewRequest: (index: Int) -> Unit = {}
-
     fun setOnSaveContentListener(callback: () -> Unit) {
         onSaveContentRequest = callback
     }
@@ -63,31 +56,6 @@ class PageScreenState(
 
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed
-    }
-
-    fun setOnTitleFocusRequestListener(callback: (index: Int) -> Unit) {
-        onTitleFocusRequest = callback
-    }
-
-    fun focusTitle(index: Int) {
-        onTitleFocusRequest(index)
-    }
-
-    fun setOnBringContentToViewListener(callback: (index: Int) -> Unit) {
-        onBringContentToViewRequest = callback
-    }
-
-    fun bringContentToView(index: Int) {
-        onBringContentToViewRequest(index)
-    }
-
-    suspend fun scrollToPosition(position: Int, topOffset: Int) {
-        /*val visibleIndexes = listState.layoutInfo
-            .visibleItemsInfo(ITEM_VISIBILITY_THRESHOLD, topOffset)
-            .map(LazyListItemInfo::index)
-        if (position !in visibleIndexes) {
-            listState.animateScrollToItem(position)
-        }*/ // TODO
     }
 
     companion object {

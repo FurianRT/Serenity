@@ -166,8 +166,8 @@ private fun TemplateNoteTagItem(
                     bringIntoViewRequester.bringIntoView(
                         textResult = layoutResult,
                         selection = tag.textState.selection,
-                        additionalTopOffset = 0,
-                        additionalBottomOffset = offset + focusMargin,
+                        additionalTopOffset = 0f,
+                        additionalBottomOffset = offset + focusMargin.toFloat(),
                     )
                 }
             }
@@ -179,8 +179,8 @@ private fun TemplateNoteTagItem(
                     bringIntoViewRequester.bringIntoView(
                         textResult = layoutResult,
                         selection = selection,
-                        additionalTopOffset = 0,
-                        additionalBottomOffset = keyboardOffset + focusMargin,
+                        additionalTopOffset = 0f,
+                        additionalBottomOffset = keyboardOffset + focusMargin.toFloat(),
                     )
                 }
             }

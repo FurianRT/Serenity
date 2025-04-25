@@ -18,7 +18,7 @@ import javax.inject.Singleton
 
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
-private const val IMAGE_COMPRESS_AMOUNT = 80
+private const val IMAGE_COMPRESS_AMOUNT = 75
 
 internal class SavedMediaData(
     val name: String,
@@ -60,7 +60,7 @@ internal class AppMediaSource @Inject constructor(
 
     suspend fun deleteAllMediaFiles(noteId: String): Boolean = withContext(dispatchers.io) {
         return@withContext try {
-            File(context.filesDir, noteId).delete()
+            File(context.filesDir, noteId).deleteRecursively()
         } catch (e: Exception) {
             false
         }
@@ -139,10 +139,11 @@ internal class AppMediaSource @Inject constructor(
         image: LocalNote.Content.Image,
         noteId: String,
     ): SavedMediaData? = withContext(dispatchers.io) {
+        val imageNewName = image.name.replaceFileExtension(".webp")
         val destFile = createMediaFile(
             noteId = noteId,
             mediaId = image.id,
-            mediaName = image.name.replaceFileExtension(".webp"),
+            mediaName = imageNewName,
         ) ?: return@withContext null
 
         val bitmap = context.contentResolver.openInputStream(image.uri)
@@ -171,7 +172,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = destFile.name,
+            name = imageNewName,
             uri = getRelativeUri(destFile),
         )
     }
@@ -193,7 +194,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = destFile.name,
+            name = video.name,
             uri = getRelativeUri(destFile),
         )
     }

@@ -21,16 +21,26 @@ fun TextLayoutResult.cursorCoordinates(selection: TextRange): Pair<Float, Float>
 suspend fun BringIntoViewRequester.bringIntoView(
     textResult: TextLayoutResult?,
     selection: TextRange,
-    additionalTopOffset: Int,
-    additionalBottomOffset: Int,
+    additionalTopOffset: Float,
+    additionalBottomOffset: Float,
 ) {
-    val (top, bottom) = textResult?.cursorCoordinates(selection) ?: return
+    val (top, bottom) = textResult?.cursorCoordinates(selection) ?: Pair(0f, 0f)
+    bringIntoView(
+        additionalTopOffset = top + additionalTopOffset,
+        additionalBottomOffset = bottom + additionalBottomOffset,
+    )
+}
+
+suspend fun BringIntoViewRequester.bringIntoView(
+    additionalTopOffset: Float,
+    additionalBottomOffset: Float,
+) {
     bringIntoView(
         Rect(
             left = 0f,
-            top = top - additionalTopOffset,
+            top = -additionalTopOffset,
             right = 0f,
-            bottom = bottom + additionalBottomOffset,
+            bottom = additionalBottomOffset,
         ),
     )
 }

@@ -7,7 +7,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.imeAnimationTarget
-import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -22,7 +21,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
@@ -54,7 +52,6 @@ import kotlinx.coroutines.flow.debounce
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
-    focusRequester: FocusRequester = FocusRequester(),
     hint: String? = null,
     color: Color = MaterialTheme.typography.bodyMedium.color,
     fontFamily: FontFamily? = MaterialTheme.typography.bodyMedium.fontFamily,
@@ -66,13 +63,12 @@ fun NoteContentTitle(
     val readOnly = !isInEditMode && title.isEmptyTitle()
 
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
-    val bringIntoViewRequester = remember { BringIntoViewRequester() }
 
     var hasFocus by remember { mutableStateOf(false) }
 
     val view = LocalView.current
     val topFocusMargin = with(LocalDensity.current) {
-        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight()).toInt()
+        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 8.dp.toPx()).toInt()
     }
     val bottomFocusMargin = with(LocalDensity.current) { 64.dp.toPx().toInt() }
     if (hasFocus) {
@@ -83,22 +79,22 @@ fun NoteContentTitle(
                 .debounce(50)
                 .collect { offset ->
                     if (imeTarget != 0) {
-                        bringIntoViewRequester.bringIntoView(
+                        title.bringIntoViewRequester.bringIntoView(
                             textResult = layoutResult,
                             selection = title.state.selection,
-                            additionalTopOffset = topFocusMargin,
-                            additionalBottomOffset = offset + bottomFocusMargin,
+                            additionalTopOffset = topFocusMargin.toFloat(),
+                            additionalBottomOffset = offset + bottomFocusMargin.toFloat(),
                         )
                     }
                 }
         }
         LaunchedEffect(title.state.selection, hasFocus) {
             delay(50)
-            bringIntoViewRequester.bringIntoView(
+            title.bringIntoViewRequester.bringIntoView(
                 textResult = layoutResult,
                 selection = title.state.selection,
-                additionalTopOffset = topFocusMargin,
-                additionalBottomOffset = keyboardOffset + bottomFocusMargin,
+                additionalTopOffset = topFocusMargin.toFloat(),
+                additionalBottomOffset = keyboardOffset + bottomFocusMargin.toFloat(),
             )
         }
     }
@@ -120,8 +116,8 @@ fun NoteContentTitle(
 
     BasicTextField(
         modifier = modifier
-            .bringIntoViewRequester(bringIntoViewRequester)
-            .focusRequester(focusRequester)
+            .bringIntoViewRequester(title.bringIntoViewRequester)
+            .focusRequester(title.focusRequester)
             .onFocusChanged { focusState ->
                 hasFocus = focusState.hasFocus
                 if (focusState.hasFocus) {

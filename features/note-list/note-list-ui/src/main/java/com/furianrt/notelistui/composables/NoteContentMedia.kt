@@ -203,10 +203,6 @@ private fun OneMediaHolder(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .graphicsLayer {
-                    scaleX = longClickScale
-                    scaleY = longClickScale
-                }
                 .clip(RoundedCornerShape(8.dp))
                 .applyIf(clickable) {
                     Modifier.combinedClickable(
@@ -222,6 +218,11 @@ private fun OneMediaHolder(
             MediaItem(
                 modifier = Modifier
                     .fillMaxSize()
+                    .graphicsLayer {
+                        scaleX = longClickScale
+                        scaleY = longClickScale
+                    }
+                    .clip(RoundedCornerShape(8.dp))
                     .blur(32.dp),
                 media = media,
                 cornerRadius = 0.dp,
@@ -231,6 +232,10 @@ private fun OneMediaHolder(
                 MediaItem(
                     modifier = Modifier
                         .fillMaxHeight()
+                        .graphicsLayer {
+                            scaleX = longClickScale
+                            scaleY = longClickScale
+                        }
                         .aspectRatio(
                             ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
                             matchHeightConstraintsFirst = true,
@@ -407,12 +412,6 @@ private fun MediaItem(
     val haptic = LocalHapticFeedback.current
     var showDropDownMenu by remember { mutableStateOf(false) }
     val dimColor = MaterialTheme.colorScheme.scrim
-    val dimModifier = Modifier.drawWithContent {
-        drawContent()
-        if (offscreenImageCount > 0) {
-            drawRect(color = dimColor)
-        }
-    }
     val interpolator = remember { OvershootInterpolator(5.0f) }
     val longClickScale by animateFloatAsState(
         targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
@@ -425,36 +424,44 @@ private fun MediaItem(
             }
         ),
     )
+    val dimModifier = Modifier.drawWithContent {
+        drawContent()
+        if (offscreenImageCount > 0) {
+            drawRect(color = dimColor)
+        }
+    }
+    val scaleModifier = Modifier.graphicsLayer {
+        scaleY = longClickScale
+        scaleX = longClickScale
+    }
+    val clickModifier = Modifier.combinedClickable(
+        onClick = { onClick(media) },
+        onLongClick = {
+            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            showDropDownMenu = true
+        },
+    )
     Box(
-        modifier = modifier
-            .graphicsLayer {
-                scaleY = longClickScale
-                scaleX = longClickScale
-            }
-            .clip(RoundedCornerShape(cornerRadius))
-            .applyIf(clickable) {
-                Modifier.combinedClickable(
-                    enabled = clickable,
-                    onClick = { onClick(media) },
-                    onLongClick = {
-                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                        showDropDownMenu = true
-                    },
-                )
-            },
+        modifier = modifier.clip(RoundedCornerShape(cornerRadius)),
         contentAlignment = Alignment.Center,
         propagateMinConstraints = true,
     ) {
         when (media) {
             is MediaBlock.Image -> ImageItem(
-                modifier = dimModifier,
+                modifier = dimModifier
+                    .then(scaleModifier)
+                    .clip(RoundedCornerShape(cornerRadius))
+                    .applyIf(clickable) { clickModifier },
                 image = media,
                 contentScale = contentScale,
                 cacheExtraKey = cacheExtraKey,
             )
 
             is MediaBlock.Video -> VideoItem(
-                modifier = dimModifier,
+                modifier = dimModifier
+                    .then(scaleModifier)
+                    .clip(RoundedCornerShape(cornerRadius))
+                    .applyIf(clickable) { clickModifier },
                 video = media,
                 contentScale = contentScale,
                 cacheExtraKey = cacheExtraKey,
@@ -588,7 +595,7 @@ private fun PopUpMenu(
             )
             .background(MaterialTheme.colorScheme.tertiaryContainer),
         containerColor = Color.Transparent,
-        offset = DpOffset(x = 8.dp, y = -(32).dp),
+        offset = DpOffset(x = 8.dp, y = -(8).dp),
         shape = RoundedCornerShape(8.dp),
         shadowElevation = 0.dp,
         expanded = expanded,

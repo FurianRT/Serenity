@@ -1,20 +1,26 @@
 package com.furianrt.notelistui.entities
 
 import android.net.Uri
+import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import kotlinx.collections.immutable.ImmutableList
 import java.time.ZonedDateTime
 
-sealed class UiNoteContent(open val id: String) {
+sealed class UiNoteContent(
+    open val id: String,
+    val bringIntoViewRequester: BringIntoViewRequester = BringIntoViewRequester(),
+) {
 
     @Stable
     data class Title(
         override val id: String,
         val state: NoteTitleState = NoteTitleState(),
+        val focusRequester: FocusRequester = FocusRequester(),
     ) : UiNoteContent(id)
 
     @Immutable

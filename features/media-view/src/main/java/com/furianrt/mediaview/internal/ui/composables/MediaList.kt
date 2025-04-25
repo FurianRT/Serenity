@@ -77,7 +77,7 @@ internal fun MediaList(
     ) {
         items(
             count = media.count(),
-            key = { media[it].name },
+            key = { media[it].id },
             contentType = { media[it]::class.simpleName },
         ) { index ->
             when (val item = media[index]) {

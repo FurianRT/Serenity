@@ -77,7 +77,7 @@ internal fun MediaList(
     ) {
         items(
             count = media.count(),
-            key = { media[it].name },
+            key = { media[it].id },
             contentType = { media[it]::class.simpleName },
         ) { index ->
             when (val item = media[index]) {
@@ -112,12 +112,12 @@ internal fun ImageItem(
         label = "ItemScale"
     )
     val context = LocalContext.current
-    val request = remember(item.name) {
+    val request = remember(item.id) {
         ImageRequest.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.name)
+            .diskCacheKey(item.id.toString())
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(item.name)
+            .memoryCacheKey(item.id.toString())
             .data(item.uri)
             .build()
     }
@@ -147,12 +147,12 @@ internal fun VideoItem(
         label = "ItemScale",
     )
     val context = LocalContext.current
-    val request = remember(item.name) {
+    val request = remember(item.id) {
         ImageRequest.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.name)
+            .diskCacheKey(item.id.toString())
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(item.name)
+            .memoryCacheKey(item.id.toString())
             .decoderFactory { result, options, _ -> VideoFrameDecoder(result.source, options) }
             .data(item.uri)
             .build()

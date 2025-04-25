@@ -297,10 +297,17 @@ internal class PageViewModel @AssistedInject constructor(
             )
         }
         launch {
+            delay(TITLE_FOCUS_DELAY)
             _state.doWithState<PageUiState.Success> { successState ->
                 val blockIndex = successState.content.indexOfFirstOrNull { it.id == newBlock.id }
                 if (blockIndex != null) {
-                    _effect.tryEmit(PageEffect.BringContentToView(blockIndex))
+                    val title = successState.content
+                        .subList(blockIndex, successState.content.size)
+                        .firstOrNull { it is UiNoteContent.Title } as? UiNoteContent.Title
+                    if (title != null) {
+                        _effect.tryEmit(PageEffect.BringContentToView(title))
+                        title.focusRequester.requestFocus()
+                    }
                 }
             }
         }
@@ -507,6 +514,7 @@ internal class PageViewModel @AssistedInject constructor(
                     }
                 }
             }
+
         }
     }
 
@@ -640,9 +648,12 @@ internal class PageViewModel @AssistedInject constructor(
         }
         _state.doWithState<PageUiState.Success> { successState ->
             if (focusFirstTitle && isEnabled && successState.isContentEmpty) {
-                delay(TITLE_FOCUS_DELAY)
-                _effect.tryEmit(PageEffect.FocusFirstTitle(index = 0))
                 focusFirstTitle = false
+                delay(TITLE_FOCUS_DELAY)
+                val firstTitle = successState.content
+                    .filterIsInstance<UiNoteContent.Title>()
+                    .firstOrNull()
+                firstTitle?.focusRequester?.requestFocus()
             }
         }
     }

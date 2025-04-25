@@ -22,7 +22,7 @@ internal interface BackupModule {
         @Singleton
         fun provideHttpLoggingInterceptor(): HttpLoggingInterceptor {
             return HttpLoggingInterceptor().apply {
-                level = HttpLoggingInterceptor.Level.BODY
+                level = HttpLoggingInterceptor.Level.BASIC
             }
         }
     }

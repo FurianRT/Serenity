@@ -69,7 +69,7 @@ internal fun MediaPager(
     HorizontalPager(
         modifier = modifier,
         state = state,
-        key = { media[it].name },
+        key = { media[it].id },
         pageSpacing = 8.dp,
         beyondViewportPageCount = 1,
         overscrollEffect = null,
@@ -106,12 +106,12 @@ private fun ImagePage(
         zoomableState.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
     }
     val context = LocalContext.current
-    val request = remember(item.name) {
+    val request = remember(item.id) {
         ImageRequest.Builder(context)
             .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.name)
+            .diskCacheKey(item.id.toString())
             .memoryCachePolicy(CachePolicy.ENABLED)
-            .memoryCacheKey(item.name)
+            .memoryCacheKey(item.id.toString())
             .data(item.uri)
             .build()
     }
@@ -141,7 +141,7 @@ internal fun VideoPage(
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
-    val exoPlayer = remember(item.name) {
+    val exoPlayer = remember(item.id) {
         ExoPlayer.Builder(view.context)
             .setLoadControl(
                 DefaultLoadControl.Builder()
@@ -155,18 +155,18 @@ internal fun VideoPage(
             )
             .build()
     }
-    val mediaSource = remember(item.name) { ExoMediaItem.fromUri(item.uri) }
-    var isEnded by rememberSaveable(item.name) { mutableStateOf(false) }
-    var playing by rememberSaveable(isPlaying, item.name) { mutableStateOf(isPlaying && !isEnded) }
-    var currentPosition by rememberSaveable(item.name) { mutableLongStateOf(0L) }
-    var isThumbDragging by remember(item.name) { mutableStateOf(false) }
+    val mediaSource = remember(item.id) { ExoMediaItem.fromUri(item.uri) }
+    var isEnded by rememberSaveable(item.id) { mutableStateOf(false) }
+    var playing by rememberSaveable(isPlaying, item.id) { mutableStateOf(isPlaying && !isEnded) }
+    var currentPosition by rememberSaveable(item.id) { mutableLongStateOf(0L) }
+    var isThumbDragging by remember(item.id) { mutableStateOf(false) }
 
     val zoomableState = rememberZoomableState()
     LaunchedEffect(zoomableState) {
         zoomableState.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
     }
 
-    LaunchedEffect(item.name) {
+    LaunchedEffect(item.id) {
         exoPlayer.setMediaItem(mediaSource)
         exoPlayer.prepare()
         exoPlayer.seekTo(currentPosition)
@@ -182,7 +182,7 @@ internal fun VideoPage(
         }
     }
 
-    DisposableEffect(item.name) {
+    DisposableEffect(item.id) {
         val listener = object : Player.Listener {
             override fun onPlaybackStateChanged(playbackState: Int) {
                 if (isEnded && playbackState == ExoPlayer.STATE_BUFFERING) {
