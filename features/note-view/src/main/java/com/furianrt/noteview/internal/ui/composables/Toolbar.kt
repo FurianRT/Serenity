@@ -50,6 +50,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
@@ -216,8 +217,11 @@ private fun Menu(
                 }
             },
             onClick = {
-                onPinClick()
                 onDismissRequest()
+                scope.launch {
+                    delay(150)
+                    onPinClick()
+                }
             }
         )
         DropdownMenuItem(
