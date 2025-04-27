@@ -115,7 +115,7 @@ private fun VoiceContent(
 ) {
     var wasStarted by rememberSaveable { mutableStateOf(false) }
     Card(
-        modifier = modifier.width(240.dp),
+        modifier = modifier.width(if (isPayable) 240.dp else 200.dp),
         shape = RoundedCornerShape(24),
         colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary),
         elevation = CardDefaults.cardElevation(0.dp),

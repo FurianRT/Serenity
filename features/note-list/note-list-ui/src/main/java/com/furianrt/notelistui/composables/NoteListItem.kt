@@ -62,7 +62,7 @@ fun NoteListItem(
     fontSize: TextUnit,
     date: String,
     modifier: Modifier = Modifier,
-    showBorder: Boolean = false,
+    isPinned: Boolean = false,
     isSelected: Boolean = false,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
@@ -102,7 +102,7 @@ fun NoteListItem(
                     MaterialTheme.colorScheme.tertiary
                 },
             ),
-            border = if (showBorder) {
+            border = if (isPinned) {
                 BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
             } else {
                 CardDefaults.outlinedCardBorder()
@@ -175,30 +175,73 @@ private fun NoteItemPreview() {
             fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.QUICK_SAND,
             fontSize = 15.sp,
-            content = persistentListOf(
-                UiNoteContent.Title(
-                    id = "1",
-                    state = NoteTitleState(
-                        initialText = AnnotatedString(
-                            text = "Kotlin is a modern programming language with a " +
-                                    "lot more syntactic sugar compared to Java, and as such " +
-                                    "there is equally more black magic",
-                        ),
-                    ),
-                ),
-                UiNoteContent.MediaBlock(
-                    id = "1",
-                    media = persistentListOf(
-                        UiNoteContent.MediaBlock.Image(
-                            id = "",
-                            name = "",
-                            addedDate = ZonedDateTime.now(),
-                            ratio = 1.5f,
-                            uri = Uri.EMPTY,
-                        )
-                    ),
-                ),
-            ),
+            content = generatePreviewContent(),
         )
     }
 }
+
+@PreviewWithBackground
+@Composable
+private fun PinnedNoteItemPreview() {
+    SerenityTheme {
+        NoteListItem(
+            date = "19.06.2023",
+            tags = persistentListOf(
+                UiNoteTag.Regular(title = "Programming", isRemovable = false),
+                UiNoteTag.Regular(title = "Android", isRemovable = false),
+                UiNoteTag.Template(id = "2"),
+            ),
+            fontColor = UiNoteFontColor.WHITE,
+            fontFamily = UiNoteFontFamily.QUICK_SAND,
+            fontSize = 15.sp,
+            isPinned = true,
+            content = generatePreviewContent(),
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun SelectedNoteItemPreview() {
+    SerenityTheme {
+        NoteListItem(
+            date = "19.06.2023",
+            tags = persistentListOf(
+                UiNoteTag.Regular(title = "Programming", isRemovable = false),
+                UiNoteTag.Regular(title = "Android", isRemovable = false),
+                UiNoteTag.Template(id = "2"),
+            ),
+            fontColor = UiNoteFontColor.WHITE,
+            fontFamily = UiNoteFontFamily.QUICK_SAND,
+            fontSize = 15.sp,
+            isPinned = true,
+            isSelected = true,
+            content = generatePreviewContent(),
+        )
+    }
+}
+
+private fun generatePreviewContent(): ImmutableList<UiNoteContent> = persistentListOf(
+    UiNoteContent.Title(
+        id = "1",
+        state = NoteTitleState(
+            initialText = AnnotatedString(
+                text = "Kotlin is a modern programming language with a " +
+                        "lot more syntactic sugar compared to Java, and as such " +
+                        "there is equally more black magic",
+            ),
+        ),
+    ),
+    UiNoteContent.MediaBlock(
+        id = "1",
+        media = persistentListOf(
+            UiNoteContent.MediaBlock.Image(
+                id = "",
+                name = "",
+                addedDate = ZonedDateTime.now(),
+                ratio = 1.5f,
+                uri = Uri.EMPTY,
+            )
+        ),
+    ),
+)

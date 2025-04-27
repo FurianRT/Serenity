@@ -14,13 +14,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,10 +36,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonEditAndDone
 import com.furianrt.uikit.components.ButtonMenu
+import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
@@ -52,6 +49,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.furianrt.uikit.R as uiR
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
@@ -188,33 +186,16 @@ private fun Menu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = if (isPinned) {
-                        stringResource(uiR.string.action_unpin)
-                    } else {
-                        stringResource(uiR.string.action_pin)
-                    },
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+        MenuItem(
+            icon = if (isPinned) {
+                painterResource(uiR.drawable.ic_unpin)
+            } else {
+                painterResource(uiR.drawable.ic_pin)
             },
-            leadingIcon = {
-                Box(
-                    modifier = Modifier.size(24.dp),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(20.dp),
-                        painter = if (isPinned) {
-                            painterResource(uiR.drawable.ic_unpin)
-                        } else {
-                            painterResource(uiR.drawable.ic_pin)
-                        },
-                        tint = Color.Unspecified,
-                        contentDescription = null,
-                    )
-                }
+            text =  if (isPinned) {
+                stringResource(uiR.string.action_unpin)
+            } else {
+                stringResource(uiR.string.action_pin)
             },
             onClick = {
                 onDismissRequest()
@@ -222,45 +203,23 @@ private fun Menu(
                     delay(150)
                     onPinClick()
                 }
-            }
+            },
         )
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(uiR.string.action_share),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_share),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_share),
+            text = stringResource(uiR.string.action_share),
             onClick = {
                 onShareClick()
                 onDismissRequest()
-            }
+            },
         )
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(uiR.string.action_delete),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_delete),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_delete),
+            text = stringResource(uiR.string.action_delete),
             onClick = {
                 onDeleteClick()
                 onDismissRequest()
-            }
+            },
         )
     }
 }

@@ -1,5 +1,6 @@
 package com.furianrt.notelist.internal.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -68,7 +69,7 @@ internal fun NoteListScreen(
 
     val screenState = rememberMainState()
 
-    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialogState: Int? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -86,7 +87,9 @@ internal fun NoteListScreen(
                         openNoteCreateScreen(effect.identifier)
                     }
 
-                    is NoteListEffect.ShowConfirmNoteDeleteDialog -> showDeleteConfirmDialog = true
+                    is NoteListEffect.ShowConfirmNoteDeleteDialog -> {
+                        showDeleteConfirmDialogState = effect.notesCount
+                    }
                 }
             }
     }
@@ -98,11 +101,12 @@ internal fun NoteListScreen(
         onEvent = viewModel::onEvent,
     )
 
-    if (showDeleteConfirmDialog) {
+    showDeleteConfirmDialogState?.let { notesCount ->
         ConfirmNotesDeleteDialog(
+            notesCount = notesCount,
             hazeState = hazeState,
             onConfirmClick = { viewModel.onEvent(NoteListEvent.OnConfirmDeleteSelectedNotesClick) },
-            onDismissRequest = { showDeleteConfirmDialog = false },
+            onDismissRequest = { showDeleteConfirmDialogState = null },
         )
     }
 }
@@ -121,17 +125,26 @@ private fun MainScreenContent(
     }
 
     val successState = uiState as? NoteListUiState.Success
-    val selectedNotesCount = successState?.selectedNotesCount ?: 0
+
+    LaunchedEffect(uiState.enableSelection) {
+        if (uiState.enableSelection) {
+            screenState.toolbarState.expand()
+        }
+    }
+
+    BackHandler(enabled = uiState.enableSelection) {
+        onEvent(NoteListEvent.OnCloseSelectionClick)
+    }
 
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
         listState = screenState.listState,
         state = screenState.toolbarState,
-        enabled = selectedNotesCount == 0,
+        enabled = !uiState.enableSelection,
         toolbar = {
             Toolbar(
                 notesCount = successState?.notes?.count() ?: 0,
-                selectedNotesCount = selectedNotesCount,
+                selectedNotesCount = successState?.selectedNotesCount ?: 0,
                 onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
                 onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
                 onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
@@ -151,11 +164,7 @@ private fun MainScreenContent(
 
         BottomNavigationBar(
             modifier = Modifier.align(Alignment.BottomEnd),
-            contentPadding = PaddingValues(
-                start = 24.dp,
-                end = 24.dp,
-                bottom = 24.dp,
-            ),
+            contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 24.dp),
             onScrollToTopClick = { onEvent(NoteListEvent.OnScrollToTopClick) },
             needToHideNavigation = {
                 uiState.hasNotes && screenState.listState.lastScrolledForward
@@ -208,7 +217,7 @@ private fun MainSuccess(
                 fontColor = note.fontColor,
                 fontFamily = note.fontFamily,
                 fontSize = note.fontSize.sp,
-                showBorder = note.isPinned,
+                isPinned = note.isPinned,
                 isSelected = note.isSelected,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },

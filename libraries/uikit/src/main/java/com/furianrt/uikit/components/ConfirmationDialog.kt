@@ -149,7 +149,7 @@ fun ConfirmationDialog(
     }
     BasicAlertDialog(
         modifier = modifier
-            .clip(RoundedCornerShape(32.dp))
+            .clip(RoundedCornerShape(16.dp))
             .hazeChild(
                 state = hazeState,
                 style = HazeDefaults.style(

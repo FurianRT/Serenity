@@ -47,6 +47,8 @@ import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -121,6 +123,7 @@ private fun SuccessContent(
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
+    val hazeState = remember { HazeState() }
     val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
     val view = LocalView.current
@@ -157,7 +160,8 @@ private fun SuccessContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(Color.Black),
+            .background(Color.Black)
+            .haze(hazeState),
         contentAlignment = Alignment.Center,
     ) {
         MediaPager(
@@ -196,6 +200,7 @@ private fun SuccessContent(
                 modifier = Modifier.background(SystemBarsConstants.Color),
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
+                hazeState = hazeState,
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
                 onDeleteClick = {
                     onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))

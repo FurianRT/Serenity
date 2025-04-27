@@ -1,6 +1,5 @@
 package com.furianrt.mediaview.internal.ui.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,11 +29,16 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.mediaview.R
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.ButtonMenu
+import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeChild
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
@@ -44,6 +46,7 @@ import com.furianrt.uikit.R as uiR
 internal fun Toolbar(
     totalImages: Int,
     currentImageIndex: Int,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
@@ -67,12 +70,13 @@ internal fun Toolbar(
             total = totalImages,
             currentIndex = currentImageIndex,
         )
-        Box{
+        Box {
             ButtonMenu(
                 onClick = { showDropDownMenu = true },
             )
             Menu(
                 expanded = showDropDownMenu,
+                hazeState = hazeState,
                 onDeleteClick = onDeleteClick,
                 onSaveMediaClick = onSaveMediaClick,
                 onDismissRequest = { showDropDownMenu = false },
@@ -98,6 +102,7 @@ private fun Counter(
 @Composable
 private fun Menu(
     expanded: Boolean,
+    hazeState: HazeState,
     onDeleteClick: () -> Unit,
     onSaveMediaClick: () -> Unit,
     onDismissRequest: () -> Unit,
@@ -114,7 +119,16 @@ private fun Menu(
         onStopOrDispose {}
     }
     DropdownMenu(
-        modifier = Modifier.background(Colors.Common.DarkGray.copy(alpha = 0.8f)),
+        modifier = Modifier
+            .hazeChild(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = Colors.Common.DarkGray,
+                    tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
+                    blurRadius = 12.dp,
+                ),
+            )
+           ,
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),
@@ -122,39 +136,17 @@ private fun Menu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(R.string.media_view_save_to_gallery),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(R.drawable.ic_download),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(R.drawable.ic_download),
+            text = stringResource(R.string.media_view_save_to_gallery),
             onClick = {
                 onSaveMediaClick()
                 onDismissRequest()
             }
         )
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(uiR.string.action_delete),
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_delete),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_delete),
+            text = stringResource(uiR.string.action_delete),
             onClick = {
                 onDeleteClick()
                 onDismissRequest()
@@ -170,6 +162,7 @@ private fun Preview() {
         Toolbar(
             totalImages = 50,
             currentImageIndex = 25,
+            hazeState = HazeState(),
         )
     }
 }

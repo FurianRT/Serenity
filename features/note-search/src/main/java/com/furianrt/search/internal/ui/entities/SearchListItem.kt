@@ -15,7 +15,7 @@ internal sealed class SearchListItem(
     ) : SearchListItem(ID) {
 
         companion object {
-            const val ID = "notes_count"
+            private const val ID = "notes_count"
         }
     }
 
@@ -25,7 +25,7 @@ internal sealed class SearchListItem(
     ) : SearchListItem(ID) {
 
         companion object {
-            const val ID = "tags_list"
+            private const val ID = "tags_list"
         }
 
         data class Tag(

@@ -25,8 +25,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -66,6 +64,7 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.contentHeight
 import com.furianrt.uikit.components.DurationBadge
+import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
@@ -79,7 +78,7 @@ import java.time.ZonedDateTime
 import com.furianrt.uikit.R as uiR
 
 private const val CONTENT_TRANSITION_DURATION = 400
-private const val LONG_CLICK_SCALE = 0.95f
+private const val LONG_CLICK_SCALE = 0.98f
 private const val LONG_CLICK_SCALE_DURATION = 350
 private const val CROSS_FADE_DURATION = 150
 private const val BLURRED_MEDIA_KEY_POSTFIX = "blurred"
@@ -203,6 +202,10 @@ private fun OneMediaHolder(
         Box(
             modifier = modifier
                 .fillMaxSize()
+                .graphicsLayer {
+                    scaleX = longClickScale
+                    scaleY = longClickScale
+                }
                 .clip(RoundedCornerShape(8.dp))
                 .applyIf(clickable) {
                     Modifier.combinedClickable(
@@ -218,10 +221,6 @@ private fun OneMediaHolder(
             MediaItem(
                 modifier = Modifier
                     .fillMaxSize()
-                    .graphicsLayer {
-                        scaleX = longClickScale
-                        scaleY = longClickScale
-                    }
                     .clip(RoundedCornerShape(8.dp))
                     .blur(32.dp),
                 media = media,
@@ -232,10 +231,6 @@ private fun OneMediaHolder(
                 MediaItem(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .graphicsLayer {
-                            scaleX = longClickScale
-                            scaleY = longClickScale
-                        }
                         .aspectRatio(
                             ratio = if (media.ratio < 0.65f) media.ratio * 1.4f else media.ratio,
                             matchHeightConstraintsFirst = true,
@@ -601,43 +596,21 @@ private fun PopUpMenu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(uiR.string.action_delete),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_delete),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_delete),
+            text = stringResource(uiR.string.action_delete),
             onClick = {
                 onRemoveClick()
                 onDismissRequest()
-            }
+            },
         )
-        DropdownMenuItem(
-            text = {
-                Text(
-                    text = stringResource(uiR.string.action_share),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            },
-            leadingIcon = {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_share),
-                    tint = Color.Unspecified,
-                    contentDescription = null,
-                )
-            },
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_share),
+            text = stringResource(uiR.string.action_share),
             onClick = {
                 onShareClick()
                 onDismissRequest()
-            }
+            },
         )
     }
 }

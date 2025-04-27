@@ -16,6 +16,9 @@ internal sealed interface NoteListUiState {
         val scrollToPosition: Int?,
         val selectedNotesCount: Int,
     ) : NoteListUiState
+
+    val enableSelection: Boolean
+        get() = this is Success && selectedNotesCount > 0
 }
 
 internal val NoteListUiState.hasNotes
@@ -44,5 +47,5 @@ internal sealed interface NoteListEffect {
         val identifier: DialogIdentifier,
     ) : NoteListEffect
 
-    data object ShowConfirmNoteDeleteDialog : NoteListEffect
+    data class ShowConfirmNoteDeleteDialog(val notesCount: Int) : NoteListEffect
 }

@@ -241,13 +241,7 @@ private fun SuccessContent(
     ) {
         items(
             count = uiState.items.count(),
-            key = { index ->
-                when (uiState.items[index]) {
-                    is SearchListItem.TagsList -> SearchListItem.TagsList.ID
-                    is SearchListItem.NotesCountTitle -> SearchListItem.NotesCountTitle.ID
-                    is SearchListItem.Note -> index
-                }
-            },
+            key = { uiState.items[it].id },
             contentType = { uiState.items[it]::class.simpleName },
         ) { index ->
             when (val item = uiState.items[index]) {

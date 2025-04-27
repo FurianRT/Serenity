@@ -166,6 +166,10 @@ internal class NoteListViewModel @Inject constructor(
     }
 
     private fun showConfirmNotesDeleteDialog() {
-        _effect.tryEmit(NoteListEffect.ShowConfirmNoteDeleteDialog)
+        _effect.tryEmit(
+            NoteListEffect.ShowConfirmNoteDeleteDialog(
+                notesCount = selectedNotesState.value.count(),
+            )
+        )
     }
 }
