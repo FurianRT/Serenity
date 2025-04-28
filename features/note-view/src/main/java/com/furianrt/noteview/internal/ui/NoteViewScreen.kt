@@ -1,6 +1,5 @@
 package com.furianrt.noteview.internal.ui
 
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -31,7 +30,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -44,6 +42,7 @@ import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
+import com.furianrt.uikit.components.ConfirmNotesDeleteDialog
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
@@ -89,6 +88,7 @@ internal fun NoteViewScreen(
 
     val successScreenState = rememberSuccessScreenState()
     var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
+    var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
     LaunchedEffect(Unit) {
@@ -100,6 +100,10 @@ internal fun NoteViewScreen(
                     is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
                     is NoteViewEffect.ShowDateSelector -> {
                         calendarDialogState = SelectedDate(effect.date)
+                    }
+
+                    is NoteViewEffect.ShowDeleteConfirmationDialog -> {
+                        deleteConfirmationDialogState = effect.noteId
                     }
                 }
             }
@@ -118,6 +122,14 @@ internal fun NoteViewScreen(
             hazeState = hazeState,
             onDismissRequest = { calendarDialogState = null },
             onDateSelected = { viewModel.onEvent(NoteViewEvent.OnDateSelected(it.date)) },
+        )
+    }
+    deleteConfirmationDialogState?.let { dialogState ->
+        ConfirmNotesDeleteDialog(
+            notesCount = 1,
+            hazeState = hazeState,
+            onConfirmClick = { viewModel.onEvent(NoteViewEvent.OnConfirmDeleteClick(dialogState)) },
+            onDismissRequest = { deleteConfirmationDialogState = null },
         )
     }
 }
@@ -199,7 +211,6 @@ private fun SuccessScreen(
 
     val hazeState = remember { HazeState() }
     val scope = rememberCoroutineScope()
-    val view = LocalView.current
 
     LaunchedEffect(uiState.isInEditMode) {
         if (uiState.isInEditMode) {
@@ -231,7 +242,6 @@ private fun SuccessScreen(
                 onDeleteClick = {
                     val noteId = uiState.notes[pagerState.currentPage].id
                     onEvent(NoteViewEvent.OnDeleteClick(noteId))
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
                 },
                 onPinClick = {
                     val note = uiState.notes[pagerState.currentPage]

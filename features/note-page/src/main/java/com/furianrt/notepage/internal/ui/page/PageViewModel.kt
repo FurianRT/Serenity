@@ -570,12 +570,17 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun removeSticker(sticker: StickerItem) {
-        hasContentChanged = true
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(
                 stickers = currentState.stickers.toPersistentList()
                     .removeAll { it.id == sticker.id },
-            )
+            ).also { newState ->
+                if (isInEditMode) {
+                    hasContentChanged = true
+                } else {
+                    launch(NonCancellable) { saveNoteContent(newState) }
+                }
+            }
         }
     }
 

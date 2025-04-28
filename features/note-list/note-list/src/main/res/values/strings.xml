@@ -1,6 +1,3 @@
 <resources>
     <string name="notes_list_search_bar_title">Search</string>
-    <string name="notes_list_delete_notes_warning_title">Just checking…</string>
-    <string name="notes_list_delete_notes_warning_body">Do you really want to delete these notes? You won’t be able to get them back later</string>
-    <string name="notes_list_delete_note_warning_body">Do you really want to delete this note? You won’t be able to get it back later</string>
 </resources>

@@ -105,6 +105,10 @@ internal class NoteViewModel @Inject constructor(
             }
 
             is NoteViewEvent.OnDeleteClick -> {
+                _effect.tryEmit(NoteViewEffect.ShowDeleteConfirmationDialog(event.noteId))
+            }
+
+            is NoteViewEvent.OnConfirmDeleteClick -> {
                 disableEditMode()
                 launch { deleteNoteUseCase(event.noteId) }
             }

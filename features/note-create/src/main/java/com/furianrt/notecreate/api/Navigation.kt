@@ -1,14 +1,18 @@
 package com.furianrt.notecreate.api
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.NoteCreateScreen
-import com.furianrt.uikit.anim.defaultPopExitTransition
+import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
 
@@ -29,9 +33,17 @@ fun NavGraphBuilder.noteCreateScreen(
     onCloseRequest: () -> Unit,
 ) {
     composable<NoteCreateRoute>(
-        exitTransition = { ExitTransition.None },
-        popExitTransition = { defaultPopExitTransition() },
-        popEnterTransition = { EnterTransition.None },
+        enterTransition = {
+            fadeIn(tween(durationMillis = 450)) + slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                initialOffset = { (it * 0.05f).toInt() },
+                animationSpec = tween(
+                    durationMillis = 450,
+                    easing = FastOutSlowInEasing,
+                ),
+            )
+        },
+        popEnterTransition = { defaultPopEnterTransition() },
     ) {
         NoteCreateScreen(
             openMediaViewScreen = openMediaViewScreen,

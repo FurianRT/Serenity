@@ -24,6 +24,10 @@
     <string name="today_title">Today</string>
     <string name="yesterday_title">Yesterday</string>
 
+    <string name="delete_notes_warning_title">Just checking…</string>
+    <string name="delete_notes_warning_body">Do you really want to delete these notes? You won’t be able to get them back later</string>
+    <string name="delete_note_warning_body">Do you really want to delete this note? You won’t be able to get it back later</string>
+
     <string-array name="months_array">
         <item>January</item>
         <item>February</item>
