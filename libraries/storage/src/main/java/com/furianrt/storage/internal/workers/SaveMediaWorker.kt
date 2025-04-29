@@ -9,6 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.furianrt.common.ErrorTracker
 import com.furianrt.storage.internal.managers.MediaSaver
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
@@ -19,6 +20,7 @@ private const val WORK_NAME_PERIODIC = "SaveMediaPeriodic"
 @HiltWorker
 internal class SaveMediaWorker @AssistedInject constructor(
     private val mediaSaver: MediaSaver,
+    private val errorTracker: ErrorTracker,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
@@ -49,8 +51,8 @@ internal class SaveMediaWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = try {
         mediaSaver.saveAll()
         Result.success()
-    } catch (exception: Exception) {
+    } catch (e: Exception) {
+        errorTracker.trackNonFatalError(e)
         Result.retry()
-        // TODO отправлять не фатальную ошибку в firebase
     }
 }

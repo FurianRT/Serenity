@@ -15,6 +15,7 @@ import com.furianrt.backup.internal.domain.usecases.SignInUseCase
 import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
 import com.furianrt.backup.internal.extensions.toQuestion
 import com.furianrt.backup.internal.ui.entities.Question
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.doWithState
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.managers.ResourcesManager
@@ -46,6 +47,7 @@ internal class BackupViewModel @Inject constructor(
     private val authorizeUseCase: AuthorizeUseCase,
     private val resourcesManager: ResourcesManager,
     private val serviceLauncher: ServiceLauncher,
+    private val errorTracker: ErrorTracker,
 ) : ViewModel() {
 
     private val expandedQuestionsState = MutableStateFlow(emptySet<String>())
@@ -152,7 +154,7 @@ internal class BackupViewModel @Inject constructor(
     private fun authorize() = launch {
         when (val result = authorizeUseCase()) {
             is AuthResult.Success -> signIn(accessToken = result.accessToken)
-            is AuthResult.Failure -> result.error.printStackTrace()
+            is AuthResult.Failure -> errorTracker.trackNonFatalError(result.error)
             is AuthResult.Resolution -> {
                 _effect.tryEmit(BackupEffect.ShowBackupResolution(result.intentSender))
             }
@@ -186,7 +188,7 @@ internal class BackupViewModel @Inject constructor(
     }
 
     private fun showError(error: Throwable) {
-        error.printStackTrace()
+        errorTracker.trackNonFatalError(error)
         val message = if (error is AuthException) {
             when (error) {
                 is AuthException.NetworkException -> {

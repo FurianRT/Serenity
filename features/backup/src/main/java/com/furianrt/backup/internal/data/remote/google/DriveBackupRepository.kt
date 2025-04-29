@@ -16,6 +16,7 @@ import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.extensions.toRemoteFile
 import com.furianrt.backup.internal.workers.AutoBackupWorker
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
@@ -55,6 +56,7 @@ internal class DriveBackupRepository @Inject constructor(
     private val backupDataStore: BackupDataStore,
     private val userInfoApiService: UserInfoApiService,
     private val driveApiService: DriveApiService,
+    private val errorTracker: ErrorTracker,
     private val dispatchers: DispatchersProvider,
 ) : BackupRepository {
 
@@ -84,7 +86,7 @@ internal class DriveBackupRepository @Inject constructor(
     override fun getAuthorizationResult(intent: Intent?): AuthorizationResult? = try {
         authorizationClient.getAuthorizationResultFromIntent(intent)
     } catch (e: ApiException) {
-        e.printStackTrace()
+        errorTracker.trackNonFatalError(e)
         null
     }
 

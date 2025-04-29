@@ -10,6 +10,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.furianrt.backup.internal.domain.BackupDataManager
+import com.furianrt.common.ErrorTracker
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
@@ -19,6 +20,7 @@ private const val WORK_NAME = "AutoBackup"
 @HiltWorker
 internal class AutoBackupWorker @AssistedInject constructor(
     private val backupDataManager: BackupDataManager,
+    private val errorTracker: ErrorTracker,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
@@ -84,8 +86,8 @@ internal class AutoBackupWorker @AssistedInject constructor(
     override suspend fun doWork(): Result = try {
         backupDataManager.startBackup()
         Result.success()
-    } catch (exception: Exception) {
+    } catch (e: Exception) {
+        errorTracker.trackNonFatalError(e)
         Result.retry()
-        // TODO отправлять не фатальную ошибку в firebase
     }
 }

@@ -4,8 +4,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.furianrt.backup.api.RootActivityIntentProvider
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.serenity.MainActivity
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,6 +20,11 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AppModule {
+
+    @Singleton
+    @Provides
+    fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
+
     @Singleton
     @Provides
     fun provideDispatchersProvider(): DispatchersProvider = object : DispatchersProvider {
@@ -42,6 +49,15 @@ internal object AppModule {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
+        }
+    }
+
+    @Singleton
+    @Provides
+    fun provideErrorTracker(crashlytics: FirebaseCrashlytics) = object : ErrorTracker {
+        override fun trackNonFatalError(error: Throwable) {
+            error.printStackTrace()
+            crashlytics.recordException(error)
         }
     }
 }

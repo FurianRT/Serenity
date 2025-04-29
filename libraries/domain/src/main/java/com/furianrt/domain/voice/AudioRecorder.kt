@@ -2,6 +2,7 @@ package com.furianrt.domain.voice
 
 import android.content.Context
 import android.media.MediaRecorder
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
@@ -15,6 +16,7 @@ private const val ENCODING_BIT_RATE = 128000
 
 class AudioRecorder @Inject constructor(
     @ApplicationContext private val context: Context,
+    private val errorTracker: ErrorTracker,
     private val dispatchers: DispatchersProvider,
 ) {
     private var recorder: MediaRecorder? = null
@@ -37,7 +39,7 @@ class AudioRecorder @Inject constructor(
             isRecording = true
             true
         } catch (e: Throwable) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
             false
         }
     }
@@ -51,7 +53,7 @@ class AudioRecorder @Inject constructor(
             recorder = null
             true
         } catch (e: Throwable) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
             isRecording = false
             false
         }

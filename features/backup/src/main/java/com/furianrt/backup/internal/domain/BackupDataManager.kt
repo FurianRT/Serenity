@@ -3,6 +3,7 @@ package com.furianrt.backup.internal.domain
 import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -19,6 +20,7 @@ internal class BackupDataManager @Inject constructor(
     private val notesRepository: NotesRepository,
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
+    private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
     val state = progressState.asStateFlow()
@@ -35,7 +37,7 @@ internal class BackupDataManager @Inject constructor(
         }
 
         val remoteFiles = backupRepository.getContentList()
-            .onFailure { it.printStackTrace() }
+            .onFailure(errorTracker::trackNonFatalError)
             .getOrNull()
 
         if (remoteFiles == null) {
@@ -68,7 +70,7 @@ internal class BackupDataManager @Inject constructor(
         val localMediaFilesIds = getLocalFilesIds()
         val remoteFilesToDelete = remoteMediaFiles.filter { !localMediaFilesIds.contains(it.name) }
         return backupRepository.deleteFiles(remoteFilesToDelete)
-            .onFailure { it.printStackTrace() }
+            .onFailure(errorTracker::trackNonFatalError)
             .map { true }
             .getOrDefault(false)
     }
@@ -86,13 +88,13 @@ internal class BackupDataManager @Inject constructor(
         val notes = notesRepository.getAllNotes().first()
         backupRepository.uploadNotesData(notes)
             .onFailure { error ->
-                error.printStackTrace()
+                errorTracker.trackNonFatalError(error)
                 return false
             }
 
         val oldNotesData = remoteFiles.filterIsInstance<RemoteFile.NotesData>()
         backupRepository.deleteFiles(oldNotesData)
-            .onFailure { it.printStackTrace() }
+            .onFailure(errorTracker::trackNonFatalError)
 
         return true
     }
@@ -129,7 +131,7 @@ internal class BackupDataManager @Inject constructor(
                     }
                     backupRepository.uploadVoice(content)
                         .onFailure { error ->
-                            error.printStackTrace()
+                            errorTracker.trackNonFatalError(error)
                             return false
                         }
                 }
@@ -141,13 +143,13 @@ internal class BackupDataManager @Inject constructor(
                     when (media) {
                         is LocalNote.Content.Image -> backupRepository.uploadMedia(media)
                             .onFailure { error ->
-                                error.printStackTrace()
+                                errorTracker.trackNonFatalError(error)
                                 return false
                             }
 
                         is LocalNote.Content.Video -> backupRepository.uploadMedia(media)
                             .onFailure { error ->
-                                error.printStackTrace()
+                                errorTracker.trackNonFatalError(error)
                                 return false
                             }
                     }

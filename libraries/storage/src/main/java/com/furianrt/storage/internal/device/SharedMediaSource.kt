@@ -5,6 +5,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.os.Environment
 import android.provider.MediaStore
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
@@ -21,6 +22,7 @@ private const val MAX_VIDEO_DURATION = 60 * 60 * 1000 // 1 hour
 internal class SharedMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
+    private val errorTracker: ErrorTracker,
 ) {
     suspend fun saveToGallery(
         media: LocalMedia,
@@ -48,7 +50,7 @@ internal class SharedMediaSource @Inject constructor(
                 resolver.update(uri, values, null, null)
                 true
             } catch (e: IOException) {
-                e.printStackTrace()
+                errorTracker.trackNonFatalError(e)
                 false
             }
         } else {

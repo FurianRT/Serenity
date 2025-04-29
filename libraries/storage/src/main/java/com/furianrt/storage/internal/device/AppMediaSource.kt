@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.core.content.FileProvider
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.storage.BuildConfig
@@ -29,6 +30,7 @@ internal class SavedMediaData(
 internal class AppMediaSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
+    private val errorTracker: ErrorTracker,
 ) {
     suspend fun saveMediaFile(
         noteId: String,
@@ -39,7 +41,7 @@ internal class AppMediaSource @Inject constructor(
             is LocalNote.Content.Video -> saveVideo(media, noteId)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        errorTracker.trackNonFatalError(e)
         null
     }
 
@@ -50,6 +52,7 @@ internal class AppMediaSource @Inject constructor(
         return@withContext try {
             File(context.filesDir, "$noteId/$MEDIA_FOLDER/${media.id}${media.name}").delete()
         } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
             false
         }
     }
@@ -62,6 +65,7 @@ internal class AppMediaSource @Inject constructor(
         return@withContext try {
             File(context.filesDir, noteId).deleteRecursively()
         } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
             false
         }
     }
@@ -86,7 +90,7 @@ internal class AppMediaSource @Inject constructor(
                 return@withContext null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
             null
         }
     }
@@ -110,7 +114,7 @@ internal class AppMediaSource @Inject constructor(
                 return@withContext null
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
             null
         }
     }
@@ -122,7 +126,7 @@ internal class AppMediaSource @Inject constructor(
         return@withContext try {
             File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId").delete()
         } catch (e: Exception) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
             false
         }
     }
@@ -168,7 +172,7 @@ internal class AppMediaSource @Inject constructor(
                 destExif.saveAttributes()
             }
         } catch (e: Exception) {
-            e.printStackTrace()
+            errorTracker.trackNonFatalError(e)
         }
 
         return@withContext SavedMediaData(
@@ -204,7 +208,7 @@ internal class AppMediaSource @Inject constructor(
             ExifInterface(inputStream)
         }
     } catch (e: Exception) {
-        e.printStackTrace()
+        errorTracker.trackNonFatalError(e)
         null
     }
 

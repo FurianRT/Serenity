@@ -3,6 +3,7 @@ package com.furianrt.backup.internal.domain
 import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.MediaRepository
@@ -22,6 +23,7 @@ internal class RestoreDataManager @Inject constructor(
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
+    private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
     val state = progressState.asStateFlow()
@@ -30,7 +32,7 @@ internal class RestoreDataManager @Inject constructor(
         progressState.update { SyncState.Starting }
 
         val remoteFiles = backupRepository.getContentList()
-            .onFailure { it.printStackTrace() }
+            .onFailure(errorTracker::trackNonFatalError)
             .getOrNull()
 
         if (remoteFiles == null) {
@@ -48,7 +50,7 @@ internal class RestoreDataManager @Inject constructor(
         }
 
         val remoteNotes = backupRepository.getRemoteNotes(notesData.id)
-            .onFailure { it.printStackTrace() }
+            .onFailure(errorTracker::trackNonFatalError)
             .getOrNull()
 
         if (remoteNotes == null) {
@@ -154,6 +156,7 @@ internal class RestoreDataManager @Inject constructor(
         val localFile = mediaRepository.createMediaDestinationFile(noteId, media.id, media.name)
             ?: return false
         return backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
+            .onFailure(errorTracker::trackNonFatalError)
             .map { true }
             .getOrDefault(false)
     }
@@ -167,6 +170,7 @@ internal class RestoreDataManager @Inject constructor(
         val localFile = mediaRepository.createVoiceDestinationFile(noteId, voice.id)
             ?: return false
         return backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
+            .onFailure(errorTracker::trackNonFatalError)
             .map { true }
             .getOrDefault(false)
     }
