@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.ZonedDateTime
@@ -98,7 +99,19 @@ internal class BackupViewModel @Inject constructor(
                 backupRepository.setAutoBackupEnabled(event.isChecked)
             }
 
-            is BackupScreenEvent.OnButtonBackupClick -> serviceLauncher.launchBackupService()
+            is BackupScreenEvent.OnButtonBackupClick -> launch {
+                if (backupRepository.isBackupConfirmed().first()) {
+                    serviceLauncher.launchBackupService()
+                } else {
+                    _effect.tryEmit(BackupEffect.ShowConfirmBackupDialog)
+                }
+            }
+
+            is BackupScreenEvent.OnConfirmBackupClick -> launch {
+                backupRepository.setBackupConfirmed(confirmed = true)
+                serviceLauncher.launchBackupService()
+            }
+
             is BackupScreenEvent.OnButtonRestoreClick -> serviceLauncher.launchRestoreService()
             is BackupScreenEvent.OnBackupPeriodClick -> {
                 _effect.tryEmit(BackupEffect.ShowBackupPeriodDialog)

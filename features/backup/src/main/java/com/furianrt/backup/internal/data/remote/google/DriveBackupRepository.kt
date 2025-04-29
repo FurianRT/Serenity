@@ -15,6 +15,7 @@ import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.extensions.toRemoteFile
+import com.furianrt.backup.internal.workers.AutoBackupWorker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
@@ -25,6 +26,7 @@ import com.google.android.gms.common.api.Scope
 import com.google.api.services.drive.DriveScopes
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
@@ -88,6 +90,7 @@ internal class DriveBackupRepository @Inject constructor(
 
     override suspend fun signOut(): Result<Unit> = try {
         credentialManager.clearCredentialState(ClearCredentialStateRequest())
+        AutoBackupWorker.cancelWork(context)
         Result.success(Unit)
     } catch (e: ClearCredentialException) {
         Result.failure(AuthException.ClearCredentialException())
@@ -103,18 +106,40 @@ internal class DriveBackupRepository @Inject constructor(
 
     override suspend fun setAutoBackupEnabled(enabled: Boolean) {
         backupDataStore.setAutoBackupEnabled(enabled)
+        val (repeatInterval, repeatIntervalTimeUnit) = getAutoBackupPeriod().first().getTimeUnit()
+        if (enabled) {
+            AutoBackupWorker.enqueuePeriodic(
+                context = context,
+                repeatInterval = repeatInterval,
+                repeatIntervalTimeUnit = repeatIntervalTimeUnit,
+            )
+        } else {
+            AutoBackupWorker.cancelWork(context)
+        }
     }
 
     override fun getAutoBackupPeriod(): Flow<BackupPeriod> = backupDataStore.getAutoBackupPeriod()
 
     override suspend fun setAutoBackupPeriod(period: BackupPeriod) {
         backupDataStore.setAutoBackupPeriod(period)
+        val (repeatInterval, repeatIntervalTimeUnit) = period.getTimeUnit()
+        AutoBackupWorker.update(
+            context = context,
+            repeatInterval = repeatInterval,
+            repeatIntervalTimeUnit = repeatIntervalTimeUnit,
+        )
     }
 
     override fun getLastSyncDate(): Flow<ZonedDateTime?> = backupDataStore.getLastSyncDate()
 
     override suspend fun setLastSyncDate(date: ZonedDateTime) {
         backupDataStore.setLastSyncDate(date)
+    }
+
+    override fun isBackupConfirmed(): Flow<Boolean> = backupDataStore.isBackupConfirmed()
+
+    override suspend fun setBackupConfirmed(confirmed: Boolean) {
+        backupDataStore.setBackupConfirmed(confirmed)
     }
 
     override suspend fun getUserEmail(): Result<String?> {

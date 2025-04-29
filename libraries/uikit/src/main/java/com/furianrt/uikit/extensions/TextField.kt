@@ -26,7 +26,7 @@ suspend fun BringIntoViewRequester.bringIntoView(
 ) {
     val (top, bottom) = textResult?.cursorCoordinates(selection) ?: Pair(0f, 0f)
     bringIntoView(
-        additionalTopOffset = top + additionalTopOffset,
+        additionalTopOffset = top - additionalTopOffset,
         additionalBottomOffset = bottom + additionalBottomOffset,
     )
 }
@@ -38,7 +38,7 @@ suspend fun BringIntoViewRequester.bringIntoView(
     bringIntoView(
         Rect(
             left = 0f,
-            top = -additionalTopOffset,
+            top = additionalTopOffset,
             right = 0f,
             bottom = additionalBottomOffset,
         ),

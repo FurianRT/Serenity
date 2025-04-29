@@ -17,6 +17,9 @@ internal class ProfileRepositoryImp @Inject constructor(
     override fun getBackupProfile(): Flow<BackupProfile?> = backupProfileDao.getAllProfiles()
         .map { it.firstOrNull()?.toBackupProfile() }
 
+    override fun isSignedIn(): Flow<Boolean> = backupProfileDao.getAllProfiles()
+        .map { it.firstOrNull() != null }
+
     override suspend fun saveBackupProfile(profile: BackupProfile) {
         backupProfileDao.upsert(profile.toEntryBackupProfile())
     }

@@ -37,6 +37,7 @@ internal sealed interface BackupUiState {
 internal sealed interface BackupScreenEvent {
     data object OnButtonBackClick : BackupScreenEvent
     data object OnButtonBackupClick : BackupScreenEvent
+    data object OnConfirmBackupClick : BackupScreenEvent
     data object OnButtonRestoreClick : BackupScreenEvent
     data object OnBackupPeriodClick : BackupScreenEvent
     data class OnBackupPeriodSelected(val period: BackupPeriod) : BackupScreenEvent
@@ -55,4 +56,5 @@ internal sealed interface BackupEffect {
     data object ShowBackupPeriodDialog : BackupEffect
     data class ShowBackupResolution(val intentSender: IntentSender) : BackupEffect
     data class ShowErrorToast(val text: String) : BackupEffect
+    data object ShowConfirmBackupDialog : BackupEffect
 }

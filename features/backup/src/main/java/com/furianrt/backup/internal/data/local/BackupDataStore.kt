@@ -18,6 +18,7 @@ private val KEY_GOOGLE_ACCESS_TOKEN = stringPreferencesKey("google_access_token"
 private val KEY_AUTO_BACKUP = booleanPreferencesKey("auto_backup")
 private val KEY_AUTO_BACKUP_PERIOD = longPreferencesKey("auto_backup_period")
 private val KEY_LAST_SYNC_DATE = stringPreferencesKey("last_sync_date")
+private val KEY_CONFIRM_BACKUP = booleanPreferencesKey("confirm_backup")
 
 @Singleton
 internal class BackupDataStore @Inject constructor(
@@ -39,7 +40,7 @@ internal class BackupDataStore @Inject constructor(
 
     fun getAutoBackupPeriod(): Flow<BackupPeriod> = dataStore.data
         .map { prefs ->
-            BackupPeriod.fromValue(prefs[KEY_AUTO_BACKUP_PERIOD]) ?: BackupPeriod.TreeDays
+            BackupPeriod.fromValue(prefs[KEY_AUTO_BACKUP_PERIOD]) ?: BackupPeriod.OneDay
         }
 
     suspend fun setAutoBackupPeriod(period: BackupPeriod) {
@@ -57,5 +58,12 @@ internal class BackupDataStore @Inject constructor(
         dataStore.edit { prefs ->
             prefs[KEY_LAST_SYNC_DATE] = date.format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
         }
+    }
+
+    fun isBackupConfirmed(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_CONFIRM_BACKUP] ?: false }
+
+    suspend fun setBackupConfirmed(confirmed: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_CONFIRM_BACKUP] = confirmed }
     }
 }

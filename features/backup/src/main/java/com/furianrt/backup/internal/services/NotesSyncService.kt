@@ -27,7 +27,7 @@ import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
 @AndroidEntryPoint
-internal class NotesBackupService : Service(), CoroutineScope {
+internal class NotesSyncService : Service(), CoroutineScope {
 
     companion object {
         private const val FOREGROUND_ID = 1
@@ -104,6 +104,8 @@ internal class NotesBackupService : Service(), CoroutineScope {
             .collect {
                 if (isActive) {
                     updateProgressNotification(isBackup, it)
+                } else {
+                    notificationManager.cancelAll()
                 }
             }
     }

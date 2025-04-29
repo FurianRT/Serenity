@@ -2,10 +2,12 @@ package com.furianrt.backup.internal.di
 
 import android.content.Context
 import android.content.Intent
+import com.furianrt.backup.api.BackupApi
 import com.furianrt.backup.internal.data.remote.google.DriveBackupRepository
+import com.furianrt.backup.internal.domain.BackupMediator
 import com.furianrt.backup.internal.domain.ServiceLauncher
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
-import com.furianrt.backup.internal.services.NotesBackupService
+import com.furianrt.backup.internal.services.NotesSyncService
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -22,6 +24,10 @@ internal interface BackupModule {
     @Singleton
     fun backupRepository(imp: DriveBackupRepository): BackupRepository
 
+    @Binds
+    @Singleton
+    fun backupApi(imp: BackupMediator): BackupApi
+
     companion object {
         @Provides
         @Singleton
@@ -37,14 +43,14 @@ internal interface BackupModule {
             @ApplicationContext context: Context,
         ): ServiceLauncher = object : ServiceLauncher {
             override fun launchBackupService() {
-                val intent = Intent(context, NotesBackupService::class.java)
-                intent.putExtra(NotesBackupService.EXTRA_IS_BACKUP, true)
+                val intent = Intent(context, NotesSyncService::class.java)
+                intent.putExtra(NotesSyncService.EXTRA_IS_BACKUP, true)
                 context.startService(intent)
             }
 
             override fun launchRestoreService() {
-                val intent = Intent(context, NotesBackupService::class.java)
-                intent.putExtra(NotesBackupService.EXTRA_IS_BACKUP, false)
+                val intent = Intent(context, NotesSyncService::class.java)
+                intent.putExtra(NotesSyncService.EXTRA_IS_BACKUP, false)
                 context.startService(intent)
             }
         }

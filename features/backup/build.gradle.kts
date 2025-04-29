@@ -30,6 +30,7 @@ dependencies {
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
+    implementation(libs.hiltWork)
     ksp(libs.hiltCompiler)
     ksp(libs.hiltAndroidCompiler)
 
@@ -54,4 +55,6 @@ dependencies {
 
     implementation(libs.googleDrive)
     implementation(libs.googleDriveGms)
+
+    implementation(libs.workManager)
 }

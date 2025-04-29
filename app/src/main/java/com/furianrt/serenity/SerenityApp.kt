@@ -5,10 +5,14 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import com.furianrt.backup.api.BackupApi
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -20,13 +24,17 @@ internal class SerenityApp : Application(), Configuration.Provider {
     @Inject
     lateinit var mediaRepository: MediaRepository
 
+    @Inject
+    lateinit var backupApi: BackupApi
+
+    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
-
-        mediaRepository.enqueuePeriodicMediaSave()
+        startPeriodicWorks()
     }
 
     override val workManagerConfiguration: Configuration
@@ -36,6 +44,11 @@ internal class SerenityApp : Application(), Configuration.Provider {
             .setTaskExecutor(Dispatchers.Default.asExecutor())
             .setMinimumLoggingLevel(Log.INFO)
             .build()
+
+    private fun startPeriodicWorks() {
+        mediaRepository.enqueuePeriodicMediaSave()
+        scope.launch { backupApi.tryStartAutoBackup() }
+    }
 
     private fun initStrictMode() {
         StrictMode.setThreadPolicy(
@@ -63,7 +76,6 @@ internal class SerenityApp : Application(), Configuration.Provider {
 
 /*
 * TODO Главный экран
-* 2.Множественный выбор записей для проставления тэгов(и еще для чего-нибудь)
 * 3.Открытие других экранов через SharedElement
 * */
 

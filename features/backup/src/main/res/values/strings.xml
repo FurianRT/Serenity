@@ -2,8 +2,6 @@
     <string name="backup_google_drive_title">Google Drive</string>
     <string name="backup_auto_backup_title">Auto backup</string>
     <string name="backup_auto_backup_period_title">Auto backup period</string>
-    <string name="backup_backup_title">Backup</string>
-    <string name="backup_restore_title">Restore</string>
     <string name="backup_last_sync_time_title">Last sync time: %s</string>
     <string name="backup_last_sync_time_none_title">None</string>
     <string name="backup_sign_out_title">Sign Out</string>
@@ -45,5 +43,8 @@
     <string name="restore_notification_initial_description">Your notes are being downloaded. This may take a moment</string>
     <string name="backup_notification_progress_description">%d of %d notes uploaded</string>
     <string name="restore_notification_progress_description">%d of %d notes downloaded</string>
+
+    <string name="backup_warning_title">Backup Warning</string>
+    <string name="backup_warning_body">You\'re about to create a new backup. Please note: this will overwrite your existing backup on Google Drive. Once replaced, your previous data will no longer be accessible. Make sure you\'re okay with that before continuing</string>
 
 </resources>

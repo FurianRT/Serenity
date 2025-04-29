@@ -28,6 +28,12 @@ internal class BackupDataManager @Inject constructor(
 
         mediaRepository.saveAllMedia()
 
+        val localNotes = notesRepository.getAllNotes().first()
+        if (localNotes.isEmpty()) {
+            progressState.update { SyncState.Idle }
+            return
+        }
+
         val remoteFiles = backupRepository.getContentList()
             .onFailure { it.printStackTrace() }
             .getOrNull()

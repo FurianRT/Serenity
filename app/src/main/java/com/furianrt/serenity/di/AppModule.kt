@@ -39,7 +39,7 @@ internal object AppModule {
         @ApplicationContext context: Context,
     ): RootActivityIntentProvider = object : RootActivityIntentProvider {
         override fun provide(): Intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             action = Intent.ACTION_MAIN
             addCategory(Intent.CATEGORY_LAUNCHER)
         }

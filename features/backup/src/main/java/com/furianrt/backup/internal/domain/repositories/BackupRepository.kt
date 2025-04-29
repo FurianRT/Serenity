@@ -26,6 +26,9 @@ internal interface BackupRepository {
     fun getLastSyncDate(): Flow<ZonedDateTime?>
     suspend fun setLastSyncDate(date: ZonedDateTime)
 
+    fun isBackupConfirmed(): Flow<Boolean>
+    suspend fun setBackupConfirmed(confirmed: Boolean)
+
     suspend fun getUserEmail(): Result<String?>
 
     suspend fun getContentList(): Result<List<RemoteFile>>

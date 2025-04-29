@@ -53,10 +53,11 @@ import com.furianrt.backup.internal.ui.composables.BackupButton
 import com.furianrt.backup.internal.ui.composables.BackupDate
 import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
+import com.furianrt.backup.internal.ui.composables.ConfirmBackupDialog
+import com.furianrt.backup.internal.ui.composables.ConfirmSignOutDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.entities.Question
-import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
@@ -88,6 +89,7 @@ internal fun BackupScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBackupPeriodDialog by remember { mutableStateOf(false) }
+    var showConfirmBackupDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -118,6 +120,8 @@ internal fun BackupScreen(
                         duration = SnackbarDuration.Short,
                     )
                 }
+
+                is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
             }
         }
     }
@@ -128,11 +132,8 @@ internal fun BackupScreen(
         onEvent = viewModel::onEvent,
     )
     if (showSignOutConfirmationDialog) {
-        ConfirmationDialog(
+        ConfirmSignOutDialog(
             hazeState = hazeState,
-            title = stringResource(R.string.backup_confirm_sign_out_title),
-            hint = stringResource(R.string.backup_confirm_sign_out_message),
-            confirmText = stringResource(R.string.backup_sign_out_title),
             onDismissRequest = { showSignOutConfirmationDialog = false },
             onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnSignOutConfirmClick) },
         )
@@ -144,6 +145,13 @@ internal fun BackupScreen(
             hazeState = hazeState,
             onPeriodSelected = { viewModel.onEvent(BackupScreenEvent.OnBackupPeriodSelected(it)) },
             onDismissRequest = { showBackupPeriodDialog = false },
+        )
+    }
+    if (showConfirmBackupDialog) {
+        ConfirmBackupDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showConfirmBackupDialog = false },
+            onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnConfirmBackupClick) },
         )
     }
 }
@@ -260,13 +268,13 @@ private fun SuccessContent(
             ) {
                 BackupButton(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.backup_backup_title),
+                    text = stringResource(uiR.string.action_backup),
                     isEnabled = uiState.isSignedIn,
                     onClick = { onEvent(BackupScreenEvent.OnButtonBackupClick) },
                 )
                 BackupButton(
                     modifier = Modifier.weight(1f),
-                    text = stringResource(R.string.backup_restore_title),
+                    text = stringResource(uiR.string.action_restore),
                     isEnabled = uiState.isSignedIn,
                     onClick = { onEvent(BackupScreenEvent.OnButtonRestoreClick) },
                 )

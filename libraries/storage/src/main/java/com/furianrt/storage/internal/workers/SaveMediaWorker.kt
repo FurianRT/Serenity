@@ -20,7 +20,7 @@ private const val WORK_NAME_PERIODIC = "SaveMediaPeriodic"
 internal class SaveMediaWorker @AssistedInject constructor(
     private val mediaSaver: MediaSaver,
     @Assisted appContext: Context,
-    @Assisted params: WorkerParameters
+    @Assisted params: WorkerParameters,
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
