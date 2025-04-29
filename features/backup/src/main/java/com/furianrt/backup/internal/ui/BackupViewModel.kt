@@ -118,7 +118,7 @@ internal class BackupViewModel @Inject constructor(
             }
 
             is BackupScreenEvent.OnBackupPeriodSelected -> launch {
-                backupRepository.setAutoBackupPeriod(event.period)
+                updateBackupPeriod(event.period)
             }
 
             is BackupScreenEvent.OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
@@ -206,6 +206,14 @@ internal class BackupViewModel @Inject constructor(
         }
 
         _effect.tryEmit(BackupEffect.ShowErrorToast(text = message))
+    }
+
+    private suspend fun updateBackupPeriod(period: BackupPeriod) {
+        state.doWithState<BackupUiState.Success> { successState ->
+            if (successState.backupPeriod != period) {
+                backupRepository.setAutoBackupPeriod(period)
+            }
+        }
     }
 
     private fun buildState(

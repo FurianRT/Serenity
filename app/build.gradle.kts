@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.gms)
+    alias(libs.plugins.crashlyticsPlugin)
 }
 
 android {
@@ -54,4 +56,8 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.biometric)
+
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.analytics)
+    implementation(libs.crashlytics)
 }

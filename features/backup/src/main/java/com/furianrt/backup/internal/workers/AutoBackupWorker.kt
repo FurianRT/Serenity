@@ -61,6 +61,7 @@ internal class AutoBackupWorker @AssistedInject constructor(
         ) {
             val constraints = Constraints.Builder()
                 .setRequiredNetworkType(NetworkType.CONNECTED)
+                .setRequiresDeviceIdle(requiresDeviceIdle = true)
                 .build()
 
             val workRequest = PeriodicWorkRequest.Builder(
