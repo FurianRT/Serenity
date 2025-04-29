@@ -26,6 +26,8 @@ internal class BackupDataManager @Inject constructor(
     suspend fun startBackup() {
         progressState.update { SyncState.Starting }
 
+        mediaRepository.saveAllMedia()
+
         val remoteFiles = backupRepository.getContentList()
             .onFailure { it.printStackTrace() }
             .getOrNull()
@@ -90,7 +92,7 @@ internal class BackupDataManager @Inject constructor(
     }
 
     private suspend fun uploadNotesMediaFiles(remoteFiles: List<RemoteFile>): Boolean {
-        val notes = notesRepository.getAllNotes().first()
+        val notes = notesRepository.getAllNotes().first().reversed()
         progressState.update {
             SyncState.Progress(syncedNotesCount = 0, totalNotesCount = notes.count())
         }

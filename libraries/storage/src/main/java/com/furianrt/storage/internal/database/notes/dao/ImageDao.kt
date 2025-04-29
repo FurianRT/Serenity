@@ -26,6 +26,9 @@ internal interface ImageDao {
     @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_NOTE_ID} = :noteId")
     fun getImages(noteId: String): Flow<List<EntryNoteImage>>
 
+    @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_IS_SAVED} = 0")
+    fun getUnsavedImages(): Flow<List<EntryNoteImage>>
+
     @Query("SELECT * FROM ${EntryNoteImage.TABLE_NAME}")
     fun getAllImages(): Flow<List<EntryNoteImage>>
 

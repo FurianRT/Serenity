@@ -1,9 +1,15 @@
 package com.furianrt.serenity.di
 
+import android.app.NotificationManager
+import android.content.Context
+import android.content.Intent
+import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.serenity.MainActivity
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -19,5 +25,23 @@ internal object AppModule {
         override val io: CoroutineDispatcher = Dispatchers.IO
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
+    }
+
+    @Singleton
+    @Provides
+    fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
+        return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    }
+
+    @Singleton
+    @Provides
+    fun provideRootActivityIntentProvider(
+        @ApplicationContext context: Context,
+    ): RootActivityIntentProvider = object : RootActivityIntentProvider {
+        override fun provide(): Intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+            action = Intent.ACTION_MAIN
+            addCategory(Intent.CATEGORY_LAUNCHER)
+        }
     }
 }

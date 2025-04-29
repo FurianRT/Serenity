@@ -2,17 +2,40 @@ package com.furianrt.serenity
 
 import android.app.Application
 import android.os.StrictMode
+import android.util.Log
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.work.Configuration
+import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.asExecutor
+import javax.inject.Inject
 
 @HiltAndroidApp
-internal class SerenityApp : Application() {
+internal class SerenityApp : Application(), Configuration.Provider {
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
+    @Inject
+    lateinit var mediaRepository: MediaRepository
 
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
+
+        mediaRepository.enqueuePeriodicMediaSave()
     }
+
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setWorkerFactory(workerFactory)
+            .setExecutor(Dispatchers.Default.asExecutor())
+            .setTaskExecutor(Dispatchers.Default.asExecutor())
+            .setMinimumLoggingLevel(Log.INFO)
+            .build()
 
     private fun initStrictMode() {
         StrictMode.setThreadPolicy(

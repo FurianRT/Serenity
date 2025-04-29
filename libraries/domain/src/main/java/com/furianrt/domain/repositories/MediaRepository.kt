@@ -37,4 +37,8 @@ interface MediaRepository {
     suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean
 
     fun getRelativeUri(file: File): Uri
+
+    fun enqueuePeriodicMediaSave()
+
+    suspend fun saveAllMedia()
 }

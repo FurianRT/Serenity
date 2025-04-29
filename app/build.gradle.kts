@@ -19,6 +19,7 @@ dependencies {
     implementation(projects.features.noteList.noteList)
     implementation(projects.features.security)
     implementation(projects.features.noteSearch)
+    implementation(projects.features.backup)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
@@ -46,7 +47,9 @@ dependencies {
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
+    implementation(libs.hiltWork)
     ksp(libs.hiltCompiler)
+    ksp(libs.hiltAndroidCompiler)
 
     implementation(libs.blur)
 

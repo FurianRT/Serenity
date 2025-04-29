@@ -6,16 +6,23 @@ import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
+import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
+import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
 import com.furianrt.storage.internal.device.AppMediaSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filterNot
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
+
+private const val MAX_QUEUE = 200
 
 private class QueueEntry(
     val noteId: String,
@@ -49,7 +56,8 @@ internal class MediaSaver @Inject constructor(
 ) {
     private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
     private val canceledEntries = mutableSetOf<QueueEntry>()
-    private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = 1000)
+    private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = MAX_QUEUE)
+    private val mutex = Mutex()
 
     init {
         queue
@@ -62,6 +70,16 @@ internal class MediaSaver @Inject constructor(
             }
             .onEach(::saveMedia)
             .launchIn(scope)
+    }
+
+    suspend fun saveAll() {
+        videoDao.getUnsavedVideos().first()
+            .map { QueueEntry(noteId = it.noteId, media = it.toNoteContentVideo()) }
+            .forEach { video -> saveMedia(video) }
+
+        imageDao.getUnsavedImages().first()
+            .map { QueueEntry(noteId = it.noteId, media = it.toNoteContentImage()) }
+            .forEach { image -> saveMedia(image) }
     }
 
     fun save(noteId: String, media: List<LocalNote.Content.Media>) {
@@ -82,7 +100,7 @@ internal class MediaSaver @Inject constructor(
         media.forEach { cancel(noteId, it) }
     }
 
-    private suspend fun saveMedia(entry: QueueEntry) {
+    private suspend fun saveMedia(entry: QueueEntry) = mutex.withLock {
         if (isMediaSaved(entry.media)) {
             return
         }

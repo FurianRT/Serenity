@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.hiltNavigation)
     implementation(libs.composeAnimation)
     ksp(libs.hiltCompiler)
+    ksp(libs.hiltAndroidCompiler)
 
     implementation(libs.immutableCollections)
 

@@ -25,6 +25,9 @@ internal interface VideoDao {
     @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_NOTE_ID} = :noteId")
     fun getVideos(noteId: String): Flow<List<EntryNoteVideo>>
 
+    @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_IS_SAVED} = 0")
+    fun getUnsavedVideos(): Flow<List<EntryNoteVideo>>
+
     @Query("SELECT * FROM ${EntryNoteVideo.TABLE_NAME}")
     fun getAllVideos(): Flow<List<EntryNoteVideo>>
 

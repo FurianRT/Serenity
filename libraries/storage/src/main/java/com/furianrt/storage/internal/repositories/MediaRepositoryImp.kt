@@ -1,5 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
+import android.content.Context
 import android.net.Uri
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
@@ -25,6 +26,8 @@ import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVoice
 import com.furianrt.storage.internal.device.AppMediaSource
 import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
+import com.furianrt.storage.internal.workers.SaveMediaWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -40,6 +43,7 @@ internal class MediaRepositoryImp @Inject constructor(
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
+    @ApplicationContext private val context: Context,
 ) : MediaRepository {
 
     override suspend fun insertMedia(
@@ -49,14 +53,14 @@ internal class MediaRepositoryImp @Inject constructor(
     ) = withContext(NonCancellable) {
         val images = media
             .filterIsInstance<LocalNote.Content.Image>()
-            .map { it.toEntryImage(noteId = noteId, isSaved = false) }
+            .map { it.toEntryImage(noteId = noteId, isSaved = !updateFile) }
         if (images.isNotEmpty()) {
             imageDao.insert(images)
         }
 
         val videos = media
             .filterIsInstance<LocalNote.Content.Video>()
-            .map { it.toEntryVideo(noteId = noteId, isSaved = false) }
+            .map { it.toEntryVideo(noteId = noteId, isSaved = !updateFile) }
         if (videos.isNotEmpty()) {
             videoDao.insert(videos)
         }
@@ -153,4 +157,12 @@ internal class MediaRepositoryImp @Inject constructor(
     }
 
     override fun getRelativeUri(file: File): Uri = appMediaSource.getRelativeUri(file)
+
+    override fun enqueuePeriodicMediaSave() {
+        SaveMediaWorker.enqueuePeriodic(context)
+    }
+
+    override suspend fun saveAllMedia() {
+        mediaSaver.saveAll()
+    }
 }

@@ -23,6 +23,7 @@ room = "2.7.1"
 
 hilt = "2.55"
 hiltNavigation = "1.2.0"
+hiltWork = "1.2.0"
 
 lottie = "6.4.0"
 
@@ -59,6 +60,8 @@ kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.1"
 
+workManager = "2.10.1"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -88,8 +91,11 @@ roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
 roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hiltCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
 hiltNavigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigation" }
+hiltWork = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
+hiltCompiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltWork" }
+hiltAndroidCompiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+
 
 lottie = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 
@@ -129,6 +135,8 @@ loggingInterceptor = { module = "com.squareup.okhttp3:logging-interceptor", vers
 kotlinSerializationConverter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "kotlinSerializationConverter" }
 
 exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
+
+workManager = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
 
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }

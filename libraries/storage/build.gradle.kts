@@ -22,11 +22,15 @@ dependencies {
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
+    implementation(libs.hiltWork)
     ksp(libs.hiltCompiler)
+    ksp(libs.hiltAndroidCompiler)
 
     implementation(libs.dataStore)
 
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.exifinterface)
+
+    implementation(libs.workManager)
 }
