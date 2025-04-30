@@ -2,6 +2,9 @@ package com.furianrt.notepage.internal.ui.page
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -261,6 +264,10 @@ private fun SuccessScreen(
     var listSize by remember { mutableStateOf(IntSize.Zero) }
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
         .calculateBottomPadding() + 8.dp
+    val listPanelPadding by animateDpAsState(
+        targetValue = toolsPanelHeight,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+    )
 
     var topEmptyTitleHeight by remember { mutableFloatStateOf(0f) }
 
@@ -295,7 +302,7 @@ private fun SuccessScreen(
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin, bottom = navBarPadding)
                 .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
-                .padding(bottom = toolsPanelHeight)
+                .padding(bottom = listPanelPadding)
                 .imePadding(),
         ) {
             ContentItems(

@@ -203,9 +203,9 @@ internal class DriveBackupRepository @Inject constructor(
         },
     )
 
-    override suspend fun uploadVoice(media: LocalNote.Content.Voice): Result<Unit> = uploadFile(
-        name = media.id,
-        fileUri = media.uri,
+    override suspend fun uploadVoice(voice: LocalNote.Content.Voice): Result<Unit> = uploadFile(
+        name = voice.id,
+        fileUri = voice.uri,
         mimeType = "audio/*",
     )
 

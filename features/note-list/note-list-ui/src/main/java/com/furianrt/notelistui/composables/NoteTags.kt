@@ -1,5 +1,8 @@
 package com.furianrt.notelistui.composables
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -84,13 +87,17 @@ fun NoteTags(
             onDoneEditing = {},
             onTextEntered = {},
             onTextCleared = {},
-            onFocusChanged ={},
+            onFocusChanged = {},
         )
         return
     }
 
     val focusManager = LocalFocusManager.current
-    FlowRow(modifier = modifier) {
+    FlowRow(
+        modifier = modifier.animateContentSize(
+            animationSpec = spring(stiffness = Spring.StiffnessHigh),
+        )
+    ) {
         LookaheadScope {
             tags.forEach { tag ->
                 key(tag.id) {

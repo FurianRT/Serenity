@@ -36,7 +36,7 @@ internal interface BackupRepository {
     suspend fun uploadNotesData(notes: List<LocalNote>): Result<Unit>
     suspend fun getRemoteNotes(fileId: String): Result<List<LocalNote>>
     suspend fun uploadMedia(media: LocalNote.Content.Media): Result<Unit>
-    suspend fun uploadVoice(media: LocalNote.Content.Voice): Result<Unit>
+    suspend fun uploadVoice(voice: LocalNote.Content.Voice): Result<Unit>
     suspend fun loadRemoteLocalToFile(
         remoteFileId: String,
         file: File,

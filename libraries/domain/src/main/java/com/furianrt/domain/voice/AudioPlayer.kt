@@ -34,8 +34,7 @@ class AudioPlayer @Inject constructor(
     }
 
     fun play(uri: Uri, progress: Float) {
-        MediaPlayer.create(context, uri).apply {
-            player = this
+        player = MediaPlayer.create(context, uri).apply {
             setProgress(progress)
             setOnCompletionListener(onCompletionListener)
             start()
@@ -51,10 +50,7 @@ class AudioPlayer @Inject constructor(
     }
 
     fun setProgress(progress: Float) {
-        val duration = player?.duration
-        if (duration != null) {
-            player?.seekTo((duration * progress).toLong(), MediaPlayer.SEEK_NEXT_SYNC)
-        }
+        player?.setProgress(progress)
     }
 
     fun setProgressListener(listener: AudioPlayerListener) {
@@ -63,6 +59,10 @@ class AudioPlayer @Inject constructor(
 
     fun clearProgressListener() {
         progressListener = null
+    }
+
+    private fun MediaPlayer.setProgress(progress: Float) {
+        seekTo((duration * progress).toLong(), MediaPlayer.SEEK_NEXT_SYNC)
     }
 
     private fun startProgressLoop() {
