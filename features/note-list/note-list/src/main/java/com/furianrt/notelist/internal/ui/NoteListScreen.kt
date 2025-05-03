@@ -211,7 +211,7 @@ private fun MainSuccess(
             val note = uiState.notes[index]
             NoteListItem(
                 modifier = Modifier
-                    .animateItem()
+                    .animateItem(placementSpec = null)
                     .animateContentSize(),
                 content = note.content,
                 tags = note.tags,

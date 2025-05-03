@@ -2,7 +2,7 @@
     <string name="backup_google_drive_title">Google Drive</string>
     <string name="backup_auto_backup_title">Auto backup</string>
     <string name="backup_auto_backup_period_title">Auto backup period</string>
-    <string name="backup_last_sync_time_title">Last sync time: %s</string>
+    <string name="backup_last_sync_time_title">Last sync date: %s</string>
     <string name="backup_last_sync_time_none_title">None</string>
     <string name="backup_sign_out_title">Sign Out</string>
     <string name="backup_tap_to_sing_in_title">Tap to Sign In</string>

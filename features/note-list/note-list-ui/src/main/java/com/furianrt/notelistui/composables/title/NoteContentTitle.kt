@@ -61,9 +61,7 @@ fun NoteContentTitle(
     onTitleTextChange: (id: String) -> Unit = {},
 ) {
     val readOnly = !isInEditMode && title.isEmptyTitle()
-
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
-
     var hasFocus by remember { mutableStateOf(false) }
 
     val view = LocalView.current

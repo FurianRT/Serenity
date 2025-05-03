@@ -1,25 +1,30 @@
 package com.furianrt.domain.usecase
 
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.NotesRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import javax.inject.Inject
 
 class GetFilteredNotesUseCase @Inject constructor(
     private val notesRepository: NotesRepository,
+    private val dispatchers: DispatchersProvider,
 ) {
     operator fun invoke(
         query: String,
         tagsNames: Set<String>,
         startDate: LocalDate?,
         endDate: LocalDate?,
-    ): Flow<List<LocalNote>> = notesRepository.getAllNotes(query).map { notes ->
-        notes
-            .filterByTags(tagsNames)
-            .filterByDate(startDate, endDate)
-    }
+    ): Flow<List<LocalNote>> = notesRepository.getAllNotes(query)
+        .map { notes ->
+            notes
+                .filterByTags(tagsNames)
+                .filterByDate(startDate, endDate)
+        }
+        .flowOn(dispatchers.default)
 
 
     private fun List<LocalNote>.filterByTags(

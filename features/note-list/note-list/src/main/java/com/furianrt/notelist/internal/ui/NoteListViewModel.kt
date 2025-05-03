@@ -93,11 +93,12 @@ internal class NoteListViewModel @Inject constructor(
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
         when (dialogId) {
-            NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+            // TODO как-то не очень красиво выглядит
+            /*NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 val successState = state.value as? NoteListUiState.Success ?: return
                 val position = result.data as Int
                 scrollToNoteState.update { successState.notes.getOrNull(position)?.id }
-            }
+            }*/
 
             NOTE_CREATE_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 launch {

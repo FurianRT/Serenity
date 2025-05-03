@@ -281,7 +281,7 @@ private fun SuccessContent(
             }
             Spacer(Modifier.height(24.dp))
             BackupDate(
-                date = uiState.lastSyncTimeTitle,
+                date = uiState.lastSyncDate,
             )
             if (uiState.questions.isNotEmpty()) {
                 HorizontalDivider(
@@ -315,7 +315,7 @@ private fun PreviewSignedIn() {
             uiState = BackupUiState.Success(
                 isAutoBackupEnabled = true,
                 backupPeriod = BackupPeriod.TreeDays,
-                lastSyncTimeTitle = null,
+                lastSyncDate = BackupUiState.Success.SyncDate.None,
                 questions = buildPreviewQuestionsList(expandedIndex = 0),
                 authState = BackupUiState.Success.AuthState.SignedIn(
                     email = "felmemfmelflmfe",
@@ -334,7 +334,7 @@ private fun PreviewSignedOut() {
             uiState = BackupUiState.Success(
                 isAutoBackupEnabled = true,
                 backupPeriod = BackupPeriod.TreeDays,
-                lastSyncTimeTitle = null,
+                lastSyncDate = BackupUiState.Success.SyncDate.None,
                 questions = buildPreviewQuestionsList(expandedIndex = 1),
                 authState = BackupUiState.Success.AuthState.SignedOut(isLoading = false),
             ),
@@ -350,7 +350,7 @@ private fun PreviewLoading() {
             uiState = BackupUiState.Success(
                 isAutoBackupEnabled = false,
                 backupPeriod = BackupPeriod.TreeDays,
-                lastSyncTimeTitle = null,
+                lastSyncDate = BackupUiState.Success.SyncDate.None,
                 questions = buildPreviewQuestionsList(expandedIndex = null),
                 authState = BackupUiState.Success.AuthState.SignedIn(
                     email = "felmemfmelflmfe",

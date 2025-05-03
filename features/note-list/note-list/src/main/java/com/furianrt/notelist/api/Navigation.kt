@@ -27,15 +27,15 @@ fun NavGraphBuilder.noteListScreen(
 ) {
     composable<NoteListRoute>(
         exitTransition = {
-            val showDefaultAnim = !hasSearchScreenRoute(targetState.destination) &&
-                    !hasNoteCreateScreenRoute(targetState.destination)
-            if (showDefaultAnim) {
-                defaultExitTransition()
-            } else {
-                fadeOut() + scaleOut(
+            when {
+                hasSearchScreenRoute(targetState.destination) -> fadeOut() + scaleOut(
                     targetScale = 0.95f,
                     transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f),
                 )
+
+                hasNoteCreateScreenRoute(targetState.destination) -> fadeOut()
+
+                else -> defaultExitTransition()
             }
         },
         popEnterTransition = {

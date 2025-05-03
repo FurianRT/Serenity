@@ -14,7 +14,7 @@ internal class GetAppThemeListUseCase @Inject constructor(
 ) {
     operator fun invoke(): ImmutableList<AppTheme> = buildThemesList()
 
-    private fun buildThemesList() = buildImmutableList {
+    private fun buildThemesList(): ImmutableList<AppTheme> = buildImmutableList {
         add(
             AppTheme(
                 title = resourcesManager.getString(R.string.settings_app_theme_scandi_grandpa_title),

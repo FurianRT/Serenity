@@ -26,7 +26,7 @@ internal class SharedMediaSource @Inject constructor(
 ) {
     suspend fun saveToGallery(
         media: LocalMedia,
-    ): Boolean = withContext(dispatchers.default) {
+    ): Boolean = withContext(dispatchers.io) {
         val values = ContentValues().apply {
             put(MediaStore.Files.FileColumns.DISPLAY_NAME, media.name)
             put(MediaStore.Files.FileColumns.MEDIA_TYPE, media.mediaType)
@@ -58,7 +58,7 @@ internal class SharedMediaSource @Inject constructor(
         }
     }
 
-    suspend fun getMediaList(): List<DeviceMedia> = withContext(dispatchers.default) {
+    suspend fun getMediaList(): List<DeviceMedia> = withContext(dispatchers.io) {
         val mediaList = mutableListOf<DeviceMedia>()
         val volumes = MediaStore.getExternalVolumeNames(context)
         volumes.forEach { volume ->

@@ -1,5 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepFilter
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
@@ -20,6 +21,7 @@ import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -27,6 +29,7 @@ import javax.inject.Inject
 internal class NotesRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
     private val noteCache: NoteCache,
+    private val dispatchers: DispatchersProvider,
     private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
@@ -87,6 +90,7 @@ internal class NotesRepositoryImp @Inject constructor(
                     .thenByDescending(LocalNote::date)
             )
         }
+        .flowOn(dispatchers.default)
 
     override fun getAllNotes(query: String): Flow<List<LocalNote>> = if (query.isNotEmpty()) {
         noteDao.getAllNotes("%$query%")
@@ -98,12 +102,15 @@ internal class NotesRepositoryImp @Inject constructor(
                 }
             }
             .map { it.sortedByDescending(LocalNote::date) }
+            .flowOn(dispatchers.default)
     } else {
         getAllNotes()
     }
 
     override fun getNote(noteId: String): Flow<LocalNote?> =
-        noteDao.getNote(noteId).map { it?.toLocalNote() }
+        noteDao.getNote(noteId)
+            .map { it?.toLocalNote() }
+            .flowOn(dispatchers.default)
 
     override fun getNoteContentFromCache(noteId: String): List<LocalNote.Content> {
         return noteCache.getNoteContent(noteId)

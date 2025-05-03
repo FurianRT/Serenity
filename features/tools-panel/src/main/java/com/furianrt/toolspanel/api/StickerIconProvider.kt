@@ -1,5 +1,5 @@
 package com.furianrt.toolspanel.api
 
 interface StickerIconProvider {
-    suspend fun getIcon(stickerId: String): Int
+    fun getIcon(stickerId: String): Int
 }

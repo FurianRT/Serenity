@@ -6,6 +6,7 @@ import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.furianrt.backup.api.BackupApi
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -14,9 +15,10 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 
 @HiltAndroidApp
-internal class SerenityApp : Application(), Configuration.Provider {
+internal class SerenityApp : Application(), Configuration.Provider, CoroutineScope {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -27,7 +29,11 @@ internal class SerenityApp : Application(), Configuration.Provider {
     @Inject
     lateinit var backupApi: BackupApi
 
-    private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    @Inject
+    lateinit var dispatchers: DispatchersProvider
+
+    override val coroutineContext: CoroutineContext
+        get() = dispatchers.io + SupervisorJob()
 
     override fun onCreate() {
         super.onCreate()
@@ -47,7 +53,7 @@ internal class SerenityApp : Application(), Configuration.Provider {
 
     private fun startPeriodicWorks() {
         mediaRepository.enqueuePeriodicMediaSave()
-        scope.launch { backupApi.tryStartAutoBackup() }
+        launch { backupApi.tryStartAutoBackup() }
     }
 
     private fun initStrictMode() {

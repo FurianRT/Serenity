@@ -14,13 +14,13 @@ import com.furianrt.backup.internal.domain.usecases.GetPopularQuestionsUseCase
 import com.furianrt.backup.internal.domain.usecases.SignInUseCase
 import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
 import com.furianrt.backup.internal.extensions.toQuestion
+import com.furianrt.backup.internal.extensions.toSyncDate
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.doWithState
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.uikit.extensions.launch
-import com.furianrt.uikit.extensions.toDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -34,8 +34,6 @@ import kotlinx.coroutines.flow.update
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import com.furianrt.uikit.R as uiR
-
-private const val LAST_SYNC_DATE_PATTERN = "dd/MM/yyyy hh:mm a"
 
 @HiltViewModel
 internal class BackupViewModel @Inject constructor(
@@ -224,10 +222,10 @@ internal class BackupViewModel @Inject constructor(
         isAutoBackupEnabled: Boolean,
         backupPeriod: BackupPeriod,
         lastSyncDate: ZonedDateTime?,
-    ): BackupUiState = BackupUiState.Success(
+    ) = BackupUiState.Success(
         isAutoBackupEnabled = isAutoBackupEnabled,
         backupPeriod = backupPeriod,
-        lastSyncTimeTitle = lastSyncDate?.toDateString(LAST_SYNC_DATE_PATTERN),
+        lastSyncDate = lastSyncDate.toSyncDate(),
         questions = questions,
         authState = authState,
     )

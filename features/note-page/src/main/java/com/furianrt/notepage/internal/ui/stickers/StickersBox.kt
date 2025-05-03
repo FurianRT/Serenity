@@ -18,8 +18,8 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 internal fun StickersBox(
     stickers: ImmutableList<StickerItem>,
-    emptyTitleHeight: Float,
-    containerSize: IntSize,
+    emptyTitleHeight: () -> Float,
+    containerSize: () -> IntSize,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     onStickerChanged: (sticker: StickerItem) -> Unit,
@@ -44,22 +44,22 @@ internal fun StickersBox(
 @Composable
 private fun StickerElement(
     sticker: StickerItem,
-    emptyTitleHeight: Float,
-    containerSize: IntSize,
+    emptyTitleHeight: () -> Float,
+    containerSize: () -> IntSize,
     onStickerChanged: (sticker: StickerItem) -> Unit,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val maxWidthPx = containerSize.width
-    val maxHeightPx = containerSize.height
     val density = LocalDensity.current
     val addOffset by animateFloatAsState(
-        targetValue = emptyTitleHeight,
+        targetValue = emptyTitleHeight(),
         animationSpec = tween(250),
     )
     StickerScreenItem(
         modifier = modifier.offset {
+            val listSize = containerSize()
+            val maxWidthPx = listSize.width
             val stickerSize = StickerItem.DEFAULT_SIZE.toPx()
             IntOffset(
                 x = (maxWidthPx * sticker.state.biasX - stickerSize / 2f).toInt(),
@@ -69,6 +69,9 @@ private fun StickerElement(
         item = sticker,
         onRemoveClick = onRemoveStickerClick,
         onDragged = { delta ->
+            val listSize = containerSize()
+            val maxWidthPx = listSize.width
+            val maxHeightPx = listSize.height
             sticker.state.biasX = if (maxHeightPx == 0) {
                 0f
             } else {

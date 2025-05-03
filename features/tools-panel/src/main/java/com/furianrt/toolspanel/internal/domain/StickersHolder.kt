@@ -1,47 +1,39 @@
 package com.furianrt.toolspanel.internal.domain
 
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.buildImmutableList
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.entities.StickerPack
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-internal class StickersHolder @Inject constructor(
-    private val dispatchers: DispatchersProvider,
-) : StickerIconProvider {
+internal class StickersHolder @Inject constructor() : StickerIconProvider {
     private var cache: ImmutableList<StickerPack>? = null
 
-    suspend fun getStickersPacks(): ImmutableList<StickerPack> {
+    fun getStickersPacks(): ImmutableList<StickerPack> {
         return cache ?: loadPacks().also { cache = it }
     }
 
-    override suspend fun getIcon(stickerId: String): Int = withContext(dispatchers.default) {
-        getStickersPacks()
-            .flatMap(StickerPack::stickers)
-            .first { it.id == stickerId }
-            .icon
+    override fun getIcon(stickerId: String): Int = getStickersPacks()
+        .flatMap(StickerPack::stickers)
+        .first { it.id == stickerId }
+        .icon
+
+    private fun loadPacks(): ImmutableList<StickerPack> = buildImmutableList {
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
+        add(getPack1())
     }
 
-    private suspend fun loadPacks(): ImmutableList<StickerPack> {
-        return buildImmutableList {
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-            add(getPack1())
-        }
-    }
-
-    private suspend fun getPack1(): StickerPack = withContext(dispatchers.default) {
+    private fun getPack1(): StickerPack {
         val stickers = buildImmutableList {
             add(Sticker(id = "pack_1_sticker_1", icon = R.drawable.sticker_pack_1_item_1))
             add(Sticker(id = "pack_1_sticker_2", icon = R.drawable.sticker_pack_1_item_2))
@@ -96,7 +88,7 @@ internal class StickersHolder @Inject constructor(
             add(Sticker(id = "pack_1_sticker_51", icon = R.drawable.sticker_pack_1_item_51))
         }
 
-        return@withContext StickerPack(
+        return StickerPack(
             id = "pack_1",
             isPremium = false,
             icon = R.drawable.sticker_pack_1_item_1,

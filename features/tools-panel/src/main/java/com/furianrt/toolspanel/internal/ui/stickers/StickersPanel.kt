@@ -66,7 +66,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.entities.StickerPack
@@ -78,10 +77,7 @@ import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
 import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
@@ -425,9 +421,7 @@ private fun Modifier.drawSelection(
 private fun PanelPreview() {
     SerenityTheme {
         TitleContent(
-            uiState = StickersPanelUiState(
-                packs = runBlocking { stickersHolderMock().getStickersPacks() }
-            ),
+            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
         )
     }
 }
@@ -438,19 +432,8 @@ private fun ContentPreview() {
     val listState = rememberLazyGridState()
     SerenityTheme {
         Content(
-            uiState = StickersPanelUiState(
-                packs = runBlocking { stickersHolderMock().getStickersPacks() },
-            ),
+            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
             listStateProvider = { listState },
         )
     }
 }
-
-private fun stickersHolderMock() = StickersHolder(
-    dispatchers = object : DispatchersProvider {
-        override val default: CoroutineDispatcher = Dispatchers.Main
-        override val io: CoroutineDispatcher = Dispatchers.Main
-        override val main: CoroutineDispatcher = Dispatchers.Main
-        override val unconfined: CoroutineDispatcher = Dispatchers.Main
-    },
-)

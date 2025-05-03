@@ -12,7 +12,7 @@ internal sealed interface BackupUiState {
     data class Success(
         val isAutoBackupEnabled: Boolean,
         val backupPeriod: BackupPeriod,
-        val lastSyncTimeTitle: String?,
+        val lastSyncDate: SyncDate,
         val questions: ImmutableList<Question>,
         val authState: AuthState,
     ) : BackupUiState {
@@ -28,6 +28,13 @@ internal sealed interface BackupUiState {
             data class SignedOut(
                 override val isLoading: Boolean,
             ) : AuthState(isLoading)
+        }
+
+        sealed interface SyncDate {
+            data object Today : SyncDate
+            data object Yesterday : SyncDate
+            data object None: SyncDate
+            data class Other(val text: String) : SyncDate
         }
     }
 

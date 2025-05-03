@@ -65,7 +65,6 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
-import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.NoteContentMedia
@@ -88,6 +87,8 @@ import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.toolspanel.api.ToolsPanelConstants
+import com.furianrt.toolspanel.api.VoiceRecord
+import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
@@ -282,12 +283,8 @@ private fun SuccessScreen(
     MediaSelectorBottomSheet(
         modifier = modifier,
         state = state.bottomScaffoldState,
-        openMediaViewer = remember {
-            { route: MediaViewerRoute -> onEvent(PageEvent.OnOpenMediaViewerRequest(route)) }
-        },
-        onMediaSelected = remember {
-            { result: MediaResult -> onEvent(PageEvent.OnMediaSelected(result)) }
-        },
+        openMediaViewer = { route -> onEvent(PageEvent.OnOpenMediaViewerRequest(route)) },
+        onMediaSelected = { result -> onEvent(PageEvent.OnMediaSelected(result)) },
     ) {
         Box(
             modifier = Modifier
@@ -319,96 +316,69 @@ private fun SuccessScreen(
                 onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
             )
             if (uiState.stickers.isNotEmpty()) {
-                val showStickersPadding = uiState.isInEditMode &&
-                        uiState.content.firstOrNull().isEmptyTitle()
                 StickersBox(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
                         .height(density.run { listSize.height.toDp() }),
                     stickers = uiState.stickers,
-                    emptyTitleHeight = if (showStickersPadding) topEmptyTitleHeight else 0f,
-                    containerSize = listSize,
+                    emptyTitleHeight = {
+                        val showStickersPadding = uiState.isInEditMode &&
+                                uiState.content.firstOrNull().isEmptyTitle()
+                        if (showStickersPadding) topEmptyTitleHeight else 0f
+                    },
+                    containerSize = { listSize },
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
                     onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
                 )
             }
         }
-        Box(
+        Panel(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                 .onGloballyPositioned { toolsPanelRect = it.boundsInParent() }
                 .applyIf(state.isVoiceRecordActive) { Modifier.zIndex(1f) },
-        ) {
-            AnimatedVisibility(
-                visible = uiState.isInEditMode,
-                enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
-                content = {
-                    val titleState = remember(uiState.content, focusedTitleId) {
-                        uiState.content
-                            .findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
-                            ?.state
-                    }
-                    ActionsPanel(
-                        noteId = uiState.noteId,
-                        fontFamily = uiState.fontFamily,
-                        fontColor = uiState.fontColor,
-                        fontSize = uiState.fontSize,
-                        hazeState = hazeState,
-                        titleState = titleState ?: NoteTitleState(),
-                        onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
-                        onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
-                        onVoiceRecordStart = {
-                            onEvent(PageEvent.OnVoiceStarted)
-                            state.isVoiceRecordActive = true
-                        },
-                        onRecordComplete = { record ->
-                            state.isVoiceRecordActive = false
-                            onEvent(PageEvent.OnVoiceRecorded(record))
-                        },
-                        onVoiceRecordCancel = { state.isVoiceRecordActive = false },
-                        onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
-                        onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
-                        onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
-                        onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
-                        onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
-                        onStickerSelected = { selectedSticker ->
-                            onEvent(
-                                PageEvent.OnStickerSelected(
-                                    sticker = StickerItem.build(
-                                        typeId = selectedSticker.id,
-                                        icon = selectedSticker.icon,
-                                        scrollOffset = state.listState.value,
-                                        viewPortHeight = state.listState.viewportSize,
-                                        toolsPanelHeight = density.run {
-                                            toolsPanelRect.height.toDp()
-                                        },
-                                        toolBarHeight = toolbarMargin,
-                                        density = density,
-                                    ),
-                                )
-                            )
-                        },
+            hazeState = hazeState,
+            uiState = uiState,
+            focusedTitleId = { focusedTitleId },
+            onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
+            onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+            onVoiceRecordStart = {
+                onEvent(PageEvent.OnVoiceStarted)
+                state.isVoiceRecordActive = true
+            },
+            onRecordComplete = { record ->
+                state.isVoiceRecordActive = false
+                onEvent(PageEvent.OnVoiceRecorded(record))
+            },
+            onVoiceRecordCancel = { state.isVoiceRecordActive = false },
+            onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
+            onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
+            onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
+            onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
+            onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
+            onStickerSelected = { selectedSticker ->
+                onEvent(
+                    PageEvent.OnStickerSelected(
+                        sticker = StickerItem.build(
+                            typeId = selectedSticker.id,
+                            icon = selectedSticker.icon,
+                            scrollOffset = state.listState.value,
+                            viewPortHeight = state.listState.viewportSize,
+                            toolsPanelHeight = density.run { toolsPanelRect.height.toDp() },
+                            toolBarHeight = toolbarMargin,
+                            density = density,
+                        ),
                     )
-                }
-            )
-        }
-        AnimatedVisibility(
+                )
+            },
+        )
+        DimSurfaceOverlay(
             visible = state.dimSurface,
-            enter = fadeIn(),
-            exit = fadeOut(),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.scrim)
-                    .clickableNoRipple {},
-            )
-        }
+        )
     }
 }
 
@@ -536,6 +506,80 @@ private fun ContentItems(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun Panel(
+    uiState: PageUiState.Success,
+    hazeState: HazeState,
+    focusedTitleId: () -> String?,
+    onMenuVisibilityChange: (visible: Boolean) -> Unit,
+    onSelectMediaClick: () -> Unit,
+    onVoiceRecordStart: () -> Unit,
+    onRecordComplete: (record: VoiceRecord) -> Unit,
+    onVoiceRecordCancel: () -> Unit,
+    onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
+    onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontSizeSelected: (size: Int) -> Unit,
+    onStickerSelected: (sticker: Sticker) -> Unit,
+    onFontStyleClick: () -> Unit,
+    onOnStickersClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier) {
+        AnimatedVisibility(
+            visible = uiState.isInEditMode,
+            enter = fadeIn(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+            exit = fadeOut(tween(durationMillis = ANIM_PANEL_VISIBILITY_DURATION)),
+            content = {
+                val focusedTitle = focusedTitleId()
+                val titleState = remember(uiState.content, focusedTitle) {
+                    uiState.content
+                        .findInstance<UiNoteContent.Title> { it.id == focusedTitle }
+                        ?.state
+                }
+                ActionsPanel(
+                    noteId = uiState.noteId,
+                    fontFamily = uiState.fontFamily,
+                    fontColor = uiState.fontColor,
+                    fontSize = uiState.fontSize,
+                    hazeState = hazeState,
+                    titleState = titleState ?: NoteTitleState(),
+                    onMenuVisibilityChange = onMenuVisibilityChange,
+                    onSelectMediaClick = onSelectMediaClick,
+                    onVoiceRecordStart = onVoiceRecordStart,
+                    onRecordComplete = onRecordComplete,
+                    onVoiceRecordCancel = onVoiceRecordCancel,
+                    onFontFamilySelected = onFontFamilySelected,
+                    onFontColorSelected = onFontColorSelected,
+                    onFontSizeSelected = onFontSizeSelected,
+                    onFontStyleClick = onFontStyleClick,
+                    onOnStickersClick = onOnStickersClick,
+                    onStickerSelected = onStickerSelected,
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun DimSurfaceOverlay(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedVisibility(
+        modifier = modifier,
+        visible = visible,
+        enter = fadeIn(),
+        exit = fadeOut(),
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.scrim)
+                .clickableNoRipple {},
+        )
     }
 }
 
