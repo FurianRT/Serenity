@@ -34,11 +34,11 @@ fun NavGraphBuilder.noteCreateScreen(
 ) {
     composable<NoteCreateRoute>(
         enterTransition = {
-            fadeIn(tween(durationMillis = 450)) + slideIntoContainer(
+            fadeIn(tween(durationMillis = 350)) + slideIntoContainer(
                 towards = AnimatedContentTransitionScope.SlideDirection.Up,
                 initialOffset = { (it * 0.05f).toInt() },
                 animationSpec = tween(
-                    durationMillis = 450,
+                    durationMillis = 350,
                     easing = FastOutSlowInEasing,
                 ),
             )
