@@ -30,19 +30,24 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonArray
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
+import okio.buffer
 import okio.source
 import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
-import java.io.InputStreamReader
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -161,36 +166,38 @@ internal class DriveBackupRepository @Inject constructor(
         }
     }
 
-    override suspend fun uploadNotesData(notes: List<LocalNote>): Result<Unit> {
-        val jsonString = Json.encodeToString(notes)
+    override suspend fun uploadNotesData(
+        notes: List<LocalNote>,
+    ): Result<Unit> = withContext(dispatchers.io) {
+        runCatching {
+            val jsonString = Json.encodeToString(notes)
 
-        val metadata = """
-            {
-                "name": "NotesData",
-                "mimeType": "application/json",
-                "parents": ["appDataFolder"]
-            }
-        """.trimIndent()
+            val metadataRequestBody = buildJsonObject {
+                put("name", "NotesData")
+                put("mimeType", "application/json")
+                putJsonArray("parents") { add("appDataFolder") }
+            }.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
-        val metadataRequestBody = metadata
-            .toRequestBody("application/json; charset=utf-8".toMediaType())
+            val fileRequestBody = jsonString.toRequestBody("application/json".toMediaType())
+            val filePart = MultipartBody.Part.createFormData(
+                name = "file",
+                filename = "NotesData.json",
+                body = fileRequestBody,
+            )
 
-        val fileRequestBody = jsonString.toRequestBody("application/json".toMediaType())
-        val filePart = MultipartBody.Part.createFormData(
-            name = "file",
-            filename = "NotesData",
-            body = fileRequestBody,
-        )
-        return runCatching { driveApiService.uploadFile(metadataRequestBody, filePart) }
+            driveApiService.uploadFile(metadataRequestBody, filePart)
+        }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     override suspend fun getRemoteNotes(
         fileId: String,
     ): Result<List<LocalNote>> = withContext(dispatchers.io) {
         runCatching {
             val responseBody = driveApiService.downloadFile(fileId)
-            val jsonText = InputStreamReader(responseBody.byteStream()).use { it.readText() }
-            Json.decodeFromString<List<LocalNote>>(jsonText)
+            responseBody.byteStream().buffered().use { input ->
+                Json.decodeFromStream<List<LocalNote>>(input)
+            }
         }
     }
 
@@ -212,17 +219,12 @@ internal class DriveBackupRepository @Inject constructor(
     override suspend fun loadRemoteLocalToFile(
         remoteFileId: String,
         file: File,
-    ): Result<Unit> = withContext(dispatchers.io) {
+    ): Result<Long> = withContext(dispatchers.io) {
         runCatching {
             val response = driveApiService.downloadFile(remoteFileId)
-            val bufferSize = 64 * 1024
-            response.byteStream().use { input ->
-                FileOutputStream(file).use { output ->
-                    val buffer = ByteArray(bufferSize)
-                    var bytesRead: Int
-                    while (input.read(buffer).also { bytesRead = it } != -1) {
-                        output.write(buffer, 0, bytesRead)
-                    }
+            response.byteStream().buffered().use { input ->
+                file.outputStream().buffered().use { output ->
+                    input.copyTo(output)
                 }
             }
         }
@@ -233,33 +235,33 @@ internal class DriveBackupRepository @Inject constructor(
         fileUri: Uri,
         mimeType: String,
     ): Result<Unit> = withContext(dispatchers.io) {
-        val contentResolver = context.contentResolver
+        runCatching {
+            val inputStream = context.contentResolver.openInputStream(fileUri)
+                ?: throw IOException("Unable to open Uri: $fileUri")
 
-        val streamBody = object : RequestBody() {
-            override fun contentType(): MediaType = mimeType.toMediaType()
-            override fun writeTo(sink: BufferedSink) {
-                contentResolver.openInputStream(fileUri)?.source()?.use { source ->
-                    sink.writeAll(source)
-                } ?: error("Unable to open Uri inside writeTo: $fileUri")
+            val streamBody = inputStream.use { stream ->
+                stream.source().buffer().let { source ->
+                    object : RequestBody() {
+                        override fun contentType(): MediaType = mimeType.toMediaType()
+                        override fun writeTo(sink: BufferedSink) {
+                            sink.writeAll(source)
+                        }
+                    }
+                }
             }
-        }
 
-        val filePart = MultipartBody.Part.createFormData("file", name, streamBody)
-        val metadataJson = """
-        {
-            "name": "$name",
-            "parents": ["appDataFolder"],
-            "mimeType": "$mimeType"
-        }
-    """.trimIndent()
+            val filePart = MultipartBody.Part.createFormData("file", name, streamBody)
 
-        val metadataRequestBody = metadataJson
-            .toRequestBody("application/json; charset=utf-8".toMediaType())
+            val metadataRequestBody = buildJsonObject {
+                put("name", name)
+                putJsonArray("parents") { add("appDataFolder") }
+                put("mimeType", mimeType)
+            }.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
 
-        return@withContext runCatching {
             driveApiService.uploadFile(metadataRequestBody, filePart)
         }
     }
+
 
     private tailrec suspend fun loadContentList(
         accumulated: List<RemoteFile> = emptyList(),

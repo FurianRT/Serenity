@@ -13,7 +13,6 @@ import com.furianrt.storage.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -154,7 +153,7 @@ internal class AppMediaSource @Inject constructor(
             mediaName = imageNewName,
         ) ?: return@withContext null
 
-        FileOutputStream(destFile).use { outputStream ->
+        destFile.outputStream().use { outputStream ->
             bitmap.compress(
                 Bitmap.CompressFormat.WEBP_LOSSY,
                 IMAGE_COMPRESS_AMOUNT,
@@ -192,7 +191,7 @@ internal class AppMediaSource @Inject constructor(
         ) ?: return@withContext null
 
         context.contentResolver.openInputStream(video.uri)?.use { inputStream ->
-            FileOutputStream(destFile).use { outputStream ->
+            destFile.outputStream().use { outputStream ->
                 inputStream.copyTo(outputStream)
             }
         }

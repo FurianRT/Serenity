@@ -255,6 +255,7 @@ fun ActionsPanel(
 
     if (showAudioRecordPermissionDialog) {
         AudioRecordPermissionDialog(
+            hazeState = hazeState,
             onDismissRequest = { showAudioRecordPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )

@@ -40,5 +40,5 @@ internal interface BackupRepository {
     suspend fun loadRemoteLocalToFile(
         remoteFileId: String,
         file: File,
-    ): Result<Unit>
+    ): Result<Long>
 }

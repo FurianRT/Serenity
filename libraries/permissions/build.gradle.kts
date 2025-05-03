@@ -32,5 +32,9 @@ dependencies {
     implementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 
+    implementation(libs.blur)
+
+    implementation(libs.lottie)
+
     api(libs.permissions)
 }

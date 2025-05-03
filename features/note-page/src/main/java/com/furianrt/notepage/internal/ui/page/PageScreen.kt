@@ -147,6 +147,7 @@ internal fun NotePageScreenInternal(
 
     val view = LocalView.current
     val density = LocalDensity.current
+    val hazeState = remember { HazeState() }
     val keyboardOffset by rememberKeyboardOffsetState()
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
@@ -196,12 +197,14 @@ internal fun NotePageScreenInternal(
     PageScreenContent(
         state = state,
         uiState = uiState,
+        hazeState = hazeState,
         onEvent = viewModel::onEvent,
         onFocusChange = onFocusChange,
     )
 
     if (showMediaPermissionDialog) {
         MediaPermissionDialog(
+            hazeState = hazeState,
             onDismissRequest = { showMediaPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )
@@ -212,6 +215,7 @@ internal fun NotePageScreenInternal(
 private fun PageScreenContent(
     state: PageScreenState,
     uiState: PageUiState,
+    hazeState: HazeState,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -222,6 +226,7 @@ private fun PageScreenContent(
                 modifier = modifier,
                 state = state,
                 uiState = uiState,
+                hazeState = hazeState,
                 onEvent = onEvent,
                 onFocusChange = onFocusChange,
             )
@@ -236,6 +241,7 @@ private fun PageScreenContent(
 private fun SuccessScreen(
     state: PageScreenState,
     uiState: PageUiState.Success,
+    hazeState: HazeState,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -258,7 +264,6 @@ private fun SuccessScreen(
         )
     }
     var focusedTitleId: String? by remember { mutableStateOf(null) }
-    val hazeState = remember { HazeState() }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
@@ -645,6 +650,7 @@ private fun SuccessScreenPreview() {
             ),
             onEvent = {},
             onFocusChange = {},
+            hazeState = HazeState(),
         )
     }
 }

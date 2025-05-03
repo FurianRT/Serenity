@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val CONTENT_TAG = "content"
+private const val CONTENT_TAG = "note_cached_content"
 
 @Singleton
 internal class NoteCache @Inject constructor(
@@ -37,9 +37,11 @@ internal class NoteCache @Inject constructor(
     }
 
     override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        savedInstanceState?.getString(CONTENT_TAG)?.let { json ->
-            cache.clear()
-            cache.putAll(Json.decodeFromString(json))
+        if (cache.isEmpty() && savedInstanceState != null) {
+            savedInstanceState.getString(CONTENT_TAG)?.let { json ->
+                cache.clear()
+                cache.putAll(Json.decodeFromString(json))
+            }
         }
     }
 

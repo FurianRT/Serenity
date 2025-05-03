@@ -51,9 +51,11 @@ internal class SharedMediaSource @Inject constructor(
                 true
             } catch (e: IOException) {
                 errorTracker.trackNonFatalError(e)
+                resolver.delete(uri, null, null)
                 false
             }
         } else {
+            errorTracker.trackNonFatalError(IOException())
             false
         }
     }
