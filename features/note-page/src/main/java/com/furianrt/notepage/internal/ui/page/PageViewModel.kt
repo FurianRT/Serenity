@@ -3,6 +3,7 @@ package com.furianrt.notepage.internal.ui.page
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
@@ -101,6 +102,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.util.UUID
@@ -118,6 +120,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
     private val audioPlayer: AudioPlayer,
     private val stickerIconProvider: StickerIconProvider,
+    private val dispatchers: DispatchersProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
@@ -686,6 +689,7 @@ internal class PageViewModel @AssistedInject constructor(
                         note?.toNoteItem(stickerIconProvider = { stickerIconProvider.getIcon(it) })
                     }
                     .distinctUntilChanged()
+                    .flowOn(dispatchers.default)
                     .collectLatest(::handleNoteResult)
             }
         }

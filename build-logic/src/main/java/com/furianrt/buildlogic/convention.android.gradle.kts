@@ -29,12 +29,6 @@ android {
             buildConfigField("String", "SUPPORT_EMAIL", "\"${properties.getProperty("SUPPORT_EMAIL")}\"")
             buildConfigField("String", "FILE_PROVIDER_AUTHORITY", "\"SerenityFileProvider\"")
         }
-        release {
-            isMinifyEnabled = false
-        }
-        debug {
-            isMinifyEnabled = false
-        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
