@@ -2,7 +2,6 @@ package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
-import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
@@ -113,15 +112,6 @@ internal fun ImmutableList<UiNoteContent>.removeVoice(
 ): ImmutableList<UiNoteContent> = toPersistentList()
     .removeAll { it is UiNoteContent.Voice && it.id == id }
     .joinTitles(focusedTitleId)
-
-internal fun ImmutableList<UiNoteContent>.updateVoiceProgress(
-    id: String,
-    progress: Float,
-): ImmutableList<UiNoteContent> {
-    val voiceIndex = indexOfFirstOrNull { it is UiNoteContent.Voice && it.id == id } ?: return this
-    val voice = this[voiceIndex] as UiNoteContent.Voice
-    return toPersistentList().set(voiceIndex, voice.copy(progress = progress))
-}
 
 private fun ImmutableList<UiNoteContent>.joinTitles(
     focusedTitleId: String?,

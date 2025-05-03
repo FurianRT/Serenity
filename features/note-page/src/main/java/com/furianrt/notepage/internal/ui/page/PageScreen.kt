@@ -271,6 +271,7 @@ private fun SuccessScreen(
     )
 
     var topEmptyTitleHeight by remember { mutableFloatStateOf(0f) }
+    val showStickersPadding = uiState.isInEditMode && uiState.content.firstOrNull().isEmptyTitle()
 
     LaunchedEffect(focusedTitleId) {
         val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
@@ -322,11 +323,7 @@ private fun SuccessScreen(
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
                         .height(density.run { listSize.height.toDp() }),
                     stickers = uiState.stickers,
-                    emptyTitleHeight = {
-                        val showStickersPadding = uiState.isInEditMode &&
-                                uiState.content.firstOrNull().isEmptyTitle()
-                        if (showStickersPadding) topEmptyTitleHeight else 0f
-                    },
+                    emptyTitleHeight = { if (showStickersPadding) topEmptyTitleHeight else 0f },
                     containerSize = { listSize },
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },

@@ -96,7 +96,7 @@ fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
     uri = uri,
     duration = duration.toLong(),
     volume = volume.toImmutableList(),
-    progress = 0f,
+    progressState = UiNoteContent.Voice.ProgressState(),
 )
 
 

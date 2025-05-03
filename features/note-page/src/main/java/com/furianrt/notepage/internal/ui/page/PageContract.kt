@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
+import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -29,6 +30,9 @@ internal sealed interface PageUiState {
             get() = content.all { content ->
                 content is UiNoteContent.Title && content.state.annotatedString.isEmpty()
             }
+
+        val playingVoice: UiNoteContent.Voice?
+            get() = content.findInstance<UiNoteContent.Voice> { it.id == playingVoiceId }
     }
 }
 

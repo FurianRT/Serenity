@@ -27,10 +27,23 @@ import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
+import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
+import com.furianrt.notepage.internal.ui.extensions.removeMedia
+import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
+import com.furianrt.notepage.internal.ui.extensions.removeVoice
+import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
+import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
+import com.furianrt.notepage.internal.ui.extensions.toNoteItem
+import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontColorSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontFamilySelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontSizeSelected
@@ -43,9 +56,14 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaShareClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOnSaveContentRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectMediaClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagDoneEditing
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagFocusChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextEntered
@@ -55,28 +73,9 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoicePlayClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRemoveClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
-import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
-import com.furianrt.notepage.internal.ui.extensions.removeMedia
-import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
-import com.furianrt.notepage.internal.ui.extensions.removeVoice
-import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
-import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
-import com.furianrt.notepage.internal.ui.extensions.toNoteItem
-import com.furianrt.notepage.internal.ui.extensions.toUiVoice
-import com.furianrt.notepage.internal.ui.extensions.updateVoiceProgress
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerChanged
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnStickerClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagFocusChanged
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
@@ -260,34 +259,16 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     override fun onAudioProgressChange(progress: Float) {
-        _state.updateState<PageUiState.Success> { currentState ->
-            if (currentState.playingVoiceId != null) {
-                currentState.copy(
-                    content = currentState.content.updateVoiceProgress(
-                        id = currentState.playingVoiceId,
-                        progress = progress,
-                    ),
-                )
-            } else {
-                currentState
-            }
+        _state.doWithState<PageUiState.Success> { successState ->
+            successState.playingVoice?.progressState?.progress?.floatValue = progress
         }
     }
 
     override fun onAudioPlayComplete() {
         audioPlayer.stop()
         _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(
-                content = if (currentState.playingVoiceId != null) {
-                    currentState.content.updateVoiceProgress(
-                        id = currentState.playingVoiceId,
-                        progress = 0f,
-                    )
-                } else {
-                    currentState.content
-                },
-                playingVoiceId = null,
-            )
+            currentState.playingVoice?.progressState?.progress?.floatValue = 0f
+            currentState.copy(playingVoiceId = null)
         }
     }
 
@@ -533,7 +514,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun playVoice(voice: UiNoteContent.Voice) {
         _state.updateState<PageUiState.Success> { currentState ->
-            audioPlayer.play(voice.uri, voice.progress)
+            audioPlayer.play(voice.uri, voice.progressState.progress.floatValue)
             currentState.copy(playingVoiceId = voice.id)
         }
     }
@@ -541,7 +522,7 @@ internal class PageViewModel @AssistedInject constructor(
     private fun playNextVoice(voice: UiNoteContent.Voice) {
         _state.updateState<PageUiState.Success> { currentState ->
             audioPlayer.stop()
-            audioPlayer.play(voice.uri, voice.progress)
+            audioPlayer.play(voice.uri, voice.progressState.progress.floatValue)
             currentState.copy(playingVoiceId = voice.id)
         }
     }
@@ -554,13 +535,10 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onVoiceProgressSelected(voice: UiNoteContent.Voice, progress: Float) {
-        _state.updateState<PageUiState.Success> { currentState ->
-            if (voice.id == currentState.playingVoiceId) {
+        _state.doWithState<PageUiState.Success> { successState ->
+            if (voice.id == successState.playingVoiceId) {
                 audioPlayer.setProgress(progress)
             }
-            currentState.copy(
-                content = currentState.content.updateVoiceProgress(voice.id, progress),
-            )
         }
     }
 

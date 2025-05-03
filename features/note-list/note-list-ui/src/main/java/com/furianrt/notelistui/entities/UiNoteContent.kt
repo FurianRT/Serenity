@@ -3,7 +3,9 @@ package com.furianrt.notelistui.entities
 import android.net.Uri
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.Stable
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -23,16 +25,22 @@ sealed class UiNoteContent(
         val focusRequester: FocusRequester = FocusRequester(),
     ) : UiNoteContent(id)
 
-    @Immutable
+    @Stable
     data class Voice(
         override val id: String,
         val uri: Uri,
         val duration: Long,
-        val progress: Float,
+        val progressState: ProgressState,
         val volume: ImmutableList<Float>,
     ) : UiNoteContent(id) {
 
-        val currentDuration = (duration * progress).toLong()
+        @Stable
+        data class ProgressState(
+            val progress: MutableFloatState = mutableFloatStateOf(0f),
+        )
+
+        val currentDuration: Long
+            get() = (duration * progressState.progress.floatValue).toLong()
     }
 
     @Immutable

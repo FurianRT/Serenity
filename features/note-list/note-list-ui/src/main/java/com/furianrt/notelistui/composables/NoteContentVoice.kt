@@ -37,6 +37,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -57,6 +58,7 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteContent.Voice
+import com.furianrt.notelistui.entities.UiNoteContent.Voice.ProgressState
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
@@ -114,6 +116,9 @@ private fun VoiceContent(
     modifier: Modifier = Modifier,
 ) {
     var wasStarted by rememberSaveable { mutableStateOf(false) }
+    val isZeroProgress by remember {
+        derivedStateOf { voice.progressState.progress.floatValue == 0f }
+    }
     Card(
         modifier = modifier.width(if (isPayable) 240.dp else 200.dp),
         shape = RoundedCornerShape(24),
@@ -143,12 +148,12 @@ private fun VoiceContent(
             VoiceSlider(
                 modifier = Modifier.weight(1f),
                 enabled = isPayable,
-                value = voice.progress,
+                progressState = voice.progressState,
                 volume = voice.volume,
                 onValueChangeFinished = { onProgressSelected(voice, it) },
             )
             Timer(
-                time = if (!wasStarted || voice.progress == 0f) {
+                time = if (!wasStarted || isZeroProgress) {
                     voice.duration.toTimeString()
                 } else {
                     voice.currentDuration.toTimeString()
@@ -268,15 +273,17 @@ private fun Timer(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun VoiceSlider(
-    value: Float,
+    progressState: ProgressState,
     volume: ImmutableList<Float>,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onValueChangeFinished: (value: Float) -> Unit,
 ) {
     var isThumbDragging by remember { mutableStateOf(false) }
-    var currentPosition by remember(if (isThumbDragging) isThumbDragging else value) {
-        mutableFloatStateOf(value)
+    var currentPosition by remember(
+        if (isThumbDragging) isThumbDragging else progressState.progress.floatValue
+    ) {
+        mutableFloatStateOf(progressState.progress.floatValue)
     }
     val view = LocalView.current
     val sliderInteractionSource = remember { MutableInteractionSource() }
@@ -297,7 +304,10 @@ private fun VoiceSlider(
             view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
             currentPosition = position
         },
-        onValueChangeFinished = { onValueChangeFinished(currentPosition) },
+        onValueChangeFinished = {
+            progressState.progress.floatValue = currentPosition
+            onValueChangeFinished(currentPosition)
+        },
         valueRange = 0f..1f,
         interactionSource = sliderInteractionSource,
         track = { Track(volume = volume, progress = it.value) },
@@ -376,7 +386,7 @@ private fun PreviewWithPlayButton() {
                 id = "",
                 uri = Uri.EMPTY,
                 duration = 10000,
-                progress = 0.5f,
+                progressState = ProgressState(),
                 volume = buildImmutableList {
                     repeat(42) {
                         add(Random.nextDouble(0.0, 0.7).toFloat())
@@ -399,7 +409,7 @@ private fun PreviewWithoutPlayButton() {
                 id = "",
                 uri = Uri.EMPTY,
                 duration = 10000,
-                progress = 0.5f,
+                progressState = ProgressState(),
                 volume = buildImmutableList {
                     repeat(42) {
                         add(Random.nextDouble(0.0, 0.7).toFloat())
