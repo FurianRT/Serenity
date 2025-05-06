@@ -7,6 +7,7 @@ import com.furianrt.backup.internal.ui.BackupUiState
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.extensions.toDateString
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 private const val LAST_SYNC_DATE_PATTERN = "dd/MM/yyyy hh:mm a"
@@ -44,11 +45,12 @@ internal fun DriveFilesListResponse.File.toRemoteFile() = when {
 }
 
 internal fun ZonedDateTime?.toSyncDate(): BackupUiState.Success.SyncDate {
-    val localDateNow = ZonedDateTime.now()
+    val localDateNow = LocalDate.now()
+    val localDate = this?.toLocalDate()
     return when {
-        this == null -> BackupUiState.Success.SyncDate.None
-        localDateNow == this -> BackupUiState.Success.SyncDate.Today
-        localDateNow.minusDays(1) == this -> BackupUiState.Success.SyncDate.Yesterday
+        this == null || localDate == null -> BackupUiState.Success.SyncDate.None
+        localDateNow == localDate -> BackupUiState.Success.SyncDate.Today
+        localDateNow.minusDays(1) == localDate -> BackupUiState.Success.SyncDate.Yesterday
         else -> BackupUiState.Success.SyncDate.Other(
             text = this.toDateString(LAST_SYNC_DATE_PATTERN),
         )

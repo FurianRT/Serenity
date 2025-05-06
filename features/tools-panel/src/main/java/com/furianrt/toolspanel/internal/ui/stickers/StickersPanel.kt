@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -43,6 +42,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,13 +73,13 @@ import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
-import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.coroutines.delay
 import kotlin.math.max
 import com.furianrt.uikit.R as uiR
+
+private val TITLE_LIST_ITEM_HEIGHT = 36.dp
 
 @Composable
 internal fun StickersTitleBar(
@@ -116,13 +116,22 @@ private fun TitleContent(
     onEvent: (event: StickersPanelEvent) -> Unit = {},
 ) {
     val listState: LazyListState = rememberLazyListState()
+    val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_HEIGHT.toPx().toInt() }
+
+    var isFirstComposition by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(uiState.selectedPackIndex) {
-        delay(200)
-        val visibleIndexes = listState.layoutInfo
-            .visibleItemsInfo(itemVisiblePercentThreshold = 100f)
-            .map(LazyListItemInfo::index)
-        if (uiState.selectedPackIndex !in visibleIndexes) {
-            listState.animateScrollToItem(uiState.selectedPackIndex)
+        val scrollOffset = (itemWidth - listState.layoutInfo.viewportSize.width) / 2
+        if (isFirstComposition) {
+            isFirstComposition = false
+            listState.scrollToItem(
+                index = uiState.selectedPackIndex,
+                scrollOffset = scrollOffset,
+            )
+        } else {
+            listState.animateScrollToItem(
+                index = uiState.selectedPackIndex,
+                scrollOffset = scrollOffset,
+            )
         }
     }
 
@@ -168,9 +177,7 @@ private fun TitleItem(
     modifier: Modifier = Modifier,
 ) {
     val underlineColor = MaterialTheme.colorScheme.primaryContainer
-    Box(
-        modifier = modifier.size(36.dp)
-    ) {
+    Box(modifier = modifier.size(TITLE_LIST_ITEM_HEIGHT)) {
         IconButton(
             modifier = Modifier.fillMaxSize(),
             onClick = { onClick(pack) },

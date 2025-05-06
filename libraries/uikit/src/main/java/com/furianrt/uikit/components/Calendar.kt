@@ -337,7 +337,7 @@ private fun DayPickerContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         MonthHeader(
-            modifier = Modifier.padding(bottom = 16.dp),
+            modifier = Modifier.padding(bottom = 14.dp),
             selected = selectedYearMonth,
             onClick = onMonthClick,
         )
@@ -648,13 +648,13 @@ private fun MonthHeader(
     Row(
         modifier = modifier
             .padding(start = 24.dp)
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
             .padding(end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             text = title,
             style = MaterialTheme.typography.titleMedium,
         )

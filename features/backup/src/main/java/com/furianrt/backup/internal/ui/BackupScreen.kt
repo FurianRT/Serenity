@@ -281,6 +281,9 @@ private fun SuccessContent(
             }
             Spacer(Modifier.height(24.dp))
             BackupDate(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
                 date = uiState.lastSyncDate,
             )
             if (uiState.questions.isNotEmpty()) {

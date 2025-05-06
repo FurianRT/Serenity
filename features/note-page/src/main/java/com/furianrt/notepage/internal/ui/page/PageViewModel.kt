@@ -277,7 +277,9 @@ internal class PageViewModel @AssistedInject constructor(
         _state.updateState<PageUiState.Success> { currentState ->
             val newContent = buildContentWithNewBlock(currentState.content, newBlock)
             currentState.copy(
-                content = newContent.refreshTitleTemplates(addTopTemplate = currentState.isInEditMode),
+                content = newContent.refreshTitleTemplates(
+                    addTopTemplate = currentState.isInEditMode,
+                ),
             )
         }
         launch {

@@ -253,7 +253,7 @@ private fun SuccessScreen(
     val toolsPanelHeight by remember(
         uiState.isInEditMode,
         isToolsPanelMenuVisible,
-        toolsPanelRect
+        toolsPanelRect.height,
     ) {
         mutableStateOf(
             when {
@@ -466,7 +466,7 @@ private fun ContentItems(
                                 .padding(
                                     start = 8.dp,
                                     end = 8.dp,
-                                    top = 0.dp,
+                                    top = if (index == 0) 8.dp else 0.dp,
                                     bottom = if (nextItem.isEmptyTitle()) 0.dp else 4.dp,
                                 )
                                 .animatePlacementInScope(this@LookaheadScope),

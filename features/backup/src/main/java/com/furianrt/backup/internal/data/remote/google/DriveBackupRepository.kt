@@ -44,7 +44,6 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
-import okio.buffer
 import okio.source
 import java.io.File
 import java.io.IOException
@@ -54,6 +53,15 @@ import javax.inject.Singleton
 
 private const val USER_INFO_EMAIL_SCOPE = "https://www.googleapis.com/auth/userinfo.email"
 private const val USER_PROFILE_SCOPE = "profile"
+
+private const val ACCEPT_JSON_VALUE = "application/json"
+private const val UTF8_DIRECTIVE = "charset=utf-8"
+
+private const val APP_FOLDER_NAME = "appDataFolder"
+
+private const val MIME_TYPE_VIDEO = "video/*"
+private const val MIME_TYPE_IMAGE = "image/*"
+private const val MIME_TYPE_AUDIO = "audio/*"
 
 @Singleton
 internal class DriveBackupRepository @Inject constructor(
@@ -170,19 +178,17 @@ internal class DriveBackupRepository @Inject constructor(
         notes: List<LocalNote>,
     ): Result<Unit> = withContext(dispatchers.io) {
         runCatching {
-            val jsonString = Json.encodeToString(notes)
-
             val metadataRequestBody = buildJsonObject {
                 put("name", "NotesData")
-                put("mimeType", "application/json")
-                putJsonArray("parents") { add("appDataFolder") }
-            }.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+                put("mimeType", ACCEPT_JSON_VALUE)
+                putJsonArray("parents") { add(APP_FOLDER_NAME) }
+            }.toString().toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
 
-            val fileRequestBody = jsonString.toRequestBody("application/json".toMediaType())
+            val jsonString = Json.encodeToString(notes)
             val filePart = MultipartBody.Part.createFormData(
                 name = "file",
                 filename = "NotesData.json",
-                body = fileRequestBody,
+                body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
             )
 
             driveApiService.uploadFile(metadataRequestBody, filePart)
@@ -205,15 +211,15 @@ internal class DriveBackupRepository @Inject constructor(
         name = media.id,
         fileUri = media.uri,
         mimeType = when (media) {
-            is LocalNote.Content.Image -> "image/*"
-            is LocalNote.Content.Video -> "video/*"
+            is LocalNote.Content.Image -> MIME_TYPE_IMAGE
+            is LocalNote.Content.Video -> MIME_TYPE_VIDEO
         },
     )
 
     override suspend fun uploadVoice(voice: LocalNote.Content.Voice): Result<Unit> = uploadFile(
         name = voice.id,
         fileUri = voice.uri,
-        mimeType = "audio/*",
+        mimeType = MIME_TYPE_AUDIO,
     )
 
     override suspend fun loadRemoteLocalToFile(
@@ -236,17 +242,12 @@ internal class DriveBackupRepository @Inject constructor(
         mimeType: String,
     ): Result<Unit> = withContext(dispatchers.io) {
         runCatching {
-            val inputStream = context.contentResolver.openInputStream(fileUri)
-                ?: throw IOException("Unable to open Uri: $fileUri")
-
-            val streamBody = inputStream.use { stream ->
-                stream.source().buffer().let { source ->
-                    object : RequestBody() {
-                        override fun contentType(): MediaType = mimeType.toMediaType()
-                        override fun writeTo(sink: BufferedSink) {
-                            sink.writeAll(source)
-                        }
-                    }
+            val streamBody = object : RequestBody() {
+                override fun contentType(): MediaType = mimeType.toMediaType()
+                override fun writeTo(sink: BufferedSink) {
+                    context.contentResolver.openInputStream(fileUri)?.source()?.use { source ->
+                        sink.writeAll(source)
+                    } ?: throw IOException("Unable to open Uri: $fileUri")
                 }
             }
 
@@ -254,9 +255,9 @@ internal class DriveBackupRepository @Inject constructor(
 
             val metadataRequestBody = buildJsonObject {
                 put("name", name)
-                putJsonArray("parents") { add("appDataFolder") }
+                putJsonArray("parents") { add(APP_FOLDER_NAME) }
                 put("mimeType", mimeType)
-            }.toString().toRequestBody("application/json; charset=utf-8".toMediaType())
+            }.toString().toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
 
             driveApiService.uploadFile(metadataRequestBody, filePart)
         }
