@@ -81,13 +81,14 @@ private fun ScreenContent(
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Scaffold(
         modifier = Modifier.systemBarsPadding(),
         topBar = {
             DefaultToolbar(
                 modifier = Modifier.drawBehind {
                     if (scrollState.canScrollBackward) {
-                        drawBottomShadow(elevation = 8.dp)
+                        drawBottomShadow(color = shadowColor)
                     }
                 },
                 title = stringResource(uiR.string.settings_title),
@@ -320,7 +321,6 @@ private fun ScreenContentPreview() {
                             title = stringResource(R.string.settings_app_theme_distant_castle_title),
                             colors = persistentListOf(
                                 UiThemeColor.DISTANT_CASTLE_BROWN,
-                                UiThemeColor.DISTANT_CASTLE_PINK,
                                 UiThemeColor.DISTANT_CASTLE_GREEN,
                                 UiThemeColor.DISTANT_CASTLE_BLUE,
                             ),

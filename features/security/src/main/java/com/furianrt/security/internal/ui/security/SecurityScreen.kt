@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -83,13 +84,14 @@ private fun ScreenContent(
     modifier: Modifier = Modifier,
 ) {
     val scrollState = rememberScrollState()
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Scaffold(
         modifier = modifier.systemBarsPadding(),
         topBar = {
             DefaultToolbar(
                 modifier = Modifier.drawBehind {
                     if (scrollState.canScrollBackward) {
-                        drawBottomShadow(elevation = 8.dp)
+                        drawBottomShadow(color = shadowColor)
                     }
                 },
                 title = stringResource(uiR.string.security_title),

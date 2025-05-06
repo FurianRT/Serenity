@@ -8,6 +8,7 @@ enum class UiThemeColor(
     val primary: Color,
     val accent: Color,
     val surfaceTint: Color = primary.copy(alpha = 0.3f),
+    val surfaceDim: Color = Color.Black.copy(alpha = 0.2f),
 ) {
     SCANDI_GRANDPA_GRAY_DARK(
         id = "1",
@@ -27,27 +28,6 @@ enum class UiThemeColor(
     SCANDI_GRANDPA_GRAY(
         id = "4",
         primary = Colors.Primary.ScandiGrandpaGray,
-        accent = Colors.Accent.Purple,
-    ),
-
-    CLEOPATRA_BLUE(
-        id = "5",
-        primary = Colors.Primary.CleopatraBLue,
-        accent = Colors.Accent.Purple,
-    ),
-    CLEOPATRA_YELLOW(
-        id = "6",
-        primary = Colors.Primary.CleopatraYellow,
-        accent = Colors.Accent.Purple,
-    ),
-    CLEOPATRA_BROWN(
-        id = "7",
-        primary = Colors.Primary.CleopatraBrown,
-        accent = Colors.Accent.Purple,
-    ),
-    CLEOPATRA_ORANGE(
-        id = "8",
-        primary = Colors.Primary.CleopatraOrange,
         accent = Colors.Accent.Purple,
     ),
 
@@ -94,11 +74,6 @@ enum class UiThemeColor(
         accent = Colors.Accent.Purple,
     ),
 
-    IRIS_PINK(
-        id = "17",
-        primary = Colors.Primary.IrisPink,
-        accent = Colors.Accent.Purple,
-    ),
     IRIS_RED(
         id = "18",
         primary = Colors.Primary.IrisRed,
@@ -125,12 +100,6 @@ enum class UiThemeColor(
         primary = Colors.Primary.StormInTheNightBlueDark,
         accent = Colors.Accent.Purple,
     ),
-    STORM_IN_THE_NIGHT_BLACK(
-        id = "23",
-        primary = Colors.Primary.StormInTheNightBlack,
-        accent = Colors.Accent.Purple,
-        surfaceTint = Color.White.copy(alpha = 0.1f),
-    ),
     STORM_IN_THE_NIGHT_BLUE_LIGHT(
         id = "24",
         primary = Colors.Primary.StormInTheNightBlueLight,
@@ -142,30 +111,29 @@ enum class UiThemeColor(
         accent = Colors.Accent.Purple,
     ),
 
-    UNICORN_2012_PINK(
-        id = "26",
-        primary = Colors.Primary.Unicorn2012Pink,
-        accent = Colors.Accent.Purple,
-    ),
     UNICORN_2012_BLUE(
         id = "27",
         primary = Colors.Primary.Unicorn2012Blue,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.White.copy(0.1f),
     ),
     UNICORN_2012_YELLOW(
         id = "28",
         primary = Colors.Primary.Unicorn2012Yellow,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.White.copy(0.1f),
     ),
     UNICORN_2012_PINK_DARK(
         id = "29",
         primary = Colors.Primary.Unicorn2012PinkDark,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.White.copy(0.1f),
     ),
     UNICORN_2012_RED(
         id = "30",
         primary = Colors.Primary.Unicorn2012Red,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.White.copy(0.1f),
     ),
 
     SPACE_COWBOY_BROWN_LIGHT(
@@ -196,11 +164,6 @@ enum class UiThemeColor(
         primary = Colors.Primary.DistantCastleBrown,
         accent = Colors.Accent.Purple,
     ),
-    DISTANT_CASTLE_PINK(
-        id = "36",
-        primary = Colors.Primary.DistantCastlePink,
-        accent = Colors.Accent.Purple,
-    ),
     DISTANT_CASTLE_GREEN(
         id = "37",
         primary = Colors.Primary.DistantCastleGreen,
@@ -220,11 +183,6 @@ enum class UiThemeColor(
     OLIVE_TREE_GREEN(
         id = "40",
         primary = Colors.Primary.OliveTreeGreen,
-        accent = Colors.Accent.Purple,
-    ),
-    OLIVE_TREE_BROWN_DARK(
-        id = "41",
-        primary = Colors.Primary.OliveTreeBrownDark,
         accent = Colors.Accent.Purple,
     ),
     OLIVE_TREE_GREEN_DARK(

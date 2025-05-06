@@ -28,17 +28,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
         )
         add(
             AppTheme(
-                title = resourcesManager.getString(R.string.settings_app_theme_cleopatra_title),
-                colors = persistentListOf(
-                    UiThemeColor.CLEOPATRA_BLUE,
-                    UiThemeColor.CLEOPATRA_YELLOW,
-                    UiThemeColor.CLEOPATRA_BROWN,
-                    UiThemeColor.CLEOPATRA_ORANGE,
-                ),
-            )
-        )
-        add(
-            AppTheme(
                 title = resourcesManager.getString(R.string.settings_app_theme_vampire_title),
                 colors = persistentListOf(
                     UiThemeColor.VAMPIRE_RED_LIGHT,
@@ -63,7 +52,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
             AppTheme(
                 title = resourcesManager.getString(R.string.settings_app_theme_iris_title),
                 colors = persistentListOf(
-                    UiThemeColor.IRIS_PINK,
                     UiThemeColor.IRIS_RED,
                     UiThemeColor.IRIS_RED_DARK,
                     UiThemeColor.IRIS_GREEN,
@@ -76,7 +64,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
                 colors = persistentListOf(
                     UiThemeColor.STORM_IN_THE_NIGHT_BLUE,
                     UiThemeColor.STORM_IN_THE_NIGHT_BLUE_DARK,
-                    UiThemeColor.STORM_IN_THE_NIGHT_BLACK,
                     UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
                     UiThemeColor.STORM_IN_THE_NIGHT_GRAY,
                 ),
@@ -86,7 +73,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
             AppTheme(
                 title = resourcesManager.getString(R.string.settings_app_theme_unicorn_2012_title),
                 colors = persistentListOf(
-                    UiThemeColor.UNICORN_2012_PINK,
                     UiThemeColor.UNICORN_2012_BLUE,
                     UiThemeColor.UNICORN_2012_YELLOW,
                     UiThemeColor.UNICORN_2012_PINK_DARK,
@@ -110,7 +96,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
                 title = resourcesManager.getString(R.string.settings_app_theme_distant_castle_title),
                 colors = persistentListOf(
                     UiThemeColor.DISTANT_CASTLE_BROWN,
-                    UiThemeColor.DISTANT_CASTLE_PINK,
                     UiThemeColor.DISTANT_CASTLE_GREEN,
                     UiThemeColor.DISTANT_CASTLE_BLUE,
                 ),
@@ -122,7 +107,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
                 colors = persistentListOf(
                     UiThemeColor.OLIVE_TREE_BROWN,
                     UiThemeColor.OLIVE_TREE_GREEN,
-                    UiThemeColor.OLIVE_TREE_BROWN_DARK,
                     UiThemeColor.OLIVE_TREE_GREEN_DARK,
                 ),
             )

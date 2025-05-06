@@ -9,38 +9,38 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 fun DrawScope.drawBottomShadow(
-    color: Color = Color.Black,
-    elevation: Dp = 6.dp,
+    color: Color,
+    elevation: Dp = 8.dp,
 ) = drawRect(
     topLeft = Offset(0f, size.height),
     size = Size(size.width, elevation.toPx()),
     brush = Brush.verticalGradient(
-        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
+        colors = listOf(color, Color.Transparent),
         startY = size.height,
         endY = size.height + elevation.toPx(),
     ),
 )
 
 fun DrawScope.drawTopInnerShadow(
-    color: Color = Color.Black,
-    elevation: Dp = 6.dp,
+    color: Color,
+    elevation: Dp = 2.dp,
 ) = drawRect(
     size = Size(size.width, elevation.toPx()),
     brush = Brush.verticalGradient(
-        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
+        colors = listOf(color, Color.Transparent),
         startY = 0f,
         endY = elevation.toPx(),
     ),
 )
 
 fun DrawScope.drawLeftShadow(
-    color: Color = Color.Black,
-    elevation: Dp = 6.dp,
+    color: Color,
+    elevation: Dp = 2.dp,
 ) = drawRect(
     topLeft = Offset(-elevation.toPx(), 0f),
     size = Size(elevation.toPx(), size.height),
     brush = Brush.horizontalGradient(
-        colors = listOf(color.copy(alpha = 0.2f), Color.Transparent),
+        colors = listOf(color, Color.Transparent),
         startX = elevation.toPx(),
         endX = -elevation.toPx(),
     ),

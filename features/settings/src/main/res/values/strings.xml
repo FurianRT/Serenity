@@ -10,7 +10,6 @@
     <string name="settings_app_version_title">App version: %s</string>
 
     <string name="settings_app_theme_scandi_grandpa_title">Scandi Grandpa</string>
-    <string name="settings_app_theme_cleopatra_title">Cleopatra</string>
     <string name="settings_app_theme_vampire_title">Vampire</string>
     <string name="settings_app_theme_euphoria_title">Euphoria</string>
     <string name="settings_app_theme_iris_title">Iris</string>

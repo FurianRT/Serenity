@@ -164,6 +164,7 @@ private fun ScreenContent(
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -171,7 +172,7 @@ private fun ScreenContent(
                 modifier = Modifier
                     .drawBehind {
                         if (scrollState.canScrollBackward) {
-                            drawBottomShadow(elevation = 8.dp)
+                            drawBottomShadow(color = shadowColor)
                         }
                     }
                     .statusBarsPadding(),

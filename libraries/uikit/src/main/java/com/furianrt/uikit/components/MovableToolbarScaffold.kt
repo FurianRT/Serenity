@@ -169,6 +169,7 @@ fun MovableToolbarScaffold(
                     (toolbarOffset == 0f && listState.canScrollBackward)
         }
     }
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
@@ -189,7 +190,7 @@ fun MovableToolbarScaffold(
                 )
                 .drawBehind {
                     if (showShadow) {
-                        drawBottomShadow(elevation = 8.dp)
+                        drawBottomShadow(color = shadowColor)
                     }
                 }
                 .clickableNoRipple {},

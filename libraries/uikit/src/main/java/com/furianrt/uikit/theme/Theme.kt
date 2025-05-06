@@ -34,6 +34,7 @@ private val defaultColorScheme = darkColorScheme(
     errorContainer = Color(0xFFF2402F),
     onErrorContainer = Color.White,
     scrim = Color.Black.copy(alpha = 0.5f),
+    surfaceDim = Color.Black.copy(alpha = 0.2f),
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -47,6 +48,7 @@ fun SerenityTheme(
         surface = color.primary,
         primaryContainer = color.accent,
         surfaceTint = color.surfaceTint,
+        surfaceDim = color.surfaceDim,
     )
 
     val animatedBackground by animateColorAsState(

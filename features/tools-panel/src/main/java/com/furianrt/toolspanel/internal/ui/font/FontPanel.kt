@@ -214,13 +214,14 @@ private fun Content(
     }
     val spanCount = 3
     val fontSpanIndexes = remember { mutableStateMapOf<UiNoteFontFamily, Int>() }
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxWidth()
             .clickableNoRipple {}
             .drawBehind {
                 if (showShadow) {
-                    drawTopInnerShadow(elevation = 2.dp)
+                    drawTopInnerShadow(color = shadowColor)
                 }
             },
         state = listState,

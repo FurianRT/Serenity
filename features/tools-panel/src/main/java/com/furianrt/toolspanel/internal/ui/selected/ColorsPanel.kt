@@ -34,6 +34,7 @@ internal fun ColorsPanel(
     onCloseClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -56,7 +57,7 @@ internal fun ColorsPanel(
         IconButton(
             modifier = Modifier.drawBehind {
                 if (listState.canScrollForward) {
-                    drawLeftShadow(elevation = 2.dp)
+                    drawLeftShadow(color = shadowColor)
                 }
             },
             onClick = onCloseClick,

@@ -117,6 +117,7 @@ private fun TitleContent(
 ) {
     val listState: LazyListState = rememberLazyListState()
     val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_HEIGHT.toPx().toInt() }
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     var isFirstComposition by rememberSaveable { mutableStateOf(true) }
     LaunchedEffect(uiState.selectedPackIndex) {
@@ -161,7 +162,7 @@ private fun TitleContent(
         ButtonClose(
             modifier = Modifier.drawBehind {
                 if (listState.canScrollForward) {
-                    drawLeftShadow(elevation = 2.dp)
+                    drawLeftShadow(color = shadowColor)
                 }
             },
             onClick = { onEvent(StickersPanelEvent.OnCloseClick) },
@@ -332,13 +333,14 @@ private fun ContentPage(
             listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
         }
     }
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxWidth()
             .clickableNoRipple {}
             .drawBehind {
                 if (showShadow) {
-                    drawTopInnerShadow(elevation = 2.dp)
+                    drawTopInnerShadow(color = shadowColor)
                 }
             },
         state = listState,
