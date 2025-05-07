@@ -182,15 +182,13 @@ private fun TitleItem(
 ) {
     val underlineColor = MaterialTheme.colorScheme.primaryContainer
     Box(modifier = modifier.size(TITLE_LIST_ITEM_HEIGHT)) {
-        IconButton(
-            modifier = Modifier.fillMaxSize(),
-            onClick = { onClick(pack) },
-        ) {
-            AsyncImage(
-                model = pack.icon,
-                contentDescription = null,
-            )
-        }
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickableNoRipple { onClick(pack) },
+            model = pack.icon,
+            contentDescription = null,
+        )
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.BottomCenter),
             visible = isSelected,

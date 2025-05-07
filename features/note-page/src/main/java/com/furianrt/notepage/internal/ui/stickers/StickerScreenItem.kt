@@ -1,6 +1,9 @@
 package com.furianrt.notepage.internal.ui.stickers
 
+import android.view.animation.OvershootInterpolator
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -75,7 +78,15 @@ internal fun StickerScreenItem(
 
     val onTransformedState by rememberUpdatedState(onTransformed)
 
+    var triggerAdditionalScale by remember { mutableStateOf(true) }
+    val interpolator = remember { OvershootInterpolator(5.0f) }
+    val additionalScale by animateFloatAsState(
+        targetValue = if (triggerAdditionalScale && item.animate) -0.05f else 0f,
+        animationSpec = tween(200, easing = { interpolator.getInterpolation(it) }),
+    )
+
     LaunchedEffect(Unit) {
+        triggerAdditionalScale = false
         snapshotFlow { transformTrigger }
             .debounce(150)
             .collect {
@@ -108,8 +119,8 @@ internal fun StickerScreenItem(
             .onGloballyPositioned { parentCoordinates = it }
             .graphicsLayer {
                 rotationZ = item.state.rotation
-                scaleX = item.state.scale
-                scaleY = item.state.scale
+                scaleX = item.state.scale + additionalScale
+                scaleY = item.state.scale + additionalScale
             },
     ) {
         Sticker(

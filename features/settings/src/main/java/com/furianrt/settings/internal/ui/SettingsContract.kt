@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui.main
+package com.furianrt.settings.internal.ui
 
 import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor

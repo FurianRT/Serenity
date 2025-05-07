@@ -13,8 +13,8 @@ import com.furianrt.security.api.navigateToChangeEmail
 import com.furianrt.security.api.navigateToChangePin
 import com.furianrt.security.api.navigateToSecurity
 import com.furianrt.security.api.securityScreen
-import com.furianrt.settings.internal.ui.main.MainRoute
-import com.furianrt.settings.internal.ui.main.settingsScreen
+import com.furianrt.settings.internal.ui.MainRoute
+import com.furianrt.settings.internal.ui.settingsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable

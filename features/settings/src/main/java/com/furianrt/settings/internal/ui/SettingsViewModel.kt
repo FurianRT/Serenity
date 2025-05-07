@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui.main
+package com.furianrt.settings.internal.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

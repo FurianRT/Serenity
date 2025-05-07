@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui.main
+package com.furianrt.settings.internal.ui
 
 import androidx.annotation.IntRange
 import androidx.compose.foundation.ScrollState
@@ -33,6 +33,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -103,6 +104,7 @@ private fun ScreenContent(
                 scrollState = scrollState,
                 onEvent = onEvent,
             )
+
             is SettingsUiState.Loading -> LoadingScreen(
                 modifier = Modifier.padding(paddingValues),
             )
@@ -182,6 +184,7 @@ private fun ThemeSelector(
     onSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
     val initialIndex = remember(themes) {
         themes.indexOfFirst { theme -> theme.colors.any { it.id == selected.id } }
     }
@@ -207,7 +210,10 @@ private fun ThemeSelector(
         }
         LazyRow(
             modifier = Modifier.systemGestureExclusion(),
-            state = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex),
+            state = rememberLazyListState(
+                initialFirstVisibleItemIndex = initialIndex,
+                initialFirstVisibleItemScrollOffset = -density.run { 24.dp.toPx() }.toInt(),
+            ),
             horizontalArrangement = Arrangement.spacedBy(24.dp),
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {

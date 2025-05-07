@@ -108,6 +108,7 @@ import java.util.UUID
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val TITLE_FOCUS_DELAY = 150L
+private const val MAX_STICKERS_COUNT = 1000
 
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
@@ -545,10 +546,13 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun addSticker(sticker: StickerItem) {
-        hasContentChanged = true
-        resetStickersEditing()
-        _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
+        val stickersCount = _state.getState<PageUiState.Success>()?.stickers?.count() ?: 0
+        if (stickersCount < MAX_STICKERS_COUNT) {
+            hasContentChanged = true
+            resetStickersEditing()
+            _state.updateState<PageUiState.Success> { currentState ->
+                currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
+            }
         }
     }
 

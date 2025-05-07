@@ -14,16 +14,17 @@ internal data class StickerItem(
     val id: String,
     val typeId: String,
     @DrawableRes val icon: Int,
+    val animate: Boolean = false,
     val state: StickerState = StickerState(),
 ) {
     companion object {
-        private const val X_OFFSET_PERCENT = 0.05
-        private val Y_OFFSET_DP = 16.dp
+        private const val X_OFFSET_PERCENT = 0.1
+        private val Y_OFFSET_DP = 20.dp
 
         val DEFAULT_SIZE = 120.dp
         const val MIN_SIZE_PERCENT = 0.6f
         const val MAX_SIZE_PERCENT = 2f
-        const val MIN_ANGLE = 3f
+        const val MIN_ANGLE = 4f
 
         fun build(
             typeId: String,
@@ -50,6 +51,7 @@ internal data class StickerItem(
                     id = UUID.randomUUID().toString(),
                     typeId = typeId,
                     icon = icon,
+                    animate = true,
                     state = StickerState(
                         initialBiasX = 0.5f + randXOffset,
                         initialDpOffsetY = scrollOffset.toDp() +

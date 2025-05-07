@@ -1,4 +1,4 @@
-package com.furianrt.settings.internal.ui.main
+package com.furianrt.settings.internal.ui
 
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
