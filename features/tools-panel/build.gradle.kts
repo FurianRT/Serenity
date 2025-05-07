@@ -32,6 +32,9 @@ dependencies {
     debugImplementation(libs.composeTooling)
     implementation(libs.composeNavigation)
 
+    implementation(libs.coil)
+    implementation(libs.coilGif)
+
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
 

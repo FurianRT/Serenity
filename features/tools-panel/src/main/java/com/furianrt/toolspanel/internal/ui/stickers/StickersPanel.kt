@@ -1,6 +1,8 @@
 package com.furianrt.toolspanel.internal.ui.stickers
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
@@ -66,6 +68,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import coil3.compose.AsyncImage
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.entities.StickerPack
@@ -150,7 +153,7 @@ private fun TitleContent(
         ) {
             items(
                 count = uiState.packs.count(),
-                // key = { uiState.packs[it].id }
+                key = { uiState.packs[it].id },
             ) { index ->
                 TitleItem(
                     pack = uiState.packs[index],
@@ -183,9 +186,8 @@ private fun TitleItem(
             modifier = Modifier.fillMaxSize(),
             onClick = { onClick(pack) },
         ) {
-            Icon(
-                painter = painterResource(pack.icon),
-                tint = Color.Unspecified,
+            AsyncImage(
+                model = pack.icon,
                 contentDescription = null,
             )
         }
@@ -233,9 +235,10 @@ internal fun StickersContent(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val density = LocalDensity.current
-    val isImeVisible = WindowInsets.isImeVisible
+
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(density)
     val imeSource = WindowInsets.imeAnimationSource.getBottom(density)
+    val isImeVisible = WindowInsets.isImeVisible
     val navigationBarsHeight = WindowInsets.navigationBars.getBottom(density)
 
     var imeHeight by remember { mutableStateOf(cachedImeHeight) }
@@ -276,22 +279,23 @@ internal fun StickersContent(
         }
     }
 
-    if (isImeVisible && visible) {
-        Content(
-            modifier = modifier.height(contentHeight),
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-            pagerState = pagerState,
-            listStateProvider = { pageScreensStates.getOrPut(it) { rememberLazyGridState() } },
-        )
-    } else {
+    if (visible || !isImeVisible) {
         AnimatedVisibility(
+            modifier = modifier,
             visible = visible,
-            enter = expandVertically(expandFrom = Alignment.Top),
-            exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            enter = if (isImeVisible) {
+                EnterTransition.None
+            } else {
+                expandVertically(expandFrom = Alignment.Top)
+            },
+            exit = if (isImeVisible) {
+                ExitTransition.None
+            } else {
+                shrinkVertically(shrinkTowards = Alignment.Top)
+            },
         ) {
             Content(
-                modifier = modifier.height(contentHeight),
+                modifier = Modifier.height(contentHeight),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 pagerState = pagerState,
@@ -373,9 +377,8 @@ private fun ContentItem(
             .padding(horizontal = 2.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = painterResource(sticker.icon),
-            tint = Color.Unspecified,
+        AsyncImage(
+            model = sticker.icon,
             contentDescription = null,
         )
     }

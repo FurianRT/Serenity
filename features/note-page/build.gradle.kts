@@ -37,6 +37,9 @@ dependencies {
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
 
+    implementation(libs.coil)
+    implementation(libs.coilGif)
+
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)
     ksp(libs.hiltCompiler)

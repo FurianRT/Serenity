@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -76,6 +77,7 @@ internal fun CheckPinScreenInternal(
 
     val view = LocalView.current
     val activity = LocalActivity.current
+    val focusManager = LocalFocusManager.current
 
     var recoveryDialogState: String? by remember { mutableStateOf(null) }
 
@@ -109,6 +111,7 @@ internal fun CheckPinScreenInternal(
     val emailSuccessText = stringResource(R.string.send_pin_recovery_email_success)
 
     LaunchedEffect(Unit) {
+        focusManager.clearFocus()
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)

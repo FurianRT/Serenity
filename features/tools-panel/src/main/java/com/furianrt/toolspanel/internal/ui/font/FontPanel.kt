@@ -2,6 +2,8 @@ package com.furianrt.toolspanel.internal.ui.font
 
 import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -165,25 +167,23 @@ internal fun FontContent(
         }
     }
 
-    if (isImeVisible && visible) {
-        Content(
-            modifier = modifier.height(contentHeight),
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-            onFontFamilySelected = onFontFamilySelected,
-            onFontColorSelected = onFontColorSelected,
-            onFontSizeSelected = onFontSizeSelected,
-            listState = listState,
-            colorsListState = colorsListState,
-        )
-    } else {
+    if (visible || !isImeVisible) {
         AnimatedVisibility(
+            modifier = modifier,
             visible = visible,
-            enter = expandVertically(expandFrom = Alignment.Top),
-            exit = shrinkVertically(shrinkTowards = Alignment.Top),
+            enter = if (isImeVisible) {
+                EnterTransition.None
+            } else {
+                expandVertically(expandFrom = Alignment.Top)
+            },
+            exit = if (isImeVisible) {
+                ExitTransition.None
+            } else {
+                shrinkVertically(shrinkTowards = Alignment.Top)
+            },
         ) {
             Content(
-                modifier = modifier.height(contentHeight),
+                modifier = Modifier.height(contentHeight),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 onFontFamilySelected = onFontFamilySelected,

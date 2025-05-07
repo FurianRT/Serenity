@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.stickers
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -29,7 +30,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
@@ -38,6 +38,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
 import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.uikit.extensions.applyIf
@@ -121,7 +122,7 @@ internal fun StickerScreenItem(
                     )
                 }
                 .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
-            icon = painterResource(item.icon),
+            icon = item.icon,
             isFlipped = item.state.isFlipped,
             onClick = { onClick(item) },
         )
@@ -237,19 +238,18 @@ private fun calculateRotationAngle(center: Offset, start: Offset, current: Offse
 
 @Composable
 private fun Sticker(
-    icon: Painter,
+    @DrawableRes icon: Int,
     isFlipped: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    AsyncImage(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
             .graphicsLayer { scaleX = if (isFlipped) -1f else 1f }
             .clickableNoRipple(onClick),
-        painter = icon,
-        tint = Color.Unspecified,
-        contentDescription = null
+        model = icon,
+        contentDescription = null,
     )
 }
 
