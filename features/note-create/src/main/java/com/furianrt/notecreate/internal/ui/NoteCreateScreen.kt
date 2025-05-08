@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -67,13 +68,15 @@ internal fun NoteCreateScreen(
     var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
                     is NoteCreateEffect.SaveCurrentNoteContent -> pageScreenState.saveContent()
-                    is NoteCreateEffect.CloseScreen -> onCloseRequest()
+                    is NoteCreateEffect.CloseScreen -> onCloseRequestState()
                     is NoteCreateEffect.ShowDateSelector -> {
                         calendarDialogState = SelectedDate(effect.date)
                     }

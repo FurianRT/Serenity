@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -69,12 +70,14 @@ internal fun MediaViewScreen(
     val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
     val imageNotSavedMessage = stringResource(uiR.string.general_error)
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is MediaViewEffect.CloseScreen -> onCloseRequest()
+                    is MediaViewEffect.CloseScreen -> onCloseRequestState()
                     is MediaViewEffect.ShowMediaSavedMessage -> snackBarHostState.showSnackbar(
                         message = imageSavedMessage,
                         duration = SnackbarDuration.Short,

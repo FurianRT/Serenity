@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -110,12 +111,14 @@ internal fun CheckPinScreenInternal(
     val emailFailureText = stringResource(R.string.send_pin_recovery_email_failure)
     val emailSuccessText = stringResource(R.string.send_pin_recovery_email_success)
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         focusManager.clearFocus()
         viewModel.effect.collect { effect ->
             when (effect) {
                 is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)
-                is CheckPinEffect.ShowPinSuccess -> onCloseRequest()
+                is CheckPinEffect.ShowPinSuccess -> onCloseRequestState()
                 is CheckPinEffect.ShowForgotPinDialog -> recoveryDialogState = effect.email
                 is CheckPinEffect.ShowWrongPinError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)

@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -70,12 +71,14 @@ internal fun EmailScreen(
     val view = LocalView.current
     val focusManager = LocalFocusManager.current
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is EmailEffect.CloseScreen -> {
                     focusManager.clearFocus()
-                    onCloseRequest()
+                    onCloseRequestState()
                 }
                 is EmailEffect.ShowEmailFormatError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)

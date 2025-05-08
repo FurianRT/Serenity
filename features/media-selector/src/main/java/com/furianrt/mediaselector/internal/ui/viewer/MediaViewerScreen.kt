@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -52,12 +53,14 @@ internal fun MediaViewerScreen(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is MediaViewerEffect.CloseScreen -> onCloseRequest()
+                    is MediaViewerEffect.CloseScreen -> onCloseRequestState()
                 }
             }
     }

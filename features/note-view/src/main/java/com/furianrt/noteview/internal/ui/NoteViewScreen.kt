@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -91,12 +92,14 @@ internal fun NoteViewScreen(
     var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is NoteViewEffect.CloseScreen -> onCloseRequest()
+                    is NoteViewEffect.CloseScreen -> onCloseRequestState()
                     is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
                     is NoteViewEffect.ShowDateSelector -> {
                         calendarDialogState = SelectedDate(effect.date)
@@ -270,6 +273,7 @@ private fun SuccessScreen(
             userScrollEnabled = !uiState.isInEditMode,
             verticalAlignment = Alignment.Top,
             state = pagerState,
+            key = {  uiState.notes[it].id },
         ) { index ->
             val pageScreenState = rememberPageScreenState()
             pageScreensStates[index] = pageScreenState

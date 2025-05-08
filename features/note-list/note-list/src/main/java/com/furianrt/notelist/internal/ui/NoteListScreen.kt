@@ -20,6 +20,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,20 +73,25 @@ internal fun NoteListScreen(
 
     var showDeleteConfirmDialogState: Int? by remember { mutableStateOf(null) }
 
+    val openNoteViewScreenState by rememberUpdatedState(openNoteViewScreen)
+    val openNoteCreateScreenState by rememberUpdatedState(openNoteCreateScreen)
+    val openNoteSearchScreenState by rememberUpdatedState(openNoteSearchScreen)
+    val openSettingsScreenState by rememberUpdatedState(openSettingsScreen)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
                     is NoteListEffect.ScrollToTop -> screenState.scrollToTop()
-                    is NoteListEffect.OpenSettingsScreen -> openSettingsScreen()
-                    is NoteListEffect.OpenNoteSearchScreen -> openNoteSearchScreen()
+                    is NoteListEffect.OpenSettingsScreen -> openSettingsScreenState()
+                    is NoteListEffect.OpenNoteSearchScreen -> openNoteSearchScreenState()
                     is NoteListEffect.OpenNoteViewScreen -> {
-                        openNoteViewScreen(effect.noteId, effect.identifier)
+                        openNoteViewScreenState(effect.noteId, effect.identifier)
                     }
 
                     is NoteListEffect.OpenNoteCreateScreen -> {
-                        openNoteCreateScreen(effect.identifier)
+                        openNoteCreateScreenState(effect.identifier)
                     }
 
                     is NoteListEffect.ShowConfirmNoteDeleteDialog -> {

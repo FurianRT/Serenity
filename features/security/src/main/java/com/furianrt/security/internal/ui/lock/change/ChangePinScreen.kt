@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalView
@@ -46,16 +47,19 @@ internal fun ChangePinScreen(
         direction = ShakingState.Direction.LEFT_THEN_RIGHT,
     )
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openEmailScreenState by rememberUpdatedState(openEmailScreen)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is ChangePinEffect.CloseScreen -> onCloseRequest()
+                is ChangePinEffect.CloseScreen -> onCloseRequestState()
                 is ChangePinEffect.ShowPinDoesNotMatchError -> {
                     view.performHapticFeedback(HapticFeedbackConstants.REJECT)
                     shakeState.shake(25)
                 }
 
-                is ChangePinEffect.OpenEmailScreen -> openEmailScreen(effect.pin)
+                is ChangePinEffect.OpenEmailScreen -> openEmailScreenState(effect.pin)
             }
         }
     }

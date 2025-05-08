@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
@@ -64,6 +65,8 @@ fun NoteContentTitle(
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     var hasFocus by remember { mutableStateOf(false) }
 
+    val onTitleTextChangeState by rememberUpdatedState(onTitleTextChange)
+
     val view = LocalView.current
     val topFocusMargin = with(LocalDensity.current) {
         (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 8.dp.toPx()).toInt()
@@ -107,7 +110,7 @@ fun NoteContentTitle(
     var titleText by remember { mutableStateOf(title.state.annotatedString) }
     LaunchedEffect(title.state.annotatedString) {
         if (titleText != title.state.annotatedString) {
-            onTitleTextChange(title.id)
+            onTitleTextChangeState(title.id)
             titleText = title.state.annotatedString
         }
     }

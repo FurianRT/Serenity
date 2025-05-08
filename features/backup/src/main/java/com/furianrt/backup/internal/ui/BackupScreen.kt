@@ -35,6 +35,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,10 +92,12 @@ internal fun BackupScreen(
     var showBackupPeriodDialog by remember { mutableStateOf(false) }
     var showConfirmBackupDialog by remember { mutableStateOf(false) }
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is BackupEffect.CloseScreen -> onCloseRequest()
+                is BackupEffect.CloseScreen -> onCloseRequestState()
                 is BackupEffect.ShowConfirmSignOutDialog -> showSignOutConfirmationDialog = true
                 is BackupEffect.ShowBackupPeriodDialog -> showBackupPeriodDialog = true
                 is BackupEffect.ShowBackupResolution -> {

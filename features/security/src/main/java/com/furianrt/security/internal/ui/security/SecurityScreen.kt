@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -50,12 +51,16 @@ internal fun SecurityScreen(
 
     val hazeState = remember { HazeState() }
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openChangePinScreenState by rememberUpdatedState(openChangePinScreen)
+    val openChangeEmailScreenState by rememberUpdatedState(openChangeEmailScreen)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is SecurityEffect.CloseScreen -> onCloseRequest()
-                is SecurityEffect.OpenChangePinScreen -> openChangePinScreen()
-                is SecurityEffect.OpenChangeEmailScreen -> openChangeEmailScreen()
+                is SecurityEffect.CloseScreen -> onCloseRequestState()
+                is SecurityEffect.OpenChangePinScreen -> openChangePinScreenState()
+                is SecurityEffect.OpenChangeEmailScreen -> openChangeEmailScreenState()
                 is SecurityEffect.ShowPinDelaysDialog -> showPinDelayDialog = true
             }
         }

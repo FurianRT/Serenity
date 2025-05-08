@@ -26,6 +26,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -165,6 +166,9 @@ private fun TemplateNoteTagItem(
     val keyboardOffset by rememberKeyboardOffsetState()
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
 
+    val onTextEnteredState by rememberUpdatedState(onTextEntered)
+    val onTextClearedState by rememberUpdatedState(onTextCleared)
+
     LaunchedEffect(imeTarget, hasFocus) {
         snapshotFlow { keyboardOffset }
             .debounce(50)
@@ -195,7 +199,7 @@ private fun TemplateNoteTagItem(
 
     val hasText by remember { derivedStateOf { tag.textState.text.isNotBlank() } }
     LaunchedEffect(hasText) {
-        if (hasText) onTextEntered() else onTextCleared()
+        if (hasText) onTextEnteredState() else onTextClearedState()
     }
 
     val strokeColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)

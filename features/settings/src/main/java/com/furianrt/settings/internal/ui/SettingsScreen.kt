@@ -28,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
@@ -63,12 +64,16 @@ internal fun SettingsScreen(
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openBackupScreenState by rememberUpdatedState(openBackupScreen)
+    val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is SettingsEffect.CloseScreen -> onCloseRequest()
-                is SettingsEffect.OpenSecurityScreen -> openSecurityScreen()
-                is SettingsEffect.OpenBackupScreen -> openBackupScreen()
+                is SettingsEffect.CloseScreen -> onCloseRequestState()
+                is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
+                is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
             }
         }
     }

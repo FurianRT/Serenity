@@ -34,6 +34,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
@@ -155,6 +156,9 @@ internal fun NotePageScreenInternal(
     val toolbarMarginPx = density.run { toolbarMargin.toPx() }
     val bottomFocusMargin = with(LocalDensity.current) { 90.dp.toPx().toInt() }
 
+    val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
+    val openMediaViewerState by rememberUpdatedState(openMediaViewer)
+
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
@@ -166,10 +170,10 @@ internal fun NotePageScreenInternal(
 
                 is PageEffect.OpenMediaViewScreen -> {
                     keyboardController?.hide()
-                    openMediaViewScreen(effect.noteId, effect.mediaId, effect.identifier)
+                    openMediaViewScreenState(effect.noteId, effect.mediaId, effect.identifier)
                 }
 
-                is PageEffect.OpenMediaViewer -> openMediaViewer(effect.route)
+                is PageEffect.OpenMediaViewer -> openMediaViewerState(effect.route)
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
@@ -198,6 +202,7 @@ internal fun NotePageScreenInternal(
         state = state,
         uiState = uiState,
         hazeState = hazeState,
+        isSelected = isSelected,
         onEvent = viewModel::onEvent,
         onFocusChange = onFocusChange,
     )
@@ -216,6 +221,7 @@ private fun PageScreenContent(
     state: PageScreenState,
     uiState: PageUiState,
     hazeState: HazeState,
+    isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -227,6 +233,7 @@ private fun PageScreenContent(
                 state = state,
                 uiState = uiState,
                 hazeState = hazeState,
+                isSelected = isSelected,
                 onEvent = onEvent,
                 onFocusChange = onFocusChange,
             )
@@ -242,6 +249,7 @@ private fun SuccessScreen(
     state: PageScreenState,
     uiState: PageUiState.Success,
     hazeState: HazeState,
+    isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
     onFocusChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -289,8 +297,16 @@ private fun SuccessScreen(
     MediaSelectorBottomSheet(
         modifier = modifier,
         state = state.bottomScaffoldState,
-        openMediaViewer = { route -> onEvent(PageEvent.OnOpenMediaViewerRequest(route)) },
-        onMediaSelected = { result -> onEvent(PageEvent.OnMediaSelected(result)) },
+        openMediaViewer = { route ->
+            if (isSelected) {
+                onEvent(PageEvent.OnOpenMediaViewerRequest(route))
+            }
+        },
+        onMediaSelected = { result ->
+            if (isSelected) {
+                onEvent(PageEvent.OnMediaSelected(result))
+            }
+        },
     ) {
         Box(
             modifier = Modifier
@@ -651,6 +667,7 @@ private fun SuccessScreenPreview() {
             onEvent = {},
             onFocusChange = {},
             hazeState = HazeState(),
+            isSelected = true,
         )
     }
 }

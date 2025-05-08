@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -92,19 +93,22 @@ internal fun SearchScreen(
     var calendarState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
+    val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openNoteViewScreenState by rememberUpdatedState(openNoteViewScreen)
+
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is SearchEffect.CloseScreen -> onCloseRequest()
+                    is SearchEffect.CloseScreen -> onCloseRequestState()
                     is SearchEffect.ShowDateSelector -> {
                         val startDate = effect.start?.let { SelectedDate(it) }
                         val endDate = effect.end?.let { SelectedDate(it) }
                         calendarState = CalendarState(startDate, endDate)
                     }
 
-                    is SearchEffect.OpenNoteViewScreen -> openNoteViewScreen(
+                    is SearchEffect.OpenNoteViewScreen -> openNoteViewScreenState(
                         effect.noteId,
                         effect.identifier,
                         effect.queryData,

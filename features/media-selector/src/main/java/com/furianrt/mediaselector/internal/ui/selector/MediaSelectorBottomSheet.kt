@@ -28,6 +28,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -81,6 +82,8 @@ internal fun MediaSelectorBottomSheetInternal(
     var skipConfirmation by remember { mutableStateOf(false) }
 
     val listState = rememberLazyGridState()
+    val onMediaSelectedState by rememberUpdatedState(onMediaSelected)
+    val openMediaViewerState by rememberUpdatedState(openMediaViewer)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -98,7 +101,7 @@ internal fun MediaSelectorBottomSheetInternal(
                         storagePermissionsState.launchMultiplePermissionRequest()
                     }
 
-                    is MediaSelectorEffect.OpenMediaViewer -> openMediaViewer(
+                    is MediaSelectorEffect.OpenMediaViewer -> openMediaViewerState(
                         MediaViewerRoute(
                             mediaId = effect.mediaId,
                             dialogId = effect.dialogId,
@@ -107,7 +110,7 @@ internal fun MediaSelectorBottomSheetInternal(
                     )
 
                     is MediaSelectorEffect.SendMediaResult -> {
-                        onMediaSelected(effect.result)
+                        onMediaSelectedState(effect.result)
                     }
                 }
             }
