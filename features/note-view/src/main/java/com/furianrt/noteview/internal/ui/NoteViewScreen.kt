@@ -273,12 +273,14 @@ private fun SuccessScreen(
             userScrollEnabled = !uiState.isInEditMode,
             verticalAlignment = Alignment.Top,
             state = pagerState,
-            key = {  uiState.notes[it].id },
+            key = { uiState.notes[it].id },
         ) { index ->
             val pageScreenState = rememberPageScreenState()
             pageScreensStates[index] = pageScreenState
 
-            val isCurrentPage by remember { derivedStateOf { pagerState.currentPage == index } }
+            val isCurrentPage by remember(index) {
+                derivedStateOf { pagerState.currentPage == index }
+            }
 
             NotePageScreen(
                 state = pageScreenState,
