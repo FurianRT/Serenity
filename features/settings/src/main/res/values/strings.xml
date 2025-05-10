@@ -20,4 +20,7 @@
     <string name="settings_app_theme_olive_tree_title">Olive Tree</string>
     <string name="settings_app_theme_beige_censorship_title">Beige Censorship</string>
 
+    <string name="settings_feedback_email_subject">Serenity feedback %s</string>
+    <string name="settings_feedback_email_error">Failed to send email</string>
+
 </resources>

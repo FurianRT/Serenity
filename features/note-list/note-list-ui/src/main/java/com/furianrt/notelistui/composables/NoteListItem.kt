@@ -44,6 +44,8 @@ import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
 private const val SELECTED_SCALE_DURATION = 350
+private const val MAX_LINES_WITH_MEDIA = 4
+private const val MAX_LINES_WITHOUT_MEDIA = 7
 
 private val cardRippleAlpha = RippleAlpha(
     draggedAlpha = 0.05f,
@@ -80,6 +82,7 @@ fun NoteListItem(
             }
         ),
     )
+    val onlyText = remember(content) { content.all { it is UiNoteContent.Title } }
     val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         OutlinedCard(
@@ -113,7 +116,7 @@ fun NoteListItem(
                     is UiNoteContent.Title -> Text(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
                         text = item.state.annotatedString,
-                        maxLines = 4,
+                        maxLines = if (onlyText) MAX_LINES_WITHOUT_MEDIA else MAX_LINES_WITH_MEDIA,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             color = fontColor.value,

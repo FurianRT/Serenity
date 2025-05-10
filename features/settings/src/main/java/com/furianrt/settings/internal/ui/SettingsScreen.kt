@@ -23,6 +23,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -34,6 +37,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,11 +49,13 @@ import com.furianrt.settings.R
 import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.EmailSender
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -64,9 +70,13 @@ internal fun SettingsScreen(
     val viewModel: SettingsViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
+    val context = LocalContext.current
+
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
     val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
+
+    val snackBarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -74,16 +84,34 @@ internal fun SettingsScreen(
                 is SettingsEffect.CloseScreen -> onCloseRequestState()
                 is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
                 is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
+                is SettingsEffect.SendFeedbackEmail -> {
+                    EmailSender.send(
+                        context = context,
+                        email = effect.supportEmail,
+                        subject = context.getString(
+                            R.string.settings_feedback_email_subject,
+                            effect.text,
+                        ),
+                    ).onFailure { error ->
+                        error.printStackTrace()
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(R.string.settings_feedback_email_error),
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+                }
             }
         }
     }
 
-    ScreenContent(uiState, viewModel::onEvent)
+    ScreenContent(uiState, snackBarHostState, viewModel::onEvent)
 }
 
 @Composable
 private fun ScreenContent(
     uiState: SettingsUiState,
+    snackBarHostState: SnackbarHostState,
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
@@ -100,7 +128,19 @@ private fun ScreenContent(
                 title = stringResource(uiR.string.settings_title),
                 onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
             )
-        }
+        },
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(uiR.drawable.ic_email),
+                        tonalColor = MaterialTheme.colorScheme.tertiary,
+                    )
+                },
+            )
+        },
     ) { paddingValues ->
         when (uiState) {
             is SettingsUiState.Success -> SuccessScreen(
@@ -171,7 +211,7 @@ private fun SuccessScreen(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_feedback_title),
             iconPainter = painterResource(id = R.drawable.ic_mail),
-            onClick = {},
+            onClick = { onEvent(SettingsEvent.OnButtonFeedbackClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
@@ -314,6 +354,7 @@ private fun LoadingScreen(
 private fun ScreenContentPreview() {
     SerenityTheme {
         ScreenContent(
+            snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState.Success(
                 themes = buildImmutableList {
                     add(
