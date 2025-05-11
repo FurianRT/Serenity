@@ -7,12 +7,14 @@ import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 
 internal class GetAppThemeListUseCase @Inject constructor(
     private val resourcesManager: ResourcesManager,
 ) {
-    operator fun invoke(): ImmutableList<AppTheme> = buildThemesList()
+    operator fun invoke(): Flow<ImmutableList<AppTheme>> = flowOf(buildThemesList())
 
     private fun buildThemesList(): ImmutableList<AppTheme> = buildImmutableList {
         add(

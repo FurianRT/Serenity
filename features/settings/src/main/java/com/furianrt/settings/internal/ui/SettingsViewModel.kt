@@ -1,11 +1,12 @@
 package com.furianrt.settings.internal.ui
 
-import android.os.Build
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.internal.domain.GetAppThemeListUseCase
+import com.furianrt.settings.internal.domain.SettingsRepository
 import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
@@ -14,28 +15,30 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
-import java.util.Locale
 import javax.inject.Inject
+
+private const val MIN_GOOD_RATING = 4
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
+    getAppThemeListUseCase: GetAppThemeListUseCase,
+    private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
-    private val getAppThemeListUseCase: GetAppThemeListUseCase,
+    private val deviceInfoRepository: DeviceInfoRepository,
 ) : ViewModel() {
 
-    val state = appearanceRepository.getAppThemeColorId()
-        .map { colorId ->
-            buildState(
-                themes = getAppThemeListUseCase(),
-                selectedThemeColor = UiThemeColor.fromId(colorId),
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = SettingsUiState.Loading,
-        )
+    val state = combine(
+        getAppThemeListUseCase(),
+        appearanceRepository.getAppThemeColorId(),
+        settingsRepository.getAppRating(),
+        ::buildState,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = SettingsUiState.Loading,
+    )
 
     private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
@@ -55,24 +58,39 @@ internal class SettingsViewModel @Inject constructor(
                 appearanceRepository.updateAppThemeColor(event.color.id)
             }
 
-            is SettingsEvent.OnButtonFeedbackClick -> {
-                _effect.tryEmit(
-                    SettingsEffect.SendFeedbackEmail(
-                        supportEmail = BuildConfig.SUPPORT_EMAIL,
-                        androidVersion = Build.VERSION.SDK_INT,
-                        language = Locale.getDefault().language,
-                        device = Build.MODEL,
+            is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
+            is SettingsEvent.OnRatingSelected -> launch {
+                settingsRepository.setAppRating(event.rating)
+                if (event.rating < MIN_GOOD_RATING) {
+                    sendFeedback()
+                } else {
+                    _effect.tryEmit(
+                        SettingsEffect.OpenMarketPage(url = deviceInfoRepository.getMarketUrl())
                     )
-                )
+                }
             }
         }
     }
 
+    private fun sendFeedback() {
+        _effect.tryEmit(
+            SettingsEffect.SendFeedbackEmail(
+                supportEmail = BuildConfig.SUPPORT_EMAIL,
+                androidVersion = deviceInfoRepository.getAndroidVersion(),
+                language = deviceInfoRepository.getDeviceLanguage(),
+                device = deviceInfoRepository.getDeviceModel(),
+                appVersion = deviceInfoRepository.getAppVersionName(),
+            )
+        )
+    }
+
     private fun buildState(
         themes: ImmutableList<AppTheme>,
-        selectedThemeColor: UiThemeColor,
+        selectedThemeColorId: String?,
+        rating: Int,
     ) = SettingsUiState.Success(
         themes = themes,
-        selectedThemeColor = selectedThemeColor,
+        selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId),
+        rating = rating,
     )
 }

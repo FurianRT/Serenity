@@ -45,7 +45,7 @@ import java.time.ZonedDateTime
 private const val SELECTED_SCALE = 0.98f
 private const val SELECTED_SCALE_DURATION = 350
 private const val MAX_LINES_WITH_MEDIA = 4
-private const val MAX_LINES_WITHOUT_MEDIA = 7
+private const val MAX_LINES_WITHOUT_MEDIA = 6
 
 private val cardRippleAlpha = RippleAlpha(
     draggedAlpha = 0.05f,

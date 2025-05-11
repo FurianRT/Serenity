@@ -1,5 +1,7 @@
 package com.furianrt.settings.internal.ui
 
+import android.content.Context
+import android.content.Intent
 import androidx.annotation.IntRange
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -60,6 +62,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import com.furianrt.uikit.R as uiR
+import androidx.core.net.toUri
 
 @Composable
 internal fun SettingsScreen(
@@ -101,6 +104,8 @@ internal fun SettingsScreen(
                         )
                     }
                 }
+
+                is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
             }
         }
     }
@@ -198,8 +203,8 @@ private fun SuccessScreen(
         )
         Rating(
             modifier = Modifier.padding(horizontal = 8.dp),
-            rating = 4,
-            onSelected = {},
+            rating = uiState.rating,
+            onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
         GeneralButton(
             modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
@@ -314,7 +319,7 @@ private fun ThemeItem(
 @Composable
 private fun Rating(
     @IntRange(0, 5) rating: Int,
-    onSelected: (Int) -> Unit,
+    onSelected: (rating: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
@@ -349,6 +354,16 @@ private fun LoadingScreen(
     Box(modifier = modifier.fillMaxSize())
 }
 
+private fun openAppMarketPage(
+    context: Context,
+    url: String,
+) {
+    val intent = Intent(Intent.ACTION_VIEW).apply {
+        data = url.toUri()
+    }
+    context.startActivity(intent)
+}
+
 @Composable
 @PreviewWithBackground
 private fun ScreenContentPreview() {
@@ -380,6 +395,7 @@ private fun ScreenContentPreview() {
                     )
                 },
                 selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+                rating = 4,
             ),
         )
     }
