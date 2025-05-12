@@ -32,4 +32,6 @@ dependencies {
     implementation(libs.coilVideo)
 
     implementation(libs.blur)
+
+    implementation(libs.lottie)
 }

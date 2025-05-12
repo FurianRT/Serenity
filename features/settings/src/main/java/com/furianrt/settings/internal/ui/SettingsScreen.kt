@@ -3,6 +3,8 @@ package com.furianrt.settings.internal.ui
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.IntRange
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -32,18 +34,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.buildImmutableList
@@ -51,6 +57,7 @@ import com.furianrt.settings.R
 import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
@@ -61,8 +68,8 @@ import com.furianrt.uikit.utils.EmailSender
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.delay
 import com.furianrt.uikit.R as uiR
-import androidx.core.net.toUri
 
 @Composable
 internal fun SettingsScreen(
@@ -330,11 +337,35 @@ private fun Rating(
             text = stringResource(id = R.string.settings_rate_us_title),
             style = MaterialTheme.typography.bodyMedium,
         )
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             repeat(5) { index ->
+                val isFilled by remember(rating, index) { mutableStateOf(rating >= index + 1) }
+                val scale = remember { Animatable(1f) }
+                SkipFirstEffect(rating, isFilled) {
+                    if (isFilled) {
+                        delay(50L * index)
+                        scale.animateTo(
+                            targetValue = 1.1f,
+                            animationSpec = tween(durationMillis = 150),
+                        )
+                        scale.animateTo(
+                            targetValue = 1f,
+                            animationSpec = tween(durationMillis = 150),
+                        )
+                    }
+                }
+
                 Icon(
-                    modifier = Modifier.clickableNoRipple { onSelected(index + 1) },
-                    painter = if (rating >= index + 1) {
+                    modifier = Modifier
+                        .graphicsLayer {
+                            scaleX = scale.value
+                            scaleY = scale.value
+                        }
+                        .clickableNoRipple { onSelected(index + 1) },
+                    painter = if (isFilled) {
                         painterResource(id = R.drawable.ic_star_filled)
                     } else {
                         painterResource(id = R.drawable.ic_star_outlined)

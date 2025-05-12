@@ -39,6 +39,7 @@ fun ConfirmationDialog(
     modifier: Modifier = Modifier,
     cancelText: String = stringResource(R.string.action_cancel),
     confirmText: String = stringResource(R.string.action_confirm),
+    icon: (@Composable () -> Unit)? = null,
     hideOnLock: Boolean = true,
     title: AnnotatedString? = null,
     hint: AnnotatedString? = null,
@@ -67,6 +68,7 @@ fun ConfirmationDialog(
                 },
             )
         },
+        icon = icon,
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
         hideOnLock = hideOnLock,
@@ -82,6 +84,7 @@ fun ConfirmationDialog(
     modifier: Modifier = Modifier,
     cancelText: String = stringResource(R.string.action_cancel),
     confirmText: String = stringResource(R.string.action_confirm),
+    icon: (@Composable () -> Unit)? = null,
     hideOnLock: Boolean = true,
     title: String? = null,
     hint: String? = null,
@@ -109,6 +112,7 @@ fun ConfirmationDialog(
                 },
             )
         },
+        icon = icon,
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
         modifier = modifier,
@@ -130,6 +134,7 @@ fun ConfirmationDialog(
     hazeState: HazeState,
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
+    icon: (@Composable () -> Unit)? = null,
     hideOnLock: Boolean = true,
     title: AnnotatedString? = null,
     hint: AnnotatedString? = null,
@@ -162,9 +167,11 @@ fun ConfirmationDialog(
         onDismissRequest = onDismissRequest,
     ) {
         Column(
-            horizontalAlignment = Alignment.End,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            icon?.invoke()
+
             if (title != null) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -180,7 +187,9 @@ fun ConfirmationDialog(
                 )
             }
             Row(
-                modifier = Modifier.padding(bottom = 8.dp),
+                modifier = Modifier
+                    .padding(bottom = 8.dp)
+                    .align(Alignment.End),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 cancelButton()
