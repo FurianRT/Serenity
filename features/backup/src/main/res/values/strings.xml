@@ -41,8 +41,6 @@
     <string name="restore_notification_title">Restore in progress…</string>
     <string name="backup_notification_initial_description">Your notes are being uploaded. This may take a moment</string>
     <string name="restore_notification_initial_description">Your notes are being downloaded. This may take a moment</string>
-    <string name="backup_notification_progress_description">%d of %d notes uploaded</string>
-    <string name="restore_notification_progress_description">%d of %d notes downloaded</string>
 
     <string name="backup_warning_title">Backup Warning</string>
     <string name="backup_warning_body">You\'re about to create a new backup. Please note: this will overwrite your existing backup on Google Drive. Once replaced, your previous data will no longer be accessible. Make sure you\'re okay with that before continuing</string>

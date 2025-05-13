@@ -120,6 +120,7 @@ fun SingleChoiceCalendar(
     selectedDate: SelectedDate,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
+    hasNotes: (date: LocalDate) -> Boolean = { false },
     onDateSelected: (date: SelectedDate) -> Unit = {},
     onDismissRequest: () -> Unit = {},
 ) {
@@ -138,6 +139,7 @@ fun SingleChoiceCalendar(
         endDate = null,
         hazeState = hazeState,
         showButtonDone = false,
+        hasNotes = hasNotes,
         onDoneClick = {},
         onDateSelected = { date ->
             scope.launch {
@@ -155,6 +157,7 @@ fun SingleChoiceCalendar(
 fun MultiChoiceCalendar(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
+    hasNotes: (date: LocalDate) -> Boolean = { false },
     startDate: SelectedDate? = null,
     endDate: SelectedDate? = null,
     onDateSelected: (start: SelectedDate, end: SelectedDate?) -> Unit = { _, _ -> },
@@ -177,6 +180,7 @@ fun MultiChoiceCalendar(
         endDate = endDateState,
         hazeState = hazeState,
         showButtonDone = startDateState != null,
+        hasNotes = hasNotes,
         onDoneClick = {
             startDateState?.let { startDate ->
                 onDateSelected(startDate, endDateState)
@@ -217,6 +221,7 @@ private fun CalendarDialog(
     endDate: SelectedDate?,
     hazeState: HazeState,
     showButtonDone: Boolean,
+    hasNotes: (date: LocalDate) -> Boolean,
     onDoneClick: () -> Unit,
     onDateSelected: (date: SelectedDate) -> Unit,
     onDismissRequest: () -> Unit,
@@ -300,6 +305,7 @@ private fun CalendarDialog(
                             endDate = endDate,
                             selectedYearMonth = selectedYearMonth,
                             showButtonDone = showButtonDone,
+                            hasNotes = { hasNotes(it.date) },
                             onDateSelected = onDateSelected,
                             onDoneClick = onDoneClick,
                             onMonthClick = { mode = Mode.YEAR_MONTH_PICKER },
@@ -327,6 +333,7 @@ private fun DayPickerContent(
     endDate: SelectedDate?,
     selectedYearMonth: SelectedYearMonth,
     showButtonDone: Boolean,
+    hasNotes: (day: CalendarDay) -> Boolean,
     onDateSelected: (date: SelectedDate) -> Unit,
     onMonthClick: () -> Unit,
     onDoneClick: () -> Unit,
@@ -381,6 +388,7 @@ private fun DayPickerContent(
                     isSelected = isSelected,
                     isEdgeDate = startDate?.date == day.date || endDate?.date == day.date,
                     isCurrentDay = day.date == LocalDate.now(),
+                    hasNotes = hasNotes,
                     onClick = { onDateSelected(SelectedDate(it.date)) },
                 )
             },
@@ -595,6 +603,7 @@ private fun DayCell(
     isSelected: Boolean,
     isEdgeDate: Boolean,
     isCurrentDay: Boolean,
+    hasNotes: (day: CalendarDay) -> Boolean,
     shape: Shape,
     onClick: (day: CalendarDay) -> Unit,
     modifier: Modifier = Modifier,
@@ -626,6 +635,22 @@ private fun DayCell(
             },
             textAlign = TextAlign.Center,
         )
+        if (hasNotes(day)) {
+            Box(
+                modifier = Modifier
+                    .padding(bottom = 4.dp)
+                    .size(3.5.dp)
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        color = if (isEdgeDate) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.primaryContainer
+                        },
+                        shape = CircleShape,
+                    )
+            )
+        }
     }
 }
 
@@ -714,6 +739,7 @@ private fun MultiChoicePreview() {
             startDate = SelectedDate(date),
             endDate = SelectedDate(date.plusDays(12)),
             hazeState = HazeState(),
+            hasNotes = { true }
         )
     }
 }

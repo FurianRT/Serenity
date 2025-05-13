@@ -24,6 +24,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.time.LocalTime
 import java.time.ZoneId
@@ -73,9 +74,7 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
             is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
             is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)
-            is NoteViewEvent.OnButtonDateClick -> _state.doWithState<NoteViewUiState.Success> {
-                _effect.tryEmit(NoteViewEffect.ShowDateSelector(date = it.date.toLocalDate()))
-            }
+            is NoteViewEvent.OnButtonDateClick -> launch { showDateSelector() }
 
             is NoteViewEvent.OnDateSelected -> {
                 _state.doWithState<NoteViewUiState.Success> { successState ->
@@ -167,6 +166,17 @@ internal class NoteViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private suspend fun showDateSelector() {
+        _state.doWithState<NoteViewUiState.Success> {
+            _effect.tryEmit(
+                NoteViewEffect.ShowDateSelector(
+                    date = it.date.toLocalDate(),
+                    datesWithNotes = notesRepository.getUniqueNotesDates().first(),
+                )
+            )
         }
     }
 

@@ -23,6 +23,7 @@ import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
@@ -110,6 +111,12 @@ internal class NotesRepositoryImp @Inject constructor(
     override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId)
             .map { it?.toLocalNote() }
+            .flowOn(dispatchers.default)
+
+    override fun getUniqueNotesDates(): Flow<Set<LocalDate>> =
+        noteDao.getAllSimpleNotes()
+            .deepMap { it.date.toLocalDate() }
+            .map { it.toSet() }
             .flowOn(dispatchers.default)
 
     override fun getNoteContentFromCache(noteId: String): List<LocalNote.Content> {

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -51,7 +52,14 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.ZonedDateTime
+
+@Immutable
+private data class CalendarState(
+    val date: SelectedDate,
+    val datesWithNotes: Set<LocalDate>,
+)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -65,7 +73,7 @@ internal fun NoteCreateScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val pageScreenState = rememberPageScreenState()
-    var calendarDialogState: SelectedDate? by remember { mutableStateOf(null) }
+    var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
@@ -78,7 +86,10 @@ internal fun NoteCreateScreen(
                     is NoteCreateEffect.SaveCurrentNoteContent -> pageScreenState.saveContent()
                     is NoteCreateEffect.CloseScreen -> onCloseRequestState()
                     is NoteCreateEffect.ShowDateSelector -> {
-                        calendarDialogState = SelectedDate(effect.date)
+                        calendarDialogState = CalendarState(
+                            date = SelectedDate(effect.date),
+                            datesWithNotes = effect.datesWithNotes,
+                        )
                     }
                 }
             }
@@ -104,7 +115,8 @@ internal fun NoteCreateScreen(
 
     calendarDialogState?.let { dialogState ->
         SingleChoiceCalendar(
-            selectedDate = dialogState,
+            selectedDate = dialogState.date,
+            hasNotes = { dialogState.datesWithNotes.contains(it) },
             hazeState = hazeState,
             onDismissRequest = { calendarDialogState = null },
             onDateSelected = { viewModel.onEvent(NoteCreateEvent.OnDateSelected(it.date)) },

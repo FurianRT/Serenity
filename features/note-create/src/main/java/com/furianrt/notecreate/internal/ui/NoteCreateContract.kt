@@ -20,5 +20,8 @@ internal sealed interface NoteCreateEvent {
 internal sealed interface NoteCreateEffect {
     data object CloseScreen : NoteCreateEffect
     data object SaveCurrentNoteContent : NoteCreateEffect
-    data class ShowDateSelector(val date: LocalDate) : NoteCreateEffect
+    data class ShowDateSelector(
+        val date: LocalDate,
+        val datesWithNotes: Set<LocalDate>,
+    ) : NoteCreateEffect
 }

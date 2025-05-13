@@ -87,7 +87,6 @@ internal class GetAppThemeListUseCase @Inject constructor(
                 title = resourcesManager.getString(R.string.settings_app_theme_space_cowboy_title),
                 colors = persistentListOf(
                     UiThemeColor.SPACE_COWBOY_BROWN_LIGHT,
-                    UiThemeColor.SPACE_COWBOY_BROWN,
                     UiThemeColor.SPACE_COWBOY_BROWN_DARK,
                     UiThemeColor.SPACE_COWBOY_BLUE,
                 ),

@@ -34,7 +34,6 @@ object Colors {
         val Unicorn2012Red = Color(0xFFBF353B)
 
         val SpaceCowboyBrownLight = Color(0xFF534030)
-        val SpaceCowboyBrown = Color(0xFF34251B)
         val SpaceCowboyBrownDark = Color(0xFF120E0D)
         val SpaceCowboyBlue = Color(0xFF030B18)
 

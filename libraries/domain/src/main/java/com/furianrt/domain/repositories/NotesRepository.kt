@@ -5,6 +5,7 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.SimpleNote
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 interface NotesRepository {
@@ -26,6 +27,8 @@ interface NotesRepository {
     fun getAllNotes(): Flow<List<LocalNote>>
     fun getAllNotes(query: String): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
+
+    fun getUniqueNotesDates(): Flow<Set<LocalDate>>
 
     fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>)
     fun deleteNoteContentFromCache(noteId: String)

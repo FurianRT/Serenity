@@ -13,15 +13,12 @@ import com.furianrt.backup.R
 import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
-import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.filterIsInstance
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
@@ -74,7 +71,6 @@ internal class NotesSyncService : Service(), CoroutineScope {
                 createInitialNotification(isBackup),
                 FOREGROUND_SERVICE_TYPE_DATA_SYNC,
             )
-            observeProgress(isBackup)
             syncDataData(isBackup)
         }
 
@@ -83,6 +79,7 @@ internal class NotesSyncService : Service(), CoroutineScope {
 
     override fun onDestroy() {
         cancel()
+        stopForeground(STOP_FOREGROUND_REMOVE)
         super.onDestroy()
     }
 
@@ -95,19 +92,6 @@ internal class NotesSyncService : Service(), CoroutineScope {
             restoreDataManager.startRestore()
         }
         close()
-    }
-
-    private fun observeProgress(isBackup: Boolean) = launch {
-        val state = if (isBackup) backupDataManager.state else restoreDataManager.state
-        state
-            .filterIsInstance<SyncState.Progress>()
-            .collect {
-                if (isActive) {
-                    updateProgressNotification(isBackup, it)
-                } else {
-                    notificationManager.cancelAll()
-                }
-            }
     }
 
     private fun createNotificationChannel() {
@@ -137,56 +121,6 @@ internal class NotesSyncService : Service(), CoroutineScope {
         }
         .setContentIntent(createNotificationIntent())
         .build()
-
-    private fun createProgressNotification(
-        isBackup: Boolean,
-        totalNotesCount: Int,
-        syncedNotesCount: Int,
-    ): Notification = NotificationCompat.Builder(this, CHANNEL_ID)
-        .apply {
-            if (isBackup) {
-                setContentTitle(getString(R.string.backup_notification_title))
-                setContentText(
-                    getString(
-                        R.string.backup_notification_progress_description,
-                        syncedNotesCount,
-                        totalNotesCount,
-                    )
-                )
-                setSmallIcon(R.drawable.ic_cloud_upload)
-            } else {
-                setContentTitle(getString(R.string.restore_notification_title))
-                setContentText(
-                    getString(
-                        R.string.restore_notification_progress_description,
-                        syncedNotesCount,
-                        totalNotesCount,
-                    )
-                )
-                setSmallIcon(R.drawable.ic_cloud_download)
-            }
-        }
-        .setProgress(
-            100,
-            ((syncedNotesCount.toFloat() / totalNotesCount) * 100).toInt(),
-            false
-        )
-        .setContentIntent(createNotificationIntent())
-        .build()
-
-    private fun updateProgressNotification(
-        isBackup: Boolean,
-        progress: SyncState.Progress,
-    ) {
-        notificationManager.notify(
-            FOREGROUND_ID,
-            createProgressNotification(
-                isBackup = isBackup,
-                totalNotesCount = progress.totalNotesCount,
-                syncedNotesCount = progress.syncedNotesCount,
-            ),
-        )
-    }
 
     private fun createNotificationIntent() = PendingIntent.getActivity(
         applicationContext,

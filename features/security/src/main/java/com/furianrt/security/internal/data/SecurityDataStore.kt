@@ -46,7 +46,7 @@ internal class SecurityDataStore @Inject constructor(
     }
 
     override fun getPinRequestDelay(): Flow<Int> = dataStore.data
-        .map { prefs -> prefs[KEY_PIN_REQUEST_DELAY] ?: 5000 }
+        .map { prefs -> prefs[KEY_PIN_REQUEST_DELAY] ?: 15000 }
 
     override suspend fun setPinRequestDelay(delay: Int) {
         dataStore.edit { prefs -> prefs[KEY_PIN_REQUEST_DELAY] = delay }

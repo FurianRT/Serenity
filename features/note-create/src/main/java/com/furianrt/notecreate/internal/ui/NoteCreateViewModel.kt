@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import java.time.LocalTime
 import java.time.ZoneId
@@ -71,12 +72,7 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnButtonBackClick -> _effect.tryEmit(NoteCreateEffect.CloseScreen)
             is NoteCreateEvent.OnContentChanged -> isContentChanged = event.isChanged
-            is NoteCreateEvent.OnButtonDateClick -> {
-                _effect.tryEmit(
-                    NoteCreateEffect.ShowDateSelector(state.value.note.date.toLocalDate()),
-                )
-            }
-
+            is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }
             is NoteCreateEvent.OnDateSelected -> {
                 val zonedDateTime = ZonedDateTime.of(
                     event.date,
@@ -92,6 +88,15 @@ internal class NoteCreateViewModel @Inject constructor(
                 _state.update { it.copy(note = it.note.copy(date = zonedDateTime)) }
             }
         }
+    }
+
+    private suspend fun showDateSelector() {
+        _effect.tryEmit(
+            NoteCreateEffect.ShowDateSelector(
+                date = state.value.note.date.toLocalDate(),
+                datesWithNotes = notesRepository.getUniqueNotesDates().first(),
+            ),
+        )
     }
 
     private fun buildInitialState() = NoteCreateUiState(

@@ -23,6 +23,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -74,6 +75,13 @@ import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
+@Immutable
+private data class CalendarState(
+    val start: SelectedDate?,
+    val end: SelectedDate?,
+    val datesWithNotes: Set<LocalDate>,
+)
+
 @Composable
 internal fun SearchScreen(
     openNoteViewScreen: (noteId: String, identifier: DialogIdentifier, data: QueryData) -> Unit,
@@ -87,8 +95,6 @@ internal fun SearchScreen(
 
     val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
     var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
-
-    data class CalendarState(val start: SelectedDate?, val end: SelectedDate?)
 
     var calendarState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
@@ -105,7 +111,7 @@ internal fun SearchScreen(
                     is SearchEffect.ShowDateSelector -> {
                         val startDate = effect.start?.let { SelectedDate(it) }
                         val endDate = effect.end?.let { SelectedDate(it) }
-                        calendarState = CalendarState(startDate, endDate)
+                        calendarState = CalendarState(startDate, endDate, effect.datesWithNotes)
                     }
 
                     is SearchEffect.OpenNoteViewScreen -> openNoteViewScreenState(
@@ -136,6 +142,7 @@ internal fun SearchScreen(
             startDate = state.start,
             endDate = state.end,
             hazeState = hazeState,
+            hasNotes = { state.datesWithNotes.contains(it) },
             onDismissRequest = { calendarState = null },
             onDateSelected = { startDate, endDate ->
                 viewModel.onEvent(SearchEvent.OnDateRangeSelected(startDate.date, endDate?.date))

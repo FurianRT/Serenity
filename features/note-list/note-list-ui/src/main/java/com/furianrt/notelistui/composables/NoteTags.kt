@@ -1,8 +1,10 @@
 package com.furianrt.notelistui.composables
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -38,6 +40,7 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -53,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.uikit.components.OneTimeEffect
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
@@ -169,6 +173,11 @@ private fun TemplateNoteTagItem(
     val onTextEnteredState by rememberUpdatedState(onTextEntered)
     val onTextClearedState by rememberUpdatedState(onTextCleared)
 
+    val alpha = remember { Animatable(0f) }
+    OneTimeEffect {
+        alpha.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 250))
+    }
+
     LaunchedEffect(imeTarget, hasFocus) {
         snapshotFlow { keyboardOffset }
             .debounce(50)
@@ -203,60 +212,62 @@ private fun TemplateNoteTagItem(
     }
 
     val strokeColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-    Box(
-        modifier = modifier
-            .padding(all = 4.dp)
-            .drawWithCache {
-                val strokeInterval = 6.dp.toPx()
-                val stroke = Stroke(
-                    width = 1.dp.toPx(),
-                    pathEffect = PathEffect.dashPathEffect(
-                        intervals = floatArrayOf(strokeInterval, strokeInterval),
-                        phase = 0f
-                    )
-                )
-                onDrawBehind {
-                    drawRoundRect(
-                        color = strokeColor,
-                        style = stroke,
-                        cornerRadius = CornerRadius(16.dp.toPx()),
-                    )
-                }
-            },
-        contentAlignment = Alignment.Center,
-    ) {
-        BasicTextField(
+    Box(modifier = modifier.graphicsLayer { this.alpha = alpha.value }) {
+        Box(
             modifier = Modifier
-                .bringIntoViewRequester(bringIntoViewRequester)
-                .widthIn(min = 80.dp)
-                .width(IntrinsicSize.Min)
-                .padding(horizontal = 10.dp, vertical = 6.dp)
-                .onFocusChanged { focusState ->
-                    onFocusChanged()
-                    hasFocus = focusState.hasFocus
-                    if (!focusState.hasFocus) {
-                        onDoneEditing(tag)
+                .padding(4.dp)
+                .drawWithCache {
+                    val strokeInterval = 6.dp.toPx()
+                    val stroke = Stroke(
+                        width = 1.dp.toPx(),
+                        pathEffect = PathEffect.dashPathEffect(
+                            intervals = floatArrayOf(strokeInterval, strokeInterval),
+                            phase = 0f,
+                        )
+                    )
+                    onDrawBehind {
+                        drawRoundRect(
+                            color = strokeColor,
+                            style = stroke,
+                            cornerRadius = CornerRadius(16.dp.toPx()),
+                        )
                     }
                 },
-            state = tag.textState,
-            enabled = enabled,
-            textStyle = MaterialTheme.typography.labelSmall,
-            lineLimits = TextFieldLineLimits.SingleLine,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
-            onTextLayout = { layoutResult = it() },
-            keyboardOptions = KeyboardOptions(
-                capitalization = KeyboardCapitalization.Sentences,
-                imeAction = ImeAction.Done,
-                showKeyboardOnFocus = false,
-            ),
-            onKeyboardAction = { focusManager.clearFocus() },
-            decorator = { innerTextField ->
-                if (tag.textState.text.isEmpty()) {
-                    Placeholder()
-                }
-                innerTextField()
-            },
-        )
+            contentAlignment = Alignment.Center,
+        ) {
+            BasicTextField(
+                modifier = Modifier
+                    .bringIntoViewRequester(bringIntoViewRequester)
+                    .widthIn(min = 80.dp)
+                    .width(IntrinsicSize.Min)
+                    .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .onFocusChanged { focusState ->
+                        onFocusChanged()
+                        hasFocus = focusState.hasFocus
+                        if (!focusState.hasFocus) {
+                            onDoneEditing(tag)
+                        }
+                    },
+                state = tag.textState,
+                enabled = enabled,
+                textStyle = MaterialTheme.typography.labelSmall,
+                lineLimits = TextFieldLineLimits.SingleLine,
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                onTextLayout = { layoutResult = it() },
+                keyboardOptions = KeyboardOptions(
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Done,
+                    showKeyboardOnFocus = false,
+                ),
+                onKeyboardAction = { focusManager.clearFocus() },
+                decorator = { innerTextField ->
+                    if (tag.textState.text.isEmpty()) {
+                        Placeholder()
+                    }
+                    innerTextField()
+                },
+            )
+        }
     }
 }
 

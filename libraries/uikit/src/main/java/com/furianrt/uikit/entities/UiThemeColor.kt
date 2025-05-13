@@ -141,11 +141,6 @@ enum class UiThemeColor(
         primary = Colors.Primary.SpaceCowboyBrownLight,
         accent = Colors.Accent.Purple,
     ),
-    SPACE_COWBOY_BROWN(
-        id = "32",
-        primary = Colors.Primary.SpaceCowboyBrown,
-        accent = Colors.Accent.Purple,
-    ),
     SPACE_COWBOY_BROWN_DARK(
         id = "33",
         primary = Colors.Primary.SpaceCowboyBrownDark,

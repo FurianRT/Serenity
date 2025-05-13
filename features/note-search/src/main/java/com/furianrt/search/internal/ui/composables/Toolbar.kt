@@ -122,7 +122,7 @@ internal fun Toolbar(
                 onClearClick = onClearQueryClick,
             )
             ButtonCalendar(
-                modifier = Modifier.padding(horizontal = 2.dp),
+                modifier = Modifier.padding(horizontal = 4.dp),
                 onClick = onCalendarClick
             )
         }
@@ -151,7 +151,7 @@ private fun ButtonCalendar(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            modifier = modifier.padding(8.dp),
+            modifier = Modifier.padding(8.dp),
             painter = painterResource(R.drawable.ic_calendar),
             contentDescription = null,
             tint = Color.Unspecified,

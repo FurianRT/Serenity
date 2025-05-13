@@ -228,7 +228,7 @@ private fun SuccessScreen(
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_about_title),
-            iconPainter = painterResource(id = uiR.drawable.ic_error),
+            iconPainter = painterResource(id = uiR.drawable.ic_info),
             onClick = {},
         )
     }

@@ -11,6 +11,7 @@ import com.furianrt.core.findInstance
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.domain.GetAllUniqueTagsUseCase
@@ -19,6 +20,7 @@ import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.search.internal.ui.extensions.toNoteItem
 import com.furianrt.search.internal.ui.extensions.toSelectedTag
 import com.furianrt.search.internal.ui.extensions.toTagsList
+import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
@@ -36,6 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -61,6 +64,7 @@ private class SearchData(
 internal class SearchViewModel @Inject constructor(
     getAllUniqueTagsUseCase: GetAllUniqueTagsUseCase,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
+    private val notesRepository: NotesRepository,
     private val dispatchers: DispatchersProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel(), DialogResultListener {
@@ -124,12 +128,14 @@ internal class SearchViewModel @Inject constructor(
 
     fun onEvent(event: SearchEvent) {
         when (event) {
-            is SearchEvent.OnButtonCalendarClick -> showDateSelector()
+            is SearchEvent.OnButtonCalendarClick, is SearchEvent.OnDateFilterClick -> launch {
+                showDateSelector()
+            }
+
             is SearchEvent.OnButtonBackClick -> _effect.tryEmit(SearchEffect.CloseScreen)
             is SearchEvent.OnButtonClearQueryClick -> clearQuery()
             is SearchEvent.OnRemoveFilterClick -> removeFilter(event.filter)
             is SearchEvent.OnTagClick -> addTagFilter(event.title)
-            is SearchEvent.OnDateFilterClick -> showDateSelector()
             is SearchEvent.OnDateRangeSelected -> addDateFilter(event.start, event.end)
             is SearchEvent.OnScrolledToItem -> scrollToNoteState.update { null }
             is SearchEvent.OnNoteItemClick -> openNoteViewScreen(event.noteId)
@@ -169,9 +175,16 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    private fun showDateSelector() {
+    private suspend fun showDateSelector() {
         val dateFilter = state.value.selectedFilters.findInstance<SelectedFilter.DateRange>()
-        _effect.tryEmit(SearchEffect.ShowDateSelector(dateFilter?.start, dateFilter?.end))
+        val dates = notesRepository.getUniqueNotesDates().first()
+        _effect.tryEmit(
+            SearchEffect.ShowDateSelector(
+                start = dateFilter?.start,
+                end = dateFilter?.end,
+                datesWithNotes = dates,
+            )
+        )
     }
 
     private fun openNoteViewScreen(noteId: String) {

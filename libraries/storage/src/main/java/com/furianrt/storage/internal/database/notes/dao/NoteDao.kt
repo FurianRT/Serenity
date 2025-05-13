@@ -51,6 +51,9 @@ internal interface NoteDao {
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
     fun getAllNotes(): Flow<List<LinkedNote>>
 
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
+    fun getAllSimpleNotes(): Flow<List<EntryNote>>
+
     @Transaction
     @Query(
         """

@@ -41,7 +41,11 @@ internal sealed interface SearchEvent {
 }
 
 internal sealed interface SearchEffect {
-    data class ShowDateSelector(val start: LocalDate?, val end: LocalDate?) : SearchEffect
+    data class ShowDateSelector(
+        val start: LocalDate?,
+        val end: LocalDate?,
+        val datesWithNotes: Set<LocalDate>,
+    ) : SearchEffect
     data class OpenNoteViewScreen(
         val noteId: String,
         val identifier: DialogIdentifier,
