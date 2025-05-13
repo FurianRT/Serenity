@@ -39,4 +39,5 @@ internal sealed interface SettingsEffect {
     }
 
     data class OpenMarketPage(val url: String) : SettingsEffect
+    data object ShowBadRatingDialog : SettingsEffect
 }

@@ -23,4 +23,7 @@
     <string name="settings_feedback_email_subject">Serenity feedback %s</string>
     <string name="settings_feedback_email_error">Failed to send email</string>
 
+    <string name="settings_bad_feedback_title">Something not right?</string>
+    <string name="settings_bad_feedback_body">Your feedback means a lot. Help us improve your experience</string>
+
 </resources>

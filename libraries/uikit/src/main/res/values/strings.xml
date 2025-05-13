@@ -12,6 +12,7 @@
     <string name="action_unpin">Unpin</string>
     <string name="action_backup">Backup</string>
     <string name="action_restore">Restore</string>
+    <string name="action_contact_us">Contact Us</string>
 
     <string name="title_email">Email</string>
 

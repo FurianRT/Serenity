@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -55,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.buildImmutableList
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.entities.AppTheme
+import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.SkipFirstEffect
@@ -66,6 +68,8 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.EmailSender
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -81,12 +85,14 @@ internal fun SettingsScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
+    val hazeState = remember { HazeState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
     val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
+    var showBadRatingDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -113,23 +119,38 @@ internal fun SettingsScreen(
                 }
 
                 is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
+                is SettingsEffect.ShowBadRatingDialog -> showBadRatingDialog = true
             }
         }
     }
 
-    ScreenContent(uiState, snackBarHostState, viewModel::onEvent)
+    ScreenContent(
+        modifier = Modifier.haze(hazeState),
+        uiState = uiState,
+        snackBarHostState = snackBarHostState,
+        onEvent = viewModel::onEvent,
+    )
+
+    if (showBadRatingDialog) {
+        BadRatingDialog(
+            hazeState = hazeState,
+            onSendClick = { viewModel.onEvent(SettingsEvent.OnButtonFeedbackClick) },
+            onDismissRequest = { showBadRatingDialog = false },
+        )
+    }
 }
 
 @Composable
 private fun ScreenContent(
     uiState: SettingsUiState,
     snackBarHostState: SnackbarHostState,
+    modifier: Modifier = Modifier,
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Scaffold(
-        modifier = Modifier.systemBarsPadding(),
+        modifier = modifier.systemBarsPadding(),
         topBar = {
             DefaultToolbar(
                 modifier = Modifier.drawBehind {

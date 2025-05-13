@@ -33,6 +33,7 @@ import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import dev.chrisbanes.haze.HazeDefaults
@@ -40,6 +41,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -126,7 +128,8 @@ fun MovableToolbarScaffold(
 
     val hazeState = remember { HazeState() }
 
-    LaunchedEffect(listState.isScrollInProgress) {
+    LifecycleStartEffect(listState.isScrollInProgress) {
+        var job: Job? = null
         val lazyState = listState as? LazyListState
         val scrollState = listState as? ScrollState
         val forceShowToolbar: Boolean
@@ -140,25 +143,32 @@ fun MovableToolbarScaffold(
         }
         val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
         when {
-            !isToolbarInHalfState || listState.isScrollInProgress -> {
-                return@LaunchedEffect
-            }
+            !isToolbarInHalfState || listState.isScrollInProgress -> {}
 
             toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || !listState.canScrollBackward -> {
-                AnimationState(toolbarOffset).animateTo(
-                    targetValue = 0f,
-                    animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
-                    block = { toolbarOffset = value },
-                )
+                job?.cancel()
+                job = scope.launch {
+                    AnimationState(toolbarOffset).animateTo(
+                        targetValue = 0f,
+                        animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
+                        block = { toolbarOffset = value },
+                    )
+                }
             }
 
             toolbarOffset <= -toolbarHeight / 2 -> {
-                AnimationState(toolbarOffset).animateTo(
-                    targetValue = -toolbarHeight,
-                    animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
-                    block = { toolbarOffset = value },
-                )
+                job?.cancel()
+                job = scope.launch {
+                    AnimationState(toolbarOffset).animateTo(
+                        targetValue = -toolbarHeight,
+                        animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
+                        block = { toolbarOffset = value },
+                    )
+                }
             }
+        }
+        onStopOrDispose {
+            job?.cancel()
         }
     }
 

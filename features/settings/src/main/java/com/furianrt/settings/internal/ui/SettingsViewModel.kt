@@ -12,6 +12,7 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 private const val MIN_GOOD_RATING = 4
+private const val RATING_CLICK_DELAY = 250L
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
@@ -61,8 +63,9 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
                 settingsRepository.setAppRating(event.rating)
+                delay(RATING_CLICK_DELAY)
                 if (event.rating < MIN_GOOD_RATING) {
-                    sendFeedback()
+                    _effect.tryEmit(SettingsEffect.ShowBadRatingDialog)
                 } else {
                     _effect.tryEmit(
                         SettingsEffect.OpenMarketPage(url = deviceInfoRepository.getMarketUrl())
