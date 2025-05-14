@@ -9,14 +9,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -176,35 +174,20 @@ private fun ScreenContent(
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        modifier = modifier,
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(uiR.drawable.ic_cloud_sync),
-                        tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    )
-                },
-            )
-        },
-    ) { paddingValues ->
-        when (uiState) {
-            is NoteViewUiState.Loading -> LoadingScreen(
-                modifier = Modifier.padding(paddingValues),
-            )
+    when (uiState) {
+        is NoteViewUiState.Loading -> LoadingScreen(
+            modifier = modifier,
+        )
 
-            is NoteViewUiState.Success -> SuccessScreen(
-                modifier = Modifier.padding(paddingValues),
-                state = state,
-                uiState = uiState,
-                onEvent = onEvent,
-                openMediaViewScreen = openMediaViewScreen,
-                openMediaViewer = openMediaViewer,
-            )
-        }
+        is NoteViewUiState.Success -> SuccessScreen(
+            modifier = modifier,
+            state = state,
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
+            onEvent = onEvent,
+            openMediaViewScreen = openMediaViewScreen,
+            openMediaViewer = openMediaViewer,
+        )
     }
 }
 
@@ -213,6 +196,7 @@ private fun ScreenContent(
 private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
     state: SuccessScreenState,
+    snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -341,6 +325,18 @@ private fun SuccessScreen(
                 openMediaViewer = openMediaViewer,
             )
         }
+
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_cloud_sync),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
+        )
     }
 }
 
