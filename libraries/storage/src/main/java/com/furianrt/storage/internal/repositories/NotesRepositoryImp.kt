@@ -3,7 +3,6 @@ package com.furianrt.storage.internal.repositories
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepFilter
 import com.furianrt.core.deepMap
-import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
@@ -31,7 +30,6 @@ internal class NotesRepositoryImp @Inject constructor(
     private val noteDao: NoteDao,
     private val noteCache: NoteCache,
     private val dispatchers: DispatchersProvider,
-    private val transactionsHelper: TransactionsHelper,
 ) : NotesRepository {
 
     override suspend fun insetNote(note: SimpleNote) {
@@ -75,7 +73,7 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
     }
 
-    override suspend fun deleteNote(noteId: String) = transactionsHelper.startTransaction {
+    override suspend fun deleteNote(noteId: String) {
         noteDao.delete(PartNoteId(noteId))
     }
 

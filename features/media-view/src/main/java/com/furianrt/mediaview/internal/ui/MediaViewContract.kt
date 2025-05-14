@@ -18,4 +18,5 @@ internal sealed interface MediaViewEffect {
     data object CloseScreen : MediaViewEffect
     data object ShowMediaSavedMessage : MediaViewEffect
     data object ShowMediaSaveErrorMessage : MediaViewEffect
+    data class ShowSyncProgressMessage(val message: String) : MediaViewEffect
 }

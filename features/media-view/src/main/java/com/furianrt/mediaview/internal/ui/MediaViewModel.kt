@@ -6,11 +6,14 @@ import androidx.navigation.toRoute
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -29,6 +32,8 @@ internal class MediaViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getNoteMediaUseCase: GetNoteMediaUseCase,
     private val mediaRepository: MediaRepository,
+    private val syncManager: SyncManager,
+    private val resourcesManager: ResourcesManager,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
@@ -60,17 +65,7 @@ internal class MediaViewModel @Inject constructor(
                 _effect.tryEmit(MediaViewEffect.CloseScreen)
             }
 
-            is MediaViewEvent.OnButtonDeleteClick -> {
-                val media = _state.value.media.getOrNull(event.mediaIndex) ?: return
-                deletedMediaIds.add(media.id)
-                val resultMedia = _state.value.media.toPersistentList().removeAt(event.mediaIndex)
-                if (resultMedia.isEmpty()) {
-                    _effect.tryEmit(MediaViewEffect.CloseScreen)
-                } else {
-                    _state.update { it.copy(media = resultMedia) }
-                }
-            }
-
+            is MediaViewEvent.OnButtonDeleteClick -> onButtonDeleteClick(event.mediaIndex)
             is MediaViewEvent.OnButtonSaveToGalleryClick -> {
                 val media = _state.value.media.getOrNull(event.mediaIndex) ?: return
                 launch {
@@ -81,6 +76,37 @@ internal class MediaViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun onButtonDeleteClick(mediaIndex: Int) {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                MediaViewEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                MediaViewEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> {
+                deleteMedia(mediaIndex)
+            }
+        }
+    }
+
+    private fun deleteMedia(index: Int) {
+        val media = _state.value.media.getOrNull(index) ?: return
+        deletedMediaIds.add(media.id)
+        val resultMedia = _state.value.media.toPersistentList().removeAt(index)
+        if (resultMedia.isEmpty()) {
+            _effect.tryEmit(MediaViewEffect.CloseScreen)
+        } else {
+            _state.update { it.copy(media = resultMedia) }
         }
     }
 

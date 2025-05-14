@@ -8,9 +8,12 @@ import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
+import com.furianrt.uikit.R as uiR
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
@@ -42,6 +45,8 @@ internal class NoteViewModel @Inject constructor(
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
+    private val syncManager: SyncManager,
+    private val resourcesManager: ResourcesManager,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NoteViewRoute>(
@@ -103,15 +108,8 @@ internal class NoteViewModel @Inject constructor(
                 sendPageChangeResult(event.index)
             }
 
-            is NoteViewEvent.OnDeleteClick -> {
-                _effect.tryEmit(NoteViewEffect.ShowDeleteConfirmationDialog(event.noteId))
-            }
-
-            is NoteViewEvent.OnConfirmDeleteClick -> {
-                disableEditMode()
-                launch { deleteNoteUseCase(event.noteId) }
-            }
-
+            is NoteViewEvent.OnDeleteClick -> onDeleteClick(event.noteId)
+            is NoteViewEvent.OnConfirmDeleteClick -> launch { deleteNote(event.noteId) }
             is NoteViewEvent.OnPinClick -> launch {
                 toggleNotePinnedState(event.noteId, event.isPinned)
             }
@@ -204,5 +202,30 @@ internal class NoteViewModel @Inject constructor(
 
     private suspend fun toggleNotePinnedState(noteId: String, isPinned: Boolean) {
         notesRepository.updateNoteIsPinned(noteId, !isPinned)
+    }
+
+    private fun onDeleteClick(noteId: String) {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                NoteViewEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                NoteViewEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> {
+                _effect.tryEmit(NoteViewEffect.ShowDeleteConfirmationDialog(noteId))
+            }
+        }
+    }
+
+    private suspend fun deleteNote(noteId: String) {
+        disableEditMode()
+        deleteNoteUseCase(noteId)
     }
 }

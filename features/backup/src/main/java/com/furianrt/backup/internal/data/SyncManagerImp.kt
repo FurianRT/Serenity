@@ -1,21 +1,24 @@
-package com.furianrt.backup.internal.domain
+package com.furianrt.backup.internal.data
 
 import android.content.Context
-import com.furianrt.backup.api.BackupApi
+import com.furianrt.backup.internal.domain.BackupDataManager
+import com.furianrt.backup.internal.domain.RestoreDataManager
+import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.workers.AutoBackupWorker
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.ProfileRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class BackupMediator @Inject constructor(
+internal class SyncManagerImp @Inject constructor(
     @ApplicationContext private val context: Context,
     private val profileRepository: ProfileRepository,
     private val backupRepository: BackupRepository,
-) : BackupApi {
+    private val backupDataManager: BackupDataManager,
+    private val restoreDataManager: RestoreDataManager,
+) : SyncManager {
 
     override suspend fun tryStartAutoBackup() {
         val isSignedIn = profileRepository.isSignedIn().first()
@@ -30,4 +33,7 @@ internal class BackupMediator @Inject constructor(
             )
         }
     }
+
+    override fun isBackupInProgress(): Boolean = backupDataManager.state.value !is SyncState.Idle
+    override fun isRestoreInProgress(): Boolean = restoreDataManager.state.value !is SyncState.Idle
 }

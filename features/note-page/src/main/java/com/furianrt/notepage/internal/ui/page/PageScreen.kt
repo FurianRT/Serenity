@@ -26,6 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -57,6 +60,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.IntSize
@@ -79,6 +83,7 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
@@ -90,6 +95,7 @@ import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
@@ -136,6 +142,7 @@ internal fun NotePageScreenInternal(
     val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),
@@ -187,6 +194,13 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.ClearFocus -> focusManager.clearFocus()
+                is PageEffect.ShowSyncProgressMessage -> {
+                    snackBarHostState.currentSnackbarData?.dismiss()
+                    snackBarHostState.showSnackbar(
+                        message = effect.message,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
         }
     }
@@ -201,6 +215,7 @@ internal fun NotePageScreenInternal(
     PageScreenContent(
         state = state,
         uiState = uiState,
+        snackBarHostState = snackBarHostState,
         hazeState = hazeState,
         isSelected = isSelected,
         onEvent = viewModel::onEvent,
@@ -220,6 +235,7 @@ internal fun NotePageScreenInternal(
 private fun PageScreenContent(
     state: PageScreenState,
     uiState: PageUiState,
+    snackBarHostState: SnackbarHostState,
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
@@ -232,6 +248,7 @@ private fun PageScreenContent(
                 modifier = modifier,
                 state = state,
                 uiState = uiState,
+                snackBarHostState = snackBarHostState,
                 hazeState = hazeState,
                 isSelected = isSelected,
                 onEvent = onEvent,
@@ -248,6 +265,7 @@ private fun PageScreenContent(
 private fun SuccessScreen(
     state: PageScreenState,
     uiState: PageUiState.Success,
+    snackBarHostState: SnackbarHostState,
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
@@ -396,6 +414,17 @@ private fun SuccessScreen(
         )
         DimSurfaceOverlay(
             visible = state.dimSurface,
+        )
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_cloud_sync),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
         )
     }
 }
@@ -642,6 +671,7 @@ private fun SuccessScreenPreview() {
     SerenityTheme {
         SuccessScreen(
             state = rememberPageScreenState(),
+            snackBarHostState = SnackbarHostState(),
             uiState = PageUiState.Success(
                 noteId = "123",
                 isInEditMode = false,

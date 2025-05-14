@@ -9,6 +9,8 @@ import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
@@ -105,6 +107,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import java.util.UUID
+import com.furianrt.uikit.R as uiR
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val TITLE_FOCUS_DELAY = 150L
@@ -121,6 +124,8 @@ internal class PageViewModel @AssistedInject constructor(
     private val audioPlayer: AudioPlayer,
     private val stickerIconProvider: StickerIconProvider,
     private val dispatchers: DispatchersProvider,
+    private val syncManager: SyncManager,
+    private val resourcesManager: ResourcesManager,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
@@ -200,10 +205,7 @@ internal class PageViewModel @AssistedInject constructor(
                 openMediaViewScreen(event.media.id)
             }
 
-            is OnMediaRemoveClick -> {
-                resetStickersEditing()
-                removeMedia(setOf(event.media.id))
-            }
+            is OnMediaRemoveClick -> onMediaRemoveClick(event.media.id)
 
             is OnMediaShareClick -> {}
             is OnOpenMediaViewerRequest -> {
@@ -455,6 +457,27 @@ internal class PageViewModel @AssistedInject constructor(
                     ),
                 ),
             )
+        }
+    }
+
+    private fun onMediaRemoveClick(mediaId: String) {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                PageEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                PageEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> {
+                resetStickersEditing()
+                removeMedia(setOf(mediaId))
+            }
         }
     }
 

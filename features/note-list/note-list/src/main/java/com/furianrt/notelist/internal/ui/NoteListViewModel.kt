@@ -3,9 +3,12 @@ package com.furianrt.notelist.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notelist.internal.ui.extensions.toMainScreenNotes
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -32,6 +35,8 @@ internal class NoteListViewModel @Inject constructor(
     notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
+    private val syncManager: SyncManager,
+    private val resourcesManager: ResourcesManager,
 ) : ViewModel(), DialogResultListener {
 
     private val scrollToNoteState = MutableStateFlow<String?>(null)
@@ -82,7 +87,7 @@ internal class NoteListViewModel @Inject constructor(
             }
 
             is NoteListEvent.OnNoteLongClick -> addOrRemoveSelectedNote(event.note.id)
-            is NoteListEvent.OnDeleteSelectedNotesClick -> showConfirmNotesDeleteDialog()
+            is NoteListEvent.OnDeleteSelectedNotesClick -> onDeleteSelectedNotesClick()
             is NoteListEvent.OnConfirmDeleteSelectedNotesClick -> launch {
                 deleteSelectedNotes(selectedNotesState.value)
             }
@@ -119,6 +124,28 @@ internal class NoteListViewModel @Inject constructor(
                 selectedNotes.toMutableSet().apply { add(noteId) }
             }
 
+        }
+    }
+
+    private fun onDeleteSelectedNotesClick() {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                NoteListEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                NoteListEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> _effect.tryEmit(
+                NoteListEffect.ShowConfirmNoteDeleteDialog(
+                    notesCount = selectedNotesState.value.count(),
+                )
+            )
         }
     }
 
@@ -162,14 +189,6 @@ internal class NoteListViewModel @Inject constructor(
                     dialogId = NOTE_VIEW_DIALOG_ID,
                     requestId = TAG,
                 ),
-            )
-        )
-    }
-
-    private fun showConfirmNotesDeleteDialog() {
-        _effect.tryEmit(
-            NoteListEffect.ShowConfirmNoteDeleteDialog(
-                notesCount = selectedNotesState.value.count(),
             )
         )
     }

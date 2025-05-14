@@ -5,8 +5,8 @@ import android.os.StrictMode
 import android.util.Log
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.furianrt.backup.api.BackupApi
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
@@ -27,7 +27,7 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
     lateinit var mediaRepository: MediaRepository
 
     @Inject
-    lateinit var backupApi: BackupApi
+    lateinit var syncManager: SyncManager
 
     @Inject
     lateinit var dispatchers: DispatchersProvider
@@ -53,7 +53,7 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
 
     private fun startPeriodicWorks() {
         mediaRepository.enqueuePeriodicMediaSave()
-        launch { backupApi.tryStartAutoBackup() }
+        launch { syncManager.tryStartAutoBackup() }
     }
 
     private fun initStrictMode() {

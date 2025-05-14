@@ -2,12 +2,12 @@ package com.furianrt.backup.internal.di
 
 import android.content.Context
 import android.content.Intent
-import com.furianrt.backup.api.BackupApi
+import com.furianrt.backup.internal.data.SyncManagerImp
 import com.furianrt.backup.internal.data.remote.google.DriveBackupRepository
-import com.furianrt.backup.internal.domain.BackupMediator
 import com.furianrt.backup.internal.domain.ServiceLauncher
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.services.NotesSyncService
+import com.furianrt.domain.managers.SyncManager
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -26,7 +26,7 @@ internal interface BackupModule {
 
     @Binds
     @Singleton
-    fun backupApi(imp: BackupMediator): BackupApi
+    fun syncManager(imp: SyncManagerImp): SyncManager
 
     companion object {
         @Provides

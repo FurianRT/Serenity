@@ -9,13 +9,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -32,6 +36,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -49,6 +54,7 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
@@ -62,6 +68,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import com.furianrt.uikit.R as uiR
 
 @Immutable
 private data class CalendarState(
@@ -99,6 +106,7 @@ internal fun NoteViewScreen(
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
@@ -119,6 +127,14 @@ internal fun NoteViewScreen(
                     is NoteViewEffect.ShowDeleteConfirmationDialog -> {
                         deleteConfirmationDialogState = effect.noteId
                     }
+
+                    is NoteViewEffect.ShowSyncProgressMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             }
     }
@@ -126,6 +142,7 @@ internal fun NoteViewScreen(
         modifier = Modifier.haze(hazeState),
         state = successScreenState,
         uiState = uiState,
+        snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
         openMediaViewScreen = openMediaViewScreen,
         openMediaViewer = openMediaViewer,
@@ -153,15 +170,34 @@ internal fun NoteViewScreen(
 private fun ScreenContent(
     state: SuccessScreenState,
     uiState: NoteViewUiState,
+    snackBarHostState: SnackbarHostState,
     onEvent: (event: NoteViewEvent) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Surface(modifier = modifier) {
+    Scaffold(
+        modifier = modifier,
+        snackbarHost = {
+            SnackbarHost(
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(uiR.drawable.ic_cloud_sync),
+                        tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    )
+                },
+            )
+        },
+    ) { paddingValues ->
         when (uiState) {
-            is NoteViewUiState.Loading -> LoadingScreen()
+            is NoteViewUiState.Loading -> LoadingScreen(
+                modifier = Modifier.padding(paddingValues),
+            )
+
             is NoteViewUiState.Success -> SuccessScreen(
+                modifier = Modifier.padding(paddingValues),
                 state = state,
                 uiState = uiState,
                 onEvent = onEvent,
@@ -176,8 +212,8 @@ private fun ScreenContent(
 @Composable
 private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
+    state: SuccessScreenState,
     modifier: Modifier = Modifier,
-    state: SuccessScreenState = rememberSuccessScreenState(),
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
@@ -334,7 +370,7 @@ private fun LoadingScreen(
 @Composable
 private fun ScreenSuccessPreview() {
     SerenityTheme {
-        SuccessScreen(
+        ScreenContent(
             uiState = NoteViewUiState.Success(
                 isInEditMode = false,
                 initialPageIndex = 0,
@@ -342,6 +378,9 @@ private fun ScreenSuccessPreview() {
                 notes = persistentListOf(),
                 date = ZonedDateTime.now(),
             ),
+            state = rememberSuccessScreenState(),
+            snackBarHostState = SnackbarHostState(),
+            onEvent = {},
             openMediaViewScreen = { _, _, _ -> },
             openMediaViewer = {},
         )

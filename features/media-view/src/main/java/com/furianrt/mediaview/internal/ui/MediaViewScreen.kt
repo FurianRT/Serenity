@@ -78,15 +78,29 @@ internal fun MediaViewScreen(
             .collectLatest { effect ->
                 when (effect) {
                     is MediaViewEffect.CloseScreen -> onCloseRequestState()
-                    is MediaViewEffect.ShowMediaSavedMessage -> snackBarHostState.showSnackbar(
-                        message = imageSavedMessage,
-                        duration = SnackbarDuration.Short,
-                    )
+                    is MediaViewEffect.ShowMediaSavedMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = imageSavedMessage,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
 
-                    is MediaViewEffect.ShowMediaSaveErrorMessage -> snackBarHostState.showSnackbar(
-                        message = imageNotSavedMessage,
-                        duration = SnackbarDuration.Short,
-                    )
+                    is MediaViewEffect.ShowMediaSaveErrorMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = imageNotSavedMessage,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    is MediaViewEffect.ShowSyncProgressMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             }
     }

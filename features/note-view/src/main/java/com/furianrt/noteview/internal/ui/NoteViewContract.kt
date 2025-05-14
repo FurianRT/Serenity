@@ -45,4 +45,5 @@ internal sealed interface NoteViewEffect {
     ) : NoteViewEffect
 
     data class ShowDeleteConfirmationDialog(val noteId: String) : NoteViewEffect
+    data class ShowSyncProgressMessage(val message: String) : NoteViewEffect
 }
