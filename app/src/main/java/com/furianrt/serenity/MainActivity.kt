@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
@@ -43,6 +44,7 @@ import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
 import com.furianrt.security.api.LockAuthorizer
+import com.furianrt.serenity.extensions.toNoteFont
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
@@ -51,6 +53,7 @@ import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
@@ -122,8 +125,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val themeColor by appearanceRepository.getAppThemeColorId()
                 .map(UiThemeColor::fromId)
                 .collectAsStateWithLifecycle(initialValue = UiThemeColor.DISTANT_CASTLE_GREEN)
+            val appFont by appearanceRepository.getAppFont()
+                .map(NoteFontFamily::toNoteFont)
+                .collectAsStateWithLifecycle(initialValue = NoteFont.QuickSand)
 
-            SerenityTheme(color = themeColor) {
+            SerenityTheme(color = themeColor, font = appFont) {
                 CompositionLocalProvider(LocalAuth provides this) {
                     NavHost(
                         modifier = Modifier

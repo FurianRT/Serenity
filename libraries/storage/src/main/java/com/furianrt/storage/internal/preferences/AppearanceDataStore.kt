@@ -14,6 +14,7 @@ import javax.inject.Singleton
 
 private val KEY_THEME_COLOR = stringPreferencesKey("theme_color")
 private val KEY_DEFAULT_NOTE_FONT = stringPreferencesKey("default_note_font")
+private val KEY_APP_FONT = stringPreferencesKey("app_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
 private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
 
@@ -33,6 +34,13 @@ internal class AppearanceDataStore @Inject constructor(
 
     suspend fun setDefaultNoteFont(font: NoteFontFamily) {
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT] = font.name }
+    }
+
+    fun getAppFont(): Flow<NoteFontFamily> = dataStore.data
+        .map { prefs -> NoteFontFamily.fromString(prefs[KEY_APP_FONT]) }
+
+    suspend fun setAppFont(font: NoteFontFamily) {
+        dataStore.edit { prefs -> prefs[KEY_APP_FONT] = font.name }
     }
 
     fun getDefaultNoteFontColor(): Flow<NoteFontColor> = dataStore.data

@@ -54,8 +54,10 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.buildImmutableList
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.entities.AppTheme
+import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
@@ -75,6 +77,11 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import com.furianrt.uikit.R as uiR
 
+private data class FontsDialogState(
+    val fonts: ImmutableList<UiNoteFontFamily>,
+    val selectedFont: UiNoteFontFamily,
+)
+
 @Composable
 internal fun SettingsScreen(
     openSecurityScreen: () -> Unit,
@@ -93,6 +100,7 @@ internal fun SettingsScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
+    var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -120,6 +128,10 @@ internal fun SettingsScreen(
 
                 is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
                 is SettingsEffect.ShowBadRatingDialog -> showBadRatingDialog = true
+                is SettingsEffect.ShowFontDialog -> fontsDialogState = FontsDialogState(
+                    fonts = effect.fonts,
+                    selectedFont = effect.selectedFont,
+                )
             }
         }
     }
@@ -136,6 +148,15 @@ internal fun SettingsScreen(
             hazeState = hazeState,
             onSendClick = { viewModel.onEvent(SettingsEvent.OnButtonFeedbackClick) },
             onDismissRequest = { showBadRatingDialog = false },
+        )
+    }
+    fontsDialogState?.let { state ->
+        AppFontDialog(
+            fonts = state.fonts,
+            selectedFont = state.selectedFont,
+            hazeState = hazeState,
+            onFontSelected = { viewModel.onEvent(SettingsEvent.OnFontSelected(it)) },
+            onDismissRequest = { fontsDialogState = null }
         )
     }
 }
@@ -221,6 +242,12 @@ private fun SuccessScreen(
             themes = uiState.themes,
             selected = uiState.selectedThemeColor,
             onSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
+        )
+        GeneralButton(
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+            title = stringResource(id = R.string.settings_font_title),
+            iconPainter = painterResource(id = R.drawable.font_svgrepo_com),
+            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),

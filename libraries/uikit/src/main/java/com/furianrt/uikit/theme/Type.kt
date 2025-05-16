@@ -6,10 +6,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 
-val Typography = Typography(
+internal fun getTypography(font: NoteFont) = Typography(
     labelSmall = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.light,
+        fontFamily = font.light,
         fontSize = 13.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
@@ -21,7 +21,7 @@ val Typography = Typography(
     ),
     labelMedium = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 14.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
@@ -33,7 +33,7 @@ val Typography = Typography(
     ),
     labelLarge = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
@@ -45,7 +45,7 @@ val Typography = Typography(
     ),
     bodySmall = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 13.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
@@ -57,7 +57,7 @@ val Typography = Typography(
     ),
     bodyMedium = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 15.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
@@ -69,7 +69,7 @@ val Typography = Typography(
     ),
     bodyLarge = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
@@ -81,7 +81,7 @@ val Typography = Typography(
     ),
     titleSmall = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 15.sp,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
@@ -93,7 +93,7 @@ val Typography = Typography(
     ),
     titleMedium = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
@@ -105,7 +105,7 @@ val Typography = Typography(
     ),
     titleLarge = TextStyle(
         color = Color.White,
-        fontFamily = NoteFont.QuickSand.regular,
+        fontFamily = font.regular,
         fontSize = 19.sp,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,

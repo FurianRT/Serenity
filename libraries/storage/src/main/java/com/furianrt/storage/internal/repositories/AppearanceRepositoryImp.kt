@@ -25,6 +25,12 @@ internal class AppearanceRepositoryImp @Inject constructor(
         return appearanceDataStore.getDefaultNoteFont()
     }
 
+    override fun getAppFont(): Flow<NoteFontFamily> = appearanceDataStore.getAppFont()
+
+    override suspend fun setAppFont(font: NoteFontFamily) {
+        appearanceDataStore.setAppFont(font)
+    }
+
     override suspend fun setDefaultNoteFont(font: NoteFontFamily) {
         appearanceDataStore.setDefaultNoteFont(font)
     }

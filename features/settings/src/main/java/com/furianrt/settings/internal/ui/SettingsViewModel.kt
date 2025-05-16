@@ -2,8 +2,12 @@ package com.furianrt.settings.internal.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.mapImmutable
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
+import com.furianrt.notelistui.extensions.toNoteFontFamily
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.internal.domain.GetAppThemeListUseCase
 import com.furianrt.settings.internal.domain.SettingsRepository
@@ -17,6 +21,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -72,6 +78,11 @@ internal class SettingsViewModel @Inject constructor(
                     )
                 }
             }
+
+            is SettingsEvent.OnButtonFontClick -> launch { showFontDialog() }
+            is SettingsEvent.OnFontSelected -> launch {
+                appearanceRepository.setAppFont(event.font.toNoteFontFamily())
+            }
         }
     }
 
@@ -83,6 +94,18 @@ internal class SettingsViewModel @Inject constructor(
                 language = deviceInfoRepository.getDeviceLanguage(),
                 device = deviceInfoRepository.getDeviceModel(),
                 appVersion = deviceInfoRepository.getAppVersionName(),
+            )
+        )
+    }
+
+    private suspend fun showFontDialog() {
+        _effect.tryEmit(
+            SettingsEffect.ShowFontDialog(
+                fonts = appearanceRepository.getNoteFontsList()
+                    .mapImmutable(NoteFontFamily::toUiNoteFontFamily),
+                selectedFont = appearanceRepository.getAppFont()
+                    .map(NoteFontFamily::toUiNoteFontFamily)
+                    .first(),
             )
         )
     }

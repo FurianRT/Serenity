@@ -13,6 +13,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import com.furianrt.uikit.entities.UiThemeColor
 
@@ -41,6 +42,7 @@ private val defaultColorScheme = darkColorScheme(
 @Composable
 fun SerenityTheme(
     color: UiThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+    font: NoteFont = NoteFont.QuickSand,
     content: @Composable () -> Unit,
 ) {
     val colorScheme = defaultColorScheme.copy(
@@ -62,12 +64,14 @@ fun SerenityTheme(
         label = "SurfaceColorAnim",
     )
 
+    val typography = remember(font) { getTypography(font) }
+
     MaterialTheme(
         colorScheme = colorScheme.copy(
             background = animatedBackground,
             surface = animatedSurface,
         ),
-        typography = Typography,
+        typography = typography,
     ) {
         val rippleAlpha = RippleAlpha(
             draggedAlpha = 0.1f,

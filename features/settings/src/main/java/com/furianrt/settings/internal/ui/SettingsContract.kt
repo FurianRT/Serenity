@@ -1,6 +1,7 @@
 package com.furianrt.settings.internal.ui
 
 import androidx.annotation.IntRange
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import kotlinx.collections.immutable.ImmutableList
@@ -18,6 +19,8 @@ internal sealed interface SettingsEvent {
     data object OnButtonBackClick : SettingsEvent
     data object OnButtonSecurityClick : SettingsEvent
     data object OnButtonBackupClick : SettingsEvent
+    data object OnButtonFontClick : SettingsEvent
+    data class OnFontSelected(val font: UiNoteFontFamily) : SettingsEvent
     data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
     data class OnRatingSelected(val rating: Int) : SettingsEvent
@@ -40,4 +43,8 @@ internal sealed interface SettingsEffect {
 
     data class OpenMarketPage(val url: String) : SettingsEffect
     data object ShowBadRatingDialog : SettingsEffect
+    data class ShowFontDialog(
+        val fonts: ImmutableList<UiNoteFontFamily>,
+        val selectedFont: UiNoteFontFamily,
+    ) : SettingsEffect
 }
