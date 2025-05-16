@@ -16,7 +16,7 @@ internal fun List<LocalTag>.toTagsList() = SearchListItem.TagsList(
     tags = mapImmutable(LocalTag::toTagsListItem),
 )
 
-internal fun LocalNote.toNoteItem(): SearchListItem.Note {
+internal fun LocalNote.toNoteItem(isSelected: Boolean): SearchListItem.Note {
     val localDateNow = LocalDate.now()
     val localDate = date.toLocalDate()
     return SearchListItem.Note(
@@ -27,6 +27,7 @@ internal fun LocalNote.toNoteItem(): SearchListItem.Note {
             else -> SearchListItem.Note.Date.Other(date.toDateString())
         },
         tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
+        isSelected = isSelected,
         fontColor = fontColor.toUiNoteFontColor(),
         fontFamily = fontFamily.toUiNoteFontFamily(),
         fontSize = fontSize,

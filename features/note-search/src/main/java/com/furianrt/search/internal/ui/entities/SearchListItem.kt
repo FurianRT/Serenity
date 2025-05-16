@@ -39,6 +39,7 @@ internal sealed class SearchListItem(
         override val id: String,
         val date: Date,
         val tags: ImmutableList<UiNoteTag>,
+        val isSelected: Boolean,
         val fontColor: UiNoteFontColor,
         val fontFamily: UiNoteFontFamily,
         val fontSize: Int,

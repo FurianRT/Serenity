@@ -82,4 +82,12 @@ sealed class UiNoteFontFamily(
         regular = NoteFont.PlayWriteModern.regular,
         bold = NoteFont.PlayWriteModern.bold,
     )
+
+    @Immutable
+    data object Tillana : UiNoteFontFamily(
+        name = "Tillana",
+        light = NoteFont.Tillana.light,
+        regular = NoteFont.Tillana.regular,
+        bold = NoteFont.Tillana.bold,
+    )
 }

@@ -29,11 +29,9 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import dev.chrisbanes.haze.HazeDefaults
@@ -41,7 +39,6 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -86,15 +83,13 @@ fun MovableToolbarScaffold(
                 val delta = consumed.y
                 totalScroll += delta
                 when {
-                    !enabled && toolbarOffset != 0f -> scope.launch {
+                    !enabled -> scope.launch {
                         AnimationState(toolbarOffset).animateTo(
                             targetValue = 0f,
                             animationSpec = tween(350),
                             block = { toolbarOffset = value },
                         )
                     }
-
-                    !enabled -> Unit
 
                     delta < 0 -> {
                         toolbarOffset = (toolbarOffset + delta).coerceAtLeast(-toolbarHeight)
@@ -128,8 +123,7 @@ fun MovableToolbarScaffold(
 
     val hazeState = remember { HazeState() }
 
-    LifecycleStartEffect(listState.isScrollInProgress) {
-        var job: Job? = null
+    LaunchedEffect(listState.isScrollInProgress) {
         val lazyState = listState as? LazyListState
         val scrollState = listState as? ScrollState
         val forceShowToolbar: Boolean
@@ -146,29 +140,20 @@ fun MovableToolbarScaffold(
             !isToolbarInHalfState || listState.isScrollInProgress -> {}
 
             toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || !listState.canScrollBackward -> {
-                job?.cancel()
-                job = scope.launch {
-                    AnimationState(toolbarOffset).animateTo(
-                        targetValue = 0f,
-                        animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
-                        block = { toolbarOffset = value },
-                    )
-                }
+                AnimationState(toolbarOffset).animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
+                    block = { toolbarOffset = value },
+                )
             }
 
             toolbarOffset <= -toolbarHeight / 2 -> {
-                job?.cancel()
-                job = scope.launch {
-                    AnimationState(toolbarOffset).animateTo(
-                        targetValue = -toolbarHeight,
-                        animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
-                        block = { toolbarOffset = value },
-                    )
-                }
+                AnimationState(toolbarOffset).animateTo(
+                    targetValue = -toolbarHeight,
+                    animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
+                    block = { toolbarOffset = value },
+                )
             }
-        }
-        onStopOrDispose {
-            job?.cancel()
         }
     }
 
@@ -187,7 +172,7 @@ fun MovableToolbarScaffold(
                 .align(Alignment.TopCenter)
                 .zIndex(1f)
                 .graphicsLayer { translationY = toolbarOffset }
-                .onGloballyPositioned { toolbarHeight = it.boundsInParent().height }
+                .onSizeChanged { toolbarHeight = it.height.toFloat() }
                 .background(MaterialTheme.colorScheme.surface)
                 .hazeChild(
                     state = hazeState,

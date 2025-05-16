@@ -21,6 +21,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -37,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
@@ -48,6 +52,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.core.buildImmutableList
+import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -65,6 +70,7 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.SelectedDate
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -97,7 +103,9 @@ internal fun SearchScreen(
     var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
 
     var calendarState: CalendarState? by remember { mutableStateOf(null) }
+    var showDeleteConfirmDialogState: Int? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openNoteViewScreenState by rememberUpdatedState(openNoteViewScreen)
@@ -119,6 +127,18 @@ internal fun SearchScreen(
                         effect.identifier,
                         effect.queryData,
                     )
+
+                    is SearchEffect.ShowConfirmNoteDeleteDialog -> {
+                        showDeleteConfirmDialogState = effect.notesCount
+                    }
+
+                    is SearchEffect.ShowSyncProgressMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             }
     }
@@ -133,6 +153,7 @@ internal fun SearchScreen(
     ScreenContent(
         modifier = Modifier.haze(hazeState),
         uiState = uiState,
+        snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
         toolbarState = toolbarState,
     )
@@ -149,17 +170,33 @@ internal fun SearchScreen(
             },
         )
     }
+
+    showDeleteConfirmDialogState?.let { notesCount ->
+        ConfirmNotesDeleteDialog(
+            notesCount = notesCount,
+            hazeState = hazeState,
+            onConfirmClick = { viewModel.onEvent(SearchEvent.OnConfirmDeleteSelectedNotesClick) },
+            onDismissRequest = { showDeleteConfirmDialogState = null },
+        )
+    }
 }
 
 @Composable
 private fun ScreenContent(
     uiState: SearchUiState,
+    snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onEvent: (event: SearchEvent) -> Unit = {},
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
     var toolbarHeight by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
+
+    LaunchedEffect(uiState.enableSelection) {
+        if (uiState.enableSelection) {
+            toolbarState.expand()
+        }
+    }
 
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
@@ -169,9 +206,13 @@ private fun ScreenContent(
             listState
         },
         state = toolbarState,
+        enabled = !uiState.enableSelection,
         toolbar = {
+            val successState = uiState.state as? SearchUiState.State.Success
             Toolbar(
                 modifier = Modifier.onSizeChanged { toolbarHeight = it.height },
+                notesCount = successState?.notesCount ?: 0,
+                selectedNotesCount = successState?.selectedNotesCount ?: 0,
                 selectedFilters = uiState.selectedFilters,
                 queryState = uiState.searchQuery,
                 onBackClick = { onEvent(SearchEvent.OnButtonBackClick) },
@@ -180,6 +221,8 @@ private fun ScreenContent(
                 onRemoveFilterClick = { onEvent(SearchEvent.OnRemoveFilterClick(it)) },
                 onUnselectedTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 onDateFilterClick = { onEvent(SearchEvent.OnDateFilterClick(it)) },
+                onDeleteClick = { onEvent(SearchEvent.OnDeleteSelectedNotesClick) },
+                onCloseSelectionClick = { onEvent(SearchEvent.OnCloseSelectionClick) }
             )
         },
     ) {
@@ -203,6 +246,17 @@ private fun ScreenContent(
                 )
             }
         }
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_cloud_sync),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
+        )
     }
 }
 
@@ -285,11 +339,12 @@ private fun SuccessContent(
                             item.date.text
                         }
                     },
+                    isSelected = item.isSelected,
                     fontColor = item.fontColor,
                     fontFamily = item.fontFamily,
                     fontSize = item.fontSize.sp,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
-                    onLongClick = {},
+                    onLongClick = { onEvent(SearchEvent.OnNoteLongClick(item.id)) },
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 )
 
@@ -344,6 +399,7 @@ private fun SuccessEmptyQueryPreview() {
                     items = persistentListOf(tagsItem),
                 ),
             ),
+            snackBarHostState = SnackbarHostState(),
         )
     }
 }
@@ -363,6 +419,7 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Programming", isRemovable = false),
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
+                        isSelected = false,
                         fontColor = UiNoteFontColor.WHITE,
                         fontFamily = UiNoteFontFamily.QuickSand,
                         fontSize = 15,
@@ -408,6 +465,7 @@ private fun SuccessFilledQueryPreview() {
                     items = noteItems,
                 ),
             ),
+            snackBarHostState = SnackbarHostState(),
         )
     }
 }
@@ -427,6 +485,7 @@ private fun EmptyStatePreview() {
                 ),
                 state = SearchUiState.State.Empty,
             ),
+            snackBarHostState = SnackbarHostState(),
         )
     }
 }

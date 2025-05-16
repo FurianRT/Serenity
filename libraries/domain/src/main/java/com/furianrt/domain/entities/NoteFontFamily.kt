@@ -9,7 +9,8 @@ enum class NoteFontFamily {
     MONSERRAT_ALTERNATES,
     TEKTUR,
     DOTO,
-    PLAY_WRITE_MODERN;
+    PLAY_WRITE_MODERN,
+    TILLANA;
 
     companion object {
         fun fromString(value: String?): NoteFontFamily {

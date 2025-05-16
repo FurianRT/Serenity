@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
 import com.furianrt.search.api.entities.QueryData
+import com.furianrt.search.internal.ui.SearchUiState.State.Success
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -15,13 +16,18 @@ import java.time.LocalDate
 internal data class SearchUiState(
     val searchQuery: TextFieldState = TextFieldState(),
     val selectedFilters: ImmutableList<SelectedFilter> = persistentListOf(),
-    val state: State = State.Success(),
+    val state: State = Success(),
 ) {
+    val enableSelection: Boolean
+        get() = state is Success && state.selectedNotesCount > 0
+
     sealed interface State {
         @Immutable
         data class Success(
             val items: ImmutableList<SearchListItem> = persistentListOf(),
             val scrollToPosition: Int? = null,
+            val notesCount: Int = 0,
+            val selectedNotesCount: Int = 0,
         ) : State
 
         data object Empty : State
@@ -38,6 +44,10 @@ internal sealed interface SearchEvent {
     data class OnRemoveFilterClick(val filter: SelectedFilter) : SearchEvent
     data class OnDateRangeSelected(val start: LocalDate, val end: LocalDate?) : SearchEvent
     data class OnNoteItemClick(val noteId: String) : SearchEvent
+    data class OnNoteLongClick(val noteId: String) : SearchEvent
+    data object OnDeleteSelectedNotesClick : SearchEvent
+    data object OnConfirmDeleteSelectedNotesClick : SearchEvent
+    data object OnCloseSelectionClick : SearchEvent
 }
 
 internal sealed interface SearchEffect {
@@ -53,4 +63,6 @@ internal sealed interface SearchEffect {
     ) : SearchEffect
 
     data object CloseScreen : SearchEffect
+    data class ShowConfirmNoteDeleteDialog(val notesCount: Int) : SearchEffect
+    data class ShowSyncProgressMessage(val message: String) : SearchEffect
 }

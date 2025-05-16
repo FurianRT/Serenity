@@ -11,7 +11,10 @@ import com.furianrt.core.findInstance
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
+import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.domain.GetAllUniqueTagsUseCase
@@ -20,6 +23,7 @@ import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.search.internal.ui.extensions.toNoteItem
 import com.furianrt.search.internal.ui.extensions.toSelectedTag
 import com.furianrt.search.internal.ui.extensions.toTagsList
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -41,7 +45,6 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
@@ -64,12 +67,16 @@ private class SearchData(
 internal class SearchViewModel @Inject constructor(
     getAllUniqueTagsUseCase: GetAllUniqueTagsUseCase,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
+    private val deleteNoteUseCase: DeleteNoteUseCase,
     private val notesRepository: NotesRepository,
     private val dispatchers: DispatchersProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
+    private val syncManager: SyncManager,
+    private val resourcesManager: ResourcesManager,
 ) : ViewModel(), DialogResultListener {
 
     private val scrollToNoteState = MutableStateFlow<String?>(null)
+    private val selectedNotesState = MutableStateFlow<Set<String>>(emptySet())
     private val queryState = TextFieldState()
     private val queryTextFlow = snapshotFlow { queryState.text.toString() }
         .debounce(QUERY_DEBOUNCE_DURATION)
@@ -96,15 +103,19 @@ internal class SearchViewModel @Inject constructor(
     }.flatMapLatest { data ->
         val dateFilter = data.selectedFilters.findInstance<SelectedFilter.DateRange>()
         val tagFilters = data.selectedFilters.filterIsInstance<SelectedFilter.Tag>()
-        getFilteredNotesUseCase(
-            query = data.queryText,
-            tagsNames = tagFilters.map(SelectedFilter.Tag::title).toSet(),
-            startDate = dateFilter?.start,
-            endDate = dateFilter?.end,
-        ).map { notes ->
+        combine(
+            selectedNotesState,
+            getFilteredNotesUseCase(
+                query = data.queryText,
+                tagsNames = tagFilters.map(SelectedFilter.Tag::title).toSet(),
+                startDate = dateFilter?.start,
+                endDate = dateFilter?.end,
+            ),
+        ) { selectedNotes, notes ->
             buildState(
                 notes = notes,
                 data = data,
+                selectedNotes = selectedNotes,
             )
         }
     }.flowOn(
@@ -138,7 +149,18 @@ internal class SearchViewModel @Inject constructor(
             is SearchEvent.OnTagClick -> addTagFilter(event.title)
             is SearchEvent.OnDateRangeSelected -> addDateFilter(event.start, event.end)
             is SearchEvent.OnScrolledToItem -> scrollToNoteState.update { null }
-            is SearchEvent.OnNoteItemClick -> openNoteViewScreen(event.noteId)
+            is SearchEvent.OnNoteItemClick -> if (selectedNotesState.value.isEmpty()) {
+                openNoteViewScreen(event.noteId)
+            } else {
+                addOrRemoveSelectedNote(event.noteId)
+            }
+            is SearchEvent.OnCloseSelectionClick -> clearSelectedNotes()
+            is SearchEvent.OnConfirmDeleteSelectedNotesClick -> launch {
+                deleteSelectedNotes(selectedNotesState.value)
+            }
+
+            is SearchEvent.OnDeleteSelectedNotesClick -> onDeleteSelectedNotesClick()
+            is SearchEvent.OnNoteLongClick -> addOrRemoveSelectedNote(event.noteId)
         }
     }
 
@@ -153,15 +175,21 @@ internal class SearchViewModel @Inject constructor(
     }
 
     private fun clearQuery() {
+        if (selectedNotesState.value.isEmpty()) {
         queryState.edit { delete(0, originalText.length) }
+            }
     }
 
     private fun removeFilter(filter: SelectedFilter) {
-        selectedFiltersFlow.update { it.toPersistentList().remove(filter) }
+        if (selectedNotesState.value.isEmpty()) {
+            selectedFiltersFlow.update { it.toPersistentList().remove(filter) }
+        }
     }
 
     private fun addTagFilter(title: String) {
-        if (!state.value.selectedFilters.any { it.isSelected && it.id == title }) {
+        val alreadyHasFilter = state.value.selectedFilters.any { it.isSelected && it.id == title }
+        val isSelectionActive = selectedNotesState.value.isEmpty()
+        if (isSelectionActive && !alreadyHasFilter) {
             selectedFiltersFlow.update { it.toPersistentList().add(SelectedFilter.Tag(title)) }
         }
     }
@@ -211,8 +239,51 @@ internal class SearchViewModel @Inject constructor(
         )
     }
 
+    private suspend fun deleteSelectedNotes(notes: Set<String>) {
+        clearSelectedNotes()
+        deleteNoteUseCase(notes)
+    }
+
+    private fun clearSelectedNotes() {
+        selectedNotesState.update { emptySet() }
+    }
+
+    private fun onDeleteSelectedNotesClick() {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                SearchEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                SearchEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> _effect.tryEmit(
+                SearchEffect.ShowConfirmNoteDeleteDialog(
+                    notesCount = selectedNotesState.value.count(),
+                )
+            )
+        }
+    }
+
+    private fun addOrRemoveSelectedNote(noteId: String) {
+        selectedNotesState.update { selectedNotes ->
+            if (selectedNotes.contains(noteId)) {
+                selectedNotes.toMutableSet().apply { remove(noteId) }
+            } else {
+                selectedNotes.toMutableSet().apply { add(noteId) }
+            }
+
+        }
+    }
+
     private suspend fun buildState(
         notes: List<LocalNote>,
+        selectedNotes: Set<String>,
         data: SearchData,
     ): SearchUiState = withContext(dispatchers.default) {
         val hasFilters = data.selectedFilters.isNotEmpty()
@@ -223,13 +294,18 @@ internal class SearchViewModel @Inject constructor(
             val items: ImmutableList<SearchListItem> = if (hasFilters || hasQuery) {
                 buildImmutableList {
                     add(SearchListItem.NotesCountTitle(notes.count()))
-                    addAll(notes.map(LocalNote::toNoteItem))
+                    val notesItems = notes.map { note ->
+                        note.toNoteItem(isSelected = selectedNotes.contains(note.id))
+                    }
+                    addAll(notesItems)
                 }
             } else {
                 persistentListOf(data.allTags.toTagsList())
             }
             SearchUiState.State.Success(
                 items = items,
+                notesCount = notes.count(),
+                selectedNotesCount = selectedNotes.count(),
                 scrollToPosition = items.indexOfFirstOrNull { item ->
                     item is SearchListItem.Note && item.id == data.scrollToNote
                 },

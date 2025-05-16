@@ -13,4 +13,5 @@ internal fun NoteFontFamily.toNoteFont() = when (this) {
     NoteFontFamily.TEKTUR -> NoteFont.Tektur
     NoteFontFamily.DOTO -> NoteFont.Doto
     NoteFontFamily.PLAY_WRITE_MODERN -> NoteFont.PlayWriteModern
+    NoteFontFamily.TILLANA -> NoteFont.Tillana
 }

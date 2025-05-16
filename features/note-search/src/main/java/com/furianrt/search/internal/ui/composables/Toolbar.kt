@@ -1,6 +1,7 @@
 package com.furianrt.search.internal.ui.composables
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
@@ -27,6 +28,7 @@ import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -48,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
@@ -73,6 +76,8 @@ private const val BACK_BUTTON_ANIM_DURATION = 200
 internal fun Toolbar(
     selectedFilters: ImmutableList<SelectedFilter>,
     queryState: TextFieldState,
+    notesCount: Int,
+    selectedNotesCount: Int,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
@@ -80,20 +85,126 @@ internal fun Toolbar(
     onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit = {},
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit = {},
     onClearQueryClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
+    onCloseSelectionClick: () -> Unit = {},
 ) {
-    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
     val isInspectionMode = LocalInspectionMode.current
     var showBackButton by rememberSaveable { mutableStateOf(isInspectionMode) }
     OneTimeEffect {
         showBackButton = true
+        focusRequester.requestFocus()
     }
-    Column(
+    val test = if (selectedNotesCount > 0) persistentListOf() else selectedFilters
+    Crossfade(
         modifier = modifier
             .statusBarsPadding()
             .fillMaxWidth()
             .animateContentSize()
             .systemGestureExclusion(),
+        targetState = selectedNotesCount > 0,
+    ) { targetState ->
+        if (targetState) {
+            SelectedContent(
+                notesCount = notesCount,
+                selectedNotesCount = selectedNotesCount.coerceAtLeast(1),
+                onDeleteClick = onDeleteClick,
+                onCloseSelectionClick = onCloseSelectionClick,
+            )
+        } else {
+            UnselectedContent(
+                selectedFilters = test,
+                queryState = queryState,
+                showBackButton = showBackButton,
+                focusRequester = focusRequester,
+                onBackClick = {
+                    showBackButton = false
+                    onBackClick()
+                },
+                onCalendarClick = onCalendarClick,
+                onDateFilterClick = onDateFilterClick,
+                onUnselectedTagClick = onUnselectedTagClick,
+                onRemoveFilterClick = onRemoveFilterClick,
+                onClearQueryClick = onClearQueryClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SelectedContent(
+    notesCount: Int,
+    selectedNotesCount: Int,
+    onDeleteClick: () -> Unit,
+    onCloseSelectionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .height(ToolbarConstants.bigToolbarHeight)
+            .padding(horizontal = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
+        Box(
+            modifier = modifier
+                .minimumInteractiveComponentSize()
+                .clickableWithScaleAnim(
+                    maxScale = 1.1f,
+                    indication = ripple(bounded = false, radius = 20.dp),
+                    onClick = onCloseSelectionClick,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(uiR.drawable.ic_exit),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+        Text(
+            modifier = Modifier.weight(1f),
+            text = "$selectedNotesCount/$notesCount",
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center,
+        )
+        Box(
+            modifier = modifier
+                .minimumInteractiveComponentSize()
+                .clickableWithScaleAnim(
+                    maxScale = 1.1f,
+                    indication = ripple(bounded = false, radius = 20.dp),
+                    onClick = onDeleteClick,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(
+                painter = painterResource(uiR.drawable.ic_delete),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+}
+
+@Composable
+private fun UnselectedContent(
+    selectedFilters: ImmutableList<SelectedFilter>,
+    queryState: TextFieldState,
+    showBackButton: Boolean,
+    focusRequester: FocusRequester,
+    modifier: Modifier = Modifier,
+    onBackClick: () -> Unit,
+    onCalendarClick: () -> Unit,
+    onDateFilterClick: (date: SelectedFilter.DateRange) -> Unit,
+    onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit,
+    onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
+    onClearQueryClick: () -> Unit,
+) {
+    val focusManager = LocalFocusManager.current
+
+    Column(modifier = modifier.fillMaxWidth()) {
         Row(
             modifier = Modifier
                 .height(ToolbarConstants.bigToolbarHeight)
@@ -110,7 +221,6 @@ internal fun Toolbar(
                     ButtonBack(
                         onClick = {
                             focusManager.clearFocus()
-                            showBackButton = false
                             onBackClick()
                         },
                     )
@@ -119,6 +229,7 @@ internal fun Toolbar(
             SearchBar(
                 modifier = Modifier.weight(1f),
                 state = queryState,
+                focusRequester = focusRequester,
                 onClearClick = onClearQueryClick,
             )
             ButtonCalendar(
@@ -162,14 +273,11 @@ private fun ButtonCalendar(
 @Composable
 private fun SearchBar(
     state: TextFieldState,
+    focusRequester: FocusRequester,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val showCloseButton by remember { derivedStateOf { state.text.isNotEmpty() } }
-    val focusRequester = remember { FocusRequester() }
-    OneTimeEffect(Unit) {
-        focusRequester.requestFocus()
-    }
     Row(
         modifier = modifier
             .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp))
@@ -274,13 +382,15 @@ private fun SelectedFiltersList(
 private fun PreviewWithTags() {
     SerenityTheme {
         Toolbar(
+            notesCount = 1,
+            selectedNotesCount = 0,
             queryState = TextFieldState(),
             selectedFilters = buildImmutableList {
                 add(SelectedFilter.DateRange(start = LocalDate.now(), end = LocalDate.now()))
                 repeat(5) { index ->
                     add(SelectedFilter.Tag(title = "Title$index", isSelected = index == 0))
                 }
-            }
+            },
         )
     }
 }
@@ -290,6 +400,21 @@ private fun PreviewWithTags() {
 private fun PreviewWithoutTags() {
     SerenityTheme {
         Toolbar(
+            notesCount = 1,
+            selectedNotesCount = 0,
+            queryState = TextFieldState("test query"),
+            selectedFilters = persistentListOf(),
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun PreviewSelected() {
+    SerenityTheme {
+        Toolbar(
+            notesCount = 10,
+            selectedNotesCount = 2,
             queryState = TextFieldState("test query"),
             selectedFilters = persistentListOf(),
         )
