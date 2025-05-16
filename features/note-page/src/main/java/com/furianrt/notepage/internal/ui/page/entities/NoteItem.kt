@@ -16,7 +16,7 @@ internal data class NoteItem(
     val tags: ImmutableList<UiNoteTag> = persistentListOf(),
     val stickers: ImmutableList<StickerItem> = persistentListOf(),
     val content: ImmutableList<UiNoteContent> = persistentListOf(),
-    val fontFamily: UiNoteFontFamily = UiNoteFontFamily.QUICK_SAND,
+    val fontFamily: UiNoteFontFamily = UiNoteFontFamily.QuickSand,
     val fontColor: UiNoteFontColor = UiNoteFontColor.WHITE,
     val fontSize: Int = 15,
 )

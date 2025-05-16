@@ -364,12 +364,13 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
                         fontColor = UiNoteFontColor.WHITE,
-                        fontFamily = UiNoteFontFamily.QUICK_SAND,
+                        fontFamily = UiNoteFontFamily.QuickSand,
                         fontSize = 15,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",
                                 state = NoteTitleState(
+                                    fontFamily = UiNoteFontFamily.QuickSand,
                                     initialText = AnnotatedString(
                                         text = "Kotlin is a modern programming language with a " +
                                                 "lot more syntactic sugar compared to Java, and as such " +

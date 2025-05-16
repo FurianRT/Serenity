@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -100,7 +101,9 @@ internal fun RegularPanel(
 private fun RegularPanelPreview() {
     SerenityTheme {
         RegularPanel(
-            titleState = NoteTitleState(),
+            titleState = NoteTitleState(
+                fontFamily = UiNoteFontFamily.QuickSand,
+            ),
         )
     }
 }

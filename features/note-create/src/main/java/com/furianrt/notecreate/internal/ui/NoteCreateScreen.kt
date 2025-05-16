@@ -213,7 +213,7 @@ private fun Preview() {
             uiState = NoteCreateUiState(
                 note = NoteItem(
                     id = "",
-                    fontFamily = UiNoteFontFamily.QUICK_SAND,
+                    fontFamily = UiNoteFontFamily.QuickSand,
                     fontColor = UiNoteFontColor.WHITE,
                     fontSize = 15,
                     date = ZonedDateTime.now(),

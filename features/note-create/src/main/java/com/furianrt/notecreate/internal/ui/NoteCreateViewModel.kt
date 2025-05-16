@@ -103,7 +103,7 @@ internal class NoteCreateViewModel @Inject constructor(
         note = NoteItem(
             id = UUID.randomUUID().toString(),
             date = ZonedDateTime.now(),
-            fontFamily = UiNoteFontFamily.QUICK_SAND,
+            fontFamily = UiNoteFontFamily.QuickSand,
             fontColor = UiNoteFontColor.WHITE,  //TODO сделать дефолтный шрифт
             fontSize = 15,
             isPinned = false,

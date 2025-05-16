@@ -323,7 +323,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                 date = NoteListScreenNote.Date.Other("19.06.2023"),
                 tags = persistentListOf(),
                 fontColor = UiNoteFontColor.WHITE,
-                fontFamily = UiNoteFontFamily.QUICK_SAND,
+                fontFamily = UiNoteFontFamily.QuickSand,
                 fontSize = 15,
                 isPinned = false,
                 isSelected = withSelected && index % 2 == 0,
@@ -331,6 +331,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                     UiNoteContent.Title(
                         id = index.toString(),
                         state = NoteTitleState(
+                            fontFamily = UiNoteFontFamily.QuickSand,
                             initialText = AnnotatedString(
                                 text = "Kotlin is a modern programming language with a " +
                                         "lot more syntactic sugar compared to Java, and as such " +

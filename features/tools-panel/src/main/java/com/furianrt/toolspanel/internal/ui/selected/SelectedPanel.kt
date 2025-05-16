@@ -22,6 +22,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -33,8 +34,8 @@ private enum class PanelState {
 
 @Composable
 internal fun SelectedPanel(
+    titleState: NoteTitleState,
     modifier: Modifier = Modifier,
-    titleState: NoteTitleState = NoteTitleState(),
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
     AnimatedContent(
@@ -365,6 +366,10 @@ private fun FillColorsStateContent(
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
-        SelectedPanel()
+        SelectedPanel(
+            titleState = NoteTitleState(
+                fontFamily = UiNoteFontFamily.QuickSand,
+            ),
+        )
     }
 }

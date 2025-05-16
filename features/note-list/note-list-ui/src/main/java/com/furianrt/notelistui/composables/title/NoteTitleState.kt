@@ -10,15 +10,17 @@ import androidx.compose.ui.text.AnnotatedString.Range
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.extensions.differSpans
 
 @Stable
 class NoteTitleState(
+    private var fontFamily: UiNoteFontFamily,
     initialText: AnnotatedString = AnnotatedString(""),
     initialSelection: TextRange = TextRange(initialText.length),
 ) {
@@ -75,7 +77,7 @@ class NoteTitleState(
                     )
                 )
                 addStyle(
-                    style = spanType.toSpanStyle(),
+                    style = spanType.toSpanStyle(fontFamily),
                     start = start,
                     end = end,
                 )
@@ -146,6 +148,13 @@ class NoteTitleState(
         }
         .mapNotNull { it.item.toSpanType() }
 
+    fun updateFontFamily(fontFamily: UiNoteFontFamily) {
+        this.fontFamily = fontFamily
+        textValueState = textValueState.copy(
+            annotatedString = textValueState.annotatedString.updateBoldFontFamily(fontFamily.bold),
+        )
+    }
+
     internal fun updateValue(value: TextFieldValue) {
         val result = textValueState.differSpans(value)
         recordUndo(oldValue = textValueState, newValue = result)
@@ -166,7 +175,7 @@ class NoteTitleState(
 }
 
 fun SpanStyle.toSpanType(): SpanType? = when {
-    fontWeight != null -> SpanType.Bold
+    fontFamily != null -> SpanType.Bold
     fontStyle == FontStyle.Italic -> SpanType.Italic
     textDecoration == TextDecoration.Underline -> SpanType.Underline
     textDecoration == TextDecoration.LineThrough -> SpanType.Strikethrough
@@ -175,8 +184,8 @@ fun SpanStyle.toSpanType(): SpanType? = when {
     else -> null
 }
 
-fun SpanType.toSpanStyle(): SpanStyle = when (this) {
-    is SpanType.Bold -> SpanStyle(fontWeight = FontWeight.Black)
+fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) {
+    is SpanType.Bold -> SpanStyle(fontFamily = fontFamily.bold)
     is SpanType.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
     is SpanType.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
     is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
@@ -196,6 +205,31 @@ private fun AnnotatedString.hasSpans(
 ): Boolean = getSpansStyles(start = start, end = end)
     .any { it.item.toSpanType() == spanType }
 
+private fun AnnotatedString.updateBoldFontFamily(
+    fontFamily: FontFamily,
+): AnnotatedString = flatMapAnnotations { span ->
+    val spanStyle: AnnotatedString.Annotation = span.item
+
+    if (spanStyle !is SpanStyle) {
+        return@flatMapAnnotations listOf(span)
+    }
+
+
+    val item = (spanStyle as? SpanStyle)?.toSpanType() ?: return@flatMapAnnotations listOf(span)
+
+    if (item !is SpanType.Bold) {
+        return@flatMapAnnotations listOf(span)
+    }
+
+    return@flatMapAnnotations listOf(
+        Range(
+            item = spanStyle.copy(fontFamily = fontFamily),
+            start = span.start,
+            end = span.end,
+        )
+    )
+}
+
 private fun AnnotatedString.removeSpansFromSelection(
     start: Int,
     end: Int,
@@ -204,7 +238,7 @@ private fun AnnotatedString.removeSpansFromSelection(
     if (text.isEmpty()) {
         return@flatMapAnnotations emptyList()
     }
-    val spanStyle: AnnotatedString.Annotation = span.item
+    val spanStyle = span.item
 
     if (spanStyle !is SpanStyle) {
         return@flatMapAnnotations listOf(span)

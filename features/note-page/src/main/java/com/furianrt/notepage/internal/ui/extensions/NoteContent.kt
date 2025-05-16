@@ -2,7 +2,9 @@ package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
 import kotlinx.collections.immutable.ImmutableList
@@ -11,6 +13,7 @@ import kotlinx.collections.immutable.toPersistentList
 import java.util.UUID
 
 internal fun List<UiNoteContent>.refreshTitleTemplates(
+    fontFamily: UiNoteFontFamily,
     addTopTemplate: Boolean,
 ): ImmutableList<UiNoteContent> {
     val result = toMutableList()
@@ -23,12 +26,22 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
         }
 
         if (index == 0 && addTopTemplate) {
-            result.add(index, UiNoteContent.Title(id = UUID.randomUUID().toString()))
+            result.add(
+                index, UiNoteContent.Title(
+                    state = NoteTitleState(fontFamily),
+                    id = UUID.randomUUID().toString()
+                )
+            )
         }
 
         if (index == lastIndex) {
             val newItemIndex = result.count()
-            result.add(newItemIndex, UiNoteContent.Title(id = UUID.randomUUID().toString()))
+            result.add(
+                newItemIndex, UiNoteContent.Title(
+                    id = UUID.randomUUID().toString(),
+                    state = NoteTitleState(fontFamily),
+                )
+            )
         }
 
         val nextItem = getOrElse(index + 1) {
@@ -37,12 +50,22 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
 
         if (nextItem !is UiNoteContent.Title) {
             val newItemIndex = result.indexOf(content) + 1
-            result.add(newItemIndex, UiNoteContent.Title(id = UUID.randomUUID().toString()))
+            result.add(
+                newItemIndex, UiNoteContent.Title(
+                    id = UUID.randomUUID().toString(),
+                    state = NoteTitleState(fontFamily),
+                )
+            )
         }
     }
 
     if (result.isEmpty()) {
-        result.add(UiNoteContent.Title(id = UUID.randomUUID().toString()))
+        result.add(
+            UiNoteContent.Title(
+                id = UUID.randomUUID().toString(),
+                state = NoteTitleState(fontFamily),
+            )
+        )
     }
 
     return result.toImmutableList()

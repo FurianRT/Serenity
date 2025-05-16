@@ -56,7 +56,10 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -68,8 +71,8 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
-import java.util.Locale
 import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
@@ -271,7 +274,7 @@ private fun Content(
         }
         items(
             count = uiState.fontFamilies.count(),
-            key = { uiState.fontFamilies[it] },
+            key = { uiState.fontFamilies[it].name },
             span = { index ->
                 fontSpanIndexes[uiState.fontFamilies[index]] = index % maxLineSpan
                 GridItemSpan(1)
@@ -387,14 +390,19 @@ private fun FontItem(
                     shape = RoundedCornerShape(8.dp),
                 )
             }
-            .clickableNoRipple { onClick(family) },
+            .clickableNoRipple { onClick(family) }
+            .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = family.name.lowercase(Locale.ROOT),
+            text = family.name,
             style = MaterialTheme.typography.bodyMedium.copy(
-                fontFamily = family.value,
+                fontFamily = family.regular,
+                lineHeight = 20.sp,
             ),
+            textAlign = TextAlign.Center,
+            overflow = TextOverflow.Ellipsis,
+            maxLines = 2,
         )
     }
 }
@@ -416,9 +424,9 @@ private fun ContentPreview() {
         Content(
             uiState = FontPanelUiState(
                 selectedFontColor = UiNoteFontColor.WHITE,
-                selectedFontFamily = UiNoteFontFamily.QUICK_SAND,
+                selectedFontFamily = UiNoteFontFamily.QuickSand,
                 selectedFontSize = 15,
-                fontFamilies = UiNoteFontFamily.entries.toImmutableList(),
+                fontFamilies = persistentListOf(UiNoteFontFamily.QuickSand),
                 fontColors = UiNoteFontColor.entries.toImmutableList(),
             ),
             onEvent = {},

@@ -313,7 +313,9 @@ private fun SuccessScreen(
     }
 
     MediaSelectorBottomSheet(
-        modifier = modifier,
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         state = state.bottomScaffoldState,
         openMediaViewer = { route ->
             if (isSelected) {
@@ -478,7 +480,7 @@ private fun ContentItems(
                                 .animatePlacementInScope(this@LookaheadScope),
                             title = item,
                             color = uiState.fontColor.value,
-                            fontFamily = uiState.fontFamily.value,
+                            fontFamily = uiState.fontFamily.regular,
                             fontSize = uiState.fontSize.sp,
                             hint = if (index == 0) {
                                 stringResource(R.string.note_title_hint_text)
@@ -592,7 +594,9 @@ private fun Panel(
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
                     hazeState = hazeState,
-                    titleState = titleState ?: NoteTitleState(),
+                    titleState = titleState ?: NoteTitleState(
+                        fontFamily = UiNoteFontFamily.QuickSand,
+                    ),
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
                     onVoiceRecordStart = onVoiceRecordStart,
@@ -656,12 +660,20 @@ private fun Modifier.clipPanel(
 
 @Composable
 private fun LoadingScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize())
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    )
 }
 
 @Composable
 private fun EmptyScreen(modifier: Modifier = Modifier) {
-    Box(modifier = modifier.fillMaxSize())
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -678,13 +690,14 @@ private fun SuccessScreenPreview() {
                 tags = persistentListOf(),
                 stickers = persistentListOf(),
                 playingVoiceId = null,
-                fontFamily = UiNoteFontFamily.QUICK_SAND,
+                fontFamily = UiNoteFontFamily.QuickSand,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 15,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",
                         state = NoteTitleState(
+                            fontFamily = UiNoteFontFamily.QuickSand,
                             initialText = AnnotatedString(
                                 text = "Kotlin is a modern programming language with a " +
                                         "lot more syntactic sugar compared to Java, and as such " +

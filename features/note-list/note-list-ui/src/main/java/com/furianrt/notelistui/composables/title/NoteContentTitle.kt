@@ -37,6 +37,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
+import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.bringIntoView
@@ -174,6 +175,7 @@ private fun NoteContentTitlePreview() {
             title = UiNoteContent.Title(
                 id = "1",
                 state = NoteTitleState(
+                    fontFamily = UiNoteFontFamily.QuickSand,
                     initialText = AnnotatedString(
                         text = "Kotlin is a modern programming language with a " +
                                 "lot more syntactic sugar compared to Java, and as such " +

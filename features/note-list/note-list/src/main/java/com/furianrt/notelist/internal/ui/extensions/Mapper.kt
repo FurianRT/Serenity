@@ -34,6 +34,6 @@ internal fun LocalNote.toMainScreenNote(
         fontSize = fontSize,
         isPinned = isPinned,
         isSelected = isSelected,
-        content = content.getShortUiContent(),
+        content = content.getShortUiContent(fontFamily.toUiNoteFontFamily()),
     )
 }

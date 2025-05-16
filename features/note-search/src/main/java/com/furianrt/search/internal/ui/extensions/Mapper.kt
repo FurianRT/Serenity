@@ -30,7 +30,7 @@ internal fun LocalNote.toNoteItem(): SearchListItem.Note {
         fontColor = fontColor.toUiNoteFontColor(),
         fontFamily = fontFamily.toUiNoteFontFamily(),
         fontSize = fontSize,
-        content = content.getShortUiContent(),
+        content = content.getShortUiContent(fontFamily.toUiNoteFontFamily()),
     )
 }
 

@@ -5,24 +5,81 @@ import androidx.compose.ui.text.font.FontFamily
 import com.furianrt.uikit.theme.NoteFont
 
 @Immutable
-enum class UiNoteFontFamily(val value: FontFamily) {
-    QUICK_SAND(NoteFont.QuickSand.regular),
-    TEST_FONT_1(NoteFont.ToThePoint.regular),
-    TEST_FONT_2(NoteFont.QuickSand.regular),
-    TEST_FONT_3(NoteFont.QuickSand.regular),
-    TEST_FONT_4(NoteFont.QuickSand.regular),
-    TEST_FONT_5(NoteFont.QuickSand.regular),
-    TEST_FONT_6(NoteFont.QuickSand.regular),
-    TEST_FONT_7(NoteFont.QuickSand.regular),
-    TEST_FONT_8(NoteFont.QuickSand.regular),
-    TEST_FONT_9(NoteFont.QuickSand.regular),
-    TEST_FONT_10(NoteFont.QuickSand.regular),
-    TEST_FONT_11(NoteFont.QuickSand.regular),
-    TEST_FONT_12(NoteFont.QuickSand.regular),
-    TEST_FONT_13(NoteFont.QuickSand.regular),
-    TEST_FONT_14(NoteFont.QuickSand.regular),
-    TEST_FONT_15(NoteFont.QuickSand.regular),
-    TEST_FONT_16(NoteFont.QuickSand.regular),
-    TEST_FONT_17(NoteFont.QuickSand.regular),
-    TEST_FONT_18(NoteFont.QuickSand.regular);
+sealed class UiNoteFontFamily(
+    val name: String,
+    val light: FontFamily,
+    val regular: FontFamily,
+    val bold: FontFamily,
+) {
+    @Immutable
+    data object QuickSand : UiNoteFontFamily(
+        name = "Quick Sand",
+        light = NoteFont.QuickSand.light,
+        regular = NoteFont.QuickSand.regular,
+        bold = NoteFont.QuickSand.bold,
+    )
+
+    @Immutable
+    data object ShantellSans : UiNoteFontFamily(
+        name = "Shantell Sans",
+        light = NoteFont.ShantellSans.light,
+        regular = NoteFont.ShantellSans.regular,
+        bold = NoteFont.ShantellSans.bold,
+    )
+
+    @Immutable
+    data object PixelifySans : UiNoteFontFamily(
+        name = "Pixelify Sans",
+        light = NoteFont.PixelifySans.light,
+        regular = NoteFont.PixelifySans.regular,
+        bold = NoteFont.PixelifySans.bold,
+    )
+
+    @Immutable
+    data object AdventPro : UiNoteFontFamily(
+        name = "Advent Pro",
+        light = NoteFont.AdventPro.light,
+        regular = NoteFont.AdventPro.regular,
+        bold = NoteFont.AdventPro.bold,
+    )
+
+    @Immutable
+    data object CormorantUnicase : UiNoteFontFamily(
+        name = "Cormorant Unicase",
+        light = NoteFont.CormorantUnicase.light,
+        regular = NoteFont.CormorantUnicase.regular,
+        bold = NoteFont.CormorantUnicase.bold,
+    )
+
+    @Immutable
+    data object MontserratAlternates : UiNoteFontFamily(
+        name = "Montserrat Alternates",
+        light = NoteFont.MontserratAlternates.light,
+        regular = NoteFont.MontserratAlternates.regular,
+        bold = NoteFont.MontserratAlternates.bold,
+    )
+
+    @Immutable
+    data object Tektur : UiNoteFontFamily(
+        name = "Tektur Font",
+        light = NoteFont.Tektur.light,
+        regular = NoteFont.Tektur.regular,
+        bold = NoteFont.Tektur.bold,
+    )
+
+    @Immutable
+    data object Doto : UiNoteFontFamily(
+        name = "Doto Font",
+        light = NoteFont.Doto.light,
+        regular = NoteFont.Doto.regular,
+        bold = NoteFont.Doto.bold,
+    )
+
+    @Immutable
+    data object PlayWriteModern : UiNoteFontFamily(
+        name = "Play Write Modern",
+        light = NoteFont.PlayWriteModern.light,
+        regular = NoteFont.PlayWriteModern.regular,
+        bold = NoteFont.PlayWriteModern.bold,
+    )
 }

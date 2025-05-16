@@ -21,7 +21,7 @@ sealed class UiNoteContent(
     @Stable
     data class Title(
         override val id: String,
-        val state: NoteTitleState = NoteTitleState(),
+        val state: NoteTitleState,
         val focusRequester: FocusRequester = FocusRequester(),
     ) : UiNoteContent(id)
 

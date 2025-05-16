@@ -25,7 +25,7 @@ internal suspend fun LocalNote.toNoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
     stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.typeId)) },
-    content = content.mapImmutable(LocalNote.Content::toUiNoteContent),
+    content = content.mapImmutable { it.toUiNoteContent(fontFamily.toUiNoteFontFamily()) },
     fontColor = fontColor.toUiNoteFontColor(),
     fontFamily = fontFamily.toUiNoteFontFamily(),
     fontSize = fontSize,

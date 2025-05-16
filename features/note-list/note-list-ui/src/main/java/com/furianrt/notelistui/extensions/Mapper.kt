@@ -80,8 +80,8 @@ fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
     isRemovable = isRemovable,
 )
 
-fun LocalNote.Content.toUiNoteContent() = when (this) {
-    is LocalNote.Content.Title -> toUiNoteTitle()
+fun LocalNote.Content.toUiNoteContent(fontFamily: UiNoteFontFamily) = when (this) {
+    is LocalNote.Content.Title -> toUiNoteTitle(fontFamily)
     is LocalNote.Content.MediaBlock -> toUiMediaBlock()
     is LocalNote.Content.Voice -> toUiVoice()
 }
@@ -100,9 +100,12 @@ fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
 )
 
 
-fun LocalNote.Content.Title.toUiNoteTitle() = UiNoteContent.Title(
+fun LocalNote.Content.Title.toUiNoteTitle(fontFamily: UiNoteFontFamily) = UiNoteContent.Title(
     id = id,
-    state = NoteTitleState(initialText = getAnnotatedString()),
+    state = NoteTitleState(
+        initialText = getAnnotatedString(fontFamily),
+        fontFamily = fontFamily,
+    ),
 )
 
 fun LocalNote.Content.Media.toUiNoteMedia(): UiNoteContent.MediaBlock.Media = when (this) {
@@ -132,7 +135,9 @@ fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean = false) = UiNoteTag.R
     isRemovable = isRemovable,
 )
 
-fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = buildImmutableList {
+fun List<LocalNote.Content>.getShortUiContent(
+    fontFamily: UiNoteFontFamily,
+): ImmutableList<UiNoteContent> = buildImmutableList {
     val mediaBlock = this@getShortUiContent.firstOrNull { it is LocalNote.Content.MediaBlock }
     if (mediaBlock != null) {
         add(
@@ -153,8 +158,9 @@ fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = 
                 state = NoteTitleState(
                     initialText = this@getShortUiContent
                         .filterIsInstance<LocalNote.Content.Title>()
-                        .map { it.getAnnotatedString() }
-                        .join(separator = "\n")
+                        .map { it.getAnnotatedString(fontFamily) }
+                        .join(separator = "\n"),
+                    fontFamily = fontFamily,
                 ),
             ),
         )
@@ -169,47 +175,27 @@ fun List<LocalNote.Content>.getShortUiContent(): ImmutableList<UiNoteContent> = 
 }
 
 fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
-    NoteFontFamily.QUICK_SAND -> UiNoteFontFamily.QUICK_SAND
-    NoteFontFamily.TEST_FONT_1 -> UiNoteFontFamily.TEST_FONT_1
-    NoteFontFamily.TEST_FONT_2 -> UiNoteFontFamily.TEST_FONT_2
-    NoteFontFamily.TEST_FONT_3 -> UiNoteFontFamily.TEST_FONT_3
-    NoteFontFamily.TEST_FONT_4 -> UiNoteFontFamily.TEST_FONT_4
-    NoteFontFamily.TEST_FONT_5 -> UiNoteFontFamily.TEST_FONT_5
-    NoteFontFamily.TEST_FONT_6 -> UiNoteFontFamily.TEST_FONT_6
-    NoteFontFamily.TEST_FONT_7 -> UiNoteFontFamily.TEST_FONT_7
-    NoteFontFamily.TEST_FONT_8 -> UiNoteFontFamily.TEST_FONT_8
-    NoteFontFamily.TEST_FONT_9 -> UiNoteFontFamily.TEST_FONT_9
-    NoteFontFamily.TEST_FONT_10 -> UiNoteFontFamily.TEST_FONT_10
-    NoteFontFamily.TEST_FONT_11 -> UiNoteFontFamily.TEST_FONT_11
-    NoteFontFamily.TEST_FONT_12 -> UiNoteFontFamily.TEST_FONT_12
-    NoteFontFamily.TEST_FONT_13 -> UiNoteFontFamily.TEST_FONT_13
-    NoteFontFamily.TEST_FONT_14 -> UiNoteFontFamily.TEST_FONT_14
-    NoteFontFamily.TEST_FONT_15 -> UiNoteFontFamily.TEST_FONT_15
-    NoteFontFamily.TEST_FONT_16 -> UiNoteFontFamily.TEST_FONT_16
-    NoteFontFamily.TEST_FONT_17 -> UiNoteFontFamily.TEST_FONT_17
-    NoteFontFamily.TEST_FONT_18 -> UiNoteFontFamily.TEST_FONT_18
+    NoteFontFamily.QUICK_SAND -> UiNoteFontFamily.QuickSand
+    NoteFontFamily.SHANTELL_SANS -> UiNoteFontFamily.ShantellSans
+    NoteFontFamily.PIXELIFY_SANS -> UiNoteFontFamily.PixelifySans
+    NoteFontFamily.ADVENT_PRO -> UiNoteFontFamily.AdventPro
+    NoteFontFamily.CORMORANT_UNICASE -> UiNoteFontFamily.CormorantUnicase
+    NoteFontFamily.MONSERRAT_ALTERNATES -> UiNoteFontFamily.MontserratAlternates
+    NoteFontFamily.TEKTUR -> UiNoteFontFamily.Tektur
+    NoteFontFamily.DOTO -> UiNoteFontFamily.Doto
+    NoteFontFamily.PLAY_WRITE_MODERN -> UiNoteFontFamily.PlayWriteModern
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
-    UiNoteFontFamily.QUICK_SAND -> NoteFontFamily.QUICK_SAND
-    UiNoteFontFamily.TEST_FONT_1 -> NoteFontFamily.TEST_FONT_1
-    UiNoteFontFamily.TEST_FONT_2 -> NoteFontFamily.TEST_FONT_2
-    UiNoteFontFamily.TEST_FONT_3 -> NoteFontFamily.TEST_FONT_3
-    UiNoteFontFamily.TEST_FONT_4 -> NoteFontFamily.TEST_FONT_4
-    UiNoteFontFamily.TEST_FONT_5 -> NoteFontFamily.TEST_FONT_5
-    UiNoteFontFamily.TEST_FONT_6 -> NoteFontFamily.TEST_FONT_6
-    UiNoteFontFamily.TEST_FONT_7 -> NoteFontFamily.TEST_FONT_7
-    UiNoteFontFamily.TEST_FONT_8 -> NoteFontFamily.TEST_FONT_8
-    UiNoteFontFamily.TEST_FONT_9 -> NoteFontFamily.TEST_FONT_9
-    UiNoteFontFamily.TEST_FONT_10 -> NoteFontFamily.TEST_FONT_10
-    UiNoteFontFamily.TEST_FONT_11 -> NoteFontFamily.TEST_FONT_11
-    UiNoteFontFamily.TEST_FONT_12 -> NoteFontFamily.TEST_FONT_12
-    UiNoteFontFamily.TEST_FONT_13 -> NoteFontFamily.TEST_FONT_13
-    UiNoteFontFamily.TEST_FONT_14 -> NoteFontFamily.TEST_FONT_14
-    UiNoteFontFamily.TEST_FONT_15 -> NoteFontFamily.TEST_FONT_15
-    UiNoteFontFamily.TEST_FONT_16 -> NoteFontFamily.TEST_FONT_16
-    UiNoteFontFamily.TEST_FONT_17 -> NoteFontFamily.TEST_FONT_17
-    UiNoteFontFamily.TEST_FONT_18 -> NoteFontFamily.TEST_FONT_18
+    UiNoteFontFamily.QuickSand -> NoteFontFamily.QUICK_SAND
+    UiNoteFontFamily.ShantellSans -> NoteFontFamily.SHANTELL_SANS
+    UiNoteFontFamily.PixelifySans -> NoteFontFamily.PIXELIFY_SANS
+    UiNoteFontFamily.AdventPro -> NoteFontFamily.ADVENT_PRO
+    UiNoteFontFamily.CormorantUnicase -> NoteFontFamily.CORMORANT_UNICASE
+    UiNoteFontFamily.MontserratAlternates -> NoteFontFamily.MONSERRAT_ALTERNATES
+    UiNoteFontFamily.Tektur -> NoteFontFamily.TEKTUR
+    UiNoteFontFamily.Doto -> NoteFontFamily.DOTO
+    UiNoteFontFamily.PlayWriteModern -> NoteFontFamily.PLAY_WRITE_MODERN
 }
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
@@ -265,7 +251,7 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
     titleId: String,
 ): NoteTextSpan? = when {
-    item.fontWeight != null -> NoteTextSpan.Bold(
+    item.fontFamily != null -> NoteTextSpan.Bold(
         titleId = titleId,
         start = start,
         end = end,
@@ -306,42 +292,46 @@ private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
     else -> null
 }
 
-private fun LocalNote.Content.Title.getAnnotatedString() = buildAnnotatedString {
+private fun LocalNote.Content.Title.getAnnotatedString(
+    fontFamily: UiNoteFontFamily,
+) = buildAnnotatedString {
     append(text)
     spans.fastForEach { span ->
         when (span) {
             is NoteTextSpan.Bold -> addStyle(
-                style = NoteTitleState.SpanType.Bold.toSpanStyle(),
+                style = NoteTitleState.SpanType.Bold.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Italic -> addStyle(
-                style = NoteTitleState.SpanType.Italic.toSpanStyle(),
+                style = NoteTitleState.SpanType.Italic.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Underline -> addStyle(
-                style = NoteTitleState.SpanType.Underline.toSpanStyle(),
+                style = NoteTitleState.SpanType.Underline.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Strikethrough -> addStyle(
-                style = NoteTitleState.SpanType.Strikethrough.toSpanStyle(),
+                style = NoteTitleState.SpanType.Strikethrough.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FontColor -> addStyle(
-                style = NoteTitleState.SpanType.FontColor(Color(span.color)).toSpanStyle(),
+                style = NoteTitleState.SpanType.FontColor(Color(span.color))
+                    .toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FillColor -> addStyle(
-                style = NoteTitleState.SpanType.FillColor(Color(span.color)).toSpanStyle(),
+                style = NoteTitleState.SpanType.FillColor(Color(span.color))
+                    .toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
