@@ -549,13 +549,16 @@ private fun MonthYearList(
         }
         items(count = items.count(), key = { it }) { index ->
             val scale = remember { Animatable(1f) }
-            LaunchedEffect(performHaptic) {
-                val isCurrentItem = index == listState.firstVisibleItemIndex
-                if (performHaptic && isCurrentItem) {
-                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
-                    scale.animateTo(targetValue = 1.1f, animationSpec = tween(durationMillis = 100))
-                    scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 100))
-                }
+            LaunchedEffect(Unit) {
+                snapshotFlow { performHaptic }
+                    .collect { haptic ->
+                        val isCurrentItem = index == listState.firstVisibleItemIndex
+                        if (haptic && isCurrentItem) {
+                            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                            scale.animateTo(targetValue = 1.1f, animationSpec = tween(durationMillis = 100))
+                            scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 100))
+                        }
+                    }
             }
             Box(
                 modifier = Modifier
