@@ -1,8 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.HapticFeedbackConstants
+import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -24,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -43,6 +41,7 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.VideoSlider
+import com.furianrt.uikit.R as uiR
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
@@ -72,7 +71,6 @@ internal fun MediaPager(
         key = { media[it].id },
         pageSpacing = 8.dp,
         beyondViewportPageCount = 1,
-        overscrollEffect = null,
     ) { page ->
         when (val item = media[page]) {
             is MediaItem.Image -> ImagePage(
@@ -242,17 +240,14 @@ internal fun VideoPage(
         AndroidView(
             modifier = Modifier
                 .fillMaxSize()
-                .zoom(zoomable = zoomableState, onTap = { onClick() })
-                .alpha(0.99f),
-            onRelease = {
-                it.player?.release()
-            },
+                .zoom(zoomable = zoomableState, onTap = { onClick() }),
+            onRelease = { it.player?.release() },
             factory = { ctx ->
-                PlayerView(ctx).apply {
+                val playerView = LayoutInflater.from(ctx)
+                    .inflate(uiR.layout.layout_player_view, null) as PlayerView
+                playerView.apply {
                     player = exoPlayer
                     useController = false
-                    artworkDisplayMode = PlayerView.ARTWORK_DISPLAY_MODE_FILL
-                    defaultArtwork = ColorDrawable(Color.BLACK)
                     setEnableComposeSurfaceSyncWorkaround(true)
                 }
             },
