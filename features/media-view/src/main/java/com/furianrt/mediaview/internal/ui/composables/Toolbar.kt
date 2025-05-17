@@ -50,6 +50,7 @@ internal fun Toolbar(
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
     onSaveMediaClick: () -> Unit = {},
 ) {
     var showDropDownMenu by remember { mutableStateOf(false) }
@@ -79,6 +80,7 @@ internal fun Toolbar(
                 hazeState = hazeState,
                 onDeleteClick = onDeleteClick,
                 onSaveMediaClick = onSaveMediaClick,
+                onShareClick = onShareClick,
                 onDismissRequest = { showDropDownMenu = false },
             )
         }
@@ -97,62 +99,6 @@ private fun Counter(
         text = stringResource(uiR.string.media_counter_pattern, currentIndex + 1, total),
         style = MaterialTheme.typography.titleMedium,
     )
-}
-
-@Composable
-private fun Menu(
-    expanded: Boolean,
-    hazeState: HazeState,
-    onDeleteClick: () -> Unit,
-    onSaveMediaClick: () -> Unit,
-    onDismissRequest: () -> Unit,
-) {
-    val scope = rememberCoroutineScope()
-    val auth = LocalAuth.current
-
-    LifecycleStartEffect(Unit) {
-        scope.launch {
-            if (!auth.isAuthorized()) {
-                onDismissRequest()
-            }
-        }
-        onStopOrDispose {}
-    }
-    DropdownMenu(
-        modifier = Modifier
-            .hazeChild(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = Colors.Common.DarkGray,
-                    tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
-                    blurRadius = 12.dp,
-                ),
-            )
-           ,
-        offset = DpOffset(x = (-8).dp, y = 0.dp),
-        containerColor = Color.Transparent,
-        shape = RoundedCornerShape(8.dp),
-        shadowElevation = 0.dp,
-        expanded = expanded,
-        onDismissRequest = onDismissRequest,
-    ) {
-        MenuItem(
-            icon = painterResource(R.drawable.ic_download),
-            text = stringResource(R.string.media_view_save_to_gallery),
-            onClick = {
-                onSaveMediaClick()
-                onDismissRequest()
-            }
-        )
-        MenuItem(
-            icon = painterResource(uiR.drawable.ic_delete),
-            text = stringResource(uiR.string.action_delete),
-            onClick = {
-                onDeleteClick()
-                onDismissRequest()
-            }
-        )
-    }
 }
 
 @Preview

@@ -76,6 +76,11 @@ internal class MediaViewModel @Inject constructor(
                     }
                 }
             }
+
+            is MediaViewEvent.OnButtonShareClick -> {
+                val media = _state.value.media.getOrNull(event.mediaIndex) ?: return
+                _effect.tryEmit(MediaViewEffect.ShareMedia(media))
+            }
         }
     }
 

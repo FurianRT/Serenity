@@ -165,13 +165,13 @@ internal class SearchViewModel @Inject constructor(
     }
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
-        when (dialogId) {
+       /* when (dialogId) {
             NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 val successState = state.value.state as? SearchUiState.State.Success ?: return
                 val position = result.data as Int
                 scrollToNoteState.update { successState.items.getOrNull(position + 1)?.id }
             }
-        }
+        }*/
     }
 
     private fun clearQuery() {

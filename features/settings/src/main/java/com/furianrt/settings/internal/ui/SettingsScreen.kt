@@ -68,7 +68,7 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
-import com.furianrt.uikit.utils.EmailSender
+import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -108,22 +108,21 @@ internal fun SettingsScreen(
                 is SettingsEffect.CloseScreen -> onCloseRequestState()
                 is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
                 is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
-                is SettingsEffect.SendFeedbackEmail -> {
-                    EmailSender.send(
-                        context = context,
-                        email = effect.supportEmail,
-                        subject = context.getString(
-                            R.string.settings_feedback_email_subject,
-                            effect.text,
-                        ),
-                    ).onFailure { error ->
-                        error.printStackTrace()
-                        snackBarHostState.currentSnackbarData?.dismiss()
-                        snackBarHostState.showSnackbar(
-                            message = context.getString(R.string.settings_feedback_email_error),
-                            duration = SnackbarDuration.Short,
-                        )
-                    }
+                is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
+                    email = effect.supportEmail,
+                    subject = context.getString(
+                        R.string.settings_feedback_email_subject,
+                        effect.text,
+                    ),
+                ).onSuccess { intent ->
+                    context.startActivity(intent)
+                }.onFailure { error ->
+                    error.printStackTrace()
+                    snackBarHostState.currentSnackbarData?.dismiss()
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(R.string.settings_feedback_email_error),
+                        duration = SnackbarDuration.Short,
+                    )
                 }
 
                 is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)

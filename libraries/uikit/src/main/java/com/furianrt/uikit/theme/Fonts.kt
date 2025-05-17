@@ -59,8 +59,8 @@ sealed class NoteFont(
 
     data object PlayWriteModern : NoteFont(
         light = FontFamily(Font(R.font.playwrite_modern_light)),
-        regular = FontFamily(Font(R.font.pixelify_sans_regular)),
-        bold = FontFamily(Font(R.font.pixelify_sans_bold)),
+        regular = FontFamily(Font(R.font.playwrite_modern_regular)),
+        bold = FontFamily(Font(R.font.playwrite_modern_bold)),
     )
 
     data object Tillana : NoteFont(

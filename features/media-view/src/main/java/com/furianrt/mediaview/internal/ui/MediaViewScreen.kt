@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +49,7 @@ import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.IntentCreator
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
@@ -65,6 +67,7 @@ internal fun MediaViewScreen(
     val viewModel = hiltViewModel<MediaViewModel>()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     val snackBarHostState = remember { SnackbarHostState() }
     val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
@@ -98,6 +101,23 @@ internal fun MediaViewScreen(
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
                             message = effect.message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    is MediaViewEffect.ShareMedia -> IntentCreator.mediaShareIntent(
+                        uri = effect.media.uri,
+                        mediaType = when (effect.media) {
+                            is MediaItem.Image -> IntentCreator.MediaType.IMAGE
+                            is MediaItem.Video -> IntentCreator.MediaType.VIDEO
+                        },
+                    ).onSuccess { intent ->
+                        context.startActivity(intent)
+                    }.onFailure { error ->
+                        error.printStackTrace()
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(uiR.string.general_error),
                             duration = SnackbarDuration.Short,
                         )
                     }
@@ -225,7 +245,10 @@ private fun SuccessContent(
                 },
                 onSaveMediaClick = {
                     onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))
-                }
+                },
+                onShareClick = {
+                    onEvent(MediaViewEvent.OnButtonShareClick(pagerState.currentPage))
+                },
             )
         }
         ControlsAnimatedVisibility(
