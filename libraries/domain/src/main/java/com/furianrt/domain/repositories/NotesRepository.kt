@@ -9,7 +9,7 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 
 interface NotesRepository {
-    suspend fun insetNote(note: SimpleNote)
+    suspend fun insertNote(note: SimpleNote)
     suspend fun upsertNote(note: SimpleNote)
     suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>)
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)

@@ -38,7 +38,6 @@ internal sealed interface NoteViewEvent {
 
 internal sealed interface NoteViewEffect {
     data object CloseScreen : NoteViewEffect
-    data object SaveCurrentNoteContent : NoteViewEffect
     data class ShowDateSelector(
         val date: LocalDate,
         val datesWithNotes: Set<LocalDate>,

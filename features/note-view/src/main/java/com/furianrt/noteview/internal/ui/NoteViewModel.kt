@@ -22,6 +22,8 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -63,14 +66,6 @@ internal class NoteViewModel @Inject constructor(
 
     init {
         observeNotes()
-    }
-
-    override fun onCleared() {
-        if (isContentChanged) {
-            launch {
-                _effect.emit(NoteViewEffect.SaveCurrentNoteContent)
-            }
-        }
     }
 
     fun onEvent(event: NoteViewEvent) {

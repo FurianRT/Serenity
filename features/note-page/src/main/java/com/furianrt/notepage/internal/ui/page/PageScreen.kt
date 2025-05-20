@@ -68,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
@@ -95,6 +96,7 @@ import com.furianrt.toolspanel.api.ActionsPanel
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.animatePlacementInScope
@@ -151,8 +153,6 @@ internal fun NotePageScreenInternal(
 
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
 
-    state.setOnSaveContentListener { viewModel.onEvent(PageEvent.OnOnSaveContentRequest) }
-
     val view = LocalView.current
     val density = LocalDensity.current
     val hazeState = remember { HazeState() }
@@ -165,6 +165,10 @@ internal fun NotePageScreenInternal(
 
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
+
+    LifecycleStartEffect(Unit) {
+        onStopOrDispose { viewModel.onEvent(PageEvent.OnScreenStopped) }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
@@ -208,7 +212,7 @@ internal fun NotePageScreenInternal(
         viewModel.onEvent(PageEvent.OnEditModeStateChange(isInEditMode))
     }
 
-    LaunchedEffect(isSelected) {
+    SkipFirstEffect(isSelected) {
         viewModel.onEvent(PageEvent.OnIsSelectedChange(isSelected))
     }
 

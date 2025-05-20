@@ -21,7 +21,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -74,22 +73,6 @@ private data class CalendarState(
     val datesWithNotes: Set<LocalDate>,
 )
 
-@Stable
-internal class SuccessScreenState {
-    private var onSaveContentRequest: () -> Unit = {}
-
-    fun setOnSaveContentListener(callback: () -> Unit) {
-        onSaveContentRequest = callback
-    }
-
-    fun saveContent() {
-        onSaveContentRequest()
-    }
-}
-
-@Composable
-internal fun rememberSuccessScreenState(): SuccessScreenState = remember { SuccessScreenState() }
-
 @Composable
 internal fun NoteViewScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
@@ -100,7 +83,6 @@ internal fun NoteViewScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    val successScreenState = rememberSuccessScreenState()
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
@@ -114,7 +96,6 @@ internal fun NoteViewScreen(
             .collectLatest { effect ->
                 when (effect) {
                     is NoteViewEffect.CloseScreen -> onCloseRequestState()
-                    is NoteViewEffect.SaveCurrentNoteContent -> successScreenState.saveContent()
                     is NoteViewEffect.ShowDateSelector -> {
                         calendarDialogState = CalendarState(
                             date = SelectedDate(effect.date),
@@ -138,7 +119,6 @@ internal fun NoteViewScreen(
     }
     ScreenContent(
         modifier = Modifier.haze(hazeState),
-        state = successScreenState,
         uiState = uiState,
         snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
@@ -166,7 +146,6 @@ internal fun NoteViewScreen(
 
 @Composable
 private fun ScreenContent(
-    state: SuccessScreenState,
     uiState: NoteViewUiState,
     snackBarHostState: SnackbarHostState,
     onEvent: (event: NoteViewEvent) -> Unit,
@@ -181,7 +160,6 @@ private fun ScreenContent(
 
         is NoteViewUiState.Success -> SuccessScreen(
             modifier = modifier,
-            state = state,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
             onEvent = onEvent,
@@ -195,7 +173,6 @@ private fun ScreenContent(
 @Composable
 private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
-    state: SuccessScreenState,
     snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
@@ -211,8 +188,6 @@ private fun SuccessScreen(
     val currentPageState = remember(pageScreensStates.size, pagerState.currentPage) {
         pageScreensStates[pagerState.currentPage]
     }
-
-    state.setOnSaveContentListener { currentPageState?.saveContent() }
 
     val toolbarState = remember { MovableToolbarState() }
     var skipToolbarExpand by remember { mutableStateOf(true) }
@@ -374,7 +349,6 @@ private fun ScreenSuccessPreview() {
                 notes = persistentListOf(),
                 date = ZonedDateTime.now(),
             ),
-            state = rememberSuccessScreenState(),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
             openMediaViewScreen = { _, _, _ -> },

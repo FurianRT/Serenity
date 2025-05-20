@@ -32,7 +32,7 @@ internal class NotesRepositoryImp @Inject constructor(
     private val dispatchers: DispatchersProvider,
 ) : NotesRepository {
 
-    override suspend fun insetNote(note: SimpleNote) {
+    override suspend fun insertNote(note: SimpleNote) {
         noteDao.insert(note.toEntryNote())
     }
 

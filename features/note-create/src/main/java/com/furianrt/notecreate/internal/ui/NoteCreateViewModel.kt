@@ -1,9 +1,9 @@
 package com.furianrt.notecreate.internal.ui
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.domain.repositories.NotesRepository
-import com.furianrt.notecreate.internal.domain.InsertNoteUseCase
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -13,13 +13,15 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -29,7 +31,6 @@ import javax.inject.Inject
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
-    private val insertNoteUseCase: InsertNoteUseCase,
     private val notesRepository: NotesRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
@@ -49,23 +50,13 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private var isContentChanged = false
 
-    override fun onCleared() {
-        if (isContentChanged) {
-            launch(NonCancellable) {
-                saveNote()
-                _effect.emit(NoteCreateEffect.SaveCurrentNoteContent)
-            }
-        }
-    }
-
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
+            is NoteCreateEvent.OnScreenStopped -> trySaveContent()
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
                 if (_state.value.isInEditMode) {
-                    launch {
-                        saveNote()
-                    }
+                    launch { saveNote() }
                 }
                 toggleEditMode()
             }
@@ -99,6 +90,13 @@ internal class NoteCreateViewModel @Inject constructor(
         )
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
+    private fun trySaveContent() {
+        if (isContentChanged) {
+            GlobalScope.launch { saveNote() }
+        }
+    }
+
     private fun buildInitialState() = NoteCreateUiState(
         note = NoteItem(
             id = UUID.randomUUID().toString(),
@@ -112,7 +110,8 @@ internal class NoteCreateViewModel @Inject constructor(
     )
 
     private suspend fun saveNote() {
-        insertNoteUseCase(_state.value.note.toSimpleNote())
+        Log.e("femfemlelffelm", "saveNoteCreate ${_state.value.note.id}")
+        notesRepository.upsertNote(_state.value.note.toSimpleNote())
         dialogResultCoordinator.onDialogResult(
             dialogIdentifier = dialogIdentifier,
             code = DialogResult.Ok(data = _state.value.note.id),

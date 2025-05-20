@@ -2,6 +2,7 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -33,6 +35,7 @@ private const val NOTE_CREATE_DIALOG_ID = 2
 @HiltViewModel
 internal class NoteListViewModel @Inject constructor(
     notesRepository: NotesRepository,
+    dispatchers: DispatchersProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncManager: SyncManager,
@@ -56,7 +59,9 @@ internal class NoteListViewModel @Inject constructor(
                 selectedNotesCount = selectedNotes.count(),
             )
         }
-    }.stateIn(
+    }.flowOn(
+        context = dispatchers.default,
+    ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = NoteListUiState.Loading,

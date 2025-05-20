@@ -56,7 +56,6 @@ internal sealed interface PageEvent {
     data class OnVoiceRecorded(val record: VoiceRecord) : PageEvent
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
-    data object OnOnSaveContentRequest : PageEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily) : PageEvent
     data class OnFontColorSelected(val color: UiNoteFontColor) : PageEvent
     data class OnFontSizeSelected(val size: Int) : PageEvent
@@ -74,6 +73,7 @@ internal sealed interface PageEvent {
     data class OnStickerChanged(val sticker: StickerItem) : PageEvent
     data class OnStickerClick(val sticker: StickerItem) : PageEvent
     data object OnClickOutside : PageEvent
+    data object OnScreenStopped : PageEvent
 }
 
 internal sealed interface PageEffect {

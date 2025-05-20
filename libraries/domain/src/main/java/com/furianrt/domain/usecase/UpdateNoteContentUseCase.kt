@@ -8,9 +8,7 @@ import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class UpdateNoteContentUseCase @Inject constructor(
@@ -29,40 +27,39 @@ class UpdateNoteContentUseCase @Inject constructor(
         fontColor: NoteFontColor,
         fontSize: Int,
         updateMediaFiles: Boolean = true,
-    ) = withContext(NonCancellable) {
+    ) {
         val allMedia = content
             .filterIsInstance<LocalNote.Content.MediaBlock>()
             .flatMap(LocalNote.Content.MediaBlock::media)
 
         val newVoices = content.filterIsInstance<LocalNote.Content.Voice>()
 
+        val existingMedia = mediaRepository.getMedia(noteId).first()
+        val mediaToDelete = existingMedia
+            .filterNot { media -> allMedia.any { it.id == media.id } }
+        val mediaToInsert = allMedia
+            .filter { media -> existingMedia.none { it.id == media.id } }
+
+        val existingVoices = mediaRepository.getVoices(noteId).first()
+        val voicesToDelete = existingVoices
+            .filterNot { voice -> newVoices.any { it.id == voice.id } }
+        val voicesToInsert = content
+            .filterIsInstance<LocalNote.Content.Voice>()
+            .filter { voice -> existingVoices.none { it.id == voice.id } }
+
+        val tagsToDelete = tagsRepository.getTags(noteId)
+            .first()
+            .filterNot { tag -> tags.any { tag.title == it.title } }
+
+        val savedStickers = stickersRepository.getStickers(noteId).first()
+        val stickersToDelete = savedStickers.filterNot { sticker ->
+            stickers.any { sticker.id == it.id }
+        }
+        val stickersToUpdate = stickers.filter { sticker ->
+            val savedSticker = savedStickers.find { sticker.id == it.id }
+            savedSticker != null && savedSticker != sticker
+        }
         transactionsHelper.startTransaction {
-            val existingMedia = mediaRepository.getMedia(noteId).first()
-            val mediaToDelete = existingMedia
-                .filterNot { media -> allMedia.any { it.id == media.id } }
-            val mediaToInsert = allMedia
-                .filter { media -> existingMedia.none { it.id == media.id } }
-
-            val existingVoices = mediaRepository.getVoices(noteId).first()
-            val voicesToDelete = existingVoices
-                .filterNot { voice -> newVoices.any { it.id == voice.id } }
-            val voicesToInsert = content
-                .filterIsInstance<LocalNote.Content.Voice>()
-                .filter { voice -> existingVoices.none { it.id == voice.id } }
-
-            val tagsToDelete = tagsRepository.getTags(noteId)
-                .first()
-                .filterNot { tag -> tags.any { tag.title == it.title } }
-
-            val savedStickers = stickersRepository.getStickers(noteId).first()
-            val stickersToDelete = savedStickers.filterNot { sticker ->
-                stickers.any { sticker.id == it.id }
-            }
-            val stickersToUpdate = stickers.filter { sticker ->
-                val savedSticker = savedStickers.find { sticker.id == it.id }
-                savedSticker != null && savedSticker != sticker
-            }
-
             if (mediaToInsert.isNotEmpty()) {
                 mediaRepository.insertMedia(noteId, mediaToInsert, updateMediaFiles)
             }

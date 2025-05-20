@@ -44,16 +44,6 @@ class PageScreenState(
         get() = bottomSheetState.isVisible ||
                 bottomSheetState.targetValue == SheetValue.Expanded
 
-    private var onSaveContentRequest: () -> Unit = {}
-
-    fun setOnSaveContentListener(callback: () -> Unit) {
-        onSaveContentRequest = callback
-    }
-
-    fun saveContent() {
-        onSaveContentRequest()
-    }
-
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed
     }

@@ -9,6 +9,7 @@ import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -55,9 +56,9 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelect
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaShareClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnOnSaveContentRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnScreenStopped
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
@@ -92,7 +93,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -101,11 +103,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
 import java.util.UUID
 import com.furianrt.uikit.R as uiR
 
@@ -113,6 +116,7 @@ private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val TITLE_FOCUS_DELAY = 150L
 private const val MAX_STICKERS_COUNT = 1000
 
+@OptIn(DelicateCoroutinesApi::class)
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
 internal class PageViewModel @AssistedInject constructor(
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
@@ -155,11 +159,6 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     override fun onCleared() {
-        if (isInEditMode && hasContentChanged) {
-            _state.doWithState<PageUiState.Success> { successState ->
-                launch(NonCancellable) { saveNoteContent(successState) }
-            }
-        }
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
         audioPlayer.clearProgressListener()
         notesRepository.deleteNoteContentFromCache(noteId)
@@ -168,7 +167,8 @@ internal class PageViewModel @AssistedInject constructor(
 
     fun onEvent(event: PageEvent) {
         when (event) {
-            is OnEditModeStateChange -> launch { changeEditModeState(event.isEnabled) }
+            is OnScreenStopped -> trySaveContent()
+            is OnEditModeStateChange -> changeEditModeState(event.isEnabled)
             is OnIsSelectedChange -> {
                 resetStickersEditing()
                 onIsSelectedChange(event.isSelected)
@@ -214,10 +214,6 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
-            is OnOnSaveContentRequest -> _state.doWithState<PageUiState.Success> { successState ->
-                launch(NonCancellable) { saveNoteContent(successState) }
-            }
-
             is OnMediaSelected -> addNewBlock(event.result.toMediaBlock())
             is OnVoiceRecorded -> addNewBlock(event.record.toUiVoice())
             is OnSelectFontClick -> resetStickersEditing()
@@ -272,6 +268,14 @@ internal class PageViewModel @AssistedInject constructor(
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.playingVoice?.progressState?.progress?.floatValue = 0f
             currentState.copy(playingVoiceId = null)
+        }
+    }
+
+    private fun trySaveContent() {
+        if (isInEditMode && hasContentChanged) {
+            _state.doWithState<PageUiState.Success> { successState ->
+                GlobalScope.launch { saveNoteContent(successState) }
+            }
         }
     }
 
@@ -495,7 +499,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (mediaIds.isEmpty()) {
             return
         }
-        launch(NonCancellable) {
+        GlobalScope.launch {
             _state.updateState<PageUiState.Success> { currentState ->
                 var newContent = currentState.content
                 mediaIds.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
@@ -516,7 +520,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun removeVoiceRecord(voice: UiNoteContent.Voice) {
-        launch(NonCancellable) {
+        GlobalScope.launch {
             _state.updateState<PageUiState.Success> { currentState ->
                 val playingVoiceId = if (currentState.playingVoiceId == voice.id) {
                     audioPlayer.stop()
@@ -599,7 +603,7 @@ internal class PageViewModel @AssistedInject constructor(
                 if (isInEditMode) {
                     hasContentChanged = true
                 } else {
-                    launch(NonCancellable) { saveNoteContent(newState) }
+                    GlobalScope.launch { saveNoteContent(newState) }
                 }
             }
         }
@@ -651,14 +655,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun changeEditModeState(isEnabled: Boolean) {
-        ensureSuccessState()
-        if (!isEnabled) {
-            resetStickersEditing()
-            focusedTitleId = null
-            hasContentChanged = false
-        }
-
+    private fun changeEditModeState(isEnabled: Boolean) {
         _state.updateState<PageUiState.Success> { currentState ->
             val newState = currentState.copy(
                 content = currentState.content.refreshTitleTemplates(
@@ -670,25 +667,19 @@ internal class PageViewModel @AssistedInject constructor(
                 },
                 isInEditMode = isEnabled,
             )
-            if (!isEnabled) {
-                launch(NonCancellable) { saveNoteContent(newState) }
+            if (!isEnabled && hasContentChanged) {
+                launch { saveNoteContent(newState) }
             }
             return@updateState newState
         }
-        _state.doWithState<PageUiState.Success> { successState ->
-            if (focusFirstTitle && isEnabled && successState.isContentEmpty) {
-                focusFirstTitle = false
-                delay(TITLE_FOCUS_DELAY)
-                val firstTitle = successState.content
-                    .filterIsInstance<UiNoteContent.Title>()
-                    .firstOrNull()
-                firstTitle?.focusRequester?.requestFocus()
+
+        _state.doWithState<PageUiState.Success> {
+            if (!isEnabled) {
+                resetStickersEditing()
+                focusedTitleId = null
+                hasContentChanged = false
             }
         }
-    }
-
-    private suspend fun ensureSuccessState() {
-        state.first { it is PageUiState.Success }
     }
 
     private fun observeNote() {
@@ -699,11 +690,13 @@ internal class PageViewModel @AssistedInject constructor(
                 val size = appearanceRepository.getDefaultNoteFontSize().firstOrNull()
                 handleNoteResult(
                     NoteItem(
+                        id = noteId,
                         fontFamily = family?.toUiNoteFontFamily() ?: UiNoteFontFamily.QuickSand,
                         fontColor = color?.toUiNoteFontColor() ?: UiNoteFontColor.WHITE,
                         fontSize = size ?: 15,
                     )
                 )
+                tryFocusFirstTitle()
             } else {
                 notesRepository.getNote(noteId)
                     .map { note ->
@@ -724,35 +717,67 @@ internal class PageViewModel @AssistedInject constructor(
 
         _state.update { localState ->
             when (localState) {
-                is PageUiState.Empty, PageUiState.Loading -> PageUiState.Success(
-                    noteId = note.id,
-                    content = note.content.refreshTitleTemplates(
+                is PageUiState.Empty, PageUiState.Loading -> {
+                    PageUiState.Success(
+                        noteId = note.id,
+                        content = note.content.refreshTitleTemplates(
+                            fontFamily = note.fontFamily,
+                            addTopTemplate = isInEditMode
+                        ),
+                        tags = note.tags,
+                        stickers = note.stickers,
+                        playingVoiceId = null,
                         fontFamily = note.fontFamily,
-                        addTopTemplate = isInEditMode
-                    ),
-                    tags = note.tags,
-                    stickers = note.stickers,
-                    playingVoiceId = null,
-                    fontFamily = note.fontFamily,
-                    fontColor = note.fontColor,
-                    fontSize = note.fontSize,
-                    isInEditMode = false,
-                )
+                        fontColor = note.fontColor,
+                        fontSize = note.fontSize,
+                        isInEditMode = isNoteCreationMode,
+                    )
+                }
 
                 is PageUiState.Success -> localState
             }
         }
     }
 
+    private suspend fun tryFocusFirstTitle() {
+        if (focusFirstTitle) {
+            focusFirstTitle = false
+            delay(TITLE_FOCUS_DELAY)
+            _state.doWithState<PageUiState.Success> { successState ->
+                val firstTitle = successState.content
+                    .filterIsInstance<UiNoteContent.Title>()
+                    .firstOrNull()
+                firstTitle?.focusRequester?.requestFocus()
+            }
+        }
+    }
+
     private suspend fun saveNoteContent(state: PageUiState.Success) {
+        val fontFamily = state.fontFamily.toNoteFontFamily()
+        val fontColor = state.fontColor.toNoteFontColor()
+        val fontSize = state.fontSize
+        // TODO костыль для сохранения. Убрать
+        if (isNoteCreationMode) {
+            delay(150)
+        }
+        notesRepository.insertNote(
+            SimpleNote(
+                id = noteId,
+                font = fontFamily,
+                fontColor = fontColor,
+                fontSize = fontSize,
+                date = ZonedDateTime.now(),
+                isPinned = false,
+            )
+        )
         updateNoteContentUseCase(
             noteId = noteId,
             content = state.content.map(UiNoteContent::toLocalNoteContent),
             tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
             stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
-            fontFamily = state.fontFamily.toNoteFontFamily(),
-            fontColor = state.fontColor.toNoteFontColor(),
-            fontSize = state.fontSize,
+            fontFamily = fontFamily,
+            fontColor = fontColor,
+            fontSize = fontSize,
         )
         if (isNoteCreationMode) {
             saveDefaultFontData(state)

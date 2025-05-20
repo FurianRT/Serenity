@@ -15,11 +15,11 @@ internal sealed interface NoteCreateEvent {
     data object OnButtonDateClick : NoteCreateEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
     data class OnDateSelected(val date: LocalDate) : NoteCreateEvent
+    data object OnScreenStopped : NoteCreateEvent
 }
 
 internal sealed interface NoteCreateEffect {
     data object CloseScreen : NoteCreateEffect
-    data object SaveCurrentNoteContent : NoteCreateEffect
     data class ShowDateSelector(
         val date: LocalDate,
         val datesWithNotes: Set<LocalDate>,

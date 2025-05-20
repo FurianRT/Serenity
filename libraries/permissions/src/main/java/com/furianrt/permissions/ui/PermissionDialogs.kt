@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -76,6 +77,7 @@ fun MediaPermissionDialog(
         confirmButton = {
             ActionButton(
                 title = stringResource(id = uiR.string.settings_title),
+                textColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
                     onSettingsClick()
                     onDismissRequest()
@@ -113,9 +115,6 @@ fun AudioRecordPermissionDialog(
     SkipFirstEffect(lottieState.isPlaying) {
         isPlaying = lottieState.isPlaying
     }
-
-
-
     ConfirmationDialog(
         hint = buildAnnotatedString {
             val title = stringResource(R.string.audio_record_permission_message)
@@ -144,6 +143,7 @@ fun AudioRecordPermissionDialog(
         confirmButton = {
             ActionButton(
                 title = stringResource(id = uiR.string.settings_title),
+                textColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
                     onSettingsClick()
                     onDismissRequest()
@@ -169,6 +169,7 @@ private fun ActionButton(
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textColor: Color = Color.Unspecified,
 ) {
     TextButton(
         modifier = modifier,
@@ -178,6 +179,7 @@ private fun ActionButton(
         Text(
             text = title,
             style = MaterialTheme.typography.titleSmall,
+            color = textColor,
         )
     }
 }
