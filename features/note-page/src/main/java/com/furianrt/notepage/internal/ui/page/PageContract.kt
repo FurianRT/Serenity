@@ -26,10 +26,6 @@ internal sealed interface PageUiState {
         val fontSize: Int,
         val isInEditMode: Boolean,
     ) : PageUiState {
-        val isContentEmpty: Boolean
-            get() = content.all { content ->
-                content is UiNoteContent.Title && content.state.annotatedString.isEmpty()
-            }
 
         val playingVoice: UiNoteContent.Voice?
             get() = content.findInstance<UiNoteContent.Voice> { it.id == playingVoiceId }

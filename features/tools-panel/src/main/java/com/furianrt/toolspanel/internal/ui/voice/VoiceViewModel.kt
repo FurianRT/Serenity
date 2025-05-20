@@ -14,8 +14,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,6 +25,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.UUID
 
 private const val TIME_PATTERN = "m:ss:S"
@@ -67,8 +69,9 @@ internal class VoiceViewModel @AssistedInject constructor(
     private var timerJob: Job? = null
     private var volumeJob: Job? = null
 
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCleared() {
-        launch(NonCancellable) {
+        GlobalScope.launch {
             cancelRecording()
         }
     }
