@@ -6,10 +6,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,6 +20,10 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,6 +34,7 @@ import com.furianrt.uikit.components.ButtonMenu
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 
 private const val ANIM_DATE_VISIBILITY_DURATION = 250
 
@@ -37,39 +42,55 @@ private const val ANIM_DATE_VISIBILITY_DURATION = 250
 internal fun Toolbar(
     date: String,
     isInEditMode: Boolean,
+    isPinned: Boolean,
+    dropDownHazeState: HazeState,
     onEditClick: () -> Unit,
     onBackButtonClick: () -> Unit,
     onDateClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    onPinClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var showDropDownMenu by remember { mutableStateOf(false) }
     Box(
         modifier = modifier
             .height(ToolbarConstants.toolbarHeight)
             .fillMaxWidth()
+            .padding(horizontal = 4.dp)
             .systemGestureExclusion(),
         contentAlignment = Alignment.Center,
     ) {
+        ButtonBack(
+            modifier = Modifier.align(Alignment.CenterStart),
+            onClick = onBackButtonClick,
+        )
         DateLabel(
             date = date,
             isClickable = isInEditMode,
             onClick = onDateClick,
         )
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.align(Alignment.CenterEnd),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            ButtonBack(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = onBackButtonClick,
-            )
-            Spacer(modifier = Modifier.weight(1f))
             ButtonEditAndDone(
                 edit = isInEditMode,
                 onClick = onEditClick,
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            ButtonMenu(onClick = {})
-            Spacer(modifier = Modifier.width(4.dp))
+            Box {
+                ButtonMenu(
+                    onClick = { showDropDownMenu = true },
+                )
+                Menu(
+                    expanded = showDropDownMenu,
+                    isPinned = isPinned,
+                    dropDownHazeState = dropDownHazeState,
+                    onDeleteClick = onDeleteClick,
+                    onPinClick = onPinClick,
+                    onDismissRequest = { showDropDownMenu = false },
+                )
+            }
         }
     }
 }
@@ -116,9 +137,13 @@ private fun ToolbarPreview() {
         Toolbar(
             date = "25 Nov 2024",
             isInEditMode = false,
+            isPinned = false,
+            dropDownHazeState = HazeState(),
             onEditClick = {},
             onBackButtonClick = {},
             onDateClick = {},
+            onDeleteClick = {},
+            onPinClick = {},
         )
     }
 }
@@ -130,9 +155,13 @@ private fun ToolbarPreviewEditMode() {
         Toolbar(
             date = "25 Nov 2024",
             isInEditMode = true,
+            isPinned = false,
+            dropDownHazeState = HazeState(),
             onEditClick = {},
             onBackButtonClick = {},
             onDateClick = {},
+            onDeleteClick = {},
+            onPinClick = {},
         )
     }
 }

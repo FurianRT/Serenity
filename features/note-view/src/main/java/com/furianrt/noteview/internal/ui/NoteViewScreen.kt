@@ -87,6 +87,7 @@ internal fun NoteViewScreen(
     var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
     val snackBarHostState = remember { SnackbarHostState() }
+    val focusManager = LocalFocusManager.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
@@ -95,7 +96,10 @@ internal fun NoteViewScreen(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is NoteViewEffect.CloseScreen -> onCloseRequestState()
+                    is NoteViewEffect.CloseScreen -> {
+                        focusManager.clearFocus()
+                        onCloseRequestState()
+                    }
                     is NoteViewEffect.ShowDateSelector -> {
                         calendarDialogState = CalendarState(
                             date = SelectedDate(effect.date),
@@ -120,6 +124,7 @@ internal fun NoteViewScreen(
     ScreenContent(
         modifier = Modifier.haze(hazeState),
         uiState = uiState,
+        hazeState = hazeState,
         snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
         openMediaViewScreen = openMediaViewScreen,
@@ -148,6 +153,7 @@ internal fun NoteViewScreen(
 private fun ScreenContent(
     uiState: NoteViewUiState,
     snackBarHostState: SnackbarHostState,
+    hazeState: HazeState,
     onEvent: (event: NoteViewEvent) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -162,6 +168,7 @@ private fun ScreenContent(
             modifier = modifier,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
+            hazeState = hazeState,
             onEvent = onEvent,
             openMediaViewScreen = openMediaViewScreen,
             openMediaViewer = openMediaViewer,
@@ -174,6 +181,7 @@ private fun ScreenContent(
 private fun SuccessScreen(
     uiState: NoteViewUiState.Success,
     snackBarHostState: SnackbarHostState,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -219,7 +227,6 @@ private fun SuccessScreen(
         onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
 
-    val hazeState = remember { HazeState() }
     val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.isInEditMode) {
@@ -276,7 +283,6 @@ private fun SuccessScreen(
         },
     ) {
         HorizontalPager(
-            modifier = Modifier.haze(hazeState),
             userScrollEnabled = !uiState.isInEditMode,
             verticalAlignment = Alignment.Top,
             state = pagerState,
@@ -350,6 +356,7 @@ private fun ScreenSuccessPreview() {
                 date = ZonedDateTime.now(),
             ),
             snackBarHostState = SnackbarHostState(),
+            hazeState = HazeState(),
             onEvent = {},
             openMediaViewScreen = { _, _, _ -> },
             openMediaViewer = {},

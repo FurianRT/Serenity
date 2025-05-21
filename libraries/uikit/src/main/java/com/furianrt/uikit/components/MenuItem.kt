@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.LocalInspectionMode
 
 private const val ANIM_DURATION = 300
 private const val INITIAL_SALE = 0.2f
@@ -24,6 +25,7 @@ fun MenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val isInspectionMode = LocalInspectionMode.current
     val scale = remember { Animatable(INITIAL_SALE) }
     val interpolator = remember { OvershootInterpolator() }
     LaunchedEffect(Unit) {
@@ -46,7 +48,7 @@ fun MenuItem(
         leadingIcon = {
             Icon(
                 modifier = Modifier.graphicsLayer {
-                    scaleY = scale.value
+                    scaleY = if (isInspectionMode) 1f else scale.value
                 },
                 painter = icon,
                 tint = MaterialTheme.colorScheme.primary,

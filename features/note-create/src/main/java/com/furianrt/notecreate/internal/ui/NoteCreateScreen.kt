@@ -33,6 +33,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
+import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notepage.api.NotePageScreen
@@ -76,8 +77,11 @@ internal fun NoteCreateScreen(
     val pageScreenState = rememberPageScreenState()
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = remember { HazeState() }
+    val focusManager = LocalFocusManager.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose { viewModel.onEvent(NoteCreateEvent.OnScreenStopped) }
@@ -88,12 +92,20 @@ internal fun NoteCreateScreen(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is NoteCreateEffect.CloseScreen -> onCloseRequestState()
+                    is NoteCreateEffect.CloseScreen -> {
+                        focusManager.clearFocus()
+                        onCloseRequestState()
+                    }
+
                     is NoteCreateEffect.ShowDateSelector -> {
                         calendarDialogState = CalendarState(
                             date = SelectedDate(effect.date),
                             datesWithNotes = effect.datesWithNotes,
                         )
+                    }
+
+                    is NoteCreateEffect.ShowDeleteConfirmationDialog -> {
+                        showDeleteConfirmationDialog = true
                     }
                 }
             }
@@ -102,6 +114,7 @@ internal fun NoteCreateScreen(
         modifier = Modifier.haze(hazeState),
         state = pageScreenState,
         uiState = uiState,
+        hazeState = hazeState,
         onEvent = viewModel::onEvent,
         notePage = {
             NotePageScreen(
@@ -126,6 +139,15 @@ internal fun NoteCreateScreen(
             onDateSelected = { viewModel.onEvent(NoteCreateEvent.OnDateSelected(it.date)) },
         )
     }
+
+    if (showDeleteConfirmationDialog) {
+        ConfirmNotesDeleteDialog(
+            notesCount = 1,
+            hazeState = hazeState,
+            onConfirmClick = { viewModel.onEvent(NoteCreateEvent.OnConfirmDeleteClick) },
+            onDismissRequest = { showDeleteConfirmationDialog = false },
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -133,6 +155,7 @@ internal fun NoteCreateScreen(
 private fun ScreenContent(
     state: PageScreenState,
     uiState: NoteCreateUiState,
+    hazeState: HazeState,
     onEvent: (event: NoteCreateEvent) -> Unit,
     notePage: @Composable () -> Unit,
     modifier: Modifier = Modifier,
@@ -169,13 +192,17 @@ private fun ScreenContent(
             Toolbar(
                 modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
+                isPinned = uiState.note.isPinned,
                 date = date,
+                dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
                 onBackButtonClick = {
                     focusManager.clearFocus()
                     onEvent(NoteCreateEvent.OnButtonBackClick)
                 },
                 onDateClick = { onEvent(NoteCreateEvent.OnButtonDateClick) },
+                onDeleteClick = { onEvent(NoteCreateEvent.OnButtonDeleteClick) },
+                onPinClick = { onEvent(NoteCreateEvent.OnPinClick) },
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),
@@ -225,6 +252,7 @@ private fun Preview() {
                 ),
                 isInEditMode = true,
             ),
+            hazeState = HazeState(),
             onEvent = {},
             notePage = { Box(Modifier.fillMaxSize()) },
         )

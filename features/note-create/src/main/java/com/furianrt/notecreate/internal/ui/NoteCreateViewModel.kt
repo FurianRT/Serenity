@@ -1,6 +1,5 @@
 package com.furianrt.notecreate.internal.ui
 
-import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.domain.repositories.NotesRepository
@@ -78,6 +77,17 @@ internal class NoteCreateViewModel @Inject constructor(
                 }
                 _state.update { it.copy(note = it.note.copy(date = zonedDateTime)) }
             }
+
+            is NoteCreateEvent.OnButtonDeleteClick -> {
+                _effect.tryEmit(NoteCreateEffect.ShowDeleteConfirmationDialog)
+            }
+
+            is NoteCreateEvent.OnConfirmDeleteClick -> {
+                isContentChanged = false
+                _effect.tryEmit(NoteCreateEffect.CloseScreen)
+            }
+
+            is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
         }
     }
 
@@ -110,8 +120,7 @@ internal class NoteCreateViewModel @Inject constructor(
     )
 
     private suspend fun saveNote() {
-        Log.e("femfemlelffelm", "saveNoteCreate ${_state.value.note.id}")
-        notesRepository.upsertNote(_state.value.note.toSimpleNote())
+        notesRepository.insertNote(_state.value.note.toSimpleNote())
         dialogResultCoordinator.onDialogResult(
             dialogIdentifier = dialogIdentifier,
             code = DialogResult.Ok(data = _state.value.note.id),
@@ -124,5 +133,13 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private fun enableEditMode() {
         _state.update { it.copy(isInEditMode = true) }
+    }
+
+    private suspend fun toggleNotePinnedState() {
+        val note = state.value.note
+        _state.update { it.copy(note = note.copy(isPinned = !note.isPinned)) }
+        if (!state.value.isInEditMode) {
+            notesRepository.updateNoteIsPinned(note.id, !note.isPinned)
+        }
     }
 }

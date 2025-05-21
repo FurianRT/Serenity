@@ -9,7 +9,6 @@ import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
-import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -108,7 +107,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.ZonedDateTime
 import java.util.UUID
 import com.furianrt.uikit.R as uiR
 
@@ -760,16 +758,6 @@ internal class PageViewModel @AssistedInject constructor(
         if (isNoteCreationMode) {
             delay(150)
         }
-        notesRepository.insertNote(
-            SimpleNote(
-                id = noteId,
-                font = fontFamily,
-                fontColor = fontColor,
-                fontSize = fontSize,
-                date = ZonedDateTime.now(),
-                isPinned = false,
-            )
-        )
         updateNoteContentUseCase(
             noteId = noteId,
             content = state.content.map(UiNoteContent::toLocalNoteContent),

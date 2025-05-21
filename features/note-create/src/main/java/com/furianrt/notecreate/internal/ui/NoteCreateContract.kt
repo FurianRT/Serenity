@@ -13,6 +13,9 @@ internal sealed interface NoteCreateEvent {
     data object OnPageTitleFocusChange : NoteCreateEvent
     data object OnButtonBackClick : NoteCreateEvent
     data object OnButtonDateClick : NoteCreateEvent
+    data object OnButtonDeleteClick : NoteCreateEvent
+    data object OnConfirmDeleteClick : NoteCreateEvent
+    data object OnPinClick : NoteCreateEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
     data class OnDateSelected(val date: LocalDate) : NoteCreateEvent
     data object OnScreenStopped : NoteCreateEvent
@@ -24,4 +27,6 @@ internal sealed interface NoteCreateEffect {
         val date: LocalDate,
         val datesWithNotes: Set<LocalDate>,
     ) : NoteCreateEffect
+
+    data object ShowDeleteConfirmationDialog : NoteCreateEffect
 }
