@@ -2,6 +2,7 @@ package com.furianrt.settings.internal.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.common.BuildInfoProvider
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -35,6 +36,7 @@ internal class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val buildInfoProvider: BuildInfoProvider,
 ) : ViewModel() {
 
     val state = combine(
@@ -118,5 +120,6 @@ internal class SettingsViewModel @Inject constructor(
         themes = themes,
         selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId),
         rating = rating,
+        appVersion = buildInfoProvider.getAppVersionName(),
     )
 }

@@ -34,12 +34,8 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
@@ -61,6 +57,7 @@ import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
+import com.furianrt.uikit.extensions.dashedRoundedRectBorder
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -216,23 +213,7 @@ private fun TemplateNoteTagItem(
         Box(
             modifier = Modifier
                 .padding(4.dp)
-                .drawWithCache {
-                    val strokeInterval = 6.dp.toPx()
-                    val stroke = Stroke(
-                        width = 1.dp.toPx(),
-                        pathEffect = PathEffect.dashPathEffect(
-                            intervals = floatArrayOf(strokeInterval, strokeInterval),
-                            phase = 0f,
-                        )
-                    )
-                    onDrawBehind {
-                        drawRoundRect(
-                            color = strokeColor,
-                            style = stroke,
-                            cornerRadius = CornerRadius(16.dp.toPx()),
-                        )
-                    }
-                },
+                .dashedRoundedRectBorder(color = strokeColor),
             contentAlignment = Alignment.Center,
         ) {
             BasicTextField(

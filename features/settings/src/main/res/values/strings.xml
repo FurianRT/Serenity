@@ -7,7 +7,9 @@
     <string name="settings_rate_us_title">Rate Us</string>
     <string name="settings_donate_title">Donate</string>
     <string name="settings_feedback_title">Report an Issue</string>
-    <string name="settings_about_title">App Info</string>
+    <string name="settings_terms_and_conditions_title">Terms &amp; Conditions</string>
+    <string name="settings_privacy_policy_title">Privacy Policy</string>
+    <string name="settings_version_title">Version %s</string>
 
     <string name="settings_app_theme_scandi_grandpa_title">Scandi Grandpa</string>
     <string name="settings_app_theme_vampire_title">Vampire</string>

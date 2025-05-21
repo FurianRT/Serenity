@@ -4,8 +4,10 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.furianrt.backup.api.RootActivityIntentProvider
+import com.furianrt.common.BuildInfoProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.serenity.BuildConfig
 import com.furianrt.serenity.MainActivity
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import dagger.Module
@@ -37,6 +39,7 @@ internal object AppModule {
     @Singleton
     @Provides
     fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
+        BuildConfig.VERSION_NAME
         return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
@@ -59,5 +62,11 @@ internal object AppModule {
             error.printStackTrace()
             crashlytics.recordException(error)
         }
+    }
+
+    @Singleton
+    @Provides
+    fun provideBuildInfoProvider(): BuildInfoProvider = object : BuildInfoProvider {
+        override fun getAppVersionName(): String = BuildConfig.VERSION_NAME
     }
 }

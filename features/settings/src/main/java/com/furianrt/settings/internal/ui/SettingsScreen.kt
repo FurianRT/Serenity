@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -221,7 +222,7 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(vertical = 8.dp),
+            .padding(top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
@@ -273,10 +274,21 @@ private fun SuccessScreen(
             onClick = { onEvent(SettingsEvent.OnButtonFeedbackClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_about_title),
-            iconPainter = painterResource(id = uiR.drawable.ic_info),
+            modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
+            title = stringResource(id = R.string.settings_terms_and_conditions_title),
+            iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
             onClick = {},
+        )
+        GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(id = R.string.settings_privacy_policy_title),
+            iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
+            onClick = {},
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Version(
+            modifier = Modifier.padding(top = 8.dp),
+            name = uiState.appVersion,
         )
     }
 }
@@ -426,6 +438,25 @@ private fun Rating(
 }
 
 @Composable
+private fun Version(
+    name: String,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(vertical = 24.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.alpha(0.5f),
+            text = stringResource(R.string.settings_version_title, name),
+            style = MaterialTheme.typography.labelSmall,
+        )
+    }
+}
+
+@Composable
 private fun LoadingScreen(
     modifier: Modifier = Modifier,
 ) {
@@ -474,6 +505,7 @@ private fun ScreenContentPreview() {
                 },
                 selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                 rating = 4,
+                appVersion = "1.0",
             ),
         )
     }

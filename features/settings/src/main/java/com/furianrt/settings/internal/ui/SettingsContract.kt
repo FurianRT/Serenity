@@ -12,6 +12,7 @@ internal sealed interface SettingsUiState {
         val themes: ImmutableList<AppTheme>,
         val selectedThemeColor: UiThemeColor,
         @IntRange(0L, 5L) val rating: Int,
+        val appVersion: String,
     ) : SettingsUiState
 }
 
