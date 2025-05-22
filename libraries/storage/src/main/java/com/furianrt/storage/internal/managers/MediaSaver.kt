@@ -12,8 +12,8 @@ import com.furianrt.storage.internal.device.AppMediaSource
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -54,21 +54,15 @@ internal class MediaSaver @Inject constructor(
     private val videoDao: VideoDao,
     private val appMediaSource: AppMediaSource,
 ) {
-    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
+    private val scope = CoroutineScope(dispatchers.default + SupervisorJob())
     private val canceledEntries = mutableSetOf<QueueEntry>()
     private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = MAX_QUEUE)
     private val mutex = Mutex()
 
     init {
         queue
-            .filterNot { entry ->
-                isEntryCanceled(entry).also { isCanceled ->
-                    if (isCanceled) {
-                        removeCanceledEntry(entry)
-                    }
-                }
-            }
             .onEach(::saveMedia)
+            .flowOn(dispatchers.default)
             .launchIn(scope)
     }
 
@@ -102,9 +96,21 @@ internal class MediaSaver @Inject constructor(
 
     private suspend fun saveMedia(entry: QueueEntry) = mutex.withLock {
         if (isMediaSaved(entry.media)) {
-            return
+            return@withLock
         }
+        if (isEntryCanceled(entry)) {
+            removeCanceledEntry(entry)
+            return@withLock
+        }
+
         val savedMediaData = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
+
+        if (isEntryCanceled(entry)) {
+            removeCanceledEntry(entry)
+            appMediaSource.deleteMediaFile(entry.noteId, entry.media)
+            return@withLock
+        }
+
         when (entry.media) {
             is LocalNote.Content.Image -> imageDao.update(
                 PartImageUri(

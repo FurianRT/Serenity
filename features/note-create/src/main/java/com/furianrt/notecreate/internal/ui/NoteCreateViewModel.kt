@@ -3,6 +3,7 @@ package com.furianrt.notecreate.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -31,6 +32,7 @@ import javax.inject.Inject
 internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
+    private val deleteNoteUseCase: DeleteNoteUseCase,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
@@ -49,9 +51,9 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private var isContentChanged = false
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
-            is NoteCreateEvent.OnScreenStopped -> trySaveContent()
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
                 if (_state.value.isInEditMode) {
@@ -61,7 +63,12 @@ internal class NoteCreateViewModel @Inject constructor(
             }
 
             is NoteCreateEvent.OnButtonBackClick -> _effect.tryEmit(NoteCreateEffect.CloseScreen)
-            is NoteCreateEvent.OnContentChanged -> isContentChanged = event.isChanged
+            is NoteCreateEvent.OnContentChanged -> {
+                if (isContentChanged != event.isChanged && event.isChanged) {
+                    launch { GlobalScope.launch { saveNote() } }
+                }
+                isContentChanged = event.isChanged
+            }
             is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }
             is NoteCreateEvent.OnDateSelected -> {
                 val zonedDateTime = ZonedDateTime.of(
@@ -82,11 +89,7 @@ internal class NoteCreateViewModel @Inject constructor(
                 _effect.tryEmit(NoteCreateEffect.ShowDeleteConfirmationDialog)
             }
 
-            is NoteCreateEvent.OnConfirmDeleteClick -> {
-                isContentChanged = false
-                _effect.tryEmit(NoteCreateEffect.CloseScreen)
-            }
-
+            is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
             is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
         }
     }
@@ -98,13 +101,6 @@ internal class NoteCreateViewModel @Inject constructor(
                 datesWithNotes = notesRepository.getUniqueNotesDates().first(),
             ),
         )
-    }
-
-    @OptIn(DelicateCoroutinesApi::class)
-    private fun trySaveContent() {
-        if (isContentChanged) {
-            GlobalScope.launch { saveNote() }
-        }
     }
 
     private fun buildInitialState() = NoteCreateUiState(
@@ -141,5 +137,10 @@ internal class NoteCreateViewModel @Inject constructor(
         if (!state.value.isInEditMode) {
             notesRepository.updateNoteIsPinned(note.id, !note.isPinned)
         }
+    }
+
+    private suspend fun deleteNote() {
+        deleteNoteUseCase(state.value.note.id)
+        _effect.tryEmit(NoteCreateEffect.CloseScreen)
     }
 }

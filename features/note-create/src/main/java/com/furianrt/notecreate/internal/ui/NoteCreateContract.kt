@@ -18,7 +18,6 @@ internal sealed interface NoteCreateEvent {
     data object OnPinClick : NoteCreateEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
     data class OnDateSelected(val date: LocalDate) : NoteCreateEvent
-    data object OnScreenStopped : NoteCreateEvent
 }
 
 internal sealed interface NoteCreateEffect {

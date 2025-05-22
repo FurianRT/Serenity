@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -82,10 +81,6 @@ internal fun NoteCreateScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
-
-    LifecycleStartEffect(Unit) {
-        onStopOrDispose { viewModel.onEvent(NoteCreateEvent.OnScreenStopped) }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.effect

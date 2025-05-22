@@ -754,21 +754,20 @@ internal class PageViewModel @AssistedInject constructor(
         val fontFamily = state.fontFamily.toNoteFontFamily()
         val fontColor = state.fontColor.toNoteFontColor()
         val fontSize = state.fontSize
-        // TODO костыль для сохранения. Убрать
-        if (isNoteCreationMode) {
-            delay(150)
-        }
-        updateNoteContentUseCase(
-            noteId = noteId,
-            content = state.content.map(UiNoteContent::toLocalNoteContent),
-            tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
-            stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
-            fontFamily = fontFamily,
-            fontColor = fontColor,
-            fontSize = fontSize,
-        )
-        if (isNoteCreationMode) {
-            saveDefaultFontData(state)
+        val note = notesRepository.getNote(noteId).firstOrNull()
+        if (note != null) {
+            updateNoteContentUseCase(
+                noteId = noteId,
+                content = state.content.map(UiNoteContent::toLocalNoteContent),
+                tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
+                stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
+                fontFamily = fontFamily,
+                fontColor = fontColor,
+                fontSize = fontSize,
+            )
+            if (isNoteCreationMode) {
+                saveDefaultFontData(state)
+            }
         }
         hasContentChanged = false
     }
