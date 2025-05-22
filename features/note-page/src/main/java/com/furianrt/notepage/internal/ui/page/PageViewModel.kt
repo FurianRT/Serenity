@@ -144,8 +144,10 @@ internal class PageViewModel @AssistedInject constructor(
     private var focusedTitleId: String? = null
     private var hasContentChanged = false
         set(value) {
-            _effect.tryEmit(PageEffect.UpdateContentChangedState(value))
-            field = value
+            if (field != value) {
+                _effect.tryEmit(PageEffect.UpdateContentChangedState(value))
+                field = value
+            }
         }
 
     private var focusFirstTitle = isNoteCreationMode
