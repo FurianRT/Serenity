@@ -3,10 +3,14 @@ package com.furianrt.notecreate.internal.ui
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import java.time.LocalDate
 
-internal data class NoteCreateUiState(
-    val note: NoteItem,
-    val isInEditMode: Boolean,
-)
+internal sealed interface NoteCreateUiState {
+    data class Success(
+        val note: NoteItem,
+        val isInEditMode: Boolean,
+    ) : NoteCreateUiState
+
+    data object Loading : NoteCreateUiState
+}
 
 internal sealed interface NoteCreateEvent {
     data object OnButtonEditClick : NoteCreateEvent

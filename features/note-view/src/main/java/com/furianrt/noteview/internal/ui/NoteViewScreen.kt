@@ -236,7 +236,9 @@ private fun SuccessScreen(
     }
 
     MovableToolbarScaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberScrollState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,

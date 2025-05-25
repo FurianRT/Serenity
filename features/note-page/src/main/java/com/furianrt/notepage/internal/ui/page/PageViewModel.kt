@@ -27,8 +27,6 @@ import com.furianrt.notelistui.extensions.toLocalNoteTag
 import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
-import com.furianrt.notelistui.extensions.toUiNoteFontColor
-import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
@@ -684,28 +682,13 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun observeNote() {
         launch {
-            if (isNoteCreationMode) {
-                val family = appearanceRepository.getDefaultNoteFont().firstOrNull()
-                val color = appearanceRepository.getDefaultNoteFontColor().firstOrNull()
-                val size = appearanceRepository.getDefaultNoteFontSize().firstOrNull()
-                handleNoteResult(
-                    NoteItem(
-                        id = noteId,
-                        fontFamily = family?.toUiNoteFontFamily() ?: UiNoteFontFamily.QuickSand,
-                        fontColor = color?.toUiNoteFontColor() ?: UiNoteFontColor.WHITE,
-                        fontSize = size ?: 15,
-                    )
-                )
-                tryFocusFirstTitle()
-            } else {
-                notesRepository.getNote(noteId)
-                    .map { note ->
-                        note?.toNoteItem(stickerIconProvider = { stickerIconProvider.getIcon(it) })
-                    }
-                    .distinctUntilChanged()
-                    .flowOn(dispatchers.default)
-                    .collectLatest(::handleNoteResult)
-            }
+            notesRepository.getNote(noteId)
+                .map { note ->
+                    note?.toNoteItem(stickerIconProvider = { stickerIconProvider.getIcon(it) })
+                }
+                .distinctUntilChanged()
+                .flowOn(dispatchers.default)
+                .collectLatest(::handleNoteResult)
         }
     }
 
@@ -724,14 +707,24 @@ internal class PageViewModel @AssistedInject constructor(
                             fontFamily = note.fontFamily,
                             addTopTemplate = isInEditMode
                         ),
-                        tags = note.tags,
+                        tags = with(note.tags) {
+                            if (isNoteCreationMode || isInEditMode) {
+                                addTagTemplate()
+                            } else {
+                                removeTagTemplate(onlyEmpty = true)
+                            }
+                        },
                         stickers = note.stickers,
                         playingVoiceId = null,
                         fontFamily = note.fontFamily,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
                         isInEditMode = isNoteCreationMode,
-                    )
+                    ).also {
+                        if (isNoteCreationMode) {
+                            tryFocusFirstTitle()
+                        }
+                    }
                 }
 
                 is PageUiState.Success -> localState
@@ -739,7 +732,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun tryFocusFirstTitle() {
+    private fun tryFocusFirstTitle() = launch {
         if (focusFirstTitle) {
             focusFirstTitle = false
             delay(TITLE_FOCUS_DELAY)

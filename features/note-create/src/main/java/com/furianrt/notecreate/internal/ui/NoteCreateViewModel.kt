@@ -2,12 +2,11 @@ package com.furianrt.notecreate.internal.ui
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.NotesRepository
-import com.furianrt.domain.usecase.DeleteNoteUseCase
-import com.furianrt.notecreate.internal.ui.entites.NoteItem
-import com.furianrt.notecreate.internal.ui.extensions.toSimpleNote
-import com.furianrt.notelistui.entities.UiNoteFontColor
-import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
+import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -17,9 +16,11 @@ import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalTime
@@ -28,16 +29,32 @@ import java.time.ZonedDateTime
 import java.util.UUID
 import javax.inject.Inject
 
+private const val KEY_NOTE_ID = "note_id"
+
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
-    private val deleteNoteUseCase: DeleteNoteUseCase,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(buildInitialState())
-    val state = _state.asStateFlow()
+    private val isInEditModeState = MutableStateFlow(false)
+
+    val state = combine(
+        isInEditModeState,
+        notesRepository.getOrCreateTemplateNote(
+            savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),
+        ),
+    ) { isInEditMode, note ->
+        NoteCreateUiState.Success(
+            note = note.toNoteItem(),
+            isInEditMode = isInEditMode,
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = NoteCreateUiState.Loading,
+    )
 
     private val _effect = MutableSharedFlow<NoteCreateEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
@@ -56,7 +73,7 @@ internal class NoteCreateViewModel @Inject constructor(
         when (event) {
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
-                if (_state.value.isInEditMode) {
+                if (isInEditModeState.value) {
                     launch { saveNote() }
                 }
                 toggleEditMode()
@@ -71,18 +88,18 @@ internal class NoteCreateViewModel @Inject constructor(
             }
             is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }
             is NoteCreateEvent.OnDateSelected -> {
-                val zonedDateTime = ZonedDateTime.of(
-                    event.date,
-                    LocalTime.now(),
-                    ZoneId.systemDefault()
-                )
-                launch {
-                    notesRepository.updateNoteDate(
-                        noteId = state.value.note.id,
-                        date = zonedDateTime,
-                    )
+                state.doWithState<NoteCreateUiState.Success> { successState ->
+                    launch {
+                        notesRepository.updateNoteDate(
+                            noteId = successState.note.id,
+                            date = ZonedDateTime.of(
+                                event.date,
+                                LocalTime.now(),
+                                ZoneId.systemDefault()
+                            ),
+                        )
+                    }
                 }
-                _state.update { it.copy(note = it.note.copy(date = zonedDateTime)) }
             }
 
             is NoteCreateEvent.OnButtonDeleteClick -> {
@@ -95,52 +112,45 @@ internal class NoteCreateViewModel @Inject constructor(
     }
 
     private suspend fun showDateSelector() {
-        _effect.tryEmit(
-            NoteCreateEffect.ShowDateSelector(
-                date = state.value.note.date.toLocalDate(),
-                datesWithNotes = notesRepository.getUniqueNotesDates().first(),
-            ),
-        )
+        state.doWithState<NoteCreateUiState.Success> { successState ->
+            _effect.tryEmit(
+                NoteCreateEffect.ShowDateSelector(
+                    date = successState.note.date.toLocalDate(),
+                    datesWithNotes = notesRepository.getUniqueNotesDates().first(),
+                ),
+            )
+        }
     }
 
-    private fun buildInitialState() = NoteCreateUiState(
-        note = NoteItem(
-            id = UUID.randomUUID().toString(),
-            date = ZonedDateTime.now(),
-            fontFamily = UiNoteFontFamily.QuickSand,
-            fontColor = UiNoteFontColor.WHITE,  //TODO сделать дефолтный шрифт
-            fontSize = 15,
-            isPinned = false,
-        ),
-        isInEditMode = true,
-    )
-
     private suspend fun saveNote() {
-        notesRepository.insertNote(_state.value.note.toSimpleNote())
-        dialogResultCoordinator.onDialogResult(
-            dialogIdentifier = dialogIdentifier,
-            code = DialogResult.Ok(data = _state.value.note.id),
-        )
+        state.doWithState<NoteCreateUiState.Success>{ successState ->
+            notesRepository.setTemplate(successState.note.id, isTemplate = false)
+            dialogResultCoordinator.onDialogResult(
+                dialogIdentifier = dialogIdentifier,
+                code = DialogResult.Ok(data = successState.note.id),
+            )
+        }
     }
 
     private fun toggleEditMode() {
-        _state.update { it.copy(isInEditMode = !it.isInEditMode) }
+        isInEditModeState.update { !it }
     }
 
     private fun enableEditMode() {
-        _state.update { it.copy(isInEditMode = true) }
+        isInEditModeState.update { true }
     }
 
     private suspend fun toggleNotePinnedState() {
-        val note = state.value.note
-        _state.update { it.copy(note = note.copy(isPinned = !note.isPinned)) }
-        if (!state.value.isInEditMode) {
+        state.doWithState<NoteCreateUiState.Success>{ successState ->
+            val note = successState.note
             notesRepository.updateNoteIsPinned(note.id, !note.isPinned)
         }
     }
 
     private suspend fun deleteNote() {
-        deleteNoteUseCase(state.value.note.id)
-        _effect.tryEmit(NoteCreateEffect.CloseScreen)
+        state.doWithState<NoteCreateUiState.Success>{ successState ->
+            notesRepository.setTemplate(successState.note.id, isTemplate = true)
+            _effect.tryEmit(NoteCreateEffect.CloseScreen)
+        }
     }
 }

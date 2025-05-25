@@ -8,6 +8,7 @@ import androidx.work.Configuration
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.domain.repositories.NotesRepository
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +26,9 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
 
     @Inject
     lateinit var mediaRepository: MediaRepository
+
+    @Inject
+    lateinit var notesRepository: NotesRepository
 
     @Inject
     lateinit var syncManager: SyncManager
@@ -52,6 +56,7 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
             .build()
 
     private fun startPeriodicWorks() {
+        notesRepository.enqueuePeriodicCleanup()
         mediaRepository.enqueuePeriodicMediaSave()
         launch { syncManager.tryStartAutoBackup() }
     }

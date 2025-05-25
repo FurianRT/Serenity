@@ -1,5 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
+import android.content.Context
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepFilter
 import com.furianrt.core.deepMap
@@ -10,16 +11,23 @@ import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
+import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
+import com.furianrt.storage.internal.database.notes.entities.PartNoteIsTemplate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
+import com.furianrt.storage.internal.database.notes.mappers.toSimpleNote
+import com.furianrt.storage.internal.preferences.AppearanceDataStore
+import com.furianrt.storage.internal.workers.DatabaseCleanupWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import java.time.LocalDate
@@ -27,7 +35,9 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 internal class NotesRepositoryImp @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val noteDao: NoteDao,
+    private val appearanceDataStore: AppearanceDataStore,
     private val noteCache: NoteCache,
     private val dispatchers: DispatchersProvider,
 ) : NotesRepository {
@@ -73,6 +83,14 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
     }
 
+    override suspend fun setTemplate(noteId: String, isTemplate: Boolean) {
+        noteDao.update(PartNoteIsTemplate(noteId, isTemplate = isTemplate))
+    }
+
+    override suspend fun deleteTemplates() {
+        noteDao.deleteTemplates()
+    }
+
     override suspend fun deleteNote(noteId: String) {
         noteDao.delete(PartNoteId(noteId))
     }
@@ -111,6 +129,25 @@ internal class NotesRepositoryImp @Inject constructor(
             .map { it?.toLocalNote() }
             .flowOn(dispatchers.default)
 
+    override fun getOrCreateTemplateNote(
+        noteId: String,
+    ): Flow<SimpleNote> = noteDao.getSimpleNote(noteId)
+        .map { note ->
+            note?.toSimpleNote() ?: EntryNote(
+                id = noteId,
+                text = "",
+                textSpans = emptyList(),
+                font = appearanceDataStore.getDefaultNoteFont().first(),
+                fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
+                fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
+                date = ZonedDateTime.now(),
+                isPinned = false,
+                isTemplate = true,
+            )
+                .also { noteDao.insert(it) }
+                .toSimpleNote()
+        }
+
     override fun getUniqueNotesDates(): Flow<Set<LocalDate>> =
         noteDao.getAllSimpleNotes()
             .deepMap { it.date.toLocalDate() }
@@ -127,5 +164,9 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun deleteNoteContentFromCache(noteId: String) {
         noteCache.deleteCache(noteId)
+    }
+
+    override fun enqueuePeriodicCleanup() {
+        DatabaseCleanupWorker.enqueuePeriodic(context)
     }
 }

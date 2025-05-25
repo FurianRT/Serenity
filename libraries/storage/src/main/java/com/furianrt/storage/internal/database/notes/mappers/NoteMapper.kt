@@ -31,6 +31,7 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     fontSize = fontSize,
     date = date,
     isPinned = isPinned,
+    isTemplate = false,
 )
 
 internal fun LinkedNote.toLocalNote() = LocalNote(
@@ -77,6 +78,15 @@ internal fun List<LocalNote.Content>.toEntryNoteText(): String {
     }
     return builder.toString()
 }
+
+internal fun EntryNote.toSimpleNote() = SimpleNote(
+    id = id,
+    font = font,
+    fontColor = fontColor,
+    fontSize = fontSize,
+    date = date,
+    isPinned = isPinned,
+)
 
 private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content> {
     val (startIndex, content) = when (getFirstTagType(text)) {

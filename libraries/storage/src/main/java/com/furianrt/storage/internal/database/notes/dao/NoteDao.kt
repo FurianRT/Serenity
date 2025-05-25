@@ -15,6 +15,7 @@ import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
+import com.furianrt.storage.internal.database.notes.entities.PartNoteIsTemplate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import kotlinx.coroutines.flow.Flow
 
@@ -41,17 +42,23 @@ internal interface NoteDao {
     @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: List<PartNoteIsPinned>)
 
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteIsTemplate)
+
     @Delete(entity = EntryNote::class)
     suspend fun delete(data: PartNoteId)
 
     @Delete(entity = EntryNote::class)
     suspend fun delete(data: List<PartNoteId>)
 
+    @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 1")
+    suspend fun deleteTemplates()
+
     @Transaction
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0")
     fun getAllNotes(): Flow<List<LinkedNote>>
 
-    @Query("SELECT * FROM ${EntryNote.TABLE_NAME}")
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0")
     fun getAllSimpleNotes(): Flow<List<EntryNote>>
 
     @Transaction
@@ -59,14 +66,17 @@ internal interface NoteDao {
         """
     SELECT * 
     FROM ${EntryNote.TABLE_NAME} 
-    WHERE ${EntryNote.FIELD_TEXT} LIKE :query 
-    OR EXISTS (
-        SELECT 1 
-        FROM ${EntryNoteToTag.TABLE_NAME} 
-        WHERE ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_NOTE_ID} = ${EntryNote.TABLE_NAME}.${EntryNote.FIELD_ID} 
-        AND ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_TAG_TITLE} LIKE :query
+    WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0
+    AND (
+        ${EntryNote.FIELD_TEXT} LIKE :query 
+        OR EXISTS (
+            SELECT 1 
+            FROM ${EntryNoteToTag.TABLE_NAME} 
+            WHERE ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_NOTE_ID} = ${EntryNote.TABLE_NAME}.${EntryNote.FIELD_ID} 
+            AND ${EntryNoteToTag.TABLE_NAME}.${EntryNoteToTag.FIELD_TAG_TITLE} LIKE :query
+        )
     )
-"""
+    """
     )
     fun getAllNotes(query: String): Flow<List<LinkedNote>>
 
@@ -74,4 +84,6 @@ internal interface NoteDao {
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     fun getNote(noteId: String): Flow<LinkedNote?>
 
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
+    fun getSimpleNote(noteId: String): Flow<EntryNote?>
 }

@@ -34,6 +34,9 @@ internal class EntryNote(
 
     @ColumnInfo(name = FIELD_IS_PINNED)
     val isPinned: Boolean,
+
+    @ColumnInfo(name = FIELD_IS_TEMPLATE)
+    val isTemplate: Boolean
 ) {
     companion object {
         const val TABLE_NAME = "Notes"
@@ -45,6 +48,7 @@ internal class EntryNote(
         const val FIELD_FONT_SIZE = "font_size"
         const val FIELD_DATE = "date"
         const val FIELD_IS_PINNED = "is_pinned"
+        const val FIELD_IS_TEMPLATE = "is_template"
     }
 }
 
@@ -97,4 +101,13 @@ internal class PartNoteIsPinned(
 
     @ColumnInfo(name = EntryNote.FIELD_IS_PINNED)
     val isPinned: Boolean,
+)
+
+@Entity
+internal class PartNoteIsTemplate(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_IS_TEMPLATE)
+    val isTemplate: Boolean,
 )

@@ -317,9 +317,7 @@ private fun SuccessScreen(
     }
 
     MediaSelectorBottomSheet(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
+        modifier = modifier.fillMaxSize(),
         state = state.bottomScaffoldState,
         openMediaViewer = { route ->
             if (isSelected) {

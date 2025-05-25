@@ -105,25 +105,32 @@ internal fun NoteCreateScreen(
                 }
             }
     }
-    ScreenContent(
-        modifier = Modifier.haze(hazeState),
-        state = pageScreenState,
-        uiState = uiState,
-        hazeState = hazeState,
-        onEvent = viewModel::onEvent,
-        notePage = {
-            NotePageScreen(
-                state = pageScreenState,
-                noteId = uiState.note.id,
-                isInEditMode = uiState.isInEditMode,
-                isSelected = true,
-                isNoteCreationMode = true,
-                onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
-                openMediaViewScreen = openMediaViewScreen,
-                openMediaViewer = openMediaViewer,
-            )
-        },
-    )
+    when (val state = uiState) {
+        is NoteCreateUiState.Success -> SuccessContent(
+            modifier = Modifier.haze(hazeState),
+            state = pageScreenState,
+            uiState = state,
+            hazeState = hazeState,
+            onEvent = viewModel::onEvent,
+            notePage = {
+                NotePageScreen(
+                    state = pageScreenState,
+                    noteId = state.note.id,
+                    isInEditMode = state.isInEditMode,
+                    isSelected = true,
+                    isNoteCreationMode = true,
+                    onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
+                    openMediaViewScreen = openMediaViewScreen,
+                    openMediaViewer = openMediaViewer,
+                )
+            },
+        )
+
+        is NoteCreateUiState.Loading -> LoadingContent(
+            modifier = Modifier.haze(hazeState),
+        )
+    }
+
 
     calendarDialogState?.let { dialogState ->
         SingleChoiceCalendar(
@@ -147,9 +154,9 @@ internal fun NoteCreateScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun ScreenContent(
+private fun SuccessContent(
     state: PageScreenState,
-    uiState: NoteCreateUiState,
+    uiState: NoteCreateUiState.Success,
     hazeState: HazeState,
     onEvent: (event: NoteCreateEvent) -> Unit,
     notePage: @Composable () -> Unit,
@@ -215,6 +222,17 @@ private fun ScreenContent(
 }
 
 @Composable
+private fun LoadingContent(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    )
+}
+
+@Composable
 private fun ToolbarDim(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
@@ -234,9 +252,9 @@ private fun ToolbarDim(
 @PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
-        ScreenContent(
+        SuccessContent(
             state = rememberPageScreenState(),
-            uiState = NoteCreateUiState(
+            uiState = NoteCreateUiState.Success(
                 note = NoteItem(
                     id = "",
                     fontFamily = UiNoteFontFamily.QuickSand,
