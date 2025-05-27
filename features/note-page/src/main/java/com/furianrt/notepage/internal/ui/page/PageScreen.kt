@@ -198,7 +198,7 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.ClearFocus -> focusManager.clearFocus()
-                is PageEffect.ShowSyncProgressMessage -> {
+                is PageEffect.ShowMessage -> {
                     snackBarHostState.currentSnackbarData?.dismiss()
                     snackBarHostState.showSnackbar(
                         message = effect.message,
@@ -425,7 +425,7 @@ private fun SuccessScreen(
             snackbar = { data ->
                 SnackBar(
                     title = data.visuals.message,
-                    icon = painterResource(uiR.drawable.ic_cloud_sync),
+                    icon = painterResource(uiR.drawable.ic_info),
                     tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
                 )
             },

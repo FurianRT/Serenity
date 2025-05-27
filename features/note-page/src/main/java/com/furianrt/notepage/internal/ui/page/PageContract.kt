@@ -86,5 +86,5 @@ internal sealed interface PageEffect {
 
     data class BringContentToView(val content: UiNoteContent) : PageEffect
     data object ClearFocus : PageEffect
-    data class ShowSyncProgressMessage(val message: String) : PageEffect
+    data class ShowMessage(val message: String) : PageEffect
 }

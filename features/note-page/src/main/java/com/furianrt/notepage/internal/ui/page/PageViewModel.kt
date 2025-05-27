@@ -27,6 +27,7 @@ import com.furianrt.notelistui.extensions.toLocalNoteTag
 import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
+import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
@@ -110,7 +111,7 @@ import com.furianrt.uikit.R as uiR
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val TITLE_FOCUS_DELAY = 150L
-private const val MAX_STICKERS_COUNT = 1000
+private const val MAX_STICKERS_COUNT = 50
 
 @OptIn(DelicateCoroutinesApi::class)
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
@@ -472,13 +473,13 @@ internal class PageViewModel @AssistedInject constructor(
         resetStickersEditing()
         when {
             syncManager.isBackupInProgress() -> _effect.tryEmit(
-                PageEffect.ShowSyncProgressMessage(
+                PageEffect.ShowMessage(
                     message = resourcesManager.getString(uiR.string.backup_in_progress),
                 ),
             )
 
             syncManager.isRestoreInProgress() -> _effect.tryEmit(
-                PageEffect.ShowSyncProgressMessage(
+                PageEffect.ShowMessage(
                     message = resourcesManager.getString(uiR.string.restore_in_progress),
                 ),
             )
@@ -517,13 +518,13 @@ internal class PageViewModel @AssistedInject constructor(
         resetStickersEditing()
         when {
             syncManager.isBackupInProgress() -> _effect.tryEmit(
-                PageEffect.ShowSyncProgressMessage(
+                PageEffect.ShowMessage(
                     message = resourcesManager.getString(uiR.string.backup_in_progress),
                 ),
             )
 
             syncManager.isRestoreInProgress() -> _effect.tryEmit(
-                PageEffect.ShowSyncProgressMessage(
+                PageEffect.ShowMessage(
                     message = resourcesManager.getString(uiR.string.restore_in_progress),
                 ),
             )
@@ -606,6 +607,12 @@ internal class PageViewModel @AssistedInject constructor(
             _state.updateState<PageUiState.Success> { currentState ->
                 currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
             }
+        } else {
+            _effect.tryEmit(
+                PageEffect.ShowMessage(
+                    message = resourcesManager.getString(R.string.note_sticker_limit_message),
+                ),
+            )
         }
     }
 

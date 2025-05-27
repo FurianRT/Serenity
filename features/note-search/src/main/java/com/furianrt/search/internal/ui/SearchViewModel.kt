@@ -47,7 +47,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -66,10 +65,10 @@ private class SearchData(
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
     getAllUniqueTagsUseCase: GetAllUniqueTagsUseCase,
+    dispatchers: DispatchersProvider,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val notesRepository: NotesRepository,
-    private val dispatchers: DispatchersProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
@@ -127,7 +126,7 @@ internal class SearchViewModel @Inject constructor(
         initialValue = SearchUiState(searchQuery = queryState),
     )
 
-    private val _effect = MutableSharedFlow<SearchEffect>(extraBufferCapacity = 10)
+    private val _effect = MutableSharedFlow<SearchEffect>(extraBufferCapacity = 5)
     val effect = _effect.asSharedFlow()
 
     init {
@@ -286,11 +285,11 @@ internal class SearchViewModel @Inject constructor(
         }
     }
 
-    private suspend fun buildState(
+    private fun buildState(
         notes: List<LocalNote>,
         selectedNotes: Set<String>,
         data: SearchData,
-    ): SearchUiState = withContext(dispatchers.default) {
+    ): SearchUiState {
         val hasFilters = data.selectedFilters.isNotEmpty()
         val hasQuery = data.queryText.isNotBlank()
         val state = if (notes.isEmpty()) {
@@ -315,16 +314,14 @@ internal class SearchViewModel @Inject constructor(
             )
         }
         val unselectedTags = if (hasFilters) {
-            val noteIds = notes.map(LocalNote::id).toSet()
             data.allTags
                 .filter { tag -> data.selectedFilters.none { it.id == tag.title } }
-                .sortedBy { it.noteIds.intersect(noteIds).isEmpty() }
                 .map(LocalTag::toSelectedTag)
         } else {
             emptyList()
         }
 
-        return@withContext SearchUiState(
+        return SearchUiState(
             searchQuery = queryState,
             selectedFilters = data.selectedFilters.toPersistentList().addAll(unselectedTags),
             state = state,
