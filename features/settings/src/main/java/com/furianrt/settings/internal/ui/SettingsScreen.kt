@@ -407,7 +407,7 @@ private fun Rating(
                     if (isFilled) {
                         delay(50L * index)
                         scale.animateTo(
-                            targetValue = 1.1f,
+                            targetValue = 1.15f,
                             animationSpec = tween(durationMillis = 150),
                         )
                         scale.animateTo(

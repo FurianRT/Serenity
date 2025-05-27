@@ -30,6 +30,8 @@ import java.util.UUID
 import javax.inject.Inject
 
 private const val KEY_NOTE_ID = "note_id"
+private const val KEY_REQUEST_ID = "requestId"
+private const val KEY_DIALOG_ID = "dialogId"
 
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
@@ -38,7 +40,7 @@ internal class NoteCreateViewModel @Inject constructor(
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
-    private val isInEditModeState = MutableStateFlow(false)
+    private val isInEditModeState = MutableStateFlow(true)
 
     val state = combine(
         isInEditModeState,
@@ -61,8 +63,8 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
         DialogIdentifier(
-            requestId = savedStateHandle["requestId"]!!,
-            dialogId = savedStateHandle["dialogId"]!!,
+            requestId = savedStateHandle[KEY_REQUEST_ID]!!,
+            dialogId = savedStateHandle[KEY_DIALOG_ID]!!,
         )
     }
 
@@ -73,8 +75,8 @@ internal class NoteCreateViewModel @Inject constructor(
         when (event) {
             is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
-                if (isInEditModeState.value) {
-                    launch { saveNote() }
+                if (isInEditModeState.value && isContentChanged) {
+                    GlobalScope.launch { saveTemplate() }
                 }
                 toggleEditMode()
             }
@@ -82,10 +84,11 @@ internal class NoteCreateViewModel @Inject constructor(
             is NoteCreateEvent.OnButtonBackClick -> _effect.tryEmit(NoteCreateEffect.CloseScreen)
             is NoteCreateEvent.OnContentChanged -> {
                 if (isContentChanged != event.isChanged && event.isChanged) {
-                    launch { GlobalScope.launch { saveNote() } }
+                    GlobalScope.launch { saveTemplate() }
                 }
                 isContentChanged = event.isChanged
             }
+
             is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }
             is NoteCreateEvent.OnDateSelected -> {
                 state.doWithState<NoteCreateUiState.Success> { successState ->
@@ -102,8 +105,10 @@ internal class NoteCreateViewModel @Inject constructor(
                 }
             }
 
-            is NoteCreateEvent.OnButtonDeleteClick -> {
+            is NoteCreateEvent.OnButtonDeleteClick -> if (isContentChanged) {
                 _effect.tryEmit(NoteCreateEffect.ShowDeleteConfirmationDialog)
+            } else {
+                launch { deleteNote() }
             }
 
             is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
@@ -122,8 +127,8 @@ internal class NoteCreateViewModel @Inject constructor(
         }
     }
 
-    private suspend fun saveNote() {
-        state.doWithState<NoteCreateUiState.Success>{ successState ->
+    private suspend fun saveTemplate() {
+        state.doWithState<NoteCreateUiState.Success> { successState ->
             notesRepository.setTemplate(successState.note.id, isTemplate = false)
             dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = dialogIdentifier,
@@ -141,15 +146,18 @@ internal class NoteCreateViewModel @Inject constructor(
     }
 
     private suspend fun toggleNotePinnedState() {
-        state.doWithState<NoteCreateUiState.Success>{ successState ->
+        state.doWithState<NoteCreateUiState.Success> { successState ->
             val note = successState.note
             notesRepository.updateNoteIsPinned(note.id, !note.isPinned)
         }
     }
 
     private suspend fun deleteNote() {
-        state.doWithState<NoteCreateUiState.Success>{ successState ->
+        state.doWithState<NoteCreateUiState.Success> { successState ->
             notesRepository.setTemplate(successState.note.id, isTemplate = true)
+            if (isContentChanged) {
+                notesRepository.enqueueOneTimeCleanup()
+            }
             _effect.tryEmit(NoteCreateEffect.CloseScreen)
         }
     }

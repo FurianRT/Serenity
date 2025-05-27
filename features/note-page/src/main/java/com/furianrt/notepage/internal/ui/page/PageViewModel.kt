@@ -100,7 +100,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -229,11 +229,7 @@ internal class PageViewModel @AssistedInject constructor(
                 onVoiceProgressSelected(event.voice, event.value)
             }
 
-            is OnVoiceRemoveClick -> {
-                resetStickersEditing()
-                removeVoiceRecord(event.voice)
-            }
-
+            is OnVoiceRemoveClick -> onVoiceRemoveClick(event.voice)
             is OnSelectStickersClick -> resetStickersEditing()
             is OnStickerSelected -> addSticker(event.sticker)
             is OnRemoveStickerClick -> removeSticker(event.sticker)
@@ -473,6 +469,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onMediaRemoveClick(mediaId: String) {
+        resetStickersEditing()
         when {
             syncManager.isBackupInProgress() -> _effect.tryEmit(
                 PageEffect.ShowSyncProgressMessage(
@@ -487,7 +484,6 @@ internal class PageViewModel @AssistedInject constructor(
             )
 
             else -> {
-                resetStickersEditing()
                 removeMedia(setOf(mediaId))
             }
         }
@@ -513,6 +509,27 @@ internal class PageViewModel @AssistedInject constructor(
                         saveNoteContent(it)
                     }
                 }
+            }
+        }
+    }
+
+    private fun onVoiceRemoveClick(voice: UiNoteContent.Voice) {
+        resetStickersEditing()
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                PageEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                PageEffect.ShowSyncProgressMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> {
+                removeVoiceRecord(voice)
             }
         }
     }
@@ -749,7 +766,7 @@ internal class PageViewModel @AssistedInject constructor(
         val fontFamily = state.fontFamily.toNoteFontFamily()
         val fontColor = state.fontColor.toNoteFontColor()
         val fontSize = state.fontSize
-        val note = notesRepository.getNote(noteId).firstOrNull()
+        val note = notesRepository.getNote(noteId).first()
         if (note != null) {
             updateNoteContentUseCase(
                 noteId = noteId,

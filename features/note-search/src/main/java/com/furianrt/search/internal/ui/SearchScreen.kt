@@ -279,18 +279,8 @@ private fun SuccessContent(
 
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
-            val visibleIndexes = listState.layoutInfo
-                .visibleItemsInfo(itemVisiblePercentThreshold = 90f)
-                .map(LazyListItemInfo::index)
-            if (uiState.scrollToPosition !in visibleIndexes) {
-                if (uiState.scrollToPosition == 1) {
-                    listState.scrollToItem(0)
-                } else {
-                    listState.scrollToItem(uiState.scrollToPosition)
-                }
-
-            }
-            toolbarState.expand(0)
+            listState.scrollToItem(uiState.scrollToPosition)
+            toolbarState.expand()
             onEvent(SearchEvent.OnScrolledToItem)
         }
     }

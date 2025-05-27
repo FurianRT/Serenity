@@ -23,7 +23,6 @@ interface NotesRepository {
     )
 
     suspend fun setTemplate(noteId: String, isTemplate: Boolean)
-    suspend fun deleteTemplates()
 
     suspend fun deleteNote(noteId: String)
     suspend fun deleteNotes(noteIds: Set<String>)
@@ -31,6 +30,7 @@ interface NotesRepository {
     fun getAllNotes(query: String): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
     fun getOrCreateTemplateNote(noteId: String): Flow<SimpleNote>
+    fun getAllTemplates(): Flow<List<SimpleNote>>
 
     fun getUniqueNotesDates(): Flow<Set<LocalDate>>
 
@@ -38,5 +38,6 @@ interface NotesRepository {
     fun deleteNoteContentFromCache(noteId: String)
     fun getNoteContentFromCache(noteId: String): List<LocalNote.Content>
 
+    fun enqueueOneTimeCleanup()
     fun enqueuePeriodicCleanup()
 }

@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.buildImmutableList
 import com.furianrt.core.findInstance
-import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.managers.ResourcesManager
@@ -45,6 +44,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
@@ -59,7 +59,7 @@ private class SearchData(
     val allTags: List<LocalTag>,
     val queryText: String,
     val selectedFilters: ImmutableList<SelectedFilter>,
-    val scrollToNote: String?,
+    val scrollToPosition: Int?,
 )
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -75,11 +75,12 @@ internal class SearchViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
 ) : ViewModel(), DialogResultListener {
 
-    private val scrollToNoteState = MutableStateFlow<String?>(null)
+    private val scrollToPositionState = MutableStateFlow<Int?>(null)
     private val selectedNotesState = MutableStateFlow<Set<String>>(emptySet())
     private val queryState = TextFieldState()
     private val queryTextFlow = snapshotFlow { queryState.text.toString() }
         .debounce(QUERY_DEBOUNCE_DURATION)
+        .onEach { scrollToPositionState.update { 0 } }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -92,13 +93,13 @@ internal class SearchViewModel @Inject constructor(
         getAllUniqueTagsUseCase(),
         queryTextFlow,
         selectedFiltersFlow,
-        scrollToNoteState,
-    ) { allTags, queryText, selectedFilters, scrollToNote ->
+        scrollToPositionState,
+    ) { allTags, queryText, selectedFilters, scrollToPosition ->
         SearchData(
             allTags = allTags,
             queryText = queryText,
             selectedFilters = selectedFilters,
-            scrollToNote = scrollToNote,
+            scrollToPosition = scrollToPosition,
         )
     }.flatMapLatest { data ->
         val dateFilter = data.selectedFilters.findInstance<SelectedFilter.DateRange>()
@@ -148,12 +149,13 @@ internal class SearchViewModel @Inject constructor(
             is SearchEvent.OnRemoveFilterClick -> removeFilter(event.filter)
             is SearchEvent.OnTagClick -> addTagFilter(event.title)
             is SearchEvent.OnDateRangeSelected -> addDateFilter(event.start, event.end)
-            is SearchEvent.OnScrolledToItem -> scrollToNoteState.update { null }
+            is SearchEvent.OnScrolledToItem -> scrollToPositionState.update { null }
             is SearchEvent.OnNoteItemClick -> if (selectedNotesState.value.isEmpty()) {
                 openNoteViewScreen(event.noteId)
             } else {
                 addOrRemoveSelectedNote(event.noteId)
             }
+
             is SearchEvent.OnCloseSelectionClick -> clearSelectedNotes()
             is SearchEvent.OnConfirmDeleteSelectedNotesClick -> launch {
                 deleteSelectedNotes(selectedNotesState.value)
@@ -165,24 +167,25 @@ internal class SearchViewModel @Inject constructor(
     }
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
-       /* when (dialogId) {
-            NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
-                val successState = state.value.state as? SearchUiState.State.Success ?: return
-                val position = result.data as Int
-                scrollToNoteState.update { successState.items.getOrNull(position + 1)?.id }
-            }
-        }*/
+        /* when (dialogId) {
+             NOTE_VIEW_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+                 val successState = state.value.state as? SearchUiState.State.Success ?: return
+                 val position = result.data as Int
+                 scrollToNoteState.update { successState.items.getOrNull(position + 1)?.id }
+             }
+         }*/
     }
 
     private fun clearQuery() {
         if (selectedNotesState.value.isEmpty()) {
-        queryState.edit { delete(0, originalText.length) }
-            }
+            queryState.edit { delete(0, originalText.length) }
+        }
     }
 
     private fun removeFilter(filter: SelectedFilter) {
         if (selectedNotesState.value.isEmpty()) {
             selectedFiltersFlow.update { it.toPersistentList().remove(filter) }
+            scrollToPositionState.update { 0 }
         }
     }
 
@@ -191,6 +194,7 @@ internal class SearchViewModel @Inject constructor(
         val isSelectionActive = selectedNotesState.value.isEmpty()
         if (isSelectionActive && !alreadyHasFilter) {
             selectedFiltersFlow.update { it.toPersistentList().add(SelectedFilter.Tag(title)) }
+            scrollToPositionState.update { 0 }
         }
     }
 
@@ -201,6 +205,7 @@ internal class SearchViewModel @Inject constructor(
                 .removeAll { it.id == filterItem.id }
                 .add(filterItem)
         }
+        scrollToPositionState.update { 0 }
     }
 
     private suspend fun showDateSelector() {
@@ -306,9 +311,7 @@ internal class SearchViewModel @Inject constructor(
                 items = items,
                 notesCount = notes.count(),
                 selectedNotesCount = selectedNotes.count(),
-                scrollToPosition = items.indexOfFirstOrNull { item ->
-                    item is SearchListItem.Note && item.id == data.scrollToNote
-                },
+                scrollToPosition = data.scrollToPosition,
             )
         }
         val unselectedTags = if (hasFilters) {

@@ -51,15 +51,15 @@ internal interface NoteDao {
     @Delete(entity = EntryNote::class)
     suspend fun delete(data: List<PartNoteId>)
 
-    @Query("DELETE FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 1")
-    suspend fun deleteTemplates()
-
     @Transaction
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0")
     fun getAllNotes(): Flow<List<LinkedNote>>
 
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0")
     fun getAllSimpleNotes(): Flow<List<EntryNote>>
+
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 1")
+    fun getAllTemplates(): Flow<List<EntryNote>>
 
     @Transaction
     @Query(

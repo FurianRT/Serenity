@@ -87,10 +87,6 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteIsTemplate(noteId, isTemplate = isTemplate))
     }
 
-    override suspend fun deleteTemplates() {
-        noteDao.deleteTemplates()
-    }
-
     override suspend fun deleteNote(noteId: String) {
         noteDao.delete(PartNoteId(noteId))
     }
@@ -148,6 +144,9 @@ internal class NotesRepositoryImp @Inject constructor(
                 .toSimpleNote()
         }
 
+    override fun getAllTemplates(): Flow<List<SimpleNote>> = noteDao.getAllTemplates()
+        .deepMap(EntryNote::toSimpleNote)
+
     override fun getUniqueNotesDates(): Flow<Set<LocalDate>> =
         noteDao.getAllSimpleNotes()
             .deepMap { it.date.toLocalDate() }
@@ -164,6 +163,10 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun deleteNoteContentFromCache(noteId: String) {
         noteCache.deleteCache(noteId)
+    }
+
+    override fun enqueueOneTimeCleanup() {
+        DatabaseCleanupWorker.enqueueOneTime(context)
     }
 
     override fun enqueuePeriodicCleanup() {
