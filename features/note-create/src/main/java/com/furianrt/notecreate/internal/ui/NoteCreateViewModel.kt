@@ -83,10 +83,10 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnButtonBackClick -> _effect.tryEmit(NoteCreateEffect.CloseScreen)
             is NoteCreateEvent.OnContentChanged -> {
-                if (isContentChanged != event.isChanged && event.isChanged) {
+                if (!isContentChanged) {
+                    isContentChanged = true
                     GlobalScope.launch { saveTemplate() }
                 }
-                isContentChanged = event.isChanged
             }
 
             is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }

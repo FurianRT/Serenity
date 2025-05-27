@@ -21,7 +21,6 @@ import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeChild
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -74,21 +73,18 @@ internal fun Menu(
                 stringResource(uiR.string.action_pin)
             },
             onClick = {
+                onPinClick()
                 onDismissRequest()
-                scope.launch {
-                    delay(150)
-                    onPinClick()
-                }
             },
         )
-        MenuItem(
+       /* MenuItem(
             icon = painterResource(uiR.drawable.ic_share),
             text = stringResource(uiR.string.action_share),
             onClick = {
                 onShareClick()
                 onDismissRequest()
             },
-        )
+        )*/
         MenuItem(
             icon = painterResource(uiR.drawable.ic_delete),
             text = stringResource(uiR.string.action_delete),
