@@ -24,8 +24,8 @@ internal class UndoRedoManager {
         private const val INTERVAL = 1000L
     }
 
-    private var undoStack = SnapshotStateList<UndoRedoOperation>()
-    private var redoStack = SnapshotStateList<UndoRedoOperation>()
+    private val undoStack = SnapshotStateList<UndoRedoOperation>()
+    private val redoStack = SnapshotStateList<UndoRedoOperation>()
 
     val canUndo: Boolean
         get() = undoStack.isNotEmpty()

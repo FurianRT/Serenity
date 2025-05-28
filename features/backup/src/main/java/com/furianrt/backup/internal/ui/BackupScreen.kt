@@ -13,20 +13,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -39,11 +36,11 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -60,9 +57,10 @@ import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
@@ -167,48 +165,42 @@ private fun ScreenContent(
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
-    val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    Scaffold(
-        modifier = modifier,
-        topBar = {
+    val toolbarState = remember { MovableToolbarState() }
+
+    MovableToolbarScaffold(
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        state = toolbarState,
+        listState = scrollState,
+        enabled = false,
+        toolbar = {
             DefaultToolbar(
-                modifier = Modifier
-                    .drawBehind {
-                        if (scrollState.canScrollBackward) {
-                            drawBottomShadow(color = shadowColor)
-                        }
-                    }
-                    .statusBarsPadding(),
+                modifier = Modifier.statusBarsPadding(),
                 title = stringResource(R.string.backup_google_drive_title),
                 onBackClick = { onEvent(BackupScreenEvent.OnButtonBackClick) },
             )
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(uiR.drawable.ic_error),
-                        tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
-                    )
-                },
-            )
-        },
-        contentWindowInsets = WindowInsets.statusBars,
-    ) { paddingValues ->
+        }
+    ) { topPadding ->
         when (uiState) {
             is BackupUiState.Success -> SuccessContent(
-                modifier = Modifier.padding(paddingValues),
                 uiState = uiState,
                 onEvent = onEvent,
                 scrollState = scrollState,
+                toolbarPadding = topPadding,
             )
 
-            is BackupUiState.Loading -> LoadingContent(
-                modifier = Modifier.padding(paddingValues),
-            )
+            is BackupUiState.Loading -> LoadingContent()
         }
+        SnackbarHost(
+            modifier = Modifier.navigationBarsPadding(),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_error),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
+        )
     }
 }
 
@@ -216,6 +208,7 @@ private fun ScreenContent(
 private fun SuccessContent(
     uiState: BackupUiState.Success,
     scrollState: ScrollState,
+    toolbarPadding: Dp,
     modifier: Modifier = Modifier,
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
@@ -224,7 +217,7 @@ private fun SuccessContent(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .navigationBarsPadding(),
+            .padding(top = toolbarPadding),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         Header(
@@ -240,7 +233,8 @@ private fun SuccessContent(
                     color = MaterialTheme.colorScheme.outlineVariant,
                     shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                 )
-                .padding(vertical = 16.dp),
+                .padding(vertical = 16.dp)
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             SwitchWithLabel(
@@ -297,7 +291,7 @@ private fun SuccessContent(
                     color = MaterialTheme.colorScheme.tertiary,
                 )
                 QuestionsList(
-                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 16.dp),
                     questions = uiState.questions,
                     isSignedIn = uiState.isSignedIn,
                     onQuestionClick = { onEvent(BackupScreenEvent.OnQuestionClick(it)) },

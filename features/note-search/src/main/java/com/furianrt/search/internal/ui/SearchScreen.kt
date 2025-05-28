@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.input.TextFieldState
@@ -37,13 +36,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,13 +63,11 @@ import com.furianrt.search.internal.ui.composables.NotesCountItem
 import com.furianrt.search.internal.ui.composables.Toolbar
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SnackBar
-import com.furianrt.uikit.extensions.visibleItemsInfo
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
@@ -80,6 +76,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import com.furianrt.uikit.R as uiR
 
 @Immutable
 private data class CalendarState(
@@ -189,7 +186,6 @@ private fun ScreenContent(
     onEvent: (event: SearchEvent) -> Unit = {},
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
-    var toolbarHeight by remember { mutableIntStateOf(0) }
     val listState = rememberLazyListState()
 
     LaunchedEffect(uiState.enableSelection) {
@@ -210,7 +206,6 @@ private fun ScreenContent(
         toolbar = {
             val successState = uiState.state as? SearchUiState.State.Success
             Toolbar(
-                modifier = Modifier.onSizeChanged { toolbarHeight = it.height },
                 notesCount = successState?.notesCount ?: 0,
                 selectedNotesCount = successState?.selectedNotesCount ?: 0,
                 selectedFilters = uiState.selectedFilters,
@@ -225,12 +220,11 @@ private fun ScreenContent(
                 onCloseSelectionClick = { onEvent(SearchEvent.OnCloseSelectionClick) }
             )
         },
-    ) {
+    ) { topPadding ->
         AnimatedContent(
             targetState = uiState.state,
             transitionSpec = { fadeIn().togetherWith(fadeOut()) },
             contentKey = { it::class.simpleName },
-            label = "ContentAnim",
         ) { targetState ->
             when (targetState) {
                 is SearchUiState.State.Success -> SuccessContent(
@@ -238,11 +232,11 @@ private fun ScreenContent(
                     onEvent = onEvent,
                     listState = listState,
                     toolbarState = toolbarState,
-                    toolbarHeight = toolbarHeight,
+                    toolbarHeight = topPadding,
                 )
 
                 is SearchUiState.State.Empty -> EmptyContent(
-                    toolbarHeight = toolbarHeight,
+                    toolbarHeight = topPadding,
                 )
             }
         }
@@ -266,7 +260,7 @@ private fun SuccessContent(
     onEvent: (event: SearchEvent) -> Unit,
     listState: LazyListState,
     toolbarState: MovableToolbarState,
-    toolbarHeight: Int,
+    toolbarHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -290,7 +284,7 @@ private fun SuccessContent(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(12.dp),
         contentPadding = PaddingValues(
-            top = LocalDensity.current.run { toolbarHeight.toDp() } + 8.dp,
+            top = toolbarHeight + 8.dp,
             bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp,
         ),
     ) {
@@ -349,12 +343,12 @@ private fun SuccessContent(
 
 @Composable
 private fun EmptyContent(
-    toolbarHeight: Int,
+    toolbarHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
-            .padding(top = LocalDensity.current.run { toolbarHeight.toDp() })
+            .padding(top = toolbarHeight)
             .fillMaxSize(),
         contentAlignment = Alignment.TopCenter,
     ) {

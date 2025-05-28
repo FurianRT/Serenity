@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +31,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -175,13 +175,14 @@ private fun MainScreenContent(
                 onCloseSelectionClick = { onEvent(NoteListEvent.OnCloseSelectionClick) },
             )
         },
-    ) {
+    ) { topPadding ->
         when (uiState) {
             is NoteListUiState.Loading -> NoteListLoading()
             is NoteListUiState.Empty -> NoteListEmpty()
             is NoteListUiState.Success -> MainSuccess(
                 uiState = uiState,
                 screenState = screenState,
+                toolbarPadding = topPadding,
                 onEvent = onEvent,
             )
         }
@@ -215,6 +216,7 @@ private fun MainScreenContent(
 private fun MainSuccess(
     uiState: NoteListUiState.Success,
     screenState: NoteListScreenState,
+    toolbarPadding: Dp,
     onEvent: (event: NoteListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -235,8 +237,7 @@ private fun MainSuccess(
         contentPadding = PaddingValues(
             start = 8.dp,
             end = 8.dp,
-            top = ToolbarConstants.bigToolbarHeight + 8.dp +
-                    WindowInsets.statusBars.asPaddingValues().calculateTopPadding(),
+            top = toolbarPadding + 8.dp,
             bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),

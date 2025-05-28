@@ -30,10 +30,12 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
@@ -63,11 +65,11 @@ class MovableToolbarState {
 @Composable
 fun MovableToolbarScaffold(
     listState: ScrollableState,
+    state: MovableToolbarState,
     toolbar: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
-    state: MovableToolbarState = MovableToolbarState(),
     enabled: Boolean = true,
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
@@ -193,7 +195,7 @@ fun MovableToolbarScaffold(
         )
         Box(
             modifier = Modifier.haze(hazeState),
-            content = { content() },
+            content = { content(toolbarHeight.pxToDp()) },
         )
     }
 }

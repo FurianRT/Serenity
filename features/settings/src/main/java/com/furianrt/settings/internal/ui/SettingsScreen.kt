@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -27,7 +28,6 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -43,13 +43,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -62,12 +62,13 @@ import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
+import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -169,45 +170,44 @@ private fun ScreenContent(
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
-    val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    Scaffold(
-        modifier = modifier.systemBarsPadding(),
-        topBar = {
+    val toolbarState = remember { MovableToolbarState() }
+
+    MovableToolbarScaffold(
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        state = toolbarState,
+        listState = scrollState,
+        enabled = false,
+        toolbar = {
             DefaultToolbar(
-                modifier = Modifier.drawBehind {
-                    if (scrollState.canScrollBackward) {
-                        drawBottomShadow(color = shadowColor)
-                    }
-                },
+                modifier = Modifier.statusBarsPadding(),
                 title = stringResource(uiR.string.settings_title),
                 onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
             )
-        },
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(uiR.drawable.ic_email),
-                        tonalColor = MaterialTheme.colorScheme.tertiary,
-                    )
-                },
-            )
-        },
-    ) { paddingValues ->
+        }
+    ) { topPadding ->
         when (uiState) {
             is SettingsUiState.Success -> SuccessScreen(
-                modifier = Modifier.padding(paddingValues),
                 uiState = uiState,
                 scrollState = scrollState,
+                topPadding = topPadding,
                 onEvent = onEvent,
             )
 
-            is SettingsUiState.Loading -> LoadingScreen(
-                modifier = Modifier.padding(paddingValues),
-            )
+            is SettingsUiState.Loading -> LoadingScreen()
         }
+        SnackbarHost(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_email),
+                    tonalColor = MaterialTheme.colorScheme.tertiary,
+                )
+            },
+        )
     }
 }
 
@@ -215,6 +215,7 @@ private fun ScreenContent(
 private fun SuccessScreen(
     uiState: SettingsUiState.Success,
     scrollState: ScrollState,
+    topPadding: Dp,
     onEvent: (event: SettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -222,7 +223,8 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(top = 8.dp),
+            .padding(top = topPadding + 8.dp)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
