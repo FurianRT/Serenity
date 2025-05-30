@@ -54,10 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
-import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.uikit.components.DefaultToolbar
@@ -69,6 +67,7 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -173,7 +172,9 @@ private fun ScreenContent(
     val toolbarState = remember { MovableToolbarState() }
 
     MovableToolbarScaffold(
-        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .navigationBarsPadding(),
         state = toolbarState,
         listState = scrollState,
         enabled = false,
@@ -196,9 +197,7 @@ private fun ScreenContent(
             is SettingsUiState.Loading -> LoadingScreen()
         }
         SnackbarHost(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .align(Alignment.BottomCenter),
+            modifier = Modifier.align(Alignment.BottomCenter),
             hostState = snackBarHostState,
             snackbar = { data ->
                 SnackBar(
@@ -223,8 +222,7 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(top = topPadding + 8.dp)
-            .navigationBarsPadding(),
+            .padding(top = topPadding + 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
@@ -297,15 +295,12 @@ private fun SuccessScreen(
 
 @Composable
 private fun ThemeSelector(
-    themes: ImmutableList<AppTheme>,
+    themes: ImmutableList<UiThemeColor>,
     selected: UiThemeColor,
     onSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
-    val initialIndex = remember(themes) {
-        themes.indexOfFirst { theme -> theme.colors.any { it.id == selected.id } }
-    }
+    val initialIndex = remember(themes) { themes.indexOf(selected) }
     Column(
         modifier = modifier
             .padding(vertical = 4.dp)
@@ -330,9 +325,9 @@ private fun ThemeSelector(
             modifier = Modifier.systemGestureExclusion(),
             state = rememberLazyListState(
                 initialFirstVisibleItemIndex = initialIndex,
-                initialFirstVisibleItemScrollOffset = -density.run { 24.dp.toPx() }.toInt(),
+                initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
             ),
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
             items(count = themes.count()) { index ->
@@ -348,40 +343,22 @@ private fun ThemeSelector(
 
 @Composable
 private fun ThemeItem(
-    theme: AppTheme,
+    theme: UiThemeColor,
     selected: UiThemeColor?,
     onSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            modifier = Modifier
-                .padding(start = 4.dp)
-                .alpha(0.5f),
-            text = theme.title,
-            style = MaterialTheme.typography.labelSmall,
-        )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            val shape = RoundedCornerShape(16.dp)
-            theme.colors.forEach { color ->
-                Box(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(shape)
-                        .background(color.primary)
-                        .applyIf(color == selected) {
-                            Modifier.border(1.dp, color.accent, shape)
-                        }
-                        .clickableNoRipple { onSelected(color) },
-                )
+    val shape = RoundedCornerShape(16.dp)
+    Box(
+        modifier = modifier
+            .size(50.dp)
+            .clip(shape)
+            .background(theme.primary)
+            .applyIf(theme == selected) {
+                Modifier.border(1.dp, theme.accent, shape)
             }
-        }
-    }
+            .clickableNoRipple { onSelected(theme) },
+    )
 }
 
 @Composable
@@ -482,29 +459,16 @@ private fun ScreenContentPreview() {
         ScreenContent(
             snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState.Success(
-                themes = buildImmutableList {
-                    add(
-                        AppTheme(
-                            title = stringResource(R.string.settings_app_theme_scandi_grandpa_title),
-                            colors = persistentListOf(
-                                UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
-                                UiThemeColor.SCANDI_GRANDPA_BROWN,
-                                UiThemeColor.SCANDI_GRANDPA_YELLOW,
-                                UiThemeColor.SCANDI_GRANDPA_GRAY,
-                            ),
-                        )
-                    )
-                    add(
-                        AppTheme(
-                            title = stringResource(R.string.settings_app_theme_distant_castle_title),
-                            colors = persistentListOf(
-                                UiThemeColor.DISTANT_CASTLE_BROWN,
-                                UiThemeColor.DISTANT_CASTLE_GREEN,
-                                UiThemeColor.DISTANT_CASTLE_BLUE,
-                            ),
-                        )
-                    )
-                },
+                themes = persistentListOf(
+                    UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
+                    UiThemeColor.DISTANT_CASTLE_GREEN,
+                    UiThemeColor.VAMPIRE_RED_DARK,
+                    UiThemeColor.VAMPIRE_BLACK,
+                    UiThemeColor.EUPHORIA_BLUE_DARK,
+                    UiThemeColor.EUPHORIA_VIOLET,
+                    UiThemeColor.EUPHORIA_BLUE,
+                    UiThemeColor.EUPHORIA_PINK,
+                ),
                 selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                 rating = 4,
                 appVersion = "1.0",

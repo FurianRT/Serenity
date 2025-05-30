@@ -12,7 +12,6 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.internal.domain.GetAppThemeListUseCase
 import com.furianrt.settings.internal.domain.SettingsRepository
-import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -113,7 +112,7 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun buildState(
-        themes: ImmutableList<AppTheme>,
+        themes: ImmutableList<UiThemeColor>,
         selectedThemeColorId: String?,
         rating: Int,
     ) = SettingsUiState.Success(

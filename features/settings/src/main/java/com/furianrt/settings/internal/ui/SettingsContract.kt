@@ -2,14 +2,13 @@ package com.furianrt.settings.internal.ui
 
 import androidx.annotation.IntRange
 import com.furianrt.notelistui.entities.UiNoteFontFamily
-import com.furianrt.settings.internal.entities.AppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface SettingsUiState {
     data object Loading : SettingsUiState
     data class Success(
-        val themes: ImmutableList<AppTheme>,
+        val themes: ImmutableList<UiThemeColor>,
         val selectedThemeColor: UiThemeColor,
         @IntRange(0L, 5L) val rating: Int,
         val appVersion: String,

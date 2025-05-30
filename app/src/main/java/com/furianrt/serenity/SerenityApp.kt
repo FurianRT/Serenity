@@ -10,16 +10,15 @@ import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import dagger.hilt.android.HiltAndroidApp
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.coroutines.CoroutineContext
 
 @HiltAndroidApp
-internal class SerenityApp : Application(), Configuration.Provider, CoroutineScope {
+internal class SerenityApp : Application(), Configuration.Provider {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -35,9 +34,6 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
 
     @Inject
     lateinit var dispatchers: DispatchersProvider
-
-    override val coroutineContext: CoroutineContext
-        get() = dispatchers.io + SupervisorJob()
 
     override fun onCreate() {
         super.onCreate()
@@ -55,10 +51,11 @@ internal class SerenityApp : Application(), Configuration.Provider, CoroutineSco
             .setMinimumLoggingLevel(Log.INFO)
             .build()
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun startPeriodicWorks() {
         notesRepository.enqueuePeriodicCleanup()
         mediaRepository.enqueuePeriodicMediaSave()
-        launch { syncManager.tryStartAutoBackup() }
+        GlobalScope.launch { syncManager.tryStartAutoBackup() }
     }
 
     private fun initStrictMode() {
