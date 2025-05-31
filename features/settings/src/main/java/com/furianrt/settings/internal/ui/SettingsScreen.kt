@@ -463,7 +463,6 @@ private fun ScreenContentPreview() {
                     UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
                     UiThemeColor.DISTANT_CASTLE_GREEN,
                     UiThemeColor.VAMPIRE_RED_DARK,
-                    UiThemeColor.VAMPIRE_BLACK,
                     UiThemeColor.EUPHORIA_BLUE_DARK,
                     UiThemeColor.EUPHORIA_VIOLET,
                     UiThemeColor.EUPHORIA_BLUE,

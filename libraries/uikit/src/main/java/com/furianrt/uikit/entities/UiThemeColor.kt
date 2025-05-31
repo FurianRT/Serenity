@@ -21,12 +21,6 @@ enum class UiThemeColor(
         primary = Colors.Primary.VampireRedDark,
         accent = Colors.Accent.Purple,
     ),
-    VAMPIRE_BLACK(
-        id = "12",
-        primary = Colors.Primary.VampireBlack,
-        accent = Colors.Accent.Purple,
-        surfaceTint = Color.White.copy(alpha = 0.1f),
-    ),
 
     EUPHORIA_BLUE_DARK(
         id = "13",
@@ -75,13 +69,13 @@ enum class UiThemeColor(
         id = "27",
         primary = Colors.Primary.Unicorn2012Blue,
         accent = Colors.Accent.Purple,
-        surfaceDim = Color.White.copy(0.1f),
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
     ),
     UNICORN_2012_PINK_DARK(
         id = "29",
         primary = Colors.Primary.Unicorn2012PinkDark,
         accent = Colors.Accent.Purple,
-        surfaceDim = Color.White.copy(0.1f),
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
     ),
 
     DISTANT_CASTLE_GREEN(
@@ -89,15 +83,9 @@ enum class UiThemeColor(
         primary = Colors.Primary.DistantCastleGreen,
         accent = Colors.Accent.GreenLight,
     ),
-
-    BEIGE_CENSORSHIP_BROWN_DARK(
-        id = "44",
-        primary = Colors.Primary.BeigeCensorshipBrownDark,
-        accent = Colors.Accent.Purple,
-    ),
-    BEIGE_CENSORSHIP_BLACK(
-        id = "45",
-        primary = Colors.Primary.BeigeCensorshipBlack,
+    DISTANT_CASTLE_BLUE(
+        id = "38",
+        primary = Colors.Primary.DistantCastleBlue,
         accent = Colors.Accent.Purple,
     );
 

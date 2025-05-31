@@ -7,7 +7,6 @@ object Colors {
         val ScandiGrandpaGrayDark = Color(0xFF25424D)
 
         val VampireRedDark = Color(0xFF270A16)
-        val VampireBlack = Color(0xFF040009)
 
         val EuphoriaBlueDark = Color(0xFF010042)
         val EuphoriaViolet = Color(0xFF46107F)
@@ -24,9 +23,7 @@ object Colors {
         val Unicorn2012PinkDark = Color(0xFFB26C86)
 
         val DistantCastleGreen = Color(0xFF193727)
-
-        val BeigeCensorshipBrownDark = Color(0xFF1E0D0A)
-        val BeigeCensorshipBlack = Color(0xFF262421)
+        val DistantCastleBlue = Color(0xFF0F1A29)
     }
 
     object Accent {

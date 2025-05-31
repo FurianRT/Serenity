@@ -14,6 +14,7 @@ internal class GetAppThemeListUseCase @Inject constructor() {
         UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
         UiThemeColor.DISTANT_CASTLE_GREEN,
         UiThemeColor.EUPHORIA_BLUE_DARK,
+        UiThemeColor.DISTANT_CASTLE_BLUE,
         UiThemeColor.STORM_IN_THE_NIGHT_BLUE,
         UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
         UiThemeColor.EUPHORIA_BLUE,
@@ -22,10 +23,7 @@ internal class GetAppThemeListUseCase @Inject constructor() {
         UiThemeColor.UNICORN_2012_PINK_DARK,
         UiThemeColor.EUPHORIA_VIOLET,
         UiThemeColor.VAMPIRE_RED_DARK,
-        UiThemeColor.VAMPIRE_BLACK,
         UiThemeColor.IRIS_RED,
         UiThemeColor.IRIS_RED_DARK,
-        UiThemeColor.BEIGE_CENSORSHIP_BLACK,
-        UiThemeColor.BEIGE_CENSORSHIP_BROWN_DARK,
     )
 }
