@@ -13,8 +13,8 @@ enum class NoteFontFamily {
     TILLANA;
 
     companion object {
-        fun fromString(value: String?): NoteFontFamily {
-            return NoteFontFamily.entries.find { it.name == value } ?: QUICK_SAND
+        fun fromString(value: String?): NoteFontFamily? {
+            return NoteFontFamily.entries.find { it.name == value }
         }
     }
 }

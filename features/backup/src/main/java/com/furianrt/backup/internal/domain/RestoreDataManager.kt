@@ -28,6 +28,9 @@ internal class RestoreDataManager @Inject constructor(
     val state = progressState.asStateFlow()
 
     suspend fun startRestore() {
+        if (state.value !is SyncState.Idle) {
+            return
+        }
         progressState.update { SyncState.Starting }
 
         val remoteFiles = backupRepository.getContentList()

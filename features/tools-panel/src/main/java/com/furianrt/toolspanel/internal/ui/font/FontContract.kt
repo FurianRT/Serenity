@@ -9,13 +9,14 @@ import kotlinx.collections.immutable.ImmutableList
 internal data class FontPanelUiState(
     val fontColors: ImmutableList<UiNoteFontColor>,
     val fontFamilies: ImmutableList<UiNoteFontFamily>,
-    val selectedFontColor: UiNoteFontColor,
-    val selectedFontFamily: UiNoteFontFamily,
+    val selectedFontColor: UiNoteFontColor?,
+    val selectedFontFamily: UiNoteFontFamily?,
     val selectedFontSize: Int,
+    val defaultFontFamily: UiNoteFontFamily?,
 )
 
 internal sealed interface FontPanelEvent {
-    data class OnFontColorSelected(val color: UiNoteFontColor) : FontPanelEvent
-    data class OnFontFamilySelected(val family: UiNoteFontFamily) : FontPanelEvent
+    data class OnFontColorSelected(val color: UiNoteFontColor?) : FontPanelEvent
+    data class OnFontFamilySelected(val family: UiNoteFontFamily?) : FontPanelEvent
     data class OnFontSizeSelected(val size: Int) : FontPanelEvent
 }

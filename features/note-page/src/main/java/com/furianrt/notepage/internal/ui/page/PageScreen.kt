@@ -481,8 +481,8 @@ private fun ContentItems(
                                 }
                                 .animatePlacementInScope(this@LookaheadScope),
                             title = item,
-                            color = uiState.fontColor.value,
-                            fontFamily = uiState.fontFamily.regular,
+                            color = uiState.fontColor?.value,
+                            fontFamily = uiState.fontFamily?.regular,
                             fontSize = uiState.fontSize.sp,
                             hint = if (index == 0) {
                                 stringResource(R.string.note_title_hint_text)
@@ -570,8 +570,8 @@ private fun Panel(
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
-    onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
-    onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
+    onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,

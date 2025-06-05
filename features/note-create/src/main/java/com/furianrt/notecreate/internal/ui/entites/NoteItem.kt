@@ -8,9 +8,6 @@ import java.time.ZonedDateTime
 @Immutable
 internal data class NoteItem(
     val id: String,
-    val fontFamily: UiNoteFontFamily,
-    val fontColor: UiNoteFontColor,
-    val fontSize: Int,
     val date: ZonedDateTime,
     val isPinned: Boolean,
 )

@@ -66,6 +66,7 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
+import com.furianrt.toolspanel.internal.ui.common.ColorResetItem
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -116,12 +117,12 @@ internal fun FontTitleBar(
 @Composable
 internal fun FontContent(
     noteId: String,
-    fontFamily: UiNoteFontFamily,
-    fontColor: UiNoteFontColor,
+    fontFamily: UiNoteFontFamily?,
+    fontColor: UiNoteFontColor?,
     fontSize: Int,
     visible: Boolean,
-    onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
-    onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
+    onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -163,7 +164,7 @@ internal fun FontContent(
             val itemHalfSize = colorsListState.layoutInfo.visibleItemsInfo
                 .firstOrNull()?.size?.div(-2) ?: 0
             colorsListState.requestScrollToItem(
-                index = uiState.fontColors.indexOf(uiState.selectedFontColor),
+                index = uiState.fontColors.indexOf(uiState.selectedFontColor).coerceAtLeast(0),
                 scrollOffset = itemHalfSize,
             )
             listState.requestScrollToItem(0)
@@ -202,8 +203,8 @@ internal fun FontContent(
 @Composable
 private fun Content(
     uiState: FontPanelUiState,
-    onFontFamilySelected: (family: UiNoteFontFamily) -> Unit,
-    onFontColorSelected: (color: UiNoteFontColor) -> Unit,
+    onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
+    onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     onEvent: (event: FontPanelEvent) -> Unit,
     listState: LazyGridState,
@@ -249,21 +250,31 @@ private fun Content(
         ) {
             LazyRow(
                 state = colorsListState,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 contentPadding = PaddingValues(
                     start = 8.dp,
                     end = 8.dp,
                     bottom = 24.dp,
                 ),
             ) {
+                item(key = "default") {
+                    ColorResetItem(
+                        modifier = Modifier.size(40.dp),
+                        onClick = {
+                            onFontColorSelected(null)
+                            onEvent(FontPanelEvent.OnFontColorSelected(null))
+                        },
+                    )
+                }
                 items(
                     count = uiState.fontColors.count(),
                     key = { uiState.fontColors[it] },
                 ) { index ->
+                    val item = uiState.fontColors[index]
                     ColorItem(
                         modifier = Modifier.size(40.dp),
-                        color = uiState.fontColors[index],
-                        isSelected = { it == uiState.selectedFontColor },
+                        color = item,
+                        isSelected = item == uiState.selectedFontColor,
                         onClick = { color ->
                             onFontColorSelected(color)
                             onEvent(FontPanelEvent.OnFontColorSelected(color))
@@ -272,11 +283,25 @@ private fun Content(
                 }
             }
         }
+        if (uiState.defaultFontFamily != null) {
+            item(key = "default") {
+                FontItem(
+                    modifier = Modifier.padding(start = 8.dp),
+                    name = "Default",
+                    family = uiState.defaultFontFamily,
+                    isSelected = { uiState.selectedFontFamily == null },
+                    onClick = {
+                        onFontFamilySelected(null)
+                        onEvent(FontPanelEvent.OnFontFamilySelected(family = null))
+                    },
+                )
+            }
+        }
         items(
             count = uiState.fontFamilies.count(),
             key = { uiState.fontFamilies[it].name },
             span = { index ->
-                fontSpanIndexes[uiState.fontFamilies[index]] = index % maxLineSpan
+                fontSpanIndexes[uiState.fontFamilies[index]] = (index + 1) % maxLineSpan
                 GridItemSpan(1)
             },
         ) { index ->
@@ -379,6 +404,7 @@ private fun FontItem(
     isSelected: (family: UiNoteFontFamily) -> Boolean,
     onClick: (family: UiNoteFontFamily) -> Unit,
     modifier: Modifier = Modifier,
+    name: String? = null,
 ) {
     Box(
         modifier = modifier
@@ -395,7 +421,7 @@ private fun FontItem(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            text = family.name,
+            text = name ?: family.name,
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontFamily = family.regular,
                 lineHeight = 20.sp,
@@ -428,6 +454,7 @@ private fun ContentPreview() {
                 selectedFontSize = 15,
                 fontFamilies = persistentListOf(UiNoteFontFamily.QuickSand),
                 fontColors = UiNoteFontColor.entries.toImmutableList(),
+                defaultFontFamily = UiNoteFontFamily.QuickSand,
             ),
             onEvent = {},
             onFontFamilySelected = {},

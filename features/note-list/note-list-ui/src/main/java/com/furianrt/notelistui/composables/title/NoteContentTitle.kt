@@ -55,8 +55,8 @@ fun NoteContentTitle(
     title: UiNoteContent.Title,
     modifier: Modifier = Modifier,
     hint: String? = null,
-    color: Color = MaterialTheme.typography.bodyMedium.color,
-    fontFamily: FontFamily? = MaterialTheme.typography.bodyMedium.fontFamily,
+    color: Color? = null,
+    fontFamily: FontFamily? = null,
     fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
     isInEditMode: Boolean = false,
     onTitleFocused: (id: String) -> Unit = {},
@@ -130,8 +130,8 @@ fun NoteContentTitle(
         onTextLayout = { layoutResult = it },
         onValueChange = { title.state.updateValue(it) },
         textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = color,
-            fontFamily = fontFamily,
+            color = color ?: MaterialTheme.typography.bodyMedium.color,
+            fontFamily = fontFamily ?: MaterialTheme.typography.bodyMedium.fontFamily,
             fontSize = fontSize,
             lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
                     (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value),

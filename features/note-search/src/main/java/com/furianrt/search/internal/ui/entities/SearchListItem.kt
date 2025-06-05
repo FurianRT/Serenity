@@ -40,8 +40,8 @@ internal sealed class SearchListItem(
         val date: Date,
         val tags: ImmutableList<UiNoteTag>,
         val isSelected: Boolean,
-        val fontColor: UiNoteFontColor,
-        val fontFamily: UiNoteFontFamily,
+        val fontColor: UiNoteFontColor?,
+        val fontFamily: UiNoteFontFamily?,
         val fontSize: Int,
         val content: ImmutableList<UiNoteContent>,
     ) : SearchListItem(id) {

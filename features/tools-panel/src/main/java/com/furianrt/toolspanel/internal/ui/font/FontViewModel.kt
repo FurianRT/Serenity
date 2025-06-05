@@ -24,8 +24,8 @@ import kotlinx.coroutines.flow.update
 @HiltViewModel(assistedFactory = FontViewModel.Factory::class)
 internal class FontViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
-    @Assisted private val initialFontFamily: UiNoteFontFamily,
-    @Assisted private val initialFontColor: UiNoteFontColor,
+    @Assisted private val initialFontFamily: UiNoteFontFamily?,
+    @Assisted private val initialFontColor: UiNoteFontColor?,
     @Assisted private val initialFontSize: Int,
 ) : ViewModel() {
 
@@ -37,11 +37,13 @@ internal class FontViewModel @AssistedInject constructor(
         selectedFontFamily,
         selectedFontColor,
         selectedFontSize,
-    ) { fontFamily, fontColor, fontSize ->
+        appearanceRepository.getAppFont(),
+    ) { fontFamily, fontColor, fontSize, appFont ->
         buildState(
             fontFamilies = appearanceRepository.getNoteFontsList(),
             fontColors = appearanceRepository.getNoteFontColorsList(),
             fontFamily = fontFamily,
+            appFontFamily = appFont,
             fontColor = fontColor,
             fontSize = fontSize,
         )
@@ -52,15 +54,19 @@ internal class FontViewModel @AssistedInject constructor(
             selectedFontFamily = initialFontFamily,
             selectedFontColor = initialFontColor,
             selectedFontSize = initialFontSize,
-            fontFamilies = persistentListOf(initialFontFamily),
-            fontColors = persistentListOf(initialFontColor),
+            fontFamilies = persistentListOf(),
+            fontColors = persistentListOf(),
+            defaultFontFamily = initialFontFamily,
         ),
     )
 
     fun onEvent(event: FontPanelEvent) {
         when (event) {
             is FontPanelEvent.OnFontFamilySelected -> selectedFontFamily.update { event.family }
-            is FontPanelEvent.OnFontColorSelected -> selectedFontColor.update { event.color }
+            is FontPanelEvent.OnFontColorSelected -> selectedFontColor.update { color ->
+                if (color == event.color) null else event.color
+            }
+
             is FontPanelEvent.OnFontSizeSelected -> selectedFontSize.update { event.size }
         }
     }
@@ -68,8 +74,9 @@ internal class FontViewModel @AssistedInject constructor(
     private fun buildState(
         fontFamilies: List<NoteFontFamily>,
         fontColors: List<NoteFontColor>,
-        fontFamily: UiNoteFontFamily,
-        fontColor: UiNoteFontColor,
+        fontFamily: UiNoteFontFamily?,
+        appFontFamily: NoteFontFamily,
+        fontColor: UiNoteFontColor?,
         fontSize: Int,
     ) = FontPanelUiState(
         selectedFontFamily = fontFamily,
@@ -77,13 +84,14 @@ internal class FontViewModel @AssistedInject constructor(
         selectedFontSize = fontSize,
         fontFamilies = fontFamilies.mapImmutable(NoteFontFamily::toUiNoteFontFamily),
         fontColors = fontColors.mapImmutable(NoteFontColor::toUiNoteFontColor),
+        defaultFontFamily = appFontFamily.toUiNoteFontFamily(),
     )
 
     @AssistedFactory
     interface Factory {
         fun create(
-            initialFontFamily: UiNoteFontFamily,
-            initialFontColor: UiNoteFontColor,
+            initialFontFamily: UiNoteFontFamily?,
+            initialFontColor: UiNoteFontColor?,
             initialFontSize: Int,
         ): FontViewModel
     }

@@ -3,6 +3,7 @@ package com.furianrt.search.internal.ui.extensions
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
@@ -16,7 +17,10 @@ internal fun List<LocalTag>.toTagsList() = SearchListItem.TagsList(
     tags = mapImmutable(LocalTag::toTagsListItem),
 )
 
-internal fun LocalNote.toNoteItem(isSelected: Boolean): SearchListItem.Note {
+internal fun LocalNote.toNoteItem(
+    isSelected: Boolean,
+    appFontFamily: NoteFontFamily,
+): SearchListItem.Note {
     val localDateNow = LocalDate.now()
     val localDate = date.toLocalDate()
     return SearchListItem.Note(
@@ -28,10 +32,10 @@ internal fun LocalNote.toNoteItem(isSelected: Boolean): SearchListItem.Note {
         },
         tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
-        fontColor = fontColor.toUiNoteFontColor(),
-        fontFamily = fontFamily.toUiNoteFontFamily(),
+        fontColor = fontColor?.toUiNoteFontColor(),
+        fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
-        content = content.getShortUiContent(fontFamily.toUiNoteFontFamily()),
+        content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
     )
 }
 

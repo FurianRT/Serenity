@@ -6,6 +6,7 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notelist.internal.ui.extensions.toMainScreenNotes
@@ -40,6 +41,7 @@ internal class NoteListViewModel @Inject constructor(
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel(), DialogResultListener {
 
     private val scrollToNoteState = MutableStateFlow<String?>(null)
@@ -49,12 +51,13 @@ internal class NoteListViewModel @Inject constructor(
         notesRepository.getAllNotes(),
         scrollToNoteState,
         selectedNotesState,
-    ) { notes, noteId, selectedNotes ->
+        appearanceRepository.getAppFont(),
+    ) { notes, noteId, selectedNotes, appFont ->
         if (notes.isEmpty()) {
             NoteListUiState.Empty
         } else {
             NoteListUiState.Success(
-                notes = notes.toMainScreenNotes(selectedNotes),
+                notes = notes.toMainScreenNotes(selectedNotes, appFont),
                 scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
                 selectedNotesCount = selectedNotes.count(),
             )

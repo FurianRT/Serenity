@@ -27,6 +27,7 @@ import com.furianrt.notelistui.extensions.toLocalNoteTag
 import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
+import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -276,20 +277,22 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun addNewBlock(newBlock: UiNoteContent) {
         hasContentChanged = true
-        _state.updateState<PageUiState.Success> { currentState ->
-            val newContent = buildContentWithNewBlock(
-                fontFamily = currentState.fontFamily,
-                content = currentState.content,
-                newBlock = newBlock,
-            )
-            currentState.copy(
-                content = newContent.refreshTitleTemplates(
-                    fontFamily = currentState.fontFamily,
-                    addTopTemplate = currentState.isInEditMode,
-                ),
-            )
-        }
         launch {
+            _state.updateState<PageUiState.Success> { currentState ->
+                val fontFamily = currentState.fontFamily
+                    ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily()
+                val newContent = buildContentWithNewBlock(
+                    fontFamily = fontFamily,
+                    content = currentState.content,
+                    newBlock = newBlock,
+                )
+                currentState.copy(
+                    content = newContent.refreshTitleTemplates(
+                        fontFamily = fontFamily,
+                        addTopTemplate = currentState.isInEditMode,
+                    ),
+                )
+            }
             delay(TITLE_FOCUS_DELAY)
             _state.doWithState<PageUiState.Success> { successState ->
                 val blockIndex = successState.content.indexOfFirstOrNull { it.id == newBlock.id }
@@ -498,9 +501,11 @@ internal class PageViewModel @AssistedInject constructor(
             _state.updateState<PageUiState.Success> { currentState ->
                 var newContent = currentState.content
                 mediaIds.forEach { newContent = newContent.removeMedia(it, focusedTitleId) }
+                val fontFamily = currentState.fontFamily
+                    ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily()
                 currentState.copy(
                     content = newContent.refreshTitleTemplates(
-                        fontFamily = currentState.fontFamily,
+                        fontFamily = fontFamily,
                         addTopTemplate = currentState.isInEditMode,
                     )
                 ).also {
@@ -678,28 +683,32 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun changeEditModeState(isEnabled: Boolean) {
-        _state.updateState<PageUiState.Success> { currentState ->
-            val newState = currentState.copy(
-                content = currentState.content.refreshTitleTemplates(
-                    fontFamily = currentState.fontFamily,
-                    addTopTemplate = isEnabled
-                ),
-                tags = with(currentState.tags) {
-                    if (isEnabled) addTagTemplate() else removeTagTemplate(onlyEmpty = true)
-                },
-                isInEditMode = isEnabled,
-            )
-            if (!isEnabled && hasContentChanged) {
-                launch { saveNoteContent(newState) }
+        launch {
+            _state.updateState<PageUiState.Success> { currentState ->
+                val fontFamily = currentState.fontFamily
+                    ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily()
+                val newState = currentState.copy(
+                    content = currentState.content.refreshTitleTemplates(
+                        fontFamily = fontFamily,
+                        addTopTemplate = isEnabled
+                    ),
+                    tags = with(currentState.tags) {
+                        if (isEnabled) addTagTemplate() else removeTagTemplate(onlyEmpty = true)
+                    },
+                    isInEditMode = isEnabled,
+                )
+                if (!isEnabled && hasContentChanged) {
+                    launch { saveNoteContent(newState) }
+                }
+                return@updateState newState
             }
-            return@updateState newState
-        }
 
-        _state.doWithState<PageUiState.Success> {
-            if (!isEnabled) {
-                resetStickersEditing()
-                focusedTitleId = null
-                hasContentChanged = false
+            _state.doWithState<PageUiState.Success> {
+                if (!isEnabled) {
+                    resetStickersEditing()
+                    focusedTitleId = null
+                    hasContentChanged = false
+                }
             }
         }
     }
@@ -708,7 +717,10 @@ internal class PageViewModel @AssistedInject constructor(
         launch {
             notesRepository.getNote(noteId)
                 .map { note ->
-                    note?.toNoteItem(stickerIconProvider = { stickerIconProvider.getIcon(it) })
+                    note?.toNoteItem(
+                        appFont = note.fontFamily ?: appearanceRepository.getAppFont().first(),
+                        stickerIconProvider = { stickerIconProvider.getIcon(it) },
+                    )
                 }
                 .distinctUntilChanged()
                 .flowOn(dispatchers.default)
@@ -716,7 +728,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleNoteResult(note: NoteItem?) {
+    private suspend fun handleNoteResult(note: NoteItem?) {
         if (note == null) {
             _state.update { PageUiState.Empty }
             return
@@ -728,7 +740,8 @@ internal class PageViewModel @AssistedInject constructor(
                     PageUiState.Success(
                         noteId = note.id,
                         content = note.content.refreshTitleTemplates(
-                            fontFamily = note.fontFamily,
+                            fontFamily = note.fontFamily
+                                ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily(),
                             addTopTemplate = isInEditMode
                         ),
                         tags = with(note.tags) {
@@ -770,8 +783,8 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private suspend fun saveNoteContent(state: PageUiState.Success) {
-        val fontFamily = state.fontFamily.toNoteFontFamily()
-        val fontColor = state.fontColor.toNoteFontColor()
+        val fontFamily = state.fontFamily?.toNoteFontFamily()
+        val fontColor = state.fontColor?.toNoteFontColor()
         val fontSize = state.fontSize
         val note = notesRepository.getNote(noteId).first()
         if (note != null) {
@@ -792,24 +805,28 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private suspend fun saveDefaultFontData(state: PageUiState.Success) {
-        appearanceRepository.setDefaultNoteFont(state.fontFamily.toNoteFontFamily())
-        appearanceRepository.setDefaultNoteFontColor(state.fontColor.toNoteFontColor())
+        appearanceRepository.setDefaultNoteFont(state.fontFamily?.toNoteFontFamily())
+        appearanceRepository.setDefaultNoteFontColor(state.fontColor?.toNoteFontColor())
         appearanceRepository.setDefaultNoteFontSize(state.fontSize)
     }
 
-    private fun updateFontFamily(family: UiNoteFontFamily) {
+    private fun updateFontFamily(family: UiNoteFontFamily?) {
         hasContentChanged = true
-        _state.updateState<PageUiState.Success> { successState ->
-            successState.content.forEach { content ->
-                if (content is UiNoteContent.Title) {
-                    content.state.updateFontFamily(family)
+        launch {
+            val fontFamily =
+                family ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily()
+            _state.updateState<PageUiState.Success> { successState ->
+                successState.content.forEach { content ->
+                    if (content is UiNoteContent.Title) {
+                        content.state.updateFontFamily(fontFamily)
+                    }
                 }
+                successState.copy(fontFamily = family)
             }
-            successState.copy(fontFamily = family)
         }
     }
 
-    private fun updateFontColor(color: UiNoteFontColor) {
+    private fun updateFontColor(color: UiNoteFontColor?) {
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { it.copy(fontColor = color) }
     }

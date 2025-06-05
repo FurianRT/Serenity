@@ -8,11 +8,12 @@ import com.furianrt.domain.entities.NoteTextSpan
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import kotlinx.serialization.encodeToString
+import androidx.core.net.toUri
 
 internal class TypeConverter {
 
     @TypeConverter
-    fun stringToUri(value: String): Uri = Uri.parse(value)
+    fun stringToUri(value: String): Uri = value.toUri()
 
     @TypeConverter
     fun uriToString(uri: Uri): String = uri.toString()
@@ -24,16 +25,16 @@ internal class TypeConverter {
     fun zonedDateTimeToString(date: ZonedDateTime): String = date.toString()
 
     @TypeConverter
-    fun stringToNoteFont(value: String): NoteFontFamily = NoteFontFamily.fromString(value)
+    fun stringToNoteFont(value: String?): NoteFontFamily? = NoteFontFamily.fromString(value)
 
     @TypeConverter
-    fun noteFontToString(font: NoteFontFamily): String = font.name
+    fun noteFontToString(font: NoteFontFamily?): String? = font?.name
 
     @TypeConverter
-    fun stringToNoteFontColor(value: String): NoteFontColor = NoteFontColor.fromString(value)
+    fun stringToNoteFontColor(value: String?): NoteFontColor? = NoteFontColor.fromString(value)
 
     @TypeConverter
-    fun noteFontColorToString(fontColor: NoteFontColor): String = fontColor.name
+    fun noteFontColorToString(fontColor: NoteFontColor?): String? = fontColor?.name
 
     @TypeConverter
     fun stringToListOfFloat(value: String): List<Float> = Json.decodeFromString(value)

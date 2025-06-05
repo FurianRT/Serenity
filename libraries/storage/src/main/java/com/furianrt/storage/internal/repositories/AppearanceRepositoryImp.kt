@@ -21,7 +21,7 @@ internal class AppearanceRepositoryImp @Inject constructor(
 
     override fun getNoteFontsList(): List<NoteFontFamily> = NoteFontFamily.entries
 
-    override fun getDefaultNoteFont(): Flow<NoteFontFamily> {
+    override fun getDefaultNoteFont(): Flow<NoteFontFamily?> {
         return appearanceDataStore.getDefaultNoteFont()
     }
 
@@ -31,14 +31,14 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.setAppFont(font)
     }
 
-    override suspend fun setDefaultNoteFont(font: NoteFontFamily) {
+    override suspend fun setDefaultNoteFont(font: NoteFontFamily?) {
         appearanceDataStore.setDefaultNoteFont(font)
     }
 
-    override fun getDefaultNoteFontColor(): Flow<NoteFontColor> =
+    override fun getDefaultNoteFontColor(): Flow<NoteFontColor?> =
         appearanceDataStore.getDefaultNoteFontColor()
 
-    override suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
+    override suspend fun setDefaultNoteFontColor(color: NoteFontColor?) {
         appearanceDataStore.setDefaultNoteFontColor(color)
     }
 

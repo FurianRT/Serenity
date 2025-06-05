@@ -33,8 +33,6 @@ import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
-import com.furianrt.notelistui.entities.UiNoteFontColor
-import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -257,9 +255,6 @@ private fun Preview() {
             uiState = NoteCreateUiState.Success(
                 note = NoteItem(
                     id = "",
-                    fontFamily = UiNoteFontFamily.QuickSand,
-                    fontColor = UiNoteFontColor.WHITE,
-                    fontSize = 15,
                     date = ZonedDateTime.now(),
                     isPinned = false,
                 ),

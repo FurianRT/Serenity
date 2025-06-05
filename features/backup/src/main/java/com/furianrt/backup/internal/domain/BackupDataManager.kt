@@ -26,6 +26,9 @@ internal class BackupDataManager @Inject constructor(
     val state = progressState.asStateFlow()
 
     suspend fun startBackup() {
+        if (state.value !is SyncState.Idle) {
+            return
+        }
         progressState.update { SyncState.Starting }
 
         mediaRepository.saveAllMedia()

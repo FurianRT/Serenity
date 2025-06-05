@@ -23,8 +23,8 @@ class UpdateNoteContentUseCase @Inject constructor(
         content: List<LocalNote.Content>,
         tags: List<LocalNote.Tag>,
         stickers: List<LocalNote.Sticker>,
-        fontFamily: NoteFontFamily,
-        fontColor: NoteFontColor,
+        fontFamily: NoteFontFamily?,
+        fontColor: NoteFontColor?,
         fontSize: Int,
         updateMediaFiles: Boolean = true,
     ) {

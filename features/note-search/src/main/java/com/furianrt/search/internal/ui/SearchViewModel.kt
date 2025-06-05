@@ -10,8 +10,10 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
@@ -69,6 +71,7 @@ internal class SearchViewModel @Inject constructor(
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val notesRepository: NotesRepository,
+    private val appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
@@ -111,11 +114,13 @@ internal class SearchViewModel @Inject constructor(
                 startDate = dateFilter?.start,
                 endDate = dateFilter?.end,
             ),
-        ) { selectedNotes, notes ->
+            appearanceRepository.getAppFont(),
+        ) { selectedNotes, notes, appFont ->
             buildState(
                 notes = notes,
                 data = data,
                 selectedNotes = selectedNotes,
+                appFontFamily = appFont,
             )
         }
     }.flowOn(
@@ -289,6 +294,7 @@ internal class SearchViewModel @Inject constructor(
         notes: List<LocalNote>,
         selectedNotes: Set<String>,
         data: SearchData,
+        appFontFamily: NoteFontFamily,
     ): SearchUiState {
         val hasFilters = data.selectedFilters.isNotEmpty()
         val hasQuery = data.queryText.isNotBlank()
@@ -299,7 +305,10 @@ internal class SearchViewModel @Inject constructor(
                 buildImmutableList {
                     add(SearchListItem.NotesCountTitle(notes.count()))
                     val notesItems = notes.map { note ->
-                        note.toNoteItem(isSelected = selectedNotes.contains(note.id))
+                        note.toNoteItem(
+                            isSelected = selectedNotes.contains(note.id),
+                            appFontFamily = appFontFamily,
+                        )
                     }
                     addAll(notesItems)
                 }

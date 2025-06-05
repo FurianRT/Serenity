@@ -9,12 +9,12 @@ interface AppearanceRepository {
     fun getAppThemeColorId(): Flow<String?>
     fun getNoteFontColorsList(): List<NoteFontColor>
     fun getNoteFontsList(): List<NoteFontFamily>
-    fun getDefaultNoteFont(): Flow<NoteFontFamily>
+    fun getDefaultNoteFont(): Flow<NoteFontFamily?>
     fun getAppFont(): Flow<NoteFontFamily>
     suspend fun setAppFont(font: NoteFontFamily)
-    suspend fun setDefaultNoteFont(font: NoteFontFamily)
-    fun getDefaultNoteFontColor(): Flow<NoteFontColor>
-    suspend fun setDefaultNoteFontColor(color: NoteFontColor)
+    suspend fun setDefaultNoteFont(font: NoteFontFamily?)
+    fun getDefaultNoteFontColor(): Flow<NoteFontColor?>
+    suspend fun setDefaultNoteFontColor(color: NoteFontColor?)
     fun getDefaultNoteFontSize(): Flow<Int>
     suspend fun setDefaultNoteFontSize(size: Int)
 }

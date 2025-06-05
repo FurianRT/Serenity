@@ -17,8 +17,8 @@ interface NotesRepository {
     suspend fun updateNoteIsPinned(noteIds: Set<String>, isPinned: Boolean)
     suspend fun updateNoteFont(
         noteId: String,
-        color: NoteFontColor,
-        family: NoteFontFamily,
+        color: NoteFontColor?,
+        family: NoteFontFamily?,
         size: Int,
     )
 

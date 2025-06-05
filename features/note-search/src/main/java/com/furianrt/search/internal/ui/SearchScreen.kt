@@ -54,7 +54,6 @@ import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.search.api.entities.QueryData
@@ -404,8 +403,8 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
                         isSelected = false,
-                        fontColor = UiNoteFontColor.WHITE,
-                        fontFamily = UiNoteFontFamily.QuickSand,
+                        fontColor = null,
+                        fontFamily = null,
                         fontSize = 15,
                         content = persistentListOf(
                             UiNoteContent.Title(

@@ -32,6 +32,6 @@ enum class NoteFontColor {
     RED_DARK;
 
     companion object {
-        fun fromString(value: String?) = NoteFontColor.entries.find { it.name == value } ?: WHITE
+        fun fromString(value: String?) = NoteFontColor.entries.find { it.name == value }
     }
 }

@@ -21,8 +21,8 @@ internal sealed interface PageUiState {
         val tags: ImmutableList<UiNoteTag>,
         val stickers: ImmutableList<StickerItem>,
         val playingVoiceId: String?,
-        val fontFamily: UiNoteFontFamily,
-        val fontColor: UiNoteFontColor,
+        val fontFamily: UiNoteFontFamily?,
+        val fontColor: UiNoteFontColor?,
         val fontSize: Int,
         val isInEditMode: Boolean,
     ) : PageUiState {
@@ -52,8 +52,8 @@ internal sealed interface PageEvent {
     data class OnVoiceRecorded(val record: VoiceRecord) : PageEvent
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
     data class OnTitleTextChange(val id: String) : PageEvent
-    data class OnFontFamilySelected(val family: UiNoteFontFamily) : PageEvent
-    data class OnFontColorSelected(val color: UiNoteFontColor) : PageEvent
+    data class OnFontFamilySelected(val family: UiNoteFontFamily?) : PageEvent
+    data class OnFontColorSelected(val color: UiNoteFontColor?) : PageEvent
     data class OnFontSizeSelected(val size: Int) : PageEvent
     data class OnVoiceRemoveClick(val voice: UiNoteContent.Voice) : PageEvent
     data class OnVoicePlayClick(val voice: UiNoteContent.Voice) : PageEvent

@@ -21,10 +21,10 @@ internal class EntryNote(
     val textSpans: List<NoteTextSpan>,
 
     @ColumnInfo(name = FIELD_FONT)
-    val font: NoteFontFamily,
+    val font: NoteFontFamily?,
 
     @ColumnInfo(name = FIELD_FONT_COLOR)
-    val fontColor: NoteFontColor,
+    val fontColor: NoteFontColor?,
 
     @ColumnInfo(name = FIELD_FONT_SIZE)
     val fontSize: Int,
@@ -85,10 +85,10 @@ internal class PartNoteFont(
     val id: String,
 
     @ColumnInfo(name = EntryNote.FIELD_FONT)
-    val font: NoteFontFamily,
+    val font: NoteFontFamily?,
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_COLOR)
-    val fontColor: NoteFontColor,
+    val fontColor: NoteFontColor?,
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_SIZE)
     val fontSize: Int,

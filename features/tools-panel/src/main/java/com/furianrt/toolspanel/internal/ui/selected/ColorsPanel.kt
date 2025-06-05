@@ -46,10 +46,11 @@ internal fun ColorsPanel(
             contentPadding = PaddingValues(horizontal = 12.dp)
         ) {
             items(count = colors.count()) { index ->
+                val item = colors[index]
                 ColorItem(
                     modifier = Modifier.size(32.dp),
-                    color = colors[index],
-                    isSelected = { it == selectedColor },
+                    color = item,
+                    isSelected = item == selectedColor,
                     onClick = { color -> onColorSelected(color.takeIf { selectedColor != it }) },
                 )
             }

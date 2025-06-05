@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
@@ -20,14 +21,17 @@ import java.time.ZonedDateTime
 import java.util.UUID
 
 internal suspend fun LocalNote.toNoteItem(
+    appFont: NoteFontFamily,
     stickerIconProvider: suspend (typeId: String) -> Int,
 ) = NoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
     stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.typeId)) },
-    content = content.mapImmutable { it.toUiNoteContent(fontFamily.toUiNoteFontFamily()) },
-    fontColor = fontColor.toUiNoteFontColor(),
-    fontFamily = fontFamily.toUiNoteFontFamily(),
+    content = content.mapImmutable { item ->
+        item.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily())
+    },
+    fontColor = fontColor?.toUiNoteFontColor(),
+    fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
 )
 

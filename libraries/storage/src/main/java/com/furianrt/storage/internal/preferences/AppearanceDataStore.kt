@@ -29,25 +29,39 @@ internal class AppearanceDataStore @Inject constructor(
         dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = colorId }
     }
 
-    fun getDefaultNoteFont(): Flow<NoteFontFamily> = dataStore.data
+    fun getDefaultNoteFont(): Flow<NoteFontFamily?> = dataStore.data
         .map { prefs -> NoteFontFamily.fromString(prefs[KEY_DEFAULT_NOTE_FONT]) }
 
-    suspend fun setDefaultNoteFont(font: NoteFontFamily) {
-        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT] = font.name }
+    suspend fun setDefaultNoteFont(font: NoteFontFamily?) {
+        dataStore.edit { prefs ->
+            if (font == null) {
+                prefs.remove(KEY_DEFAULT_NOTE_FONT)
+            } else {
+                prefs[KEY_DEFAULT_NOTE_FONT] = font.name
+            }
+        }
     }
 
     fun getAppFont(): Flow<NoteFontFamily> = dataStore.data
-        .map { prefs -> NoteFontFamily.fromString(prefs[KEY_APP_FONT]) }
+        .map { prefs ->
+            NoteFontFamily.fromString(prefs[KEY_APP_FONT]) ?: NoteFontFamily.QUICK_SAND
+        }
 
     suspend fun setAppFont(font: NoteFontFamily) {
         dataStore.edit { prefs -> prefs[KEY_APP_FONT] = font.name }
     }
 
-    fun getDefaultNoteFontColor(): Flow<NoteFontColor> = dataStore.data
+    fun getDefaultNoteFontColor(): Flow<NoteFontColor?> = dataStore.data
         .map { prefs -> NoteFontColor.fromString(prefs[KEY_DEFAULT_NOTE_FONT_COLOR]) }
 
-    suspend fun setDefaultNoteFontColor(color: NoteFontColor) {
-        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_COLOR] = color.name }
+    suspend fun setDefaultNoteFontColor(color: NoteFontColor?) {
+        dataStore.edit { prefs ->
+            if (color == null) {
+                prefs.remove(KEY_DEFAULT_NOTE_FONT_COLOR)
+            } else {
+                prefs[KEY_DEFAULT_NOTE_FONT_COLOR] = color.name
+            }
+        }
     }
 
     fun getDefaultNoteFontSize(): Flow<Int> = dataStore.data

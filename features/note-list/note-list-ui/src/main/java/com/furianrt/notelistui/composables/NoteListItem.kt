@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -59,8 +60,8 @@ private val cardRippleAlpha = RippleAlpha(
 fun NoteListItem(
     content: ImmutableList<UiNoteContent>,
     tags: ImmutableList<UiNoteTag>,
-    fontColor: UiNoteFontColor,
-    fontFamily: UiNoteFontFamily,
+    fontColor: UiNoteFontColor?,
+    fontFamily: UiNoteFontFamily?,
     fontSize: TextUnit,
     date: String,
     modifier: Modifier = Modifier,
@@ -119,14 +120,14 @@ fun NoteListItem(
                         maxLines = if (onlyText) MAX_LINES_WITHOUT_MEDIA else MAX_LINES_WITH_MEDIA,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium.copy(
-                            color = fontColor.value,
-                            fontFamily = fontFamily.regular,
+                            fontFamily = fontFamily?.regular
+                                ?: MaterialTheme.typography.bodyMedium.fontFamily,
                             fontSize = fontSize,
                             lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
                                     (fontSize.value /
                                             MaterialTheme.typography.bodyMedium.fontSize.value),
                         ),
-                        color = fontColor.value,
+                        color = fontColor?.value ?: Color.Unspecified,
                     )
 
                     is UiNoteContent.MediaBlock -> NoteContentMedia(
