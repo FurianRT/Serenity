@@ -1,7 +1,6 @@
 package com.furianrt.toolspanel.internal.ui.common
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -14,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.theme.SerenityTheme
 
@@ -27,7 +27,7 @@ internal fun ColorResetItem(
             .alpha(0.5f)
             .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick),
+            .clickableWithScaleAnim(onClick = onClick, maxScale = 1.2f),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

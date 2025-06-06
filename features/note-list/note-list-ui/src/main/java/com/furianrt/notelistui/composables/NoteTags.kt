@@ -208,6 +208,16 @@ private fun TemplateNoteTagItem(
         if (hasText) onTextEnteredState() else onTextClearedState()
     }
 
+    val density = LocalDensity.current
+    val textMeasurer = rememberTextMeasurer()
+    val hintStyle = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic)
+    val hintText = stringResource(R.string.note_content_add_tag_hint)
+    val hintWidth = remember {
+        density.run {
+            textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width.toDp()
+        }
+    }
+
     val strokeColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
     Box(modifier = modifier.graphicsLayer { this.alpha = alpha.value }) {
         Box(
@@ -219,9 +229,9 @@ private fun TemplateNoteTagItem(
             BasicTextField(
                 modifier = Modifier
                     .bringIntoViewRequester(bringIntoViewRequester)
-                    .widthIn(min = 80.dp)
-                    .width(IntrinsicSize.Min)
                     .padding(horizontal = 10.dp, vertical = 6.dp)
+                    .widthIn(min = hintWidth)
+                    .width(IntrinsicSize.Min)
                     .onFocusChanged { focusState ->
                         onFocusChanged()
                         hasFocus = focusState.hasFocus
@@ -243,24 +253,18 @@ private fun TemplateNoteTagItem(
                 onKeyboardAction = { focusManager.clearFocus() },
                 decorator = { innerTextField ->
                     if (tag.textState.text.isEmpty()) {
-                        Placeholder()
+                        Text(
+                            modifier = Modifier.alpha(0.5f),
+                            text = hintText,
+                            style = hintStyle,
+                            maxLines = 1,
+                        )
                     }
                     innerTextField()
                 },
             )
         }
     }
-}
-
-@Composable
-private fun Placeholder() {
-    Text(
-        modifier = Modifier.alpha(0.5f),
-        text = stringResource(id = R.string.note_content_add_tag_hint),
-        style = MaterialTheme.typography.labelSmall,
-        fontStyle = FontStyle.Italic,
-        maxLines = 1,
-    )
 }
 
 @Composable

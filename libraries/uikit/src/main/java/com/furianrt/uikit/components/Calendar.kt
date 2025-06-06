@@ -408,6 +408,7 @@ private fun DayPickerContent(
             visible = showButtonDone,
         ) {
             ButtonDone(
+                text= stringResource(R.string.action_done),
                 onClick = onDoneClick,
             )
         }
@@ -481,6 +482,7 @@ private fun YearMonthPickerContent(
         }
         ButtonDone(
             modifier = Modifier.padding(end = 24.dp, top = 8.dp, bottom = 12.dp),
+            text= stringResource(R.string.action_select),
             onClick = { onYearMonthSelected(selectedYearMonth) },
         )
     }
@@ -488,6 +490,7 @@ private fun YearMonthPickerContent(
 
 @Composable
 private fun ButtonDone(
+    text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -496,7 +499,7 @@ private fun ButtonDone(
         onClick = onClick,
     ) {
         Text(
-            text = stringResource(R.string.action_done),
+            text = text,
             style = MaterialTheme.typography.titleMedium,
         )
     }

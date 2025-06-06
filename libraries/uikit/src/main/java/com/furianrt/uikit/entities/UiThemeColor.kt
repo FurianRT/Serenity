@@ -41,12 +41,14 @@ enum class UiThemeColor(
         id = "16",
         primary = Colors.Primary.EuphoriaPink,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.Black.copy(alpha = 0.1f),
     ),
 
     IRIS_RED(
         id = "18",
         primary = Colors.Primary.IrisRed,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.Black.copy(alpha = 0.1f),
     ),
     IRIS_RED_DARK(
         id = "19",
@@ -69,7 +71,7 @@ enum class UiThemeColor(
         id = "27",
         primary = Colors.Primary.Unicorn2012Blue,
         accent = Colors.Accent.Purple,
-        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+        surfaceDim = Color.DarkGray.copy(alpha = 0.15f),
     ),
     UNICORN_2012_PINK_DARK(
         id = "29",

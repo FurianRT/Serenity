@@ -19,7 +19,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 internal fun ColorItem(
     color: UiNoteFontColor,
     isSelected: Boolean,
-    onClick: (color: UiNoteFontColor) -> Unit,
+    onClick: (color: UiNoteFontColor?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -30,7 +30,7 @@ internal fun ColorItem(
                     .padding(2.dp)
             }
             .background(color.value, RoundedCornerShape(16.dp))
-            .clickableNoRipple { onClick(color) },
+            .clickableNoRipple { if (isSelected) onClick(null) else onClick(color) },
     )
 }
 

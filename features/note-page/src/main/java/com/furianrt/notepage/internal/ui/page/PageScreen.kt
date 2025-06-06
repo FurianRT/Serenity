@@ -643,11 +643,10 @@ private fun Modifier.clipPanel(
         val path = Path()
         val rect = size.toRect()
         val cornerRadius = CornerRadius(8.dp.toPx())
+        val panelHeightPx = ToolsPanelConstants.PANEL_HEIGHT.toPx()
         path.addRoundRect(
             RoundRect(
-                rect = rect.copy(
-                    bottom = toolsPanelTop() + ToolsPanelConstants.PANEL_HEIGHT.toPx(),
-                ),
+                rect = rect.copy(bottom = toolsPanelTop() + panelHeightPx),
                 bottomLeft = cornerRadius,
                 bottomRight = cornerRadius,
             )
