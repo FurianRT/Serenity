@@ -30,7 +30,7 @@ enum class UiThemeColor(
     EUPHORIA_VIOLET(
         id = "4",
         primary = Colors.Primary.EuphoriaViolet,
-        accent = Colors.Accent.Pink2,
+        accent = Colors.Accent.Purple2,
     ),
     EUPHORIA_BLUE(
         id = "5",
@@ -47,13 +47,13 @@ enum class UiThemeColor(
     IRIS_RED(
         id = "7",
         primary = Colors.Primary.IrisRed,
-        accent = Colors.Accent.Purple,
+        accent = Colors.Accent.Red,
         surfaceDim = Color.Black.copy(alpha = 0.1f),
     ),
     IRIS_RED_DARK(
         id = "8",
         primary = Colors.Primary.IrisRedDark,
-        accent = Colors.Accent.Purple,
+        accent = Colors.Accent.Pink3,
     ),
 
     STORM_IN_THE_NIGHT_BLUE(

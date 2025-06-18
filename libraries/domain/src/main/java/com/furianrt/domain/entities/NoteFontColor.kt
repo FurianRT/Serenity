@@ -1,11 +1,11 @@
 package com.furianrt.domain.entities
 
 enum class NoteFontColor {
+    BLACK,
+
     WHITE,
 
-    GREY_LIGHT,
     GREY,
-    GREY_DARK,
 
     PINK_LIGHT,
     PINK,

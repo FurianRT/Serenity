@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -14,23 +15,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.furianrt.core.mapImmutable
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ColorsPanel(
-    colors: ImmutableList<UiNoteFontColor>,
-    selectedColor: UiNoteFontColor?,
+    colors: ImmutableList<Color>,
+    selectedColor: Color?,
     modifier: Modifier = Modifier,
-    onColorSelected: (color: UiNoteFontColor?) -> Unit = {},
+    onColorSelected: (color: Color?) -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -45,8 +47,7 @@ internal fun ColorsPanel(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 12.dp)
         ) {
-            items(count = colors.count()) { index ->
-                val item = colors[index]
+            itemsIndexed(items = colors) { _, item ->
                 ColorItem(
                     modifier = Modifier.size(32.dp),
                     color = item,
@@ -77,8 +78,8 @@ internal fun ColorsPanel(
 private fun Preview() {
     SerenityTheme {
         ColorsPanel(
-            colors = UiNoteFontColor.entries.toImmutableList(),
-            selectedColor = UiNoteFontColor.GREY_DARK,
+            colors = UiNoteFontColor.entries.mapImmutable { it.value },
+            selectedColor = UiNoteFontColor.BLUE_DARK.value,
         )
     }
 }

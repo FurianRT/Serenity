@@ -18,15 +18,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
+import com.furianrt.core.mapImmutable
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteFontBackgroundColor
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.toImmutableList
 
 private enum class PanelState {
     DEFAULT, FONT_COLOR, FILL_COLOR,
@@ -284,7 +284,7 @@ private fun FontColorsStateContent(
     titleState: NoteTitleState,
     onCloseClick: () -> Unit,
 ) {
-    val colors = remember { UiNoteFontColor.entries.toImmutableList() }
+    val colors = remember { UiNoteFontColor.entries.mapImmutable { it.value } }
     val selectedColor = remember(titleState.annotatedString, titleState.selection) {
         titleState
             .getSpans(
@@ -293,7 +293,7 @@ private fun FontColorsStateContent(
                 spanType = NoteTitleState.SpanType.FontColor(),
             )
             .filterIsInstance<NoteTitleState.SpanType.FontColor>()
-            .map { UiNoteFontColor.fromColor(it.color.toArgb()) }
+            .map { UiNoteFontColor.fromColor(it.color).value }
             .takeIf { it.count() == 1 }
             ?.firstOrNull()
     }
@@ -313,7 +313,7 @@ private fun FontColorsStateContent(
                 titleState.addSpan(
                     start = titleState.selection.min,
                     end = titleState.selection.max,
-                    spanType = NoteTitleState.SpanType.FontColor(color = color.value),
+                    spanType = NoteTitleState.SpanType.FontColor(color = color),
                 )
             }
         },
@@ -326,7 +326,7 @@ private fun FillColorsStateContent(
     titleState: NoteTitleState,
     onCloseClick: () -> Unit,
 ) {
-    val colors = remember { UiNoteFontColor.entries.toImmutableList() }
+    val colors = remember { UiNoteFontBackgroundColor.entries.mapImmutable { it.value } }
     val selectedColor = remember(titleState.annotatedString, titleState.selection) {
         titleState
             .getSpans(
@@ -335,7 +335,7 @@ private fun FillColorsStateContent(
                 spanType = NoteTitleState.SpanType.FillColor(),
             )
             .filterIsInstance<NoteTitleState.SpanType.FillColor>()
-            .map { UiNoteFontColor.fromColor(it.color.toArgb()) }
+            .map { UiNoteFontBackgroundColor.fromColor(it.color)?.value }
             .takeIf { it.count() == 1 }
             ?.firstOrNull()
     }
@@ -355,7 +355,7 @@ private fun FillColorsStateContent(
                 titleState.addSpan(
                     start = titleState.selection.min,
                     end = titleState.selection.max,
-                    spanType = NoteTitleState.SpanType.FillColor(color = color.value),
+                    spanType = NoteTitleState.SpanType.FillColor(color = color),
                 )
             }
         },

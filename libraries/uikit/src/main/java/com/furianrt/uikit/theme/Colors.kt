@@ -29,6 +29,7 @@ object Colors {
     object Accent {
         val GreenLight = Color(0xFF558B2F)
         val Purple = Color(0xFF8D6EFD)
+        val Purple2 = Color(0xFF8F63BF)
         val PurpleDark = Color(0xFF8D4BF6)
         val Turquoise = Color(0xFF39A0A8)
         val Blue = Color(0xFF446DFF)
@@ -36,15 +37,15 @@ object Colors {
         val Blue3 = Color(0xFF8FC0D8)
         val RichMulberry = Color(0xFF7A004F)
         val Pink = Color(0xFFBC8AC3)
-        val Pink2 = Color(0xFF8F63BF)
+        val Pink3 = Color(0xFFA65768)
         val PlumWine = Color(0xFF6B2F4E)
+        val Red = Color(0xFFEA1640)
     }
 
     object Font {
         val White = Color(0xFFFFFFFF)
-        val GreyLight = Color(0xFFD6D6D6)
         val Grey = Color(0xFFBDBDBD)
-        val GreyDark = Color(0xFF9E9E9E)
+        val Black = Color(0xFF000000)
         val PinkLight = Color(0xFFFAD2E0)
         val Pink = Color(0xFFF8BCD0)
         val PinkDark = Color(0xFFF6A5C1)
@@ -56,13 +57,29 @@ object Colors {
         val GreenDark = Color(0xFF00CE00)
         val BlueLight = Color(0xFF83DFE9)
         val Blue = Color(0xFF00BCD4)
-        val BlueDark = Color(0xFF007FFF)
+        val BlueDark = Color(0xFF51A7FF)
         val PurpleLight = Color(0xFFE1BEE7)
         val Purple = Color(0xFFEB75FF)
         val PurpleDark = Color(0xFFAB47BC)
         val RedLight = Color(0xFFFFCDD2)
         val Red = Color(0xFFFF6461)
         val RedDark = Color(0xFFFF2521)
+    }
+
+    object FontBackground {
+        val Blue = Color(0xFF003366)
+        val Indigo = Color(0xFF4B0082)
+        val Purple = Color(0xFF7B1FA2)
+        val PinkishRed = Color(0xFFC2185B)
+        val DeepOrange = Color(0xFFD84315)
+        val Teal = Color(0xFF00796B)
+        val ForestGreen = Color(0xFF2E7D32)
+        val Amber = Color(0xFFFFC107)
+        val Orange = Color(0xFFF57C00)
+        val LightBlue = Color(0xFF0288D1)
+        val Crimson = Color(0xFFC62828)
+        val DeepPurple = Color(0xFF6A1B9A)
+        val Brown = Color(0xFF5D4037)
     }
 
     object Common {

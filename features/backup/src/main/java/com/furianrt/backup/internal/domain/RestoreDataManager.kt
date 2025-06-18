@@ -112,6 +112,7 @@ internal class RestoreDataManager @Inject constructor(
                 remoteNote = remoteNote,
             )
             if (isSuccess) {
+                saveNotesData(listOf(remoteNote))
                 progressState.update {
                     SyncState.Progress(
                         syncedNotesCount = index + 1,

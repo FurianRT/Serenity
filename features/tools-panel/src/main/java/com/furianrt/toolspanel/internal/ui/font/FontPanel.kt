@@ -273,11 +273,12 @@ private fun Content(
                     val item = uiState.fontColors[index]
                     ColorItem(
                         modifier = Modifier.size(40.dp),
-                        color = item,
+                        color = item.value,
                         isSelected = item == uiState.selectedFontColor,
                         onClick = { color ->
-                            onFontColorSelected(color)
-                            onEvent(FontPanelEvent.OnFontColorSelected(color))
+                            val uiColor = color?.let(UiNoteFontColor::fromColor)
+                            onFontColorSelected(uiColor)
+                            onEvent(FontPanelEvent.OnFontColorSelected(uiColor))
                         },
                     )
                 }

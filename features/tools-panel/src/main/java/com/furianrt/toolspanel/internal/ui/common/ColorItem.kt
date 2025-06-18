@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -17,9 +18,9 @@ import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
 internal fun ColorItem(
-    color: UiNoteFontColor,
+    color: Color,
     isSelected: Boolean,
-    onClick: (color: UiNoteFontColor?) -> Unit,
+    onClick: (color: Color?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -29,7 +30,7 @@ internal fun ColorItem(
                     .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
                     .padding(2.dp)
             }
-            .background(color.value, RoundedCornerShape(16.dp))
+            .background(color, RoundedCornerShape(16.dp))
             .clickableNoRipple { if (isSelected) onClick(null) else onClick(color) },
     )
 }
@@ -39,7 +40,7 @@ internal fun ColorItem(
 private fun PreviewSelected() {
     SerenityTheme {
         ColorItem(
-            color = UiNoteFontColor.GREEN,
+            color = UiNoteFontColor.GREEN.value,
             isSelected = true,
             onClick = {},
         )
@@ -51,7 +52,7 @@ private fun PreviewSelected() {
 private fun PreviewUnselected() {
     SerenityTheme {
         ColorItem(
-            color = UiNoteFontColor.GREEN,
+            color = UiNoteFontColor.GREEN.value,
             isSelected = false,
             onClick = {},
         )

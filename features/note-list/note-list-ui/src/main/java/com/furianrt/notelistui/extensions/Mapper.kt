@@ -202,9 +202,8 @@ fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
     NoteFontColor.WHITE -> UiNoteFontColor.WHITE
-    NoteFontColor.GREY_LIGHT -> UiNoteFontColor.GREY_LIGHT
     NoteFontColor.GREY -> UiNoteFontColor.GREY
-    NoteFontColor.GREY_DARK -> UiNoteFontColor.GREY_DARK
+    NoteFontColor.BLACK -> UiNoteFontColor.BLACK
     NoteFontColor.PINK_LIGHT -> UiNoteFontColor.PINK_LIGHT
     NoteFontColor.PINK -> UiNoteFontColor.PINK
     NoteFontColor.PINK_DARK -> UiNoteFontColor.PINK_DARK
@@ -227,9 +226,8 @@ fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
 
 fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.WHITE -> NoteFontColor.WHITE
-    UiNoteFontColor.GREY_LIGHT -> NoteFontColor.GREY_LIGHT
     UiNoteFontColor.GREY -> NoteFontColor.GREY
-    UiNoteFontColor.GREY_DARK -> NoteFontColor.GREY_DARK
+    UiNoteFontColor.BLACK -> NoteFontColor.BLACK
     UiNoteFontColor.PINK_LIGHT -> NoteFontColor.PINK_LIGHT
     UiNoteFontColor.PINK -> NoteFontColor.PINK
     UiNoteFontColor.PINK_DARK -> NoteFontColor.PINK_DARK
