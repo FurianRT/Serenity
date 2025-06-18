@@ -48,7 +48,6 @@ import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.debounce
 
 @OptIn(FlowPreview::class, ExperimentalLayoutApi::class)
@@ -92,14 +91,17 @@ fun NoteContentTitle(
                     }
                 }
         }
-        LaunchedEffect(title.state.selection, hasFocus) {
-            delay(50)
-            title.bringIntoViewRequester.bringIntoView(
-                textResult = layoutResult,
-                selection = title.state.selection,
-                additionalTopOffset = topFocusMargin.toFloat(),
-                additionalBottomOffset = keyboardOffset + bottomFocusMargin.toFloat(),
-            )
+        LaunchedEffect(hasFocus) {
+            snapshotFlow { title.state.selection }
+                .debounce(50)
+                .collect { selection ->
+                    title.bringIntoViewRequester.bringIntoView(
+                        textResult = layoutResult,
+                        selection = selection,
+                        additionalTopOffset = topFocusMargin.toFloat(),
+                        additionalBottomOffset = keyboardOffset + bottomFocusMargin.toFloat(),
+                    )
+                }
         }
     }
 
@@ -121,10 +123,7 @@ fun NoteContentTitle(
             }
     }
 
-    val isTextEmpty by remember {
-        derivedStateOf { title.state.textValue.text.isEmpty() }
-    }
-
+    val isTextEmpty by remember { derivedStateOf { title.state.textValue.text.isEmpty() } }
     val textStyle = if (isTextEmpty) {
         MaterialTheme.typography.labelMedium
     } else {
