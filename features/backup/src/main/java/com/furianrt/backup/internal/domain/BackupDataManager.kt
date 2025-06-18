@@ -5,6 +5,7 @@ import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,15 +21,28 @@ internal class BackupDataManager @Inject constructor(
     private val notesRepository: NotesRepository,
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
+    private val deviceInfoRepository: DeviceInfoRepository,
     private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
     val state = progressState.asStateFlow()
 
+    fun clearFailureState() {
+        if (state.value is SyncState.Failure) {
+            progressState.update { SyncState.Idle }
+        }
+    }
+
     suspend fun startBackup() {
-        if (state.value !is SyncState.Idle) {
+        if (state.value is SyncState.Progress || state.value is SyncState.Starting) {
             return
         }
+
+        if (!deviceInfoRepository.hasNetworkConnection()) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
         progressState.update { SyncState.Starting }
 
         mediaRepository.saveAllMedia()

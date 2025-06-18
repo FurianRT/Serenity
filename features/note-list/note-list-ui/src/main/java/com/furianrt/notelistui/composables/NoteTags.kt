@@ -1,10 +1,8 @@
 package com.furianrt.notelistui.composables
 
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -29,6 +27,7 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -36,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
@@ -52,12 +50,12 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteTag
-import com.furianrt.uikit.components.OneTimeEffect
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -80,6 +78,7 @@ fun NoteTags(
     onTextCleared: () -> Unit = {},
     onFocusChanged: () -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
 
     if (tags.isEmpty() && showStub) {
         TemplateNoteTagItem(
@@ -91,56 +90,54 @@ fun NoteTags(
             onTextCleared = {},
             onFocusChanged = {},
         )
-        return
-    }
-
-    val focusManager = LocalFocusManager.current
-    FlowRow(
-        modifier = modifier.animateContentSize(
-            animationSpec = spring(stiffness = Spring.StiffnessHigh),
-        )
-    ) {
-        LookaheadScope {
-            tags.forEach { tag ->
-                key(tag.id) {
-                    when (tag) {
-                        is UiNoteTag.Regular -> TagItem(
-                            modifier = Modifier.applyIf(animateItemsPlacement) {
-                                Modifier.animatePlacementInScope(this@LookaheadScope)
-                            },
-                            title = tag.title,
-                            isRemovable = isEditable,
-                            onClick = onTagClick?.let { { onTagClick(tag) } },
-                            onRemoveClick = { onTagRemoveClick(tag) },
-                        )
-
-                        is UiNoteTag.Template -> {
-                            LaunchedEffect(isEditable) {
-                                if (!isEditable) {
-                                    focusManager.clearFocus()
-                                }
-                            }
-                            TemplateNoteTagItem(
+    } else {
+        FlowRow(
+            modifier = modifier.animateContentSize(
+                animationSpec = spring(stiffness = Spring.StiffnessHigh),
+            )
+        ) {
+            LookaheadScope {
+                tags.forEach { tag ->
+                    key(tag.id) {
+                        when (tag) {
+                            is UiNoteTag.Regular -> TagItem(
                                 modifier = Modifier.applyIf(animateItemsPlacement) {
                                     Modifier.animatePlacementInScope(this@LookaheadScope)
                                 },
-                                tag = tag,
-                                onDoneEditing = onDoneEditing,
-                                onTextEntered = onTextEntered,
-                                onTextCleared = onTextCleared,
-                                onFocusChanged = onFocusChanged,
+                                title = tag.title,
+                                isRemovable = isEditable,
+                                onClick = onTagClick?.let { { onTagClick(tag) } },
+                                onRemoveClick = { onTagRemoveClick(tag) },
                             )
+
+                            is UiNoteTag.Template -> {
+                                LaunchedEffect(isEditable) {
+                                    if (!isEditable) {
+                                        focusManager.clearFocus()
+                                    }
+                                }
+                                TemplateNoteTagItem(
+                                    modifier = Modifier.applyIf(animateItemsPlacement) {
+                                        Modifier.animatePlacementInScope(this@LookaheadScope)
+                                    },
+                                    tag = tag,
+                                    onDoneEditing = onDoneEditing,
+                                    onTextEntered = onTextEntered,
+                                    onTextCleared = onTextCleared,
+                                    onFocusChanged = onFocusChanged,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            if (date != null) {
-                NoteDateItem(
-                    modifier = Modifier.weight(1f),
-                    text = date,
-                    topPadding = if (tags.isEmpty()) 12.dp else 10.dp,
-                )
+                if (date != null) {
+                    NoteDateItem(
+                        modifier = Modifier.weight(1f),
+                        text = date,
+                        topPadding = if (tags.isEmpty()) 12.dp else 10.dp,
+                    )
+                }
             }
         }
     }
@@ -169,11 +166,6 @@ private fun TemplateNoteTagItem(
 
     val onTextEnteredState by rememberUpdatedState(onTextEntered)
     val onTextClearedState by rememberUpdatedState(onTextCleared)
-
-    val alpha = remember { Animatable(0f) }
-    OneTimeEffect {
-        alpha.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 250))
-    }
 
     LaunchedEffect(imeTarget, hasFocus) {
         snapshotFlow { keyboardOffset }
@@ -208,18 +200,15 @@ private fun TemplateNoteTagItem(
         if (hasText) onTextEnteredState() else onTextClearedState()
     }
 
-    val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val hintStyle = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic)
     val hintText = stringResource(R.string.note_content_add_tag_hint)
-    val hintWidth = remember {
-        density.run {
-            textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width.toDp()
-        }
+    val hintWidth = rememberSaveable {
+        textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
     }
 
     val strokeColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
-    Box(modifier = modifier.graphicsLayer { this.alpha = alpha.value }) {
+    Box(modifier = modifier) {
         Box(
             modifier = Modifier
                 .padding(4.dp)
@@ -230,7 +219,7 @@ private fun TemplateNoteTagItem(
                 modifier = Modifier
                     .bringIntoViewRequester(bringIntoViewRequester)
                     .padding(horizontal = 10.dp, vertical = 6.dp)
-                    .widthIn(min = hintWidth)
+                    .widthIn(min = hintWidth.pxToDp())
                     .width(IntrinsicSize.Min)
                     .onFocusChanged { focusState ->
                         onFocusChanged()

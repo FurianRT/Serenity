@@ -118,7 +118,7 @@ class NoteTitleState(
     fun undo() {
         val entry = undoRedoManager.undo() ?: return
         textValueState = textValueState.copy(
-            annotatedString = entry.annotatedString,
+            annotatedString = entry.annotatedString.updateBoldFontFamily(fontFamily.bold),
             selection = TextRange(
                 entry.selection.max.coerceIn(0, entry.annotatedString.length),
                 entry.selection.max.coerceIn(0, entry.annotatedString.length),
@@ -129,7 +129,7 @@ class NoteTitleState(
     fun redo() {
         val entry = undoRedoManager.redo() ?: return
         textValueState = textValueState.copy(
-            annotatedString = entry.annotatedString,
+            annotatedString = entry.annotatedString.updateBoldFontFamily(fontFamily.bold),
             selection = TextRange(
                 entry.selection.max.coerceIn(0, entry.annotatedString.length),
                 entry.selection.max.coerceIn(0, entry.annotatedString.length),
@@ -208,14 +208,13 @@ private fun AnnotatedString.hasSpans(
 private fun AnnotatedString.updateBoldFontFamily(
     fontFamily: FontFamily,
 ): AnnotatedString = flatMapAnnotations { span ->
-    val spanStyle: AnnotatedString.Annotation = span.item
+    val spanStyle = span.item
 
     if (spanStyle !is SpanStyle) {
         return@flatMapAnnotations listOf(span)
     }
 
-
-    val item = (spanStyle as? SpanStyle)?.toSpanType() ?: return@flatMapAnnotations listOf(span)
+    val item = (spanStyle as? SpanStyle)?.toSpanType()
 
     if (item !is SpanType.Bold) {
         return@flatMapAnnotations listOf(span)

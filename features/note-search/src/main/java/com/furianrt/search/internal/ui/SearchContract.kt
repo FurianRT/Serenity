@@ -19,7 +19,7 @@ internal data class SearchUiState(
     val state: State = Success(),
 ) {
     val enableSelection: Boolean
-        get() = state is Success && state.selectedNotesCount > 0
+        get() = state is Success && state.enableSelection
 
     sealed interface State {
         @Immutable
@@ -28,7 +28,9 @@ internal data class SearchUiState(
             val scrollToPosition: Int? = null,
             val notesCount: Int = 0,
             val selectedNotesCount: Int = 0,
-        ) : State
+        ) : State {
+            val enableSelection = selectedNotesCount > 0
+        }
 
         data object Empty : State
     }

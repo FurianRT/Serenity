@@ -6,6 +6,7 @@ import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.SimpleNote
+import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,15 +24,28 @@ internal class RestoreDataManager @Inject constructor(
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
+    private val deviceInfoRepository: DeviceInfoRepository,
     private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
     val state = progressState.asStateFlow()
 
+    fun clearFailureState() {
+        if (state.value is SyncState.Failure) {
+            progressState.update { SyncState.Idle }
+        }
+    }
+
     suspend fun startRestore() {
-        if (state.value !is SyncState.Idle) {
+        if (state.value is SyncState.Progress || state.value is SyncState.Starting) {
             return
         }
+
+        if (!deviceInfoRepository.hasNetworkConnection()) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
         progressState.update { SyncState.Starting }
 
         val remoteFiles = backupRepository.getContentList()
@@ -73,6 +88,8 @@ internal class RestoreDataManager @Inject constructor(
         }
 
         saveNotesData(remoteNotes)
+
+        backupRepository.setLastSyncDate(ZonedDateTime.now())
 
         progressState.update { SyncState.Idle }
     }

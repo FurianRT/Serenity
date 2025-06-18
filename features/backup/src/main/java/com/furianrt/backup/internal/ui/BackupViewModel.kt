@@ -3,9 +3,13 @@ package com.furianrt.backup.internal.ui
 import android.content.Intent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.backup.R
+import com.furianrt.backup.internal.domain.BackupDataManager
+import com.furianrt.backup.internal.domain.RestoreDataManager
 import com.furianrt.backup.internal.domain.ServiceLauncher
 import com.furianrt.backup.internal.domain.entities.AuthResult
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
+import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.domain.usecases.AuthorizeUseCase
@@ -15,6 +19,20 @@ import com.furianrt.backup.internal.domain.usecases.SignInUseCase
 import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
 import com.furianrt.backup.internal.extensions.toQuestion
 import com.furianrt.backup.internal.extensions.toSyncDate
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnAutoBackupCheckChange
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupPeriodClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupPeriodSelected
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupResolutionComplete
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupResolutionFailure
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonBackClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonBackupClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonRestoreClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnConfirmBackupClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnQuestionClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignInClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignOutClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignOutConfirmClick
+import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.doWithState
@@ -26,6 +44,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -39,6 +58,8 @@ import com.furianrt.uikit.R as uiR
 internal class BackupViewModel @Inject constructor(
     getPopularQuestionsUseCase: GetPopularQuestionsUseCase,
     getBackupProfileUseCase: GetBackupProfileUseCase,
+    private val restoreDataManager: RestoreDataManager,
+    private val backupDataManager: BackupDataManager,
     private val backupRepository: BackupRepository,
     private val signInUseCase: SignInUseCase,
     private val signOutUseCase: SignOutUseCase,
@@ -77,12 +98,41 @@ internal class BackupViewModel @Inject constructor(
         }
     }
 
-    val state = combine(
+    private val syncProgressState = combine(
+        backupDataManager.state,
+        restoreDataManager.state,
+    ) { backupSyncState, restoreSyncState ->
+        when {
+            backupSyncState is SyncState.Starting -> SyncProgress.BackupStarting
+            backupSyncState is SyncState.Progress -> SyncProgress.BackupProgress(
+                syncedNotesCount = backupSyncState.syncedNotesCount,
+                totalNotesCount = backupSyncState.totalNotesCount,
+            )
+
+            restoreSyncState is SyncState.Starting -> SyncProgress.RestoreStarting
+            restoreSyncState is SyncState.Progress -> SyncProgress.RestoreProgress(
+                syncedNotesCount = restoreSyncState.syncedNotesCount,
+                totalNotesCount = restoreSyncState.totalNotesCount,
+            )
+
+            backupSyncState is SyncState.Failure || restoreSyncState is SyncState.Failure -> {
+                SyncProgress.Failure(
+                    backup = backupSyncState is SyncState.Failure,
+                    restore = restoreSyncState is SyncState.Failure,
+                )
+            }
+
+            else -> SyncProgress.Idle
+        }
+    }
+
+    val state: StateFlow<BackupUiState> = com.furianrt.core.combine(
         questionsListFlow,
         authStatusFlow,
         backupRepository.isAutoBackupEnabled(),
         backupRepository.getAutoBackupPeriod(),
         backupRepository.getLastSyncDate(),
+        syncProgressState,
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
@@ -95,45 +145,61 @@ internal class BackupViewModel @Inject constructor(
 
     fun onEvent(event: BackupScreenEvent) {
         when (event) {
-            is BackupScreenEvent.OnAutoBackupCheckChange -> launch {
+            is OnAutoBackupCheckChange -> launch {
                 backupRepository.setAutoBackupEnabled(event.isChecked)
             }
 
-            is BackupScreenEvent.OnButtonBackupClick -> launch {
+            is OnButtonBackupClick -> launch {
                 if (backupRepository.isBackupConfirmed().first()) {
+                    restoreDataManager.clearFailureState()
                     serviceLauncher.launchBackupService()
                 } else {
                     _effect.tryEmit(BackupEffect.ShowConfirmBackupDialog)
                 }
             }
 
-            is BackupScreenEvent.OnConfirmBackupClick -> launch {
+            is OnConfirmBackupClick -> launch {
                 backupRepository.setBackupConfirmed(confirmed = true)
                 serviceLauncher.launchBackupService()
             }
 
-            is BackupScreenEvent.OnButtonRestoreClick -> serviceLauncher.launchRestoreService()
-            is BackupScreenEvent.OnBackupPeriodClick -> {
+            is OnButtonRestoreClick -> {
+                backupDataManager.clearFailureState()
+                serviceLauncher.launchRestoreService()
+            }
+            is OnBackupPeriodClick -> {
                 _effect.tryEmit(BackupEffect.ShowBackupPeriodDialog)
             }
 
-            is BackupScreenEvent.OnBackupPeriodSelected -> launch {
+            is OnBackupPeriodSelected -> launch {
                 updateBackupPeriod(event.period)
             }
 
-            is BackupScreenEvent.OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
-            is BackupScreenEvent.OnQuestionClick -> toggleQuestionExpandedState(event.question)
-            is BackupScreenEvent.OnSignInClick -> authorize()
-            is BackupScreenEvent.OnSignOutClick -> {
-                _effect.tryEmit(BackupEffect.ShowConfirmSignOutDialog)
+            is OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
+            is OnQuestionClick -> toggleQuestionExpandedState(event.question)
+            is OnSignInClick -> authorize()
+            is OnSignOutClick -> state.doWithState<BackupUiState.Success> { successState ->
+                if (successState.isBackupInProgress || successState.isRestoreInProgress) {
+                    _effect.tryEmit(
+                        BackupEffect.ShowErrorToast(
+                            resourcesManager.getString(R.string.backup_sync_in_progress_message),
+                        )
+                    )
+                } else {
+                    _effect.tryEmit(BackupEffect.ShowConfirmSignOutDialog)
+                }
             }
 
-            is BackupScreenEvent.OnSignOutConfirmClick -> signOut()
-            is BackupScreenEvent.OnBackupResolutionComplete -> launch {
+            is OnSignOutConfirmClick -> {
+                backupDataManager.clearFailureState()
+                restoreDataManager.clearFailureState()
+                signOut()
+            }
+            is OnBackupResolutionComplete -> launch {
                 signIn(intent = event.intent)
             }
 
-            is BackupScreenEvent.OnBackupResolutionFailure -> showError(event.error)
+            is OnBackupResolutionFailure -> showError(event.error)
         }
     }
 
@@ -222,11 +288,13 @@ internal class BackupViewModel @Inject constructor(
         isAutoBackupEnabled: Boolean,
         backupPeriod: BackupPeriod,
         lastSyncDate: ZonedDateTime?,
+        syncProgress: SyncProgress,
     ) = BackupUiState.Success(
         isAutoBackupEnabled = isAutoBackupEnabled,
         backupPeriod = backupPeriod,
         lastSyncDate = lastSyncDate.toSyncDate(),
         questions = questions,
         authState = authState,
+        syncProgress = syncProgress,
     )
 }

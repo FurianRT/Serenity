@@ -152,14 +152,14 @@ private fun SuccessContent(
             },
         )
         ControlsAnimatedVisibility(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .statusBarsPadding(),
+            modifier = Modifier.align(Alignment.TopCenter),
             visible = showControls,
             label = "ToolbarAnim",
         ) {
             Toolbar(
-                modifier = Modifier.background(SystemBarsConstants.Color),
+                modifier = Modifier
+                    .background(SystemBarsConstants.Color)
+                    .statusBarsPadding(),
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
                 selectionState = uiState.media[pagerState.currentPage].state,
@@ -174,14 +174,14 @@ private fun SuccessContent(
             )
         }
         ControlsAnimatedVisibility(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding(),
+            modifier = Modifier.align(Alignment.BottomCenter),
             visible = showControls,
             label = "MediaListAnim",
         ) {
             MediaList(
-                modifier = Modifier.background(SystemBarsConstants.Color),
+                modifier = Modifier
+                    .background(SystemBarsConstants.Color)
+                    .navigationBarsPadding(),
                 media = uiState.media,
                 state = listState,
                 initialMediaIndex = uiState.initialMediaIndex,

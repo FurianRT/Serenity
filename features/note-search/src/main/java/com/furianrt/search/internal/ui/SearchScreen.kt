@@ -1,6 +1,7 @@
 package com.furianrt.search.internal.ui
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.fadeIn
@@ -264,6 +265,10 @@ private fun SuccessContent(
 ) {
     val focusManager = LocalFocusManager.current
 
+    BackHandler(enabled = uiState.enableSelection) {
+        onEvent(SearchEvent.OnCloseSelectionClick)
+    }
+
     LaunchedEffect(listState.isScrollInProgress) {
         if (listState.isScrollInProgress) {
             focusManager.clearFocus()
@@ -272,7 +277,7 @@ private fun SuccessContent(
 
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
-            listState.scrollToItem(uiState.scrollToPosition)
+            listState.requestScrollToItem( uiState.scrollToPosition)
             toolbarState.expand()
             onEvent(SearchEvent.OnScrolledToItem)
         }

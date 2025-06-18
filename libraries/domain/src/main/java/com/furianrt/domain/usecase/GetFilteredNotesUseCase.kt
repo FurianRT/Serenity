@@ -18,7 +18,7 @@ class GetFilteredNotesUseCase @Inject constructor(
         tagsNames: Set<String>,
         startDate: LocalDate?,
         endDate: LocalDate?,
-    ): Flow<List<LocalNote>> = notesRepository.getAllNotes(query)
+    ): Flow<List<LocalNote>> = notesRepository.getAllNotes(query.trim())
         .map { notes ->
             notes
                 .filterByTags(tagsNames)

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -127,7 +126,7 @@ fun ActionsPanel(
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
     val imeBottom by rememberKeyboardOffsetState()
-    val isImeVisible = WindowInsets.isImeVisible && imeBottom == imeTarget
+    val isImeVisible = imeTarget != 0 && imeBottom == imeTarget
 
     val panelMode = when {
         isFontPanelVisible -> PanelMode.FONT

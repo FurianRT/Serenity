@@ -6,6 +6,13 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.animateBounds
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,6 +43,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -47,7 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
-import com.furianrt.backup.internal.ui.composables.BackupButton
+import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress
 import com.furianrt.backup.internal.ui.composables.BackupDate
 import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
@@ -55,10 +64,13 @@ import com.furianrt.backup.internal.ui.composables.ConfirmBackupDialog
 import com.furianrt.backup.internal.ui.composables.ConfirmSignOutDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
+import com.furianrt.backup.internal.ui.composables.SyncButton
+import com.furianrt.backup.internal.ui.composables.SyncError
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.theme.SerenityTheme
@@ -126,6 +138,7 @@ internal fun BackupScreen(
             }
         }
     }
+
     ScreenContent(
         modifier = Modifier.haze(hazeState),
         uiState = uiState,
@@ -191,7 +204,9 @@ private fun ScreenContent(
             is BackupUiState.Loading -> LoadingContent()
         }
         SnackbarHost(
-            modifier = Modifier.navigationBarsPadding(),
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding(),
             hostState = snackBarHostState,
             snackbar = { data ->
                 SnackBar(
@@ -204,6 +219,7 @@ private fun ScreenContent(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 private fun SuccessContent(
     uiState: BackupUiState.Success,
@@ -213,6 +229,13 @@ private fun SuccessContent(
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val view = LocalView.current
+
+    SkipFirstEffect(uiState.hasSyncError) {
+        if (uiState.hasSyncError) {
+            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+        }
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -257,33 +280,111 @@ private fun SuccessContent(
                 onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
             )
             Spacer(Modifier.height(40.dp))
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(24.dp),
-            ) {
-                BackupButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(uiR.string.action_backup),
-                    isEnabled = uiState.isSignedIn,
-                    onClick = { onEvent(BackupScreenEvent.OnButtonBackupClick) },
-                )
-                BackupButton(
-                    modifier = Modifier.weight(1f),
-                    text = stringResource(uiR.string.action_restore),
-                    isEnabled = uiState.isSignedIn,
-                    onClick = { onEvent(BackupScreenEvent.OnButtonRestoreClick) },
-                )
+            LookaheadScope {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .animateContentSize(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                ) {
+                    AnimatedVisibility(
+                        modifier = Modifier.weight(1f),
+                        visible = !uiState.isRestoreInProgress,
+                        enter = fadeIn(tween(500)),
+                        exit = ExitTransition.None,
+                    ) {
+                        SyncButton(
+                            modifier = Modifier.animateBounds(this@LookaheadScope),
+                            text = when (val progress = uiState.syncProgress) {
+                                is SyncProgress.BackupStarting -> {
+                                    stringResource(R.string.backup_starting_message)
+                                }
+
+                                is SyncProgress.BackupProgress -> stringResource(
+                                    R.string.backup_progress_message,
+                                    progress.syncedNotesCount,
+                                    progress.totalNotesCount,
+                                )
+
+                                else -> stringResource(uiR.string.action_backup)
+                            },
+                            progress = when (val progress = uiState.syncProgress) {
+                                is SyncProgress.BackupStarting -> 0f
+                                is SyncProgress.BackupProgress -> {
+                                    progress.syncedNotesCount / progress.totalNotesCount.toFloat()
+                                }
+
+                                else -> null
+                            },
+                            hasError = uiState.syncProgress is SyncProgress.Failure &&
+                                    uiState.syncProgress.backup,
+                            isEnabled = uiState.isSignedIn,
+                            onClick = {
+                                if (!uiState.isSyncInProgress) {
+                                    onEvent(BackupScreenEvent.OnButtonBackupClick)
+                                }
+                            },
+                        )
+                    }
+                    AnimatedVisibility(
+                        modifier = Modifier.weight(1f),
+                        visible = !uiState.isBackupInProgress,
+                        enter = fadeIn(tween(500)),
+                        exit = ExitTransition.None,
+                    ) {
+                        SyncButton(
+                            modifier = Modifier.animateBounds(this@LookaheadScope),
+                            text = when (val progress = uiState.syncProgress) {
+                                is SyncProgress.RestoreStarting -> {
+                                    stringResource(R.string.restore_starting_message)
+                                }
+
+                                is SyncProgress.RestoreProgress -> stringResource(
+                                    R.string.restore_progress_message,
+                                    progress.syncedNotesCount,
+                                    progress.totalNotesCount,
+                                )
+
+                                else -> stringResource(uiR.string.action_restore)
+                            },
+                            progress = when (val progress = uiState.syncProgress) {
+                                is SyncProgress.RestoreStarting -> 0f
+                                is SyncProgress.RestoreProgress -> {
+                                    progress.syncedNotesCount / progress.totalNotesCount.toFloat()
+                                }
+
+                                else -> null
+                            },
+                            hasError = uiState.syncProgress is SyncProgress.Failure &&
+                                    uiState.syncProgress.restore,
+                            isEnabled = uiState.isSignedIn,
+                            onClick = {
+                                if (!uiState.isSyncInProgress) {
+                                    onEvent(BackupScreenEvent.OnButtonRestoreClick)
+                                }
+                            },
+                        )
+                    }
+                }
             }
             Spacer(Modifier.height(24.dp))
-            BackupDate(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
-                date = uiState.lastSyncDate,
-            )
+            if (uiState.syncProgress is SyncProgress.Failure) {
+                SyncError(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                )
+            } else {
+                BackupDate(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp),
+                    date = uiState.lastSyncDate,
+                )
+            }
             if (uiState.questions.isNotEmpty()) {
                 HorizontalDivider(
                     modifier = Modifier.padding(start = 24.dp, top = 40.dp, bottom = 32.dp),
@@ -322,6 +423,7 @@ private fun PreviewSignedIn() {
                     email = "felmemfmelflmfe",
                     isLoading = false,
                 ),
+                syncProgress = SyncProgress.Idle,
             ),
         )
     }
@@ -338,6 +440,7 @@ private fun PreviewSignedOut() {
                 lastSyncDate = BackupUiState.Success.SyncDate.None,
                 questions = buildPreviewQuestionsList(expandedIndex = 1),
                 authState = BackupUiState.Success.AuthState.SignedOut(isLoading = false),
+                syncProgress = SyncProgress.Idle,
             ),
         )
     }
@@ -357,6 +460,7 @@ private fun PreviewLoading() {
                     email = "felmemfmelflmfe",
                     isLoading = true,
                 ),
+                syncProgress = SyncProgress.Idle,
             ),
         )
     }

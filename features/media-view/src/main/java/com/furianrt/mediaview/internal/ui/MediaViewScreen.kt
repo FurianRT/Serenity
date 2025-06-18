@@ -5,12 +5,11 @@ import android.view.HapticFeedbackConstants
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -38,11 +37,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaview.R
-import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.mediaview.internal.ui.composables.MediaList
 import com.furianrt.mediaview.internal.ui.composables.MediaPager
 import com.furianrt.mediaview.internal.ui.composables.Toolbar
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
+import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.hideSystemUi
@@ -125,26 +124,10 @@ internal fun MediaViewScreen(
             }
     }
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(R.drawable.ic_download),
-                        color = Colors.Common.DarkGray.copy(alpha = 0.9f),
-                    )
-                },
-            )
-        },
-        content = { paddingValues ->
-            SuccessContent(
-                paddingValues = paddingValues,
-                uiState = uiState,
-                onEvent = viewModel::onEvent,
-            )
-        }
+    SuccessContent(
+        snackBarHostState = snackBarHostState,
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
     )
 }
 
@@ -152,7 +135,7 @@ internal fun MediaViewScreen(
 private fun SuccessContent(
     uiState: MediaViewUiState,
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues = PaddingValues(),
+    snackBarHostState: SnackbarHostState,
     onEvent: (event: MediaViewEvent) -> Unit = {},
 ) {
     val pagerState = rememberPagerState(
@@ -227,14 +210,14 @@ private fun SuccessContent(
             },
         )
         ControlsAnimatedVisibility(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(paddingValues),
+            modifier = Modifier.align(Alignment.TopCenter),
             visible = showControls,
             label = "ToolbarAnim",
         ) {
             Toolbar(
-                modifier = Modifier.background(SystemBarsConstants.Color),
+                modifier = Modifier
+                    .background(SystemBarsConstants.Color)
+                    .statusBarsPadding(),
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
                 hazeState = hazeState,
@@ -252,14 +235,14 @@ private fun SuccessContent(
             )
         }
         ControlsAnimatedVisibility(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(paddingValues),
+            modifier = Modifier.align(Alignment.BottomCenter),
             visible = showControls,
             label = "MediaListAnim",
         ) {
             MediaList(
-                modifier = Modifier.background(SystemBarsConstants.Color),
+                modifier = Modifier
+                    .background(SystemBarsConstants.Color)
+                    .navigationBarsPadding(),
                 media = uiState.media,
                 state = listState,
                 initialMediaIndex = uiState.initialMediaIndex,
@@ -267,6 +250,19 @@ private fun SuccessContent(
                 onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
             )
         }
+        SnackbarHost(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding(),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(R.drawable.ic_download),
+                    color = Colors.Common.DarkGray.copy(alpha = 0.9f),
+                )
+            },
+        )
     }
 }
 
@@ -283,6 +279,7 @@ private fun Preview() {
                     MediaItem.Image(id = "3", name = "3", uri = Uri.EMPTY, ratio = 1.4f),
                 ),
             ),
+            snackBarHostState = SnackbarHostState(),
         )
     }
 }

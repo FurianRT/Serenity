@@ -168,7 +168,9 @@ internal class PageViewModel @AssistedInject constructor(
     fun onEvent(event: PageEvent) {
         when (event) {
             is OnScreenStopped -> trySaveContent()
-            is OnEditModeStateChange -> changeEditModeState(event.isEnabled)
+            is OnEditModeStateChange -> {
+                changeEditModeState(event.isEnabled)
+            }
             is OnIsSelectedChange -> {
                 resetStickersEditing()
                 onIsSelectedChange(event.isSelected)

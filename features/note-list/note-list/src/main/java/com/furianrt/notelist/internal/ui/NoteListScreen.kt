@@ -47,7 +47,6 @@ import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar

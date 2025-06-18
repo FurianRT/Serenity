@@ -33,6 +33,11 @@ object Colors {
         val Turquoise = Color(0xFF39A0A8)
         val Blue = Color(0xFF446DFF)
         val Blue2 = Color(0xFF5A8DEE)
+        val Blue3 = Color(0xFF8FC0D8)
+        val RichMulberry = Color(0xFF7A004F)
+        val Pink = Color(0xFFBC8AC3)
+        val Pink2 = Color(0xFF8F63BF)
+        val PlumWine = Color(0xFF6B2F4E)
     }
 
     object Font {

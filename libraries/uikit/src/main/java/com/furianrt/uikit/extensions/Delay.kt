@@ -1,7 +1,6 @@
 package com.furianrt.uikit.extensions
 
 import androidx.compose.foundation.Indication
-import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.runtime.getValue
@@ -21,22 +20,13 @@ fun Modifier.debounceClickable(
         clickable(
             onClick = {
                 val currentTime = System.currentTimeMillis()
-                if ((currentTime - lastClickTime) < debounceInterval) return@clickable
-                lastClickTime = currentTime
-                onClick()
+                if ((currentTime - lastClickTime) >= debounceInterval) {
+                    lastClickTime = currentTime
+                    onClick()
+                }
             },
             indication = indication,
             interactionSource = remember { MutableInteractionSource() },
         )
-    })
-
-fun Modifier.debounceClickable(
-    debounceInterval: Long = 400,
-    onClick: () -> Unit,
-): Modifier = composed {
-    debounceClickable(
-        onClick = onClick,
-        debounceInterval = debounceInterval,
-        indication = LocalIndication.current,
-    )
-}
+    }
+)

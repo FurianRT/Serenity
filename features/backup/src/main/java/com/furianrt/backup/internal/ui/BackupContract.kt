@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.IntentSender
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
+import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress.*
 import com.furianrt.backup.internal.ui.entities.Question
 import kotlinx.collections.immutable.ImmutableList
 
@@ -15,9 +16,14 @@ internal sealed interface BackupUiState {
         val lastSyncDate: SyncDate,
         val questions: ImmutableList<Question>,
         val authState: AuthState,
+        val syncProgress: SyncProgress,
     ) : BackupUiState {
 
         val isSignedIn = authState is AuthState.SignedIn
+        val isBackupInProgress = syncProgress is BackupStarting || syncProgress is BackupProgress
+        val isRestoreInProgress = syncProgress is RestoreStarting || syncProgress is RestoreProgress
+        val isSyncInProgress = isBackupInProgress || isRestoreInProgress
+        val hasSyncError = syncProgress is Failure
 
         sealed class AuthState(open val isLoading: Boolean) {
             data class SignedIn(
@@ -33,8 +39,28 @@ internal sealed interface BackupUiState {
         sealed interface SyncDate {
             data object Today : SyncDate
             data object Yesterday : SyncDate
-            data object None: SyncDate
+            data object None : SyncDate
             data class Other(val text: String) : SyncDate
+        }
+
+        sealed interface SyncProgress {
+            data object Idle : SyncProgress
+            data object BackupStarting : SyncProgress
+            data object RestoreStarting : SyncProgress
+            data class BackupProgress(
+                val syncedNotesCount: Int,
+                val totalNotesCount: Int,
+            ) : SyncProgress
+
+            data class RestoreProgress(
+                val syncedNotesCount: Int,
+                val totalNotesCount: Int,
+            ) : SyncProgress
+
+            data class Failure(
+                val backup: Boolean,
+                val restore: Boolean,
+            ) : SyncProgress
         }
     }
 

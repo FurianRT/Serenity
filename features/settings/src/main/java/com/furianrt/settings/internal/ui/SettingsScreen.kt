@@ -46,7 +46,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -172,9 +171,7 @@ private fun ScreenContent(
     val toolbarState = remember { MovableToolbarState() }
 
     MovableToolbarScaffold(
-        modifier = modifier
-            .background(MaterialTheme.colorScheme.surface)
-            .navigationBarsPadding(),
+        modifier = modifier.background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         listState = scrollState,
         enabled = false,
@@ -197,7 +194,9 @@ private fun ScreenContent(
             is SettingsUiState.Loading -> LoadingScreen()
         }
         SnackbarHost(
-            modifier = Modifier.align(Alignment.BottomCenter),
+            modifier = Modifier
+                .navigationBarsPadding()
+                .align(Alignment.BottomCenter),
             hostState = snackBarHostState,
             snackbar = { data ->
                 SnackBar(
@@ -222,7 +221,8 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(top = topPadding + 8.dp),
+            .padding(top = topPadding + 8.dp)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
