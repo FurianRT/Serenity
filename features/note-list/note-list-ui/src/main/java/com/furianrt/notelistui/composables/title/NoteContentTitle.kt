@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
@@ -109,12 +111,32 @@ fun NoteContentTitle(
     }
 
     var titleText by remember { mutableStateOf(title.state.annotatedString) }
-    LaunchedEffect(title.state.annotatedString) {
-        if (titleText != title.state.annotatedString) {
-            onTitleTextChangeState(title.id)
-            titleText = title.state.annotatedString
-        }
+    LaunchedEffect(Unit) {
+        snapshotFlow { title.state.annotatedString }
+            .collect { annotatedString ->
+                if (titleText != annotatedString) {
+                    onTitleTextChangeState(title.id)
+                    titleText = annotatedString
+                }
+            }
     }
+
+    val isTextEmpty by remember {
+        derivedStateOf { title.state.textValue.text.isEmpty() }
+    }
+
+    val textStyle = if (isTextEmpty) {
+        MaterialTheme.typography.labelMedium
+    } else {
+        MaterialTheme.typography.bodyMedium
+    }
+
+    val adjustedStyle = textStyle.copy(
+        color = color ?: textStyle.color,
+        fontFamily = fontFamily ?: textStyle.fontFamily,
+        fontSize = fontSize,
+        lineHeight = textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value),
+    )
 
     BasicTextField(
         modifier = modifier
@@ -129,13 +151,7 @@ fun NoteContentTitle(
         value = title.state.textValue,
         onTextLayout = { layoutResult = it },
         onValueChange = { title.state.updateValue(it) },
-        textStyle = MaterialTheme.typography.bodyMedium.copy(
-            color = color ?: MaterialTheme.typography.bodyMedium.color,
-            fontFamily = fontFamily ?: MaterialTheme.typography.bodyMedium.fontFamily,
-            fontSize = fontSize,
-            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
-                    (fontSize.value / MaterialTheme.typography.bodyMedium.fontSize.value),
-        ),
+        textStyle = adjustedStyle,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
@@ -148,7 +164,10 @@ fun NoteContentTitle(
                 enter = fadeIn(tween(200)),
                 exit = ExitTransition.None,
             ) {
-                Placeholder(hint = hint.orEmpty())
+                Placeholder(
+                    style = adjustedStyle,
+                    hint = hint.orEmpty(),
+                )
             }
             innerTextField()
         },
@@ -157,12 +176,13 @@ fun NoteContentTitle(
 
 @Composable
 private fun Placeholder(
+    style: TextStyle,
     hint: String,
 ) {
     Text(
         modifier = Modifier.alpha(0.5f),
         text = hint,
-        style = MaterialTheme.typography.labelMedium,
+        style = style,
         fontStyle = FontStyle.Italic,
     )
 }
