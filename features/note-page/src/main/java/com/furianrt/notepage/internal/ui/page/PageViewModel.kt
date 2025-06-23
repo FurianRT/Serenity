@@ -209,7 +209,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnMediaRemoveClick -> onMediaRemoveClick(event.media.id)
 
-            is OnMediaShareClick -> {}
+            is OnMediaShareClick -> _effect.tryEmit(PageEffect.ShareMedia(event.media))
             is OnOpenMediaViewerRequest -> {
                 resetStickersEditing()
                 _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))

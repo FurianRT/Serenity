@@ -107,6 +107,7 @@ import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -202,6 +203,23 @@ internal fun NotePageScreenInternal(
                     snackBarHostState.currentSnackbarData?.dismiss()
                     snackBarHostState.showSnackbar(
                         message = effect.message,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
+
+                is PageEffect.ShareMedia -> IntentCreator.mediaShareIntent(
+                    uri = effect.media.uri,
+                    mediaType = when (effect.media) {
+                        is UiNoteContent.MediaBlock.Image -> IntentCreator.MediaType.IMAGE
+                        is UiNoteContent.MediaBlock.Video -> IntentCreator.MediaType.VIDEO
+                    },
+                ).onSuccess { intent ->
+                    context.startActivity(intent)
+                }.onFailure { error ->
+                    error.printStackTrace()
+                    snackBarHostState.currentSnackbarData?.dismiss()
+                    snackBarHostState.showSnackbar(
+                        message = context.getString(uiR.string.general_error),
                         duration = SnackbarDuration.Short,
                     )
                 }

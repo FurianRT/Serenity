@@ -1,3 +1,5 @@
 <resources>
     <string name="notes_list_search_bar_title">Search</string>
+    <string name="notes_list_empty_list_title">\"Every story starts with a word\"</string>
+    <string name="notes_list_empty_list_body">Tap to begin yours!</string>
 </resources>

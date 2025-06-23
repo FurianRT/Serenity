@@ -48,4 +48,6 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.kotlinxSerializationJson)
+
+    implementation(libs.lottie)
 }

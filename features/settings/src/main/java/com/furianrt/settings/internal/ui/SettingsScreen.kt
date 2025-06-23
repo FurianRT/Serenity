@@ -2,6 +2,7 @@ package com.furianrt.settings.internal.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -131,6 +132,10 @@ internal fun SettingsScreen(
                     fonts = effect.fonts,
                     selectedFont = effect.selectedFont,
                 )
+
+                is SettingsEffect.OpenLink -> {
+                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
+                }
             }
         }
     }
@@ -237,53 +242,56 @@ private fun SuccessScreen(
             iconPainter = painterResource(id = R.drawable.ic_cloud),
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
         )
+        GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(id = R.string.settings_font_title),
+            iconPainter = painterResource(id = R.drawable.font_svgrepo_com),
+            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
+        )
         ThemeSelector(
             modifier = Modifier.padding(vertical = 4.dp),
             themes = uiState.themes,
             selected = uiState.selectedThemeColor,
             onSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
         )
-        GeneralButton(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-            title = stringResource(id = R.string.settings_font_title),
-            iconPainter = painterResource(id = R.drawable.font_svgrepo_com),
-            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
-        )
-        GeneralButton(
+
+        /*GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
             hint = "English",
             onClick = {},
-        )
+        )*/
         Rating(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
             rating = uiState.rating,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
-        GeneralButton(
+       /* GeneralButton(
             modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
             title = stringResource(id = R.string.settings_donate_title),
             iconPainter = painterResource(id = R.drawable.ic_hart),
             onClick = {},
-        )
+        )*/
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_feedback_title),
             iconPainter = painterResource(id = R.drawable.ic_mail),
             onClick = { onEvent(SettingsEvent.OnButtonFeedbackClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(top = 8.dp, start = 8.dp, end = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_terms_and_conditions_title),
             iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
-            onClick = {},
+            onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_privacy_policy_title),
             iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
-            onClick = {},
+            onClick = { onEvent(SettingsEvent.OnButtonPrivacyPolicyClick) },
         )
         Spacer(modifier = Modifier.weight(1f))
         Version(

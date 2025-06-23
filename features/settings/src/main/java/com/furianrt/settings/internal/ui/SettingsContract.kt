@@ -24,6 +24,8 @@ internal sealed interface SettingsEvent {
     data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
     data class OnRatingSelected(val rating: Int) : SettingsEvent
+    data object OnButtonTermsAndConditionsClick : SettingsEvent
+    data object OnButtonPrivacyPolicyClick : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
@@ -47,4 +49,6 @@ internal sealed interface SettingsEffect {
         val fonts: ImmutableList<UiNoteFontFamily>,
         val selectedFont: UiNoteFontFamily,
     ) : SettingsEffect
+
+    data class OpenLink(val url: String) : SettingsEffect
 }

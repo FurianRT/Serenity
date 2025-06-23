@@ -2,20 +2,28 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -26,10 +34,15 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,7 +52,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.core.buildImmutableList
+import com.furianrt.notelist.R
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
@@ -51,6 +70,8 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
@@ -60,6 +81,7 @@ import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
+private const val EMPTY_STATE_ANIM_DURATION = 2500
 
 @Composable
 internal fun NoteListScreen(
@@ -176,9 +198,9 @@ private fun MainScreenContent(
         },
     ) { topPadding ->
         when (uiState) {
-            is NoteListUiState.Loading -> NoteListLoading()
-            is NoteListUiState.Empty -> NoteListEmpty()
-            is NoteListUiState.Success -> MainSuccess(
+            is NoteListUiState.Loading -> LoadingContent()
+            is NoteListUiState.Empty -> EmptyContent(onEvent = onEvent)
+            is NoteListUiState.Success -> SuccessContent(
                 uiState = uiState,
                 screenState = screenState,
                 toolbarPadding = topPadding,
@@ -212,7 +234,7 @@ private fun MainScreenContent(
 }
 
 @Composable
-private fun MainSuccess(
+private fun SuccessContent(
     uiState: NoteListUiState.Success,
     screenState: NoteListScreenState,
     toolbarPadding: Dp,
@@ -263,14 +285,81 @@ private fun MainSuccess(
 }
 
 @Composable
-private fun NoteListEmpty(
+private fun EmptyContent(
     modifier: Modifier = Modifier,
+    onEvent: (event: NoteListEvent) -> Unit,
 ) {
-    Box(modifier = modifier.fillMaxSize())
+    val (initialOffsetPx, initialAlpha) = if (LocalInspectionMode.current) {
+        0f to 1f
+    } else {
+        500.dp.dpToPx() to 0f
+    }
+
+    var startAnimation by remember { mutableStateOf(false) }
+    val transition = updateTransition(targetState = startAnimation,)
+
+    val contentAlpha by transition.animateFloat(
+        transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },
+        targetValueByState = { if (it) 1f else initialAlpha },
+    )
+    val contentTranslationY by transition.animateFloat(
+        transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },
+        targetValueByState = { if (it) 0f else initialOffsetPx },
+    )
+
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.anim_empty_diary),
+    )
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever,
+        speed = 0.5f,
+    )
+
+    LaunchedEffect(Unit) {
+        startAnimation = true
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .graphicsLayer {
+                alpha = contentAlpha
+                translationY = contentTranslationY
+            },
+        contentAlignment = Alignment.Center,
+    ) {
+        Column(
+            modifier = Modifier
+                .clickableNoRipple { onEvent(NoteListEvent.OnAddNoteClick) }
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LottieAnimation(
+                modifier = Modifier
+                    .height(70.dp)
+                    .scale(2.4f),
+                composition = composition,
+                progress = { progress },
+            )
+            Spacer(Modifier.height(24.dp))
+            Text(
+                text = stringResource(R.string.notes_list_empty_list_title),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                modifier = Modifier.alpha(0.5f),
+                text = stringResource(R.string.notes_list_empty_list_body),
+                style = MaterialTheme.typography.labelMedium,
+            )
+        }
+    }
 }
 
 @Composable
-private fun NoteListLoading(
+private fun LoadingContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize())
@@ -293,6 +382,18 @@ private fun SuccessPreview() {
                 scrollToPosition = null,
                 selectedNotesCount = 0
             ),
+            snackBarHostState = SnackbarHostState(),
+            onEvent = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun EmptyPreview() {
+    SerenityTheme {
+        MainScreenContent(
+            uiState = NoteListUiState.Empty,
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
         )

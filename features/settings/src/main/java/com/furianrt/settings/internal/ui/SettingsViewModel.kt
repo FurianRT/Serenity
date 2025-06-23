@@ -28,6 +28,10 @@ import javax.inject.Inject
 
 private const val MIN_GOOD_RATING = 4
 private const val RATING_CLICK_DELAY = 250L
+private const val PRIVACY_POLICY_LINK =
+    "https://drive.google.com/file/d/1-a4wF_gQIN1TQYHMuMa2tgfmuVoWAXb-/view?usp=sharing"
+private const val TERMS_AND_CONDITIONS_LINK =
+    "https://drive.google.com/file/d/1-a4wF_gQIN1TQYHMuMa2tgfmuVoWAXb-/view?usp=sharing"
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
@@ -83,6 +87,14 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonFontClick -> launch { showFontDialog() }
             is SettingsEvent.OnFontSelected -> launch {
                 appearanceRepository.setAppFont(event.font.toNoteFontFamily())
+            }
+
+            is SettingsEvent.OnButtonTermsAndConditionsClick -> {
+                _effect.tryEmit(SettingsEffect.OpenLink(TERMS_AND_CONDITIONS_LINK))
+            }
+
+            is SettingsEvent.OnButtonPrivacyPolicyClick -> {
+                _effect.tryEmit(SettingsEffect.OpenLink(PRIVACY_POLICY_LINK))
             }
         }
     }
