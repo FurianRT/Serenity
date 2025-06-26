@@ -17,10 +17,10 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         return cache ?: loadPacks().also { cache = it }
     }
 
-    override fun getIcon(stickerId: String): Int = getStickersPacks()
+    override fun getIcon(stickerId: String): Int? = getStickersPacks()
         .flatMap(StickerPack::stickers)
-        .first { it.id == stickerId }
-        .icon
+        .firstOrNull { it.id == stickerId }
+        ?.icon
 
     private fun loadPacks(): ImmutableList<StickerPack> = buildImmutableList {
         add(getPack1())

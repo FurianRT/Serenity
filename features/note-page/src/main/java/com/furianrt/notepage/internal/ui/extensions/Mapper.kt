@@ -22,11 +22,13 @@ import java.util.UUID
 
 internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
-    stickerIconProvider: suspend (typeId: String) -> Int,
+    stickerIconProvider: suspend (typeId: String) -> Int?,
 ) = NoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
-    stickers = stickers.mapImmutable { it.toStickerItem(stickerIconProvider(it.typeId)) },
+    stickers = stickers
+        .mapNotNull { it.toStickerItem(stickerIconProvider(it.typeId)) }
+        .toImmutableList(),
     content = content.mapImmutable { item ->
         item.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily())
     },
@@ -59,20 +61,26 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     editTime = state.editTime,
 )
 
-private fun LocalNote.Sticker.toStickerItem(@DrawableRes icon: Int) = StickerItem(
-    id = id,
-    typeId = typeId,
-    icon = icon,
-    state = StickerState(
-        initialScale = scale,
-        initialRotation = rotation,
-        initialIsFlipped = isFlipped,
-        initialBiasX = biasX,
-        initialDpOffsetY = dpOffsetY.dp,
-        initialEditTime = editTime,
-        initialIsEditing = false,
-    ),
-)
+private fun LocalNote.Sticker.toStickerItem(
+    @DrawableRes icon: Int?,
+): StickerItem? = if (icon == null) {
+    null
+} else {
+    StickerItem(
+        id = id,
+        typeId = typeId,
+        icon = icon,
+        state = StickerState(
+            initialScale = scale,
+            initialRotation = rotation,
+            initialIsFlipped = isFlipped,
+            initialBiasX = biasX,
+            initialDpOffsetY = dpOffsetY.dp,
+            initialEditTime = editTime,
+            initialIsEditing = false,
+        ),
+    )
+}
 
 private fun MediaResult.Media.toMediaBlockMedia(): MediaBlock.Media = when (this) {
     is MediaResult.Media.Image -> MediaBlock.Image(
