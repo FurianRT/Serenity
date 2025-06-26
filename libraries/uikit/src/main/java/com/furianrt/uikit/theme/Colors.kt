@@ -22,12 +22,12 @@ object Colors {
         val Unicorn2012Blue = Color(0xFF6197B1)
         val Unicorn2012PinkDark = Color(0xFFB26C86)
 
-        val DistantCastleGreen = Color(0xFF193727)
+        val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
     }
 
     object Accent {
-        val GreenLight = Color(0xFF558B2F)
+        val GreenLight = Color(0xFF6DA646)
         val Purple = Color(0xFF8D6EFD)
         val Purple2 = Color(0xFF8F63BF)
         val PurpleDark = Color(0xFF8D4BF6)
