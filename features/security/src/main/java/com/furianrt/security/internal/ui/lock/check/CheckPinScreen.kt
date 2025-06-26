@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -63,7 +63,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 import java.util.concurrent.Executors
 import com.furianrt.uikit.R as uiR
@@ -105,7 +104,6 @@ internal fun CheckPinScreenInternal(
         direction = ShakingState.Direction.LEFT_THEN_RIGHT,
     )
 
-    val recoveryDialogHazeState = remember { HazeState() }
     val snackBarHostState = remember { SnackbarHostState() }
 
     val emailFailureText = stringResource(R.string.send_pin_recovery_email_failure)
@@ -150,37 +148,41 @@ internal fun CheckPinScreenInternal(
         }
     }
 
-    Scaffold(
-        snackbarHost = {
-            SnackbarHost(
-                hostState = snackBarHostState,
-                snackbar = { data ->
-                    SnackBar(
-                        title = data.visuals.message,
-                        icon = painterResource(uiR.drawable.ic_email),
-                        tonalColor = MaterialTheme.colorScheme.tertiary,
-                    )
-                },
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .hazeChild(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
+                    blurRadius = 20.dp,
+                ),
             )
-        },
-        content = { paddingValues ->
-            ScreenContent(
-                modifier = Modifier
-                    .clickableNoRipple {}
-                    .haze(recoveryDialogHazeState)
-                    .padding(paddingValues),
-                uiState = uiState,
-                hazeState = hazeState,
-                pinsShakingState = shakeState,
-                onEvent = viewModel::onEvent,
-            )
-        },
-    )
+            .systemBarsPadding(),
+    ) {
+        ScreenContent(
+            modifier = Modifier.clickableNoRipple {},
+            uiState = uiState,
+            pinsShakingState = shakeState,
+            onEvent = viewModel::onEvent,
+        )
+        SnackbarHost(
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_email),
+                    tonalColor = MaterialTheme.colorScheme.tertiary,
+                )
+            },
+        )
+    }
 
     recoveryDialogState?.let { state ->
         ForgotPinDialog(
             email = state,
-            hazeState = recoveryDialogHazeState,
+            hazeState = hazeState,
             onConfirmClick = { viewModel.onEvent(CheckPinEvent.OnSendRecoveryEmailClick) },
             onDismissRequest = { recoveryDialogState = null },
         )
@@ -195,21 +197,11 @@ internal fun CheckPinScreenInternal(
 private fun ScreenContent(
     uiState: CheckPinUiState,
     modifier: Modifier = Modifier,
-    hazeState: HazeState = HazeState(),
     pinsShakingState: ShakingState = rememberShakingState(),
     onEvent: (event: CheckPinEvent) -> Unit = {},
 ) {
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .hazeChild(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
-                    blurRadius = 20.dp,
-                ),
-            ),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         ButtonClose(
