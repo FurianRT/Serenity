@@ -218,7 +218,7 @@ internal class BackupViewModel @Inject constructor(
     private fun authorize() = launch {
         when (val result = authorizeUseCase()) {
             is AuthResult.Success -> signIn(accessToken = result.accessToken)
-            is AuthResult.Failure -> errorTracker.trackNonFatalError(result.error)
+            is AuthResult.Failure -> showError(result.error)
             is AuthResult.Resolution -> {
                 _effect.tryEmit(BackupEffect.ShowBackupResolution(result.intentSender))
             }
@@ -257,6 +257,10 @@ internal class BackupViewModel @Inject constructor(
             when (error) {
                 is AuthException.NetworkException -> {
                     resourcesManager.getString(uiR.string.network_error)
+                }
+
+                is AuthException.ResolutionCanceled -> {
+                    resourcesManager.getString(R.string.backup_sing_in_resolution_canceled_error)
                 }
 
                 else -> resourcesManager.getString(

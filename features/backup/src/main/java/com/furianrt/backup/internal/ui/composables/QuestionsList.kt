@@ -65,7 +65,9 @@ private fun QuestionItem(
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            modifier = Modifier.alpha(alpha),
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(alpha),
             text = "${index + 1}. ${question.title}",
             style = MaterialTheme.typography.titleSmall,
             fontWeight = FontWeight.ExtraBold,

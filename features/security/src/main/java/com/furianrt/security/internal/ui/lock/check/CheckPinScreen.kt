@@ -41,8 +41,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleStartEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -64,6 +67,7 @@ import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeChild
+import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.Executors
 import com.furianrt.uikit.R as uiR
 
@@ -78,6 +82,7 @@ internal fun CheckPinScreenInternal(
     val view = LocalView.current
     val activity = LocalActivity.current
     val focusManager = LocalFocusManager.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     var recoveryDialogState: String? by remember { mutableStateOf(null) }
 
@@ -113,39 +118,41 @@ internal fun CheckPinScreenInternal(
 
     LaunchedEffect(Unit) {
         focusManager.clearFocus()
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)
-                is CheckPinEffect.ShowPinSuccess -> onCloseRequestState()
-                is CheckPinEffect.ShowForgotPinDialog -> recoveryDialogState = effect.email
-                is CheckPinEffect.ShowWrongPinError -> {
-                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                    shakeState.shake(25)
-                }
-
-                is CheckPinEffect.ShowBiometricScanner -> biometricPrompt?.authenticate(
-                    CancellationSignal(),
-                    Executors.newSingleThreadExecutor(),
-                    object : BiometricPrompt.AuthenticationCallback() {
-                        override fun onAuthenticationSucceeded(
-                            result: BiometricPrompt.AuthenticationResult?,
-                        ) {
-                            viewModel.onEvent(CheckPinEvent.OnBiometricSucceeded)
-                        }
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is CheckPinEffect.CloseScreen -> activity?.moveTaskToBack(true)
+                    is CheckPinEffect.ShowPinSuccess -> onCloseRequestState()
+                    is CheckPinEffect.ShowForgotPinDialog -> recoveryDialogState = effect.email
+                    is CheckPinEffect.ShowWrongPinError -> {
+                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        shakeState.shake(25)
                     }
-                )
 
-                is CheckPinEffect.ShowSendEmailFailure -> snackBarHostState.showSnackbar(
-                    message = emailFailureText,
-                    duration = SnackbarDuration.Short,
-                )
+                    is CheckPinEffect.ShowBiometricScanner -> biometricPrompt?.authenticate(
+                        CancellationSignal(),
+                        Executors.newSingleThreadExecutor(),
+                        object : BiometricPrompt.AuthenticationCallback() {
+                            override fun onAuthenticationSucceeded(
+                                result: BiometricPrompt.AuthenticationResult?,
+                            ) {
+                                viewModel.onEvent(CheckPinEvent.OnBiometricSucceeded)
+                            }
+                        }
+                    )
 
-                is CheckPinEffect.ShowSendEmailSuccess -> snackBarHostState.showSnackbar(
-                    message = emailSuccessText,
-                    duration = SnackbarDuration.Short,
-                )
+                    is CheckPinEffect.ShowSendEmailFailure -> snackBarHostState.showSnackbar(
+                        message = emailFailureText,
+                        duration = SnackbarDuration.Short,
+                    )
+
+                    is CheckPinEffect.ShowSendEmailSuccess -> snackBarHostState.showSnackbar(
+                        message = emailSuccessText,
+                        duration = SnackbarDuration.Short,
+                    )
+                }
             }
-        }
     }
 
     Box(
@@ -168,6 +175,7 @@ internal fun CheckPinScreenInternal(
             onEvent = viewModel::onEvent,
         )
         SnackbarHost(
+            modifier = Modifier.align(Alignment.BottomCenter),
             hostState = snackBarHostState,
             snackbar = { data ->
                 SnackBar(

@@ -1,5 +1,6 @@
 package com.furianrt.backup.internal.ui
 
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.IntentSender
 import android.view.HapticFeedbackConstants
@@ -52,7 +53,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
@@ -77,6 +81,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -86,6 +91,7 @@ internal fun BackupScreen(
     val viewModel: BackupViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
     val view = LocalView.current
     val hazeState = remember { HazeState() }
     var showSignOutConfirmationDialog by remember { mutableStateOf(false) }
@@ -93,8 +99,18 @@ internal fun BackupScreen(
     val authLauncher = rememberLauncherForActivityResult(
         ActivityResultContracts.StartIntentSenderForResult()
     ) { result ->
-        if (result.resultCode == android.app.Activity.RESULT_OK) {
-            viewModel.onEvent(BackupScreenEvent.OnBackupResolutionComplete(result.data))
+        when (result.resultCode) {
+            Activity.RESULT_OK -> {
+                viewModel.onEvent(BackupScreenEvent.OnBackupResolutionComplete(result.data))
+            }
+
+            Activity.RESULT_CANCELED -> {
+                viewModel.onEvent(
+                    BackupScreenEvent.OnBackupResolutionFailure(
+                        AuthException.ResolutionCanceled()
+                    )
+                )
+            }
         }
     }
 
@@ -105,38 +121,40 @@ internal fun BackupScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is BackupEffect.CloseScreen -> onCloseRequestState()
-                is BackupEffect.ShowConfirmSignOutDialog -> showSignOutConfirmationDialog = true
-                is BackupEffect.ShowBackupPeriodDialog -> showBackupPeriodDialog = true
-                is BackupEffect.ShowBackupResolution -> {
-                    try {
-                        val intentSenderRequest = IntentSenderRequest
-                            .Builder(effect.intentSender)
-                            .build()
-                        authLauncher.launch(intentSenderRequest)
-                    } catch (e: IntentSender.SendIntentException) {
-                        val error = AuthException.SendIntentException()
-                        viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
-                    } catch (e: ActivityNotFoundException) {
-                        val error = AuthException.ActivityNotFoundException()
-                        viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is BackupEffect.CloseScreen -> onCloseRequestState()
+                    is BackupEffect.ShowConfirmSignOutDialog -> showSignOutConfirmationDialog = true
+                    is BackupEffect.ShowBackupPeriodDialog -> showBackupPeriodDialog = true
+                    is BackupEffect.ShowBackupResolution -> {
+                        try {
+                            val intentSenderRequest = IntentSenderRequest
+                                .Builder(effect.intentSender)
+                                .build()
+                            authLauncher.launch(intentSenderRequest)
+                        } catch (e: IntentSender.SendIntentException) {
+                            val error = AuthException.SendIntentException()
+                            viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
+                        } catch (e: ActivityNotFoundException) {
+                            val error = AuthException.ActivityNotFoundException()
+                            viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
+                        }
                     }
-                }
 
-                is BackupEffect.ShowErrorToast -> {
-                    snackBarHostState.currentSnackbarData?.dismiss()
-                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
-                    snackBarHostState.showSnackbar(
-                        message = effect.text,
-                        duration = SnackbarDuration.Short,
-                    )
-                }
+                    is BackupEffect.ShowErrorToast -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        snackBarHostState.showSnackbar(
+                            message = effect.text,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
 
-                is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
+                    is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
+                }
             }
-        }
     }
 
     ScreenContent(

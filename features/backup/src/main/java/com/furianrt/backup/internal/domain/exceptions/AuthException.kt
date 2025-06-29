@@ -12,4 +12,5 @@ internal sealed class AuthException(val code: Int): Throwable() {
     class ActivityNotFoundException : AuthException(804)
     class ClearCredentialException : AuthException(805)
     class FetchEmailException : AuthException(806)
+    class ResolutionCanceled : AuthException(807)
 }

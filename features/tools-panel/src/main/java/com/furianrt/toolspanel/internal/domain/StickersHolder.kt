@@ -23,10 +23,10 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         ?.icon
 
     private fun loadPacks(): ImmutableList<StickerPack> = buildImmutableList {
+        add(getPack4())
         add(getPack1())
         //add(getPack2())
         //add(getPack3())
-        add(getPack4())
         //add(getPack5())
         add(getPack6())
         add(getPack7())

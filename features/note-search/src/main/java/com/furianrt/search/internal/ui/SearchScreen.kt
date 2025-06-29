@@ -57,6 +57,7 @@ import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notesearch.R
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.ui.composables.AllTagsList
 import com.furianrt.search.internal.ui.composables.NotesCountItem
@@ -358,7 +359,7 @@ private fun EmptyContent(
     ) {
         Text(
             modifier = Modifier.padding(top = 100.dp),
-            text = "No results found",
+            text = stringResource(R.string.notes_search_empty_search_title),
             style = MaterialTheme.typography.titleMedium,
         )
     }

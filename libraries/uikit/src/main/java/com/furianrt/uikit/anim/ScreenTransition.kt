@@ -15,10 +15,10 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultEnterTransition(): 
         towards = AnimatedContentTransitionScope.SlideDirection.Left,
         initialOffset = { it / 2 },
         animationSpec = tween(
-            durationMillis = 450,
+            durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(450))
+    ) + fadeIn(animationSpec = tween(350))
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): ExitTransition {
@@ -26,10 +26,10 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): E
         towards = AnimatedContentTransitionScope.SlideDirection.Left,
         targetOffset = { (it * 0.1f).toInt() },
         animationSpec = tween(
-            durationMillis = 400,
+            durationMillis = 350,
             easing = LinearEasing,
         ),
-    ) + fadeOut(animationSpec = tween(400), targetAlpha = 0.2f)
+    ) + fadeOut(animationSpec = tween(350), targetAlpha = 0.2f)
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopExitTransition(): ExitTransition {
@@ -37,7 +37,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopExitTransition()
         towards = AnimatedContentTransitionScope.SlideDirection.Right,
         targetOffset = { (it * 0.8f).toInt() },
         animationSpec = tween(
-            durationMillis = 400,
+            durationMillis = 350,
             easing = LinearEasing,
         ),
     ) + fadeOut(animationSpec = tween(300))
@@ -48,8 +48,8 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopEnterTransition(
         towards = AnimatedContentTransitionScope.SlideDirection.Right,
         initialOffset = { (it * 0.1f).toInt() },
         animationSpec = tween(
-            durationMillis = 400,
+            durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(400), initialAlpha = 0.2f)
+    ) + fadeIn(animationSpec = tween(350), initialAlpha = 0.2f)
 }

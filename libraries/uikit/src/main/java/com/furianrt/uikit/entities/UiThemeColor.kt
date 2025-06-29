@@ -8,7 +8,7 @@ enum class UiThemeColor(
     val primary: Color,
     val accent: Color,
     val surfaceTint: Color = primary.copy(alpha = 0.3f),
-    val surfaceDim: Color = Color.Black.copy(alpha = 0.2f),
+    val surfaceDim: Color = Color.Black.copy(alpha = 0.1f),
 ) {
     SCANDI_GRANDPA_GRAY_DARK(
         id = "1",
@@ -41,14 +41,12 @@ enum class UiThemeColor(
         id = "6",
         primary = Colors.Primary.EuphoriaPink,
         accent = Colors.Accent.RichMulberry,
-        surfaceDim = Color.Black.copy(alpha = 0.1f),
     ),
 
     IRIS_RED(
         id = "7",
         primary = Colors.Primary.IrisRed,
         accent = Colors.Accent.Red,
-        surfaceDim = Color.Black.copy(alpha = 0.1f),
     ),
     IRIS_RED_DARK(
         id = "8",
@@ -89,6 +87,7 @@ enum class UiThemeColor(
         id = "14",
         primary = Colors.Primary.DistantCastleBlue,
         accent = Colors.Accent.Purple,
+        surfaceDim = Color.Black.copy(alpha = 0.2f),
     );
 
     companion object {

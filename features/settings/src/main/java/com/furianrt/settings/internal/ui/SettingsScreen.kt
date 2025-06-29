@@ -2,7 +2,6 @@ package com.furianrt.settings.internal.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -53,7 +52,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
@@ -76,6 +78,7 @@ import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private data class FontsDialogState(
@@ -94,6 +97,7 @@ internal fun SettingsScreen(
 
     val context = LocalContext.current
     val hazeState = remember { HazeState() }
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
@@ -104,40 +108,42 @@ internal fun SettingsScreen(
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
-            when (effect) {
-                is SettingsEffect.CloseScreen -> onCloseRequestState()
-                is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
-                is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
-                is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
-                    email = effect.supportEmail,
-                    subject = context.getString(
-                        R.string.settings_feedback_email_subject,
-                        effect.text,
-                    ),
-                ).onSuccess { intent ->
-                    context.startActivity(intent)
-                }.onFailure { error ->
-                    error.printStackTrace()
-                    snackBarHostState.currentSnackbarData?.dismiss()
-                    snackBarHostState.showSnackbar(
-                        message = context.getString(R.string.settings_feedback_email_error),
-                        duration = SnackbarDuration.Short,
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is SettingsEffect.CloseScreen -> onCloseRequestState()
+                    is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
+                    is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
+                    is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
+                        email = effect.supportEmail,
+                        subject = context.getString(
+                            R.string.settings_feedback_email_subject,
+                            effect.text,
+                        ),
+                    ).onSuccess { intent ->
+                        context.startActivity(intent)
+                    }.onFailure { error ->
+                        error.printStackTrace()
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(R.string.settings_feedback_email_error),
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
+
+                    is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
+                    is SettingsEffect.ShowBadRatingDialog -> showBadRatingDialog = true
+                    is SettingsEffect.ShowFontDialog -> fontsDialogState = FontsDialogState(
+                        fonts = effect.fonts,
+                        selectedFont = effect.selectedFont,
                     )
-                }
 
-                is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
-                is SettingsEffect.ShowBadRatingDialog -> showBadRatingDialog = true
-                is SettingsEffect.ShowFontDialog -> fontsDialogState = FontsDialogState(
-                    fonts = effect.fonts,
-                    selectedFont = effect.selectedFont,
-                )
-
-                is SettingsEffect.OpenLink -> {
-                    context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(effect.url)))
+                    is SettingsEffect.OpenLink -> {
+                        context.startActivity(Intent(Intent.ACTION_VIEW, effect.url.toUri()))
+                    }
                 }
             }
-        }
     }
 
     ScreenContent(
@@ -267,12 +273,12 @@ private fun SuccessScreen(
             rating = uiState.rating,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
-       /* GeneralButton(
-            modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
-            title = stringResource(id = R.string.settings_donate_title),
-            iconPainter = painterResource(id = R.drawable.ic_hart),
-            onClick = {},
-        )*/
+        /* GeneralButton(
+             modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
+             title = stringResource(id = R.string.settings_donate_title),
+             iconPainter = painterResource(id = R.drawable.ic_hart),
+             onClick = {},
+         )*/
         GeneralButton(
             modifier = Modifier
                 .padding(top = 16.dp)
