@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">Безопасность</string>
+    <string name="settings_backup_title">Синхронизация</string>
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_font_title">Шрифт</string>
+    <string name="settings_language_title">Язык</string>
+    <string name="settings_rate_us_title">Оцените нас</string>
+    <string name="settings_donate_title">Поддержать</string>
+    <string name="settings_feedback_title">Сообщить о проблеме</string>
+    <string name="settings_terms_and_conditions_title">Условия использования</string>
+    <string name="settings_privacy_policy_title">Политика конфиденциальности</string>
+    <string name="settings_version_title">Версия %s</string>
+
+    <string name="settings_feedback_email_subject">Обратная связь Serenity %s</string>
+    <string name="settings_feedback_email_error">Не удалось отправить письмо</string>
+
+    <string name="settings_bad_feedback_title">Что-то не так?</string>
+    <string name="settings_bad_feedback_body">Нам важно ваше мнение. Помогите нам сделать приложение лучше</string>
+</resources>

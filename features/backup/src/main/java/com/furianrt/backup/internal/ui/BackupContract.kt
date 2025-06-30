@@ -24,6 +24,7 @@ internal sealed interface BackupUiState {
         val isRestoreInProgress = syncProgress is RestoreStarting || syncProgress is RestoreProgress
         val isSyncInProgress = isBackupInProgress || isRestoreInProgress
         val hasSyncError = syncProgress is Failure
+        val isSyncSuccess = syncProgress is SyncProgress.Success
 
         sealed class AuthState(open val isLoading: Boolean) {
             data class SignedIn(
@@ -47,6 +48,7 @@ internal sealed interface BackupUiState {
             data object Idle : SyncProgress
             data object BackupStarting : SyncProgress
             data object RestoreStarting : SyncProgress
+            data object Success : SyncProgress
             data class BackupProgress(
                 val syncedNotesCount: Int,
                 val totalNotesCount: Int,

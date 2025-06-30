@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="media_permission_message">Приложению Serenity нужен доступ к хранилищу, чтобы вы могли прикреплять фото и видео. Нажмите Настройки > Разрешения и включите Фото и видео</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Фото и видео</string>
+
+    <string name="audio_record_permission_message">Приложению Serenity нужен доступ к микрофону, чтобы вы могли записывать голосовые заметки. Нажмите Настройки > Разрешения и включите Микрофон</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Микрофон</string>
+
+</resources>

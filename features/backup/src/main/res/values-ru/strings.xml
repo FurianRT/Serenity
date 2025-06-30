@@ -1,0 +1,65 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Авто-бекап</string>
+    <string name="backup_auto_backup_period_title">Период авто-бекапа</string>
+    <string name="backup_last_sync_time_title">Последняя синхронизация: %s</string>
+    <string name="backup_restore_data_title">Восстановить данные</string>
+    <string name="backup_backup_data_title">Создать резервную копию</string>
+    <string name="backup_last_sync_time_none_title">Нет</string>
+    <string name="backup_sign_out_title">Выйти</string>
+    <string name="backup_tap_to_sing_in_title">Нажмите, чтобы Войти</string>
+    <string name="backup_tap_to_sing_in_underline_part">Войти</string>
+    <string name="backup_tap_to_sing_out_title">Нажмите, чтобы Выйти</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Уже уходите?</string>
+    <string name="backup_confirm_sign_out_message">Вы можете войти снова в любой момент, но пока что резервное копирование будет приостановлено</string>
+    <string name="backup_period_one_day_title">1 день</string>
+    <string name="backup_period_three_days_title">3 дня</string>
+    <string name="backup_period_one_week_title">1 неделя</string>
+    <string name="backup_period_two_weeks_title">2 недели</string>
+    <string name="backup_period_one_month_title">1 месяц</string>
+
+    <string name="backup_popular_question_1_title">Как работает синхронизация с Google Drive?</string>
+    <string name="backup_popular_question_1_answer">Ваши заметки автоматически сохраняются в личный аккаунт Google Drive. Это обеспечивает безопасное хранение данных и доступ к ним с разных устройств</string>
+
+    <string name="backup_popular_question_2_title">Где хранятся мои заметки в Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Заметки хранятся в скрытой папке, доступной только этому приложению. Она не отображается в списке файлов Google Drive и доступна только вам — даже разработчик приложения не имеет к ней доступа</string>
+
+    <string name="backup_popular_question_3_title">Нужен ли Google-аккаунт для синхронизации?</string>
+    <string name="backup_popular_question_3_answer">Да, для включения синхронизации необходимо войти в аккаунт Google</string>
+
+    <string name="backup_popular_question_4_title">Могу ли я получить доступ к заметкам напрямую через Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Нет, заметки сохраняются в приватной папке приложения, которая недоступна через интерфейс Google Drive. Получить к ним доступ можно только из приложения</string>
+
+    <string name="backup_popular_question_5_title">Что произойдет, если я удалю приложение? Удалятся ли заметки?</string>
+    <string name="backup_popular_question_5_answer">Удаление приложения не удаляет ваши заметки из Google Drive. После повторной установки и входа в тот же аккаунт Google они будут восстановлены</string>
+
+    <string name="backup_popular_question_6_title">Можно ли синхронизировать заметки между несколькими устройствами?</string>
+    <string name="backup_popular_question_6_answer">Да! Если вы вошли в один и тот же аккаунт Google на всех устройствах, заметки будут синхронизироваться</string>
+
+    <string name="backup_popular_question_7_title">Мои данные в безопасности?</string>
+    <string name="backup_popular_question_7_answer">Да. Заметки хранятся в приватной папке на Google Drive и не передаются никому — даже разработчику</string>
+
+    <string name="backup_popular_question_8_title">Что произойдет, если я сменю аккаунт Google?</string>
+    <string name="backup_popular_question_8_answer">Если вы переключитесь на другой аккаунт Google, заметки из предыдущего аккаунта станут недоступны. Чтобы получить к ним доступ, вернитесь в оригинальный аккаунт</string>
+
+    <string name="backup_notifications_channel_name">Канал резервного копирования</string>
+    <string name="backup_notifications_channel_description">Отображает прогресс резервной копии</string>
+    <string name="backup_notification_title">Создание резервной копии…</string>
+    <string name="restore_notification_title">Восстановление…</string>
+    <string name="backup_notification_initial_description">Ваши заметки загружаются. Это может занять некоторое время</string>
+    <string name="restore_notification_initial_description">Ваши заметки загружаются. Это может занять некоторое время</string>
+
+    <string name="backup_warning_title">Предупреждение</string>
+    <string name="backup_warning_body">Вы собираетесь создать новую копию. Это перезапишет существующую копию в Google Drive. После замены предыдущие данные будут недоступны. Пожалуйста, убедитесь, что вы готовы продолжить</string>
+
+    <string name="backup_progress_message">Создание резервной копии %d/%d</string>
+    <string name="restore_progress_message">Восстановление %d/%d</string>
+    <string name="backup_starting_message">Создаем резервную копию…</string>
+    <string name="restore_starting_message">Начинаем восстановление…</string>
+
+    <string name="backup_sync_in_progress_message">Синхронизация…</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Вход был прерван</string>
+    <string name="backup_success_message">Готово!</string>
+</resources>

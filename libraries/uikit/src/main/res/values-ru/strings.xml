@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_cancel">Отмена</string>
+    <string name="action_discard">Удалить</string>
+    <string name="action_not_now">Не сейчас</string>
+    <string name="action_delete">Удалить</string>
+    <string name="action_share">Поделиться</string>
+    <string name="action_save">Сохранить</string>
+    <string name="action_confirm">Подтвердить</string>
+    <string name="action_send">Отправить</string>
+    <string name="action_done">Готово</string>
+    <string name="action_pin">Закрепить</string>
+    <string name="action_unpin">Открепить</string>
+    <string name="action_contact_us">Связаться с нами</string>
+    <string name="action_select">Выбрать</string>
+    <string name="action_continue">Продолжить</string>
+
+    <string name="title_email">Электронная почта</string>
+
+    <string name="settings_title">Настройки</string>
+    <string name="security_title">Безопасность</string>
+
+    <string name="media_counter_pattern">%d из %d</string>
+    <string name="general_error">Что-то пошло не так</string>
+    <string name="general_error_with_code">%d Что-то пошло не так</string>
+    <string name="network_error">Нет подключения к интернету</string>
+
+    <string name="today_title">Сегодня</string>
+    <string name="yesterday_title">Вчера</string>
+
+    <string name="delete_notes_warning_title">Просто уточняем…</string>
+    <string name="delete_notes_warning_body">Вы действительно хотите удалить эти заметки? Вы не сможете восстановить их позже</string>
+    <string name="delete_note_warning_body">Вы действительно хотите удалить эту заметку? Вы не сможете восстановить её позже</string>
+
+    <string name="backup_in_progress">Создание резервной копии…</string>
+    <string name="restore_in_progress">Восстановление…</string>
+
+    <string-array name="months_array">
+        <item>Январь</item>
+        <item>Февраль</item>
+        <item>Март</item>
+        <item>Апрель</item>
+        <item>Май</item>
+        <item>Июнь</item>
+        <item>Июль</item>
+        <item>Август</item>
+        <item>Сентябрь</item>
+        <item>Октябрь</item>
+        <item>Ноябрь</item>
+        <item>Декабрь</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Вс</item>
+    </string-array>
+</resources>

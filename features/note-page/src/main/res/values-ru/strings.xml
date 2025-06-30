@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_title_hint_text">Текст…</string>
+    <string name="note_title_hint_write_more_here">Еще текст…</string>
+    <string name="note_sticker_limit_message">Достигнут лимит стикеров</string>
+</resources>

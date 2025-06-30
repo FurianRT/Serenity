@@ -10,10 +10,9 @@
     <string name="action_done">Done</string>
     <string name="action_pin">Pin</string>
     <string name="action_unpin">Unpin</string>
-    <string name="action_backup">Backup</string>
-    <string name="action_restore">Restore</string>
     <string name="action_contact_us">Contact Us</string>
     <string name="action_select">Select</string>
+    <string name="action_continue">Continue</string>
 
     <string name="title_email">Email</string>
 

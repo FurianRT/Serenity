@@ -25,7 +25,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 internal fun SyncButton(
     text: String,
     progress: Float?,
-    hasError: Boolean,
     onClick: () -> Unit,
     isEnabled: Boolean,
     modifier: Modifier = Modifier,
@@ -51,22 +50,14 @@ internal fun SyncButton(
             enabled = isEnabled,
             shape = RoundedCornerShape(16.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (hasError) {
-                    MaterialTheme.colorScheme.errorContainer
-                } else {
-                    MaterialTheme.colorScheme.primaryContainer
-                },
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
             ),
         ) {
             Text(
-                modifier = Modifier.padding(vertical = 4.dp),
+                modifier = Modifier.padding(vertical = 8.dp),
                 text = text,
-                style = if (progress == null) {
-                    MaterialTheme.typography.titleMedium
-                } else {
-                    MaterialTheme.typography.bodyMedium
-                },
+                style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
@@ -83,7 +74,6 @@ private fun Preview() {
             text = "Backup",
             isEnabled = true,
             progress = null,
-            hasError = false,
             onClick = {},
         )
     }
@@ -97,21 +87,6 @@ private fun PreviewProgress() {
             text = "Backup",
             isEnabled = true,
             progress = 0.5f,
-            hasError = false,
-            onClick = {},
-        )
-    }
-}
-
-@Composable
-@PreviewWithBackground
-private fun PreviewError() {
-    SerenityTheme {
-        SyncButton(
-            text = "Backup",
-            isEnabled = true,
-            progress = null,
-            hasError = true,
             onClick = {},
         )
     }

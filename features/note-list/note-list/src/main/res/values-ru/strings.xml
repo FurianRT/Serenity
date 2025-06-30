@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Поиск</string>
+    <string name="notes_list_empty_list_title">\"Каждая история начинается со слова\"</string>
+    <string name="notes_list_empty_list_body">Нажмите, чтобы начать свою!</string>
+</resources>

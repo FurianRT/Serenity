@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Пожалуйста, предоставьте разрешение \"Разрешить ко всем\" или выберите больше медиа</string>
+    <string name="media_selector_empty_list_title">Пусто</string>
+    <string name="media_selector_apply_button_title">Прикрепить %d медиа</string>
+    <string name="media_selector_discard_title">Сбросить выбор</string>
+    <string name="media_selector_discard_hint">Вы действительно хотите закрыть меню вложений?</string>
+</resources>

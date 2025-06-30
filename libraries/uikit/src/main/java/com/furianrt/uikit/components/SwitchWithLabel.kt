@@ -38,7 +38,9 @@ fun SwitchWithLabel(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            modifier = Modifier.applyIf(!enabled) { Modifier.alpha(0.5f) },
+            modifier = Modifier
+                .weight(1f)
+                .applyIf(!enabled) { Modifier.alpha(0.5f) },
             text = title,
             style = MaterialTheme.typography.bodyMedium,
         )

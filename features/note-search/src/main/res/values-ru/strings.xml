@@ -1,0 +1,11 @@
+<resources>
+    <string name="notes_search_bar_title">Искать по тексту и тэгам</string>
+    <string name="notes_search_empty_search_title">Заметки не найдены</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">Нашлась %d заметка</item>
+        <item quantity="few">Нашлись %d заметки</item>
+        <item quantity="many">Нашлось %d заметок</item>
+        <item quantity="other">Нашлось %d заметок</item>
+    </plurals>
+</resources>

@@ -1,8 +1,10 @@
 <resources>
-    <string name="backup_google_drive_title">Google Drive</string>
-    <string name="backup_auto_backup_title">Auto backup</string>
-    <string name="backup_auto_backup_period_title">Auto backup period</string>
-    <string name="backup_last_sync_time_title">Last sync date: %s</string>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Auto Backup</string>
+    <string name="backup_auto_backup_period_title">Auto Backup Period</string>
+    <string name="backup_last_sync_time_title">Last sync: %s</string>
+    <string name="backup_restore_data_title">Restore Data</string>
+    <string name="backup_backup_data_title">Backup</string>
     <string name="backup_last_sync_time_none_title">None</string>
     <string name="backup_sign_out_title">Sign Out</string>
     <string name="backup_tap_to_sing_in_title">Tap to Sign In</string>
@@ -11,7 +13,6 @@
     <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">Leaving so soon?</string>
     <string name="backup_confirm_sign_out_message">You can sign back in anytime, but please note that backups will be paused until then</string>
-    <string name="backup_unknown_profile_email_title">Unknown email</string>
     <string name="backup_period_one_day_title">1 day</string>
     <string name="backup_period_three_days_title">3 days</string>
     <string name="backup_period_one_week_title">1 week</string>
@@ -50,9 +51,9 @@
     <string name="backup_starting_message">Backup starting…</string>
     <string name="restore_starting_message">Restore starting…</string>
 
-    <string name="backup_error_message">Oops! Something went wrong during the sync</string>
     <string name="backup_sync_in_progress_message">Sync in progress</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Sing In interrupted</string>
+    <string name="backup_success_message">Done!</string>
 
 </resources>

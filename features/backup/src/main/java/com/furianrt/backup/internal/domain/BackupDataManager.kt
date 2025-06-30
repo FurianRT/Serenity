@@ -8,6 +8,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
@@ -79,6 +80,8 @@ internal class BackupDataManager @Inject constructor(
 
         backupRepository.setLastSyncDate(ZonedDateTime.now())
 
+        progressState.update { SyncState.Success }
+        delay(500)
         progressState.update { SyncState.Idle }
     }
 

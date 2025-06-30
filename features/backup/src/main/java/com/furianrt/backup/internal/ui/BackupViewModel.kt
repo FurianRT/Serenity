@@ -122,6 +122,10 @@ internal class BackupViewModel @Inject constructor(
                 )
             }
 
+            backupSyncState is SyncState.Success || restoreSyncState is SyncState.Success -> {
+                SyncProgress.Success
+            }
+
             else -> SyncProgress.Idle
         }
     }
@@ -151,6 +155,7 @@ internal class BackupViewModel @Inject constructor(
 
             is OnButtonBackupClick -> launch {
                 if (backupRepository.isBackupConfirmed().first()) {
+                    backupDataManager.clearFailureState()
                     restoreDataManager.clearFailureState()
                     serviceLauncher.launchBackupService()
                 } else {
@@ -165,6 +170,7 @@ internal class BackupViewModel @Inject constructor(
 
             is OnButtonRestoreClick -> {
                 backupDataManager.clearFailureState()
+                restoreDataManager.clearFailureState()
                 serviceLauncher.launchRestoreService()
             }
             is OnBackupPeriodClick -> {

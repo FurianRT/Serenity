@@ -31,7 +31,7 @@ internal fun ConfirmBackupDialog(
         },
         confirmButton = {
             ConfirmationDialogButton(
-                title = stringResource(uiR.string.action_backup),
+                title = stringResource(uiR.string.action_continue),
                 textColor = MaterialTheme.colorScheme.primaryContainer,
                 onClick = {
                     onConfirmClick()

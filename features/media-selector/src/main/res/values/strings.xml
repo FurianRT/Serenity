@@ -1,5 +1,5 @@
 <resources>
-    <string name="media_selector_partial_access_message">Please grant \"Allow all\" permission, or select more photos</string>
+    <string name="media_selector_partial_access_message">Please grant \"Allow all\" permission, or select more media</string>
     <string name="media_selector_empty_list_title">Empty</string>
     <string name="media_selector_apply_button_title">Attach %d media</string>
     <string name="media_selector_discard_title">Discard selection</string>

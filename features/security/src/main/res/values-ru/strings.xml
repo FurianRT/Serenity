@@ -1,0 +1,35 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Введите PIN-код</string>
+    <string name="lock_enter_new_pin_title">Введите новый PIN-код</string>
+    <string name="lock_repeat_your_pin_title">Повторите PIN-код</string>
+    <string name="lock_forgot_pin_title">Забыли PIN-код?</string>
+    <string name="lock_fingerprint_title">Пропускаем только классных людей</string>
+    <string name="lock_use_pin_title">Использовать PIN</string>
+    <string name="recovery_email_hint">Введите адрес эл. почты, чтобы получить забытый PIN-код</string>
+    <string name="recovery_email_format_error">Некорректный email</string>
+    <string name="pin_recovery_dialog_title">Мы отправим инструкции для сброса PIN-кода на %s. Если письмо не придёт, проверьте папку \"Спам\"</string>
+    <string name="pin_recovery_email_subject">Восстановление PIN-кода</string>
+    <string name="pin_recovery_email_content">Ваш PIN-код: %s</string>
+    <string name="pin_recovery_email_title">Адрес эл. почты</string>
+    <string name="send_pin_recovery_email_failure">Что-то пошло не так</string>
+    <string name="send_pin_recovery_email_success">Письмо отправлено</string>
+
+    <string name="security_enable_pin_title">Включить PIN-код</string>
+    <string name="security_email_to_recover_pin_title">Email для восстановления</string>
+    <string name="security_pin_request_title">Задержка запроса PIN</string>
+    <string name="security_enable_fingerprint_title">Включить отпечаток пальца</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d секунда</item>
+        <item quantity="few">%d секунды</item>
+        <item quantity="many">%d секунд</item>
+        <item quantity="other">%d секунды</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d минута</item>
+        <item quantity="few">%d минуты</item>
+        <item quantity="many">%d минут</item>
+        <item quantity="other">%d минуты</item>
+    </plurals>
+</resources>

@@ -269,7 +269,7 @@ private fun SuccessScreen(
             onClick = {},
         )*/
         Rating(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp),
             rating = uiState.rating,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
@@ -316,9 +316,7 @@ private fun ThemeSelector(
 ) {
     val initialIndex = remember(themes) { themes.indexOf(selected) }
     Column(
-        modifier = modifier
-            .padding(vertical = 4.dp)
-            .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Row(

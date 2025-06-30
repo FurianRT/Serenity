@@ -1,0 +1,4 @@
+<resources>
+    <string name="font_panel_title">Стиль шрифта</string>
+    <string name="font_panel_size_selector_title">Размер</string>
+</resources>
