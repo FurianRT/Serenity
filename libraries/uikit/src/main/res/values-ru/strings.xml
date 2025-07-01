@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="action_cancel">Отмена</string>
-    <string name="action_discard">Удалить</string>
+    <string name="action_discard">Сбросить</string>
     <string name="action_not_now">Не сейчас</string>
     <string name="action_delete">Удалить</string>
     <string name="action_share">Поделиться</string>

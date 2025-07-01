@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
@@ -193,7 +194,7 @@ internal fun MediaSelectorBottomSheetInternal(
         ConfirmationDialog(
             title = stringResource(R.string.media_selector_discard_title),
             hint = stringResource(R.string.media_selector_discard_hint),
-            confirmText = stringResource(com.furianrt.uikit.R.string.action_discard),
+            confirmText = stringResource(uiR.string.action_discard),
             hazeState = hazeState,
             onDismissRequest = { showConfirmDialog = false },
             onConfirmClick = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },

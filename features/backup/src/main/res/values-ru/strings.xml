@@ -1,7 +1,7 @@
 <resources>
     <string name="backup_google_drive_title" translatable="false">Google Drive</string>
-    <string name="backup_auto_backup_title">Авто-бекап</string>
-    <string name="backup_auto_backup_period_title">Период авто-бекапа</string>
+    <string name="backup_auto_backup_title">Авто-бэкап</string>
+    <string name="backup_auto_backup_period_title">Период авто-бэкапа</string>
     <string name="backup_last_sync_time_title">Последняя синхронизация: %s</string>
     <string name="backup_restore_data_title">Восстановить данные</string>
     <string name="backup_backup_data_title">Создать резервную копию</string>
@@ -61,5 +61,5 @@
     <string name="backup_sync_in_progress_message">Синхронизация…</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Вход был прерван</string>
-    <string name="backup_success_message">Готово!</string>
+    <string name="backup_success_message">Готово</string>
 </resources>
