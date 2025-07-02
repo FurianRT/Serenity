@@ -19,7 +19,7 @@ import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private const val BASE_URL = "https://www.googleapis.com/"
-private const val READ_WRITE_TIMEOUT = 120L
+private const val READ_WRITE_TIMEOUT = 60L * 5L
 private const val CONNECT_TIMEOUT = 20L
 
 @Module
