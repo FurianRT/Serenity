@@ -16,6 +16,7 @@ data class MediaViewRoute(
     val mediaId: String,
     val dialogId: Int,
     val requestId: String,
+    val mediaBlockId: String? = null,
 )
 
 fun NavController.navigateToMediaView(

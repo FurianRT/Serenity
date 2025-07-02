@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -126,16 +127,23 @@ fun MovableToolbarScaffold(
     val hazeState = remember { HazeState() }
 
     LaunchedEffect(listState.isScrollInProgress) {
-        val lazyState = listState as? LazyListState
-        val scrollState = listState as? ScrollState
-        val forceShowToolbar: Boolean
-        if (lazyState != null) {
-            val visibleItemsInfo = lazyState.layoutInfo.visibleItemsInfo
-            val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull(LazyListItemInfo::index)
-            val scrollOffset = lazyState.firstVisibleItemScrollOffset
-            forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
-        } else {
-            forceShowToolbar = scrollState!!.value <= toolbarHeight
+        var forceShowToolbar = false
+        when (listState) {
+            is LazyGridState -> {
+                val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull { it.index }
+                val scrollOffset = listState.firstVisibleItemScrollOffset
+                forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
+            }
+            is LazyListState -> {
+                val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull(LazyListItemInfo::index)
+                val scrollOffset = listState.firstVisibleItemScrollOffset
+                forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
+            }
+            is ScrollState -> {
+                forceShowToolbar = listState.value <= toolbarHeight
+            }
         }
         val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
         when {

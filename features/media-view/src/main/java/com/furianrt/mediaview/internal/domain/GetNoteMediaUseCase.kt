@@ -7,9 +7,10 @@ import javax.inject.Inject
 internal class GetNoteMediaUseCase @Inject constructor(
     private val notesRepository: NotesRepository,
 ) {
-    operator fun invoke(noteId: String): List<LocalNote.Content.Media> {
+    operator fun invoke(noteId: String, blockId: String?): List<LocalNote.Content.Media> {
         return notesRepository.getNoteContentFromCache(noteId)
             .filterIsInstance<LocalNote.Content.MediaBlock>()
+            .filter { blockId == null || it.id == blockId }
             .flatMap(LocalNote.Content.MediaBlock::media)
     }
 }

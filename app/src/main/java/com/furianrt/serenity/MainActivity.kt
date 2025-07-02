@@ -29,6 +29,9 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
+import com.furianrt.mediasorting.api.MediaSortingRoute
+import com.furianrt.mediasorting.api.mediaSortingScreen
+import com.furianrt.mediasorting.api.navigateToMediaSorting
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.api.mediaViewScreen
 import com.furianrt.mediaview.api.navigateToMediaView
@@ -179,6 +182,16 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
+                            openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
+                                navController.navigateToMediaSorting(
+                                    route = MediaSortingRoute(
+                                        noteId = noteId,
+                                        mediaBlockId = mediaBlockId,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    )
+                                )
+                            },
                             openMediaViewer = navController::navigateToMediaViewer,
                             onCloseRequest = navController::navigateUp,
                         )
@@ -194,6 +207,16 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
+                            openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
+                                navController.navigateToMediaSorting(
+                                    route = MediaSortingRoute(
+                                        noteId = noteId,
+                                        mediaBlockId = mediaBlockId,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    )
+                                )
+                            },
                             openMediaViewer = navController::navigateToMediaViewer,
                             onCloseRequest = navController::navigateUp,
                         )
@@ -201,6 +224,21 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         settingsNavigation(navController)
                         mediaViewScreen(onCloseRequest = navController::navigateUp)
                         mediaViewerScreen(onCloseRequest = navController::navigateUp)
+                        mediaSortingScreen(
+                            openMediaViewScreen = { noteId, mediaId, mediaBlockId, identifier ->
+                                navController.navigateToMediaView(
+                                    route = MediaViewRoute(
+                                        noteId = noteId,
+                                        mediaBlockId = mediaBlockId,
+                                        mediaId = mediaId,
+                                        dialogId = identifier.dialogId,
+                                        requestId = identifier.requestId,
+                                    ),
+                                )
+                            },
+                            openMediaViewer = navController::navigateToMediaViewer,
+                            onCloseRequest = navController::navigateUp
+                        )
                         noteSearchScreen(
                             openNoteViewScreen = { noteId, identifier, data ->
                                 navController.navigateToNoteView(

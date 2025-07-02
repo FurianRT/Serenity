@@ -1,7 +1,6 @@
 package com.furianrt.mediaview.internal.ui
 
 import android.net.Uri
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,8 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -146,7 +146,7 @@ private fun SuccessContent(
     val hazeState = remember { HazeState() }
     val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val listState = rememberLazyListState()
     var isThumbDragging by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(false) }
@@ -224,7 +224,7 @@ private fun SuccessContent(
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
                 onDeleteClick = {
                     onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                 },
                 onSaveMediaClick = {
                     onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))

@@ -1,6 +1,5 @@
 package com.furianrt.mediaview.internal.ui.composables
 
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.foundation.interaction.DragInteraction
@@ -24,8 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -37,7 +37,6 @@ import androidx.media3.ui.PlayerView
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
-import com.furianrt.uikit.R as uiR
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
@@ -48,6 +47,7 @@ import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import androidx.media3.common.MediaItem as ExoMediaItem
+import com.furianrt.uikit.R as uiR
 
 private const val SCALE_MULTIPLIER = 1.8f
 private const val SLIDER_UPDATE_INTERVAL = 25L
@@ -139,7 +139,7 @@ internal fun VideoPage(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val exoPlayer = remember(item.id) {
         ExoPlayer.Builder(context)
             .setLoadControl(
@@ -282,7 +282,7 @@ internal fun VideoPage(
                 duration = item.duration,
                 interactionSource = sliderInteractionSource,
                 onProgressChange = { progress ->
-                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                     currentPosition = (item.duration * progress).toLong()
                 },
                 onProgressChangeFinished = { exoPlayer.seekTo(currentPosition) },

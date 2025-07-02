@@ -79,6 +79,7 @@ fun NavController.navigateToNoteView(
 
 fun NavGraphBuilder.noteViewScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
@@ -90,6 +91,7 @@ fun NavGraphBuilder.noteViewScreen(
     ) {
         NoteViewScreen(
             openMediaViewScreen = openMediaViewScreen,
+            openMediaSortingScreen = openMediaSortingScreen,
             openMediaViewer = openMediaViewer,
             onCloseRequest = onCloseRequest,
         )

@@ -3,7 +3,6 @@ package com.furianrt.backup.internal.ui
 import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.IntentSender
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,8 +38,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -94,7 +94,7 @@ internal fun BackupScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val hazeState = remember { HazeState() }
     var showSignOutConfirmationDialog by remember { mutableStateOf(false) }
 
@@ -147,7 +147,7 @@ internal fun BackupScreen(
 
                     is BackupEffect.ShowErrorToast -> {
                         snackBarHostState.currentSnackbarData?.dismiss()
-                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.showSnackbar(
                             message = effect.text,
                             duration = SnackbarDuration.Short,
@@ -249,7 +249,7 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
 
     val hazeState = remember { HazeState() }
@@ -270,7 +270,7 @@ private fun SuccessContent(
 
     SkipFirstEffect(uiState.hasSyncError) {
         if (uiState.syncProgress is SyncProgress.Failure) {
-            view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
             if (uiState.syncProgress.backup) {
                 backupShakeState.shake()
             }
@@ -325,12 +325,16 @@ private fun SuccessContent(
                     title = stringResource(R.string.backup_auto_backup_title),
                     isChecked = uiState.isAutoBackupEnabled,
                     onCheckedChange = { isChecked ->
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                        if (isChecked) {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        } else {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                        }
                         onEvent(BackupScreenEvent.OnAutoBackupCheckChange(isChecked))
                     },
                     enabled = uiState.isSignedIn,
                 )
-                Spacer(Modifier.height(16.dp))
+                Spacer(Modifier.height(8.dp))
                 BackupPeriod(
                     modifier = Modifier
                         .fillMaxWidth()

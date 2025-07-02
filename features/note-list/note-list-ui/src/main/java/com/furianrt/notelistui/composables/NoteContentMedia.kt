@@ -61,6 +61,7 @@ import coil3.request.crossfade
 import coil3.size.Precision
 import coil3.video.VideoFrameDecoder
 import com.furianrt.core.buildImmutableList
+import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.contentHeight
 import com.furianrt.uikit.components.DurationBadge
@@ -90,7 +91,7 @@ fun NoteContentMedia(
     clickable: Boolean = false,
     dropDownHazeState: HazeState? = null,
     onClick: (media: MediaBlock.Media) -> Unit = {},
-    onShareClick: (media: MediaBlock.Media) -> Unit = {},
+    onSortingClick: () -> Unit = {},
     onRemoveClick: (media: MediaBlock.Media) -> Unit = {},
 ) {
     AnimatedContent(
@@ -110,7 +111,7 @@ fun NoteContentMedia(
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
 
@@ -122,7 +123,7 @@ fun NoteContentMedia(
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
 
@@ -134,7 +135,7 @@ fun NoteContentMedia(
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
 
@@ -144,7 +145,7 @@ fun NoteContentMedia(
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
 
@@ -154,7 +155,7 @@ fun NoteContentMedia(
                 clickable = clickable,
                 dropDownHazeState = dropDownHazeState,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
         }
@@ -167,7 +168,7 @@ private fun OneMediaHolder(
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
-    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onSortingClick: () -> Unit,
     onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -181,7 +182,7 @@ private fun OneMediaHolder(
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,
             onClick = onClick,
-            onShareClick = onShareClick,
+            onSortingClick = onSortingClick,
             onRemoveClick = onRemoveClick,
         )
     } else {
@@ -244,7 +245,7 @@ private fun OneMediaHolder(
                         expanded = showDropDownMenu,
                         hazeState = dropDownHazeState,
                         onRemoveClick = { onRemoveClick(media) },
-                        onShareClick = { onShareClick(media) },
+                        onSortingClick = onSortingClick,
                         onDismissRequest = { showDropDownMenu = false },
                     )
                 }
@@ -259,7 +260,7 @@ private fun RowMediaHolder(
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
-    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onSortingClick: () -> Unit,
     onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -285,7 +286,7 @@ private fun RowMediaHolder(
                 },
                 clickable = clickable,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
         }
@@ -298,7 +299,7 @@ private fun FourMediaHolder(
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
-    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onSortingClick: () -> Unit,
     onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -314,7 +315,7 @@ private fun FourMediaHolder(
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,
             onClick = onClick,
-            onShareClick = onShareClick,
+            onSortingClick = onSortingClick,
             onRemoveClick = onRemoveClick,
         )
         Column(
@@ -331,7 +332,7 @@ private fun FourMediaHolder(
                 dropDownHazeState = dropDownHazeState,
                 clickable = clickable,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
             RowMediaHolder(
@@ -342,7 +343,7 @@ private fun FourMediaHolder(
                 dropDownHazeState = dropDownHazeState,
                 clickable = clickable,
                 onClick = onClick,
-                onShareClick = onShareClick,
+                onSortingClick = onSortingClick,
                 onRemoveClick = onRemoveClick,
             )
         }
@@ -355,7 +356,7 @@ private fun ManyMediaHolder(
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
-    onShareClick: (media: MediaBlock.Media) -> Unit,
+    onSortingClick: () -> Unit,
     onRemoveClick: (media: MediaBlock.Media) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -373,7 +374,7 @@ private fun ManyMediaHolder(
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,
             onClick = onClick,
-            onShareClick = onShareClick,
+            onSortingClick = onSortingClick,
             onRemoveClick = onRemoveClick,
         )
         RowMediaHolder(
@@ -384,7 +385,7 @@ private fun ManyMediaHolder(
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,
             onClick = onClick,
-            onShareClick = onShareClick,
+            onSortingClick = onSortingClick,
             onRemoveClick = onRemoveClick,
         )
     }
@@ -397,7 +398,7 @@ private fun MediaItem(
     clickable: Boolean = false,
     dropDownHazeState: HazeState? = null,
     onClick: (media: MediaBlock.Media) -> Unit = {},
-    onShareClick: (media: MediaBlock.Media) -> Unit = {},
+    onSortingClick: () -> Unit = {},
     onRemoveClick: (media: MediaBlock.Media) -> Unit = {},
     contentScale: ContentScale = ContentScale.Crop,
     cornerRadius: Dp = 4.dp,
@@ -476,7 +477,7 @@ private fun MediaItem(
                 expanded = showDropDownMenu,
                 hazeState = dropDownHazeState,
                 onRemoveClick = { onRemoveClick(media) },
-                onShareClick = { onShareClick(media) },
+                onSortingClick = onSortingClick,
                 onDismissRequest = { showDropDownMenu = false },
             )
         }
@@ -565,7 +566,7 @@ private fun PopUpMenu(
     expanded: Boolean,
     hazeState: HazeState,
     onRemoveClick: () -> Unit,
-    onShareClick: () -> Unit,
+    onSortingClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -597,18 +598,18 @@ private fun PopUpMenu(
         onDismissRequest = onDismissRequest,
     ) {
         MenuItem(
-            icon = painterResource(uiR.drawable.ic_delete),
-            text = stringResource(uiR.string.action_delete),
+            icon = painterResource(R.drawable.ic_change_order),
+            text = stringResource(uiR.string.action_change_sorting),
             onClick = {
-                onRemoveClick()
+                onSortingClick()
                 onDismissRequest()
             },
         )
         MenuItem(
-            icon = painterResource(uiR.drawable.ic_share),
-            text = stringResource(uiR.string.action_share),
+            icon = painterResource(uiR.drawable.ic_delete),
+            text = stringResource(uiR.string.action_delete),
             onClick = {
-                onShareClick()
+                onRemoveClick()
                 onDismissRequest()
             },
         )

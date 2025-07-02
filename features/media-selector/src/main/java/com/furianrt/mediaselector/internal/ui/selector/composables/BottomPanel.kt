@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
@@ -72,7 +74,7 @@ internal fun BottomPanel(
         AnimatedVisibility(
             modifier = Modifier
                 .wrapContentSize()
-                .padding(end = 8.dp, bottom = 14.dp)
+                .padding(end = 8.dp, bottom = 10.dp)
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd),
             visible = selectedCount > 0,
@@ -86,7 +88,8 @@ internal fun BottomPanel(
             )
         ) {
             ActionButton(
-                icon = painterResource(com.furianrt.uikit.R.drawable.ic_send),
+                modifier = Modifier.size(64.dp),
+                icon = painterResource(uiR.drawable.ic_send),
                 onClick = onSendClick,
             )
         }

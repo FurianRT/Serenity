@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.lock.email
 
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,8 +32,9 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -68,7 +68,7 @@ internal fun EmailScreen(
 
     var showErrorMessage by remember { mutableStateOf(false) }
 
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val focusManager = LocalFocusManager.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
@@ -81,7 +81,7 @@ internal fun EmailScreen(
                     onCloseRequestState()
                 }
                 is EmailEffect.ShowEmailFormatError -> {
-                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                     emailShakeState.shake(animationDuration = 25)
                     showErrorMessage = true
                 }

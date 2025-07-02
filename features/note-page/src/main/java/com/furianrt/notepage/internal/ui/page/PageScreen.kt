@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.ui.page
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -36,7 +35,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -51,6 +49,7 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -58,6 +57,7 @@ import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
@@ -84,7 +84,6 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
@@ -107,14 +106,13 @@ import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
-import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.coroutines.launch
+import com.furianrt.uikit.R as uiR
 
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 
@@ -129,6 +127,7 @@ internal fun NotePageScreenInternal(
     onFocusChange: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId,
@@ -142,7 +141,6 @@ internal fun NotePageScreenInternal(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
-    val scope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
     val snackBarHostState = remember { SnackbarHostState() }
@@ -166,6 +164,7 @@ internal fun NotePageScreenInternal(
 
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
+    val openMediaSortingScreenState by rememberUpdatedState(openMediaSortingScreen)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose { viewModel.onEvent(PageEvent.OnScreenStopped) }
@@ -177,7 +176,7 @@ internal fun NotePageScreenInternal(
                 is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {
                     focusManager.clearFocus(force = true)
-                    scope.launch { state.bottomScaffoldState.bottomSheetState.expand() }
+                    state.bottomScaffoldState.bottomSheetState.expand()
                 }
 
                 is PageEffect.OpenMediaViewScreen -> {
@@ -207,22 +206,11 @@ internal fun NotePageScreenInternal(
                     )
                 }
 
-                is PageEffect.ShareMedia -> IntentCreator.mediaShareIntent(
-                    uri = effect.media.uri,
-                    mediaType = when (effect.media) {
-                        is UiNoteContent.MediaBlock.Image -> IntentCreator.MediaType.IMAGE
-                        is UiNoteContent.MediaBlock.Video -> IntentCreator.MediaType.VIDEO
-                    },
-                ).onSuccess { intent ->
-                    context.startActivity(intent)
-                }.onFailure { error ->
-                    error.printStackTrace()
-                    snackBarHostState.currentSnackbarData?.dismiss()
-                    snackBarHostState.showSnackbar(
-                        message = context.getString(uiR.string.general_error),
-                        duration = SnackbarDuration.Short,
-                    )
-                }
+                is PageEffect.OpenMediaSortingScreen -> openMediaSortingScreenState(
+                    effect.noteId,
+                    effect.mediaBlockId,
+                    effect.identifier
+                )
             }
         }
     }
@@ -460,7 +448,7 @@ private fun ContentItems(
     onEvent: (event: PageEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val density = LocalDensity.current
     val topTitlePadding = 8.dp
     val topPadding = density.run { topTitlePadding.toPx() + 6.dp.toPx() }
@@ -523,9 +511,9 @@ private fun ContentItems(
                             onClick = { onEvent(PageEvent.OnMediaClick(it)) },
                             onRemoveClick = { media ->
                                 onEvent(PageEvent.OnMediaRemoveClick(media))
-                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                             },
-                            onShareClick = { onEvent(PageEvent.OnMediaShareClick(it)) },
+                            onSortingClick = { onEvent(PageEvent.OnMediaSortingClick(item.id)) },
                         )
 
                         is UiNoteContent.Voice -> NoteContentVoice(
@@ -543,7 +531,7 @@ private fun ContentItems(
                             isRemovable = uiState.isInEditMode,
                             onRemoveClick = { voice ->
                                 onEvent(PageEvent.OnVoiceRemoveClick(voice))
-                                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                             },
                             onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
                             onProgressSelected = { voice, value ->
@@ -564,9 +552,9 @@ private fun ContentItems(
                     isEditable = uiState.isInEditMode,
                     animateItemsPlacement = true,
                     showStub = true,
-                    onTagRemoveClick = {
-                        onEvent(PageEvent.OnTagRemoveClick(it))
-                        view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                    onTagRemoveClick = { tag ->
+                        onEvent(PageEvent.OnTagRemoveClick(tag))
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                     },
                     onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
                     onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },

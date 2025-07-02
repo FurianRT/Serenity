@@ -163,7 +163,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val hazeState = remember { HazeState() }
 
     BottomSheetScaffold(
-        modifier = modifier.haze(state = hazeState),
+        modifier = modifier,
         scaffoldState = state,
         sheetContainerColor = Color.Transparent,
         containerColor = Color.Transparent,
@@ -182,7 +182,8 @@ internal fun MediaSelectorBottomSheetInternal(
                 modifier = Modifier
                     .statusBarsPadding()
                     .padding(top = ToolbarConstants.toolbarHeight)
-                    .graphicsLayer { translationY = bottomSheetTranslationY.toPx() },
+                    .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
+                    .haze(state = hazeState),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,

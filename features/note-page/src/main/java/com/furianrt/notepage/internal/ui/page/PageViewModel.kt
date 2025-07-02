@@ -7,8 +7,10 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.core.mapImmutable
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
+import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -28,6 +30,7 @@ import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
+import com.furianrt.notelistui.extensions.toUiNoteMedia
 import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -54,7 +57,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSelected
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaShareClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSortingClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnScreenStopped
@@ -111,6 +114,7 @@ import java.util.UUID
 import com.furianrt.uikit.R as uiR
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
+private const val MEDIA_SORTING_DIALOG_ID = 2
 private const val TITLE_FOCUS_DELAY = 150L
 private const val MAX_STICKERS_COUNT = 50
 
@@ -171,6 +175,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnEditModeStateChange -> {
                 changeEditModeState(event.isEnabled)
             }
+
             is OnIsSelectedChange -> {
                 resetStickersEditing()
                 onIsSelectedChange(event.isSelected)
@@ -209,7 +214,11 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnMediaRemoveClick -> onMediaRemoveClick(event.media.id)
 
-            is OnMediaShareClick -> _effect.tryEmit(PageEffect.ShareMedia(event.media))
+            is OnMediaSortingClick -> {
+                resetStickersEditing()
+                onMediaSortingClick(event.mediaBlockId)
+            }
+
             is OnOpenMediaViewerRequest -> {
                 resetStickersEditing()
                 _effect.tryEmit(PageEffect.OpenMediaViewer(event.route))
@@ -252,6 +261,25 @@ internal class PageViewModel @AssistedInject constructor(
                 @Suppress("UNCHECKED_CAST")
                 removeMedia(result.data as Set<String>)
             }
+
+            MEDIA_SORTING_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
+                onMediaSortingResult(result.data as MediaSortingResult)
+            }
+        }
+    }
+
+    private fun onMediaSortingResult(result: MediaSortingResult) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(
+                content = successState.content.mapImmutable { content ->
+                    if (content is UiNoteContent.MediaBlock && content.id == result.mediaBlockId) {
+                        content.copy(media = result.media.mapImmutable { it.toUiNoteMedia() })
+                    } else {
+                        content
+                    }
+                },
+            )
         }
     }
 
@@ -467,6 +495,45 @@ internal class PageViewModel @AssistedInject constructor(
                     mediaId = mediaId,
                     identifier = DialogIdentifier(
                         dialogId = MEDIA_VIEW_DIALOG_ID,
+                        requestId = noteId,
+                    ),
+                ),
+            )
+        }
+    }
+
+    private fun onMediaSortingClick(mediaBlockId: String) {
+        when {
+            syncManager.isBackupInProgress() -> _effect.tryEmit(
+                PageEffect.ShowMessage(
+                    message = resourcesManager.getString(uiR.string.backup_in_progress),
+                ),
+            )
+
+            syncManager.isRestoreInProgress() -> _effect.tryEmit(
+                PageEffect.ShowMessage(
+                    message = resourcesManager.getString(uiR.string.restore_in_progress),
+                ),
+            )
+
+            else -> {
+                openMediaSortingScreen(mediaBlockId)
+            }
+        }
+    }
+
+    private fun openMediaSortingScreen(mediaBlockId: String) {
+        _state.doWithState<PageUiState.Success> { successState ->
+            notesRepository.cacheNoteContent(
+                noteId = noteId,
+                content = successState.content.map(UiNoteContent::toLocalNoteContent),
+            )
+            _effect.tryEmit(
+                PageEffect.OpenMediaSortingScreen(
+                    noteId = noteId,
+                    mediaBlockId = mediaBlockId,
+                    identifier = DialogIdentifier(
+                        dialogId = MEDIA_SORTING_DIALOG_ID,
                         requestId = noteId,
                     ),
                 ),

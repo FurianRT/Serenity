@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.security
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,7 +20,8 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -126,7 +126,7 @@ private fun SuccessScreen(
     onEvent: (event: SecurityEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -138,8 +138,8 @@ private fun SuccessScreen(
             title = stringResource(R.string.security_enable_pin_title),
             isChecked = uiState.isPinEnabled,
             onCheckedChange = { isChecked ->
-                if (uiState.isPinEnabled) {
-                    view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                if (!isChecked) {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
                 }
                 onEvent(SecurityEvent.OnEnablePinCheckChanged(isChecked))
             },
@@ -173,7 +173,11 @@ private fun SuccessScreen(
             isChecked = uiState.isFingerprintEnabled,
             enabled = uiState.isPinEnabled,
             onCheckedChange = { isChecked ->
-                view.performHapticFeedback(HapticFeedbackConstants.CONFIRM)
+                if (isChecked) {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                } else {
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                }
                 onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
             },
         )

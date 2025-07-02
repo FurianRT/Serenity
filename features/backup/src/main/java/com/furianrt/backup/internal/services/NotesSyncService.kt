@@ -10,6 +10,7 @@ import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.furianrt.backup.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
@@ -110,11 +111,11 @@ internal class NotesSyncService : Service(), CoroutineScope {
     ): Notification = NotificationCompat.Builder(this, CHANNEL_ID)
         .apply {
             if (isBackup) {
-                setContentTitle(getString(R.string.backup_notification_title))
+                setContentTitle(getString(uiR.string.backup_in_progress))
                 setContentText(getString(R.string.backup_notification_initial_description))
                 setSmallIcon(R.drawable.ic_cloud_upload)
             } else {
-                setContentTitle(getString(R.string.restore_notification_title))
+                setContentTitle(getString(uiR.string.restore_in_progress))
                 setContentText(getString(R.string.restore_notification_initial_description))
                 setSmallIcon(R.drawable.ic_cloud_download)
             }

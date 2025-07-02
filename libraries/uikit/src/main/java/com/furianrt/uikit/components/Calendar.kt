@@ -1,6 +1,5 @@
 package com.furianrt.uikit.components
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
@@ -57,9 +56,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
@@ -513,7 +513,7 @@ private fun MonthYearList(
     onItemSelected: (index: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
     val listHeight = itemHeight * 5
     val listHeightPx = LocalDensity.current.run { listHeight.toPx() }
@@ -535,7 +535,7 @@ private fun MonthYearList(
         snapshotFlow { listState.firstVisibleItemIndex }
             .collect { index ->
                 if (userInteracted && listState.firstVisibleItemScrollOffset != 0) {
-                    view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                 }
                 onItemSelected(index)
             }
@@ -557,7 +557,7 @@ private fun MonthYearList(
                     .collect { haptic ->
                         val isCurrentItem = index == listState.firstVisibleItemIndex
                         if (haptic && isCurrentItem) {
-                            view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                             scale.animateTo(targetValue = 1.1f, animationSpec = tween(durationMillis = 100))
                             scale.animateTo(targetValue = 1f, animationSpec = tween(durationMillis = 100))
                         }

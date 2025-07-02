@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.lock.change
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -40,7 +40,7 @@ internal fun ChangePinScreen(
     val viewModel: ChangePinViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
 
     val shakeState = rememberShakingState(
         strength = ShakingState.Strength.Strong,
@@ -55,7 +55,7 @@ internal fun ChangePinScreen(
             when (effect) {
                 is ChangePinEffect.CloseScreen -> onCloseRequestState()
                 is ChangePinEffect.ShowPinDoesNotMatchError -> {
-                    view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                     shakeState.shake(25)
                 }
 

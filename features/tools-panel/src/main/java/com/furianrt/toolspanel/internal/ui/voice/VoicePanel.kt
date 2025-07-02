@@ -1,6 +1,5 @@
 package com.furianrt.toolspanel.internal.ui.voice
 
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
@@ -37,8 +36,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.rememberTextMeasurer
@@ -181,7 +181,7 @@ private fun Timer(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val textMeasurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.bodySmall
     val density = LocalDensity.current
@@ -193,7 +193,7 @@ private fun Timer(
     Row(
         modifier = modifier
             .clickableNoRipple {
-                view.performHapticFeedback(HapticFeedbackConstants.CLOCK_TICK)
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentTick)
                 onClick()
             }
             .padding(start = 6.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),

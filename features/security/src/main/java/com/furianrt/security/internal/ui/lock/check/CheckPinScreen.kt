@@ -2,7 +2,6 @@ package com.furianrt.security.internal.ui.lock.check
 
 import android.hardware.biometrics.BiometricPrompt
 import android.os.CancellationSignal
-import android.view.HapticFeedbackConstants
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.LocalActivity
 import androidx.compose.animation.AnimatedContent
@@ -35,8 +34,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -79,7 +79,7 @@ internal fun CheckPinScreenInternal(
     val viewModel: CheckPinViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val activity = LocalActivity.current
     val focusManager = LocalFocusManager.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
@@ -126,7 +126,7 @@ internal fun CheckPinScreenInternal(
                     is CheckPinEffect.ShowPinSuccess -> onCloseRequestState()
                     is CheckPinEffect.ShowForgotPinDialog -> recoveryDialogState = effect.email
                     is CheckPinEffect.ShowWrongPinError -> {
-                        view.performHapticFeedback(HapticFeedbackConstants.REJECT)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         shakeState.shake(25)
                     }
 

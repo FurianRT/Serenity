@@ -45,8 +45,6 @@
 
     <string name="backup_notifications_channel_name">Канал резервного копирования</string>
     <string name="backup_notifications_channel_description">Отображает прогресс резервной копии</string>
-    <string name="backup_notification_title">Создание резервной копии…</string>
-    <string name="restore_notification_title">Восстановление…</string>
     <string name="backup_notification_initial_description">Ваши заметки загружаются. Это может занять некоторое время</string>
     <string name="restore_notification_initial_description">Ваши заметки загружаются. Это может занять некоторое время</string>
 

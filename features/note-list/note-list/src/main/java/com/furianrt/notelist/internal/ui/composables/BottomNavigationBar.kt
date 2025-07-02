@@ -36,6 +36,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
 
@@ -97,7 +98,7 @@ internal fun BottomNavigationBar(
                 scaleX = scale
                 scaleY = scale
             },
-            icon = painterResource(R.drawable.ic_fab_add),
+            icon = painterResource(uiR.drawable.ic_add),
             onClick = onAddNoteClick,
         )
     }

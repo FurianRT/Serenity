@@ -14,6 +14,7 @@
     <string name="action_contact_us">Связаться с нами</string>
     <string name="action_select">Выбрать</string>
     <string name="action_continue">Продолжить</string>
+    <string name="action_change_sorting">Изменить порядок</string>
 
     <string name="title_email">Электронная почта</string>
 
@@ -33,7 +34,7 @@
     <string name="delete_note_warning_body">Вы действительно хотите удалить эту заметку? Вы не сможете восстановить её позже</string>
 
     <string name="backup_in_progress">Создание резервной копии…</string>
-    <string name="restore_in_progress">Восстановление…</string>
+    <string name="restore_in_progress">Идет восстановление…</string>
 
     <string-array name="months_array">
         <item>Январь</item>

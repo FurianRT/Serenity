@@ -116,7 +116,7 @@ internal class MediaViewModel @Inject constructor(
     }
 
     private fun buildInitialState(): MediaViewUiState {
-        val media = getNoteMediaUseCase(route.noteId)
+        val media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
         return MediaViewUiState(
             media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
             initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,

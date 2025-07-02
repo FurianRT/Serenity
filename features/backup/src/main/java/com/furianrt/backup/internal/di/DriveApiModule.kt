@@ -14,10 +14,13 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 private const val BASE_URL = "https://www.googleapis.com/"
+private const val READ_WRITE_TIMEOUT = 120L
+private const val CONNECT_TIMEOUT = 20L
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -33,6 +36,9 @@ internal object DriveApiModule {
         val builder = OkHttpClient.Builder()
             .addInterceptor(tokenInterceptor)
             .authenticator(tokenAuthenticator)
+            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
+            .readTimeout(READ_WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .writeTimeout(READ_WRITE_TIMEOUT, TimeUnit.SECONDS)
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(loggingInterceptor)
         }

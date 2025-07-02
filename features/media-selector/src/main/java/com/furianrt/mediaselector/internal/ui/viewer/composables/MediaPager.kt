@@ -1,6 +1,5 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
-import android.view.HapticFeedbackConstants
 import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.foundation.interaction.DragInteraction
@@ -24,8 +23,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.compose.LifecycleStartEffect
@@ -41,13 +41,13 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.VideoSlider
-import com.furianrt.uikit.R as uiR
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import androidx.media3.common.MediaItem as ExoMediaItem
+import com.furianrt.uikit.R as uiR
 
 private const val SCALE_MULTIPLIER = 1.8f
 private const val SLIDER_UPDATE_INTERVAL = 25L
@@ -138,9 +138,10 @@ internal fun VideoPage(
     onEnded: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
+    val context = LocalContext.current
+    val hapticFeedback = LocalHapticFeedback.current
     val exoPlayer = remember(item.id) {
-        ExoPlayer.Builder(view.context)
+        ExoPlayer.Builder(context)
             .setLoadControl(
                 DefaultLoadControl.Builder()
                     .setBufferDurationsMs(
@@ -282,7 +283,7 @@ internal fun VideoPage(
                 duration = item.duration,
                 interactionSource = sliderInteractionSource,
                 onProgressChange = { progress ->
-                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                     currentPosition = (item.duration * progress).toLong()
                 },
                 onProgressChangeFinished = { exoPlayer.seekTo(currentPosition) },

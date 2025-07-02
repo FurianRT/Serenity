@@ -1,7 +1,6 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearEasing
@@ -51,8 +50,9 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
@@ -285,7 +285,7 @@ private fun VoiceSlider(
     ) {
         mutableFloatStateOf(progressState.progress.floatValue)
     }
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     val sliderInteractionSource = remember { MutableInteractionSource() }
     LaunchedEffect(sliderInteractionSource) {
         sliderInteractionSource.interactions.collect { interaction ->
@@ -301,7 +301,7 @@ private fun VoiceSlider(
         enabled = enabled,
         value = currentPosition,
         onValueChange = { position ->
-            view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+            hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
             currentPosition = position
         },
         onValueChangeFinished = {

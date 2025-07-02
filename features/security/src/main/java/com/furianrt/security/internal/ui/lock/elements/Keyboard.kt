@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.lock.elements
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -16,7 +15,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -32,7 +32,7 @@ internal fun Keyboard(
     onClearKeyClick: () -> Unit = {},
     onFingerprintClick: () -> Unit = {},
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -46,7 +46,7 @@ internal fun Keyboard(
                 Key(
                     key = index + 1,
                     onClick = { key ->
-                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                         onKeyClick(key)
                     },
                 )
@@ -60,7 +60,7 @@ internal fun Keyboard(
                 Key(
                     key = index + 4,
                     onClick = { key ->
-                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                         onKeyClick(key)
                     },
                 )
@@ -74,7 +74,7 @@ internal fun Keyboard(
                 Key(
                     key = index + 7,
                     onClick = { key ->
-                        view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                         onKeyClick(key)
                     },
                 )
@@ -95,14 +95,14 @@ internal fun Keyboard(
             Key(
                 key = 0,
                 onClick = { key ->
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                     onKeyClick(key)
                 },
             )
             IconKey(
                 painter = painterResource(R.drawable.ic_backspace),
                 onClick = {
-                    view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
                     onClearKeyClick()
                 },
             )

@@ -1,6 +1,5 @@
 package com.furianrt.toolspanel.internal.ui.font
 
-import android.view.HapticFeedbackConstants
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -52,8 +51,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -330,7 +330,7 @@ private fun SizeSelector(
     onSizeSelected: (size: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val view = LocalView.current
+    val hapticFeedback = LocalHapticFeedback.current
     Row(
         modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -348,7 +348,7 @@ private fun SizeSelector(
             onValueChange = { value ->
                 val newValue = value.toInt()
                 if (size != newValue) {
-                    view.performHapticFeedback(HapticFeedbackConstants.TEXT_HANDLE_MOVE)
+                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                     onSizeSelected(newValue)
                 }
             },

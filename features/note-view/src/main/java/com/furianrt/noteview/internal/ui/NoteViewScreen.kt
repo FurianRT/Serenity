@@ -76,6 +76,7 @@ private data class CalendarState(
 @Composable
 internal fun NoteViewScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
@@ -100,6 +101,7 @@ internal fun NoteViewScreen(
                         focusManager.clearFocus()
                         onCloseRequestState()
                     }
+
                     is NoteViewEffect.ShowDateSelector -> {
                         calendarDialogState = CalendarState(
                             date = SelectedDate(effect.date),
@@ -129,6 +131,7 @@ internal fun NoteViewScreen(
         onEvent = viewModel::onEvent,
         openMediaViewScreen = openMediaViewScreen,
         openMediaViewer = openMediaViewer,
+        openMediaSortingScreen = openMediaSortingScreen,
     )
     calendarDialogState?.let { dialogState ->
         SingleChoiceCalendar(
@@ -156,6 +159,7 @@ private fun ScreenContent(
     hazeState: HazeState,
     onEvent: (event: NoteViewEvent) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -172,6 +176,7 @@ private fun ScreenContent(
             onEvent = onEvent,
             openMediaViewScreen = openMediaViewScreen,
             openMediaViewer = openMediaViewer,
+            openMediaSortingScreen = openMediaSortingScreen,
         )
     }
 }
@@ -184,6 +189,7 @@ private fun SuccessScreen(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {
@@ -306,6 +312,7 @@ private fun SuccessScreen(
                 onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },
                 openMediaViewScreen = openMediaViewScreen,
                 openMediaViewer = openMediaViewer,
+                openMediaSortingScreen = openMediaSortingScreen,
             )
         }
 
@@ -362,6 +369,7 @@ private fun ScreenSuccessPreview() {
             onEvent = {},
             openMediaViewScreen = { _, _, _ -> },
             openMediaViewer = {},
+            openMediaSortingScreen = { _, _, _ -> },
         )
     }
 }

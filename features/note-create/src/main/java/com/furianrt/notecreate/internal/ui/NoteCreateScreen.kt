@@ -64,6 +64,7 @@ private data class CalendarState(
 @Composable
 internal fun NoteCreateScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
+    openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
@@ -120,6 +121,7 @@ internal fun NoteCreateScreen(
                     onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
                     openMediaViewScreen = openMediaViewScreen,
                     openMediaViewer = openMediaViewer,
+                    openMediaSortingScreen = openMediaSortingScreen,
                 )
             },
         )
