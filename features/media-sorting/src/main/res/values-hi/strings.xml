@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">मीडिया ब्लॉक संपादित करें</string>
+    <string name="media_sorting_drag_and_drop_hint">क्रम बदलने के लिए ड्रैग और ड्रॉप करें</string>
+    <string name="media_sorting_save_chages_hint">क्या आप अपने बदलाव सहेजना चाहते हैं?</string>
+</resources>

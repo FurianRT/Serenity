@@ -27,12 +27,16 @@ internal fun ForgotPinDialog(
     val hint = remember {
         buildAnnotatedString {
             val emailStartIndex = fullText.indexOf(email)
-            val emailEndIndex = emailStartIndex + email.length
-            append(fullText.substring(0, emailStartIndex))
-            withStyle(SpanStyle(fontWeight = FontWeight.ExtraBold)) {
-                append(email)
+            if (emailStartIndex != -1) {
+                val emailEndIndex = emailStartIndex + email.length
+                append(fullText.substring(0, emailStartIndex))
+                withStyle(SpanStyle(fontWeight = FontWeight.ExtraBold)) {
+                    append(email)
+                }
+                append(fullText.substring(emailEndIndex, fullText.length))
+            } else {
+                append(fullText)
             }
-            append(fullText.substring(emailEndIndex, fullText.length))
         }
     }
     ConfirmationDialog(

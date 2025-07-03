@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">सुरक्षा</string>
+    <string name="settings_backup_title">बैकअप और पुनर्स्थापना</string>
+    <string name="settings_theme_title">थीम</string>
+    <string name="settings_font_title">ऐप फ़ॉन्ट</string>
+    <string name="settings_language_title">भाषा</string>
+    <string name="settings_rate_us_title">हमें रेट करें</string>
+    <string name="settings_donate_title">दान करें</string>
+    <string name="settings_feedback_title">समस्या रिपोर्ट करें</string>
+    <string name="settings_terms_and_conditions_title">नियम और शर्तें</string>
+    <string name="settings_privacy_policy_title">गोपनीयता नीति</string>
+    <string name="settings_version_title">संस्करण %s</string>
+
+    <string name="settings_feedback_email_subject">Serenity प्रतिक्रिया %s</string>
+    <string name="settings_feedback_email_error">ईमेल भेजने में विफल</string>
+
+    <string name="settings_bad_feedback_title">कुछ ठीक नहीं लग रहा?</string>
+    <string name="settings_bad_feedback_body">आपकी प्रतिक्रिया हमारे लिए महत्वपूर्ण है। कृपया हमें बेहतर बनाने में मदद करें</string>
+</resources>

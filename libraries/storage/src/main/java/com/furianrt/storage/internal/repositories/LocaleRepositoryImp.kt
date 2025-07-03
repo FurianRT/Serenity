@@ -40,6 +40,7 @@ internal class LocaleRepositoryImp @Inject constructor(
         listOf(
             AppLocale.ENGLISH,
             AppLocale.RUSSIAN,
+            AppLocale.HINDI,
         )
     )
 

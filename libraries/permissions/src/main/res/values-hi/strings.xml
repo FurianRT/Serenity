@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity को आपकी स्टोरेज तक पहुँच चाहिए ताकि आप फोटो और वीडियो संलग्न कर सकें। सेटिंग्स > परमिशन पर जाएं, और फ़ोटो और वीडियो ऑन करें</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">फ़ोटो और वीडियो</string>
+
+    <string name="audio_record_permission_message">Serenity को आपकी माइक्रोफ़ोन तक पहुँच चाहिए ताकि आप आवाज़ रिकॉर्ड कर सकें। सेटिंग्स > परमिशन पर जाएं, और माइक्रोफ़ोन ऑन करें</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">माइक्रोफ़ोन</string>
+</resources>

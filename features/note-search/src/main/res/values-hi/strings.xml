@@ -1,0 +1,9 @@
+<resources>
+    <string name="notes_search_bar_title">टेक्स्ट और टैग से खोजें</string>
+    <string name="notes_search_empty_search_title">कोई नोट नहीं मिला</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d नोट मिला</item>
+        <item quantity="other">%d नोट मिले</item>
+    </plurals>
+</resources>

@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">ऑटो बैकअप</string>
+    <string name="backup_auto_backup_period_title">ऑटो बैकअप अवधि</string>
+    <string name="backup_last_sync_time_title">आखिरी सिंक: %s</string>
+    <string name="backup_restore_data_title">डेटा पुनर्स्थापित करें</string>
+    <string name="backup_backup_data_title">बैकअप</string>
+    <string name="backup_last_sync_time_none_title">कोई नहीं</string>
+    <string name="backup_sign_out_title">साइन आउट</string>
+    <string name="backup_tap_to_sing_in_title">साइन इन के लिए टैप करें</string>
+    <string name="backup_tap_to_sing_in_underline_part">साइन इन</string>
+    <string name="backup_tap_to_sing_out_title">साइन आउट के लिए टैप करें</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">इतनी जल्दी जा रहे हैं?</string>
+    <string name="backup_confirm_sign_out_message">आप कभी भी वापस साइन इन कर सकते हैं, लेकिन कृपया ध्यान दें कि तब तक बैकअप रुका रहेगा</string>
+    <string name="backup_period_one_day_title">1 दिन</string>
+    <string name="backup_period_three_days_title">3 दिन</string>
+    <string name="backup_period_one_week_title">1 सप्ताह</string>
+    <string name="backup_period_two_weeks_title">2 सप्ताह</string>
+    <string name="backup_period_one_month_title">1 महीना</string>
+
+    <string name="backup_popular_question_1_title">Google Drive से सिंक कैसे काम करता है?</string>
+    <string name="backup_popular_question_1_answer">आपके नोट्स स्वचालित रूप से आपके Google Drive खाते में बैकअप हो जाते हैं। यह सुनिश्चित करता है कि आपका डेटा सुरक्षित है और कई डिवाइसों से पहुँचा जा सकता है</string>
+    <string name="backup_popular_question_2_title">मेरे नोट्स Google Drive में कहाँ स्टोर होते हैं?</string>
+    <string name="backup_popular_question_2_answer">आपके नोट्स Google Drive में एक छिपे हुए, ऐप-विशिष्ट फ़ोल्डर में स्टोर होते हैं, जो सामान्य फ़ाइल सूची में नहीं दिखता। यह फ़ोल्डर केवल आपके लिए निजी है — डेवलपर को भी पहुँच नहीं है</string>
+    <string name="backup_popular_question_3_title">क्या सिंक्रोनाइज़ेशन के लिए Google अकाउंट ज़रूरी है?</string>
+    <string name="backup_popular_question_3_answer">हाँ, क्लाउड सिंक चालू करने के लिए Google अकाउंट से साइन इन करना ज़रूरी है</string>
+    <string name="backup_popular_question_4_title">क्या मैं सीधे Google Drive से नोट्स एक्सेस कर सकता हूँ?</string>
+    <string name="backup_popular_question_4_answer">नहीं, नोट्स एक निजी ऐप फ़ोल्डर में होते हैं जो Drive इंटरफ़ेस में दिखाई नहीं देता। आप उन्हें केवल ऐप के माध्यम से एक्सेस कर सकते हैं</string>
+    <string name="backup_popular_question_5_title">अगर मैं ऐप अनइंस्टॉल करूँ तो क्या नोट्स हट जाएंगे?</string>
+    <string name="backup_popular_question_5_answer">ऐप को हटाने से आपके नोट्स Google Drive से नहीं हटते। जब आप दोबारा इंस्टॉल करके उसी अकाउंट से साइन इन करेंगे, तो नोट्स बहाल हो जाएंगे</string>
+    <string name="backup_popular_question_6_title">क्या मैं कई डिवाइसेज़ पर नोट्स सिंक कर सकता हूँ?</string>
+    <string name="backup_popular_question_6_answer">हाँ! जब तक आप सभी डिवाइसों पर एक ही Google अकाउंट से साइन इन करेंगे, आपके नोट्स सिंक होते रहेंगे</string>
+    <string name="backup_popular_question_7_title">क्या मेरा डेटा सुरक्षित है?</string>
+    <string name="backup_popular_question_7_answer">हाँ। आपके नोट्स एक निजी, ऐप-विशिष्ट Google Drive फ़ोल्डर में होते हैं और ऐप आपका डेटा किसी से साझा नहीं करता</string>
+    <string name="backup_popular_question_8_title">अगर मैं Google अकाउंट बदल दूँ तो क्या होगा?</string>
+    <string name="backup_popular_question_8_answer">अगर आप अकाउंट बदलते हैं, तो पुराने अकाउंट वाले नोट्स दिखेंगे नहीं। उन्हें देखने के लिए आपको उसी पुराने Google अकाउंट से साइन इन करना होगा</string>
+
+    <string name="backup_notifications_channel_name">बैकअप चैनल</string>
+    <string name="backup_notifications_channel_description">बैकअप प्रगति दिखाता है</string>
+    <string name="backup_notification_initial_description">आपके नोट्स अपलोड हो रहे हैं। इसमें कुछ समय लग सकता है</string>
+    <string name="restore_notification_initial_description">आपके नोट्स डाउनलोड हो रहे हैं। इसमें कुछ समय लग सकता है</string>
+
+    <string name="backup_warning_title">बैकअप चेतावनी</string>
+    <string name="backup_warning_body">आप नया बैकअप बनाने जा रहे हैं। कृपया ध्यान दें: इससे Google Drive में मौजूदा बैकअप ओवरराइट हो जाएगा। एक बार बदले जाने के बाद पुराने डेटा तक पहुँचा नहीं जा सकेगा। कृपया आगे बढ़ने से पहले सुनिश्चित करें</string>
+
+    <string name="backup_progress_message">बैकअप प्रगति %d/%d</string>
+    <string name="restore_progress_message">रीस्टोर प्रगति %d/%d</string>
+    <string name="backup_starting_message">बैकअप शुरू हो रहा है…</string>
+    <string name="restore_starting_message">रीस्टोर शुरू हो रहा है…</string>
+
+    <string name="backup_sync_in_progress_message">सिंक हो रहा है</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">साइन इन बाधित हो गया</string>
+    <string name="backup_success_message">पूरा हुआ</string>
+</resources>

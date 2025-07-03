@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">खोजें</string>
+    <string name="notes_list_empty_list_title">&quot;हर कहानी एक शब्द से शुरू होती है&quot;</string>
+    <string name="notes_list_empty_list_body">शुरू करने के लिए टैप करें!</string>
+</resources>

@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">रद्द करें</string>
+    <string name="action_discard">हटा दें</string>
+    <string name="action_not_now">अभी नहीं</string>
+    <string name="action_delete">हटाएं</string>
+    <string name="action_share">साझा करें</string>
+    <string name="action_save">सहेजें</string>
+    <string name="action_confirm">पुष्टि करें</string>
+    <string name="action_send">भेजें</string>
+    <string name="action_done">पूर्ण</string>
+    <string name="action_pin">पिन करें</string>
+    <string name="action_unpin">अनपिन करें</string>
+    <string name="action_contact_us">हमसे संपर्क करें</string>
+    <string name="action_select">चुनें</string>
+    <string name="action_continue">जारी रखें</string>
+    <string name="action_change_sorting">क्रम बदलें</string>
+
+    <string name="title_email">ईमेल</string>
+
+    <string name="settings_title">सेटिंग्स</string>
+    <string name="security_title">सुरक्षा</string>
+
+    <string name="media_counter_pattern">%d में से %d</string>
+    <string name="general_error">कुछ गलत हो गया</string>
+    <string name="general_error_with_code">%d कुछ गलत हो गया</string>
+    <string name="network_error">इंटरनेट कनेक्शन नहीं है</string>
+
+    <string name="today_title">आज</string>
+    <string name="yesterday_title">कल</string>
+
+    <string name="delete_notes_warning_title">बस एक बार पूछ लें…</string>
+    <string name="delete_notes_warning_body">क्या आप वाकई इन नोट्स को हटाना चाहते हैं? बाद में आप इन्हें वापस नहीं ला पाएंगे</string>
+    <string name="delete_note_warning_body">क्या आप वाकई इस नोट को हटाना चाहते हैं? बाद में आप इसे वापस नहीं ला पाएंगे</string>
+
+    <string name="backup_in_progress">बैकअप चल रहा है</string>
+    <string name="restore_in_progress">रीस्टोर चल रहा है</string>
+
+    <string-array name="months_array">
+        <item>जनवरी</item>
+        <item>फरवरी</item>
+        <item>मार्च</item>
+        <item>अप्रैल</item>
+        <item>मई</item>
+        <item>जून</item>
+        <item>जुलाई</item>
+        <item>अगस्त</item>
+        <item>सितंबर</item>
+        <item>अक्टूबर</item>
+        <item>नवंबर</item>
+        <item>दिसंबर</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>सोम</item>
+        <item>मंगल</item>
+        <item>बुध</item>
+        <item>गुरु</item>
+        <item>शुक्र</item>
+        <item>शनि</item>
+        <item>रवि</item>
+    </string-array>
+</resources>

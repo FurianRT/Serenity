@@ -132,14 +132,16 @@ private fun SignedInHeader(
     val title = remember {
         buildAnnotatedString {
             append(wholeText)
-            addStyle(
-                style = SpanStyle(
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.ExtraBold,
-                ),
-                start = underlinePartIndex,
-                end = underlinePartIndex + underlinePart.length,
-            )
+            if (underlinePartIndex != -1) {
+                addStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.ExtraBold,
+                    ),
+                    start = underlinePartIndex,
+                    end = underlinePartIndex + underlinePart.length,
+                )
+            }
         }
     }
     Column(
@@ -187,14 +189,16 @@ private fun SignedOutHeader(
     val title = remember {
         buildAnnotatedString {
             append(wholeText)
-            addStyle(
-                style = SpanStyle(
-                    textDecoration = TextDecoration.Underline,
-                    fontWeight = FontWeight.ExtraBold,
-                ),
-                start = underlinePartIndex,
-                end = underlinePartIndex + underlinePart.length,
-            )
+            if (underlinePartIndex != -1) {
+                addStyle(
+                    style = SpanStyle(
+                        textDecoration = TextDecoration.Underline,
+                        fontWeight = FontWeight.ExtraBold,
+                    ),
+                    start = underlinePartIndex,
+                    end = underlinePartIndex + underlinePart.length,
+                )
+            }
         }
     }
     Text(

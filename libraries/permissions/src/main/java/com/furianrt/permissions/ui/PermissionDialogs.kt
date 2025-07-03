@@ -57,16 +57,20 @@ fun MediaPermissionDialog(
             val boldPartOneIndex = title.indexOf(boldPartOne)
             val boldPartTwoIndex = title.indexOf(boldPartTwo)
             append(title)
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartOneIndex,
-                end = boldPartOneIndex + boldPartOne.length,
-            )
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartTwoIndex,
-                end = boldPartTwoIndex + boldPartTwo.length,
-            )
+            if (boldPartOneIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartOneIndex,
+                    end = boldPartOneIndex + boldPartOne.length,
+                )
+            }
+            if (boldPartTwoIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartTwoIndex,
+                    end = boldPartTwoIndex + boldPartTwo.length,
+                )
+            }
         },
         cancelButton = {
             ActionButton(
@@ -123,16 +127,20 @@ fun AudioRecordPermissionDialog(
             val boldPartOneIndex = title.indexOf(boldPartOne)
             val boldPartTwoIndex = title.indexOf(boldPartTwo)
             append(title)
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartOneIndex,
-                end = boldPartOneIndex + boldPartOne.length,
-            )
-            addStyle(
-                style = SpanStyle(fontWeight = FontWeight.ExtraBold),
-                start = boldPartTwoIndex,
-                end = boldPartTwoIndex + boldPartTwo.length,
-            )
+            if (boldPartOneIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartOneIndex,
+                    end = boldPartOneIndex + boldPartOne.length,
+                )
+            }
+            if (boldPartTwoIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartTwoIndex,
+                    end = boldPartTwoIndex + boldPartTwo.length,
+                )
+            }
         },
         cancelButton = {
             ActionButton(
