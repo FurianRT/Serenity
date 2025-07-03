@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.update
 import java.lang.ref.WeakReference
+import java.util.Locale
 import javax.inject.Inject
 
 internal class LocaleRepositoryImp @Inject constructor(
@@ -21,7 +22,7 @@ internal class LocaleRepositoryImp @Inject constructor(
 ) : LocaleRepository {
     private val activityCallbacks = CurrentActivityCallbacks()
 
-    private val localeFlow = MutableStateFlow(getDefaultLocale())
+    private val localeFlow by lazy { MutableStateFlow(getDefaultLocale()) }
 
     init {
         (applicationContext as Application).registerActivityLifecycleCallbacks(activityCallbacks)
@@ -41,17 +42,15 @@ internal class LocaleRepositoryImp @Inject constructor(
             AppLocale.ENGLISH,
             AppLocale.RUSSIAN,
             AppLocale.HINDI,
+            AppLocale.INDONESIAN,
+            AppLocale.SPAIN,
         )
     )
 
     override fun getSelectedLocale(): Flow<AppLocale> = localeFlow
 
     private fun getDefaultLocale(): AppLocale {
-        val localeManager = activityContext.getSystemService(LocaleManager::class.java)
-        val currentLocales = localeManager?.applicationLocales
-        val currentLocale = currentLocales?.get(0)
-        val languageTag = currentLocale?.toLanguageTag()
-        return AppLocale.fromTag(languageTag)
+        return AppLocale.fromTag(Locale.getDefault().language)
     }
 }
 

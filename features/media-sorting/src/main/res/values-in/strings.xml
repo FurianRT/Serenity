@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Edit Blok Media</string>
+    <string name="media_sorting_drag_and_drop_hint">Seret &amp; Lepas untuk mengubah urutan</string>
+    <string name="media_sorting_save_chages_hint">Apakah Anda ingin menyimpan perubahan?</string>
+</resources>

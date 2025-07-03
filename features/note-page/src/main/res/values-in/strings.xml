@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_title_hint_text">Teks…</string>
+    <string name="note_title_hint_write_more_here">Tulis lebih banyak di sini…</string>
+    <string name="note_sticker_limit_message">Batas stiker tercapai</string>
+</resources>

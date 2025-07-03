@@ -1,0 +1,29 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Masukkan PIN Anda</string>
+    <string name="lock_enter_new_pin_title">Masukkan PIN baru</string>
+    <string name="lock_repeat_your_pin_title">Ulangi PIN Anda</string>
+    <string name="lock_forgot_pin_title">Lupa PIN Anda?</string>
+    <string name="lock_fingerprint_title">Hanya orang keren yang diizinkan</string>
+    <string name="lock_use_pin_title">Gunakan PIN</string>
+    <string name="recovery_email_hint">Masukkan alamat email untuk menerima kode PIN yang terlupa</string>
+    <string name="recovery_email_format_error">Email tidak valid</string>
+    <string name="pin_recovery_dialog_title">Kami akan mengirim instruksi reset PIN ke %s. Jika tidak menerima email, periksa folder spam Anda</string>
+    <string name="pin_recovery_email_subject">Pemulihan PIN</string>
+    <string name="pin_recovery_email_content">PIN Anda: %s</string>
+    <string name="pin_recovery_email_title">Alamat email</string>
+    <string name="send_pin_recovery_email_failure">Terjadi kesalahan</string>
+    <string name="send_pin_recovery_email_success">Email pemulihan telah dikirim</string>
+
+    <string name="security_enable_pin_title">Aktifkan PIN</string>
+    <string name="security_email_to_recover_pin_title">Email untuk pemulihan PIN</string>
+    <string name="security_pin_request_title">Penundaan permintaan PIN</string>
+    <string name="security_enable_fingerprint_title">Aktifkan Sidik Jari</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="other">%d detik</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="other">%d menit</item>
+    </plurals>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Izinkan izin "Izinkan semua", atau pilih lebih banyak media</string>
+    <string name="media_selector_empty_list_title">Kosong</string>
+    <string name="media_selector_apply_button_title">Lampirkan %d media</string>
+    <string name="media_selector_discard_title">Batalkan pilihan</string>
+    <string name="media_selector_discard_hint">Apakah Anda ingin menutup menu lampiran?</string>
+</resources>

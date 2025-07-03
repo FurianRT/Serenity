@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Cadangan Otomatis</string>
+    <string name="backup_auto_backup_period_title">Periode Cadangan Otomatis</string>
+    <string name="backup_last_sync_time_title">Sinkron terakhir: %s</string>
+    <string name="backup_restore_data_title">Pulihkan Data</string>
+    <string name="backup_backup_data_title">Cadangkan</string>
+    <string name="backup_last_sync_time_none_title">Tidak ada</string>
+    <string name="backup_sign_out_title">Keluar</string>
+    <string name="backup_tap_to_sing_in_title">Ketuk untuk Masuk</string>
+    <string name="backup_tap_to_sing_in_underline_part">Masuk</string>
+    <string name="backup_tap_to_sing_out_title">Ketuk untuk Keluar</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Keluar begitu cepat?</string>
+    <string name="backup_confirm_sign_out_message">Anda bisa masuk kembali kapan saja, tapi cadangan akan dihentikan sampai itu</string>
+    <string name="backup_period_one_day_title">1 hari</string>
+    <string name="backup_period_three_days_title">3 hari</string>
+    <string name="backup_period_one_week_title">1 minggu</string>
+    <string name="backup_period_two_weeks_title">2 minggu</string>
+    <string name="backup_period_one_month_title">1 bulan</string>
+
+    <string name="backup_popular_question_1_title">Bagaimana sinkronisasi dengan Google Drive bekerja?</string>
+    <string name="backup_popular_question_1_answer">Catatan Anda secara otomatis dicadangkan ke akun Google Drive pribadi Anda. Ini memastikan data Anda tersimpan dengan aman dan dapat diakses dari beberapa perangkat.</string>
+    <string name="backup_popular_question_2_title">Di mana catatan saya disimpan di Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Catatan Anda disimpan di folder tersembunyi khusus aplikasi di Google Drive Anda, jadi tidak akan muncul di daftar file Drive biasa. Folder ini bersifat pribadi dan hanya Anda yang dapat mengaksesnya — termasuk pengembang aplikasi tidak dapat melihat catatan Anda.</string>
+    <string name="backup_popular_question_3_title">Apakah saya perlu akun Google untuk sinkronisasi?</string>
+    <string name="backup_popular_question_3_answer">Ya, Anda harus masuk dengan akun Google untuk mengaktifkan sinkronisasi cloud.</string>
+    <string name="backup_popular_question_4_title">Bisakah saya mengakses catatan langsung dari Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Tidak, catatan disimpan dalam folder aplikasi pribadi yang tidak terlihat di antarmuka Google Drive. Anda hanya dapat mengaksesnya melalui aplikasi.</string>
+    <string name="backup_popular_question_5_title">Apa yang terjadi jika saya menghapus aplikasi? Apakah catatan saya akan terhapus?</string>
+    <string name="backup_popular_question_5_answer">Menghapus aplikasi tidak menghapus catatan Anda dari Google Drive. Saat Anda menginstal ulang dan masuk dengan akun Google yang sama, catatan Anda akan dipulihkan.</string>
+    <string name="backup_popular_question_6_title">Bisakah saya menyinkronkan catatan saya di beberapa perangkat?</string>
+    <string name="backup_popular_question_6_answer">Ya! Selama Anda masuk dengan akun Google yang sama di semua perangkat, catatan Anda akan disinkronkan.</string>
+    <string name="backup_popular_question_7_title">Apakah data saya aman?</string>
+    <string name="backup_popular_question_7_answer">Ya. Catatan Anda disimpan di folder Google Drive khusus aplikasi yang bersifat pribadi, dan aplikasi tidak membagikan data Anda dengan siapa pun.</string>
+    <string name="backup_popular_question_8_title">Apa yang terjadi jika saya mengganti akun Google?</string>
+    <string name="backup_popular_question_8_answer">Jika Anda beralih ke akun Google lain, catatan dari akun sebelumnya tidak akan tersedia. Untuk mengaksesnya, Anda harus kembali ke akun Google asli.</string>
+
+    <string name="backup_notifications_channel_name">Saluran Cadangan</string>
+    <string name="backup_notifications_channel_description">Menampilkan progres cadangan</string>
+    <string name="backup_notification_initial_description">Catatan Anda sedang diunggah. Mohon tunggu sebentar.</string>
+    <string name="restore_notification_initial_description">Catatan Anda sedang diunduh. Mohon tunggu sebentar.</string>
+
+    <string name="backup_warning_title">Peringatan Cadangan</string>
+    <string name="backup_warning_body">Anda akan membuat cadangan baru. Perhatian: ini akan menimpa cadangan lama di Google Drive. Setelah diganti, data sebelumnya tidak bisa dipulihkan. Pastikan Anda setuju sebelum melanjutkan.</string>
+
+    <string name="backup_progress_message">Cadangan dalam proses %d/%d</string>
+    <string name="restore_progress_message">Pemulihan dalam proses %d/%d</string>
+    <string name="backup_starting_message">Memulai cadangan…</string>
+    <string name="restore_starting_message">Memulai pemulihan…</string>
+
+    <string name="backup_sync_in_progress_message">Sinkronisasi berlangsung</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Masuk dibatalkan</string>
+    <string name="backup_success_message">Selesai</string>
+</resources>

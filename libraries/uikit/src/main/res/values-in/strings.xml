@@ -1,0 +1,63 @@
+<resources>
+    <string name="action_cancel">Batal</string>
+    <string name="action_discard">Buang</string>
+    <string name="action_not_now">Nanti saja</string>
+    <string name="action_delete">Hapus</string>
+    <string name="action_share">Bagikan</string>
+    <string name="action_save">Simpan</string>
+    <string name="action_confirm">Konfirmasi</string>
+    <string name="action_send">Kirim</string>
+    <string name="action_done">Selesai</string>
+    <string name="action_pin">Semat</string>
+    <string name="action_unpin">Lepas Semat</string>
+    <string name="action_contact_us">Hubungi Kami</string>
+    <string name="action_select">Pilih</string>
+    <string name="action_continue">Lanjutkan</string>
+    <string name="action_change_sorting">Ubah Urutan</string>
+
+    <string name="title_email">Email</string>
+
+    <string name="settings_title">Pengaturan</string>
+    <string name="security_title">Keamanan</string>
+
+    <string name="media_counter_pattern">%d dari %d</string>
+    <string name="general_error">Terjadi kesalahan</string>
+    <string name="general_error_with_code">%d Terjadi kesalahan</string>
+    <string name="network_error">Tidak ada koneksi internet</string>
+
+    <string name="today_title">Hari ini</string>
+    <string name="yesterday_title">Kemarin</string>
+
+    <string name="delete_notes_warning_title">Cek dulu…</string>
+    <string name="delete_notes_warning_body">Apakah Anda yakin ingin menghapus catatan ini? Anda tidak akan bisa mengembalikannya nanti.</string>
+    <string name="delete_note_warning_body">Apakah Anda yakin ingin menghapus catatan ini? Anda tidak akan bisa mengembalikannya nanti.</string>
+
+    <string name="backup_in_progress">Cadangan sedang berlangsung</string>
+    <string name="restore_in_progress">Pemulihan sedang berlangsung</string>
+
+    <string-array name="months_array">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maret</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Agustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>Desember</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Sen</item>
+        <item>Sel</item>
+        <item>Rab</item>
+        <item>Kam</item>
+        <item>Jum</item>
+        <item>Sab</item>
+        <item>Min</item>
+    </string-array>
+
+</resources>
