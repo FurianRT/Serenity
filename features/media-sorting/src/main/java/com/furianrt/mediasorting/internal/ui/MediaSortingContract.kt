@@ -8,6 +8,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 
 internal data class MediaSortingUiState(
     val media: List<MediaItem>,
+    val hasContentChanged: Boolean,
 )
 
 internal sealed interface MediaSortingEvent {

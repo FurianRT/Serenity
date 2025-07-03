@@ -4,7 +4,6 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
-import com.furianrt.core.deepEqualTo
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.repositories.NotesRepository
@@ -98,7 +97,7 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun sendResult() {
-        if (isMediaListChanged()) {
+        if (state.value.hasContentChanged) {
             dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = DialogIdentifier(
                     requestId = route.requestId,
@@ -116,18 +115,11 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun checkCloseScreen() {
-        if (isMediaListChanged()) {
+        if (state.value.hasContentChanged) {
             _effect.tryEmit(MediaSortingEffect.ShowConfirmCloseDialog)
         } else {
             _effect.tryEmit(MediaSortingEffect.CloseScreen)
         }
-    }
-
-    private fun isMediaListChanged(): Boolean {
-        val existingItems = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
-            .map(LocalNote.Content.Media::toMediaItem)
-        val newItems = state.value.media
-        return !existingItems.deepEqualTo(newItems)
     }
 
     private fun changeMediaOrder(from: LazyGridItemInfo, to: LazyGridItemInfo) {
@@ -136,6 +128,7 @@ internal class MediaSortingViewModel @Inject constructor(
                 media = currentState.media.toMutableList().apply {
                     add(to.index, removeAt(from.index))
                 },
+                hasContentChanged = true,
             )
         }
     }
@@ -145,6 +138,7 @@ internal class MediaSortingViewModel @Inject constructor(
             val newItems = result.toMediaItems()
             currentState.copy(
                 media = currentState.media.toMutableList().apply { addAll(newItems) },
+                hasContentChanged = true
             )
         }
     }
@@ -155,6 +149,7 @@ internal class MediaSortingViewModel @Inject constructor(
                 media = currentState.media.toMutableList().apply {
                     removeAll { mediaIds.contains(it.id) }
                 },
+                hasContentChanged = true,
             )
         }
     }
@@ -203,5 +198,6 @@ internal class MediaSortingViewModel @Inject constructor(
     private fun buildInitialState() = MediaSortingUiState(
         media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
             .map(LocalNote.Content.Media::toMediaItem),
+        hasContentChanged = false,
     )
 }

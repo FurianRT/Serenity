@@ -283,7 +283,7 @@ private fun SuccessScreen(
         )
 
         GeneralButton(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp),
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
             hint = uiState.locale.text,
