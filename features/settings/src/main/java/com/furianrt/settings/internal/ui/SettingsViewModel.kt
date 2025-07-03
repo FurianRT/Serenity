@@ -3,10 +3,13 @@ package com.furianrt.settings.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
+import com.furianrt.core.doWithState
 import com.furianrt.core.mapImmutable
+import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
+import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
@@ -39,6 +42,7 @@ internal class SettingsViewModel @Inject constructor(
     private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val localeRepository: LocaleRepository,
     private val buildInfoProvider: BuildInfoProvider,
 ) : ViewModel() {
 
@@ -46,6 +50,7 @@ internal class SettingsViewModel @Inject constructor(
         getAppThemeListUseCase(),
         appearanceRepository.getAppThemeColorId(),
         settingsRepository.getAppRating(),
+        localeRepository.getSelectedLocale(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
@@ -96,6 +101,19 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonPrivacyPolicyClick -> {
                 _effect.tryEmit(SettingsEffect.OpenLink(PRIVACY_POLICY_LINK))
             }
+
+            is SettingsEvent.OnLocaleClick -> launch {
+                state.doWithState<SettingsUiState.Success> { successState ->
+                    _effect.tryEmit(
+                        SettingsEffect.ShowLocaleDialog(
+                            locale = localeRepository.getLocaleList().first(),
+                            selectedLocale = successState.locale,
+                        )
+                    )
+                }
+            }
+
+            is SettingsEvent.OnLocaleSelected -> localeRepository.setSelectedLocale(event.locale)
         }
     }
 
@@ -127,10 +145,12 @@ internal class SettingsViewModel @Inject constructor(
         themes: ImmutableList<UiThemeColor>,
         selectedThemeColorId: String?,
         rating: Int,
+        locale: AppLocale,
     ) = SettingsUiState.Success(
         themes = themes,
         selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId),
         rating = rating,
         appVersion = buildInfoProvider.getAppVersionName(),
+        locale = locale,
     )
 }

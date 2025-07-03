@@ -1,6 +1,7 @@
 package com.furianrt.settings.internal.ui
 
 import androidx.annotation.IntRange
+import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.entities.UiThemeColor
 import kotlinx.collections.immutable.ImmutableList
@@ -12,6 +13,7 @@ internal sealed interface SettingsUiState {
         val selectedThemeColor: UiThemeColor,
         @IntRange(0L, 5L) val rating: Int,
         val appVersion: String,
+        val locale: AppLocale,
     ) : SettingsUiState
 }
 
@@ -24,6 +26,8 @@ internal sealed interface SettingsEvent {
     data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
     data class OnRatingSelected(val rating: Int) : SettingsEvent
+    data object OnLocaleClick : SettingsEvent
+    data class OnLocaleSelected(val locale: AppLocale) : SettingsEvent
     data object OnButtonTermsAndConditionsClick : SettingsEvent
     data object OnButtonPrivacyPolicyClick : SettingsEvent
 }
@@ -51,4 +55,8 @@ internal sealed interface SettingsEffect {
     ) : SettingsEffect
 
     data class OpenLink(val url: String) : SettingsEffect
+    data class ShowLocaleDialog(
+        val locale: List<AppLocale>,
+        val selectedLocale: AppLocale,
+    ) : SettingsEffect
 }

@@ -56,10 +56,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
+import com.furianrt.settings.internal.ui.composables.LocaleDialog
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -86,6 +88,11 @@ private data class FontsDialogState(
     val selectedFont: UiNoteFontFamily,
 )
 
+private data class LocaleDialogState(
+    val locale: List<AppLocale>,
+    val selectedLocale: AppLocale,
+)
+
 @Composable
 internal fun SettingsScreen(
     openSecurityScreen: () -> Unit,
@@ -106,6 +113,7 @@ internal fun SettingsScreen(
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
+    var localeDialogState: LocaleDialogState? by remember { mutableStateOf(null) }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -142,6 +150,10 @@ internal fun SettingsScreen(
                     is SettingsEffect.OpenLink -> {
                         context.startActivity(Intent(Intent.ACTION_VIEW, effect.url.toUri()))
                     }
+
+                    is SettingsEffect.ShowLocaleDialog -> {
+                        localeDialogState = LocaleDialogState(effect.locale, effect.selectedLocale)
+                    }
                 }
             }
     }
@@ -167,6 +179,15 @@ internal fun SettingsScreen(
             hazeState = hazeState,
             onFontSelected = { viewModel.onEvent(SettingsEvent.OnFontSelected(it)) },
             onDismissRequest = { fontsDialogState = null }
+        )
+    }
+    localeDialogState?.let { state ->
+        LocaleDialog(
+            locales = state.locale,
+            selectedLocale = state.selectedLocale,
+            hazeState = hazeState,
+            onLocaleSelected = { viewModel.onEvent(SettingsEvent.OnLocaleSelected(it)) },
+            onDismissRequest = { localeDialogState = null }
         )
     }
 }
@@ -261,15 +282,15 @@ private fun SuccessScreen(
             onSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
         )
 
-        /*GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
+        GeneralButton(
+            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
-            hint = "English",
-            onClick = {},
-        )*/
+            hint = uiState.locale.text,
+            onClick = { onEvent(SettingsEvent.OnLocaleClick) },
+        )
         Rating(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 12.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             rating = uiState.rating,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
@@ -483,6 +504,7 @@ private fun ScreenContentPreview() {
                 selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                 rating = 4,
                 appVersion = "1.0",
+                locale = AppLocale.ENGLISH,
             ),
         )
     }

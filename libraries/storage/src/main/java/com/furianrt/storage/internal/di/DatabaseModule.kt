@@ -4,6 +4,7 @@ import android.content.Context
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
+import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.ProfileRepository
@@ -20,6 +21,7 @@ import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.DeviceInfoRepositoryImp
+import com.furianrt.storage.internal.repositories.LocaleRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
 import com.furianrt.storage.internal.repositories.ProfileRepositoryImp
@@ -64,6 +66,10 @@ internal interface DatabaseModule {
     @Binds
     @Singleton
     fun deviceInfoRepository(imp: DeviceInfoRepositoryImp): DeviceInfoRepository
+
+    @Binds
+    @Singleton
+    fun localeRepository(imp: LocaleRepositoryImp): LocaleRepository
 
     companion object {
         @Provides

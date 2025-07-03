@@ -1,0 +1,74 @@
+package com.furianrt.storage.internal.repositories
+
+import android.app.Activity
+import android.app.Application
+import android.app.LocaleManager
+import android.content.Context
+import android.os.Bundle
+import android.os.LocaleList
+import com.furianrt.domain.entities.AppLocale
+import com.furianrt.domain.repositories.LocaleRepository
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.update
+import java.lang.ref.WeakReference
+import javax.inject.Inject
+
+internal class LocaleRepositoryImp @Inject constructor(
+    @ApplicationContext private val applicationContext: Context,
+) : LocaleRepository {
+    private val activityCallbacks = CurrentActivityCallbacks()
+
+    private val localeFlow = MutableStateFlow(getDefaultLocale())
+
+    init {
+        (applicationContext as Application).registerActivityLifecycleCallbacks(activityCallbacks)
+    }
+
+    private val activityContext: Context
+        get() = (activityCallbacks.currentActivityContext ?: applicationContext)
+
+    override fun setSelectedLocale(locale: AppLocale) {
+        val localeManager = activityContext.getSystemService(LocaleManager::class.java)
+        localeManager?.applicationLocales = LocaleList.forLanguageTags(locale.tag)
+        localeFlow.update { locale }
+    }
+
+    override fun getLocaleList(): Flow<List<AppLocale>> = flowOf(
+        listOf(
+            AppLocale.ENGLISH,
+            AppLocale.RUSSIAN,
+        )
+    )
+
+    override fun getSelectedLocale(): Flow<AppLocale> = localeFlow
+
+    private fun getDefaultLocale(): AppLocale {
+        val localeManager = activityContext.getSystemService(LocaleManager::class.java)
+        val currentLocales = localeManager?.applicationLocales
+        val currentLocale = currentLocales?.get(0)
+        val languageTag = currentLocale?.toLanguageTag()
+        return AppLocale.fromTag(languageTag)
+    }
+}
+
+private class CurrentActivityCallbacks : Application.ActivityLifecycleCallbacks {
+
+    private var currentActivity: WeakReference<Activity>? = null
+
+    val currentActivityContext: Context?
+        get() = currentActivity?.get()?.takeUnless { it.isDestroyed }
+
+
+    override fun onActivityStarted(activity: Activity) = Unit
+    override fun onActivityResumed(activity: Activity) = Unit
+    override fun onActivityPaused(activity: Activity) = Unit
+    override fun onActivityStopped(activity: Activity) = Unit
+    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+    override fun onActivityDestroyed(activity: Activity) = Unit
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        currentActivity = WeakReference(activity)
+    }
+}
