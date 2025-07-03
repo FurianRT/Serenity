@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Suchen</string>
+    <string name="notes_list_empty_list_title">\"Jede Geschichte beginnt mit einem Wort\"</string>
+    <string name="notes_list_empty_list_body">Tippe, um deine zu beginnen!</string>
+</resources>

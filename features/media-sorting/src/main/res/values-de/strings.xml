@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Medienblock bearbeiten</string>
+    <string name="media_sorting_drag_and_drop_hint">Ziehen &amp; ablegen, um die Reihenfolge zu ändern</string>
+    <string name="media_sorting_save_chages_hint">Möchtest du deine Änderungen speichern?</string>
+</resources>
