@@ -213,7 +213,9 @@ private fun MainScreenContent(
             contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 24.dp),
             onScrollToTopClick = { onEvent(NoteListEvent.OnScrollToTopClick) },
             needToHideNavigation = {
-                uiState.hasNotes && screenState.listState.lastScrolledForward
+                uiState.hasNotes &&
+                        screenState.listState.lastScrolledForward &&
+                        screenState.listState.canScrollForward
             },
             needToShowScrollUpButton = { uiState.hasNotes && needToShowScrollUpButton },
             onAddNoteClick = { onEvent(NoteListEvent.OnAddNoteClick) },
