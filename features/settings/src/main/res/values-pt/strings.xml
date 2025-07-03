@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">Segurança</string>
+    <string name="settings_backup_title">Backup e Restauração</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_font_title">Fonte do App</string>
+    <string name="settings_language_title">Idioma</string>
+    <string name="settings_rate_us_title">Avalie-nos</string>
+    <string name="settings_donate_title">Doar</string>
+    <string name="settings_feedback_title">Reportar um Problema</string>
+    <string name="settings_terms_and_conditions_title">Termos e Condições</string>
+    <string name="settings_privacy_policy_title">Política de Privacidade</string>
+    <string name="settings_version_title">Versão %s</string>
+
+    <string name="settings_feedback_email_subject">Feedback Serenity %s</string>
+    <string name="settings_feedback_email_error">Falha ao enviar email</string>
+
+    <string name="settings_bad_feedback_title">Algo não está certo?</string>
+    <string name="settings_bad_feedback_body">Seu feedback é muito importante. Ajude-nos a melhorar sua experiência</string>
+</resources>

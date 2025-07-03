@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Por favor, conceda a permissão "Permitir tudo" ou selecione mais mídias</string>
+    <string name="media_selector_empty_list_title">Vazio</string>
+    <string name="media_selector_apply_button_title">Anexar %d mídias</string>
+    <string name="media_selector_discard_title">Descartar seleção</string>
+    <string name="media_selector_discard_hint">Você quer fechar o menu de anexos?</string>
+</resources>

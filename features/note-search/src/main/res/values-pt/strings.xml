@@ -1,0 +1,10 @@
+<resources>
+    <string name="notes_search_bar_title">Pesquisar por texto e tags</string>
+    <string name="notes_search_empty_search_title">Nenhuma nota encontrada</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d catatan ditemukan</item>
+        <item quantity="many">%d catatan ditemukan</item>
+        <item quantity="other">%d catatan ditemukan</item>
+    </plurals>
+</resources>
