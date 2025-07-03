@@ -1,5 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.viewer
 
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -52,8 +53,17 @@ internal fun MediaViewerScreen(
     val viewModel = hiltViewModel<MediaViewerViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val activity = LocalActivity.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    DisposableEffect(Unit) {
+        val requestedOrientation = activity?.requestedOrientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
+        onDispose {
+            requestedOrientation?.let { activity.requestedOrientation = it }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect

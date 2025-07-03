@@ -1,5 +1,6 @@
 package com.furianrt.mediaview.internal.ui
 
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -67,12 +68,21 @@ internal fun MediaViewScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
+    val activity = LocalActivity.current
 
     val snackBarHostState = remember { SnackbarHostState() }
     val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
     val imageNotSavedMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    DisposableEffect(Unit) {
+        val requestedOrientation = activity?.requestedOrientation
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_FULL_USER
+        onDispose {
+            requestedOrientation?.let { activity.requestedOrientation = it }
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.effect
