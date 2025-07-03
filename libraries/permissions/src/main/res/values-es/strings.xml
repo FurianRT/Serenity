@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity membutuhkan akses ke penyimpanan Anda agar dapat melampirkan foto dan video. Ketuk Pengaturan > Izin, dan aktifkan Foto dan video</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Foto dan video</string>
+
+    <string name="audio_record_permission_message">Serenity membutuhkan akses ke mikrofon Anda untuk merekam suara. Ketuk Pengaturan > Izin, dan aktifkan Mikrofon</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Mikrofon</string>
+</resources>

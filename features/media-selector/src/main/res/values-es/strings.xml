@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Por favor concede el permiso "Permitir todo" o selecciona más medios</string>
+    <string name="media_selector_empty_list_title">Vacío</string>
+    <string name="media_selector_apply_button_title">Adjuntar %d medios</string>
+    <string name="media_selector_discard_title">Descartar selección</string>
+    <string name="media_selector_discard_hint">¿Quieres cerrar el menú de adjuntos?</string>
+</resources>

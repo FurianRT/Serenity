@@ -1,0 +1,10 @@
+<resources>
+    <string name="notes_search_bar_title">Buscar por texto y etiquetas</string>
+    <string name="notes_search_empty_search_title">No se encontraron notas</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d nota encontrada</item>
+        <item quantity="many">%d notas encontradas</item>
+        <item quantity="other">%d notas encontradas</item>
+    </plurals>
+</resources>

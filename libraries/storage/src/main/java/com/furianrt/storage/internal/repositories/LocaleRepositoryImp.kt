@@ -43,7 +43,7 @@ internal class LocaleRepositoryImp @Inject constructor(
             AppLocale.RUSSIAN,
             AppLocale.HINDI,
             AppLocale.INDONESIAN,
-            AppLocale.SPAIN,
+            AppLocale.SPANISH,
         )
     )
 

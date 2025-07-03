@@ -1,0 +1,33 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Introduce tu PIN</string>
+    <string name="lock_enter_new_pin_title">Introduce un nuevo PIN</string>
+    <string name="lock_repeat_your_pin_title">Repite tu PIN</string>
+    <string name="lock_forgot_pin_title">¿Olvidaste tu PIN?</string>
+    <string name="lock_fingerprint_title">Solo personas geniales permitidas</string>
+    <string name="lock_use_pin_title">Usar PIN</string>
+    <string name="recovery_email_hint">Por favor, introduce tu correo electrónico para recibir tu PIN olvidado</string>
+    <string name="recovery_email_format_error">Correo electrónico inválido</string>
+    <string name="pin_recovery_dialog_title">Enviaremos instrucciones para restablecer el PIN a %s. Si no recibes el correo, revisa la carpeta de spam</string>
+    <string name="pin_recovery_email_subject">Recuperación de PIN</string>
+    <string name="pin_recovery_email_content">Tu PIN: %s</string>
+    <string name="pin_recovery_email_title">Dirección de correo</string>
+    <string name="send_pin_recovery_email_failure">Algo salió mal</string>
+    <string name="send_pin_recovery_email_success">Correo de recuperación enviado</string>
+
+    <string name="security_enable_pin_title">Activar PIN</string>
+    <string name="security_email_to_recover_pin_title">Correo para recuperar PIN</string>
+    <string name="security_pin_request_title">Retraso en la solicitud de PIN</string>
+    <string name="security_enable_fingerprint_title">Activar huella digital</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d segundo</item>
+        <item quantity="many">%d segundos</item>
+        <item quantity="other">%d segundos</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minuto</item>
+        <item quantity="many">%d minutos</item>
+        <item quantity="other">%d minutos</item>
+    </plurals>
+</resources>
