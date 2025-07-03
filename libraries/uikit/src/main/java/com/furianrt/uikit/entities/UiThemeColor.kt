@@ -46,7 +46,7 @@ enum class UiThemeColor(
     IRIS_RED(
         id = "7",
         primary = Colors.Primary.IrisRed,
-        accent = Colors.Accent.Red,
+        accent = Colors.Accent.RedDark,
     ),
     IRIS_RED_DARK(
         id = "8",

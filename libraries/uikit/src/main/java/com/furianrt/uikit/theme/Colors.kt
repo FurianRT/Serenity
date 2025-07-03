@@ -34,12 +34,12 @@ object Colors {
         val Turquoise = Color(0xFF39A0A8)
         val Blue = Color(0xFF446DFF)
         val Blue2 = Color(0xFF5A8DEE)
-        val Blue3 = Color(0xFF8FC0D8)
+        val Blue3 = Color(0xFF66C28E)
         val RichMulberry = Color(0xFF7A004F)
         val Pink = Color(0xFFBC8AC3)
         val Pink3 = Color(0xFFA65768)
         val PlumWine = Color(0xFF6B2F4E)
-        val Red = Color(0xFFEA1640)
+        val RedDark = Color(0xFF5D0F0F)
     }
 
     object Font {
