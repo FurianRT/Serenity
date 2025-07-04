@@ -1,0 +1,31 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Ilagay ang iyong PIN</string>
+    <string name="lock_enter_new_pin_title">Ilagay ang bagong PIN</string>
+    <string name="lock_repeat_your_pin_title">Ulitin ang iyong PIN</string>
+    <string name="lock_forgot_pin_title">Nakalimutan mo ba ang iyong PIN?</string>
+    <string name="lock_fingerprint_title">Para lamang sa mga kahanga-hangang tao</string>
+    <string name="lock_use_pin_title">Gumamit ng PIN</string>
+    <string name="recovery_email_hint">Ilagay ang iyong email para makatanggap ng PIN code</string>
+    <string name="recovery_email_format_error">Hindi valid ang email</string>
+    <string name="pin_recovery_dialog_title">Ipapadala namin ang mga tagubilin sa pag-reset ng PIN sa %s. Kung hindi mo makita, tingnan ang spam folder</string>
+    <string name="pin_recovery_email_subject">Pag-recover ng PIN</string>
+    <string name="pin_recovery_email_content">Ang iyong PIN: %s</string>
+    <string name="pin_recovery_email_title">Email address</string>
+    <string name="send_pin_recovery_email_failure">May nagkamaling nangyari</string>
+    <string name="send_pin_recovery_email_success">Nai-send na ang recovery email</string>
+
+    <string name="security_enable_pin_title">I-enable ang PIN</string>
+    <string name="security_email_to_recover_pin_title">Email para ma-recover ang PIN</string>
+    <string name="security_pin_request_title">Delay sa request ng PIN</string>
+    <string name="security_enable_fingerprint_title">I-enable ang Fingerprint</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d segundo</item>
+        <item quantity="other">%d segundo</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minuto</item>
+        <item quantity="other">%d minuto</item>
+    </plurals>
+</resources>

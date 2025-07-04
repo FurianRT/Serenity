@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Sao lưu tự động</string>
+    <string name="backup_auto_backup_period_title">Thời gian sao lưu tự động</string>
+    <string name="backup_last_sync_time_title">Đồng bộ lần cuối: %s</string>
+    <string name="backup_restore_data_title">Khôi phục dữ liệu</string>
+    <string name="backup_backup_data_title">Sao lưu</string>
+    <string name="backup_last_sync_time_none_title">Không có</string>
+    <string name="backup_sign_out_title">Đăng xuất</string>
+    <string name="backup_tap_to_sing_in_title">Chạm để Đăng nhập</string>
+    <string name="backup_tap_to_sing_in_underline_part">Đăng nhập</string>
+    <string name="backup_tap_to_sing_out_title">Chạm để Đăng xuất</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Rời đi sớm thế?</string>
+    <string name="backup_confirm_sign_out_message">Bạn có thể đăng nhập lại bất cứ lúc nào, nhưng lưu ý rằng sao lưu sẽ tạm dừng cho đến lúc đó</string>
+    <string name="backup_period_one_day_title">1 ngày</string>
+    <string name="backup_period_three_days_title">3 ngày</string>
+    <string name="backup_period_one_week_title">1 tuần</string>
+    <string name="backup_period_two_weeks_title">2 tuần</string>
+    <string name="backup_period_one_month_title">1 tháng</string>
+    <string name="backup_popular_question_1_title">Đồng bộ với Google Drive hoạt động như thế nào?</string>
+    <string name="backup_popular_question_1_answer">Ghi chú của bạn sẽ tự động được sao lưu vào tài khoản Google Drive cá nhân. Điều này đảm bảo dữ liệu được lưu trữ an toàn và có thể truy cập từ nhiều thiết bị.</string>
+    <string name="backup_popular_question_2_title">Ghi chú của tôi được lưu ở đâu trên Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Ghi chú của bạn được lưu trong một thư mục ẩn riêng cho ứng dụng trên Google Drive, nên không xuất hiện trong danh sách file Drive bình thường. Thư mục này là riêng tư và chỉ bạn mới truy cập được — không ai khác, kể cả nhà phát triển ứng dụng.</string>
+    <string name="backup_popular_question_3_title">Tôi có cần tài khoản Google để dùng đồng bộ không?</string>
+    <string name="backup_popular_question_3_answer">Có, bạn phải đăng nhập bằng tài khoản Google để bật tính năng đồng bộ trên đám mây.</string>
+    <string name="backup_popular_question_4_title">Tôi có thể truy cập ghi chú trực tiếp từ Google Drive không?</string>
+    <string name="backup_popular_question_4_answer">Không, ghi chú được lưu trong thư mục riêng của ứng dụng, không hiển thị trong giao diện Google Drive. Bạn chỉ có thể truy cập qua ứng dụng.</string>
+    <string name="backup_popular_question_5_title">Nếu tôi gỡ cài đặt ứng dụng thì ghi chú có bị xóa không?</string>
+    <string name="backup_popular_question_5_answer">Gỡ cài đặt không xóa ghi chú trên Google Drive. Khi cài lại ứng dụng và đăng nhập cùng tài khoản Google, ghi chú sẽ được khôi phục.</string>
+    <string name="backup_popular_question_6_title">Tôi có thể đồng bộ ghi chú trên nhiều thiết bị không?</string>
+    <string name="backup_popular_question_6_answer">Có! Miễn là bạn đăng nhập cùng tài khoản Google trên tất cả thiết bị, ghi chú sẽ được đồng bộ.</string>
+    <string name="backup_popular_question_7_title">Dữ liệu của tôi có an toàn không?</string>
+    <string name="backup_popular_question_7_answer">Có. Ghi chú được lưu trong thư mục riêng của ứng dụng trên Google Drive, và ứng dụng không chia sẻ dữ liệu của bạn với ai khác.</string>
+    <string name="backup_popular_question_8_title">Nếu tôi đổi tài khoản Google thì sao?</string>
+    <string name="backup_popular_question_8_answer">Nếu chuyển sang tài khoản Google khác, ghi chú của tài khoản trước sẽ không hiển thị. Để truy cập, bạn phải đăng nhập lại tài khoản Google cũ.</string>
+
+    <string name="backup_notifications_channel_name">Kênh sao lưu</string>
+    <string name="backup_notifications_channel_description">Hiển thị tiến trình sao lưu</string>
+    <string name="backup_notification_initial_description">Đang tải ghi chú lên. Quá trình có thể mất chút thời gian</string>
+    <string name="restore_notification_initial_description">Đang tải ghi chú xuống. Quá trình có thể mất chút thời gian</string>
+
+    <string name="backup_warning_title">Cảnh báo sao lưu</string>
+    <string name="backup_warning_body">Bạn sắp tạo bản sao lưu mới. Lưu ý: điều này sẽ ghi đè bản sao lưu hiện tại trên Google Drive. Một khi thay thế, dữ liệu trước đó sẽ không thể truy cập được nữa. Hãy chắc chắn bạn đồng ý trước khi tiếp tục.</string>
+
+
+    <string name="backup_progress_message">Đang sao lưu %d/%d</string>
+    <string name="restore_progress_message">Đang khôi phục %d/%d</string>
+    <string name="backup_starting_message">Bắt đầu sao lưu…</string>
+    <string name="restore_starting_message">Bắt đầu khôi phục…</string>
+
+    <string name="backup_sync_in_progress_message">Đang đồng bộ</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Đăng nhập bị gián đoạn</string>
+    <string name="backup_success_message">Hoàn thành</string>
+</resources>

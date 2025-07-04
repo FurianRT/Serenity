@@ -1,0 +1,63 @@
+<resources>
+    <string name="action_cancel">Hủy</string>
+    <string name="action_discard">Bỏ qua</string>
+    <string name="action_not_now">Không phải bây giờ</string>
+    <string name="action_delete">Xóa</string>
+    <string name="action_share">Chia sẻ</string>
+    <string name="action_save">Lưu</string>
+    <string name="action_confirm">Xác nhận</string>
+    <string name="action_send">Gửi</string>
+    <string name="action_done">Xong</string>
+    <string name="action_pin">Ghim</string>
+    <string name="action_unpin">Bỏ ghim</string>
+    <string name="action_contact_us">Liên hệ</string>
+    <string name="action_select">Chọn</string>
+    <string name="action_continue">Tiếp tục</string>
+    <string name="action_change_sorting">Thay đổi thứ tự</string>
+
+    <string name="title_email">Email</string>
+
+    <string name="settings_title">Cài đặt</string>
+    <string name="security_title">Bảo mật</string>
+
+    <string name="media_counter_pattern">%d trên %d</string>
+    <string name="general_error">Có lỗi xảy ra</string>
+    <string name="general_error_with_code">Lỗi %d xảy ra</string>
+    <string name="network_error">Không có kết nối mạng</string>
+
+    <string name="today_title">Hôm nay</string>
+    <string name="yesterday_title">Hôm qua</string>
+
+    <string name="delete_notes_warning_title">Chỉ kiểm tra…</string>
+    <string name="delete_notes_warning_body">Bạn có chắc muốn xóa những ghi chú này? Không thể khôi phục sau khi xóa</string>
+    <string name="delete_note_warning_body">Bạn có chắc muốn xóa ghi chú này? Không thể khôi phục sau khi xóa</string>
+
+    <string name="backup_in_progress">Đang sao lưu</string>
+    <string name="restore_in_progress">Đang phục hồi</string>
+
+    <string-array name="months_array">
+        <item>Tháng Một</item>
+        <item>Tháng Hai</item>
+        <item>Tháng Ba</item>
+        <item>Tháng Tư</item>
+        <item>Tháng Năm</item>
+        <item>Tháng Sáu</item>
+        <item>Tháng Bảy</item>
+        <item>Tháng Tám</item>
+        <item>Tháng Chín</item>
+        <item>Tháng Mười</item>
+        <item>Tháng Mười Một</item>
+        <item>Tháng Mười Hai</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Thứ Hai</item>
+        <item>Thứ Ba</item>
+        <item>Thứ Tư</item>
+        <item>Thứ Năm</item>
+        <item>Thứ Sáu</item>
+        <item>Thứ Bảy</item>
+        <item>Chủ Nhật</item>
+    </string-array>
+
+</resources>

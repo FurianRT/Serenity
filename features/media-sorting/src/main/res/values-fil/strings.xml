@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">I-edit ang Media Block</string>
+    <string name="media_sorting_drag_and_drop_hint">I-drag at i-drop para baguhin ang ayos</string>
+    <string name="media_sorting_save_chages_hint">Gusto mo bang i-save ang mga pagbabago?</string>
+</resources>

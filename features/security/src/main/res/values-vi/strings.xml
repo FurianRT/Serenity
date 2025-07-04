@@ -1,0 +1,29 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Nhập mã PIN của bạn</string>
+    <string name="lock_enter_new_pin_title">Nhập mã PIN mới</string>
+    <string name="lock_repeat_your_pin_title">Nhập lại mã PIN</string>
+    <string name="lock_forgot_pin_title">Quên mã PIN?</string>
+    <string name="lock_fingerprint_title">Chỉ dành cho người tuyệt vời</string>
+    <string name="lock_use_pin_title">Sử dụng mã PIN</string>
+    <string name="recovery_email_hint">Vui lòng nhập email để nhận mã PIN khi quên</string>
+    <string name="recovery_email_format_error">Email không hợp lệ</string>
+    <string name="pin_recovery_dialog_title">Chúng tôi sẽ gửi hướng dẫn đặt lại mã PIN tới %s. Nếu không nhận được, vui lòng kiểm tra thư mục spam</string>
+    <string name="pin_recovery_email_subject">Khôi phục mã PIN</string>
+    <string name="pin_recovery_email_content">Mã PIN của bạn: %s</string>
+    <string name="pin_recovery_email_title">Địa chỉ email</string>
+    <string name="send_pin_recovery_email_failure">Đã xảy ra lỗi</string>
+    <string name="send_pin_recovery_email_success">Email khôi phục đã được gửi</string>
+
+    <string name="security_enable_pin_title">Bật mã PIN</string>
+    <string name="security_email_to_recover_pin_title">Email để khôi phục mã PIN</string>
+    <string name="security_pin_request_title">Thời gian chờ yêu cầu mã PIN</string>
+    <string name="security_enable_fingerprint_title">Bật vân tay</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="other">%d giây</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="other">%d phút</item>
+    </plurals>
+</resources>

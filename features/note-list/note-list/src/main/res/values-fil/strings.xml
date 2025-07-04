@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Maghanap</string>
+    <string name="notes_list_empty_list_title">\"Bawat kwento ay nagsisimula sa isang salita\"</string>
+    <string name="notes_list_empty_list_body">I-tap para simulan ang iyo!</string>
+</resources>

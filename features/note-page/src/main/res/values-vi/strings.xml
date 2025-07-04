@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_title_hint_text">Văn bản…</string>
+    <string name="note_title_hint_write_more_here">Viết thêm ở đây…</string>
+    <string name="note_sticker_limit_message">Đã đạt giới hạn nhãn dán</string>
+</resources>

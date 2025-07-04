@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Vui lòng cấp quyền \"Cho phép tất cả\" hoặc chọn thêm phương tiện</string>
+    <string name="media_selector_empty_list_title">Trống</string>
+    <string name="media_selector_apply_button_title">Đính kèm %d phương tiện</string>
+    <string name="media_selector_discard_title">Hủy lựa chọn</string>
+    <string name="media_selector_discard_hint">Bạn có muốn đóng menu đính kèm không?</string>
+</resources>

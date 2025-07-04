@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Paki-bigay ang \"Pahintulot sa Lahat\" o pumili ng mas maraming media</string>
+    <string name="media_selector_empty_list_title">Wala</string>
+    <string name="media_selector_apply_button_title">I-attach ang %d na media</string>
+    <string name="media_selector_discard_title">Itapon ang napili</string>
+    <string name="media_selector_discard_hint">Gusto mo bang isara ang attachment menu?</string>
+</resources>

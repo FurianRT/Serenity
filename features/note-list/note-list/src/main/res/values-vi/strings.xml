@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Tìm kiếm</string>
+    <string name="notes_list_empty_list_title">\"Mỗi câu chuyện bắt đầu bằng một từ\"</string>
+    <string name="notes_list_empty_list_body">Chạm để bắt đầu câu chuyện của bạn!</string>
+</resources>

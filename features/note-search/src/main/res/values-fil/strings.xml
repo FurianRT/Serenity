@@ -1,0 +1,9 @@
+<resources>
+    <string name="notes_search_bar_title">Maghanap ayon sa teksto at mga tag</string>
+    <string name="notes_search_empty_search_title">Walang nahanap na mga tala</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d tala ang nahanap</item>
+        <item quantity="other">%d mga tala ang nahanap</item>
+    </plurals>
+</resources>

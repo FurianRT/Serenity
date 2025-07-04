@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Awtomatik na Backup</string>
+    <string name="backup_auto_backup_period_title">Panahon ng Awtomatik na Backup</string>
+    <string name="backup_last_sync_time_title">Huling sync: %s</string>
+    <string name="backup_restore_data_title">Ibalik ang Data</string>
+    <string name="backup_backup_data_title">Backup</string>
+    <string name="backup_last_sync_time_none_title">Wala</string>
+    <string name="backup_sign_out_title">Mag-sign Out</string>
+    <string name="backup_tap_to_sing_in_title">Pindutin para Mag-sign In</string>
+    <string name="backup_tap_to_sing_in_underline_part">Mag-sign In</string>
+    <string name="backup_tap_to_sing_out_title">Pindutin para Mag-sign Out</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Umalis nang maaga?</string>
+    <string name="backup_confirm_sign_out_message">Maaari kang mag-sign in muli kahit kailan, ngunit tandaan na ihihinto muna ang backup hanggang doon</string>
+    <string name="backup_period_one_day_title">1 araw</string>
+    <string name="backup_period_three_days_title">3 araw</string>
+    <string name="backup_period_one_week_title">1 linggo</string>
+    <string name="backup_period_two_weeks_title">2 linggo</string>
+    <string name="backup_period_one_month_title">1 buwan</string>
+
+    <string name="backup_popular_question_1_title">Paano gumagana ang pagsi-sync sa Google Drive?</string>
+    <string name="backup_popular_question_1_answer">Awtomatikong nase-save ang iyong mga tala sa iyong personal na Google Drive account. Tinitiyak nito na ligtas ang iyong data at maaaring ma-access mula sa iba\'t ibang device.</string>
+    <string name="backup_popular_question_2_title">Saan nakaimbak ang aking mga tala sa Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Nakaimbak ang iyong mga tala sa isang nakatagong folder na pang-app sa iyong Google Drive, kaya hindi ito makikita sa karaniwang listahan ng mga file. Pribado ang folder na ito at ikaw lamang ang may access, walang ibang, kahit ang developer.</string>
+    <string name="backup_popular_question_3_title">Kailangan ko ba ng Google account para sa pagsi-sync?</string>
+    <string name="backup_popular_question_3_answer">Oo, kailangan mong mag-sign in gamit ang Google account para paganahin ang cloud synchronization.</string>
+    <string name="backup_popular_question_4_title">Pwede ko bang ma-access ang mga tala ko diretso mula sa Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Hindi, ang mga tala ay nakaimbak sa isang pribadong folder ng app na hindi makikita sa interface ng Google Drive. Maaari mo lang ma-access ito gamit ang app.</string>
+    <string name="backup_popular_question_5_title">Ano ang mangyayari kung i-uninstall ko ang app? Mabubura ba ang mga tala ko?</string>
+    <string name="backup_popular_question_5_answer">Hindi mabubura ang mga tala mula sa Google Drive kapag in-uninstall ang app. Kapag na-install muli at nag-sign in gamit ang parehong Google account, mare-restore ang iyong mga tala.</string>
+    <string name="backup_popular_question_6_title">Pwede ko bang i-sync ang mga tala ko sa maraming device?</string>
+    <string name="backup_popular_question_6_answer">Oo! Hangga\'t nag-sign in ka gamit ang parehong Google account sa lahat ng device, mase-sync ang iyong mga tala.</string>
+    <string name="backup_popular_question_7_title">Ligtas ba ang aking data?</string>
+    <string name="backup_popular_question_7_answer">Oo. Ang iyong mga tala ay nakaimbak sa isang pribadong, app-specific na folder sa Google Drive, at hindi ibinabahagi ng app ang iyong data sa iba.</string>
+    <string name="backup_popular_question_8_title">Ano ang mangyayari kung papalitan ko ang aking Google account?</string>
+    <string name="backup_popular_question_8_answer">Kung magpalit ka ng Google account, hindi maa-access ang mga tala mula sa naunang account. Kailangan mong bumalik sa orihinal na Google account para ma-access ang mga ito.</string>
+
+    <string name="backup_notifications_channel_name">Backup channel</string>
+    <string name="backup_notifications_channel_description">Ipinapakita ang progreso ng backup</string>
+    <string name="backup_notification_initial_description">Ina-upload ang iyong mga tala. Maaaring tumagal ng sandali.</string>
+    <string name="restore_notification_initial_description">Dinada-download ang iyong mga tala. Maaaring tumagal ng sandali.</string>
+
+    <string name="backup_warning_title">Babala sa Backup</string>
+    <string name="backup_warning_body">Malilikha ka ng bagong backup. Tandaan: mapapalitan nito ang kasalukuyang backup sa Google Drive. Kapag napalitan, hindi na maa-access ang lumang data. Siguraduhing okay ka dito bago magpatuloy.</string>
+
+    <string name="backup_progress_message">Backup in progress %d/%d</string>
+    <string name="restore_progress_message">Restore in progress %d/%d</string>
+    <string name="backup_starting_message">Nagsisimula ang backup…</string>
+    <string name="restore_starting_message">Nagsisimula ang pag-restore…</string>
+
+    <string name="backup_sync_in_progress_message">Nag-sync…</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Naantala ang Sign In</string>
+    <string name="backup_success_message">Tapos na</string>
+</resources>
