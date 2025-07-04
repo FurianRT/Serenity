@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">İptal</string>
+    <string name="action_discard">At</string>
+    <string name="action_not_now">Şimdi değil</string>
+    <string name="action_delete">Sil</string>
+    <string name="action_share">Paylaş</string>
+    <string name="action_save">Kaydet</string>
+    <string name="action_confirm">Onayla</string>
+    <string name="action_send">Gönder</string>
+    <string name="action_done">Tamamlandı</string>
+    <string name="action_pin">Sabitlen</string>
+    <string name="action_unpin">Sabit kaldır</string>
+    <string name="action_contact_us">Bize Ulaşın</string>
+    <string name="action_select">Seç</string>
+    <string name="action_continue">Devam et</string>
+    <string name="action_change_sorting">Sıralamayı değiştir</string>
+
+    <string name="title_email">E-posta</string>
+
+    <string name="settings_title">Ayarlar</string>
+    <string name="security_title">Güvenlik</string>
+
+    <string name="media_counter_pattern">%d / %d</string>
+    <string name="general_error">Bir şeyler yanlış gitti</string>
+    <string name="general_error_with_code">%d Bir şeyler yanlış gitti</string>
+    <string name="network_error">İnternet bağlantısı yok</string>
+
+    <string name="today_title">Bugün</string>
+    <string name="yesterday_title">Dün</string>
+
+    <string name="delete_notes_warning_title">Sadece kontrol</string>
+    <string name="delete_notes_warning_body">Bu notları gerçekten silmek istiyor musunuz? Sonra geri alamayacaksınız</string>
+    <string name="delete_note_warning_body">Bu notu gerçekten silmek istiyor musunuz? Sonra geri alamayacaksınız</string>
+
+    <string name="backup_in_progress">Yedekleme devam ediyor</string>
+    <string name="restore_in_progress">Geri yükleme devam ediyor</string>
+
+    <string-array name="months_array">
+        <item>Ocak</item>
+        <item>Şubat</item>
+        <item>Mart</item>
+        <item>Nisan</item>
+        <item>Mayıs</item>
+        <item>Haziran</item>
+        <item>Temmuz</item>
+        <item>Ağustos</item>
+        <item>Eylül</item>
+        <item>Ekim</item>
+        <item>Kasım</item>
+        <item>Aralık</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Pzt</item>
+        <item>Sal</item>
+        <item>Çar</item>
+        <item>Per</item>
+        <item>Cum</item>
+        <item>Cmt</item>
+        <item>Paz</item>
+    </string-array>
+</resources>

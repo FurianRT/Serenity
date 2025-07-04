@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity, fotoğraf ve video eklemenize izin vermek için depolama erişimine ihtiyaç duyar. Ayarlar &gt; İzinler bölümüne dokunun ve Fotoğraflar ve videoları açın</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Fotoğraflar ve videolar</string>
+
+    <string name="audio_record_permission_message">Serenity, ses kaydı yapabilmeniz için mikrofon erişimine ihtiyaç duyar. Ayarlar &gt; İzinler bölümüne dokunun ve Mikrofonu açın</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Mikrofon</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Lütfen \"Tümünü İzin Ver\" iznini verin veya daha fazla medya seçin</string>
+    <string name="media_selector_empty_list_title">Boş</string>
+    <string name="media_selector_apply_button_title">%d medya ekle</string>
+    <string name="media_selector_discard_title">Seçimi iptal et</string>
+    <string name="media_selector_discard_hint">Ek dosyalar menüsünü kapatmak istiyor musunuz?</string>
+</resources>

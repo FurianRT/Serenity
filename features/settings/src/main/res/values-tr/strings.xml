@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">Güvenlik</string>
+    <string name="settings_backup_title">Yedekleme ve Geri Yükleme</string>
+    <string name="settings_theme_title">Tema</string>
+    <string name="settings_font_title">Uygulama Yazı Tipi</string>
+    <string name="settings_language_title">Dil</string>
+    <string name="settings_rate_us_title">Bizi Değerlendir</string>
+    <string name="settings_donate_title">Bağış Yap</string>
+    <string name="settings_feedback_title">Sorun Bildir</string>
+    <string name="settings_terms_and_conditions_title">Şartlar ve Koşullar</string>
+    <string name="settings_privacy_policy_title">Gizlilik Politikası</string>
+    <string name="settings_version_title">Sürüm %s</string>
+
+    <string name="settings_feedback_email_subject">Serenity geri bildirimi %s</string>
+    <string name="settings_feedback_email_error">E-posta gönderilemedi</string>
+
+    <string name="settings_bad_feedback_title">Bir şeyler yanlış mı?</string>
+    <string name="settings_bad_feedback_body">Geri bildiriminiz bizim için çok değerli. Deneyiminizi geliştirmemize yardımcı olun</string>
+</resources>

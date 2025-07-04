@@ -1,0 +1,31 @@
+<resources>
+    <string name="lock_enter_your_pin_title">PIN\'inizi girin</string>
+    <string name="lock_enter_new_pin_title">Yeni PIN\'i girin</string>
+    <string name="lock_repeat_your_pin_title">PIN\'inizi tekrar girin</string>
+    <string name="lock_forgot_pin_title">PIN\'inizi mi unuttunuz?</string>
+    <string name="lock_fingerprint_title">Sadece harika insanlar kabul edilir</string>
+    <string name="lock_use_pin_title">PIN kullan</string>
+    <string name="recovery_email_hint">Unuttuğunuz PIN kodunu almak için e-posta adresinizi girin</string>
+    <string name="recovery_email_format_error">Geçersiz e-posta</string>
+    <string name="pin_recovery_dialog_title">%s adresine PIN sıfırlama talimatları gönderilecek. E-posta gelmezse spam klasörünü kontrol edin</string>
+    <string name="pin_recovery_email_subject">PIN kurtarma</string>
+    <string name="pin_recovery_email_content">PIN\'iniz: %s</string>
+    <string name="pin_recovery_email_title">E-posta adresi</string>
+    <string name="send_pin_recovery_email_failure">Bir hata oluştu</string>
+    <string name="send_pin_recovery_email_success">Kurtarma e-postası gönderildi</string>
+
+    <string name="security_enable_pin_title">PIN\'i etkinleştir</string>
+    <string name="security_email_to_recover_pin_title">PIN kurtarma için e-posta</string>
+    <string name="security_pin_request_title">PIN talep gecikmesi</string>
+    <string name="security_enable_fingerprint_title">Parmak izi etkinleştir</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d saniye</item>
+        <item quantity="other">%d saniye</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d dakika</item>
+        <item quantity="other">%d dakika</item>
+    </plurals>
+</resources>
