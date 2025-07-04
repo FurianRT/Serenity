@@ -16,10 +16,6 @@ android {
         targetSdk = ConfigData.TARGET_SDK_VERSION
         versionCode = ConfigData.VERSION_CODE
         versionName = ConfigData.VERSION_NAME
-
-        vectorDrawables {
-            useSupportLibrary = true
-        }
     }
 
     buildFeatures {
@@ -53,9 +49,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = ConfigData.JVM_TARGET
-    }
-    androidResources{
-        generateLocaleConfig = true
     }
     packaging {
         resources {

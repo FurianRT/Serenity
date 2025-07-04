@@ -12,12 +12,12 @@ private const val DATE_PATTERN = "dd LLL yyyy"
 private const val TIME_PATTERN = "m:ss"
 
 fun ZonedDateTime.toDateString(pattern: String = DATE_PATTERN): String {
-    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.US)
+    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
     return format(formatter)
 }
 
 fun LocalDate.toDateString(pattern: String = DATE_PATTERN): String {
-    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.US)
+    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
     return format(formatter)
 }
 
@@ -26,6 +26,6 @@ fun Int.toTimeString(pattern: String = TIME_PATTERN): String = toLong().toTimeSt
 fun Long.toTimeString(pattern: String = TIME_PATTERN): String {
     val instant = Instant.ofEpochMilli(this)
     val localTime = LocalTime.ofInstant(instant, ZoneId.systemDefault())
-    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.US)
+    val formatter = DateTimeFormatter.ofPattern(pattern, Locale.getDefault())
     return localTime.format(formatter)
 }

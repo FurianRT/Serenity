@@ -32,9 +32,8 @@ internal class LocaleRepositoryImp @Inject constructor(
         get() = (activityCallbacks.currentActivityContext ?: applicationContext)
 
     override fun setSelectedLocale(locale: AppLocale) {
-        val localeManager = activityContext.getSystemService(LocaleManager::class.java)
-        localeManager?.applicationLocales = LocaleList.forLanguageTags(locale.tag)
-        localeFlow.update { locale }
+        activityContext.getSystemService(LocaleManager::class.java)
+            ?.applicationLocales = LocaleList.forLanguageTags(locale.tag)
     }
 
     override fun getLocaleList(): Flow<List<AppLocale>> = flowOf(
@@ -54,23 +53,24 @@ internal class LocaleRepositoryImp @Inject constructor(
     private fun getDefaultLocale(): AppLocale {
         return AppLocale.fromTag(Locale.getDefault().language)
     }
-}
 
-private class CurrentActivityCallbacks : Application.ActivityLifecycleCallbacks {
+    private inner class CurrentActivityCallbacks : Application.ActivityLifecycleCallbacks {
 
-    private var currentActivity: WeakReference<Activity>? = null
+        private var currentActivity: WeakReference<Activity>? = null
 
-    val currentActivityContext: Context?
-        get() = currentActivity?.get()?.takeUnless { it.isDestroyed }
+        val currentActivityContext: Context?
+            get() = currentActivity?.get()?.takeUnless { it.isDestroyed }
 
 
-    override fun onActivityStarted(activity: Activity) = Unit
-    override fun onActivityResumed(activity: Activity) = Unit
-    override fun onActivityPaused(activity: Activity) = Unit
-    override fun onActivityStopped(activity: Activity) = Unit
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
-    override fun onActivityDestroyed(activity: Activity) = Unit
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        currentActivity = WeakReference(activity)
+        override fun onActivityStarted(activity: Activity) = Unit
+        override fun onActivityResumed(activity: Activity) = Unit
+        override fun onActivityPaused(activity: Activity) = Unit
+        override fun onActivityStopped(activity: Activity) = Unit
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
+        override fun onActivityDestroyed(activity: Activity) = Unit
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            currentActivity = WeakReference(activity)
+            localeFlow.update { getDefaultLocale() }
+        }
     }
 }

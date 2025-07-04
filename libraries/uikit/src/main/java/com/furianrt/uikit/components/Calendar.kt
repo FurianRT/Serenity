@@ -669,9 +669,9 @@ private fun MonthHeader(
     val title = remember(selected) {
         val month = selected.yearMonth.month.getDisplayName(
             TextStyle.FULL_STANDALONE,
-            Locale.US,
+            Locale.getDefault(),
         ).replaceFirstChar {
-            if (it.isLowerCase()) it.titlecase(Locale.US) else it.toString()
+            if (it.isLowerCase()) it.titlecase() else it.toString()
         }
         val year = selected.yearMonth.year.toString()
         "$month $year"
