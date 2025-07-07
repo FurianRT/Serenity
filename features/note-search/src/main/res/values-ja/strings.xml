@@ -1,0 +1,8 @@
+<resources>
+    <string name="notes_search_bar_title">テキストとタグで検索</string>
+    <string name="notes_search_empty_search_title">ノートが見つかりません</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="other">%d 件のノートが見つかりました</item>
+    </plurals>
+</resources>

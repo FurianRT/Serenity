@@ -1,0 +1,4 @@
+<resources>
+    <string name="font_panel_title">フォントスタイル</string>
+    <string name="font_panel_size_selector_title">サイズ</string>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">検索</string>
+    <string name="notes_list_empty_list_title">\"すべての物語は言葉から始まる\"</string>
+    <string name="notes_list_empty_list_body">あなたの物語を始めましょう！</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">「すべてを許可」の権限を付与するか、メディアをさらに選択してください</string>
+    <string name="media_selector_empty_list_title">空</string>
+    <string name="media_selector_apply_button_title">%d 件のメディアを添付</string>
+    <string name="media_selector_discard_title">選択を破棄</string>
+    <string name="media_selector_discard_hint">添付メニューを閉じますか？</string>
+</resources>

@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">自動バックアップ</string>
+    <string name="backup_auto_backup_period_title">自動バックアップ間隔</string>
+    <string name="backup_last_sync_time_title">最終同期: %s</string>
+    <string name="backup_restore_data_title">データを復元</string>
+    <string name="backup_backup_data_title">バックアップ</string>
+    <string name="backup_last_sync_time_none_title">なし</string>
+    <string name="backup_sign_out_title">サインアウト</string>
+    <string name="backup_tap_to_sing_in_title">タップしてサインイン</string>
+    <string name="backup_tap_to_sing_in_underline_part">サインイン</string>
+    <string name="backup_tap_to_sing_out_title">タップしてサインアウト</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">もう行くの？</string>
+    <string name="backup_confirm_sign_out_message">いつでも再度サインインできますが、その間バックアップは一時停止されます</string>
+    <string name="backup_period_one_day_title">1日</string>
+    <string name="backup_period_three_days_title">3日</string>
+    <string name="backup_period_one_week_title">1週間</string>
+    <string name="backup_period_two_weeks_title">2週間</string>
+    <string name="backup_period_one_month_title">1か月</string>
+
+    <string name="backup_popular_question_1_title">Google Driveとの同期はどう機能しますか？</string>
+    <string name="backup_popular_question_1_answer">メモは自動的にあなたの Google Drive アカウントにバックアップされます。データは安全に保存され、複数デバイスでアクセス可能です。</string>
+    <string name="backup_popular_question_2_title">メモは Google Drive のどこに保存されますか？</string>
+    <string name="backup_popular_question_2_answer">メモは Google Drive 内の非表示でアプリ専用のフォルダに保存されるため、通常のファイル一覧には表示されません。このフォルダはあなた専用で、開発者もアクセスできません。</string>
+    <string name="backup_popular_question_3_title">同期には Google アカウントが必要ですか？</string>
+    <string name="backup_popular_question_3_answer">はい、クラウド同期を有効にするには Google アカウントでサインインする必要があります。</string>
+    <string name="backup_popular_question_4_title">Google Drive から直接メモにアクセスできますか？</string>
+    <string name="backup_popular_question_4_answer">いいえ、メモはアプリ専用フォルダに保存されるため Google Drive のインターフェースには表示されず、アプリを通してのみアクセスできます。</string>
+    <string name="backup_popular_question_5_title">アプリをアンインストールしたらメモは削除されますか？</string>
+    <string name="backup_popular_question_5_answer">いいえ、アプリをアンインストールしても Google Drive のメモは削除されません。再インストールして同じアカウントでサインインすれば復元されます。</string>
+    <string name="backup_popular_question_6_title">複数のデバイスでメモを同期できますか？</string>
+    <string name="backup_popular_question_6_answer">はい！すべてのデバイスで同じ Google アカウントにサインインすれば、メモは同期されます。</string>
+    <string name="backup_popular_question_7_title">データは安全ですか？</string>
+    <string name="backup_popular_question_7_answer">はい。メモはアプリ専用の非公開フォルダに保存され、アプリはデータを他人と共有しません。</string>
+    <string name="backup_popular_question_8_title">Google アカウントを変更したらどうなりますか？</string>
+    <string name="backup_popular_question_8_answer">別のアカウントに変更すると、以前のアカウントのメモにはアクセスできなくなります。アクセスするには元のアカウントに戻る必要があります。</string>
+
+    <string name="backup_notifications_channel_name">バックアップ チャネル</string>
+    <string name="backup_notifications_channel_description">バックアップの進行状況を表示します</string>
+    <string name="backup_notification_initial_description">メモをアップロード中です。少々お待ちください。</string>
+    <string name="restore_notification_initial_description">メモをダウンロード中です。少々お待ちください。</string>
+
+    <string name="backup_warning_title">バックアップの警告</string>
+    <string name="backup_warning_body">新しいバックアップを作成しようとしています。既存の Google Drive 上のバックアップが上書きされます。その場合、以前のデータには戻れません。続行してよろしいですか？</string>
+
+    <string name="backup_progress_message">バックアップ中 %d/%d</string>
+    <string name="restore_progress_message">復元中 %d/%d</string>
+    <string name="backup_starting_message">バックアップを開始しています…</string>
+    <string name="restore_starting_message">復元を開始しています…</string>
+
+    <string name="backup_sync_in_progress_message">同期中…</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">サインインが中断されました</string>
+    <string name="backup_success_message">完了</string>
+</resources>

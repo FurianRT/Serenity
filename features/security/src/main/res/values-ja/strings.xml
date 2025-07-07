@@ -1,0 +1,29 @@
+<resources>
+    <string name="lock_enter_your_pin_title">PINを入力してください</string>
+    <string name="lock_enter_new_pin_title">新しいPINを入力してください</string>
+    <string name="lock_repeat_your_pin_title">PINをもう一度入力してください</string>
+    <string name="lock_forgot_pin_title">PINを忘れましたか？</string>
+    <string name="lock_fingerprint_title">特別な人だけが許可されています</string>
+    <string name="lock_use_pin_title">PINを使う</string>
+    <string name="recovery_email_hint">忘れたPINコードを受け取るためにメールアドレスを入力してください</string>
+    <string name="recovery_email_format_error">無効なメールアドレスです</string>
+    <string name="pin_recovery_dialog_title">%s にPINリセットの指示を送信します。メールが届かない場合は迷惑メールフォルダを確認してください</string>
+    <string name="pin_recovery_email_subject">PINの回復</string>
+    <string name="pin_recovery_email_content">あなたのPIN：%s</string>
+    <string name="pin_recovery_email_title">メールアドレス</string>
+    <string name="send_pin_recovery_email_failure">問題が発生しました</string>
+    <string name="send_pin_recovery_email_success">回復メールを送信しました</string>
+
+    <string name="security_enable_pin_title">PINを有効にする</string>
+    <string name="security_email_to_recover_pin_title">PIN回復用メール</string>
+    <string name="security_pin_request_title">PINリクエストの遅延</string>
+    <string name="security_enable_fingerprint_title">指紋認証を有効にする</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="other">%d 秒</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="other">%d 分</item>
+    </plurals>
+</resources>

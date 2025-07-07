@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">キャンセル</string>
+    <string name="action_discard">破棄</string>
+    <string name="action_not_now">今はしない</string>
+    <string name="action_delete">削除</string>
+    <string name="action_share">共有</string>
+    <string name="action_save">保存</string>
+    <string name="action_confirm">確認</string>
+    <string name="action_send">送信</string>
+    <string name="action_done">完了</string>
+    <string name="action_pin">ピン留め</string>
+    <string name="action_unpin">ピン留め解除</string>
+    <string name="action_contact_us">お問い合わせ</string>
+    <string name="action_select">選択</string>
+    <string name="action_continue">続行</string>
+    <string name="action_change_sorting">並び替えを変更</string>
+
+    <string name="title_email">メール</string>
+
+    <string name="settings_title">設定</string>
+    <string name="security_title">セキュリティ</string>
+
+    <string name="media_counter_pattern">%d ／ %d</string>
+    <string name="general_error">エラーが発生しました</string>
+    <string name="general_error_with_code">%d エラーが発生しました</string>
+    <string name="network_error">インターネット接続がありません</string>
+
+    <string name="today_title">今日</string>
+    <string name="yesterday_title">昨日</string>
+
+    <string name="delete_notes_warning_title">確認</string>
+    <string name="delete_notes_warning_body">本当にこれらのノートを削除しますか？後で復元できません。</string>
+    <string name="delete_note_warning_body">本当にこのノートを削除しますか？後で復元できません。</string>
+
+    <string name="backup_in_progress">バックアップ中</string>
+    <string name="restore_in_progress">復元中</string>
+
+    <string-array name="months_array">
+        <item>1月</item>
+        <item>2月</item>
+        <item>3月</item>
+        <item>4月</item>
+        <item>5月</item>
+        <item>6月</item>
+        <item>7月</item>
+        <item>8月</item>
+        <item>9月</item>
+        <item>10月</item>
+        <item>11月</item>
+        <item>12月</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>月</item>
+        <item>火</item>
+        <item>水</item>
+        <item>木</item>
+        <item>金</item>
+        <item>土</item>
+        <item>日</item>
+    </string-array>
+</resources>

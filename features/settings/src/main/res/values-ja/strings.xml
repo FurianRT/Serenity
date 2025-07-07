@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">セキュリティ</string>
+    <string name="settings_backup_title">バックアップと復元</string>
+    <string name="settings_theme_title">テーマ</string>
+    <string name="settings_font_title">アプリのフォント</string>
+    <string name="settings_language_title">言語</string>
+    <string name="settings_rate_us_title">評価する</string>
+    <string name="settings_donate_title">寄付</string>
+    <string name="settings_feedback_title">問題を報告する</string>
+    <string name="settings_terms_and_conditions_title">利用規約</string>
+    <string name="settings_privacy_policy_title">プライバシーポリシー</string>
+    <string name="settings_version_title">バージョン %s</string>
+
+    <string name="settings_feedback_email_subject">Serenity フィードバック %s</string>
+    <string name="settings_feedback_email_error">メールの送信に失敗しました</string>
+
+    <string name="settings_bad_feedback_title">何か問題がありますか？</string>
+    <string name="settings_bad_feedback_body">あなたのフィードバックはとても大切です。体験を向上させるためにご協力ください</string>
+</resources>
