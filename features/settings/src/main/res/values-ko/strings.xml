@@ -1,0 +1,18 @@
+<resources>
+    <string name="settings_security_title">보안</string>
+    <string name="settings_backup_title">백업 및 복원</string>
+    <string name="settings_theme_title">테마</string>
+    <string name="settings_font_title">앱 글꼴</string>
+    <string name="settings_language_title">언어</string>
+    <string name="settings_rate_us_title">평가하기</string>
+    <string name="settings_donate_title">기부하기</string>
+    <string name="settings_feedback_title">문제 신고하기</string>
+    <string name="settings_terms_and_conditions_title">이용 약관</string>
+    <string name="settings_privacy_policy_title">개인정보 처리방침</string>
+    <string name="settings_version_title">버전 %s</string>
+    <string name="settings_feedback_email_subject">Serenity 피드백 %s</string>
+    <string name="settings_feedback_email_error">이메일 전송 실패</string>
+
+    <string name="settings_bad_feedback_title">문제가 있나요?</string>
+    <string name="settings_bad_feedback_body">귀하의 피드백은 매우 중요합니다. 경험 개선에 도움을 주세요</string>
+</resources>

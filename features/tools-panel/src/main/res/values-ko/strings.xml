@@ -1,0 +1,4 @@
+<resources>
+    <string name="font_panel_title">글꼴 스타일</string>
+    <string name="font_panel_size_selector_title">크기</string>
+</resources>

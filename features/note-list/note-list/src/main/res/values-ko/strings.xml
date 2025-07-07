@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">검색</string>
+    <string name="notes_list_empty_list_title">"모든 이야기는 한 단어로 시작됩니다"</string>
+    <string name="notes_list_empty_list_body">시작하려면 탭하세요!</string>
+</resources>

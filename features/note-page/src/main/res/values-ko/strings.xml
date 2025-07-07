@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_title_hint_text">텍스트…</string>
+    <string name="note_title_hint_write_more_here">여기에 더 작성하세요…</string>
+    <string name="note_sticker_limit_message">스티커 한도에 도달했습니다</string>
+</resources>

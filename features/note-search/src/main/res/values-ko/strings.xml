@@ -1,0 +1,7 @@
+<resources>
+    <string name="notes_search_bar_title">텍스트 및 태그로 검색</string>
+    <string name="notes_search_empty_search_title">메모를 찾을 수 없습니다</string>
+    <plurals name="note_search_notes_count_title">
+        <item quantity="other">%d개의 메모가 검색되었습니다</item>
+    </plurals>
+</resources>

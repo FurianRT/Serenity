@@ -1,0 +1,55 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">자동 백업</string>
+    <string name="backup_auto_backup_period_title">자동 백업 주기</string>
+    <string name="backup_last_sync_time_title">마지막 동기화: %s</string>
+    <string name="backup_restore_data_title">데이터 복원</string>
+    <string name="backup_backup_data_title">백업</string>
+    <string name="backup_last_sync_time_none_title">없음</string>
+    <string name="backup_sign_out_title">로그아웃</string>
+    <string name="backup_tap_to_sing_in_title">로그인하려면 탭하세요</string>
+    <string name="backup_tap_to_sing_in_underline_part">로그인</string>
+    <string name="backup_tap_to_sing_out_title">로그아웃하려면 탭하세요</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">벌써 나가시나요?</string>
+    <string name="backup_confirm_sign_out_message">언제든지 다시 로그인할 수 있지만, 그때까지 백업이 일시 중지됨을 유의하세요</string>
+    <string name="backup_period_one_day_title">1일</string>
+    <string name="backup_period_three_days_title">3일</string>
+    <string name="backup_period_one_week_title">1주</string>
+    <string name="backup_period_two_weeks_title">2주</string>
+    <string name="backup_period_one_month_title">1개월</string>
+    <string name="backup_popular_question_1_title">Google Drive와 동기화는 어떻게 작동하나요?</string>
+    <string name="backup_popular_question_1_answer">메모가 자동으로 개인 Google Drive 계정에 백업됩니다. 데이터가 안전하게 저장되고 여러 기기에서 접근할 수 있습니다.</string>
+    <string name="backup_popular_question_2_title">내 메모는 Google Drive 어디에 저장되나요?</string>
+    <string name="backup_popular_question_2_answer">메모는 Google Drive 내 앱 전용 숨겨진 폴더에 저장되어 일반 파일 목록에는 나타나지 않습니다. 이 폴더는 비공개이며 사용자만 접근 가능합니다.</string>
+    <string name="backup_popular_question_3_title">동기화를 사용하려면 Google 계정이 필요한가요?</string>
+    <string name="backup_popular_question_3_answer">예, 클라우드 동기화를 활성화하려면 Google 계정으로 로그인해야 합니다.</string>
+    <string name="backup_popular_question_4_title">Google Drive에서 직접 메모에 접근할 수 있나요?</string>
+    <string name="backup_popular_question_4_answer">아니요, 메모는 Google Drive 인터페이스에 보이지 않는 비공개 앱 폴더에 저장됩니다. 앱을 통해서만 접근할 수 있습니다.</string>
+    <string name="backup_popular_question_5_title">앱을 삭제하면 메모가 삭제되나요?</string>
+    <string name="backup_popular_question_5_answer">앱 삭제는 Google Drive의 메모를 삭제하지 않습니다. 동일한 Google 계정으로 다시 로그인하면 메모가 복원됩니다.</string>
+    <string name="backup_popular_question_6_title">여러 기기에서 메모를 동기화할 수 있나요?</string>
+    <string name="backup_popular_question_6_answer">예! 모든 기기에서 동일한 Google 계정으로 로그인하면 메모가 동기화됩니다.</string>
+    <string name="backup_popular_question_7_title">내 데이터는 안전한가요?</string>
+    <string name="backup_popular_question_7_answer">예. 메모는 앱 전용 비공개 Google Drive 폴더에 저장되며, 앱은 데이터를 공유하지 않습니다.</string>
+    <string name="backup_popular_question_8_title">Google 계정을 변경하면 어떻게 되나요?</string>
+    <string name="backup_popular_question_8_answer">다른 Google 계정으로 전환하면 이전 계정의 메모에 접근할 수 없습니다. 원래 계정으로 다시 전환해야 합니다.</string>
+
+    <string name="backup_notifications_channel_name">백업 채널</string>
+    <string name="backup_notifications_channel_description">백업 진행 상황 표시</string>
+    <string name="backup_notification_initial_description">메모를 업로드 중입니다. 잠시만 기다려주세요.</string>
+    <string name="restore_notification_initial_description">메모를 다운로드 중입니다. 잠시만 기다려주세요.</string>
+
+    <string name="backup_warning_title">백업 경고</string>
+    <string name="backup_warning_body">새 백업을 생성하려고 합니다. 기존 Google Drive 백업이 덮어써집니다. 이전 데이터는 더 이상 접근할 수 없으니 진행 전에 확인하세요.</string>
+
+    <string name="backup_progress_message">백업 진행 중 %d/%d</string>
+    <string name="restore_progress_message">복원 진행 중 %d/%d</string>
+    <string name="backup_starting_message">백업 시작 중…</string>
+    <string name="restore_starting_message">복원 시작 중…</string>
+
+    <string name="backup_sync_in_progress_message">동기화 진행 중</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">로그인 중단됨</string>
+    <string name="backup_success_message">완료</string>
+</resources>

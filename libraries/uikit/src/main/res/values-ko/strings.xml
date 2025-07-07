@@ -1,0 +1,63 @@
+<resources>
+    <string name="action_cancel">취소</string>
+    <string name="action_discard">버리기</string>
+    <string name="action_not_now">나중에</string>
+    <string name="action_delete">삭제</string>
+    <string name="action_share">공유</string>
+    <string name="action_save">저장</string>
+    <string name="action_confirm">확인</string>
+    <string name="action_send">보내기</string>
+    <string name="action_done">완료</string>
+    <string name="action_pin">고정</string>
+    <string name="action_unpin">고정 해제</string>
+    <string name="action_contact_us">문의하기</string>
+    <string name="action_select">선택</string>
+    <string name="action_continue">계속</string>
+    <string name="action_change_sorting">순서 변경</string>
+
+    <string name="title_email">이메일</string>
+
+    <string name="settings_title">설정</string>
+    <string name="security_title">보안</string>
+
+    <string name="media_counter_pattern">%d / %d</string>
+    <string name="general_error">문제가 발생했습니다</string>
+    <string name="general_error_with_code">%d 문제 발생</string>
+    <string name="network_error">인터넷 연결 없음</string>
+
+    <string name="today_title">오늘</string>
+    <string name="yesterday_title">어제</string>
+
+    <string name="delete_notes_warning_title">확인합니다…</string>
+    <string name="delete_notes_warning_body">정말 이 메모들을 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.</string>
+    <string name="delete_note_warning_body">정말 이 메모를 삭제하시겠습니까? 삭제 후에는 복구할 수 없습니다.</string>
+
+    <string name="backup_in_progress">백업 진행 중</string>
+    <string name="restore_in_progress">복원 진행 중</string>
+
+    <string-array name="months_array">
+        <item>1월</item>
+        <item>2월</item>
+        <item>3월</item>
+        <item>4월</item>
+        <item>5월</item>
+        <item>6월</item>
+        <item>7월</item>
+        <item>8월</item>
+        <item>9월</item>
+        <item>10월</item>
+        <item>11월</item>
+        <item>12월</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>월</item>
+        <item>화</item>
+        <item>수</item>
+        <item>목</item>
+        <item>금</item>
+        <item>토</item>
+        <item>일</item>
+    </string-array>
+
+</resources>

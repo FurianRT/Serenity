@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">\"전체 허용\" 권한을 부여하거나 더 많은 미디어를 선택해 주세요</string>
+    <string name="media_selector_empty_list_title">비어 있음</string>
+    <string name="media_selector_apply_button_title">%d개의 미디어 첨부</string>
+    <string name="media_selector_discard_title">선택 취소</string>
+    <string name="media_selector_discard_hint">첨부 메뉴를 닫으시겠습니까?</string>
+</resources>

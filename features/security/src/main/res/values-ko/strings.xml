@@ -1,0 +1,28 @@
+<resources>
+    <string name="lock_enter_your_pin_title">PIN을 입력하세요</string>
+    <string name="lock_enter_new_pin_title">새 PIN을 입력하세요</string>
+    <string name="lock_repeat_your_pin_title">PIN을 다시 입력하세요</string>
+    <string name="lock_forgot_pin_title">PIN을 잊으셨나요?</string>
+    <string name="lock_fingerprint_title">멋진 사람만 허용됩니다</string>
+    <string name="lock_use_pin_title">PIN 사용</string>
+    <string name="recovery_email_hint">잊은 PIN 코드를 받으려면 이메일 주소를 입력하세요</string>
+    <string name="recovery_email_format_error">잘못된 이메일</string>
+    <string name="pin_recovery_dialog_title">%s로 PIN 재설정 안내를 보냅니다. 이메일을 받지 못하면 스팸 폴더를 확인하세요</string>
+    <string name="pin_recovery_email_subject">PIN 복구</string>
+    <string name="pin_recovery_email_content">당신의 PIN: %s</string>
+    <string name="pin_recovery_email_title">이메일 주소</string>
+    <string name="send_pin_recovery_email_failure">문제가 발생했습니다</string>
+    <string name="send_pin_recovery_email_success">복구 이메일이 전송되었습니다</string>
+    <string name="security_enable_pin_title">PIN 활성화</string>
+    <string name="security_email_to_recover_pin_title">PIN 복구용 이메일</string>
+    <string name="security_pin_request_title">PIN 요청 지연 시간</string>
+    <string name="security_enable_fingerprint_title">지문 활성화</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="other">%d초</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="other">%d분</item>
+    </plurals>
+</resources>

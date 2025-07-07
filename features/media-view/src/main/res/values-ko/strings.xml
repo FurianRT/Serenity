@@ -1,0 +1,4 @@
+<resources>
+    <string name="media_view_save_to_gallery">갤러리에 저장</string>
+    <string name="media_view_saved_to_gallery">갤러리에 저장됨</string>
+</resources>
