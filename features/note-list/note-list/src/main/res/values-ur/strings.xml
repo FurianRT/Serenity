@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">تلاش کریں</string>
+    <string name="notes_list_empty_list_title">\"ہر کہانی ایک لفظ سے شروع ہوتی ہے\"</string>
+    <string name="notes_list_empty_list_body">اپنی کہانی شروع کرنے کے لیے ٹیپ کریں!</string>
+</resources>

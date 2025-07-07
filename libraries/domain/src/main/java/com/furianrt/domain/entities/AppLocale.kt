@@ -12,13 +12,15 @@ enum class AppLocale(val tag: String, val text: String) {
     VIETNAMESE(tag ="vi", text = "Tiếng Việt"),
     FILIPINO(tag ="vi", text = "Filipino"),
     JAPANESE(tag ="ja", text = "日本語"),
-    KOREAN(tag ="ko", text = "한국어");
+    KOREAN(tag ="ko", text = "한국어"),
+    PAKISTAN_URDU(tag ="ur", text = "اُردُو");
 
     companion object {
         fun fromTag(tag: String?): AppLocale = when (tag) {
             ENGLISH.tag -> ENGLISH
             RUSSIAN.tag -> RUSSIAN
             HINDI.tag -> HINDI
+            PAKISTAN_URDU.tag -> PAKISTAN_URDU
             INDONESIAN.tag -> INDONESIAN
             SPANISH.tag -> SPANISH
             PORTUGUESE.tag -> PORTUGUESE

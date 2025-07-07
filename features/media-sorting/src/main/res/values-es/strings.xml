@@ -1,5 +1,5 @@
 <resources>
     <string name="media_sorting_title">Editar Bloque de Medios</string>
     <string name="media_sorting_drag_and_drop_hint">Arrastra y suelta para cambiar el orden</string>
-    <string name="media_sorting_save_chages_hint">¿Quieres guardar tus cambios?</string>
+    <string name="media_sorting_save_changes_hint">¿Quieres guardar tus cambios?</string>
 </resources>

@@ -1,5 +1,5 @@
 <resources>
     <string name="media_sorting_title">Chỉnh sửa khối phương tiện</string>
     <string name="media_sorting_drag_and_drop_hint">Kéo &amp; thả để thay đổi thứ tự</string>
-    <string name="media_sorting_save_chages_hint">Bạn có muốn lưu các thay đổi không?</string>
+    <string name="media_sorting_save_changes_hint">Bạn có muốn lưu các thay đổi không?</string>
 </resources>

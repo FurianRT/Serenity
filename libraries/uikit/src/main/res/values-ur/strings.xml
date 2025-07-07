@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">منسوخ کریں</string>
+    <string name="action_discard">رد کریں</string>
+    <string name="action_not_now">ابھی نہیں</string>
+    <string name="action_delete">حذف کریں</string>
+    <string name="action_share">شیئر کریں</string>
+    <string name="action_save">محفوظ کریں</string>
+    <string name="action_confirm">تصدیق کریں</string>
+    <string name="action_send">بھیجیں</string>
+    <string name="action_done">مکمل</string>
+    <string name="action_pin">پن کریں</string>
+    <string name="action_unpin">ان پن کریں</string>
+    <string name="action_contact_us">ہم سے رابطہ کریں</string>
+    <string name="action_select">منتخب کریں</string>
+    <string name="action_continue">جاری رکھیں</string>
+    <string name="action_change_sorting">ترتیب تبدیل کریں</string>
+
+    <string name="title_email">ای میل</string>
+
+    <string name="settings_title">ترتیبات</string>
+    <string name="security_title">سیکورٹی</string>
+
+    <string name="media_counter_pattern">%d میں سے %d</string>
+    <string name="general_error">کچھ غلط ہو گیا ہے</string>
+    <string name="general_error_with_code">%d کچھ غلط ہو گیا ہے</string>
+    <string name="network_error">انٹرنیٹ کنکشن نہیں ہے</string>
+
+    <string name="today_title">آج</string>
+    <string name="yesterday_title">کل</string>
+
+    <string name="delete_notes_warning_title">ذرا رکیں…</string>
+    <string name="delete_notes_warning_body">کیا آپ واقعی ان نوٹس کو حذف کرنا چاہتے ہیں؟ آپ بعد میں انھیں واپس نہیں لا سکیں گے</string>
+    <string name="delete_note_warning_body">کیا آپ واقعی اس نوٹ کو حذف کرنا چاہتے ہیں؟ آپ بعد میں اسے واپس نہیں لا سکیں گے</string>
+
+    <string name="backup_in_progress">بیک اپ جاری ہے</string>
+    <string name="restore_in_progress">بحال کیا جا رہا ہے</string>
+
+    <string-array name="months_array">
+        <item>جنوری</item>
+        <item>فروری</item>
+        <item>مارچ</item>
+        <item>اپریل</item>
+        <item>مئی</item>
+        <item>جون</item>
+        <item>جولائی</item>
+        <item>اگست</item>
+        <item>ستمبر</item>
+        <item>اکتوبر</item>
+        <item>نومبر</item>
+        <item>دسمبر</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>پیر</item>
+        <item>منگل</item>
+        <item>بدھ</item>
+        <item>جمعرات</item>
+        <item>جمعہ</item>
+        <item>ہفتہ</item>
+        <item>اتوار</item>
+    </string-array>
+</resources>

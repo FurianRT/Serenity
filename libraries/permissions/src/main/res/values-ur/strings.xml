@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">تصاویر اور ویڈیوز منسلک کرنے کے لیے Serenity کو آپ کی اسٹوریج تک رسائی کی ضرورت ہے۔ سیٹنگز &gt; پرمیشنز پر ٹیپ کریں، اور \"تصاویر اور ویڈیوز\" کو فعال کریں</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">تصاویر اور ویڈیوز</string>
+
+    <string name="audio_record_permission_message">آواز ریکارڈ کرنے کے لیے Serenity کو آپ کے مائیکروفون تک رسائی درکار ہے۔ سیٹنگز &gt; پرمیشنز پر ٹیپ کریں، اور \"مائیکروفون\" کو فعال کریں</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">مائیکروفون</string>
+</resources>

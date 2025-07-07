@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">سیکیورٹی</string>
+    <string name="settings_backup_title">بیک اپ اور بحال کریں</string>
+    <string name="settings_theme_title">تھیم</string>
+    <string name="settings_font_title">ایپ فانٹ</string>
+    <string name="settings_language_title">زبان</string>
+    <string name="settings_rate_us_title">ہمیں درجہ دیں</string>
+    <string name="settings_donate_title">عطیہ کریں</string>
+    <string name="settings_feedback_title">مسئلہ رپورٹ کریں</string>
+    <string name="settings_terms_and_conditions_title">شرائط و ضوابط</string>
+    <string name="settings_privacy_policy_title">رازداری کی پالیسی</string>
+    <string name="settings_version_title">ورژن %s</string>
+
+    <string name="settings_feedback_email_subject">Serenity فیڈبیک %s</string>
+    <string name="settings_feedback_email_error">ای میل بھیجنے میں ناکامی</string>
+
+    <string name="settings_bad_feedback_title">کچھ ٹھیک نہیں لگ رہا؟</string>
+    <string name="settings_bad_feedback_body">آپ کی رائے ہمارے لیے اہم ہے۔ ہمیں آپ کا تجربہ بہتر بنانے میں مدد کریں</string>
+</resources>

@@ -1,5 +1,5 @@
 <resources>
     <string name="media_sorting_title">メディアブロックを編集</string>
     <string name="media_sorting_drag_and_drop_hint">順番を変更するにはドラッグ＆ドロップしてください</string>
-    <string name="media_sorting_save_chages_hint">変更を保存しますか？</string>
+    <string name="media_sorting_save_changes_hint">変更を保存しますか？</string>
 </resources>

@@ -23,7 +23,7 @@ internal fun ConfirmCloseDialog(
 ) {
     ConfirmationDialog(
         modifier = modifier,
-        hint = AnnotatedString(stringResource(R.string.media_sorting_save_chages_hint)),
+        hint = AnnotatedString(stringResource(R.string.media_sorting_save_changes_hint)),
         hazeState = hazeState,
         onDismissRequest = onDismissRequest,
         cancelButton = {

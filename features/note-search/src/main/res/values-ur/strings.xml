@@ -1,0 +1,9 @@
+<resources>
+    <string name="notes_search_bar_title">متن اور ٹیگز کے ذریعے تلاش کریں</string>
+    <string name="notes_search_empty_search_title">کوئی نوٹ نہیں ملا</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d نوٹ ملا</item>
+        <item quantity="other">%d نوٹس ملے</item>
+    </plurals>
+</resources>
