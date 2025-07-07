@@ -1,0 +1,11 @@
+<resources>
+    <string name="notes_search_bar_title">Пошук за текстом і тегами</string>
+    <string name="notes_search_empty_search_title">Нотаток не знайдено</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">Знайдено %d нотатку</item>
+        <item quantity="few">Знайдено %d нотатки</item>
+        <item quantity="many">Знайдено %d нотаток</item>
+        <item quantity="other">Знайдено %d нотаток</item>
+    </plurals>
+</resources>

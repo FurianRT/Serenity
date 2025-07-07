@@ -7,10 +7,10 @@
     <string name="backup_backup_data_title">Backup</string>
     <string name="backup_last_sync_time_none_title">Nessuno</string>
     <string name="backup_sign_out_title">Disconnetti</string>
-    <string name="backup_tap_to_sing_in_title">Tocca per accedere</string>
-    <string name="backup_tap_to_sing_in_underline_part">Accedi</string>
-    <string name="backup_tap_to_sing_out_title">Tocca per disconnetterti</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_in_title">Tocca per Accedere</string>
+    <string name="backup_tap_to_sing_in_underline_part">Accedere</string>
+    <string name="backup_tap_to_sing_out_title">Tocca per Disconnetterti</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">Disconnetterti</string>
     <string name="backup_confirm_sign_out_title">Stai per uscire?</string>
     <string name="backup_confirm_sign_out_message">Puoi accedere di nuovo in qualsiasi momento, ma tieni presente che i backup saranno sospesi fino ad allora</string>
     <string name="backup_period_one_day_title">1 giorno</string>

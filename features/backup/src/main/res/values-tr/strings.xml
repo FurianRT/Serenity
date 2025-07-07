@@ -1,18 +1,18 @@
 <resources>
     <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Otomatik Yedekleme</string>
-    <string name="backup_auto_backup_period_title">Yedekleme Süresi</string>
+    <string name="backup_auto_backup_period_title">Otomatik Yedekleme Süresi</string>
     <string name="backup_last_sync_time_title">Son senkronizasyon: %s</string>
     <string name="backup_restore_data_title">Verileri Geri Yükle</string>
     <string name="backup_backup_data_title">Yedekle</string>
     <string name="backup_last_sync_time_none_title">Yok</string>
-    <string name="backup_sign_out_title">Oturumu Kapat</string>
-    <string name="backup_tap_to_sing_in_title">Devam etmek için Giriş Yap\'a dokunun</string>
-    <string name="backup_tap_to_sing_in_underline_part">Çıkış Yap</string>
-    <string name="backup_tap_to_sing_out_title">Devam etmeden önce Çıkış Yap\'a dokunun</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
-    <string name="backup_confirm_sign_out_title">Bu kadar erken mi ayrılıyorsun?</string>
-    <string name="backup_confirm_sign_out_message">İstediğin zaman tekrar giriş yapabilirsin, ancak yedeklemelerin o zamana kadar duraklatılacağını unutma</string>
+    <string name="backup_sign_out_title">Çıkış Yap</string>
+    <string name="backup_tap_to_sing_in_title">Giriş Yapmak için dokunun</string>
+    <string name="backup_tap_to_sing_in_underline_part">Giriş Yapmak</string>
+    <string name="backup_tap_to_sing_out_title">Çıkış Yapmak için dokunun</string>
+    <string name="backup_tap_to_sing_out_underline_part">Çıkış Yapmak</string>
+    <string name="backup_confirm_sign_out_title">Bu kadar çabuk mu gidiyorsunuz?</string>
+    <string name="backup_confirm_sign_out_message">İstediğiniz zaman tekrar giriş yapabilirsiniz, ancak yedeklemelerin o zamana kadar duraklatılacağını unutmayın</string>
     <string name="backup_period_one_day_title">1 gün</string>
     <string name="backup_period_three_days_title">3 gün</string>
     <string name="backup_period_one_week_title">1 hafta</string>
@@ -20,37 +20,37 @@
     <string name="backup_period_one_month_title">1 ay</string>
 
     <string name="backup_popular_question_1_title">Google Drive ile senkronizasyon nasıl çalışır?</string>
-    <string name="backup_popular_question_1_answer">Notların kişisel Google Drive hesabına otomatik yedeklenir. Bu sayede verilerin güvenle saklanır ve birden fazla cihazdan erişilebilir olur</string>
-    <string name="backup_popular_question_2_title">Notlarım Google Drive’da nerede saklanıyor?</string>
-    <string name="backup_popular_question_2_answer">Notların, Google Drive’da gizli ve uygulamaya özel bir klasörde saklanır, bu yüzden normal dosya listesinden görünmez. Bu klasör sadece sana özeldir; geliştirici dahil kimse erişemez</string>
-    <string name="backup_popular_question_3_title">Senkronizasyon için Google hesabı gerekli mi?</string>
-    <string name="backup_popular_question_3_answer">Evet, bulut senkronizasyonunu etkinleştirmek için bir Google hesabıyla giriş yapmalısın</string>
-    <string name="backup_popular_question_4_title">Notlarıma Google Drive üzerinden direkt erişebilir miyim?</string>
-    <string name="backup_popular_question_4_answer">Hayır, notlar Google Drive arayüzünde görünmeyen özel bir uygulama klasöründe saklanır. Sadece uygulama üzerinden erişilebilir</string>
-    <string name="backup_popular_question_5_title">Uygulamayı kaldırırsam notlarım silinir mi?</string>
-    <string name="backup_popular_question_5_answer">Hayır, uygulamayı kaldırmak notlarını Google Drive’dan silmez. Yeniden yükleyip aynı Google hesabıyla giriş yaptığında notların geri yüklenecektir</string>
+    <string name="backup_popular_question_1_answer">Notlarınız kişisel Google Drive hesabınıza otomatik olarak yedeklenir. Bu, verilerinizin güvenli bir şekilde saklanmasını ve birden fazla cihazdan erişilebilmesini sağlar.</string>
+    <string name="backup_popular_question_2_title">Notlarım Google Drive\'da nerede saklanıyor?</string>
+    <string name="backup_popular_question_2_answer">Notlarınız Google Drive’da gizli, uygulamaya özel bir klasörde saklanır, bu nedenle normal Drive dosya listenizde görünmezler. Bu klasör özeldir ve sadece siz erişebilirsiniz — uygulama geliştiricisi dahil hiç kimse notlarınıza erişemez.</string>
+    <string name="backup_popular_question_3_title">Senkronizasyon için Google hesabı gerekiyor mu?</string>
+    <string name="backup_popular_question_3_answer">Evet, bulut senkronizasyonunu etkinleştirmek için Google hesabınızla giriş yapmanız gerekir.</string>
+    <string name="backup_popular_question_4_title">Notlarıma Google Drive’dan doğrudan erişebilir miyim?</string>
+    <string name="backup_popular_question_4_answer">Hayır, notlar Google Drive arayüzünde görünmeyen özel bir uygulama klasöründe saklanır. Onlara sadece uygulama aracılığıyla erişebilirsiniz.</string>
+    <string name="backup_popular_question_5_title">Uygulamayı kaldırırsam ne olur? Notlarım silinir mi?</string>
+    <string name="backup_popular_question_5_answer">Uygulamayı kaldırmak notlarınızı Google Drive’dan silmez. Uygulamayı tekrar yükleyip aynı Google hesabıyla giriş yaptığınızda notlarınız geri yüklenecektir.</string>
     <string name="backup_popular_question_6_title">Notlarımı birden fazla cihazda senkronize edebilir miyim?</string>
-    <string name="backup_popular_question_6_answer">Evet! Aynı Google hesabıyla giriş yaptığınız sürece notlarınız tüm cihazlarda senkronize edilir</string>
+    <string name="backup_popular_question_6_answer">Evet! Tüm cihazlarda aynı Google hesabıyla giriş yaptığınız sürece notlarınız senkronize edilir.</string>
     <string name="backup_popular_question_7_title">Verilerim güvende mi?</string>
-    <string name="backup_popular_question_7_answer">Evet. Notların özel bir uygulama klasöründe saklanır ve uygulama verilerini kimseyle paylaşmaz</string>
+    <string name="backup_popular_question_7_answer">Evet. Notlarınız özel, uygulamaya özgü Google Drive klasöründe saklanır ve uygulama verilerinizi kimseyle paylaşmaz.</string>
     <string name="backup_popular_question_8_title">Google hesabımı değiştirirsem ne olur?</string>
-    <string name="backup_popular_question_8_answer">Farklı bir Google hesabına geçersen, önceki hesaba ait notlar erişilemez olur. Onlara erişmek için orijinal hesapla tekrar giriş yapmalısın</string>
+    <string name="backup_popular_question_8_answer">Farklı bir Google hesabına geçerseniz, önceki hesaba ait notlarınıza erişemezsiniz. Onlara erişmek için orijinal Google hesabına geri dönmeniz gerekir.</string>
 
     <string name="backup_notifications_channel_name">Yedekleme kanalı</string>
     <string name="backup_notifications_channel_description">Yedekleme ilerlemesini gösterir</string>
-    <string name="backup_notification_initial_description">Notların yükleniyor. Lütfen bekle</string>
-    <string name="restore_notification_initial_description">Notların indiriliyor. Lütfen bekle</string>
+    <string name="backup_notification_initial_description">Notlarınız yükleniyor. Biraz zaman alabilir.</string>
+    <string name="restore_notification_initial_description">Notlarınız indiriliyor. Biraz zaman alabilir.</string>
 
     <string name="backup_warning_title">Yedekleme Uyarısı</string>
-    <string name="backup_warning_body">Yeni bir yedek oluşturuyorsun. Bu işlem mevcut Google Drive yedeğini üzerine yazar. Önceki veriler kaybolur. Devam etmek istediğinden emin misin?</string>
+    <string name="backup_warning_body">Yeni bir yedekleme oluşturuyorsunuz. Lütfen dikkat: bu, Google Drive’daki mevcut yedeklemenizin üzerine yazacaktır. Değiştirildikten sonra önceki verileriniz erişilemez hale gelecektir. Devam etmeden önce emin olun.</string>
 
-    <string name="backup_progress_message">Yedekleme sürüyor %1$d/%2$d</string>
-    <string name="restore_progress_message">Geri yükleme sürüyor %1$d/%2$d</string>
+    <string name="backup_progress_message">Yedekleme yapılıyor %1$d/%2$d</string>
+    <string name="restore_progress_message">Geri yükleme yapılıyor %1$d/%2$d</string>
     <string name="backup_starting_message">Yedekleme başlıyor…</string>
     <string name="restore_starting_message">Geri yükleme başlıyor…</string>
 
-    <string name="backup_sync_in_progress_message">Senkronizasyon sürüyor</string>
+    <string name="backup_sync_in_progress_message">Senkronizasyon devam ediyor</string>
 
-    <string name="backup_sing_in_resolution_canceled_error">Giriş işlemi iptal edildi</string>
+    <string name="backup_sing_in_resolution_canceled_error">Giriş işlemi kesildi</string>
     <string name="backup_success_message">Tamamlandı</string>
 </resources>

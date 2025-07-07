@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Автоматичне збереження</string>
+    <string name="backup_auto_backup_period_title">Період автозбереження</string>
+    <string name="backup_last_sync_time_title">Остання синхронізація: %s</string>
+    <string name="backup_restore_data_title">Відновити дані</string>
+    <string name="backup_backup_data_title">Резервне копіювання</string>
+    <string name="backup_last_sync_time_none_title">Відсутнє</string>
+    <string name="backup_sign_out_title">Вийти</string>
+    <string name="backup_tap_to_sing_in_title">Натисніть, щоб Увійти</string>
+    <string name="backup_tap_to_sing_in_underline_part">Увійти</string>
+    <string name="backup_tap_to_sing_out_title">Натисніть, щоб Вийти</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Вже йдете?</string>
+    <string name="backup_confirm_sign_out_message">Ви можете увійти знову будь-коли, але зверніть увагу, що резервне копіювання буде призупинено до того часу</string>
+    <string name="backup_period_one_day_title">1 день</string>
+    <string name="backup_period_three_days_title">3 дні</string>
+    <string name="backup_period_one_week_title">1 тиждень</string>
+    <string name="backup_period_two_weeks_title">2 тижні</string>
+    <string name="backup_period_one_month_title">1 місяць</string>
+
+    <string name="backup_popular_question_1_title">Як працює синхронізація з Google Drive?</string>
+    <string name="backup_popular_question_1_answer">Ваші нотатки автоматично зберігаються у вашому особистому акаунті Google Drive. Це гарантує безпечне збереження даних та доступ з різних пристроїв.</string>
+    <string name="backup_popular_question_2_title">Де зберігаються мої нотатки на Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Ваші нотатки зберігаються у прихованій папці, призначеній для додатка, на вашому Google Drive, тому вони не відображаються у звичайному списку файлів. Ця папка приватна і доступна лише вам — ніхто інший, включно з розробниками додатка, не має доступу до ваших нотаток.</string>
+    <string name="backup_popular_question_3_title">Чи потрібен Google акаунт для синхронізації?</string>
+    <string name="backup_popular_question_3_answer">Так, для увімкнення хмарної синхронізації потрібно увійти за допомогою Google акаунта.</string>
+    <string name="backup_popular_question_4_title">Чи можу я отримати доступ до нотаток безпосередньо з Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Ні, нотатки зберігаються у приватній папці додатка, яка не відображається через інтерфейс Google Drive. Доступ можливий лише через додаток.</string>
+    <string name="backup_popular_question_5_title">Що станеться, якщо я видалю додаток? Чи видаляться мої нотатки?</string>
+    <string name="backup_popular_question_5_answer">Видалення додатка не видаляє ваші нотатки з Google Drive. Після повторної установки додатка і входу у той самий Google акаунт нотатки будуть відновлені.</string>
+    <string name="backup_popular_question_6_title">Чи можна синхронізувати нотатки на кількох пристроях?</string>
+    <string name="backup_popular_question_6_answer">Так! Якщо увійти з одним і тим самим Google акаунтом на всіх пристроях, нотатки будуть синхронізовані.</string>
+    <string name="backup_popular_question_7_title">Чи безпечні мої дані?</string>
+    <string name="backup_popular_question_7_answer">Так. Ваші нотатки зберігаються у приватній папці Google Drive, і додаток не передає ваші дані третім особам.</string>
+    <string name="backup_popular_question_8_title">Що станеться, якщо я зміню Google акаунт?</string>
+    <string name="backup_popular_question_8_answer">Якщо ви переключитесь на інший Google акаунт, нотатки з попереднього акаунта не будуть доступні. Щоб отримати доступ, потрібно повернутися до оригінального акаунта Google.</string>
+
+    <string name="backup_notifications_channel_name">Канал резервного копіювання</string>
+    <string name="backup_notifications_channel_description">Показує прогрес резервного копіювання</string>
+    <string name="backup_notification_initial_description">Ваші нотатки завантажуються. Це може зайняти деякий час.</string>
+    <string name="restore_notification_initial_description">Ваші нотатки завантажуються. Це може зайняти деякий час.</string>
+
+    <string name="backup_warning_title">Попередження про резервне копіювання</string>
+    <string name="backup_warning_body">Ви збираєтесь створити нове резервне копіювання. Зверніть увагу: це перезапише існуюче резервне копіювання на Google Drive. Після заміни попередні дані стануть недоступними. Будь ласка, переконайтесь, що ви згодні з цим перед продовженням.</string>
+
+    <string name="backup_progress_message">Резервне копіювання %1$d/%2$d</string>
+    <string name="restore_progress_message">Відновлення %1$d/%2$d</string>
+    <string name="backup_starting_message">Починається резервне копіювання…</string>
+    <string name="restore_starting_message">Починається відновлення…</string>
+
+    <string name="backup_sync_in_progress_message">Синхронізація в процесі</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Вхід перервано</string>
+    <string name="backup_success_message">Готово</string>
+</resources>

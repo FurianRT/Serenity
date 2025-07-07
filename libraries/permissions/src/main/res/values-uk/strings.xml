@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity потребує доступ до вашого сховища, щоб ви могли додавати фото та відео. Відкрийте Налаштування > Дозволи та увімкніть Фото та відео</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Фото та відео</string>
+
+    <string name="audio_record_permission_message">Serenity потребує доступ до вашого мікрофона, щоб записувати голос. Відкрийте Налаштування > Дозволи та увімкніть Мікрофон</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Мікрофон</string>
+</resources>

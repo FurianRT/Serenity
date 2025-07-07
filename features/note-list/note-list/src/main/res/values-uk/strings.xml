@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Пошук</string>
+    <string name="notes_list_empty_list_title">\"Кожна історія починається зі слова\"</string>
+    <string name="notes_list_empty_list_body">Торкніться, щоб почати свою!</string>
+</resources>

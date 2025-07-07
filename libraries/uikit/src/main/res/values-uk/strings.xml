@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">Скасувати</string>
+    <string name="action_discard">Відхилити</string>
+    <string name="action_not_now">Не зараз</string>
+    <string name="action_delete">Видалити</string>
+    <string name="action_share">Поділитися</string>
+    <string name="action_save">Зберегти</string>
+    <string name="action_confirm">Підтвердити</string>
+    <string name="action_send">Відправити</string>
+    <string name="action_done">Готово</string>
+    <string name="action_pin">Закріпити</string>
+    <string name="action_unpin">Відкріпити</string>
+    <string name="action_contact_us">Зв’язатися з нами</string>
+    <string name="action_select">Вибрати</string>
+    <string name="action_continue">Продовжити</string>
+    <string name="action_change_sorting">Змінити порядок</string>
+
+    <string name="title_email">Електронна пошта</string>
+
+    <string name="settings_title">Налаштування</string>
+    <string name="security_title">Безпека</string>
+
+    <string name="media_counter_pattern">%1$d з %2$d</string>
+    <string name="general_error">Щось пішло не так</string>
+    <string name="general_error_with_code">%d: Щось пішло не так</string>
+    <string name="network_error">Немає інтернет-з’єднання</string>
+
+    <string name="today_title">Сьогодні</string>
+    <string name="yesterday_title">Вчора</string>
+
+    <string name="delete_notes_warning_title">Просто перевірка…</string>
+    <string name="delete_notes_warning_body">Ви справді хочете видалити ці нотатки? Пізніше їх не можна буде відновити</string>
+    <string name="delete_note_warning_body">Ви справді хочете видалити цю нотатку? Пізніше її не можна буде відновити</string>
+
+    <string name="backup_in_progress">Резервне копіювання триває</string>
+    <string name="restore_in_progress">Відновлення триває</string>
+
+    <string-array name="months_array">
+        <item>Січень</item>
+        <item>Лютий</item>
+        <item>Березень</item>
+        <item>Квітень</item>
+        <item>Травень</item>
+        <item>Червень</item>
+        <item>Липень</item>
+        <item>Серпень</item>
+        <item>Вересень</item>
+        <item>Жовтень</item>
+        <item>Листопад</item>
+        <item>Грудень</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Пн</item>
+        <item>Вт</item>
+        <item>Ср</item>
+        <item>Чт</item>
+        <item>Пт</item>
+        <item>Сб</item>
+        <item>Нд</item>
+    </string-array>
+</resources>

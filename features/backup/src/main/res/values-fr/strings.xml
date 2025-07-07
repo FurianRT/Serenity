@@ -7,10 +7,10 @@
     <string name="backup_backup_data_title">Sauvegarder</string>
     <string name="backup_last_sync_time_none_title">Aucune</string>
     <string name="backup_sign_out_title">Déconnexion</string>
-    <string name="backup_tap_to_sing_in_title">Appuyez pour vous connecter</string>
-    <string name="backup_tap_to_sing_in_underline_part">Se connecter</string>
-    <string name="backup_tap_to_sing_out_title">Appuyez pour vous déconnecter</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_in_title">Appuyez pour vous Connecter</string>
+    <string name="backup_tap_to_sing_in_underline_part">Connecter</string>
+    <string name="backup_tap_to_sing_out_title">Appuyez pour vous Déconnecter</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">Déconnecter</string>
     <string name="backup_confirm_sign_out_title">Vous partez déjà ?</string>
     <string name="backup_confirm_sign_out_message">Vous pouvez vous reconnecter à tout moment, mais les sauvegardes seront suspendues jusqu’à ce moment</string>
     <string name="backup_period_one_day_title">1 jour</string>

@@ -1,0 +1,19 @@
+<resources>
+    <string name="settings_security_title">Безпека</string>
+    <string name="settings_backup_title">Збереження та відновлення</string>
+    <string name="settings_theme_title">Тема</string>
+    <string name="settings_font_title">Шрифт додатку</string>
+    <string name="settings_language_title">Мова</string>
+    <string name="settings_rate_us_title">Оцініть нас</string>
+    <string name="settings_donate_title">Пожертвувати</string>
+    <string name="settings_feedback_title">Повідомити про проблему</string>
+    <string name="settings_terms_and_conditions_title">Умови використання</string>
+    <string name="settings_privacy_policy_title">Політика конфіденційності</string>
+    <string name="settings_version_title">Версія %s</string>
+
+    <string name="settings_feedback_email_subject">Відгук Serenity %s</string>
+    <string name="settings_feedback_email_error">Не вдалося надіслати листа</string>
+
+    <string name="settings_bad_feedback_title">Щось не так?</string>
+    <string name="settings_bad_feedback_body">Ваш відгук дуже важливий. Допоможіть нам покращити ваш досвід</string>
+</resources>

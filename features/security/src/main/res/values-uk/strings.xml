@@ -1,0 +1,35 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Введіть свій PIN</string>
+    <string name="lock_enter_new_pin_title">Введіть новий PIN</string>
+    <string name="lock_repeat_your_pin_title">Повторіть свій PIN</string>
+    <string name="lock_forgot_pin_title">Забули свій PIN?</string>
+    <string name="lock_fingerprint_title">Тільки для крутих</string>
+    <string name="lock_use_pin_title">Використати PIN</string>
+    <string name="recovery_email_hint">Будь ласка, введіть вашу електронну адресу, щоб отримати забутий PIN</string>
+    <string name="recovery_email_format_error">Невірна електронна адреса</string>
+    <string name="pin_recovery_dialog_title">Інструкції з відновлення PIN буде надіслано на %s. Якщо лист не прийде, перевірте папку спам</string>
+    <string name="pin_recovery_email_subject">Відновлення PIN</string>
+    <string name="pin_recovery_email_content">Ваш PIN: %s</string>
+    <string name="pin_recovery_email_title">Електронна адреса</string>
+    <string name="send_pin_recovery_email_failure">Щось пішло не так</string>
+    <string name="send_pin_recovery_email_success">Лист для відновлення надіслано</string>
+
+    <string name="security_enable_pin_title">Увімкнути PIN</string>
+    <string name="security_email_to_recover_pin_title">Електронна адреса для відновлення PIN</string>
+    <string name="security_pin_request_title">Затримка запиту PIN</string>
+    <string name="security_enable_fingerprint_title">Увімкнути відбиток пальця</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d секунда</item>
+        <item quantity="few">%d секунди</item>
+        <item quantity="many">%d секунд</item>
+        <item quantity="other">%d секунд</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d хвилина</item>
+        <item quantity="few">%d хвилини</item>
+        <item quantity="many">%d хвилин</item>
+        <item quantity="other">%d хвилин</item>
+    </plurals>
+</resources>

@@ -1,5 +1,6 @@
 package com.furianrt.backup.internal.ui.composables
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +46,8 @@ internal fun SyncButton(
                             size = size.copy(width = size.width * progressState),
                         )
                     }
-                },
+                }
+                .animateContentSize(),
             onClick = onClick,
             enabled = isEnabled,
             shape = RoundedCornerShape(16.dp),
@@ -58,7 +60,7 @@ internal fun SyncButton(
                 modifier = Modifier.padding(vertical = 8.dp),
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
+                maxLines = 2,
                 textAlign = TextAlign.Center,
                 overflow = TextOverflow.Ellipsis,
             )

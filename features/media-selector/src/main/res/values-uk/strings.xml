@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Будь ласка, надайте дозвіл «Дозволити все» або виберіть більше медіафайлів</string>
+    <string name="media_selector_empty_list_title">Порожньо</string>
+    <string name="media_selector_apply_button_title">Прикріпити %d медіафайлів</string>
+    <string name="media_selector_discard_title">Відхилити вибір</string>
+    <string name="media_selector_discard_hint">Ви хочете закрити меню вкладень?</string>
+</resources>

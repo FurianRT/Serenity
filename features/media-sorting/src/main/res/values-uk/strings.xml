@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Редагувати медіаблок</string>
+    <string name="media_sorting_drag_and_drop_hint">Перетягніть, щоб змінити порядок</string>
+    <string name="media_sorting_save_changes_hint">Бажаєте зберегти зміни?</string>
+</resources>

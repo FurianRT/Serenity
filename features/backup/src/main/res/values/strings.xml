@@ -10,7 +10,7 @@
     <string name="backup_tap_to_sing_in_title">Tap to Sign In</string>
     <string name="backup_tap_to_sing_in_underline_part">Sign In</string>
     <string name="backup_tap_to_sing_out_title">Tap to Sign Out</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">Sign Out</string>
     <string name="backup_confirm_sign_out_title">Leaving so soon?</string>
     <string name="backup_confirm_sign_out_message">You can sign back in anytime, but please note that backups will be paused until then</string>
     <string name="backup_period_one_day_title">1 day</string>
