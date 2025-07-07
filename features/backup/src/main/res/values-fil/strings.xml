@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Babala sa Backup</string>
     <string name="backup_warning_body">Malilikha ka ng bagong backup. Tandaan: mapapalitan nito ang kasalukuyang backup sa Google Drive. Kapag napalitan, hindi na maa-access ang lumang data. Siguraduhing okay ka dito bago magpatuloy.</string>
 
-    <string name="backup_progress_message">Backup in progress %d/%d</string>
-    <string name="restore_progress_message">Restore in progress %d/%d</string>
+    <string name="backup_progress_message">Backup in progress %1$d/%2$d</string>
+    <string name="restore_progress_message">Restore in progress %1$d/%2$d</string>
     <string name="backup_starting_message">Nagsisimula ang backup…</string>
     <string name="restore_starting_message">Nagsisimula ang pag-restore…</string>
 

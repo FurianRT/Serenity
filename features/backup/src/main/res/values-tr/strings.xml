@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Yedekleme Uyarısı</string>
     <string name="backup_warning_body">Yeni bir yedek oluşturuyorsun. Bu işlem mevcut Google Drive yedeğini üzerine yazar. Önceki veriler kaybolur. Devam etmek istediğinden emin misin?</string>
 
-    <string name="backup_progress_message">Yedekleme sürüyor %d/%d</string>
-    <string name="restore_progress_message">Geri yükleme sürüyor %d/%d</string>
+    <string name="backup_progress_message">Yedekleme sürüyor %1$d/%2$d</string>
+    <string name="restore_progress_message">Geri yükleme sürüyor %1$d/%2$d</string>
     <string name="backup_starting_message">Yedekleme başlıyor…</string>
     <string name="restore_starting_message">Geri yükleme başlıyor…</string>
 

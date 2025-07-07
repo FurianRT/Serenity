@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_title_hint_text">Testo…</string>
+    <string name="note_title_hint_write_more_here">Scrivi di più qui…</string>
+    <string name="note_sticker_limit_message">Limite adesivi raggiunto</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Per favore concedi il permesso \"Consenti tutto\" oppure seleziona più media</string>
+    <string name="media_selector_empty_list_title">Vuoto</string>
+    <string name="media_selector_apply_button_title">Allega %d media</string>
+    <string name="media_selector_discard_title">Annulla selezione</string>
+    <string name="media_selector_discard_hint">Vuoi chiudere il menu degli allegati?</string>
+</resources>

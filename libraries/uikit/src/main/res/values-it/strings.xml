@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">Annulla</string>
+    <string name="action_discard">Scarta</string>
+    <string name="action_not_now">Non ora</string>
+    <string name="action_delete">Elimina</string>
+    <string name="action_share">Condividi</string>
+    <string name="action_save">Salva</string>
+    <string name="action_confirm">Conferma</string>
+    <string name="action_send">Invia</string>
+    <string name="action_done">Fatto</string>
+    <string name="action_pin">Fissa</string>
+    <string name="action_unpin">Sblocca</string>
+    <string name="action_contact_us">Contattaci</string>
+    <string name="action_select">Seleziona</string>
+    <string name="action_continue">Continua</string>
+    <string name="action_change_sorting">Cambia ordine</string>
+
+    <string name="title_email">Email</string>
+
+    <string name="settings_title">Impostazioni</string>
+    <string name="security_title">Sicurezza</string>
+
+    <string name="media_counter_pattern">%1$d di %2$d</string>
+    <string name="general_error">Qualcosa è andato storto</string>
+    <string name="general_error_with_code">%d Qualcosa è andato storto</string>
+    <string name="network_error">Nessuna connessione internet</string>
+
+    <string name="today_title">Oggi</string>
+    <string name="yesterday_title">Ieri</string>
+
+    <string name="delete_notes_warning_title">Solo un controllo…</string>
+    <string name="delete_notes_warning_body">Vuoi davvero eliminare queste note? Non potrai recuperarle in seguito</string>
+    <string name="delete_note_warning_body">Vuoi davvero eliminare questa nota? Non potrai recuperarla in seguito</string>
+
+    <string name="backup_in_progress">Backup in corso</string>
+    <string name="restore_in_progress">Ripristino in corso</string>
+
+    <string-array name="months_array">
+        <item>Gennaio</item>
+        <item>Febbraio</item>
+        <item>Marzo</item>
+        <item>Aprile</item>
+        <item>Maggio</item>
+        <item>Giugno</item>
+        <item>Luglio</item>
+        <item>Agosto</item>
+        <item>Settembre</item>
+        <item>Ottobre</item>
+        <item>Novembre</item>
+        <item>Dicembre</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Gio</item>
+        <item>Ven</item>
+        <item>Sab</item>
+        <item>Dom</item>
+    </string-array>
+</resources>

@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Aviso de Backup</string>
     <string name="backup_warning_body">Você está prestes a criar um novo backup. Observe: isso substituirá seu backup existente no Google Drive. Depois de substituído, seus dados anteriores não estarão mais acessíveis. Certifique-se de estar de acordo antes de continuar.</string>
 
-    <string name="backup_progress_message">Backup em andamento %d/%d</string>
-    <string name="restore_progress_message">Restauração em andamento %d/%d</string>
+    <string name="backup_progress_message">Backup em andamento %1$d/%2$d</string>
+    <string name="restore_progress_message">Restauração em andamento %1$d/%2$d</string>
     <string name="backup_starting_message">Iniciando backup…</string>
     <string name="restore_starting_message">Iniciando restauração…</string>
 

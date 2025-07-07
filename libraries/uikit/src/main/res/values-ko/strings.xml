@@ -20,7 +20,7 @@
     <string name="settings_title">설정</string>
     <string name="security_title">보안</string>
 
-    <string name="media_counter_pattern">%d / %d</string>
+    <string name="media_counter_pattern">%1$d/ %2$d</string>
     <string name="general_error">문제가 발생했습니다</string>
     <string name="general_error_with_code">%d 문제 발생</string>
     <string name="network_error">인터넷 연결 없음</string>

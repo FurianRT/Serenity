@@ -20,7 +20,7 @@
     <string name="settings_title">Ayarlar</string>
     <string name="security_title">Güvenlik</string>
 
-    <string name="media_counter_pattern">%d / %d</string>
+    <string name="media_counter_pattern">%1$d / %2$d</string>
     <string name="general_error">Bir şeyler yanlış gitti</string>
     <string name="general_error_with_code">%d Bir şeyler yanlış gitti</string>
     <string name="network_error">İnternet bağlantısı yok</string>

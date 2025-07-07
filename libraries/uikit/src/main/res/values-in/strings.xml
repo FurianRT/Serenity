@@ -20,7 +20,7 @@
     <string name="settings_title">Pengaturan</string>
     <string name="security_title">Keamanan</string>
 
-    <string name="media_counter_pattern">%d dari %d</string>
+    <string name="media_counter_pattern">%1$d dari %2$d</string>
     <string name="general_error">Terjadi kesalahan</string>
     <string name="general_error_with_code">%d Terjadi kesalahan</string>
     <string name="network_error">Tidak ada koneksi internet</string>

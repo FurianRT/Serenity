@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Peringatan Cadangan</string>
     <string name="backup_warning_body">Anda akan membuat cadangan baru. Perhatian: ini akan menimpa cadangan lama di Google Drive. Setelah diganti, data sebelumnya tidak bisa dipulihkan. Pastikan Anda setuju sebelum melanjutkan.</string>
 
-    <string name="backup_progress_message">Cadangan dalam proses %d/%d</string>
-    <string name="restore_progress_message">Pemulihan dalam proses %d/%d</string>
+    <string name="backup_progress_message">Cadangan dalam proses %1$d/%2$d</string>
+    <string name="restore_progress_message">Pemulihan dalam proses %1$d/%2$d</string>
     <string name="backup_starting_message">Memulai cadangan…</string>
     <string name="restore_starting_message">Memulai pemulihan…</string>
 

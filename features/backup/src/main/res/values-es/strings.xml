@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Advertencia de respaldo</string>
     <string name="backup_warning_body">Estás a punto de crear una nueva copia de seguridad. Ten en cuenta que esto sobrescribirá tu respaldo actual en Google Drive. Una vez reemplazados, tus datos anteriores ya no estarán accesibles. Asegúrate de estar de acuerdo antes de continuar.</string>
 
-    <string name="backup_progress_message">Copia de seguridad en progreso %d/%d</string>
-    <string name="restore_progress_message">Restauración en progreso %d/%d</string>
+    <string name="backup_progress_message">Copia de seguridad en progreso %1$d/%2$d</string>
+    <string name="restore_progress_message">Restauración en progreso %1$d/%2$d</string>
     <string name="backup_starting_message">Iniciando copia de seguridad…</string>
     <string name="restore_starting_message">Iniciando restauración…</string>
 

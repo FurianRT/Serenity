@@ -21,7 +21,7 @@
     <string name="settings_title">Настройки</string>
     <string name="security_title">Безопасность</string>
 
-    <string name="media_counter_pattern">%d из %d</string>
+    <string name="media_counter_pattern">%1$d из %2$d</string>
     <string name="general_error">Что-то пошло не так</string>
     <string name="general_error_with_code">%d Что-то пошло не так</string>
     <string name="network_error">Нет подключения к интернету</string>

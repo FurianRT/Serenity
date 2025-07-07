@@ -51,8 +51,8 @@
     <string name="backup_warning_title">Предупреждение</string>
     <string name="backup_warning_body">Вы собираетесь создать новую копию. Это перезапишет существующую копию в Google Drive. После замены предыдущие данные будут недоступны. Пожалуйста, убедитесь, что вы готовы продолжить</string>
 
-    <string name="backup_progress_message">Создание резервной копии %d/%d</string>
-    <string name="restore_progress_message">Восстановление %d/%d</string>
+    <string name="backup_progress_message">Создание резервной копии %1$d/%2$d</string>
+    <string name="restore_progress_message">Восстановление %1$d/%2$d</string>
     <string name="backup_starting_message">Создаем резервную копию…</string>
     <string name="restore_starting_message">Начинаем восстановление…</string>
 

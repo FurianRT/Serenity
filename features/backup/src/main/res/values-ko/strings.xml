@@ -43,8 +43,8 @@
     <string name="backup_warning_title">백업 경고</string>
     <string name="backup_warning_body">새 백업을 생성하려고 합니다. 기존 Google Drive 백업이 덮어써집니다. 이전 데이터는 더 이상 접근할 수 없으니 진행 전에 확인하세요.</string>
 
-    <string name="backup_progress_message">백업 진행 중 %d/%d</string>
-    <string name="restore_progress_message">복원 진행 중 %d/%d</string>
+    <string name="backup_progress_message">백업 진행 중 %1$d/%2$d</string>
+    <string name="restore_progress_message">복원 진행 중 %1$d/%2$d</string>
     <string name="backup_starting_message">백업 시작 중…</string>
     <string name="restore_starting_message">복원 시작 중…</string>
 

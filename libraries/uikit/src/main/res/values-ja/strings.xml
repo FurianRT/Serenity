@@ -20,7 +20,7 @@
     <string name="settings_title">設定</string>
     <string name="security_title">セキュリティ</string>
 
-    <string name="media_counter_pattern">%d ／ %d</string>
+    <string name="media_counter_pattern">%1$d ／ %2$d</string>
     <string name="general_error">エラーが発生しました</string>
     <string name="general_error_with_code">%d エラーが発生しました</string>
     <string name="network_error">インターネット接続がありません</string>

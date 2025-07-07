@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Backup-Warnung</string>
     <string name="backup_warning_body">Du wirst ein neues Backup erstellen. Dies ersetzt das alte auf Google Drive. Alte Daten gehen verloren. Bist du sicher, dass du fortfahren willst?</string>
 
-    <string name="backup_progress_message">Backup läuft %d/%d</string>
-    <string name="restore_progress_message">Wiederherstellung läuft %d/%d</string>
+    <string name="backup_progress_message">Backup läuft %1$d/%2$d</string>
+    <string name="restore_progress_message">Wiederherstellung läuft %1$d/%2$d</string>
     <string name="backup_starting_message">Backup startet…</string>
     <string name="restore_starting_message">Wiederherstellung startet…</string>
 

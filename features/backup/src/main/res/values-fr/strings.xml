@@ -43,8 +43,8 @@
     <string name="backup_warning_title">Avertissement de sauvegarde</string>
     <string name="backup_warning_body">Vous êtes sur le point de créer une nouvelle sauvegarde. Notez que cela écrasera votre sauvegarde existante sur Google Drive. Une fois remplacées, vos données précédentes ne seront plus accessibles. Assurez-vous que cela vous convient avant de continuer.</string>
 
-    <string name="backup_progress_message">Sauvegarde en cours %d/%d</string>
-    <string name="restore_progress_message">Restauration en cours %d/%d</string>
+    <string name="backup_progress_message">Sauvegarde en cours %1$d/%2$d</string>
+    <string name="restore_progress_message">Restauration en cours %1$d/%2$d</string>
     <string name="backup_starting_message">Démarrage de la sauvegarde…</string>
     <string name="restore_starting_message">Démarrage de la restauration…</string>
 

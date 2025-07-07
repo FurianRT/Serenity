@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Backup automatico</string>
+    <string name="backup_auto_backup_period_title">Periodo di backup automatico</string>
+    <string name="backup_last_sync_time_title">Ultima sincronizzazione: %s</string>
+    <string name="backup_restore_data_title">Ripristina dati</string>
+    <string name="backup_backup_data_title">Backup</string>
+    <string name="backup_last_sync_time_none_title">Nessuno</string>
+    <string name="backup_sign_out_title">Disconnetti</string>
+    <string name="backup_tap_to_sing_in_title">Tocca per accedere</string>
+    <string name="backup_tap_to_sing_in_underline_part">Accedi</string>
+    <string name="backup_tap_to_sing_out_title">Tocca per disconnetterti</string>
+    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_confirm_sign_out_title">Stai per uscire?</string>
+    <string name="backup_confirm_sign_out_message">Puoi accedere di nuovo in qualsiasi momento, ma tieni presente che i backup saranno sospesi fino ad allora</string>
+    <string name="backup_period_one_day_title">1 giorno</string>
+    <string name="backup_period_three_days_title">3 giorni</string>
+    <string name="backup_period_one_week_title">1 settimana</string>
+    <string name="backup_period_two_weeks_title">2 settimane</string>
+    <string name="backup_period_one_month_title">1 mese</string>
+
+    <string name="backup_popular_question_1_title">Come funziona la sincronizzazione con Google Drive?</string>
+    <string name="backup_popular_question_1_answer">Le tue note vengono salvate automaticamente nel tuo account Google Drive personale. Questo garantisce che i tuoi dati siano archiviati in modo sicuro e accessibili da più dispositivi</string>
+    <string name="backup_popular_question_2_title">Dove sono archiviate le mie note su Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Le tue note sono archiviate in una cartella nascosta specifica per l\'app nel tuo Google Drive, quindi non appariranno nella lista normale dei file di Drive. Questa cartella è privata e accessibile solo a te — nessun altro, incluso lo sviluppatore dell\'app, può accedervi</string>
+    <string name="backup_popular_question_3_title">Ho bisogno di un account Google per usare la sincronizzazione?</string>
+    <string name="backup_popular_question_3_answer">Sì, devi accedere con un account Google per abilitare la sincronizzazione cloud</string>
+    <string name="backup_popular_question_4_title">Posso accedere alle mie note direttamente da Google Drive?</string>
+    <string name="backup_popular_question_4_answer">No, le note sono archiviate in una cartella privata dell\'app che non è visibile tramite l\'interfaccia di Google Drive. Puoi accedervi solo tramite l\'app</string>
+    <string name="backup_popular_question_5_title">Cosa succede se disinstallo l\'app? Le mie note verranno cancellate?</string>
+    <string name="backup_popular_question_5_answer">Disinstallare l\'app non cancella le tue note da Google Drive. Quando reinstalli l\'app e accedi con lo stesso account Google, le note verranno ripristinate</string>
+    <string name="backup_popular_question_6_title">Posso sincronizzare le mie note su più dispositivi?</string>
+    <string name="backup_popular_question_6_answer">Sì! Basta accedere con lo stesso account Google su tutti i dispositivi per sincronizzare le note</string>
+    <string name="backup_popular_question_7_title">I miei dati sono al sicuro?</string>
+    <string name="backup_popular_question_7_answer">Sì. Le tue note sono archiviate in una cartella privata e specifica per l\'app su Google Drive, e l\'app non condivide i tuoi dati con nessuno</string>
+    <string name="backup_popular_question_8_title">Cosa succede se cambio account Google?</string>
+    <string name="backup_popular_question_8_answer">Se cambi account Google, le note del precedente account non saranno disponibili. Per accedervi devi tornare all’account Google originale</string>
+
+    <string name="backup_notifications_channel_name">Canale di backup</string>
+    <string name="backup_notifications_channel_description">Mostra il progresso del backup</string>
+    <string name="backup_notification_initial_description">Le tue note stanno venendo caricate. Potrebbe richiedere qualche momento</string>
+    <string name="restore_notification_initial_description">Le tue note stanno venendo scaricate. Potrebbe richiedere qualche momento</string>
+
+    <string name="backup_warning_title">Avviso di backup</string>
+    <string name="backup_warning_body">Stai per creare un nuovo backup. Nota: questo sovrascriverà il backup esistente su Google Drive. Una volta sostituito, i dati precedenti non saranno più accessibili. Assicurati di essere d’accordo prima di continuare</string>
+
+    <string name="backup_progress_message">Backup in corso %1$d/%2$d</string>
+    <string name="restore_progress_message">Ripristino in corso %1$d/%2$d</string>
+    <string name="backup_starting_message">Avvio backup…</string>
+    <string name="restore_starting_message">Avvio ripristino…</string>
+
+    <string name="backup_sync_in_progress_message">Sincronizzazione in corso</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Accesso interrotto</string>
+    <string name="backup_success_message">Completato</string>
+</resources>

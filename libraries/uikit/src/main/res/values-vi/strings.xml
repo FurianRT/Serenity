@@ -20,7 +20,7 @@
     <string name="settings_title">Cài đặt</string>
     <string name="security_title">Bảo mật</string>
 
-    <string name="media_counter_pattern">%d trên %d</string>
+    <string name="media_counter_pattern">%1$d trên %2$d</string>
     <string name="general_error">Có lỗi xảy ra</string>
     <string name="general_error_with_code">Lỗi %d xảy ra</string>
     <string name="network_error">Không có kết nối mạng</string>

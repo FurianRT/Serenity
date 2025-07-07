@@ -44,8 +44,8 @@
     <string name="backup_warning_title">Backup Warning</string>
     <string name="backup_warning_body">You\'re about to create a new backup. Please note: this will overwrite your existing backup on Google Drive. Once replaced, your previous data will no longer be accessible. Make sure you\'re okay with that before continuing</string>
 
-    <string name="backup_progress_message">Backup in progress %d/%d</string>
-    <string name="restore_progress_message">Restore in progress %d/%d</string>
+    <string name="backup_progress_message">Backup in progress %1$d/%2$d</string>
+    <string name="restore_progress_message">Restore in progress %1$d/%2$d</string>
     <string name="backup_starting_message">Backup starting…</string>
     <string name="restore_starting_message">Restore starting…</string>
 

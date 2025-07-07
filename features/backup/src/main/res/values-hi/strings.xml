@@ -44,8 +44,8 @@
     <string name="backup_warning_title">बैकअप चेतावनी</string>
     <string name="backup_warning_body">आप नया बैकअप बनाने जा रहे हैं। कृपया ध्यान दें: इससे Google Drive में मौजूदा बैकअप ओवरराइट हो जाएगा। एक बार बदले जाने के बाद पुराने डेटा तक पहुँचा नहीं जा सकेगा। कृपया आगे बढ़ने से पहले सुनिश्चित करें</string>
 
-    <string name="backup_progress_message">बैकअप प्रगति %d/%d</string>
-    <string name="restore_progress_message">रीस्टोर प्रगति %d/%d</string>
+    <string name="backup_progress_message">बैकअप प्रगति %1$d/%2$d</string>
+    <string name="restore_progress_message">रीस्टोर प्रगति %1$d/%2$d</string>
     <string name="backup_starting_message">बैकअप शुरू हो रहा है…</string>
     <string name="restore_starting_message">रीस्टोर शुरू हो रहा है…</string>
 

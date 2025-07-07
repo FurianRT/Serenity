@@ -20,7 +20,7 @@
     <string name="settings_title">Settings</string>
     <string name="security_title">Security</string>
 
-    <string name="media_counter_pattern">%d of %d</string>
+    <string name="media_counter_pattern">%1$d of %2$d</string>
     <string name="general_error">Something went wrong</string>
     <string name="general_error_with_code">%d Something went wrong</string>
     <string name="network_error">No internet connection</string>

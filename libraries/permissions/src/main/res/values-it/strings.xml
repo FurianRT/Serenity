@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity ha bisogno dell\'accesso alla memoria per consentirti di allegare foto e video. Tocca Impostazioni &gt; Autorizzazioni e attiva Foto e video</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Foto e video</string>
+
+    <string name="audio_record_permission_message">Serenity ha bisogno dell\'accesso al microfono per consentire le registrazioni vocali. Tocca Impostazioni &gt; Autorizzazioni e attiva Microfono</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Microfono</string>
+</resources>

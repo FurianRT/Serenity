@@ -44,8 +44,8 @@
     <string name="backup_warning_title">バックアップの警告</string>
     <string name="backup_warning_body">新しいバックアップを作成しようとしています。既存の Google Drive 上のバックアップが上書きされます。その場合、以前のデータには戻れません。続行してよろしいですか？</string>
 
-    <string name="backup_progress_message">バックアップ中 %d/%d</string>
-    <string name="restore_progress_message">復元中 %d/%d</string>
+    <string name="backup_progress_message">バックアップ中 %1$d/%2$d</string>
+    <string name="restore_progress_message">復元中 %1$d/%2$d</string>
     <string name="backup_starting_message">バックアップを開始しています…</string>
     <string name="restore_starting_message">復元を開始しています…</string>
 

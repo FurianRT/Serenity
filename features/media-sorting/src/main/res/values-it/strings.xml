@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Modifica Blocco Media</string>
+    <string name="media_sorting_drag_and_drop_hint">Trascina e rilascia per cambiare ordine</string>
+    <string name="media_sorting_save_changes_hint">Vuoi salvare le modifiche?</string>
+</resources>
