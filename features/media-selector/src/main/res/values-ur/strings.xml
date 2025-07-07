@@ -1,7 +1,0 @@
-<resources>
-    <string name="media_selector_partial_access_message">براہ کرم \"تمام کی اجازت دیں\" دیں، یا مزید میڈیا منتخب کریں</string>
-    <string name="media_selector_empty_list_title">خالی</string>
-    <string name="media_selector_apply_button_title">%d میڈیا منسلک کریں</string>
-    <string name="media_selector_discard_title">انتخاب ختم کریں</string>
-    <string name="media_selector_discard_hint">کیا آپ اٹیچمنٹ مینو بند کرنا چاہتے ہیں؟</string>
-</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Veuillez accorder l\'autorisation \"Tout autoriser\" ou sélectionner plus de médias</string>
+    <string name="media_selector_empty_list_title">Vide</string>
+    <string name="media_selector_apply_button_title">Joindre %d médias</string>
+    <string name="media_selector_discard_title">Annuler la sélection</string>
+    <string name="media_selector_discard_hint">Voulez-vous fermer le menu des pièces jointes ?</string>
+</resources>

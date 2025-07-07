@@ -1,0 +1,33 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Entrez votre code PIN</string>
+    <string name="lock_enter_new_pin_title">Entrez un nouveau code PIN</string>
+    <string name="lock_repeat_your_pin_title">Répétez votre code PIN</string>
+    <string name="lock_forgot_pin_title">Vous avez oublié votre code PIN ?</string>
+    <string name="lock_fingerprint_title">Réservé aux personnes formidables</string>
+    <string name="lock_use_pin_title">Utiliser le code PIN</string>
+    <string name="recovery_email_hint">Veuillez entrer votre adresse e-mail pour recevoir votre code PIN oublié</string>
+    <string name="recovery_email_format_error">E-mail invalide</string>
+    <string name="pin_recovery_dialog_title">Nous enverrons les instructions de réinitialisation du PIN à %s. Si vous ne recevez pas l\'e-mail, vérifiez votre dossier spam</string>
+    <string name="pin_recovery_email_subject">Récupération du code PIN</string>
+    <string name="pin_recovery_email_content">Votre code PIN : %s</string>
+    <string name="pin_recovery_email_title">Adresse e-mail</string>
+    <string name="send_pin_recovery_email_failure">Une erreur est survenue</string>
+    <string name="send_pin_recovery_email_success">E-mail de récupération envoyé</string>
+
+    <string name="security_enable_pin_title">Activer le code PIN</string>
+    <string name="security_email_to_recover_pin_title">E-mail pour récupérer le code PIN</string>
+    <string name="security_pin_request_title">Délai de demande du PIN</string>
+    <string name="security_enable_fingerprint_title">Activer l\'empreinte digitale</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d seconde</item>
+        <item quantity="many">%d secondes</item>
+        <item quantity="other">%d secondes</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minute</item>
+        <item quantity="many">%d minutes</item>
+        <item quantity="other">%d minutes</item>
+    </plurals>
+</resources>

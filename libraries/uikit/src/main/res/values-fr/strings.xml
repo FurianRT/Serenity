@@ -1,0 +1,62 @@
+<resources>
+    <string name="action_cancel">Annuler</string>
+    <string name="action_discard">Jeter</string>
+    <string name="action_not_now">Pas maintenant</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_share">Partager</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="action_confirm">Confirmer</string>
+    <string name="action_send">Envoyer</string>
+    <string name="action_done">Terminé</string>
+    <string name="action_pin">Épingler</string>
+    <string name="action_unpin">Désépingler</string>
+    <string name="action_contact_us">Contactez-nous</string>
+    <string name="action_select">Sélectionner</string>
+    <string name="action_continue">Continuer</string>
+    <string name="action_change_sorting">Changer l’ordre</string>
+
+    <string name="title_email">Email</string>
+
+    <string name="settings_title">Paramètres</string>
+    <string name="security_title">Sécurité</string>
+
+    <string name="media_counter_pattern">%d sur %d</string>
+    <string name="general_error">Une erreur est survenue</string>
+    <string name="general_error_with_code">%d Une erreur est survenue</string>
+    <string name="network_error">Pas de connexion Internet</string>
+
+    <string name="today_title">Aujourd’hui</string>
+    <string name="yesterday_title">Hier</string>
+
+    <string name="delete_notes_warning_title">Vérification</string>
+    <string name="delete_notes_warning_body">Voulez-vous vraiment supprimer ces notes ? Vous ne pourrez pas les récupérer plus tard</string>
+    <string name="delete_note_warning_body">Voulez-vous vraiment supprimer cette note ? Vous ne pourrez pas la récupérer plus tard</string>
+
+    <string name="backup_in_progress">Sauvegarde en cours</string>
+    <string name="restore_in_progress">Restauration en cours</string>
+
+    <string-array name="months_array">
+        <item>Janvier</item>
+        <item>Février</item>
+        <item>Mars</item>
+        <item>Avril</item>
+        <item>Mai</item>
+        <item>Juin</item>
+        <item>Juillet</item>
+        <item>Août</item>
+        <item>Septembre</item>
+        <item>Octobre</item>
+        <item>Novembre</item>
+        <item>Décembre</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mer</item>
+        <item>Jeu</item>
+        <item>Ven</item>
+        <item>Sam</item>
+        <item>Dim</item>
+    </string-array>
+</resources>

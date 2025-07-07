@@ -1,0 +1,9 @@
+<resources>
+    <string name="media_permission_message">Serenity a besoin d’accéder à votre stockage pour vous permettre de joindre des photos et des vidéos. Appuyez sur Paramètres > Autorisations, puis activez Photos et vidéos</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Photos et vidéos</string>
+
+    <string name="audio_record_permission_message">Serenity a besoin d’accéder à votre microphone pour permettre les enregistrements vocaux. Appuyez sur Paramètres > Autorisations, puis activez Microphone</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Microphone</string>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Modifier le bloc média</string>
+    <string name="media_sorting_drag_and_drop_hint">Glisser-déposer pour changer l’ordre</string>
+    <string name="media_sorting_save_changes_hint">Voulez-vous enregistrer vos modifications ?</string>
+</resources>

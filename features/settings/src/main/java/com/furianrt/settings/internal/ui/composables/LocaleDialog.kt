@@ -60,8 +60,8 @@ internal fun LocaleDialog(
                     ),
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
-                .padding(vertical = 16.dp)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .padding(vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             locales.forEach { locale ->
