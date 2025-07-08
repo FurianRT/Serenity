@@ -1,4 +1,5 @@
 import com.furianrt.buildlogic.ConfigData
+import gradle.kotlin.dsl.accessors._324cd5068e6ae58f93836292cc57497f.kotlin
 import java.util.Properties
 
 plugins {
@@ -44,11 +45,13 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = ConfigData.JAVA_VERSION
+        targetCompatibility = ConfigData.JAVA_VERSION
     }
-    kotlinOptions {
-        jvmTarget = ConfigData.JVM_TARGET
+    kotlin {
+        compilerOptions {
+            jvmTarget = ConfigData.JVM_TARGET
+        }
     }
     packaging {
         resources {

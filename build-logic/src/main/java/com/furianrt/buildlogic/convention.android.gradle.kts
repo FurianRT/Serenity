@@ -1,4 +1,5 @@
 import com.furianrt.buildlogic.ConfigData
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.util.Properties
 
 plugins {
@@ -24,18 +25,32 @@ android {
             if (file("${project.name}-proguard-rules.pro").exists()) {
                 consumerProguardFiles("${project.name}-proguard-rules.pro")
             }
-            buildConfigField("String", "PREFS_PASSWORD", "\"${properties.getProperty("PREFS_PASSWORD")}\"")
-            buildConfigField("String", "GMAIL_APP_PASSWORD", "\"${properties.getProperty("GMAIL_APP_PASSWORD")}\"")
-            buildConfigField("String", "SUPPORT_EMAIL", "\"${properties.getProperty("SUPPORT_EMAIL")}\"")
+            buildConfigField(
+                "String",
+                "PREFS_PASSWORD",
+                "\"${properties.getProperty("PREFS_PASSWORD")}\""
+            )
+            buildConfigField(
+                "String",
+                "GMAIL_APP_PASSWORD",
+                "\"${properties.getProperty("GMAIL_APP_PASSWORD")}\""
+            )
+            buildConfigField(
+                "String",
+                "SUPPORT_EMAIL",
+                "\"${properties.getProperty("SUPPORT_EMAIL")}\""
+            )
             buildConfigField("String", "FILE_PROVIDER_AUTHORITY", "\"SerenityFileProvider\"")
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = ConfigData.JAVA_VERSION
+        targetCompatibility = ConfigData.JAVA_VERSION
     }
-    kotlinOptions {
-        jvmTarget = ConfigData.JVM_TARGET
+    kotlin {
+        compilerOptions {
+            jvmTarget = ConfigData.JVM_TARGET
+        }
     }
     packaging {
         resources {
