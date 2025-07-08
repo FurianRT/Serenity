@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,6 +52,8 @@ internal fun LocaleDialog(
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Column(
             modifier = modifier
+                .fillMaxWidth()
+                .heightIn(max = 600.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .hazeEffect(
                     state = hazeState,
