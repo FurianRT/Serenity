@@ -13,7 +13,7 @@ import androidx.navigation.NavBackStackEntry
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultEnterTransition(): EnterTransition {
     return slideIntoContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Left,
-        initialOffset = { it / 2 },
+        initialOffset = { (it * 0.2f).toInt() },
         animationSpec = tween(
             durationMillis = 350,
             easing = FastOutSlowInEasing,
@@ -29,7 +29,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): E
             durationMillis = 350,
             easing = LinearEasing,
         ),
-    ) + fadeOut(animationSpec = tween(350), targetAlpha = 0.2f)
+    ) + fadeOut(animationSpec = tween(300))
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopExitTransition(): ExitTransition {
