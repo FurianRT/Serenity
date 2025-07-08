@@ -2,6 +2,7 @@ package com.furianrt.notelistui.composables.title
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -50,7 +51,11 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 
-@OptIn(FlowPreview::class, ExperimentalLayoutApi::class)
+@OptIn(
+    FlowPreview::class,
+    ExperimentalLayoutApi::class,
+    ExperimentalAnimationApi::class,
+)
 @Composable
 fun NoteContentTitle(
     title: UiNoteContent.Title,
@@ -71,7 +76,7 @@ fun NoteContentTitle(
 
     val view = LocalView.current
     val topFocusMargin = with(LocalDensity.current) {
-        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 8.dp.toPx()).toInt()
+        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 24.dp.toPx()).toInt()
     }
     val bottomFocusMargin = with(LocalDensity.current) { 64.dp.toPx().toInt() }
     if (hasFocus) {
