@@ -54,7 +54,7 @@ import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -183,7 +183,7 @@ internal fun MediaSelectorBottomSheetInternal(
                     .statusBarsPadding()
                     .padding(top = ToolbarConstants.toolbarHeight)
                     .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
-                    .haze(state = hazeState),
+                    .hazeSource(hazeState),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,

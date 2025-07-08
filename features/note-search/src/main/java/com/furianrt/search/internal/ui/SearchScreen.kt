@@ -72,7 +72,7 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
@@ -149,7 +149,7 @@ internal fun SearchScreen(
     }
 
     ScreenContent(
-        modifier = Modifier.haze(hazeState),
+        modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,

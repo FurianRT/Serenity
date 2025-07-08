@@ -62,7 +62,7 @@ import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -137,7 +137,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                     NavHost(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.surface)
-                            .haze(hazeState),
+                            .hazeSource(hazeState),
                         navController = navController,
                         startDestination = NoteListRoute,
                         enterTransition = { defaultEnterTransition() },

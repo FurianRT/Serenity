@@ -31,7 +31,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlin.math.max
 
 private const val ACTION_PANEL_ANIM_DURATION = 250
@@ -60,12 +60,12 @@ internal fun BottomPanel(
         ) {
             SelectedCountHint(
                 modifier = Modifier
-                    .hazeChild(
+                    .hazeEffect(
                         state = hazeState,
                         style = HazeDefaults.style(
                             backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
                             blurRadius = 12.dp,
-                        ),
+                        )
                     )
                     .navigationBarsPadding(),
                 count = selectedCount,

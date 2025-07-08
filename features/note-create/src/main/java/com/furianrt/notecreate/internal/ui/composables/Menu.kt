@@ -20,7 +20,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -46,12 +46,12 @@ internal fun Menu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeChild(
+            .hazeEffect(
                 state = dropDownHazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 12.dp,
-                ),
+                )
             )
             .background(MaterialTheme.colorScheme.tertiaryContainer),
         offset = DpOffset(x = (-8).dp, y = 0.dp),

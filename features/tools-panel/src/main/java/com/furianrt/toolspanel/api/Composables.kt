@@ -54,7 +54,7 @@ import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 
 private enum class PanelMode {
     REGULAR,
@@ -113,14 +113,14 @@ fun ActionsPanel(
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
     val hazeModifier = Modifier
         .background(MaterialTheme.colorScheme.tertiaryContainer)
-        .hazeChild(
+        .hazeEffect(
             state = hazeState,
             style = HazeDefaults.style(
                 backgroundColor = MaterialTheme.colorScheme.surface,
                 tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
                 noiseFactor = 0f,
                 blurRadius = 12.dp,
-            ),
+            )
         )
         .background(MaterialTheme.colorScheme.tertiaryContainer)
 

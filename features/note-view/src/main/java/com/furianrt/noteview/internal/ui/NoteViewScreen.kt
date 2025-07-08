@@ -59,7 +59,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -124,7 +124,7 @@ internal fun NoteViewScreen(
             }
     }
     ScreenContent(
-        modifier = Modifier.haze(hazeState),
+        modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         hazeState = hazeState,
         snackBarHostState = snackBarHostState,

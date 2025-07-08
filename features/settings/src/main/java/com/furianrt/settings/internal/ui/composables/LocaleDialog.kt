@@ -22,7 +22,7 @@ import com.furianrt.uikit.components.RadioButtonWithText
 import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -52,12 +52,12 @@ internal fun LocaleDialog(
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(16.dp))
-                .hazeChild(
+                .hazeEffect(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
                         blurRadius = 20.dp,
-                    ),
+                    )
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
                 .verticalScroll(rememberScrollState())

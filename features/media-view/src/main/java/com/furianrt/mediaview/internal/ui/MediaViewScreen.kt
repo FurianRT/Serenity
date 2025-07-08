@@ -51,7 +51,7 @@ import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -191,7 +191,7 @@ private fun SuccessContent(
         modifier = modifier
             .fillMaxSize()
             .background(Color.Black)
-            .haze(hazeState),
+            .hazeSource(hazeState),
         contentAlignment = Alignment.Center,
     ) {
         MediaPager(

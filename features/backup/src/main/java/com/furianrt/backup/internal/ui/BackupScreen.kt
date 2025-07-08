@@ -79,8 +79,8 @@ import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -160,7 +160,7 @@ internal fun BackupScreen(
     }
 
     ScreenContent(
-        modifier = Modifier.haze(hazeState),
+        modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         snackBarHostState = snackBarHostState,
         onEvent = viewModel::onEvent,
@@ -299,7 +299,7 @@ private fun SuccessContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .haze(hazeState)
+                .hazeSource(hazeState)
                 .verticalScroll(scrollState)
                 .padding(top = toolbarPadding, bottom = backupBlockHeight.pxToDp()),
             verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -377,14 +377,14 @@ private fun SuccessContent(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .hazeChild(
+                .hazeEffect(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
                         tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
-                    ),
+                    )
                 )
                 .background(MaterialTheme.colorScheme.outlineVariant)
                 .onSizeChanged { backupBlockHeight = it.height }

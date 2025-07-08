@@ -72,7 +72,7 @@ import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
@@ -582,12 +582,12 @@ private fun PopUpMenu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeChild(
+            .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 12.dp,
-                ),
+                )
             )
             .background(MaterialTheme.colorScheme.tertiaryContainer),
         containerColor = Color.Transparent,

@@ -48,7 +48,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -106,7 +106,7 @@ internal fun NoteCreateScreen(
     }
     when (val state = uiState) {
         is NoteCreateUiState.Success -> SuccessContent(
-            modifier = Modifier.haze(hazeState),
+            modifier = Modifier.hazeSource(hazeState),
             state = pageScreenState,
             uiState = state,
             hazeState = hazeState,
@@ -127,7 +127,7 @@ internal fun NoteCreateScreen(
         )
 
         is NoteCreateUiState.Loading -> LoadingContent(
-            modifier = Modifier.haze(hazeState),
+            modifier = Modifier.hazeSource(hazeState),
         )
     }
 

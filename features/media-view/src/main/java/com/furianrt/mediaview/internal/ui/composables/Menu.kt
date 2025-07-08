@@ -21,7 +21,7 @@ import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.launch
 
 @Composable
@@ -46,13 +46,13 @@ internal fun Menu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeChild(
+            .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = Colors.Common.DarkGray,
                     tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
                     blurRadius = 12.dp,
-                ),
+                )
             ),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,

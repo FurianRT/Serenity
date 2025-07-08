@@ -110,7 +110,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import com.furianrt.uikit.R as uiR
 
@@ -344,7 +344,7 @@ private fun SuccessScreen(
                 .applyIf(uiState.isInEditMode) {
                     Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                 }
-                .haze(hazeState)
+                .hazeSource(hazeState)
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin, bottom = navBarPadding)

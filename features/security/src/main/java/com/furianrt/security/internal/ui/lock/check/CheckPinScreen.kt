@@ -66,7 +66,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.Executors
 import com.furianrt.uikit.R as uiR
@@ -158,13 +158,13 @@ internal fun CheckPinScreenInternal(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .hazeChild(
+            .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
                     blurRadius = 20.dp,
-                ),
+                )
             )
             .systemBarsPadding(),
     ) {

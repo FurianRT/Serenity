@@ -31,7 +31,7 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 
 
 @Composable
@@ -51,7 +51,7 @@ internal fun SuccessContent(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
-                .haze(state = hazeState),
+                .hazeSource(state = hazeState),
             state = listState,
             columns = GridCells.Fixed(listSpanCount),
             verticalArrangement = Arrangement.spacedBy(4.dp),

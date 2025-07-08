@@ -40,8 +40,8 @@ import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.haze
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -184,14 +184,14 @@ fun MovableToolbarScaffold(
                 .graphicsLayer { translationY = toolbarOffset }
                 .onSizeChanged { toolbarHeight = it.height.toFloat() }
                 .background(MaterialTheme.colorScheme.surface)
-                .hazeChild(
+                .hazeEffect(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
                         tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
-                    ),
+                    )
                 )
                 .drawBehind {
                     if (showShadow) {
@@ -202,7 +202,7 @@ fun MovableToolbarScaffold(
             content = { toolbar() },
         )
         Box(
-            modifier = Modifier.haze(hazeState),
+            modifier = Modifier.hazeSource(hazeState),
             content = { content(toolbarHeight.pxToDp()) },
         )
     }

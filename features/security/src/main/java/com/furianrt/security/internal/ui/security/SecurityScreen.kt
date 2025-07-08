@@ -35,7 +35,7 @@ import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -67,7 +67,7 @@ internal fun SecurityScreen(
     }
 
     ScreenContent(
-        modifier = Modifier.haze(hazeState),
+        modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         onEvent = viewModel::onEvent
     )

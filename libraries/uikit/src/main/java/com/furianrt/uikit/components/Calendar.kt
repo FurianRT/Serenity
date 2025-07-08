@@ -87,7 +87,7 @@ import com.kizitonwose.calendar.core.daysOfWeek
 import com.kizitonwose.calendar.core.yearMonth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeChild
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -270,12 +270,12 @@ private fun CalendarDialog(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(32.dp))
-                    .hazeChild(
+                    .hazeEffect(
                         state = hazeState,
                         style = HazeDefaults.style(
                             backgroundColor = MaterialTheme.colorScheme.surface,
                             blurRadius = 20.dp,
-                        ),
+                        )
                     )
                     .background(MaterialTheme.colorScheme.surfaceTint)
                     .wrapContentSize()

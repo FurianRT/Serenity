@@ -75,7 +75,7 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
@@ -137,7 +137,7 @@ internal fun NoteListScreen(
     }
 
     MainScreenContent(
-        modifier = Modifier.haze(hazeState),
+        modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         snackBarHostState = snackBarHostState,
         screenState = screenState,

@@ -70,7 +70,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -148,7 +148,7 @@ internal fun MediaSortingScreen(
     MediaSelectorBottomSheet(
         modifier = Modifier
             .fillMaxSize()
-            .haze(hazeState),
+            .hazeSource(hazeState),
         state = bottomSheetScaffoldState,
         openMediaViewer = { viewModel.onEvent(MediaSortingEvent.OnOpenMediaViewerRequest(it)) },
         onMediaSelected = { viewModel.onEvent(MediaSortingEvent.OnMediaSelected(it)) },
