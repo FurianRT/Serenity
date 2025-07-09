@@ -52,6 +52,6 @@
     <string name="backup_sync_in_progress_message">Sync in progress</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Sing In interrupted</string>
-    <string name="backup_success_message">Done</string>
+    <string name="backup_success_message">Successful</string>
 
 </resources>

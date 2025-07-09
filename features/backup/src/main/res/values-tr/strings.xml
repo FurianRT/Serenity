@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Senkronizasyon devam ediyor</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Giriş işlemi kesildi</string>
-    <string name="backup_success_message">Tamamlandı</string>
+    <string name="backup_success_message">Başarılı</string>
 </resources>

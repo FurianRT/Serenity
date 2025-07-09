@@ -123,6 +123,7 @@ internal class BackupViewModel @Inject constructor(
             }
 
             backupSyncState is SyncState.Success || restoreSyncState is SyncState.Success -> {
+                _effect.tryEmit(BackupEffect.ShowSyncSuccessMessage)
                 SyncProgress.Success
             }
 

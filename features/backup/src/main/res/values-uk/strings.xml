@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Синхронізація в процесі</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Вхід перервано</string>
-    <string name="backup_success_message">Готово</string>
+    <string name="backup_success_message">Успішно</string>
 </resources>

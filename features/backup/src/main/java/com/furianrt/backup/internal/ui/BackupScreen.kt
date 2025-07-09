@@ -32,7 +32,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -63,6 +62,7 @@ import com.furianrt.backup.internal.ui.composables.ConfirmSignOutDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.composables.RestoreButton
+import com.furianrt.backup.internal.ui.composables.SuccessSyncSnackBar
 import com.furianrt.backup.internal.ui.composables.SyncButton
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.anim.ShakingState
@@ -83,7 +83,6 @@ import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -117,10 +116,13 @@ internal fun BackupScreen(
     }
 
     val snackBarHostState = remember { SnackbarHostState() }
+    val syncSnackBarHostState = remember { SnackbarHostState() }
     var showBackupPeriodDialog by remember { mutableStateOf(false) }
     var showConfirmBackupDialog by remember { mutableStateOf(false) }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    val successText = stringResource(R.string.backup_success_message)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -136,10 +138,10 @@ internal fun BackupScreen(
                                 .Builder(effect.intentSender)
                                 .build()
                             authLauncher.launch(intentSenderRequest)
-                        } catch (e: IntentSender.SendIntentException) {
+                        } catch (_: IntentSender.SendIntentException) {
                             val error = AuthException.SendIntentException()
                             viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
-                        } catch (e: ActivityNotFoundException) {
+                        } catch (_: ActivityNotFoundException) {
                             val error = AuthException.ActivityNotFoundException()
                             viewModel.onEvent(BackupScreenEvent.OnBackupResolutionFailure(error))
                         }
@@ -155,16 +157,32 @@ internal fun BackupScreen(
                     }
 
                     is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
+                    is BackupEffect.ShowSyncSuccessMessage -> syncSnackBarHostState.showSnackbar(
+                        message = successText,
+                        duration = SnackbarDuration.Short,
+                    )
                 }
             }
     }
 
-    ScreenContent(
-        modifier = Modifier.hazeSource(hazeState),
-        uiState = uiState,
-        snackBarHostState = snackBarHostState,
-        onEvent = viewModel::onEvent,
-    )
+    Box {
+        ScreenContent(
+            modifier = Modifier.hazeSource(hazeState),
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
+            onEvent = viewModel::onEvent,
+        )
+        SnackbarHost(
+            modifier = Modifier.align(Alignment.Center),
+            hostState = syncSnackBarHostState,
+            snackbar = { data ->
+                SuccessSyncSnackBar(
+                    title = data.visuals.message,
+                    hazeState = hazeState
+                )
+            },
+        )
+    }
     if (showSignOutConfirmationDialog) {
         ConfirmSignOutDialog(
             hazeState = hazeState,
@@ -250,7 +268,6 @@ private fun SuccessContent(
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    val scope = rememberCoroutineScope()
 
     val hazeState = remember { HazeState() }
     var backupBlockHeight by remember { mutableIntStateOf(0) }
@@ -266,7 +283,6 @@ private fun SuccessContent(
     )
 
     val errorText = stringResource(uiR.string.general_error)
-    val successText = stringResource(R.string.backup_success_message)
 
     SkipFirstEffect(uiState.hasSyncError) {
         if (uiState.syncProgress is SyncProgress.Failure) {
@@ -281,17 +297,6 @@ private fun SuccessContent(
                 message = errorText,
                 duration = SnackbarDuration.Short,
             )
-        }
-    }
-
-    LaunchedEffect(uiState.isSyncSuccess) {
-        if (uiState.isSyncSuccess) {
-            scope.launch {
-                snackBarHostState.showSnackbar(
-                    message = successText,
-                    duration = SnackbarDuration.Short,
-                )
-            }
         }
     }
 
@@ -430,6 +435,7 @@ private fun SuccessContent(
                     is SyncProgress.BackupProgress -> {
                         progress.syncedNotesCount / progress.totalNotesCount.toFloat()
                     }
+
                     is SyncProgress.RestoreProgress -> {
                         progress.syncedNotesCount / progress.totalNotesCount.toFloat()
                     }

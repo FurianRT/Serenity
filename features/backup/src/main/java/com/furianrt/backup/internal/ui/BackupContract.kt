@@ -24,7 +24,6 @@ internal sealed interface BackupUiState {
         val isRestoreInProgress = syncProgress is RestoreStarting || syncProgress is RestoreProgress
         val isSyncInProgress = isBackupInProgress || isRestoreInProgress
         val hasSyncError = syncProgress is Failure
-        val isSyncSuccess = syncProgress is SyncProgress.Success
 
         sealed class AuthState(open val isLoading: Boolean) {
             data class SignedIn(
@@ -92,4 +91,5 @@ internal sealed interface BackupEffect {
     data class ShowBackupResolution(val intentSender: IntentSender) : BackupEffect
     data class ShowErrorToast(val text: String) : BackupEffect
     data object ShowConfirmBackupDialog : BackupEffect
+    data object ShowSyncSuccessMessage : BackupEffect
 }

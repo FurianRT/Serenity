@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Đang đồng bộ</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Đăng nhập bị gián đoạn</string>
-    <string name="backup_success_message">Hoàn thành</string>
+    <string name="backup_success_message">Thành công</string>
 </resources>

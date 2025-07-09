@@ -170,7 +170,7 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetSwipeEnabled = sheetSwipeEnabled,
         sheetShadowElevation = 0.dp,
         sheetShape = RectangleShape,
-        sheetDragHandle = {},
+        sheetDragHandle = null,
         snackbarHost = {},
         content = { paddingValues ->
             Box {
@@ -210,7 +210,7 @@ internal fun MediaSelectorBottomSheetInternal(
                     bottomSheetTranslationY = PREDICTIVE_BACK_TRANSLATION * event.progress
                 }
                 viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-            } catch (e: CancellationException) {
+            } catch (_: CancellationException) {
                 translationYAnim.animateTo(0f)
             }
         },

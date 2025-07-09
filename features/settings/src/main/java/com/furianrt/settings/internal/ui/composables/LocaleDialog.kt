@@ -53,7 +53,7 @@ internal fun LocaleDialog(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .heightIn(max = 600.dp)
+                .heightIn(max = 616.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .hazeEffect(
                     state = hazeState,

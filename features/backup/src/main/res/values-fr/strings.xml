@@ -51,5 +51,5 @@
     <string name="backup_sync_in_progress_message">Synchronisation en cours</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Connexion interrompue</string>
-    <string name="backup_success_message">Terminé</string>
+    <string name="backup_success_message">Réussi</string>
 </resources>

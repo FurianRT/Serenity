@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">सिंक हो रहा है</string>
 
     <string name="backup_sing_in_resolution_canceled_error">साइन इन बाधित हो गया</string>
-    <string name="backup_success_message">पूरा हुआ</string>
+    <string name="backup_success_message">सफल रहा</string>
 </resources>

@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Sincronización en progreso</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Inicio de sesión interrumpido</string>
-    <string name="backup_success_message">Listo</string>
+    <string name="backup_success_message">Exitoso</string>
 </resources>

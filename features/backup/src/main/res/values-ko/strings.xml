@@ -51,5 +51,5 @@
     <string name="backup_sync_in_progress_message">동기화 진행 중</string>
 
     <string name="backup_sing_in_resolution_canceled_error">로그인 중단됨</string>
-    <string name="backup_success_message">완료</string>
+    <string name="backup_success_message">성공함</string>
 </resources>

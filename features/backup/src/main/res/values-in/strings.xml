@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Sinkronisasi berlangsung</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Masuk dibatalkan</string>
-    <string name="backup_success_message">Selesai</string>
+    <string name="backup_success_message">Berhasil</string>
 </resources>

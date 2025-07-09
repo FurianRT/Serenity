@@ -52,5 +52,5 @@
     <string name="backup_sync_in_progress_message">Synchronisierung läuft</string>
 
     <string name="backup_sing_in_resolution_canceled_error">Anmeldung abgebrochen</string>
-    <string name="backup_success_message">Fertig</string>
+    <string name="backup_success_message">Erfolgreich</string>
 </resources>
