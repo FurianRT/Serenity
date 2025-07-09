@@ -71,7 +71,6 @@ internal fun StickerScreenItem(
     var stickerCenter by remember { mutableStateOf<Offset?>(null) }
     var initialDragOffset by remember { mutableStateOf<Offset?>(null) }
     var initialAngle by remember { mutableFloatStateOf(item.state.rotation) }
-    var initialScale by remember { mutableFloatStateOf(item.state.scale) }
 
     var transformTrigger by remember { mutableIntStateOf(0) }
     var isFirstLaunch by remember { mutableStateOf(true) }
@@ -108,7 +107,6 @@ internal fun StickerScreenItem(
                             maximumValue = StickerItem.MAX_SIZE_PERCENT,
                         )
                         initialAngle = resultRotation
-                        initialScale = resultScale
                         item.state.rotation = resultRotation
                         item.state.scale = resultScale
                         onDragged(pan)
@@ -178,7 +176,6 @@ internal fun StickerScreenItem(
                             onDragEnd = {
                                 initialDragOffset = null
                                 initialAngle = item.state.rotation
-                                initialScale = item.state.scale
                                 onTransformedState()
                             }
                         ) { change, _ ->
