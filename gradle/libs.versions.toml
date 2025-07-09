@@ -116,6 +116,7 @@ coilVideo = { module = "io.coil-kt.coil3:coil-video", version.ref = "coil" }
 coilGif = { module = "io.coil-kt.coil3:coil-gif", version.ref = "coil" }
 
 zoom = { module = "io.github.panpf.zoomimage:zoomimage-compose", version.ref = "zoom" }
+zoomCoil = { module = "io.github.panpf.zoomimage:zoomimage-compose-coil3", version.ref = "zoom" }
 
 blur = { module = "dev.chrisbanes.haze:haze", version.ref = "blur" }
 

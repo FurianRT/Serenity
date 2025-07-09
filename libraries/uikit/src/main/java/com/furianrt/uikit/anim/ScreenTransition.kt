@@ -29,7 +29,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): E
             durationMillis = 350,
             easing = LinearEasing,
         ),
-    ) + fadeOut(animationSpec = tween(300))
+    ) + fadeOut(animationSpec = tween(250))
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopExitTransition(): ExitTransition {

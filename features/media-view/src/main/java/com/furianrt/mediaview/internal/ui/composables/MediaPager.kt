@@ -34,15 +34,16 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.DefaultLoadControl
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
-import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.VideoSlider
+import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
+import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
@@ -99,10 +100,11 @@ private fun ImagePage(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val zoomableState = rememberZoomableState()
-    LaunchedEffect(zoomableState) {
-        zoomableState.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
+    val zoomState = rememberCoilZoomState()
+    LaunchedEffect(zoomState.zoomable) {
+        zoomState.zoomable.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
     }
+
     val context = LocalContext.current
     val request = remember(item.id) {
         ImageRequest.Builder(context)
@@ -113,11 +115,12 @@ private fun ImagePage(
             .data(item.uri)
             .build()
     }
-    AsyncImage(
-        modifier = modifier
-            .fillMaxSize()
-            .zoom(zoomable = zoomableState, onTap = { onClick() }),
+    CoilZoomAsyncImage(
+        modifier = modifier.fillMaxSize(),
+        zoomState = zoomState,
         model = request,
+        onTap = { onClick() },
+        scrollBar = null,
         placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
         error = ColorPainter(MaterialTheme.colorScheme.tertiary),
         contentDescription = null,

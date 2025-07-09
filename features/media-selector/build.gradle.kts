@@ -53,6 +53,7 @@ dependencies {
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.zoom)
+    implementation(libs.zoomCoil)
 
     implementation(libs.exoplayer)
     implementation(libs.exoplayerUi)
