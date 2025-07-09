@@ -1,5 +1,6 @@
 package com.furianrt.mediaview.internal.ui.composables
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.AnimationState
@@ -62,7 +63,7 @@ import com.furianrt.uikit.R as uiR
 
 private const val SCALE_MULTIPLIER = 1.8f
 private const val SLIDER_UPDATE_INTERVAL = 25L
-private const val DRAG_TO_CLOSE_DELIMITER = 3.5f
+private const val DRAG_TO_CLOSE_DELIMITER = 4f
 
 @Composable
 internal fun MediaPager(
@@ -193,6 +194,7 @@ private fun ImagePage(
     }
 }
 
+@SuppressLint("InflateParams")
 @OptIn(UnstableApi::class)
 @Composable
 internal fun VideoPage(
