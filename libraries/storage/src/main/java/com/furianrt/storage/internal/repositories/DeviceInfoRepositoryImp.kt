@@ -10,7 +10,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 internal class DeviceInfoRepositoryImp @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) : DeviceInfoRepository {
 
     override fun hasNetworkConnection(): Boolean {

@@ -27,7 +27,7 @@ internal class SavedMediaData(
 
 @Singleton
 internal class AppMediaSource @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
     private val errorTracker: ErrorTracker,
 ) {

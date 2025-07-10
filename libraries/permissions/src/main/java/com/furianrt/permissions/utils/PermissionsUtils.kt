@@ -20,7 +20,7 @@ private enum class MediaPermissionStatus {
 
 @Singleton
 class PermissionsUtils @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) {
     companion object {
         fun getMediaPermissionList(): List<String> {

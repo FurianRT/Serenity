@@ -20,7 +20,7 @@ interface AudioPlayerListener {
 }
 
 class AudioPlayer @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     dispatchers: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(dispatchers.io + SupervisorJob())

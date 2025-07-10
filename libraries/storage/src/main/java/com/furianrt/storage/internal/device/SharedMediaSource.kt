@@ -20,7 +20,7 @@ private const val MAX_VIDEO_DURATION = 60 * 30 * 1000 // 30 minutes
 
 @Singleton
 internal class SharedMediaSource @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dispatchers: DispatchersProvider,
     private val errorTracker: ErrorTracker,
 ) {

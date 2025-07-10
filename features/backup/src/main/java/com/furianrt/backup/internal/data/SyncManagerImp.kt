@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 internal class SyncManagerImp @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val profileRepository: ProfileRepository,
     private val backupRepository: BackupRepository,
     private val backupDataManager: BackupDataManager,

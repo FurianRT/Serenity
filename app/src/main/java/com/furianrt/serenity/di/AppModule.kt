@@ -31,6 +31,7 @@ internal object AppModule {
     @Provides
     fun provideDispatchersProvider(): DispatchersProvider = object : DispatchersProvider {
         override val main: CoroutineDispatcher = Dispatchers.Main
+        override val mainImmediate: CoroutineDispatcher = Dispatchers.Main.immediate
         override val io: CoroutineDispatcher = Dispatchers.IO
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined

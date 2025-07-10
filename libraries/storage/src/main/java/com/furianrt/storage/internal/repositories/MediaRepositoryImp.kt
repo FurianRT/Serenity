@@ -43,7 +43,7 @@ internal class MediaRepositoryImp @Inject constructor(
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
 ) : MediaRepository {
 
     override suspend fun insertMedia(

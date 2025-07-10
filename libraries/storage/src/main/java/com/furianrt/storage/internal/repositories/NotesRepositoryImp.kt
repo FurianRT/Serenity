@@ -34,7 +34,7 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 internal class NotesRepositoryImp @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val noteDao: NoteDao,
     private val appearanceDataStore: AppearanceDataStore,
     private val noteCache: NoteCache,

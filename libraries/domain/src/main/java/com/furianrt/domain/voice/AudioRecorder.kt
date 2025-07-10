@@ -15,7 +15,7 @@ private const val SAMPLING_RATE = 44100
 private const val ENCODING_BIT_RATE = 128000
 
 class AudioRecorder @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val errorTracker: ErrorTracker,
     private val dispatchers: DispatchersProvider,
 ) {

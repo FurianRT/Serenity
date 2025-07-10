@@ -5,7 +5,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.furianrt.security.api.ChangeEmailRoute
-import com.furianrt.security.internal.domain.LockManager
+import com.furianrt.security.api.LockAuthorizer
 import com.furianrt.security.internal.domain.ValidateEmailUseCase
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.uikit.extensions.launch
@@ -24,7 +24,7 @@ internal class EmailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val securityRepository: SecurityRepository,
     private val validateEmailUseCase: ValidateEmailUseCase,
-    private val lockManager: LockManager,
+    private val lockAuthorizer: LockAuthorizer,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<ChangeEmailRoute>()
@@ -59,7 +59,7 @@ internal class EmailViewModel @Inject constructor(
         }
         _state.update { it.copy(isLoading = true) }
         if (validateEmailUseCase(email)) {
-            lockManager.authorize()
+            lockAuthorizer.authorize()
             validateEmailJob = launch {
                 savePinAndEmail(route.pin, email)
                 _effect.tryEmit(EmailEffect.CloseScreen)

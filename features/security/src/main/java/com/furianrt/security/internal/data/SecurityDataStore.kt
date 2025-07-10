@@ -26,7 +26,7 @@ private val KEY_RECOVERY_EMAIL_SEND_TIME = longPreferencesKey("recovery_email_se
 
 @Singleton
 internal class SecurityDataStore @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val dataStore: DataStore<Preferences>,
     private val cipher: SerenityCipher,
 ) : SecurityRepository {

@@ -6,6 +6,7 @@ import android.app.LocaleManager
 import android.content.Context
 import android.os.Bundle
 import android.os.LocaleList
+import com.furianrt.common.ActivityLifecycleCallbacks
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.repositories.LocaleRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -18,7 +19,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 internal class LocaleRepositoryImp @Inject constructor(
-    @ApplicationContext private val applicationContext: Context,
+    @param:ApplicationContext private val applicationContext: Context,
 ) : LocaleRepository {
     private val activityCallbacks = CurrentActivityCallbacks()
 
@@ -62,20 +63,13 @@ internal class LocaleRepositoryImp @Inject constructor(
         return AppLocale.fromTag(Locale.getDefault().language)
     }
 
-    private inner class CurrentActivityCallbacks : Application.ActivityLifecycleCallbacks {
+    private inner class CurrentActivityCallbacks : ActivityLifecycleCallbacks {
 
         private var currentActivity: WeakReference<Activity>? = null
 
         val currentActivityContext: Context?
             get() = currentActivity?.get()?.takeUnless { it.isDestroyed }
 
-
-        override fun onActivityStarted(activity: Activity) = Unit
-        override fun onActivityResumed(activity: Activity) = Unit
-        override fun onActivityPaused(activity: Activity) = Unit
-        override fun onActivityStopped(activity: Activity) = Unit
-        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) = Unit
-        override fun onActivityDestroyed(activity: Activity) = Unit
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
             currentActivity = WeakReference(activity)
             localeFlow.update { getDefaultLocale() }

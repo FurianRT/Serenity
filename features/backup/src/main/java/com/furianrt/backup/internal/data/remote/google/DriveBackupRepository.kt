@@ -65,7 +65,7 @@ private const val MIME_TYPE_AUDIO = "audio/*"
 
 @Singleton
 internal class DriveBackupRepository @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val backupDataStore: BackupDataStore,
     private val userInfoApiService: UserInfoApiService,
     private val driveApiService: DriveApiService,
