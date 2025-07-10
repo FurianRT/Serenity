@@ -16,7 +16,7 @@ import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val MAX_VIDEO_DURATION = 60 * 60 * 1000 // 1 hour
+private const val MAX_VIDEO_DURATION = 60 * 30 * 1000 // 30 minutes
 
 @Singleton
 internal class SharedMediaSource @Inject constructor(
