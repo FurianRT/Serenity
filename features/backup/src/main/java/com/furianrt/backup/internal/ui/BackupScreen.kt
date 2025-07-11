@@ -288,10 +288,10 @@ private fun SuccessContent(
         if (uiState.syncProgress is SyncProgress.Failure) {
             hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
             if (uiState.syncProgress.backup) {
-                backupShakeState.shake()
+                backupShakeState.shake(animationDuration = 25)
             }
             if (uiState.syncProgress.restore) {
-                restoreShakeState.shake()
+                restoreShakeState.shake(animationDuration = 25)
             }
             snackBarHostState.showSnackbar(
                 message = errorText,

@@ -312,7 +312,7 @@ private fun SuccessScreen(
     )
 
     var topEmptyTitleHeight by remember { mutableFloatStateOf(0f) }
-    val showStickersPadding = uiState.isInEditMode && uiState.content.firstOrNull().isEmptyTitle()
+    val showStickersPadding = (uiState.content.firstOrNull() as? UiNoteContent.Title) != null
 
     LaunchedEffect(focusedTitleId) {
         val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }

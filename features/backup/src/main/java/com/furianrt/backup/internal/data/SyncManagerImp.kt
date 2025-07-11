@@ -34,6 +34,11 @@ internal class SyncManagerImp @Inject constructor(
         }
     }
 
-    override fun isBackupInProgress(): Boolean = backupDataManager.state.value !is SyncState.Idle
-    override fun isRestoreInProgress(): Boolean = restoreDataManager.state.value !is SyncState.Idle
+    override fun isBackupInProgress(): Boolean =
+        backupDataManager.state.value is SyncState.Starting ||
+                backupDataManager.state.value is SyncState.Progress
+
+    override fun isRestoreInProgress(): Boolean =
+        restoreDataManager.state.value !is SyncState.Starting ||
+                restoreDataManager.state.value !is SyncState.Progress
 }

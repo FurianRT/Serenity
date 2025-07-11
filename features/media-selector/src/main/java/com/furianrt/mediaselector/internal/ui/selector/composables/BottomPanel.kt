@@ -8,6 +8,7 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -31,6 +32,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import kotlin.math.max
 
@@ -63,10 +65,12 @@ internal fun BottomPanel(
                     .hazeEffect(
                         state = hazeState,
                         style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.7f),
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.3f)),
                             blurRadius = 12.dp,
                         )
                     )
+                    .background(MaterialTheme.colorScheme.outlineVariant)
                     .navigationBarsPadding(),
                 count = selectedCount,
             )

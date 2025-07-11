@@ -36,7 +36,10 @@ internal fun SuccessSyncSnackBar(
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.anim_sync_success),
     )
-    val lottieState = animateLottieCompositionAsState(composition = composition)
+    val lottieState = animateLottieCompositionAsState(
+        composition = composition,
+        speed = 1.4f,
+    )
 
     Column(
         modifier = modifier
