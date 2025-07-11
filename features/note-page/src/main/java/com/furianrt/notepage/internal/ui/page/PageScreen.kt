@@ -114,6 +114,7 @@ import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
 import com.furianrt.uikit.R as uiR
 
+private const val TAG = "NotePageScreenInternal"
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
@@ -130,7 +131,7 @@ internal fun NotePageScreenInternal(
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
-        key = noteId,
+        key = noteId + TAG,
         creationCallback = { factory ->
             factory.create(
                 noteId = noteId,
