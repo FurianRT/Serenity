@@ -84,8 +84,8 @@ fun UiNoteContent?.isEmptyTitle() = this is UiNoteContent.Title && state.text.is
 val UiNoteContent.MediaBlock.contentHeight: Dp
     get() = when (media.count()) {
         1 -> 150.dp
-        2 -> 120.dp
-        3 -> 110.dp
+        2 -> 130.dp
+        3 -> 120.dp
         4 -> 150.dp
         else -> 180.dp
     }

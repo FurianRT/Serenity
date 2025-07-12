@@ -231,7 +231,6 @@ private fun SuccessContent(
                 .graphicsLayer { alpha = controlsAlpha }
                 .align(Alignment.TopCenter),
             visible = showControls,
-            label = "ToolbarAnim",
         ) {
             Toolbar(
                 modifier = Modifier
@@ -258,7 +257,6 @@ private fun SuccessContent(
                 .graphicsLayer { alpha = controlsAlpha }
                 .align(Alignment.BottomCenter),
             visible = showControls,
-            label = "MediaListAnim",
         ) {
             MediaList(
                 modifier = Modifier

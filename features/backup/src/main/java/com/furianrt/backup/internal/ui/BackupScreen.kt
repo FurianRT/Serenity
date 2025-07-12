@@ -157,10 +157,13 @@ internal fun BackupScreen(
                     }
 
                     is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
-                    is BackupEffect.ShowSyncSuccessMessage -> syncSnackBarHostState.showSnackbar(
-                        message = successText,
-                        duration = SnackbarDuration.Short,
-                    )
+                    is BackupEffect.ShowSyncSuccessMessage -> {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                        syncSnackBarHostState.showSnackbar(
+                            message = successText,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             }
     }

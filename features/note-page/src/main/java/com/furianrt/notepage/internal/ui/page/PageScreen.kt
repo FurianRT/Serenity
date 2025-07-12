@@ -112,6 +112,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private const val TAG = "NotePageScreenInternal"
@@ -172,7 +173,7 @@ internal fun NotePageScreenInternal(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {

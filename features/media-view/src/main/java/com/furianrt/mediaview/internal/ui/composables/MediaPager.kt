@@ -369,10 +369,7 @@ internal fun VideoPage(
                     }
                 },
             )
-            ControlsAnimatedVisibility(
-                visible = showControls,
-                label = "ButtonPlayPauseAnim",
-            ) {
+            ControlsAnimatedVisibility(visible = showControls) {
                 ButtonPlayPause(
                     isPlay = !playing || isEnded,
                     onClick = {
@@ -392,7 +389,6 @@ internal fun VideoPage(
                     .navigationBarsPadding()
                     .padding(bottom = 90.dp),
                 visible = showControls,
-                label = "VideoSliderAnim",
             ) {
                 VideoSlider(
                     progress = currentPosition.toFloat() / item.duration,

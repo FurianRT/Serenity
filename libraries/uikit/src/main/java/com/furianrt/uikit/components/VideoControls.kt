@@ -117,7 +117,6 @@ fun VideoSlider(
 @Composable
 fun ControlsAnimatedVisibility(
     visible: Boolean,
-    label: String,
     modifier: Modifier = Modifier,
     content: @Composable AnimatedVisibilityScope.() -> Unit,
 ) {
@@ -126,7 +125,6 @@ fun ControlsAnimatedVisibility(
         visible = visible,
         enter = fadeIn(),
         exit = fadeOut(),
-        label = label,
         content = content,
     )
 }
