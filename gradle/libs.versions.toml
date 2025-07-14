@@ -1,6 +1,6 @@
 [versions]
 
-agp = "8.11.0"
+agp = "8.11.1"
 kotlin = "2.2.0"
 
 ksp = "2.2.0-2.0.2"
@@ -59,7 +59,7 @@ googleDrive = "v3-rev197-1.25.0"
 googleDriveGms = "17.0.0"
 
 retrofit = "3.0.0"
-loggingInterceptor = "5.0.0"
+loggingInterceptor = "5.1.0"
 kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.1"

@@ -26,7 +26,6 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-private const val BIOMETRIC_SCANNER_REQUEST_DELAY = 100L
 private const val PIN_CHECK_DELAY = 100L
 
 @HiltViewModel
@@ -118,8 +117,7 @@ internal class CheckPinViewModel @Inject constructor(
         val isFingerprintEnabled = securityRepository.isBiometricAvailable() &&
                 securityRepository.isFingerprintEnabled().first()
         if (isFingerprintEnabled) {
-            delay(BIOMETRIC_SCANNER_REQUEST_DELAY)
-            _effect.tryEmit(CheckPinEffect.ShowBiometricScanner)
+            _effect.emit(CheckPinEffect.ShowBiometricScanner)
         }
     }
 

@@ -67,7 +67,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 250L
+private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 200L
 private const val SPLASH_SCREEN_DELAY = 400L
 
 @AndroidEntryPoint
@@ -100,19 +100,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             setOnExitAnimationListener { splashScreenViewProvider ->
                 splashScreenViewProvider.view
                     .animate()
-                    .alpha(0f)
-                    .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
-
-                splashScreenViewProvider.view
-                    .animate()
                     .scaleX(1.1f)
                     .scaleY(1.1f)
-                    .duration = SPLASH_SCREEN_EXIT_ANIM_DURATION
-
-                enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
-                    navigationBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
-                )
+                    .alpha(0f)
+                    .setDuration(SPLASH_SCREEN_EXIT_ANIM_DURATION)
+                    .withEndAction { splashScreenViewProvider.remove() }
             }
         }
 
