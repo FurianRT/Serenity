@@ -88,7 +88,6 @@ fun VideoSlider(
 ) {
     Row(
         modifier = modifier
-            .background(SystemBarsConstants.Color)
             .fillMaxWidth()
             .draggable(state = rememberDraggableState {}, orientation = Orientation.Horizontal)
             .systemGestureExclusion()

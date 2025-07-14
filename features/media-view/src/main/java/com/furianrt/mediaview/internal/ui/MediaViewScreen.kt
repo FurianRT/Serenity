@@ -1,6 +1,7 @@
 package com.furianrt.mediaview.internal.ui
 
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.net.Uri
 import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
@@ -24,11 +25,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -152,6 +155,8 @@ private fun SuccessContent(
     onEvent: (event: MediaViewEvent) -> Unit = {},
     onCloseRequest: () -> Unit = {},
 ) {
+    val configuration = LocalConfiguration.current
+
     val pagerState = rememberPagerState(
         initialPage = uiState.initialMediaIndex,
         pageCount = { uiState.media.count() },
@@ -165,6 +170,7 @@ private fun SuccessContent(
     var isThumbDragging by remember { mutableStateOf(false) }
     var isPlaying by remember { mutableStateOf(false) }
     var controlsAlpha by remember { mutableFloatStateOf(1f) }
+    var isVideoItem by remember { mutableStateOf(false) }
 
     DisposableEffect(showControls) {
         if (showControls) {
@@ -180,16 +186,18 @@ private fun SuccessContent(
     LaunchedEffect(
         listState.isScrollInProgress,
         showControls,
-        pagerState.currentPage,
         isThumbDragging,
         isPlaying,
     ) {
-        val isVideoItem = uiState.media[pagerState.currentPage] is MediaItem.Video
-        val isScrollInProgress = listState.isScrollInProgress
-        if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging && isPlaying) {
-            delay(UI_HIDE_DELAY)
-            showControls = false
-        }
+        snapshotFlow { pagerState.currentPage }
+            .collectLatest { currentPage ->
+                isVideoItem = uiState.media[currentPage] is MediaItem.Video
+                val isScrollInProgress = listState.isScrollInProgress
+                if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging && isPlaying) {
+                    delay(UI_HIDE_DELAY)
+                    showControls = false
+                }
+            }
     }
 
     Box(
@@ -256,7 +264,9 @@ private fun SuccessContent(
             modifier = Modifier
                 .graphicsLayer { alpha = controlsAlpha }
                 .align(Alignment.BottomCenter),
-            visible = showControls,
+            visible = showControls &&
+                    (!isVideoItem ||
+                    configuration.orientation == Configuration.ORIENTATION_PORTRAIT),
         ) {
             MediaList(
                 modifier = Modifier

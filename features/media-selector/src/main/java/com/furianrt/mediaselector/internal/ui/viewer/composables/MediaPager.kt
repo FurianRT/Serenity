@@ -1,10 +1,13 @@
 package com.furianrt.mediaselector.internal.ui.viewer.composables
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration.ORIENTATION_LANDSCAPE
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.view.LayoutInflater
 import androidx.annotation.OptIn
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateTo
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
@@ -34,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
@@ -50,6 +54,8 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ButtonPlayPause
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.VideoSlider
+import com.furianrt.uikit.constants.SystemBarsConstants
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.dpToPx
 import com.github.panpf.zoomimage.CoilZoomAsyncImage
 import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
@@ -212,7 +218,9 @@ internal fun VideoPage(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val configuration = LocalConfiguration.current
     val hapticFeedback = LocalHapticFeedback.current
+
     val exoPlayer = remember(item.id) {
         ExoPlayer.Builder(context)
             .setLoadControl(
@@ -387,11 +395,21 @@ internal fun VideoPage(
             ControlsAnimatedVisibility(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
-                    .navigationBarsPadding()
-                    .padding(bottom = 90.dp),
+                    .applyIf(configuration.orientation == ORIENTATION_PORTRAIT) {
+                        Modifier
+                            .navigationBarsPadding()
+                            .padding(bottom = 90.dp)
+                    },
                 visible = showControls,
             ) {
                 VideoSlider(
+                    modifier = Modifier
+                        .background(SystemBarsConstants.Color)
+                        .applyIf(configuration.orientation == ORIENTATION_LANDSCAPE) {
+                            Modifier
+                                .navigationBarsPadding()
+                                .padding(bottom = 8.dp)
+                        },
                     progress = currentPosition.toFloat() / item.duration,
                     duration = item.duration,
                     interactionSource = sliderInteractionSource,
