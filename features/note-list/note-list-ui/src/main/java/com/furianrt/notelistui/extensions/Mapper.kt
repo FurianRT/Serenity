@@ -185,6 +185,8 @@ fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
     NoteFontFamily.DOTO -> UiNoteFontFamily.Doto
     NoteFontFamily.PLAY_WRITE_MODERN -> UiNoteFontFamily.PlayWriteModern
     NoteFontFamily.TILLANA -> UiNoteFontFamily.Tillana
+    NoteFontFamily.LIFE_SEVERS -> UiNoteFontFamily.LifeSavers
+    NoteFontFamily.TEXTURINA -> UiNoteFontFamily.Texturina
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
@@ -198,6 +200,8 @@ fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
     UiNoteFontFamily.Doto -> NoteFontFamily.DOTO
     UiNoteFontFamily.PlayWriteModern -> NoteFontFamily.PLAY_WRITE_MODERN
     UiNoteFontFamily.Tillana -> NoteFontFamily.TILLANA
+    UiNoteFontFamily.LifeSavers -> NoteFontFamily.LIFE_SEVERS
+    UiNoteFontFamily.Texturina -> NoteFontFamily.TEXTURINA
 }
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {

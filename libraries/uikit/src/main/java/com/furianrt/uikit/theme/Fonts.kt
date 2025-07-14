@@ -68,4 +68,16 @@ sealed class NoteFont(
         regular = FontFamily(Font(R.font.tillana_regular)),
         bold = FontFamily(Font(R.font.tillana_bold)),
     )
+
+    data object LifeSavers : NoteFont(
+        light = FontFamily(Font(R.font.life_savers_regular)),
+        regular = FontFamily(Font(R.font.life_savers_regular)),
+        bold = FontFamily(Font(R.font.life_savers_bold)),
+    )
+
+    data object Texturina : NoteFont(
+        light = FontFamily(Font(R.font.texturina_light)),
+        regular = FontFamily(Font(R.font.texturina_regular)),
+        bold = FontFamily(Font(R.font.texturina_bold)),
+    )
 }

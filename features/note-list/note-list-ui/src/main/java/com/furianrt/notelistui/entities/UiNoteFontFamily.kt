@@ -90,4 +90,20 @@ sealed class UiNoteFontFamily(
         regular = NoteFont.Tillana.regular,
         bold = NoteFont.Tillana.bold,
     )
+
+    @Immutable
+    data object LifeSavers : UiNoteFontFamily(
+        name = "Life Savers",
+        light = NoteFont.LifeSavers.light,
+        regular = NoteFont.LifeSavers.regular,
+        bold = NoteFont.LifeSavers.bold,
+    )
+
+    @Immutable
+    data object Texturina : UiNoteFontFamily(
+        name = "Texturina",
+        light = NoteFont.Texturina.light,
+        regular = NoteFont.Texturina.regular,
+        bold = NoteFont.Texturina.bold,
+    )
 }

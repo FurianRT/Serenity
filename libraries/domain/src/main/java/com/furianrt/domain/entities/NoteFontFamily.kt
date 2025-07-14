@@ -10,7 +10,9 @@ enum class NoteFontFamily {
     TEKTUR,
     DOTO,
     PLAY_WRITE_MODERN,
-    TILLANA;
+    TILLANA,
+    LIFE_SEVERS,
+    TEXTURINA;
 
     companion object {
         fun fromString(value: String?): NoteFontFamily? {
