@@ -11,7 +11,7 @@ internal sealed interface SettingsUiState {
     data class Success(
         val themes: ImmutableList<UiThemeColor>,
         val selectedThemeColor: UiThemeColor,
-        @IntRange(0L, 5L) val rating: Int,
+        @param:IntRange(0L, 5L) val rating: Int,
         val appVersion: String,
         val locale: AppLocale,
     ) : SettingsUiState

@@ -4,5 +4,5 @@ import androidx.annotation.DrawableRes
 
 data class Sticker(
     val id: String,
-    @DrawableRes val icon: Int,
+    @param:DrawableRes val icon: Int,
 )
