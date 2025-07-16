@@ -99,10 +99,9 @@ fun NoteContentMedia(
         targetState = block,
         contentKey = { targetState -> targetState.media.count() },
         transitionSpec = {
-            fadeIn(animationSpec = tween(CONTENT_TRANSITION_DURATION))
-                .togetherWith(fadeOut(animationSpec = tween(CONTENT_TRANSITION_DURATION)))
+            fadeIn(tween(CONTENT_TRANSITION_DURATION))
+                .togetherWith(fadeOut(tween(CONTENT_TRANSITION_DURATION)))
         },
-        label = "MediaContentTransitionAnim",
     ) { targetState ->
         when (targetState.media.count()) {
             1 -> OneMediaHolder(

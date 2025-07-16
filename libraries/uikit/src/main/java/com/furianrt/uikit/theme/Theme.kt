@@ -56,12 +56,10 @@ fun SerenityTheme(
     val animatedBackground by animateColorAsState(
         animationSpec = tween(BACKGROUND_COLOR_ANIM_DURATION),
         targetValue = colorScheme.background,
-        label = "BackgroundColorAnim",
     )
     val animatedSurface by animateColorAsState(
         animationSpec = tween(BACKGROUND_COLOR_ANIM_DURATION),
         targetValue = colorScheme.surface,
-        label = "SurfaceColorAnim",
     )
 
     val typography = remember(font) { getTypography(font) }
