@@ -73,7 +73,7 @@ internal class NoteCreateViewModel @Inject constructor(
     @OptIn(DelicateCoroutinesApi::class)
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
-            is NoteCreateEvent.OnPageTitleFocusChange -> enableEditMode()
+            is NoteCreateEvent.OnPageTitleFocused -> enableEditMode()
             is NoteCreateEvent.OnButtonEditClick -> {
                 if (isInEditModeState.value && isContentChanged) {
                     GlobalScope.launch { saveTemplate() }

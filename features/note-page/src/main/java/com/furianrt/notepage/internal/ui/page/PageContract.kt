@@ -42,7 +42,7 @@ internal sealed interface PageEvent {
     data object OnTagFocusChanged : PageEvent
     data object OnSelectMediaClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
-    data class OnTitleFocusChange(val id: String) : PageEvent
+    data class OnTitleFocusChange(val id: String, val focused: Boolean) : PageEvent
     data object OnFocusedTitleSelectionChange : PageEvent
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent

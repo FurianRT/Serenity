@@ -54,6 +54,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -84,15 +85,33 @@ private const val MAX_FONT_SIZE = 32f
 
 @Composable
 internal fun FontTitleBar(
+    showKeyBoardButton: Boolean,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
+    val showKeyBoardButtonState = remember { showKeyBoardButton }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
+        if (showKeyBoardButtonState) {
+            IconButton(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .align(Alignment.CenterStart),
+                onClick = { keyboardController?.show() },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_keyboard),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.font_panel_title),
@@ -442,6 +461,7 @@ private fun FontItem(
 private fun PanelPreview() {
     SerenityTheme {
         FontTitleBar(
+            showKeyBoardButton = true,
             onDoneClick = {},
         )
     }

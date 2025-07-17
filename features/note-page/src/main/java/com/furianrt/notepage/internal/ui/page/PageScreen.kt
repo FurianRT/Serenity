@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -126,7 +127,7 @@ internal fun NotePageScreenInternal(
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
-    onFocusChange: () -> Unit,
+    onTitleFocused: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
@@ -231,7 +232,7 @@ internal fun NotePageScreenInternal(
         hazeState = hazeState,
         isSelected = isSelected,
         onEvent = viewModel::onEvent,
-        onFocusChange = onFocusChange,
+        onTitleFocused = onTitleFocused,
     )
 
     if (showMediaPermissionDialog) {
@@ -251,7 +252,7 @@ private fun PageScreenContent(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
-    onFocusChange: () -> Unit,
+    onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -264,7 +265,7 @@ private fun PageScreenContent(
                 hazeState = hazeState,
                 isSelected = isSelected,
                 onEvent = onEvent,
-                onFocusChange = onFocusChange,
+                onTitleFocused = onTitleFocused,
             )
 
         is PageUiState.Loading -> LoadingScreen()
@@ -281,7 +282,7 @@ private fun SuccessScreen(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
-    onFocusChange: () -> Unit,
+    onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -301,7 +302,9 @@ private fun SuccessScreen(
             } + 24.dp
         )
     }
-    var focusedTitleId: String? by remember { mutableStateOf(null) }
+
+    val focusedTitlesIds = remember { mutableStateListOf<String>() }
+    val focusedTitleId = focusedTitlesIds.lastOrNull()
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
@@ -361,9 +364,15 @@ private fun SuccessScreen(
                 uiState = uiState,
                 hazeState = hazeState,
                 onEvent = onEvent,
-                onTitleFocusChange = { id ->
-                    focusedTitleId = id
-                    onFocusChange()
+                onTitleFocusChange = { id, focused ->
+                    if (focused) {
+                        focusedTitlesIds.add(id)
+                    } else {
+                        focusedTitlesIds.remove(id)
+                    }
+                    if (focused) {
+                        onTitleFocused()
+                    }
                 },
                 onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
             )
@@ -445,7 +454,7 @@ private fun SuccessScreen(
 private fun ContentItems(
     uiState: PageUiState.Success,
     hazeState: HazeState,
-    onTitleFocusChange: (id: String) -> Unit,
+    onTitleFocusChange: (id: String, focused: Boolean) -> Unit,
     onEmptyTitleHeightChange: (height: Float) -> Unit,
     onEvent: (event: PageEvent) -> Unit,
     modifier: Modifier = Modifier,
@@ -498,9 +507,9 @@ private fun ContentItems(
                                 stringResource(R.string.note_title_hint_write_more_here)
                             },
                             isInEditMode = uiState.isInEditMode,
-                            onTitleFocused = { id ->
-                                onEvent(PageEvent.OnTitleFocusChange(id))
-                                onTitleFocusChange(id)
+                            onTitleFocusChange = { id, focused ->
+                                onEvent(PageEvent.OnTitleFocusChange(id, focused))
+                                onTitleFocusChange(id, focused)
                             },
                             onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
                         )
@@ -604,9 +613,7 @@ private fun Panel(
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
                     hazeState = hazeState,
-                    titleState = titleState ?: NoteTitleState(
-                        fontFamily = UiNoteFontFamily.QuickSand,
-                    ),
+                    titleState = titleState,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
                     onVoiceRecordStart = onVoiceRecordStart,
@@ -717,7 +724,7 @@ private fun SuccessScreenPreview() {
                 ),
             ),
             onEvent = {},
-            onFocusChange = {},
+            onTitleFocused = {},
             hazeState = HazeState(),
             isSelected = true,
         )

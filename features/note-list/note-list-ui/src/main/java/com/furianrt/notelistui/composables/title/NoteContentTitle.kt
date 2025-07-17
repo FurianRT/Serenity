@@ -2,7 +2,6 @@ package com.furianrt.notelistui.composables.title
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -54,7 +53,6 @@ import kotlinx.coroutines.flow.debounce
 @OptIn(
     FlowPreview::class,
     ExperimentalLayoutApi::class,
-    ExperimentalAnimationApi::class,
 )
 @Composable
 fun NoteContentTitle(
@@ -65,7 +63,7 @@ fun NoteContentTitle(
     fontFamily: FontFamily? = null,
     fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
     isInEditMode: Boolean = false,
-    onTitleFocused: (id: String) -> Unit = {},
+    onTitleFocusChange: (id: String, focused: Boolean) -> Unit = {_, _ -> },
     onTitleTextChange: (id: String) -> Unit = {},
 ) {
     val readOnly = !isInEditMode && title.isEmptyTitle()
@@ -148,9 +146,7 @@ fun NoteContentTitle(
             .focusRequester(title.focusRequester)
             .onFocusChanged { focusState ->
                 hasFocus = focusState.hasFocus
-                if (focusState.hasFocus) {
-                    onTitleFocused(title.id)
-                }
+                onTitleFocusChange(title.id, focusState.hasFocus)
             },
         value = title.state.textValue,
         onTextLayout = { layoutResult = it },

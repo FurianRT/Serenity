@@ -309,7 +309,7 @@ private fun SuccessScreen(
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
-                onFocusChange = { onEvent(NoteViewEvent.OnPageTitleFocusChange) },
+                onTitleFocused = { onEvent(NoteViewEvent.OnPageTitleFocused) },
                 openMediaViewScreen = openMediaViewScreen,
                 openMediaViewer = openMediaViewer,
                 openMediaSortingScreen = openMediaSortingScreen,

@@ -24,6 +24,7 @@ internal class BulletViewModel @Inject constructor(
     fun onEvent(evet: BulletPanelEvent) {
         when (evet) {
             is BulletPanelEvent.OnCloseClick -> _effect.tryEmit(BulletPanelEffect.ClosePanel)
+            is BulletPanelEvent.OnKeyboardClick -> _effect.tryEmit(BulletPanelEffect.ShowKeyboard)
         }
     }
 

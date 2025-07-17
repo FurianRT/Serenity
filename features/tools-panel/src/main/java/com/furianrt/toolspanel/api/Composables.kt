@@ -70,7 +70,7 @@ private enum class PanelMode {
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
 @Composable
 fun ActionsPanel(
-    titleState: NoteTitleState,
+    titleState: NoteTitleState?,
     hazeState: HazeState,
     noteId: String,
     fontFamily: UiNoteFontFamily?,
@@ -93,7 +93,7 @@ fun ActionsPanel(
     val context = LocalContext.current
     val hasMultiSelection by remember(titleState) {
         derivedStateOf {
-            titleState.selection.min != titleState.selection.max
+            titleState?.selection?.min != titleState?.selection?.max
         }
     }
     var isVoiceRecordingActive by rememberSaveable { mutableStateOf(false) }
@@ -232,6 +232,7 @@ fun ActionsPanel(
 
                     PanelMode.FONT -> FontTitleBar(
                         modifier = heightModifier,
+                        showKeyBoardButton = titleState != null,
                         onDoneClick = { isFontPanelVisible = false },
                     )
 
@@ -242,6 +243,7 @@ fun ActionsPanel(
 
                     PanelMode.BULLET -> BulletTitleBar(
                         modifier = heightModifier,
+                        showKeyBoardButton = titleState != null,
                         onDoneClick = { isBulletPanelVisible = false },
                     )
                 }

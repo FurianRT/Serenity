@@ -27,7 +27,7 @@ internal sealed interface NoteViewEvent {
     data object OnButtonEditClick : NoteViewEvent
     data object OnButtonBackClick : NoteViewEvent
     data object OnButtonDateClick : NoteViewEvent
-    data object OnPageTitleFocusChange : NoteViewEvent
+    data object OnPageTitleFocused : NoteViewEvent
     data class OnPageChange(val index: Int) : NoteViewEvent
     data class OnDeleteClick(val noteId: String) : NoteViewEvent
     data class OnConfirmDeleteClick(val noteId: String) : NoteViewEvent

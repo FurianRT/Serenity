@@ -202,8 +202,10 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> {
-                resetStickersEditing()
-                focusedTitleId = event.id
+                if (event.focused) {
+                    resetStickersEditing()
+                    focusedTitleId = event.id
+                }
             }
 
             is OnFocusedTitleSelectionChange -> resetStickersEditing()

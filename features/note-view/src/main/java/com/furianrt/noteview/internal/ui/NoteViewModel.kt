@@ -67,7 +67,7 @@ internal class NoteViewModel @Inject constructor(
 
     fun onEvent(event: NoteViewEvent) {
         when (event) {
-            is NoteViewEvent.OnPageTitleFocusChange -> enableEditMode()
+            is NoteViewEvent.OnPageTitleFocused -> enableEditMode()
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
             is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
             is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)

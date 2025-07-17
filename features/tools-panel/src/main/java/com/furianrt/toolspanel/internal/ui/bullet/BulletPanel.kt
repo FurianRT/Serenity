@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -46,6 +47,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
@@ -61,41 +63,62 @@ import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun BulletTitleBar(
+    showKeyBoardButton: Boolean,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: BulletViewModel = hiltViewModel()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     val onDoneClickState by rememberUpdatedState(onDoneClick)
 
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collect { effect ->
-                if (effect is BulletPanelEffect.ClosePanel) {
-                    onDoneClickState()
+            .collectLatest { effect ->
+                when (effect) {
+                    is BulletPanelEffect.ShowKeyboard -> keyboardController?.show()
+                    is BulletPanelEffect.ClosePanel -> onDoneClickState()
                 }
             }
     }
 
     TitleContent(
         modifier = modifier,
+        showKeyBoardButton = showKeyBoardButton,
         onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
-internal fun TitleContent(
+private fun TitleContent(
+    showKeyBoardButton: Boolean,
     onEvent: (event: BulletPanelEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val showKeyBoardButtonState = remember { showKeyBoardButton }
     Box(
         modifier = modifier
             .fillMaxWidth()
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
+        if (showKeyBoardButtonState) {
+            IconButton(
+                modifier = Modifier
+                    .padding(start = 4.dp)
+                    .align(Alignment.CenterStart),
+                onClick = { onEvent(BulletPanelEvent.OnKeyboardClick) },
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_keyboard),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.bullet_panel_title),
@@ -122,12 +145,11 @@ internal fun TitleContent(
 @Composable
 internal fun BulletContent(
     visible: Boolean,
-    titleState: NoteTitleState,
+    titleState: NoteTitleState?,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: BulletViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
-    val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val density = LocalDensity.current
 
@@ -138,16 +160,6 @@ internal fun BulletContent(
 
     var imeHeight by remember { mutableStateOf(cachedImeHeight) }
     val contentHeight = imeHeight - density.run { navigationBarsHeight.toDp() }
-
-    LaunchedEffect(Unit) {
-        viewModel.effect
-            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collectLatest { effect ->
-                when (effect) {
-                    is BulletPanelEffect.ClosePanel -> Unit
-                }
-            }
-    }
 
     LaunchedEffect(imeTarget, imeSource) {
         val imeMaxHeight = max(imeTarget, imeSource)
@@ -176,7 +188,6 @@ internal fun BulletContent(
                 modifier = Modifier.height(contentHeight),
                 titleState = titleState,
                 uiState = uiState,
-                onEvent = viewModel::onEvent,
             )
         }
     }
@@ -185,8 +196,7 @@ internal fun BulletContent(
 @Composable
 private fun Content(
     uiState: BulletPanelUiState,
-    titleState: NoteTitleState,
-    onEvent: (event: BulletPanelEvent) -> Unit,
+    titleState: NoteTitleState?,
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyGridState()
@@ -215,20 +225,20 @@ private fun Content(
         contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
     ) {
         itemsIndexed(items = uiState.items) { _, item ->
-            val hasBulletLIst = remember(titleState.annotatedString, titleState.selection) {
-                titleState.hasBulletList(
+            val hasBulletLIst = remember(titleState?.annotatedString, titleState?.selection) {
+                titleState?.hasBulletList(
                     position = titleState.selection.min,
                     bulletList = item,
-                )
+                ).orFalse()
             }
             BulletListItem(
                 bullet = item.bullet,
                 isSelected = hasBulletLIst,
                 onClick = {
                     if (hasBulletLIst) {
-                        titleState.removeBulletList(titleState.selection.min, item)
+                        titleState?.removeBulletList(titleState.selection.min, item)
                     } else {
-                        titleState.addBulletList(titleState.selection.min, item)
+                        titleState?.addBulletList(titleState.selection.min, item)
                     }
                 },
             )
@@ -241,6 +251,7 @@ private fun Content(
 private fun PanelPreview() {
     SerenityTheme {
         TitleContent(
+            showKeyBoardButton = true,
             onEvent = {},
         )
     }
@@ -255,12 +266,16 @@ private fun ContentPreview() {
                 items = listOf(
                     NoteTitleState.BulletListType.Dots,
                     NoteTitleState.BulletListType.Done,
+                    NoteTitleState.BulletListType.Moon,
+                    NoteTitleState.BulletListType.Sun,
+                    NoteTitleState.BulletListType.Candle,
+                    NoteTitleState.BulletListType.Knife,
+                    NoteTitleState.BulletListType.Scroll,
                 ),
             ),
             titleState = NoteTitleState(
                 fontFamily = UiNoteFontFamily.QuickSand,
             ),
-            onEvent = {},
         )
     }
 }

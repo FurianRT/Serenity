@@ -118,7 +118,7 @@ internal fun NoteCreateScreen(
                     isInEditMode = state.isInEditMode,
                     isSelected = true,
                     isNoteCreationMode = true,
-                    onFocusChange = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocusChange) },
+                    onTitleFocused = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocused) },
                     openMediaViewScreen = openMediaViewScreen,
                     openMediaViewer = openMediaViewer,
                     openMediaSortingScreen = openMediaSortingScreen,

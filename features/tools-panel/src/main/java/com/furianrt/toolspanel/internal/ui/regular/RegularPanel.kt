@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
@@ -19,7 +20,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun RegularPanel(
-    titleState: NoteTitleState,
+    titleState: NoteTitleState?,
     modifier: Modifier = Modifier,
     onSelectMediaClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
@@ -33,8 +34,8 @@ internal fun RegularPanel(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(
-            enabled = titleState.canUndo,
-            onClick = { titleState.undo() },
+            enabled = titleState?.canUndo.orFalse(),
+            onClick = { titleState?.undo() },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
@@ -91,8 +92,8 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            enabled = titleState.canRedo,
-            onClick = { titleState.redo() },
+            enabled = titleState?.canRedo.orFalse(),
+            onClick = { titleState?.redo() },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),

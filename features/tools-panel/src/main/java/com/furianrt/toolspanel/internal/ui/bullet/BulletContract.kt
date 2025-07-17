@@ -8,8 +8,10 @@ internal data class BulletPanelUiState(
 
 internal sealed interface BulletPanelEvent {
     data object OnCloseClick : BulletPanelEvent
+    data object OnKeyboardClick : BulletPanelEvent
 }
 
 internal sealed interface BulletPanelEffect {
+    data object ShowKeyboard: BulletPanelEffect
     data object ClosePanel: BulletPanelEffect
 }
