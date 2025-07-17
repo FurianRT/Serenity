@@ -250,7 +250,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnStickerClick -> changeStickerEditing(event.sticker)
             is OnClickOutside -> {
                 resetStickersEditing()
-                _effect.tryEmit(PageEffect.ClearFocus)
+                _effect.tryEmit(PageEffect.HideKeyboard)
             }
         }
     }

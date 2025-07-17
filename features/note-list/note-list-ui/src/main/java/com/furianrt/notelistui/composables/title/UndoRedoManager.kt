@@ -33,9 +33,6 @@ internal class UndoRedoManager {
     val canRedo: Boolean
         get() = redoStack.isNotEmpty()
 
-    val prevValue: AnnotatedString?
-        get() = undoStack.lastOrNull()?.postText
-
     fun record(operation: UndoRedoOperation) {
         redoStack.clear()
 
@@ -49,6 +46,8 @@ internal class UndoRedoManager {
                 postSelection = operation.postSelection,
             )
         }
+
+        undoStack.removeConsecutiveDuplicatesInPlace()
 
         while (undoStack.size >= CAPACITY) {
             undoStack.removeFirstOrNull()
@@ -74,5 +73,16 @@ internal class UndoRedoManager {
     fun clearHistory() {
         undoStack.clear()
         redoStack.clear()
+    }
+}
+
+private fun SnapshotStateList<UndoRedoOperation>.removeConsecutiveDuplicatesInPlace() {
+    var i = 1
+    while (i < size) {
+        if (this[i].postText == this[i - 1].postText) {
+            this.removeAt(i)
+        } else {
+            i++
+        }
     }
 }

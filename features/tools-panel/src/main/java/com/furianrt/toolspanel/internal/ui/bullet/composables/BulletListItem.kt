@@ -9,21 +9,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun DotsItem(
+internal fun BulletListItem(
+    bullet: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -37,23 +39,20 @@ internal fun DotsItem(
                     shape = RoundedCornerShape(8.dp),
                 )
             }
+            .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
             .clickableNoRipple(onClick = onClick)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
+            .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
         repeat(3) { index ->
             Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Box(
-                    modifier = Modifier
-                        .size(8.dp)
-                        .background(MaterialTheme.colorScheme.onSurface, CircleShape)
+                Text(
+                    text = bullet,
                 )
                 Box(
                     modifier = Modifier
-                        .height(4.dp)
+                        .height(6.dp)
                         .fillMaxWidth()
                         .padding(
                             end = when (index) {
@@ -73,7 +72,8 @@ internal fun DotsItem(
 @PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
-        DotsItem(
+        BulletListItem(
+            bullet = NoteTitleState.BulletListType.Dots.bullet,
             isSelected = true,
             onClick = {},
         )

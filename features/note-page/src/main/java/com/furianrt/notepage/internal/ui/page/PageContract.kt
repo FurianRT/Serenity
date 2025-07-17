@@ -91,6 +91,6 @@ internal sealed interface PageEffect {
     ) : PageEffect
 
     data class BringContentToView(val content: UiNoteContent) : PageEffect
-    data object ClearFocus : PageEffect
+    data object HideKeyboard : PageEffect
     data class ShowMessage(val message: String) : PageEffect
 }

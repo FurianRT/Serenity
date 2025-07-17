@@ -37,10 +37,33 @@ class NoteTitleState(
 
     sealed class BulletListType(val bullet: String) {
         data object Dots : BulletListType("●${Typography.nbsp}${Typography.nbsp}")
+        data object Done : BulletListType("✓${Typography.nbsp}${Typography.nbsp}")
+        data object Cross : BulletListType("✗${Typography.nbsp}${Typography.nbsp}")
+        data object Star : BulletListType("\u2605${Typography.nbsp}${Typography.nbsp}")
+        data object Hart : BulletListType("\u2665${Typography.nbsp}${Typography.nbsp}")
+        data object Flower : BulletListType("\uD83C\uDF38${Typography.nbsp}${Typography.nbsp}")
+        data object Knife : BulletListType("\uD83D\uDDE1\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Scroll : BulletListType("\uD83D\uDCDC${Typography.nbsp}${Typography.nbsp}")
+        data object Pencil : BulletListType("\uD83D\uDD8B\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Sun : BulletListType("\u2600\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Moon : BulletListType("\uD83C\uDF11${Typography.nbsp}${Typography.nbsp}")
+        data object Candle : BulletListType("\uD83D\uDD6F\uFE0F${Typography.nbsp}${Typography.nbsp}")
 
         companion object {
-            const val BULLET_LENGTH = 3
-            fun getAllBullets(): Set<String> = setOf(Dots.bullet)
+            fun getAllBullets(): Set<String> = setOf(
+                Dots.bullet,
+                Done.bullet,
+                Cross.bullet,
+                Star.bullet,
+                Hart.bullet,
+                Flower.bullet,
+                Knife.bullet,
+                Scroll.bullet,
+                Pencil.bullet,
+                Sun.bullet,
+                Moon.bullet,
+                Candle.bullet,
+            )
         }
     }
 
@@ -134,7 +157,7 @@ class NoteTitleState(
 
         val startPart = annotatedString.substring(
             startIndex = 0,
-            endIndex = position,
+            endIndex = position.coerceAtMost(annotatedString.length),
         )
 
         val breakIndex = startPart.indexOfLast { it == '\n' } + 1
@@ -148,7 +171,7 @@ class NoteTitleState(
         val result = textValueState.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange(
-                index = (textValueState.selection.min + BulletListType.BULLET_LENGTH)
+                index = (textValueState.selection.min + bulletList.bullet.length)
                     .coerceAtMost(newAnnotatedString.length),
             ),
         )
@@ -185,7 +208,7 @@ class NoteTitleState(
         val result = textValueState.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange(
-                (textValueState.selection.min - BulletListType.BULLET_LENGTH)
+                (textValueState.selection.min - bulletList.bullet.length)
                     .coerceAtLeast(0)
             ),
         )
@@ -263,9 +286,7 @@ class NoteTitleState(
     }
 
     private fun removeAnyBulletList(position: Int) {
-        if (getBullet(position) == null) {
-            return
-        }
+        val bullet = getBullet(position) ?: return
         val startPart = annotatedString.substring(
             startIndex = 0,
             endIndex = position,
@@ -277,7 +298,7 @@ class NoteTitleState(
             append(annotatedString.subSequence(0, bulletIndex))
             append(
                 annotatedString.subSequence(
-                    startIndex = bulletIndex + 3,
+                    startIndex = bulletIndex + bullet.length,
                     endIndex = annotatedString.length,
                 )
             )
@@ -290,9 +311,38 @@ class NoteTitleState(
 
     internal fun updateValue(value: TextFieldValue) {
         val withMergedSpans = textValueState.differSpans(value)
-        val result = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
-        recordUndo(oldValue = textValueState, newValue = result)
-        textValueState = result
+        val updatedValue = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
+        val withAdjustedSelection = updatedValue.ignoreBulletListSelection()
+        recordUndo(oldValue = textValueState, newValue = withAdjustedSelection)
+        textValueState = withAdjustedSelection
+    }
+
+    private fun TextFieldValue.ignoreBulletListSelection(): TextFieldValue {
+        var newSelectionMin = selection.min
+        var newSelectionMax = selection.max
+
+        while (
+            BulletListType.getAllBullets().any { bullet ->
+                val char = text.getOrNull(newSelectionMin) ?: return@any false
+                bullet.any { it == char }
+            }
+        ) {
+            newSelectionMin++
+        }
+        while (
+            BulletListType.getAllBullets().any { bullet ->
+                val char = text.getOrNull(newSelectionMax) ?: return@any false
+                bullet.any { it == char }
+            }
+        ) {
+            newSelectionMax++
+        }
+        return copy(
+            selection = TextRange(
+                start = newSelectionMin.coerceAtLeast(0),
+                end = newSelectionMax.coerceAtMost(text.length),
+            )
+        )
     }
 
     private fun handleValueUpdate(
@@ -347,7 +397,7 @@ class NoteTitleState(
         return newValue.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange(
-                (newValue.selection.min + BulletListType.BULLET_LENGTH)
+                (newValue.selection.min + bullet.length)
                     .coerceAtMost(newAnnotatedString.text.length)
             ),
         )
@@ -369,11 +419,13 @@ class NoteTitleState(
             return newValue
         }
 
+        val bullet = getBullet(oldValue.selection.min) ?: return newValue
+
         val newAnnotatedString = buildAnnotatedString {
             append(
                 oldValue.annotatedString.subSequence(
                     startIndex = 0,
-                    endIndex = oldValue.selection.min - BulletListType.BULLET_LENGTH,
+                    endIndex = oldValue.selection.min - bullet.length,
                 )
             )
             append(
@@ -387,14 +439,14 @@ class NoteTitleState(
         return oldValue.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange(
-                (oldValue.selection.min - BulletListType.BULLET_LENGTH)
+                (oldValue.selection.min - bullet.length)
                     .coerceAtLeast(0)
             ),
         )
     }
 
     private fun recordUndo(oldValue: TextFieldValue, newValue: TextFieldValue) {
-        if (undoRedoManager.prevValue != newValue.annotatedString) {
+        if (oldValue.annotatedString != newValue.annotatedString) {
             val operation = UndoRedoOperation(
                 preText = oldValue.annotatedString,
                 postText = newValue.annotatedString,

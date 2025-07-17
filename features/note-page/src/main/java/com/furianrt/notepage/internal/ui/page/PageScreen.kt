@@ -199,7 +199,7 @@ internal fun NotePageScreenInternal(
                     )
                 }
 
-                is PageEffect.ClearFocus -> focusManager.clearFocus()
+                is PageEffect.HideKeyboard -> keyboardController?.hide()
                 is PageEffect.ShowMessage -> {
                     snackBarHostState.currentSnackbarData?.dismiss()
                     snackBarHostState.showSnackbar(

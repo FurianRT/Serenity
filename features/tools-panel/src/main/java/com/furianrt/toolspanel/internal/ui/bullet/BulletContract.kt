@@ -1,9 +1,9 @@
 package com.furianrt.toolspanel.internal.ui.bullet
 
-import com.furianrt.toolspanel.internal.ui.bullet.entities.BulletListItem
+import com.furianrt.notelistui.composables.title.NoteTitleState
 
 internal data class BulletPanelUiState(
-    val items: List<BulletListItem>,
+    val items: List<NoteTitleState.BulletListType>,
 )
 
 internal sealed interface BulletPanelEvent {

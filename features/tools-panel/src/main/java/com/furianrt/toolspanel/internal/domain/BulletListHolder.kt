@@ -6,7 +6,5 @@ import javax.inject.Singleton
 
 @Singleton
 internal class BulletListHolder @Inject constructor() {
-    fun getBulletListEntries(): List<BulletEntry> = listOf(
-        BulletEntry.Dots(isPremium = false)
-    )
+    fun getBulletListEntries(): List<BulletEntry> = BulletEntry.entries
 }

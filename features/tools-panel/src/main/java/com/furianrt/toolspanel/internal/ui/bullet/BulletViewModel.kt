@@ -3,7 +3,7 @@ package com.furianrt.toolspanel.internal.ui.bullet
 import androidx.lifecycle.ViewModel
 import com.furianrt.toolspanel.internal.domain.BulletListHolder
 import com.furianrt.toolspanel.internal.entities.BulletEntry
-import com.furianrt.toolspanel.internal.ui.bullet.extensions.toBulletListItem
+import com.furianrt.toolspanel.internal.ui.bullet.extensions.toBulletListType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,6 +29,6 @@ internal class BulletViewModel @Inject constructor(
 
     private fun buildInitialState() = BulletPanelUiState(
         items = bulletListHolder.getBulletListEntries()
-            .map(BulletEntry::toBulletListItem),
+            .map(BulletEntry::toBulletListType),
     )
 }

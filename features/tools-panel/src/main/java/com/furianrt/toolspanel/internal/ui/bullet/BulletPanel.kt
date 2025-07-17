@@ -3,9 +3,9 @@ package com.furianrt.toolspanel.internal.ui.bullet
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -48,9 +49,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
-import com.furianrt.toolspanel.internal.ui.bullet.composables.DotsItem
-import com.furianrt.toolspanel.internal.ui.bullet.entities.BulletListItem
-import com.furianrt.toolspanel.internal.ui.bullet.extensions.toBulletListType
+import com.furianrt.toolspanel.internal.ui.bullet.composables.BulletListItem
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -98,7 +97,10 @@ internal fun TitleContent(
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.bullet_panel_title),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleMedium,
         )
         IconButton(
@@ -116,7 +118,7 @@ internal fun TitleContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun BulletContent(
     visible: Boolean,
@@ -208,28 +210,28 @@ private fun Content(
             },
         state = listState,
         columns = GridCells.Fixed(spanCount),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(top = 8.dp, bottom = 16.dp, start = 8.dp, end = 8.dp),
     ) {
         itemsIndexed(items = uiState.items) { _, item ->
-            val bulletListType = item.toBulletListType()
             val hasBulletLIst = remember(titleState.annotatedString, titleState.selection) {
                 titleState.hasBulletList(
                     position = titleState.selection.min,
-                    bulletList = bulletListType,
+                    bulletList = item,
                 )
             }
-            when (item) {
-                is BulletListItem.Dots -> DotsItem(
-                    isSelected = hasBulletLIst,
-                    onClick = {
-                        if (hasBulletLIst) {
-                            titleState.removeBulletList(titleState.selection.min, bulletListType)
-                        } else {
-                            titleState.addBulletList(titleState.selection.min, bulletListType)
-                        }
-                    },
-                )
-            }
+            BulletListItem(
+                bullet = item.bullet,
+                isSelected = hasBulletLIst,
+                onClick = {
+                    if (hasBulletLIst) {
+                        titleState.removeBulletList(titleState.selection.min, item)
+                    } else {
+                        titleState.addBulletList(titleState.selection.min, item)
+                    }
+                },
+            )
         }
     }
 }
@@ -250,7 +252,10 @@ private fun ContentPreview() {
     SerenityTheme {
         Content(
             uiState = BulletPanelUiState(
-                items = listOf(BulletListItem.Dots(isPremium = true)),
+                items = listOf(
+                    NoteTitleState.BulletListType.Dots,
+                    NoteTitleState.BulletListType.Done,
+                ),
             ),
             titleState = NoteTitleState(
                 fontFamily = UiNoteFontFamily.QuickSand,

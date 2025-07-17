@@ -94,7 +94,10 @@ internal fun FontTitleBar(
         contentAlignment = Alignment.Center,
     ) {
         Text(
+            modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.font_panel_title),
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleMedium,
         )
         IconButton(
