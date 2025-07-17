@@ -13,7 +13,7 @@ import kotlin.random.Random
 internal data class StickerItem(
     val id: String,
     val typeId: String,
-    @DrawableRes val icon: Int,
+    @param:DrawableRes val icon: Int,
     val animate: Boolean = false,
     val state: StickerState = StickerState(),
 ) {

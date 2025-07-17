@@ -272,13 +272,17 @@ internal class PageViewModel @AssistedInject constructor(
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { successState ->
             successState.copy(
-                content = successState.content.mapImmutable { content ->
+                content = successState.content.mapNotNull { content ->
                     if (content is UiNoteContent.MediaBlock && content.id == result.mediaBlockId) {
-                        content.copy(media = result.media.mapImmutable { it.toUiNoteMedia() })
+                        if (result.media.isEmpty()) {
+                            null
+                        } else {
+                            content.copy(media = result.media.mapImmutable { it.toUiNoteMedia() })
+                        }
                     } else {
                         content
                     }
-                },
+                }.toImmutableList(),
             )
         }
     }

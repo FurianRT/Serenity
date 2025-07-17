@@ -9,6 +9,6 @@ import kotlinx.collections.immutable.ImmutableList
 internal class StickerPack(
     val id: String,
     val isPremium: Boolean,
-    @field:DrawableRes val icon: Int,
+    @param:DrawableRes val icon: Int,
     val stickers: ImmutableList<Sticker>,
 )
