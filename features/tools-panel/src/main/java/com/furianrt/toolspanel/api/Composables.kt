@@ -38,6 +38,8 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
+import com.furianrt.toolspanel.internal.ui.bullet.BulletTitleBar
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
 import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
 import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
@@ -62,6 +64,7 @@ private enum class PanelMode {
     VOICE_RECORD,
     FONT,
     STICKERS,
+    BULLET,
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
@@ -83,7 +86,7 @@ fun ActionsPanel(
     onFontSizeSelected: (size: Int) -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
-    onOnStickersClick: () -> Unit,
+    onStickersClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -96,6 +99,7 @@ fun ActionsPanel(
     var isVoiceRecordingActive by rememberSaveable { mutableStateOf(false) }
     var isFontPanelVisible by rememberSaveable { mutableStateOf(false) }
     var isStickersPanelVisible by rememberSaveable { mutableStateOf(false) }
+    var isBulletPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
 
     val audioRecordPermissionsState = rememberPermissionState(
@@ -130,6 +134,7 @@ fun ActionsPanel(
 
     val panelMode = when {
         isFontPanelVisible -> PanelMode.FONT
+        isBulletPanelVisible -> PanelMode.BULLET
         isStickersPanelVisible -> PanelMode.STICKERS
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
@@ -146,16 +151,17 @@ fun ActionsPanel(
         if (isImeVisible) {
             isFontPanelVisible = false
             isStickersPanelVisible = false
+            isBulletPanelVisible = false
         }
     }
 
-    LaunchedEffect(isFontPanelVisible, isStickersPanelVisible) {
-        onMenuVisibilityChange(isFontPanelVisible || isStickersPanelVisible)
+    LaunchedEffect(isFontPanelVisible, isStickersPanelVisible, isBulletPanelVisible) {
+        onMenuVisibilityChange(isFontPanelVisible || isStickersPanelVisible || isBulletPanelVisible)
     }
 
     Column(
         modifier = modifier
-            .applyIf(!isFontPanelVisible && !isStickersPanelVisible) {
+            .applyIf(!isFontPanelVisible && !isStickersPanelVisible && !isBulletPanelVisible) {
                 Modifier.imePadding()
             }
             .fillMaxWidth()
@@ -175,7 +181,6 @@ fun ActionsPanel(
                     (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)))
                         .togetherWith(fadeOut(animationSpec = tween(durationMillis = 90)))
                 },
-                label = "ActionsPanel",
             ) { targetState ->
                 when (targetState) {
                     PanelMode.REGULAR -> RegularPanel(
@@ -187,14 +192,19 @@ fun ActionsPanel(
                         },
                         onFontStyleClick = {
                             keyboardController?.hide()
-                            isFontPanelVisible = !isStickersPanelVisible
+                            isFontPanelVisible = true
                             onFontStyleClick()
                         },
-                        onOnStickersClick = {
+                        onStickersClick = {
                             keyboardController?.hide()
-                            isStickersPanelVisible = !isFontPanelVisible
-                            onOnStickersClick()
+                            isStickersPanelVisible = true
+                            onStickersClick()
                         },
+                        onBulletListClick = {
+                            keyboardController?.hide()
+                            isBulletPanelVisible = true
+                            onStickersClick()
+                        }
                     )
 
                     PanelMode.FORMATTING -> SelectedPanel(
@@ -229,6 +239,11 @@ fun ActionsPanel(
                         modifier = heightModifier,
                         onDoneClick = { isStickersPanelVisible = false },
                     )
+
+                    PanelMode.BULLET -> BulletTitleBar(
+                        modifier = heightModifier,
+                        onDoneClick = { isBulletPanelVisible = false },
+                    )
                 }
             }
         }
@@ -249,6 +264,12 @@ fun ActionsPanel(
             modifier = hazeModifier,
             visible = isStickersPanelVisible,
             onStickerSelected = onStickerSelected,
+        )
+
+        BulletContent(
+            modifier = hazeModifier,
+            visible = isBulletPanelVisible,
+            titleState = titleState,
         )
     }
 

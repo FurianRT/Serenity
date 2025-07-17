@@ -1,4 +1,6 @@
 <resources>
     <string name="font_panel_title">글꼴 스타일</string>
     <string name="font_panel_size_selector_title">크기</string>
+
+    <string name="bullet_panel_title">기호 목록</string>
 </resources>

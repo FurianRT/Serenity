@@ -11,12 +11,14 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextDecoration
+import com.furianrt.core.indexOfLastOrNull
 import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.notelistui.extensions.toSpanStyle
+import com.furianrt.notelistui.extensions.toSpanType
 import com.furianrt.uikit.extensions.differSpans
+import com.furianrt.uikit.extensions.getSpansStyles
 
 @Stable
 class NoteTitleState(
@@ -31,6 +33,15 @@ class NoteTitleState(
         data object Strikethrough : SpanType
         data class FontColor(val color: Color = Color.Unspecified) : SpanType
         data class FillColor(val color: Color = Color.Unspecified) : SpanType
+    }
+
+    sealed class BulletListType(val bullet: String) {
+        data object Dots : BulletListType("●${Typography.nbsp}${Typography.nbsp}")
+
+        companion object {
+            const val BULLET_LENGTH = 3
+            fun getAllBullets(): Set<String> = setOf(Dots.bullet)
+        }
     }
 
     private val undoRedoManager = UndoRedoManager()
@@ -115,6 +126,90 @@ class NoteTitleState(
         .getSpansStyles(start = start, end = end)
         .any { it.item.toSpanType() is SpanType.FillColor }
 
+    fun addBulletList(
+        position: Int,
+        bulletList: BulletListType,
+    ) {
+        removeAnyBulletList(position)
+
+        val startPart = annotatedString.substring(
+            startIndex = 0,
+            endIndex = position,
+        )
+
+        val breakIndex = startPart.indexOfLast { it == '\n' } + 1
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(annotatedString.subSequence(0, breakIndex))
+            append(bulletList.bullet)
+            append(annotatedString.subSequence(breakIndex, annotatedString.length))
+        }
+
+        val result = textValueState.copy(
+            annotatedString = newAnnotatedString,
+            selection = TextRange(
+                index = (textValueState.selection.min + BulletListType.BULLET_LENGTH)
+                    .coerceAtMost(newAnnotatedString.length),
+            ),
+        )
+
+        recordUndo(oldValue = textValueState, newValue = result)
+        textValueState = result
+    }
+
+    fun removeBulletList(
+        position: Int,
+        bulletList: BulletListType,
+    ) {
+        if (!hasBulletList(position, bulletList)) {
+            return
+        }
+
+        val startPart = annotatedString.substring(
+            startIndex = 0,
+            endIndex = position,
+        )
+
+        val bulletIndex = startPart.indexOfLast { it == '\n' } + 1
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(annotatedString.subSequence(0, bulletIndex))
+            append(
+                annotatedString.subSequence(
+                    startIndex = bulletIndex + bulletList.bullet.length,
+                    endIndex = annotatedString.length,
+                )
+            )
+        }
+
+        val result = textValueState.copy(
+            annotatedString = newAnnotatedString,
+            selection = TextRange(
+                (textValueState.selection.min - BulletListType.BULLET_LENGTH)
+                    .coerceAtLeast(0)
+            ),
+        )
+
+        recordUndo(oldValue = textValueState, newValue = result)
+        textValueState = result
+    }
+
+    fun hasBulletList(
+        position: Int,
+        bulletList: BulletListType,
+    ): Boolean {
+        val startPart = annotatedString.substring(
+            startIndex = 0,
+            endIndex = position,
+        )
+        return startPart
+            .substring(
+                startIndex = startPart.indexOfLastOrNull { it == '\n' }?.plus(1) ?: 0,
+                endIndex = position,
+            )
+            .startsWith(bulletList.bullet)
+    }
+
     fun undo() {
         val entry = undoRedoManager.undo() ?: return
         textValueState = textValueState.copy(
@@ -155,14 +250,151 @@ class NoteTitleState(
         )
     }
 
+    private fun getBullet(position: Int): String? {
+        val startPart = annotatedString.substring(
+            startIndex = 0,
+            endIndex = position,
+        )
+        val paragraph = startPart.substring(
+            startIndex = startPart.indexOfLastOrNull { it == '\n' }?.plus(1) ?: 0,
+            endIndex = position,
+        )
+        return BulletListType.getAllBullets().find(paragraph::startsWith)
+    }
+
+    private fun removeAnyBulletList(position: Int) {
+        if (getBullet(position) == null) {
+            return
+        }
+        val startPart = annotatedString.substring(
+            startIndex = 0,
+            endIndex = position,
+        )
+
+        val bulletIndex = startPart.indexOfLast { it == '\n' } + 1
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(annotatedString.subSequence(0, bulletIndex))
+            append(
+                annotatedString.subSequence(
+                    startIndex = bulletIndex + 3,
+                    endIndex = annotatedString.length,
+                )
+            )
+        }
+
+        textValueState = textValueState.copy(
+            annotatedString = newAnnotatedString,
+        )
+    }
+
     internal fun updateValue(value: TextFieldValue) {
-        val result = textValueState.differSpans(value)
+        val withMergedSpans = textValueState.differSpans(value)
+        val result = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
         recordUndo(oldValue = textValueState, newValue = result)
         textValueState = result
     }
 
+    private fun handleValueUpdate(
+        oldValue: TextFieldValue,
+        newValue: TextFieldValue,
+    ): TextFieldValue = when {
+        oldValue.annotatedString.length < newValue.annotatedString.length -> {
+            handleAddCharacters(oldValue, newValue)
+        }
+
+        oldValue.annotatedString.length > newValue.annotatedString.length -> {
+            handleRemoveCharacters(oldValue, newValue)
+        }
+
+        else -> newValue
+    }
+
+    private fun handleAddCharacters(
+        oldValue: TextFieldValue,
+        newValue: TextFieldValue,
+    ): TextFieldValue {
+        val typedCharsCount = newValue.text.length - oldValue.text.length
+        val startTypeIndex = oldValue.selection.min
+
+        val typedText = newValue.annotatedString.subSequence(
+            startIndex = startTypeIndex,
+            endIndex = startTypeIndex + typedCharsCount,
+        )
+
+        if (typedText.text != "\n") {
+            return newValue
+        }
+
+        val bullet = getBullet(startTypeIndex) ?: return newValue
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(
+                newValue.annotatedString.subSequence(
+                    startIndex = 0,
+                    endIndex = newValue.selection.min,
+                )
+            )
+            append(bullet)
+            append(
+                newValue.annotatedString.subSequence(
+                    startIndex = newValue.selection.min,
+                    endIndex = newValue.annotatedString.length,
+                )
+            )
+        }
+
+        return newValue.copy(
+            annotatedString = newAnnotatedString,
+            selection = TextRange(
+                (newValue.selection.min + BulletListType.BULLET_LENGTH)
+                    .coerceAtMost(newAnnotatedString.text.length)
+            ),
+        )
+    }
+
+    private fun handleRemoveCharacters(
+        oldValue: TextFieldValue,
+        newValue: TextFieldValue,
+    ): TextFieldValue {
+        val removedCharsCount = oldValue.text.length - newValue.text.length
+        val endTypeIndex = newValue.selection.min
+
+        val removedText = oldValue.annotatedString.subSequence(
+            startIndex = endTypeIndex,
+            endIndex = endTypeIndex + removedCharsCount,
+        )
+
+        if (removedText.text != Typography.nbsp.toString()) {
+            return newValue
+        }
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(
+                oldValue.annotatedString.subSequence(
+                    startIndex = 0,
+                    endIndex = oldValue.selection.min - BulletListType.BULLET_LENGTH,
+                )
+            )
+            append(
+                oldValue.annotatedString.subSequence(
+                    startIndex = oldValue.selection.min,
+                    endIndex = oldValue.annotatedString.length,
+                )
+            )
+        }
+
+        return oldValue.copy(
+            annotatedString = newAnnotatedString,
+            selection = TextRange(
+                (oldValue.selection.min - BulletListType.BULLET_LENGTH)
+                    .coerceAtLeast(0)
+            ),
+        )
+    }
+
     private fun recordUndo(oldValue: TextFieldValue, newValue: TextFieldValue) {
-        if (oldValue.annotatedString != newValue.annotatedString) {
+        if (undoRedoManager.prevValue != newValue.annotatedString) {
             val operation = UndoRedoOperation(
                 preText = oldValue.annotatedString,
                 postText = newValue.annotatedString,
@@ -173,30 +405,6 @@ class NoteTitleState(
         }
     }
 }
-
-fun SpanStyle.toSpanType(): SpanType? = when {
-    fontFamily != null -> SpanType.Bold
-    fontStyle == FontStyle.Italic -> SpanType.Italic
-    textDecoration == TextDecoration.Underline -> SpanType.Underline
-    textDecoration == TextDecoration.LineThrough -> SpanType.Strikethrough
-    color != Color.Unspecified -> SpanType.FontColor(color)
-    background != Color.Unspecified -> SpanType.FillColor(background)
-    else -> null
-}
-
-fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) {
-    is SpanType.Bold -> SpanStyle(fontFamily = fontFamily.bold)
-    is SpanType.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
-    is SpanType.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
-    is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
-    is SpanType.FontColor -> SpanStyle(color = color)
-    is SpanType.FillColor -> SpanStyle(background = color)
-}
-
-private fun AnnotatedString.getSpansStyles(
-    start: Int,
-    end: Int,
-): List<Range<SpanStyle>> = spanStyles.filter { start >= it.start && end <= it.end }
 
 private fun AnnotatedString.hasSpans(
     start: Int,

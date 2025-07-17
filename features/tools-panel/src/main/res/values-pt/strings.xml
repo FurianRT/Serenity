@@ -1,4 +1,6 @@
 <resources>
     <string name="font_panel_title">Estilo da fonte</string>
     <string name="font_panel_size_selector_title">Tamanho</string>
+
+    <string name="bullet_panel_title">Lista com marcadores</string>
 </resources>

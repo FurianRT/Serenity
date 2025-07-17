@@ -1,4 +1,6 @@
 <resources>
     <string name="font_panel_title">Style de police</string>
     <string name="font_panel_size_selector_title">Taille</string>
+
+    <string name="bullet_panel_title">Liste à puces</string>
 </resources>

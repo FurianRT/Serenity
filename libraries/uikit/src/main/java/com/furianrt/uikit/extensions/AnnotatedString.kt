@@ -1,6 +1,8 @@
 package com.furianrt.uikit.extensions
 
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.AnnotatedString.Range
+import androidx.compose.ui.text.SpanStyle
 
 fun Iterable<AnnotatedString>.join(separator: String = ""): AnnotatedString {
     var result = AnnotatedString("")
@@ -12,3 +14,8 @@ fun Iterable<AnnotatedString>.join(separator: String = ""): AnnotatedString {
     }
     return result
 }
+
+fun AnnotatedString.getSpansStyles(
+    start: Int,
+    end: Int,
+): List<Range<SpanStyle>> = spanStyles.filter { start >= it.start && end <= it.end }

@@ -407,7 +407,7 @@ private fun SuccessScreen(
             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
             onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
-            onOnStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
+            onStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
             onStickerSelected = { selectedSticker ->
                 onEvent(
                     PageEvent.OnStickerSelected(
@@ -583,7 +583,7 @@ private fun Panel(
     onFontSizeSelected: (size: Int) -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
-    onOnStickersClick: () -> Unit,
+    onStickersClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -616,7 +616,7 @@ private fun Panel(
                     onFontColorSelected = onFontColorSelected,
                     onFontSizeSelected = onFontSizeSelected,
                     onFontStyleClick = onFontStyleClick,
-                    onOnStickersClick = onOnStickersClick,
+                    onStickersClick = onStickersClick,
                     onStickerSelected = onStickerSelected,
                 )
             }

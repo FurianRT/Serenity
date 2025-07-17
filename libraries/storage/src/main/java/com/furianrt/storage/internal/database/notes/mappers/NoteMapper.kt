@@ -168,8 +168,7 @@ private fun getFirstTagType(text: String): FirstTagType {
 
     val firstType = typesList
         .filter { it.index != -1 }
-        .sortedBy(TypeIndex::index)
-        .firstOrNull()?.type
+        .minByOrNull(TypeIndex::index)?.type
 
     return firstType ?: FirstTagType.NONE
 }

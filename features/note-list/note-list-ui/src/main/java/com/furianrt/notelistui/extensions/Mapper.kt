@@ -15,7 +15,7 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextSpan
 import com.furianrt.notelistui.composables.title.NoteTitleState
-import com.furianrt.notelistui.composables.title.toSpanStyle
+import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -252,6 +252,25 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.RED_DARK -> NoteFontColor.RED_DARK
 }
 
+fun SpanStyle.toSpanType(): SpanType? = when {
+    fontFamily != null -> SpanType.Bold
+    fontStyle == FontStyle.Italic -> SpanType.Italic
+    textDecoration == TextDecoration.Underline -> SpanType.Underline
+    textDecoration == TextDecoration.LineThrough -> SpanType.Strikethrough
+    color != Color.Unspecified -> SpanType.FontColor(color)
+    background != Color.Unspecified -> SpanType.FillColor(background)
+    else -> null
+}
+
+fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) {
+    is SpanType.Bold -> SpanStyle(fontFamily = fontFamily.bold)
+    is SpanType.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
+    is SpanType.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
+    is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
+    is SpanType.FontColor -> SpanStyle(color = color)
+    is SpanType.FillColor -> SpanStyle(background = color)
+}
+
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
     titleId: String,
 ): NoteTextSpan? = when {
@@ -303,39 +322,37 @@ private fun LocalNote.Content.Title.getAnnotatedString(
     spans.fastForEach { span ->
         when (span) {
             is NoteTextSpan.Bold -> addStyle(
-                style = NoteTitleState.SpanType.Bold.toSpanStyle(fontFamily),
+                style = SpanType.Bold.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Italic -> addStyle(
-                style = NoteTitleState.SpanType.Italic.toSpanStyle(fontFamily),
+                style = SpanType.Italic.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Underline -> addStyle(
-                style = NoteTitleState.SpanType.Underline.toSpanStyle(fontFamily),
+                style = SpanType.Underline.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Strikethrough -> addStyle(
-                style = NoteTitleState.SpanType.Strikethrough.toSpanStyle(fontFamily),
+                style = SpanType.Strikethrough.toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FontColor -> addStyle(
-                style = NoteTitleState.SpanType.FontColor(Color(span.color))
-                    .toSpanStyle(fontFamily),
+                style = SpanType.FontColor(Color(span.color)).toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FillColor -> addStyle(
-                style = NoteTitleState.SpanType.FillColor(Color(span.color))
-                    .toSpanStyle(fontFamily),
+                style = SpanType.FillColor(Color(span.color)).toSpanStyle(fontFamily),
                 start = span.start,
                 end = span.end,
             )

@@ -1,4 +1,6 @@
 <resources>
     <string name="font_panel_title">Stile del carattere</string>
     <string name="font_panel_size_selector_title">Dimensione</string>
+
+    <string name="bullet_panel_title">Elenco con simboli</string>
 </resources>

@@ -24,7 +24,8 @@ internal fun RegularPanel(
     onSelectMediaClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
     onFontStyleClick: () -> Unit = {},
-    onOnStickersClick: () -> Unit = {},
+    onStickersClick: () -> Unit = {},
+    onBulletListClick: () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -54,6 +55,15 @@ internal fun RegularPanel(
             )
         }
         IconButton(
+            onClick = onBulletListClick,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_panel_bullet_list),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        IconButton(
             onClick = onSelectMediaClick,
         ) {
             Icon(
@@ -63,7 +73,7 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onOnStickersClick,
+            onClick = onStickersClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_panel_stickers),

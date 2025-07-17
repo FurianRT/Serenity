@@ -33,6 +33,9 @@ internal class UndoRedoManager {
     val canRedo: Boolean
         get() = redoStack.isNotEmpty()
 
+    val prevValue: AnnotatedString?
+        get() = undoStack.lastOrNull()?.postText
+
     fun record(operation: UndoRedoOperation) {
         redoStack.clear()
 
