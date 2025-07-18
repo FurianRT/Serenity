@@ -4,6 +4,7 @@ import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.toolspanel.internal.entities.BulletEntry
 
 internal fun BulletEntry.toBulletListType(): NoteTitleState.BulletListType = when (this) {
+    BulletEntry.CHECKED -> NoteTitleState.BulletListType.Checked()
     BulletEntry.DOTS -> NoteTitleState.BulletListType.Dots
     BulletEntry.DONE -> NoteTitleState.BulletListType.Done
     BulletEntry.CROSS -> NoteTitleState.BulletListType.Cross
@@ -16,4 +17,6 @@ internal fun BulletEntry.toBulletListType(): NoteTitleState.BulletListType = whe
     BulletEntry.PENCIL -> NoteTitleState.BulletListType.Pencil
     BulletEntry.SUN -> NoteTitleState.BulletListType.Sun
     BulletEntry.MOON -> NoteTitleState.BulletListType.Moon
+    BulletEntry.MUSHROOM -> NoteTitleState.BulletListType.Mushroom
+    BulletEntry.SPARKS -> NoteTitleState.BulletListType.Sparks
 }

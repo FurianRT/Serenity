@@ -36,24 +36,32 @@ class NoteTitleState(
     }
 
     sealed class BulletListType(val bullet: String) {
-        data object Dots : BulletListType("●${Typography.nbsp}${Typography.nbsp}")
-        data object Done : BulletListType("✓${Typography.nbsp}${Typography.nbsp}")
-        data object Cross : BulletListType("✗${Typography.nbsp}${Typography.nbsp}")
-        data object Star : BulletListType("\u2605${Typography.nbsp}${Typography.nbsp}")
-        data object Hart : BulletListType("\u2665${Typography.nbsp}${Typography.nbsp}")
-        data object Flower : BulletListType("\uD83C\uDF38${Typography.nbsp}${Typography.nbsp}")
-        data object Knife : BulletListType("\uD83D\uDDE1\uFE0F${Typography.nbsp}${Typography.nbsp}")
-        data object Scroll : BulletListType("\uD83D\uDCDC${Typography.nbsp}${Typography.nbsp}")
-        data object Pencil :
-            BulletListType("\uD83D\uDD8B\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data class Checked(
+            val doneBullet: String = wrapWithSpaces("☑"),
+        ) : BulletListType(wrapWithSpaces("☐"))
 
-        data object Sun : BulletListType("\u2600\uFE0F${Typography.nbsp}${Typography.nbsp}")
-        data object Moon : BulletListType("\uD83C\uDF11${Typography.nbsp}${Typography.nbsp}")
-        data object Candle :
-            BulletListType("\uD83D\uDD6F\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Dots : BulletListType(wrapWithSpaces("●"))
+        data object Done : BulletListType(wrapWithSpaces("✓"))
+        data object Cross : BulletListType(wrapWithSpaces("✗"))
+        data object Star : BulletListType(wrapWithSpaces("★"))
+        data object Hart : BulletListType(wrapWithSpaces("♥"))
+        data object Flower : BulletListType(wrapWithSpaces("\uD83C\uDF38"))
+        data object Knife : BulletListType(wrapWithSpaces("\uD83D\uDDE1\uFE0F"))
+        data object Scroll : BulletListType(wrapWithSpaces("\uD83D\uDCDC"))
+        data object Pencil : BulletListType(wrapWithSpaces("\uD83D\uDD8B\uFE0F"))
+        data object Sun : BulletListType(wrapWithSpaces("☀️"))
+        data object Moon : BulletListType(wrapWithSpaces("\uD83C\uDF11"))
+        data object Candle : BulletListType(wrapWithSpaces("\uD83D\uDD6F\uFE0F"))
+        data object Mushroom : BulletListType(wrapWithSpaces("\uD83C\uDF44"))
+        data object Sparks : BulletListType(wrapWithSpaces("✨"))
 
         companion object {
+            val CHECKED_BULLET = Checked().bullet
+            val CHECKED_DONE_BULLET = Checked().doneBullet
+
             fun getAllBullets(): Set<String> = setOf(
+                CHECKED_BULLET,
+                CHECKED_DONE_BULLET,
                 Dots.bullet,
                 Done.bullet,
                 Cross.bullet,
@@ -66,7 +74,38 @@ class NoteTitleState(
                 Sun.bullet,
                 Moon.bullet,
                 Candle.bullet,
+                Mushroom.bullet,
+                Sparks.bullet,
             )
+
+            fun fromBullet(bullet: String): BulletListType? = when (bullet) {
+                Dots.bullet -> Dots
+                Done.bullet -> Done
+                Cross.bullet -> Cross
+                Star.bullet -> Star
+                Hart.bullet -> Hart
+                Flower.bullet -> Flower
+                Knife.bullet -> Knife
+                Scroll.bullet -> Scroll
+                Pencil.bullet -> Pencil
+                Sun.bullet -> Sun
+                Moon.bullet -> Moon
+                Candle.bullet -> Candle
+                Mushroom.bullet -> Mushroom
+                Sparks.bullet -> Sparks
+                CHECKED_BULLET, CHECKED_DONE_BULLET -> Checked()
+                else -> null
+            }
+
+            fun isBulletPart(char: Char?): Boolean = if (char == null) {
+                false
+            } else {
+                getAllBullets().any { it.contains(char) }
+            }
+
+            private fun wrapWithSpaces(bullet: String): String {
+                return "${Typography.nbsp}$bullet${Typography.nbsp}${Typography.nbsp}"
+            }
         }
     }
 
@@ -219,12 +258,16 @@ class NoteTitleState(
             startIndex = 0,
             endIndex = textValueState.selection.min,
         )
-        return startPart
-            .substring(
-                startIndex = startPart.indexOfLastOrNull { it == '\n' }?.plus(1) ?: 0,
-                endIndex = textValueState.selection.min,
-            )
-            .startsWith(bulletList.bullet)
+        val paragraph = startPart.substring(
+            startIndex = startPart.indexOfLastOrNull { it == '\n' }?.plus(1) ?: 0,
+            endIndex = textValueState.selection.min,
+        )
+
+        return if (bulletList is BulletListType.Checked) {
+            paragraph.startsWith(bulletList.bullet) || paragraph.startsWith(bulletList.doneBullet)
+        } else {
+            paragraph.startsWith(bulletList.bullet)
+        }
     }
 
     fun undo() {
@@ -316,20 +359,11 @@ class NoteTitleState(
         var newSelectionMin = selection.min
         var newSelectionMax = selection.max
 
-        while (
-            BulletListType.getAllBullets().any { bullet ->
-                val char = text.getOrNull(newSelectionMin) ?: return@any false
-                bullet.any { it == char }
-            }
-        ) {
-            newSelectionMin++
+
+        while (BulletListType.isBulletPart(text.getOrNull(newSelectionMin))) {
+            newSelectionMin--
         }
-        while (
-            BulletListType.getAllBullets().any { bullet ->
-                val char = text.getOrNull(newSelectionMax) ?: return@any false
-                bullet.any { it == char }
-            }
-        ) {
+        while (BulletListType.isBulletPart(text.getOrNull(newSelectionMax))) {
             newSelectionMax++
         }
         return copy(
@@ -352,7 +386,7 @@ class NoteTitleState(
             handleRemoveCharacters(oldValue, newValue)
         }
 
-        else -> newValue
+        else -> handleCheckedListClick(newValue)
     }
 
     private fun handleAddCharacters(
@@ -372,6 +406,7 @@ class NoteTitleState(
         }
 
         val bullet = getBullet(startTypeIndex) ?: return newValue
+        val bulletListType = BulletListType.fromBullet(bullet) ?: return newValue
 
         val newAnnotatedString = buildAnnotatedString {
             append(
@@ -380,7 +415,11 @@ class NoteTitleState(
                     endIndex = newValue.selection.min,
                 )
             )
-            append(bullet)
+            if (bulletListType is BulletListType.Checked) {
+                append(BulletListType.CHECKED_BULLET)
+            } else {
+                append(bullet)
+            }
             append(
                 newValue.annotatedString.subSequence(
                     startIndex = newValue.selection.min,
@@ -437,6 +476,68 @@ class NoteTitleState(
                 (oldValue.selection.min - bullet.length)
                     .coerceAtLeast(0)
             ),
+        )
+    }
+
+    private fun handleCheckedListClick(newValue: TextFieldValue): TextFieldValue {
+        if (newValue.selection.min != newValue.selection.max) {
+            return newValue
+        }
+
+        val selectedChar = newValue.text.getOrNull(newValue.selection.min) ?: return newValue
+        if (!BulletListType.isBulletPart(selectedChar)) {
+            return newValue
+        }
+
+        var endIndex = newValue.selection.min
+        while (endIndex < newValue.text.length && BulletListType.isBulletPart(newValue.text[endIndex])) {
+            endIndex++
+        }
+
+        val bullet = getBullet(endIndex.coerceAtMost(annotatedString.length)) ?: return newValue
+
+        val bulletListType = BulletListType.fromBullet(bullet) ?: return newValue
+
+        if (bulletListType !is BulletListType.Checked) {
+            return newValue
+        }
+
+        val startPart = newValue.annotatedString.substring(
+            startIndex = 0,
+            endIndex = endIndex.coerceAtMost(newValue.text.length),
+        )
+
+        val bulletIndex = startPart.lastIndexOf(bullet)
+
+        val newAnnotatedString = buildAnnotatedString {
+            append(newValue.annotatedString.subSequence(startIndex = 0, endIndex = bulletIndex))
+            if (bullet == bulletListType.bullet) {
+                append(bulletListType.doneBullet)
+                append(
+                    newValue.annotatedString.subSequence(
+                        startIndex = bulletIndex + bulletListType.bullet.length,
+                        endIndex = newValue.annotatedString.length,
+                    )
+                )
+            } else {
+                append(bulletListType.bullet)
+                append(
+                    newValue.annotatedString.subSequence(
+                        startIndex = bulletIndex + bulletListType.doneBullet.length,
+                        endIndex = newValue.annotatedString.length,
+                    )
+                )
+            }
+        }
+
+        var newSelection = newValue.selection.min
+        while (BulletListType.isBulletPart(text.getOrNull(newSelection))) {
+            newSelection++
+        }
+
+        return newValue.copy(
+            annotatedString = newAnnotatedString,
+            selection = TextRange(newSelection),
         )
     }
 
