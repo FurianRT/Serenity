@@ -178,7 +178,7 @@ private fun NoteItemPreview() {
             ),
             fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.QuickSand,
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             content = generatePreviewContent(),
         )
     }
@@ -197,7 +197,7 @@ private fun PinnedNoteItemPreview() {
             ),
             fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.QuickSand,
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             isPinned = true,
             content = generatePreviewContent(),
         )
@@ -217,7 +217,7 @@ private fun SelectedNoteItemPreview() {
             ),
             fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.QuickSand,
-            fontSize = 15.sp,
+            fontSize = 16.sp,
             isPinned = true,
             isSelected = true,
             content = generatePreviewContent(),
