@@ -74,7 +74,7 @@ fun NoteContentTitle(
 
     val view = LocalView.current
     val topFocusMargin = with(LocalDensity.current) {
-        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 56.dp.toPx()).toInt()
+        (ToolbarConstants.toolbarHeight.toPx() + view.getStatusBarHeight() + 64.dp.toPx()).toInt()
     }
     val bottomFocusMargin = with(LocalDensity.current) { 64.dp.toPx().toInt() }
     if (hasFocus) {
