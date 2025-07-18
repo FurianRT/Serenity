@@ -31,10 +31,9 @@ import javax.inject.Inject
 
 private const val MIN_GOOD_RATING = 4
 private const val RATING_CLICK_DELAY = 250L
-private const val PRIVACY_POLICY_LINK =
-    "https://drive.google.com/file/d/1-a4wF_gQIN1TQYHMuMa2tgfmuVoWAXb-/view?usp=sharing"
+private const val PRIVACY_POLICY_LINK = "https://sites.google.com/view/serenityapp/privacy-policy"
 private const val TERMS_AND_CONDITIONS_LINK =
-    "https://drive.google.com/file/d/1-a4wF_gQIN1TQYHMuMa2tgfmuVoWAXb-/view?usp=sharing"
+    "https://sites.google.com/view/serenityapp/terms-and-conditions"
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
