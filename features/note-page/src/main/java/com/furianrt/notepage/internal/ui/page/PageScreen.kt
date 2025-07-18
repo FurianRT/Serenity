@@ -33,7 +33,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -303,8 +302,7 @@ private fun SuccessScreen(
         )
     }
 
-    val focusedTitlesIds = remember { mutableStateListOf<String>() }
-    val focusedTitleId = focusedTitlesIds.lastOrNull()
+    var focusedTitleId: String? by remember { mutableStateOf(null) }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = density.run { statusBarHeight.toDp() }
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
@@ -365,10 +363,10 @@ private fun SuccessScreen(
                 hazeState = hazeState,
                 onEvent = onEvent,
                 onTitleFocusChange = { id, focused ->
-                    if (focused) {
-                        focusedTitlesIds.add(id)
-                    } else {
-                        focusedTitlesIds.remove(id)
+                    focusedTitleId = when {
+                        focused && (focusedTitleId == null || focusedTitleId == id) -> id
+                        !focused && focusedTitleId == id -> null
+                        else -> focusedTitleId
                     }
                     if (focused) {
                         onTitleFocused()

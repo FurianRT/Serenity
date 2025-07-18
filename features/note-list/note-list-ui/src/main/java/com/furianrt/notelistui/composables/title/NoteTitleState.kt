@@ -44,10 +44,13 @@ class NoteTitleState(
         data object Flower : BulletListType("\uD83C\uDF38${Typography.nbsp}${Typography.nbsp}")
         data object Knife : BulletListType("\uD83D\uDDE1\uFE0F${Typography.nbsp}${Typography.nbsp}")
         data object Scroll : BulletListType("\uD83D\uDCDC${Typography.nbsp}${Typography.nbsp}")
-        data object Pencil : BulletListType("\uD83D\uDD8B\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Pencil :
+            BulletListType("\uD83D\uDD8B\uFE0F${Typography.nbsp}${Typography.nbsp}")
+
         data object Sun : BulletListType("\u2600\uFE0F${Typography.nbsp}${Typography.nbsp}")
         data object Moon : BulletListType("\uD83C\uDF11${Typography.nbsp}${Typography.nbsp}")
-        data object Candle : BulletListType("\uD83D\uDD6F\uFE0F${Typography.nbsp}${Typography.nbsp}")
+        data object Candle :
+            BulletListType("\uD83D\uDD6F\uFE0F${Typography.nbsp}${Typography.nbsp}")
 
         companion object {
             fun getAllBullets(): Set<String> = setOf(
@@ -149,15 +152,12 @@ class NoteTitleState(
         .getSpansStyles(start = start, end = end)
         .any { it.item.toSpanType() is SpanType.FillColor }
 
-    fun addBulletList(
-        position: Int,
-        bulletList: BulletListType,
-    ) {
-        removeAnyBulletList(position)
+    fun addBulletList(bulletList: BulletListType) {
+        removeAnyBulletList()
 
         val startPart = annotatedString.substring(
             startIndex = 0,
-            endIndex = position.coerceAtMost(annotatedString.length),
+            endIndex = textValueState.selection.min.coerceAtMost(annotatedString.length),
         )
 
         val breakIndex = startPart.indexOfLast { it == '\n' } + 1
@@ -180,17 +180,14 @@ class NoteTitleState(
         textValueState = result
     }
 
-    fun removeBulletList(
-        position: Int,
-        bulletList: BulletListType,
-    ) {
-        if (!hasBulletList(position, bulletList)) {
+    fun removeBulletList(bulletList: BulletListType) {
+        if (!hasBulletList(bulletList)) {
             return
         }
 
         val startPart = annotatedString.substring(
             startIndex = 0,
-            endIndex = position,
+            endIndex = textValueState.selection.min,
         )
 
         val bulletIndex = startPart.indexOfLast { it == '\n' } + 1
@@ -217,18 +214,15 @@ class NoteTitleState(
         textValueState = result
     }
 
-    fun hasBulletList(
-        position: Int,
-        bulletList: BulletListType,
-    ): Boolean {
+    fun hasBulletList(bulletList: BulletListType): Boolean {
         val startPart = annotatedString.substring(
             startIndex = 0,
-            endIndex = position,
+            endIndex = textValueState.selection.min,
         )
         return startPart
             .substring(
                 startIndex = startPart.indexOfLastOrNull { it == '\n' }?.plus(1) ?: 0,
-                endIndex = position,
+                endIndex = textValueState.selection.min,
             )
             .startsWith(bulletList.bullet)
     }
@@ -285,11 +279,11 @@ class NoteTitleState(
         return BulletListType.getAllBullets().find(paragraph::startsWith)
     }
 
-    private fun removeAnyBulletList(position: Int) {
-        val bullet = getBullet(position) ?: return
+    private fun removeAnyBulletList() {
+        val bullet = getBullet(textValueState.selection.min) ?: return
         val startPart = annotatedString.substring(
             startIndex = 0,
-            endIndex = position,
+            endIndex = textValueState.selection.min,
         )
 
         val bulletIndex = startPart.indexOfLast { it == '\n' } + 1
@@ -306,6 +300,7 @@ class NoteTitleState(
 
         textValueState = textValueState.copy(
             annotatedString = newAnnotatedString,
+            selection = TextRange((textValueState.selection.min - bullet.length).coerceAtLeast(0)),
         )
     }
 

@@ -226,19 +226,16 @@ private fun Content(
     ) {
         itemsIndexed(items = uiState.items) { _, item ->
             val hasBulletLIst = remember(titleState?.annotatedString, titleState?.selection) {
-                titleState?.hasBulletList(
-                    position = titleState.selection.min,
-                    bulletList = item,
-                ).orFalse()
+                titleState?.hasBulletList(bulletList = item).orFalse()
             }
             BulletListItem(
                 bullet = item.bullet,
                 isSelected = hasBulletLIst,
                 onClick = {
                     if (hasBulletLIst) {
-                        titleState?.removeBulletList(titleState.selection.min, item)
+                        titleState?.removeBulletList(item)
                     } else {
-                        titleState?.addBulletList(titleState.selection.min, item)
+                        titleState?.addBulletList(item)
                     }
                 },
             )

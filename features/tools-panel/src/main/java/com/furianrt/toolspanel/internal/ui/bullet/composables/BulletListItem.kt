@@ -2,7 +2,6 @@ package com.furianrt.toolspanel.internal.ui.bullet.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -39,7 +38,7 @@ internal fun BulletListItem(
                     shape = RoundedCornerShape(8.dp),
                 )
             }
-            .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clickableNoRipple(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
