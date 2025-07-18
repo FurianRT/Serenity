@@ -52,6 +52,7 @@ import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.bullet.composables.BulletListItem
+import com.furianrt.toolspanel.internal.ui.bullet.composables.CheckedBulletListItem
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -228,17 +229,32 @@ private fun Content(
             val hasBulletLIst = remember(titleState?.annotatedString, titleState?.selection) {
                 titleState?.hasBulletList(bulletList = item).orFalse()
             }
-            BulletListItem(
-                bullet = item.bullet,
-                isSelected = hasBulletLIst,
-                onClick = {
-                    if (hasBulletLIst) {
-                        titleState?.removeBulletList(item)
-                    } else {
-                        titleState?.addBulletList(item)
-                    }
-                },
-            )
+            if (item is NoteTitleState.BulletListType.Checked) {
+                CheckedBulletListItem(
+                    uncheckedBullet = item.bullet,
+                    checkedBullet = item.doneBullet,
+                    isSelected = hasBulletLIst,
+                    onClick = {
+                        if (hasBulletLIst) {
+                            titleState?.removeBulletList(item)
+                        } else {
+                            titleState?.addBulletList(item)
+                        }
+                    },
+                )
+            } else {
+                BulletListItem(
+                    bullet = item.bullet,
+                    isSelected = hasBulletLIst,
+                    onClick = {
+                        if (hasBulletLIst) {
+                            titleState?.removeBulletList(item)
+                        } else {
+                            titleState?.addBulletList(item)
+                        }
+                    },
+                )
+            }
         }
     }
 }
@@ -261,6 +277,7 @@ private fun ContentPreview() {
         Content(
             uiState = BulletPanelUiState(
                 items = listOf(
+                    NoteTitleState.BulletListType.Checked(),
                     NoteTitleState.BulletListType.Dots,
                     NoteTitleState.BulletListType.Done,
                     NoteTitleState.BulletListType.Moon,

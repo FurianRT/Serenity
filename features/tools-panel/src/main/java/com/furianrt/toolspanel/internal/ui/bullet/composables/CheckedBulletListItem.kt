@@ -23,8 +23,9 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun BulletListItem(
-    bullet: String,
+internal fun CheckedBulletListItem(
+    uncheckedBullet: String,
+    checkedBullet: String,
     isSelected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,7 +48,11 @@ internal fun BulletListItem(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = bullet.substring(1, bullet.length),
+                    text = if (index == 2) {
+                        uncheckedBullet.substring(1, uncheckedBullet.length)
+                    } else {
+                        checkedBullet.substring(1, checkedBullet.length)
+                    },
                 )
                 Box(
                     modifier = Modifier
@@ -71,9 +76,11 @@ internal fun BulletListItem(
 @PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
-        val bullet =NoteTitleState.BulletListType.Dots.bullet
-        BulletListItem(
-            bullet = bullet.substring(1, bullet.length),
+        val uncheckedBullet = NoteTitleState.BulletListType.CHECKED_BULLET
+        val checkedBullet = NoteTitleState.BulletListType.CHECKED_DONE_BULLET
+        CheckedBulletListItem(
+            uncheckedBullet = uncheckedBullet.substring(1, uncheckedBullet.length),
+            checkedBullet = checkedBullet.substring(1, uncheckedBullet.length),
             isSelected = true,
             onClick = {},
         )

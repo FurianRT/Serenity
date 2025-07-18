@@ -475,7 +475,7 @@ private fun ContentPreview() {
             uiState = FontPanelUiState(
                 selectedFontColor = UiNoteFontColor.WHITE,
                 selectedFontFamily = UiNoteFontFamily.QuickSand,
-                selectedFontSize = 15,
+                selectedFontSize = 16,
                 fontFamilies = persistentListOf(UiNoteFontFamily.QuickSand),
                 fontColors = UiNoteFontColor.entries.toImmutableList(),
                 defaultFontFamily = UiNoteFontFamily.QuickSand,

@@ -706,7 +706,7 @@ private fun SuccessScreenPreview() {
                 playingVoiceId = null,
                 fontFamily = UiNoteFontFamily.QuickSand,
                 fontColor = UiNoteFontColor.WHITE,
-                fontSize = 15,
+                fontSize = 16,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",

@@ -411,7 +411,7 @@ private fun SuccessFilledQueryPreview() {
                         isSelected = false,
                         fontColor = null,
                         fontFamily = null,
-                        fontSize = 15,
+                        fontSize = 16,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",

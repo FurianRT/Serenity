@@ -1,6 +1,7 @@
 package com.furianrt.toolspanel.internal.entities
 
 internal enum class BulletEntry {
+    CHECKED,
     DOTS,
     DONE,
     CROSS,
@@ -13,4 +14,6 @@ internal enum class BulletEntry {
     SUN,
     MOON,
     CANDLE,
+    MUSHROOM,
+    SPARKS,
 }

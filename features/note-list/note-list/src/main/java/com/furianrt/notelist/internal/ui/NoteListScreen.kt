@@ -427,7 +427,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                 tags = persistentListOf(),
                 fontColor = null,
                 fontFamily = null,
-                fontSize = 15,
+                fontSize = 16,
                 isPinned = false,
                 isSelected = withSelected && index % 2 == 0,
                 content = persistentListOf(

@@ -18,5 +18,5 @@ internal data class NoteItem(
     val content: ImmutableList<UiNoteContent> = persistentListOf(),
     val fontFamily: UiNoteFontFamily? = null,
     val fontColor: UiNoteFontColor? = null,
-    val fontSize: Int = 15,
+    val fontSize: Int = 16,
 )

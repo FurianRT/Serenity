@@ -65,7 +65,7 @@ internal class AppearanceDataStore @Inject constructor(
     }
 
     fun getDefaultNoteFontSize(): Flow<Int> = dataStore.data
-        .map { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] ?: 15 }
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] ?: 16 }
 
     suspend fun setDefaultNoteFontSize(size: Int) {
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] = size }
