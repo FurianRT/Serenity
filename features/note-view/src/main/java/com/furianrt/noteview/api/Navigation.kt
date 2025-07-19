@@ -15,7 +15,6 @@ import com.furianrt.noteview.internal.ui.NoteViewScreen
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDate
 import kotlin.reflect.typeOf

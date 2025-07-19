@@ -298,7 +298,7 @@ private fun EmptyContent(
     }
 
     var startAnimation by remember { mutableStateOf(false) }
-    val transition = updateTransition(targetState = startAnimation,)
+    val transition = updateTransition(targetState = startAnimation)
 
     val contentAlpha by transition.animateFloat(
         transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },

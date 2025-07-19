@@ -7,7 +7,6 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteTextSpan
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
-import kotlinx.serialization.encodeToString
 import androidx.core.net.toUri
 
 internal class TypeConverter {

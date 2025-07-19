@@ -37,11 +37,11 @@ private const val NOTE_CREATE_DIALOG_ID = 2
 internal class NoteListViewModel @Inject constructor(
     notesRepository: NotesRepository,
     dispatchers: DispatchersProvider,
+    appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
-    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel(), DialogResultListener {
 
     private val scrollToNoteState = MutableStateFlow<String?>(null)

@@ -310,6 +310,14 @@ class NoteTitleState(
         )
     }
 
+    internal fun updateValue(value: TextFieldValue) {
+        val withMergedSpans = textValueState.differSpans(value)
+        val updatedValue = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
+        val withAdjustedSelection = updatedValue.ignoreBulletListSelection()
+        recordUndo(oldValue = textValueState, newValue = withAdjustedSelection)
+        textValueState = withAdjustedSelection
+    }
+
     private fun getBullet(position: Int): String? {
         val startPart = annotatedString.substring(
             startIndex = 0,
@@ -347,24 +355,23 @@ class NoteTitleState(
         )
     }
 
-    internal fun updateValue(value: TextFieldValue) {
-        val withMergedSpans = textValueState.differSpans(value)
-        val updatedValue = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
-        val withAdjustedSelection = updatedValue.ignoreBulletListSelection()
-        recordUndo(oldValue = textValueState, newValue = withAdjustedSelection)
-        textValueState = withAdjustedSelection
-    }
-
     private fun TextFieldValue.ignoreBulletListSelection(): TextFieldValue {
         var newSelectionMin = selection.min
         var newSelectionMax = selection.max
 
 
         while (BulletListType.isBulletPart(text.getOrNull(newSelectionMin))) {
-            newSelectionMin--
+            if (selection.collapsed) {
+                newSelectionMin++
+            } else {
+                newSelectionMin--
+            }
         }
         while (BulletListType.isBulletPart(text.getOrNull(newSelectionMax))) {
             newSelectionMax++
+        }
+        if (!selection.collapsed) {
+            newSelectionMin++
         }
         return copy(
             selection = TextRange(
@@ -480,7 +487,7 @@ class NoteTitleState(
     }
 
     private fun handleCheckedListClick(newValue: TextFieldValue): TextFieldValue {
-        if (newValue.selection.min != newValue.selection.max) {
+        if (!newValue.selection.collapsed) {
             return newValue
         }
 
