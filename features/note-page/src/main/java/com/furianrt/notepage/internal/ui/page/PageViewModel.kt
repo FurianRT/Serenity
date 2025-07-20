@@ -36,6 +36,7 @@ import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
 import com.furianrt.notepage.internal.ui.extensions.removeMedia
+import com.furianrt.notepage.internal.ui.extensions.removeMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeVoice
@@ -271,21 +272,36 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onMediaSortingResult(result: MediaSortingResult) {
-        hasContentChanged = true
-        _state.updateState<PageUiState.Success> { successState ->
-            successState.copy(
-                content = successState.content.mapNotNull { content ->
-                    if (content is UiNoteContent.MediaBlock && content.id == result.mediaBlockId) {
-                        if (result.media.isEmpty()) {
-                            null
-                        } else {
+        launch {
+            _state.updateState<PageUiState.Success> { successState ->
+                val fontFamily = successState.fontFamily ?: appearanceRepository.getAppFont()
+                    .first()
+                    .toUiNoteFontFamily()
+
+                val newContent = if (result.media.isEmpty()) {
+                    successState.content.removeMediaBlock(result.mediaBlockId, focusedTitleId)
+                } else {
+                    successState.content.map { content ->
+                        if (content is UiNoteContent.MediaBlock && content.id == result.mediaBlockId) {
                             content.copy(media = result.media.mapImmutable { it.toUiNoteMedia() })
+                        } else {
+                            content
                         }
-                    } else {
-                        content
                     }
-                }.toImmutableList(),
-            )
+                }
+                successState.copy(
+                    content = newContent.refreshTitleTemplates(
+                        fontFamily = fontFamily,
+                        addTopTemplate = successState.isInEditMode,
+                    ),
+                ).also {
+                    if (isInEditMode) {
+                        hasContentChanged = true
+                    } else {
+                        saveNoteContent(it)
+                    }
+                }
+            }
         }
     }
 
@@ -803,43 +819,45 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun handleNoteResult(note: NoteItem?) {
+    private fun handleNoteResult(note: NoteItem?) {
         if (note == null) {
             _state.update { PageUiState.Empty }
             return
         }
 
-        _state.update { localState ->
-            when (localState) {
-                is PageUiState.Empty, PageUiState.Loading -> {
-                    PageUiState.Success(
-                        noteId = note.id,
-                        content = note.content.refreshTitleTemplates(
-                            fontFamily = note.fontFamily
-                                ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily(),
-                            addTopTemplate = isInEditMode
-                        ),
-                        tags = with(note.tags) {
-                            if (isNoteCreationMode || isInEditMode) {
-                                addTagTemplate()
-                            } else {
-                                removeTagTemplate(onlyEmpty = true)
+        launch {
+            _state.update { localState ->
+                when (localState) {
+                    is PageUiState.Empty, PageUiState.Loading -> {
+                        PageUiState.Success(
+                            noteId = note.id,
+                            content = note.content.refreshTitleTemplates(
+                                fontFamily = note.fontFamily
+                                    ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily(),
+                                addTopTemplate = isInEditMode
+                            ),
+                            tags = with(note.tags) {
+                                if (isNoteCreationMode || isInEditMode) {
+                                    addTagTemplate()
+                                } else {
+                                    removeTagTemplate(onlyEmpty = true)
+                                }
+                            },
+                            stickers = note.stickers,
+                            playingVoiceId = null,
+                            fontFamily = note.fontFamily,
+                            fontColor = note.fontColor,
+                            fontSize = note.fontSize,
+                            isInEditMode = isNoteCreationMode,
+                        ).also {
+                            if (isNoteCreationMode) {
+                                tryFocusFirstTitle()
                             }
-                        },
-                        stickers = note.stickers,
-                        playingVoiceId = null,
-                        fontFamily = note.fontFamily,
-                        fontColor = note.fontColor,
-                        fontSize = note.fontSize,
-                        isInEditMode = isNoteCreationMode,
-                    ).also {
-                        if (isNoteCreationMode) {
-                            tryFocusFirstTitle()
                         }
                     }
-                }
 
-                is PageUiState.Success -> localState
+                    is PageUiState.Success -> localState
+                }
             }
         }
     }

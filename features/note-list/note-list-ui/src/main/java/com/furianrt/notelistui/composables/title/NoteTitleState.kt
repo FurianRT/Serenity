@@ -124,7 +124,7 @@ class NoteTitleState(
         }
 
     val text: String
-        get() = annotatedString.text
+        get() = textValueState.text
 
     var selection: TextRange
         get() = textValueState.selection
@@ -370,7 +370,7 @@ class NoteTitleState(
         while (BulletListType.isBulletPart(text.getOrNull(newSelectionMax))) {
             newSelectionMax++
         }
-        if (!selection.collapsed) {
+        if (!selection.collapsed && newSelectionMin != selection.min) {
             newSelectionMin++
         }
         return copy(

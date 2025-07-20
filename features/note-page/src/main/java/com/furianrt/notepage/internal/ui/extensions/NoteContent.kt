@@ -129,6 +129,17 @@ internal fun ImmutableList<UiNoteContent>.removeMedia(
     }
 }
 
+internal fun ImmutableList<UiNoteContent>.removeMediaBlock(
+    id: String,
+    focusedTitleId: String?,
+): ImmutableList<UiNoteContent> {
+    val mediaBlockIndex = indexOfFirst { it is UiNoteContent.MediaBlock && it.id == id }
+    if (mediaBlockIndex == -1) {
+        return this
+    }
+    return toPersistentList().removeAt(mediaBlockIndex).joinTitles(focusedTitleId)
+}
+
 internal fun ImmutableList<UiNoteContent>.removeVoice(
     id: String,
     focusedTitleId: String?,
