@@ -1,5 +1,6 @@
 package com.furianrt.security.internal.domain
 
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.security.BuildConfig
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
@@ -17,6 +18,7 @@ import javax.mail.internet.MimeMessage
 
 internal class SendPinRecoveryEmailUseCase @Inject constructor(
     private val securityRepository: SecurityRepository,
+    private val errorTracker: ErrorTracker,
     private val dispatchers: DispatchersProvider,
 ) {
     suspend operator fun invoke(
@@ -49,6 +51,7 @@ internal class SendPinRecoveryEmailUseCase @Inject constructor(
         try {
             Result.success(Transport.send(message))
         } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
             Result.failure(e)
         }
     }
