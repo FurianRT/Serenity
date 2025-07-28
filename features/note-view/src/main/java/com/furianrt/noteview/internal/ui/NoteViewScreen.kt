@@ -6,10 +6,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
@@ -35,6 +38,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -207,6 +211,9 @@ private fun SuccessScreen(
     val toolbarState = remember { MovableToolbarState() }
     var skipToolbarExpand by remember { mutableStateOf(true) }
 
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     LaunchedEffect(Unit) {
         snapshotFlow { pagerState.currentPage }
             .collectLatest { currentPage ->
@@ -259,7 +266,7 @@ private fun SuccessScreen(
                 uiState.date.toDateString()
             }
             Toolbar(
-                modifier = Modifier.statusBarsPadding(),
+                modifier = Modifier.padding(top = statusBarHeight.dp),
                 isInEditMode = uiState.isInEditMode,
                 date = date,
                 isPinned = uiState.notes[pagerState.currentPage].isPinned,
@@ -290,9 +297,16 @@ private fun SuccessScreen(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                ToolbarDim {
-                    scope.launch { currentPageState?.bottomSheetState?.hide() }
-                }
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.scrim)
+                        .padding(top = statusBarHeight.dp)
+                        .height(ToolbarConstants.toolbarHeight)
+                        .clickableNoRipple {
+                            scope.launch { currentPageState?.bottomSheetState?.hide() }
+                        },
+                )
             }
         },
     ) {
@@ -334,21 +348,6 @@ private fun SuccessScreen(
             },
         )
     }
-}
-
-@Composable
-private fun ToolbarDim(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.scrim)
-            .statusBarsPadding()
-            .height(ToolbarConstants.toolbarHeight)
-            .clickableNoRipple(onClick = onClick)
-    )
 }
 
 @Composable

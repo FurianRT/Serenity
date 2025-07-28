@@ -26,9 +26,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.furianrt.domain.entities.NoteFontFamily
-import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.security.api.CheckPinScreen
+import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
 import com.furianrt.mediasorting.api.MediaSortingRoute
@@ -48,16 +46,14 @@ import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
+import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.security.api.LockAuthorizer
-import com.furianrt.serenity.extensions.toNoteFont
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
-import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
@@ -65,7 +61,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 200L
@@ -76,9 +71,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     @Inject
     lateinit var lockAuthorizer: LockAuthorizer
-
-    @Inject
-    lateinit var appearanceRepository: AppearanceRepository
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -113,29 +105,31 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
             val hazeState = remember { HazeState() }
-            val themeColor by appearanceRepository.getAppThemeColorId()
-                .map(UiThemeColor::fromId)
-                .collectAsStateWithLifecycle(initialValue = UiThemeColor.DISTANT_CASTLE_GREEN)
-            val appFont by appearanceRepository.getAppFont()
-                .map(NoteFontFamily::toNoteFont)
-                .collectAsStateWithLifecycle(initialValue = NoteFont.QuickSand)
 
-            LaunchedEffect(themeColor.isLight) {
-                val color = Color.Transparent.toArgb()
-                if (themeColor.isLight) {
-                    enableEdgeToEdge(
-                        statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
-                        navigationBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
-                    )
-                } else {
-                    enableEdgeToEdge(
-                        statusBarStyle = SystemBarStyle.dark(color),
-                        navigationBarStyle = SystemBarStyle.dark(color),
-                    )
+            LaunchedEffect(uiState.appColor.isLight) {
+                val currentDestination = navController.currentDestination
+                val hasMediaViewRoute = currentDestination?.hasRoute<MediaViewRoute>()
+                val hasMediaViewerRoute = currentDestination?.hasRoute<MediaViewerRoute>()
+                if (hasMediaViewRoute != true && hasMediaViewerRoute != true) {
+                    val color = Color.Transparent.toArgb()
+                    if (uiState.appColor.isLight) {
+                        enableEdgeToEdge(
+                            statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
+                            navigationBarStyle = SystemBarStyle.light(
+                                scrim = color,
+                                darkScrim = color
+                            ),
+                        )
+                    } else {
+                        enableEdgeToEdge(
+                            statusBarStyle = SystemBarStyle.dark(color),
+                            navigationBarStyle = SystemBarStyle.dark(color),
+                        )
+                    }
                 }
             }
 
-            SerenityTheme(color = themeColor, font = appFont) {
+            SerenityTheme(color = uiState.appColor, font = uiState.appFont) {
                 CompositionLocalProvider(LocalAuth provides this) {
                     NavHost(
                         modifier = Modifier

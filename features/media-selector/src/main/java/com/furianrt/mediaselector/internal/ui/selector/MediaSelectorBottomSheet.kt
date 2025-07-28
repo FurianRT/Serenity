@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -29,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,7 +46,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
@@ -57,6 +59,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.coroutines.cancellation.CancellationException
+import com.furianrt.uikit.R as uiR
 
 private const val CONTENT_ANIM_DURATION = 300
 private val PREDICTIVE_BACK_TRANSLATION = 100.dp
@@ -162,6 +165,9 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val hazeState = remember { HazeState() }
 
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = state,
@@ -180,8 +186,7 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetContent = {
             SheetContent(
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(top = ToolbarConstants.toolbarHeight)
+                    .padding(top = ToolbarConstants.toolbarHeight + statusBarHeight.dp)
                     .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
                     .hazeSource(hazeState),
                 uiState = uiState,

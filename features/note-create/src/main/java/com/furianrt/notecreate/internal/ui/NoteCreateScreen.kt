@@ -6,10 +6,13 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -20,9 +23,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -165,6 +170,10 @@ private fun SuccessContent(
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     val toolbarState = remember { MovableToolbarState() }
+
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     BackHandler(
         enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
         onBack = { onEvent(NoteCreateEvent.OnButtonBackClick) },
@@ -192,7 +201,7 @@ private fun SuccessContent(
                 uiState.note.date.toDateString()
             }
             Toolbar(
-                modifier = Modifier.statusBarsPadding(),
+                modifier = Modifier.padding(top = statusBarHeight.dp),
                 isInEditMode = uiState.isInEditMode,
                 isPinned = uiState.note.isPinned,
                 date = date,
@@ -212,9 +221,16 @@ private fun SuccessContent(
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {
-                ToolbarDim {
-                    scope.launch { state.bottomSheetState.hide() }
-                }
+                Box(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.scrim)
+                        .padding(top = statusBarHeight.dp)
+                        .height(ToolbarConstants.toolbarHeight)
+                        .clickableNoRipple {
+                            scope.launch { state.bottomSheetState.hide() }
+                        }
+                )
             }
         },
         content = { notePage() },
@@ -229,21 +245,6 @@ private fun LoadingContent(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
-    )
-}
-
-@Composable
-private fun ToolbarDim(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.scrim)
-            .statusBarsPadding()
-            .height(ToolbarConstants.toolbarHeight)
-            .clickableNoRipple(onClick = onClick)
     )
 }
 

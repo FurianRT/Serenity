@@ -14,12 +14,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -38,6 +40,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -205,6 +208,9 @@ private fun ScreenContent(
     val scrollState = rememberScrollState()
     val toolbarState = remember { MovableToolbarState() }
 
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
@@ -212,7 +218,7 @@ private fun ScreenContent(
         enabled = false,
         toolbar = {
             DefaultToolbar(
-                modifier = Modifier.statusBarsPadding(),
+                modifier = Modifier.padding(top = statusBarHeight.dp),
                 title = stringResource(uiR.string.settings_title),
                 onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
             )
