@@ -2,6 +2,8 @@
     <string name="settings_security_title">Безопасность</string>
     <string name="settings_backup_title">Синхронизация</string>
     <string name="settings_theme_title">Тема</string>
+    <string name="settings_light_theme_title">Светлая</string>
+    <string name="settings_dark_theme_title">Тёмная</string>
     <string name="settings_font_title">Шрифт</string>
     <string name="settings_language_title">Язык</string>
     <string name="settings_rate_us_title">Оцените нас</string>

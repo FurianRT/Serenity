@@ -2,6 +2,8 @@
     <string name="settings_security_title">सुरक्षा</string>
     <string name="settings_backup_title">बैकअप और पुनर्स्थापना</string>
     <string name="settings_theme_title">थीम</string>
+    <string name="settings_light_theme_title">हल्की</string>
+    <string name="settings_dark_theme_title">गहरी</string>
     <string name="settings_font_title">ऐप फ़ॉन्ट</string>
     <string name="settings_language_title">भाषा</string>
     <string name="settings_rate_us_title">हमें रेट करें</string>

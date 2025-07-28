@@ -2,6 +2,8 @@
     <string name="settings_security_title">Bảo mật</string>
     <string name="settings_backup_title">Sao lưu và Khôi phục</string>
     <string name="settings_theme_title">Giao diện</string>
+    <string name="settings_light_theme_title">Sáng</string>
+    <string name="settings_dark_theme_title">Tối</string>
     <string name="settings_font_title">Phông chữ ứng dụng</string>
     <string name="settings_language_title">Ngôn ngữ</string>
     <string name="settings_rate_us_title">Đánh giá chúng tôi</string>

@@ -2,6 +2,8 @@
     <string name="settings_security_title">Безпека</string>
     <string name="settings_backup_title">Збереження та відновлення</string>
     <string name="settings_theme_title">Тема</string>
+    <string name="settings_light_theme_title">Світла</string>
+    <string name="settings_dark_theme_title">Темна</string>
     <string name="settings_font_title">Шрифт додатку</string>
     <string name="settings_language_title">Мова</string>
     <string name="settings_rate_us_title">Оцініть нас</string>

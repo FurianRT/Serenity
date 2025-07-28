@@ -2,6 +2,8 @@
     <string name="settings_security_title">보안</string>
     <string name="settings_backup_title">백업 및 복원</string>
     <string name="settings_theme_title">테마</string>
+    <string name="settings_light_theme_title">라이트</string>
+    <string name="settings_dark_theme_title">다크</string>
     <string name="settings_font_title">앱 글꼴</string>
     <string name="settings_language_title">언어</string>
     <string name="settings_rate_us_title">평가하기</string>

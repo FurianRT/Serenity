@@ -2,6 +2,8 @@
     <string name="settings_security_title">Sicurezza</string>
     <string name="settings_backup_title">Backup e ripristino</string>
     <string name="settings_theme_title">Tema</string>
+    <string name="settings_light_theme_title">Chiaro</string>
+    <string name="settings_dark_theme_title">Scuro</string>
     <string name="settings_font_title">Carattere dell\'app</string>
     <string name="settings_language_title">Lingua</string>
     <string name="settings_rate_us_title">Valutaci</string>

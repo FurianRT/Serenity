@@ -2,6 +2,8 @@
     <string name="settings_security_title">Keamanan</string>
     <string name="settings_backup_title">Cadangkan &amp; Pulihkan</string>
     <string name="settings_theme_title">Tema</string>
+    <string name="settings_light_theme_title">Terang</string>
+    <string name="settings_dark_theme_title">Gelap</string>
     <string name="settings_font_title">Font Aplikasi</string>
     <string name="settings_language_title">Bahasa</string>
     <string name="settings_rate_us_title">Beri Penilaian</string>

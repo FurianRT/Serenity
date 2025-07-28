@@ -2,6 +2,8 @@
     <string name="settings_security_title">Seguridad</string>
     <string name="settings_backup_title">Copia y Restaurar</string>
     <string name="settings_theme_title">Tema</string>
+    <string name="settings_light_theme_title">Maliwanag</string>
+    <string name="settings_dark_theme_title">Madilim</string>
     <string name="settings_font_title">Fuente de la App</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_rate_us_title">Califícanos</string>

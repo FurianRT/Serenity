@@ -2,6 +2,8 @@
     <string name="settings_security_title">Sécurité</string>
     <string name="settings_backup_title">Sauvegarde et restauration</string>
     <string name="settings_theme_title">Thème</string>
+    <string name="settings_light_theme_title">Clair</string>
+    <string name="settings_dark_theme_title">Sombre</string>
     <string name="settings_font_title">Police de l’application</string>
     <string name="settings_language_title">Langue</string>
     <string name="settings_rate_us_title">Évaluez-nous</string>
