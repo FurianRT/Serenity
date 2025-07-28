@@ -20,9 +20,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
@@ -36,6 +38,9 @@ fun TagItem(
     title: String,
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
+    background: Color = MaterialTheme.colorScheme.secondaryContainer,
+    textColor: Color = Color.Unspecified,
+    horizontalPadding: Dp = 10.dp,
     onClick: (() -> Unit)? = null,
     onRemoveClick: () -> Unit = {},
     icon: (@Composable () -> Unit)? = null,
@@ -48,9 +53,9 @@ fun TagItem(
             modifier = Modifier
                 .padding(all = 4.dp)
                 .clip(RoundedCornerShape(size = 16.dp))
-                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.07f))
+                .background(background)
                 .applyIf(onClick != null) { Modifier.clickable { onClick?.invoke() } }
-                .padding(horizontal = 10.dp, vertical = 6.dp),
+                .padding(horizontal = horizontalPadding, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
@@ -59,6 +64,7 @@ fun TagItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelSmall,
+                color = textColor,
             )
             if (icon != null) {
                 icon()

@@ -28,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -241,6 +242,11 @@ private fun SuccessScreen(
         }
     }
 
+    var cachedDimValue by rememberSaveable { mutableStateOf(false) }
+    LaunchedEffect(currentPageState?.dimSurface) {
+        currentPageState?.dimSurface?.let { cachedDimValue = it }
+    }
+
     MovableToolbarScaffold(
         modifier = modifier
             .fillMaxSize()
@@ -280,7 +286,7 @@ private fun SuccessScreen(
             )
             AnimatedVisibility(
                 modifier = Modifier.zIndex(1f),
-                visible = currentPageState?.dimSurface.orFalse(),
+                visible = currentPageState?.dimSurface ?: cachedDimValue,
                 enter = fadeIn(),
                 exit = fadeOut(),
             ) {

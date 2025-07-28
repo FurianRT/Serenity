@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.ImmutableList
 internal data class MediaViewUiState(
     val initialMediaIndex: Int,
     val media: ImmutableList<MediaItem>,
+    val isLightTheme: Boolean,
 )
 
 internal sealed interface MediaViewEvent {

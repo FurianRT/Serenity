@@ -42,7 +42,6 @@ internal fun CheckBox(
             visible = state is SelectionState.Selected,
             enter = scaleIn(initialScale = 0.7f) + fadeIn(),
             exit = scaleOut(targetScale = 0.5f) + fadeOut(),
-            label = "CheckBoxAnim",
         ) {
             Box(
                 modifier = Modifier
@@ -57,6 +56,7 @@ internal fun CheckBox(
                     text = (state as? SelectionState.Selected)?.order?.toString().orEmpty(),
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.ExtraBold,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
             }
         }
@@ -65,7 +65,6 @@ internal fun CheckBox(
             visible = state is SelectionState.Default,
             enter = fadeIn(),
             exit = fadeOut(tween(durationMillis = 200)),
-            label = "CheckBoxAnim2",
         ) {
             Box(
                 modifier = Modifier

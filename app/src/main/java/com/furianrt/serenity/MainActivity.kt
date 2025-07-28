@@ -15,9 +15,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,7 +56,6 @@ import com.furianrt.uikit.anim.defaultEnterTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
-import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
@@ -108,11 +109,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             }
         }
 
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
-            navigationBarStyle = SystemBarStyle.dark(SystemBarsConstants.Color.toArgb()),
-        )
-
         setContent {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
@@ -123,6 +119,21 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val appFont by appearanceRepository.getAppFont()
                 .map(NoteFontFamily::toNoteFont)
                 .collectAsStateWithLifecycle(initialValue = NoteFont.QuickSand)
+
+            LaunchedEffect(themeColor.isLight) {
+                val color = Color.Transparent.toArgb()
+                if (themeColor.isLight) {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
+                        navigationBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
+                    )
+                } else {
+                    enableEdgeToEdge(
+                        statusBarStyle = SystemBarStyle.dark(color),
+                        navigationBarStyle = SystemBarStyle.dark(color),
+                    )
+                }
+            }
 
             SerenityTheme(color = themeColor, font = appFont) {
                 CompositionLocalProvider(LocalAuth provides this) {

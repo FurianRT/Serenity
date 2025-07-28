@@ -52,7 +52,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -634,10 +633,10 @@ private fun DayCell(
             modifier = Modifier.alpha(if (day.position == DayPosition.MonthDate) 1f else 0.5f),
             text = day.date.dayOfMonth.toString(),
             style = MaterialTheme.typography.bodyLarge,
-            color = if (isCurrentDay && !isEdgeDate) {
-                MaterialTheme.colorScheme.primaryContainer
-            } else {
-                MaterialTheme.typography.bodyLarge.color
+            color = when {
+                isCurrentDay && !isEdgeDate -> MaterialTheme.colorScheme.primaryContainer
+                isEdgeDate -> MaterialTheme.colorScheme.onPrimaryContainer
+                else -> MaterialTheme.colorScheme.onSurface
             },
             textAlign = TextAlign.Center,
         )
@@ -649,7 +648,7 @@ private fun DayCell(
                     .align(Alignment.BottomCenter)
                     .background(
                         color = if (isEdgeDate) {
-                            MaterialTheme.colorScheme.primary
+                            MaterialTheme.colorScheme.onPrimaryContainer
                         } else {
                             MaterialTheme.colorScheme.primaryContainer
                         },
@@ -694,7 +693,7 @@ private fun MonthHeader(
                 .alpha(0.4f)
                 .size(20.dp),
             painter = painterResource(R.drawable.ic_action_edit),
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
     }

@@ -9,6 +9,7 @@ internal sealed interface MediaViewerUiState {
     data class Success(
         val initialMediaIndex: Int,
         val media: ImmutableList<MediaItem>,
+        val isLightTheme: Boolean,
     ) : MediaViewerUiState {
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             media = media.mapImmutable { item ->

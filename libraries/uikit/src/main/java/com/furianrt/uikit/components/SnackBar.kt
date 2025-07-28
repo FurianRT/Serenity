@@ -46,7 +46,7 @@ fun SnackBar(
             if (icon != null) {
                 Icon(
                     painter = icon,
-                    tint = Color.Unspecified,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = title,
                 )
             }

@@ -26,7 +26,7 @@ internal fun SearchBar(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .background(MaterialTheme.colorScheme.tertiary)
+            .background(MaterialTheme.colorScheme.background)
             .clickableNoRipple(onClick = onClick)
             .padding(vertical = 8.dp),
         contentAlignment = Alignment.CenterStart,

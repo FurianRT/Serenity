@@ -36,6 +36,7 @@ fun DurationBadge(
             text = durationString,
             fontSize = 12.sp,
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer
         )
     }
 }

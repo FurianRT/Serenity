@@ -31,7 +31,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -273,7 +272,7 @@ private fun ButtonClose(
             .clickable(onClick = onClick)
             .padding(2.dp),
         painter = painterResource(uiR.drawable.ic_exit),
-        tint = Color.Unspecified,
+        tint = MaterialTheme.colorScheme.onErrorContainer,
         contentDescription = null
     )
 }
@@ -287,7 +286,7 @@ private fun ButtonResize(
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),
         painter = painterResource(R.drawable.ic_rotate_sticker),
-        tint = Color.Unspecified,
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
         contentDescription = null
     )
 }
@@ -304,7 +303,7 @@ private fun ButtonFlip(
             .clickable(onClick = onClick)
             .padding(2.dp),
         painter = painterResource(R.drawable.ic_flip_sticker),
-        tint = Color.Unspecified,
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
         contentDescription = null
     )
 }

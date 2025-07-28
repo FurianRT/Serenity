@@ -27,7 +27,11 @@ internal fun ColorItem(
         modifier = modifier
             .applyIf(isSelected) {
                 Modifier
-                    .border(1.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        shape = RoundedCornerShape(16.dp),
+                    )
                     .padding(2.dp)
             }
             .background(color, RoundedCornerShape(16.dp))

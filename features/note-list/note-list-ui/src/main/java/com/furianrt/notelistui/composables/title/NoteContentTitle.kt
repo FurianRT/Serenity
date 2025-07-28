@@ -134,7 +134,7 @@ fun NoteContentTitle(
     }
 
     val adjustedStyle = textStyle.copy(
-        color = color ?: textStyle.color,
+        color = color ?: MaterialTheme.colorScheme.onSurface,
         fontFamily = fontFamily ?: textStyle.fontFamily,
         fontSize = fontSize,
         lineHeight = textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value),
@@ -152,7 +152,7 @@ fun NoteContentTitle(
         onTextLayout = { layoutResult = it },
         onValueChange = { title.state.updateValue(it) },
         textStyle = adjustedStyle,
-        cursorBrush = SolidColor(MaterialTheme.colorScheme.onSurface),
+        cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
         keyboardOptions = KeyboardOptions(
             capitalization = KeyboardCapitalization.Sentences,
             showKeyboardOnFocus = true,

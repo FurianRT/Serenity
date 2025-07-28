@@ -3,6 +3,7 @@ package com.furianrt.uikit.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 fun ButtonMenu(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    tint: Color = MaterialTheme.colorScheme.onSurface,
 ) {
     Box(
         modifier = modifier.clickableWithScaleAnim(
@@ -30,7 +32,7 @@ fun ButtonMenu(
             modifier = modifier.padding(8.dp),
             painter = painterResource(R.drawable.ic_action_menu),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = tint,
         )
     }
 }

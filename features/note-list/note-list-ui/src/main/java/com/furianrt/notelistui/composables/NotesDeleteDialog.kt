@@ -2,6 +2,7 @@ package com.furianrt.notelistui.composables
 
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -9,13 +10,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.furianrt.uikit.R
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.components.SkipFirstEffect
@@ -60,6 +66,18 @@ private fun DialogIcon(
         isPlaying = isPlaying,
         speed = 1.3f,
     )
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.onSurface.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.onSurface.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+    )
     SkipFirstEffect(lottieState.isPlaying) {
         isPlaying = lottieState.isPlaying
     }
@@ -72,6 +90,7 @@ private fun DialogIcon(
             .clickableWithScaleAnim { isPlaying = true },
         composition = composition,
         progress = { (lottieState.progress + 0.2f).coerceAtMost(1f) },
+        dynamicProperties = dynamicProperties,
     )
 }
 

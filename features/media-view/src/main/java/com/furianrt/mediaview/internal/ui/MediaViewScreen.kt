@@ -1,9 +1,12 @@
 package com.furianrt.mediaview.internal.ui
 
 import android.content.pm.ActivityInfo
-import android.content.res.Configuration
+import android.content.res.Configuration.ORIENTATION_PORTRAIT
 import android.net.Uri
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +33,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -80,6 +84,30 @@ internal fun MediaViewScreen(
     val imageNotSavedMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    DisposableEffect(uiState.isLightTheme) {
+        val barsColor = Color.Transparent.toArgb()
+        if (uiState.isLightTheme) {
+            (activity as? ComponentActivity)?.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.dark(barsColor),
+                navigationBarStyle = SystemBarStyle.dark(barsColor),
+            )
+        }
+        onDispose {
+            if (uiState.isLightTheme) {
+                (activity as? ComponentActivity)?.enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.light(
+                        scrim = barsColor,
+                        darkScrim = barsColor,
+                    ),
+                    navigationBarStyle = SystemBarStyle.light(
+                        scrim = barsColor,
+                        darkScrim = barsColor,
+                    ),
+                )
+            }
+        }
+    }
 
     DisposableEffect(Unit) {
         val requestedOrientation = activity?.requestedOrientation
@@ -266,7 +294,7 @@ private fun SuccessContent(
                 .align(Alignment.BottomCenter),
             visible = showControls &&
                     (!isVideoItem ||
-                    configuration.orientation == Configuration.ORIENTATION_PORTRAIT),
+                    configuration.orientation == ORIENTATION_PORTRAIT),
         ) {
             MediaList(
                 modifier = Modifier
@@ -302,6 +330,7 @@ private fun Preview() {
         SuccessContent(
             uiState = MediaViewUiState(
                 initialMediaIndex = 1,
+                isLightTheme = false,
                 media = persistentListOf(
                     MediaItem.Image(id = "1", name = "1", uri = Uri.EMPTY, ratio = 0.5f),
                     MediaItem.Image(id = "2", name = "2", uri = Uri.EMPTY, ratio = 0.5f),

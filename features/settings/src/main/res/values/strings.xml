@@ -2,6 +2,8 @@
     <string name="settings_security_title">Security</string>
     <string name="settings_backup_title">Backup and Restore</string>
     <string name="settings_theme_title">Theme</string>
+    <string name="settings_light_theme_title">Light</string>
+    <string name="settings_dark_theme_title">Dark</string>
     <string name="settings_font_title">App Font</string>
     <string name="settings_language_title">Language</string>
     <string name="settings_rate_us_title">Rate Us</string>

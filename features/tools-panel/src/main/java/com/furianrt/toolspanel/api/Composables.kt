@@ -1,6 +1,8 @@
 package com.furianrt.toolspanel.api
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -14,6 +16,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,6 +30,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -116,7 +121,7 @@ fun ActionsPanel(
 
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
     val hazeModifier = Modifier
-        .background(MaterialTheme.colorScheme.tertiaryContainer)
+        .background(MaterialTheme.colorScheme.background)
         .hazeEffect(
             state = hazeState,
             style = HazeDefaults.style(
@@ -126,7 +131,8 @@ fun ActionsPanel(
                 blurRadius = 12.dp,
             )
         )
-        .background(MaterialTheme.colorScheme.tertiaryContainer)
+        .background(MaterialTheme.colorScheme.background)
+        .background(MaterialTheme.colorScheme.background)
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
     val imeBottom by rememberKeyboardOffsetState()
@@ -167,6 +173,23 @@ fun ActionsPanel(
             .fillMaxWidth()
             .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)),
     ) {
+        AnimatedVisibility(
+            visible = panelMode != PanelMode.VOICE_RECORD,
+            enter = fadeIn(tween(delayMillis = 300)),
+            exit = ExitTransition.None,
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(8.dp)
+                    .offset(y = 4.dp)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surfaceDim)
+                        )
+                    ),
+            )
+        }
         Box {
             Box(
                 modifier = Modifier

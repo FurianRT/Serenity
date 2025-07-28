@@ -54,21 +54,18 @@ fun ButtonPlayPause(
         modifier = modifier
             .size(64.dp)
             .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.scrim)
+            .background(Color.Black.copy(alpha = 0.5f))
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        AnimatedContent(
-            targetState = isPlay,
-            label = "IconAnim",
-        ) { targetState ->
+        AnimatedContent(targetState = isPlay) { targetState ->
             Icon(
                 painter = if (targetState) {
                     painterResource(R.drawable.ic_play)
                 } else {
                     painterResource(R.drawable.ic_pause)
                 },
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
         }
@@ -137,7 +134,7 @@ private fun SliderTrack(
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .height(4.dp)
-            .background(MaterialTheme.colorScheme.primary)
+            .background(MaterialTheme.colorScheme.onPrimaryContainer)
             .drawWithCache {
                 val offset = Offset(x = size.width * progress, y = 0f)
                 onDrawBehind {
@@ -153,7 +150,7 @@ private fun SliderThumb() {
         modifier = Modifier
             .clip(CircleShape)
             .size(14.dp)
-            .background(MaterialTheme.colorScheme.primary)
+            .background(MaterialTheme.colorScheme.onPrimaryContainer)
     )
 }
 
@@ -180,12 +177,14 @@ private fun SliderTime(
             textAlign = TextAlign.End,
             text = current.toTimeString(),
             style = style,
-            maxLines = 1
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
         Text(
             text = "/${total.toTimeString()}",
             style = style,
-            maxLines = 1
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }
 }

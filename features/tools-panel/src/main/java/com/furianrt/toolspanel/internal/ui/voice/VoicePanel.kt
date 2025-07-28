@@ -215,13 +215,13 @@ private fun Timer(
             if (targetState) {
                 Icon(
                     painter = painterResource(uiR.drawable.ic_play),
-                    tint = Color.Unspecified,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
                 )
             } else {
                 Icon(
                     painter = painterResource(uiR.drawable.ic_pause),
-                    tint = Color.Unspecified,
+                    tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
                 )
             }
@@ -287,7 +287,7 @@ private fun ButtonDone(
         ) {
             Icon(
                 painter = painterResource(uiR.drawable.ic_send),
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
         }

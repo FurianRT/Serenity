@@ -50,6 +50,7 @@ internal fun Toolbar(
     ) {
         ButtonBack(
             onClick = onBackClick,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
         )
         Counter(
             modifier = Modifier.weight(1f),
@@ -58,6 +59,7 @@ internal fun Toolbar(
         )
         Box {
             ButtonMenu(
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 onClick = { showDropDownMenu = true },
             )
             Menu(
@@ -83,6 +85,7 @@ private fun Counter(
         textAlign = TextAlign.Center,
         text = stringResource(uiR.string.media_counter_pattern, currentIndex + 1, total),
         style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
     )
 }
 

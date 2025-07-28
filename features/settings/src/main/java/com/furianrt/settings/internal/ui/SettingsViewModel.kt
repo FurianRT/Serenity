@@ -3,6 +3,7 @@ package com.furianrt.settings.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.AppLocale
@@ -13,20 +14,25 @@ import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
-import com.furianrt.settings.internal.domain.GetAppThemeListUseCase
 import com.furianrt.settings.internal.domain.SettingsRepository
+import com.furianrt.settings.internal.domain.usecases.GetAppDarkThemeListUseCase
+import com.furianrt.settings.internal.domain.usecases.GetAppLightThemeListUseCase
+import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 private const val MIN_GOOD_RATING = 4
@@ -37,7 +43,9 @@ private const val TERMS_AND_CONDITIONS_LINK =
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
-    getAppThemeListUseCase: GetAppThemeListUseCase,
+    dispatchers: DispatchersProvider,
+    private val getAppDarkThemeListUseCase: GetAppDarkThemeListUseCase,
+    private val getAppLightThemeListUseCase: GetAppLightThemeListUseCase,
     private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
@@ -45,12 +53,16 @@ internal class SettingsViewModel @Inject constructor(
     private val buildInfoProvider: BuildInfoProvider,
 ) : ViewModel() {
 
+    private val selectedTheme = MutableStateFlow<UiTheme?>(null)
+
     val state = combine(
-        getAppThemeListUseCase(),
+        selectedTheme,
         appearanceRepository.getAppThemeColorId(),
         settingsRepository.getAppRating(),
         localeRepository.getSelectedLocale(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
@@ -74,6 +86,8 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnAppThemeColorSelected -> launch {
                 appearanceRepository.updateAppThemeColor(event.color.id)
             }
+
+            is SettingsEvent.OnAppThemeSelected -> selectedTheme.update { event.theme }
 
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
@@ -141,15 +155,38 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun buildState(
-        themes: ImmutableList<UiThemeColor>,
+        selectedTheme: UiTheme?,
         selectedThemeColorId: String?,
         rating: Int,
         locale: AppLocale,
-    ) = SettingsUiState.Success(
-        themes = themes,
-        selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId),
-        rating = rating,
-        appVersion = buildInfoProvider.getAppVersionName(),
-        locale = locale,
-    )
+    ): SettingsUiState {
+        val selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId)
+        val lightColors = getAppLightThemeListUseCase()
+        val darkColors = getAppDarkThemeListUseCase()
+        return SettingsUiState.Success(
+            themes = persistentListOf(
+                UiTheme.Light(
+                    isSelected = if (selectedTheme == null) {
+                        lightColors.contains(selectedThemeColor)
+                    } else {
+                        selectedTheme is UiTheme.Light
+                    },
+                    colors = lightColors,
+                    selectedColor = selectedThemeColor,
+                ),
+                UiTheme.Dark(
+                    isSelected = if (selectedTheme == null) {
+                        darkColors.contains(selectedThemeColor)
+                    } else {
+                        selectedTheme is UiTheme.Dark
+                    },
+                    colors = darkColors,
+                    selectedColor = selectedThemeColor,
+                ),
+            ),
+            rating = rating,
+            appVersion = buildInfoProvider.getAppVersionName(),
+            locale = locale,
+        )
+    }
 }

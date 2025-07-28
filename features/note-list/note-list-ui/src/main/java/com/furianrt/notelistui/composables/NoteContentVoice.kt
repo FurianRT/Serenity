@@ -177,7 +177,7 @@ private fun ButtonPlay(
     val scaleModifier = if (isPaused) {
         Modifier.scale(0.7f)
     } else {
-        val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
+        val infiniteTransition = rememberInfiniteTransition()
         val scale by infiniteTransition.animateFloat(
             initialValue = 0.8f,
             targetValue = 1f,
@@ -188,7 +188,6 @@ private fun ButtonPlay(
                 ),
                 repeatMode = RepeatMode.Reverse,
             ),
-            label = "ActionButtonScaleAnim",
         )
         Modifier
             .graphicsLayer {
@@ -210,7 +209,7 @@ private fun ButtonPlay(
         Box(
             modifier = Modifier
                 .size(36.dp)
-                .background(MaterialTheme.colorScheme.primary, CircleShape)
+                .background(MaterialTheme.colorScheme.surfaceContainer, CircleShape)
                 .debounceClickable(
                     debounceInterval = PLAY_BUTTON_DEBOUNCE,
                     indication = null,
@@ -224,7 +223,6 @@ private fun ButtonPlay(
                     .graphicsLayer { rotationZ = rotation.toFloat() },
                 targetState = isPaused,
                 animationSpec = tween(200),
-                label = "PlayAnim",
             ) { targetState ->
                 if (targetState) {
                     Icon(
@@ -333,7 +331,7 @@ private fun Track(
         volume.forEachIndexed { index, value ->
             val adjustedHeight = (value * VOLUME_MULTIPLIER).coerceAtMost(1f)
             val color = when {
-                index < fullColumns -> MaterialTheme.colorScheme.primary
+                index < fullColumns -> MaterialTheme.colorScheme.surfaceContainer
                 index == fullColumns -> {
                     val color = MaterialTheme.colorScheme.onTertiaryContainer
                     MaterialTheme.colorScheme.onTertiaryContainer.copy(

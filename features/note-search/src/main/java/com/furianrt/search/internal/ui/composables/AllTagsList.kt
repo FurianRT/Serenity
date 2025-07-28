@@ -31,6 +31,7 @@ internal fun AllTagsList(
             TagItem(
                 title = tag.title,
                 isRemovable = false,
+                background = MaterialTheme.colorScheme.background,
                 onClick = { onTagClick(tag) },
                 icon = {
                     Text(

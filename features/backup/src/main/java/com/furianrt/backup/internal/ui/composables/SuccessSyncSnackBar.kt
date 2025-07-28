@@ -66,6 +66,7 @@ internal fun SuccessSyncSnackBar(
         Text(
             text = title,
             style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onPrimaryContainer,
         )
     }
 }

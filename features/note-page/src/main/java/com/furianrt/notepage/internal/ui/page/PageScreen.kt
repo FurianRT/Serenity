@@ -351,7 +351,7 @@ private fun SuccessScreen(
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin, bottom = navBarPadding)
-                .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
                 .padding(bottom = listPanelPadding)
                 .imePadding(),
         ) {
@@ -432,6 +432,9 @@ private fun SuccessScreen(
             },
         )
         DimSurfaceOverlay(
+            modifier = Modifier
+                .padding(top = ToolbarConstants.toolbarHeight + statusBarHeightDp)
+                .fillMaxSize(),
             visible = state.dimSurface,
         )
         SnackbarHost(

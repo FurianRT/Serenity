@@ -8,7 +8,6 @@ import androidx.compose.ui.unit.sp
 
 internal fun getTypography(font: NoteFont) = Typography(
     labelSmall = TextStyle(
-        color = Color.White,
         fontFamily = font.light,
         fontSize = 13.sp,
         lineHeight = 28.sp,
@@ -20,7 +19,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     labelMedium = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 14.sp,
         lineHeight = 28.sp,
@@ -32,7 +30,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     labelLarge = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
@@ -44,7 +41,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     bodySmall = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 13.sp,
         lineHeight = 28.sp,
@@ -56,7 +52,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     bodyMedium = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 15.sp,
         lineHeight = 28.sp,
@@ -68,7 +63,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     bodyLarge = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
@@ -80,7 +74,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     titleSmall = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 15.sp,
         lineHeight = 28.sp,
@@ -92,7 +85,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     titleMedium = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 17.sp,
         lineHeight = 29.sp,
@@ -104,7 +96,6 @@ internal fun getTypography(font: NoteFont) = Typography(
         ),
     ),
     titleLarge = TextStyle(
-        color = Color.White,
         fontFamily = font.regular,
         fontSize = 19.sp,
         lineHeight = 29.sp,

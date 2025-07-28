@@ -30,7 +30,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
@@ -194,7 +193,7 @@ private fun EmailInput(
                 modifier = Modifier.weight(1f),
                 state = state,
                 textStyle = MaterialTheme.typography.bodyMedium,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
                 lineLimits = TextFieldLineLimits.SingleLine,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Email,
@@ -218,7 +217,7 @@ private fun EmailInput(
                     .size(20.dp)
                     .alpha(0.5f),
                 painter = painterResource(uiR.drawable.ic_email),
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
         }

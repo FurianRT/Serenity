@@ -216,7 +216,7 @@ private fun ButtonClose(
     ) {
         Icon(
             painter = painterResource(uiR.drawable.ic_exit),
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
     }

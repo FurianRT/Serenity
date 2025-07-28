@@ -395,14 +395,14 @@ private fun SizeSelector(
 private fun SliderTrack(
     progress: Float,
 ) {
-    val trackColor = MaterialTheme.colorScheme.primary
+    val trackColor = MaterialTheme.colorScheme.surfaceContainer
     Box(
         modifier = Modifier
             .padding(bottom = 2.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
             .height(4.dp)
-            .background(MaterialTheme.colorScheme.primary.copy(0.5f))
+            .background(MaterialTheme.colorScheme.onTertiaryContainer)
             .drawWithCache {
                 onDrawBehind {
                     drawRect(color = trackColor, size = size.copy(width = size.width * progress))
@@ -417,7 +417,7 @@ private fun SliderThumb() {
         modifier = Modifier
             .clip(CircleShape)
             .size(14.dp)
-            .background(MaterialTheme.colorScheme.primary)
+            .background(MaterialTheme.colorScheme.surfaceContainer)
     )
 }
 
@@ -435,7 +435,7 @@ private fun FontItem(
             .applyIf(isSelected(family)) {
                 Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(8.dp),
                 )
             }

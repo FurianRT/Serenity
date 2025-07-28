@@ -207,7 +207,7 @@ private fun TemplateNoteTagItem(
         textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
     }
 
-    val strokeColor = MaterialTheme.colorScheme.secondary.copy(alpha = 0.5f)
+    val strokeColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
     Box(modifier = modifier) {
         Box(
             modifier = Modifier
@@ -230,9 +230,11 @@ private fun TemplateNoteTagItem(
                     },
                 state = tag.textState,
                 enabled = enabled,
-                textStyle = MaterialTheme.typography.labelSmall,
+                textStyle = MaterialTheme.typography.labelSmall.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
                 lineLimits = TextFieldLineLimits.SingleLine,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
                 onTextLayout = { layoutResult = it() },
                 keyboardOptions = KeyboardOptions(
                     capitalization = KeyboardCapitalization.Sentences,

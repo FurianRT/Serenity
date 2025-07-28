@@ -48,13 +48,6 @@ private const val SELECTED_SCALE_DURATION = 350
 private const val MAX_LINES_WITH_MEDIA = 4
 private const val MAX_LINES_WITHOUT_MEDIA = 6
 
-private val cardRippleAlpha = RippleAlpha(
-    draggedAlpha = 0.05f,
-    focusedAlpha = 0.05f,
-    hoveredAlpha = 0.05f,
-    pressedAlpha = 0.05f,
-)
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteListItem(
@@ -84,7 +77,19 @@ fun NoteListItem(
         ),
     )
     val onlyText = remember(content) { content.all { it is UiNoteContent.Title } }
-    val rippleConfig = RippleConfiguration(MaterialTheme.colorScheme.onPrimary, cardRippleAlpha)
+
+    val rippleColor = MaterialTheme.colorScheme.surfaceContainer
+    val rippleConfig = remember(rippleColor) {
+        RippleConfiguration(
+            color = rippleColor,
+            rippleAlpha = RippleAlpha(
+                draggedAlpha = 0.05f,
+                focusedAlpha = 0.05f,
+                hoveredAlpha = 0.05f,
+                pressedAlpha = 0.05f,
+            ),
+        )
+    }
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         OutlinedCard(
             modifier = modifier
@@ -101,9 +106,9 @@ fun NoteListItem(
             shape = RoundedCornerShape(8.dp),
             colors = CardDefaults.cardColors(
                 containerColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2f)
+                    MaterialTheme.colorScheme.onSurfaceVariant
                 } else {
-                    MaterialTheme.colorScheme.tertiary
+                    MaterialTheme.colorScheme.background
                 },
             ),
             border = if (isPinned) {

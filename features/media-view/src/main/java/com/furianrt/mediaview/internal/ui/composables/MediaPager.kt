@@ -327,14 +327,7 @@ internal fun VideoPage(
     var showContent by remember { mutableStateOf(true) }
     if (showContent) {
         BoxWithConstraints(
-            modifier = modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    val offsetToClose = size.height / DRAG_TO_CLOSE_DELIMITER
-                    translationY = dragOffset
-                    alpha =
-                        ((offsetToClose - dragOffset * 0.4f) / offsetToClose).coerceAtLeast(0.5f)
-                },
+            modifier = modifier.fillMaxSize(),
             contentAlignment = Alignment.Center,
         ) {
             val maxHeightPx = this.maxHeight.dpToPx()
@@ -364,7 +357,12 @@ internal fun VideoPage(
                                 )
                             }
                         },
-                    ),
+                    )
+                    .graphicsLayer {
+                        translationY = dragOffset
+                        alpha =
+                            ((offsetToClose - dragOffset * 0.4f) / offsetToClose).coerceAtLeast(0.5f)
+                    },
                 onRelease = { it.player?.release() },
                 factory = { ctx ->
                     val playerView = LayoutInflater.from(ctx)
@@ -376,7 +374,13 @@ internal fun VideoPage(
                     }
                 },
             )
-            ControlsAnimatedVisibility(visible = showControls) {
+            ControlsAnimatedVisibility(
+                modifier = Modifier.graphicsLayer {
+                    translationY = dragOffset
+                    alpha = (offsetToClose - dragOffset) / offsetToClose
+                },
+                visible = showControls,
+            ) {
                 ButtonPlayPause(
                     isPlay = !playing || isEnded,
                     onClick = {
@@ -397,6 +401,9 @@ internal fun VideoPage(
                         Modifier
                             .navigationBarsPadding()
                             .padding(bottom = 90.dp)
+                    }
+                    .graphicsLayer {
+                        alpha = (offsetToClose - dragOffset) / offsetToClose
                     },
                 visible = showControls,
             ) {

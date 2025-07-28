@@ -13,7 +13,6 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -152,7 +151,7 @@ private fun IconKey(
     ) {
         Icon(
             painter = painter,
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
     }

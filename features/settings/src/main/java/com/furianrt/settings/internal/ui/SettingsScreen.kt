@@ -56,18 +56,21 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
+import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
+import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -276,10 +279,10 @@ private fun SuccessScreen(
             onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
         )
         ThemeSelector(
-            modifier = Modifier.padding(vertical = 4.dp),
+            modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
             themes = uiState.themes,
-            selected = uiState.selectedThemeColor,
-            onSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
+            onThemeSelected = { onEvent(SettingsEvent.OnAppThemeSelected(it)) },
+            onColorSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
         )
 
         GeneralButton(
@@ -330,44 +333,73 @@ private fun SuccessScreen(
 
 @Composable
 private fun ThemeSelector(
-    themes: ImmutableList<UiThemeColor>,
-    selected: UiThemeColor,
-    onSelected: (color: UiThemeColor) -> Unit,
+    themes: ImmutableList<UiTheme>,
+    onThemeSelected: (theme: UiTheme) -> Unit,
+    onColorSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val initialIndex = remember(themes) { themes.indexOf(selected) }
+    val selectedTheme = themes.first { it.isSelected }
+    val selectedColorIndex = remember(themes, selectedTheme) {
+        selectedTheme.colors.indexOfFirstOrNull { it == selectedTheme.selectedColor }
+    }
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 12.dp, horizontal = 20.dp),
+            modifier = Modifier.padding(horizontal = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_theme),
-                contentDescription = stringResource(id = R.string.settings_theme_title),
-                tint = Color.Unspecified,
+                painter = painterResource(R.drawable.ic_theme),
+                contentDescription = stringResource(R.string.settings_theme_title),
+                tint = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-                text = stringResource(id = R.string.settings_theme_title),
+                text = stringResource(R.string.settings_theme_title),
                 style = MaterialTheme.typography.bodyMedium,
             )
+        }
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            themes.forEach { theme ->
+                TagItem(
+                    title = when(theme) {
+                        is UiTheme.Light -> stringResource(R.string.settings_light_theme_title)
+                        is UiTheme.Dark -> stringResource(R.string.settings_dark_theme_title)
+                    },
+                    isRemovable = false,
+                    background = if (theme.isSelected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.secondaryContainer
+                    },
+                    textColor = if (theme.isSelected) {
+                        MaterialTheme.colorScheme.onPrimaryContainer
+                    } else {
+                        Color.Unspecified
+                    },
+                    horizontalPadding = 20.dp,
+                    onClick = { onThemeSelected(theme) },
+                )
+            }
         }
         LazyRow(
             modifier = Modifier.systemGestureExclusion(),
             state = rememberLazyListState(
-                initialFirstVisibleItemIndex = initialIndex,
+                initialFirstVisibleItemIndex = selectedColorIndex ?: 0,
                 initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
             ),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
-            items(count = themes.count()) { index ->
+            items(count = selectedTheme.colors.count()) { index ->
                 ThemeItem(
-                    theme = themes[index],
-                    selected = selected,
-                    onSelected = onSelected,
+                    theme = selectedTheme.colors[index],
+                    selected = selectedTheme.selectedColor,
+                    onSelected = onColorSelected,
                 )
             }
         }
@@ -386,9 +418,9 @@ private fun ThemeItem(
         modifier = modifier
             .size(50.dp)
             .clip(shape)
-            .background(theme.primary)
+            .background(theme.surface)
             .applyIf(theme == selected) {
-                Modifier.border(1.dp, theme.accent, shape)
+                Modifier.border(1.dp, theme.primaryContainer, shape)
             }
             .clickableNoRipple { onSelected(theme) },
     )
@@ -437,12 +469,12 @@ private fun Rating(
                         }
                         .clickableNoRipple { onSelected(index + 1) },
                     painter = if (isFilled) {
-                        painterResource(id = R.drawable.ic_star_filled)
+                        painterResource(R.drawable.ic_star_filled)
                     } else {
-                        painterResource(id = R.drawable.ic_star_outlined)
+                        painterResource(R.drawable.ic_star_outlined)
                     },
                     contentDescription = (index + 1).toString(),
-                    tint = Color.Unspecified,
+                    tint = MaterialTheme.colorScheme.surfaceContainer,
                 )
             }
         }
@@ -493,15 +525,27 @@ private fun ScreenContentPreview() {
             snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState.Success(
                 themes = persistentListOf(
-                    UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
-                    UiThemeColor.DISTANT_CASTLE_GREEN,
-                    UiThemeColor.VAMPIRE_RED_DARK,
-                    UiThemeColor.EUPHORIA_BLUE_DARK,
-                    UiThemeColor.EUPHORIA_VIOLET,
-                    UiThemeColor.EUPHORIA_BLUE,
-                    UiThemeColor.EUPHORIA_PINK,
+                    UiTheme.Light(
+                        colors = persistentListOf(
+                            UiThemeColor.LIGHT_BLUE,
+                        ),
+                        selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+                        isSelected = false,
+                    ),
+                    UiTheme.Dark(
+                       colors = persistentListOf(
+                           UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
+                           UiThemeColor.DISTANT_CASTLE_GREEN,
+                           UiThemeColor.VAMPIRE_RED_DARK,
+                           UiThemeColor.EUPHORIA_BLUE_DARK,
+                           UiThemeColor.EUPHORIA_VIOLET,
+                           UiThemeColor.EUPHORIA_BLUE,
+                           UiThemeColor.EUPHORIA_PINK,
+                       ),
+                        selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+                        isSelected = true,
+                    )
                 ),
-                selectedThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                 rating = 4,
                 appVersion = "1.0",
                 locale = AppLocale.ENGLISH,

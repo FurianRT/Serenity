@@ -34,11 +34,10 @@ internal fun BulletListItem(
             .applyIf(isSelected) {
                 Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(8.dp),
                 )
             }
-            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clickableNoRipple(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
@@ -48,6 +47,7 @@ internal fun BulletListItem(
             ) {
                 Text(
                     text = bullet.substring(1, bullet.length),
+                    style = MaterialTheme.typography.bodyMedium,
                 )
                 Box(
                     modifier = Modifier

@@ -30,7 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -128,7 +127,7 @@ private fun ButtonScrollToTop(
             Icon(
                 modifier = Modifier.padding(8.dp),
                 painter = painterResource(R.drawable.ic_scroll_up),
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
         }

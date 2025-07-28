@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -47,7 +46,7 @@ fun GeneralButton(
             Icon(
                 painter = iconPainter,
                 contentDescription = title,
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {

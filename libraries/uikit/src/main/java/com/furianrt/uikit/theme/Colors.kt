@@ -24,6 +24,9 @@ object Colors {
 
         val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
+
+
+        val LightBlue = Color(0xFFC0E0F4)
     }
 
     object Accent {
@@ -40,6 +43,8 @@ object Colors {
         val Pink3 = Color(0xFFA65768)
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
+
+        val LightBlue = Color(0xFF7D8BFF)
     }
 
     object Font {

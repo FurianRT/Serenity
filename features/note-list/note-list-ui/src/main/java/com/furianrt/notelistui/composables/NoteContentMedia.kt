@@ -588,11 +588,11 @@ private fun PopUpMenu(
                     blurRadius = 12.dp,
                 )
             )
-            .background(MaterialTheme.colorScheme.tertiaryContainer),
+            .background(MaterialTheme.colorScheme.background),
         containerColor = Color.Transparent,
         offset = DpOffset(x = 8.dp, y = -(8).dp),
         shape = RoundedCornerShape(8.dp),
-        shadowElevation = 0.dp,
+        shadowElevation = 8.dp,
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {

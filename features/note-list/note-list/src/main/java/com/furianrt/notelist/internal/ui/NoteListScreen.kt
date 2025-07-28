@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
@@ -52,11 +53,15 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.furianrt.core.buildImmutableList
 import com.furianrt.notelist.R
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
@@ -317,6 +322,18 @@ private fun EmptyContent(
         iterations = LottieConstants.IterateForever,
         speed = 0.5f,
     )
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.onSurface.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.STROKE_COLOR,
+            value = MaterialTheme.colorScheme.onSurface.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+    )
 
     LaunchedEffect(Unit) {
         startAnimation = true
@@ -343,6 +360,7 @@ private fun EmptyContent(
                     .scale(2.4f),
                 composition = composition,
                 progress = { progress },
+                dynamicProperties = dynamicProperties,
             )
             Spacer(Modifier.height(24.dp))
             Text(

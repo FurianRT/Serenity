@@ -35,11 +35,10 @@ internal fun CheckedBulletListItem(
             .applyIf(isSelected) {
                 Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.onSurface,
+                    color = MaterialTheme.colorScheme.surfaceContainer,
                     shape = RoundedCornerShape(8.dp),
                 )
             }
-            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(8.dp))
             .clickableNoRipple(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 4.dp),
     ) {
@@ -53,6 +52,7 @@ internal fun CheckedBulletListItem(
                     } else {
                         checkedBullet.substring(1, checkedBullet.length)
                     },
+                    style = MaterialTheme.typography.bodyMedium,
                 )
                 Box(
                     modifier = Modifier

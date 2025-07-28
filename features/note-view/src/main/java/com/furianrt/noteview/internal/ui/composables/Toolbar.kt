@@ -119,7 +119,7 @@ private fun DateLabel(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp)),
+                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp)),
             )
         }
         Text(

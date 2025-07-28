@@ -30,7 +30,7 @@ internal fun SyncButton(
     isEnabled: Boolean,
     modifier: Modifier = Modifier,
 ) {
-    val progressColor = MaterialTheme.colorScheme.tertiaryContainer
+    val progressColor = MaterialTheme.colorScheme.background
     val alpha by animateFloatAsState(targetValue = if (isEnabled) 1f else 0.5f)
     val progressState by animateFloatAsState(targetValue = progress ?: 0f)
     CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
@@ -54,6 +54,8 @@ internal fun SyncButton(
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f),
             ),
         ) {
             Text(

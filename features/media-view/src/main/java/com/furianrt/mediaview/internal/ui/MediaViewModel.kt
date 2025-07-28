@@ -8,11 +8,13 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -24,6 +26,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -34,6 +37,7 @@ internal class MediaViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
+    private val appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
@@ -46,6 +50,14 @@ internal class MediaViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private val deletedMediaIds = mutableSetOf<String>()
+
+    init {
+        launch {
+            val themeColorId = appearanceRepository.getAppThemeColorId().first()
+            val themeColor = UiThemeColor.fromId(themeColorId)
+            _state.update { it.copy(isLightTheme = themeColor.isLight) }
+        }
+    }
 
     override fun onCleared() {
         if (deletedMediaIds.isNotEmpty()) {
@@ -120,6 +132,7 @@ internal class MediaViewModel @Inject constructor(
         return MediaViewUiState(
             media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
             initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
+            isLightTheme = false,
         )
     }
 }

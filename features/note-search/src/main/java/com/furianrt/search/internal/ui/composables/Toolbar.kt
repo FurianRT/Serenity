@@ -42,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -160,7 +159,7 @@ private fun SelectedContent(
             Icon(
                 painter = painterResource(uiR.drawable.ic_exit),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
         Text(
@@ -182,7 +181,7 @@ private fun SelectedContent(
             Icon(
                 painter = painterResource(uiR.drawable.ic_delete),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
+                tint = MaterialTheme.colorScheme.onSurface,
             )
         }
     }
@@ -265,7 +264,7 @@ private fun ButtonCalendar(
             modifier = Modifier.padding(8.dp),
             painter = painterResource(R.drawable.ic_calendar),
             contentDescription = null,
-            tint = Color.Unspecified,
+            tint = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
@@ -280,7 +279,7 @@ private fun SearchBar(
     val showCloseButton by remember { derivedStateOf { state.text.isNotEmpty() } }
     Row(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.tertiary, RoundedCornerShape(16.dp))
+            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
             .padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -289,9 +288,11 @@ private fun SearchBar(
                 .weight(1f)
                 .focusRequester(focusRequester),
             state = state,
-            textStyle = MaterialTheme.typography.bodyMedium,
+            textStyle = MaterialTheme.typography.bodyMedium.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
             lineLimits = TextFieldLineLimits.SingleLine,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.secondary),
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
                 imeAction = ImeAction.Done,
@@ -315,7 +316,7 @@ private fun SearchBar(
                     .alpha(0.5f)
                     .clickableNoRipple(onClick = onClearClick),
                 painter = painterResource(uiR.drawable.ic_exit),
-                tint = Color.Unspecified,
+                tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null
             )
         }
@@ -345,6 +346,7 @@ private fun SelectedFiltersList(
                     TagItem(
                         modifier = Modifier.animateItem(),
                         title = filter.title,
+                        background = MaterialTheme.colorScheme.background,
                         isRemovable = true,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                     )
@@ -354,6 +356,7 @@ private fun SelectedFiltersList(
                             .alpha(0.5f)
                             .animateItem(),
                         title = filter.title,
+                        background = MaterialTheme.colorScheme.background,
                         isRemovable = false,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                         onClick = { onUnselectedTagClick(filter) },
@@ -368,6 +371,7 @@ private fun SelectedFiltersList(
                     } else {
                         filter.start.toDateString()
                     },
+                    background = MaterialTheme.colorScheme.background,
                     isRemovable = true,
                     onClick = { onDateFilterClick(filter) },
                     onRemoveClick = { onRemoveFilterClick(filter) },

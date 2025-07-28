@@ -7,15 +7,24 @@ import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
-fun TextLayoutResult.cursorCoordinates(selection: TextRange): Pair<Float, Float> {
-    val currentLine = try {
-        getLineForOffset(selection.end)
+fun TextLayoutResult.cursorCoordinates(selection: TextRange): Pair<Float, Float>? {
+    val minLine = try {
+        getLineForOffset(selection.min)
     } catch (ex: IllegalArgumentException) {
-        getLineForOffset(selection.end - 1)
+        getLineForOffset(selection.min - 1)
     }
-    val lineTop = getLineTop(currentLine)
-    val lineBottom = getLineBottom(currentLine)
-    return lineTop to lineBottom
+
+    val maxLine = try {
+        getLineForOffset(selection.max)
+    } catch (ex: IllegalArgumentException) {
+        getLineForOffset(selection.max - 1)
+    }
+
+    return if(minLine != maxLine) {
+        null
+    } else {
+        getLineTop(maxLine) to getLineBottom(maxLine)
+    }
 }
 
 suspend fun BringIntoViewRequester.bringIntoView(
@@ -24,7 +33,7 @@ suspend fun BringIntoViewRequester.bringIntoView(
     additionalTopOffset: Float,
     additionalBottomOffset: Float,
 ) {
-    val (top, bottom) = textResult?.cursorCoordinates(selection) ?: Pair(0f, 0f)
+    val (top, bottom) = textResult?.cursorCoordinates(selection) ?: return
     bringIntoView(
         additionalTopOffset = top - additionalTopOffset,
         additionalBottomOffset = bottom + additionalBottomOffset,

@@ -2,6 +2,7 @@ package com.furianrt.mediaview.internal.ui.composables
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -15,6 +16,7 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.mediaview.R
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
+import com.furianrt.uikit.components.defaultMenuItemColors
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
@@ -45,15 +47,14 @@ internal fun Menu(
         onStopOrDispose {}
     }
     DropdownMenu(
-        modifier = Modifier
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = Colors.Common.DarkGray,
-                    tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
-                    blurRadius = 12.dp,
-                )
-            ),
+        modifier = Modifier.hazeEffect(
+            state = hazeState,
+            style = HazeDefaults.style(
+                backgroundColor = Colors.Common.DarkGray,
+                tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
+                blurRadius = 12.dp,
+            )
+        ),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),
@@ -61,9 +62,14 @@ internal fun Menu(
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
+        val colors = defaultMenuItemColors().copy(
+            textColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
+        )
         MenuItem(
             icon = painterResource(R.drawable.ic_download),
             text = stringResource(R.string.media_view_save_to_gallery),
+            colors = colors,
             onClick = {
                 onSaveMediaClick()
                 onDismissRequest()
@@ -72,6 +78,7 @@ internal fun Menu(
         MenuItem(
             icon = painterResource(uiR.drawable.ic_share),
             text = stringResource(uiR.string.action_share),
+            colors = colors,
             onClick = {
                 onShareClick()
                 onDismissRequest()
@@ -80,6 +87,7 @@ internal fun Menu(
         MenuItem(
             icon = painterResource(com.furianrt.uikit.R.drawable.ic_delete),
             text = stringResource(com.furianrt.uikit.R.string.action_delete),
+            colors = colors,
             onClick = {
                 onDeleteClick()
                 onDismissRequest()

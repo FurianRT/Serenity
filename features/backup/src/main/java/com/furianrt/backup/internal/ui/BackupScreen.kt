@@ -322,7 +322,7 @@ private fun SuccessContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = MaterialTheme.colorScheme.outlineVariant,
+                        color = MaterialTheme.colorScheme.secondaryContainer,
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -394,9 +394,9 @@ private fun SuccessContent(
                         blurRadius = 12.dp,
                     )
                 )
-                .background(MaterialTheme.colorScheme.outlineVariant)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
                 .onSizeChanged { backupBlockHeight = it.height }
-                .padding(bottom = 24.dp)
+                .padding(bottom = 16.dp)
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(16.dp),

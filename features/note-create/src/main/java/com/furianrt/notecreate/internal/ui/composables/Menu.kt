@@ -53,7 +53,7 @@ internal fun Menu(
                     blurRadius = 12.dp,
                 )
             )
-            .background(MaterialTheme.colorScheme.tertiaryContainer),
+            .background(MaterialTheme.colorScheme.background),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(8.dp),

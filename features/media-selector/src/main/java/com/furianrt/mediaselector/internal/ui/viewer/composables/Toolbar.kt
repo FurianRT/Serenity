@@ -41,6 +41,7 @@ internal fun Toolbar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         ButtonBack(
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
             onClick = onBackClick,
         )
         Counter(
@@ -68,6 +69,7 @@ private fun Counter(
         textAlign = TextAlign.Center,
         text = stringResource(uiR.string.media_counter_pattern, currentIndex + 1, total),
         style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onPrimaryContainer,
     )
 }
 
