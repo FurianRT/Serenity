@@ -34,6 +34,7 @@ fun SerenityTheme(
         secondary = color.secondary,
         onSecondary = color.onSecondary,
         onBackground = color.onBackground,
+        inverseSurface = color.inverseSurface,
         onSurface = color.onSurface,
         onSurfaceVariant = color.onSurfaceVariant,
         surfaceContainer = color.surfaceContainer,

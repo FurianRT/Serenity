@@ -346,7 +346,6 @@ private fun SelectedFiltersList(
                     TagItem(
                         modifier = Modifier.animateItem(),
                         title = filter.title,
-                        background = MaterialTheme.colorScheme.background,
                         isRemovable = true,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                     )
@@ -356,7 +355,6 @@ private fun SelectedFiltersList(
                             .alpha(0.5f)
                             .animateItem(),
                         title = filter.title,
-                        background = MaterialTheme.colorScheme.background,
                         isRemovable = false,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                         onClick = { onUnselectedTagClick(filter) },
@@ -371,7 +369,6 @@ private fun SelectedFiltersList(
                     } else {
                         filter.start.toDateString()
                     },
-                    background = MaterialTheme.colorScheme.background,
                     isRemovable = true,
                     onClick = { onDateFilterClick(filter) },
                     onRemoveClick = { onRemoveFilterClick(filter) },

@@ -467,7 +467,7 @@ private fun MediaItem(
                 modifier = Modifier.wrapContentSize(),
                 text = "+$offscreenImageCount",
                 textAlign = TextAlign.Center,
-                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f),
                 style = MaterialTheme.typography.headlineMedium,
             )
         }

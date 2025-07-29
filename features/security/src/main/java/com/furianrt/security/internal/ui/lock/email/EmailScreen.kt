@@ -192,7 +192,9 @@ private fun EmailInput(
             BasicTextField(
                 modifier = Modifier.weight(1f),
                 state = state,
-                textStyle = MaterialTheme.typography.bodyMedium,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
                 cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
                 lineLimits = TextFieldLineLimits.SingleLine,
                 keyboardOptions = KeyboardOptions(

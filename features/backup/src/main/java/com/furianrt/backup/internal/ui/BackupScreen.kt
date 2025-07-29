@@ -322,7 +322,7 @@ private fun SuccessContent(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        color = MaterialTheme.colorScheme.inverseSurface,
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -394,7 +394,7 @@ private fun SuccessContent(
                         blurRadius = 12.dp,
                     )
                 )
-                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .background(MaterialTheme.colorScheme.inverseSurface)
                 .onSizeChanged { backupBlockHeight = it.height }
                 .padding(bottom = 16.dp)
                 .align(Alignment.BottomCenter)
