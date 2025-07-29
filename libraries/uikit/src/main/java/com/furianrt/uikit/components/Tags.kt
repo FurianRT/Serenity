@@ -23,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -39,6 +40,7 @@ fun TagItem(
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
     background: Color = MaterialTheme.colorScheme.secondaryContainer,
+    textStyle: TextStyle = MaterialTheme.typography.labelSmall,
     textColor: Color = Color.Unspecified,
     horizontalPadding: Dp = 10.dp,
     onClick: (() -> Unit)? = null,
@@ -63,7 +65,7 @@ fun TagItem(
                 text = title,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelSmall,
+                style = textStyle,
                 color = textColor,
             )
             if (icon != null) {

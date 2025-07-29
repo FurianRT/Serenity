@@ -68,7 +68,7 @@ fun ButtonEditAndDone(
                 ImageVector.vectorResource(id = R.drawable.ic_action_edit)
             },
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.onPrimary,
+            tint = MaterialTheme.colorScheme.onSurface,
         )
     }
 }

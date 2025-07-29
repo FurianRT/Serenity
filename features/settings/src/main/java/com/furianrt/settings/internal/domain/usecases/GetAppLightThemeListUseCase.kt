@@ -8,5 +8,9 @@ import javax.inject.Inject
 internal class GetAppLightThemeListUseCase @Inject constructor() {
     operator fun invoke(): ImmutableList<UiThemeColor> = persistentListOf(
         UiThemeColor.LIGHT_BLUE,
+        UiThemeColor.GREEN_LIGHT,
+        UiThemeColor.PINK_LIGHT,
+        UiThemeColor.PURPLE_LIGHT,
+        UiThemeColor.ORANGE_LIGHT,
     )
 }

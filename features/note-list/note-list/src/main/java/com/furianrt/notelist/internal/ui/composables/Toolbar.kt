@@ -176,7 +176,7 @@ private fun SettingsButton(
             },
         painter = painterResource(id = R.drawable.ic_settings),
         contentDescription = null,
-        tint = MaterialTheme.colorScheme.onPrimary,
+        tint = MaterialTheme.colorScheme.onSurface,
     )
 }
 

@@ -377,6 +377,7 @@ private fun ThemeSelector(
                         is UiTheme.Dark -> stringResource(R.string.settings_dark_theme_title)
                     },
                     isRemovable = false,
+                    textStyle = MaterialTheme.typography.bodySmall,
                     background = if (theme.isSelected) {
                         MaterialTheme.colorScheme.primaryContainer
                     } else {

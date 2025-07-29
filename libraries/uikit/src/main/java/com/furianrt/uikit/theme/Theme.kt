@@ -24,7 +24,7 @@ private val defaultColorScheme = darkColorScheme()
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
-    color: UiThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+    color: UiThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
     font: NoteFont = NoteFont.QuickSand,
     content: @Composable () -> Unit,
 ) {

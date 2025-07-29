@@ -57,7 +57,7 @@ internal fun AppFontDialog(
         Column(
             modifier = modifier
                 .fillMaxWidth()
-                .heightIn(max = 616.dp)
+                .heightIn(max = 564.dp)
                 .clip(RoundedCornerShape(16.dp))
                 .hazeEffect(
                     state = hazeState,

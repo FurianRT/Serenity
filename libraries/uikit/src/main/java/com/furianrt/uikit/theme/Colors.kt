@@ -27,6 +27,10 @@ object Colors {
 
 
         val LightBlue = Color(0xFFC0E0F4)
+        val LightGreen = Color(0xFFD3EEDF)
+        val LightPink = Color(0xFFFADFEE)
+        val LightPurple = Color(0xFFE1C3FF)
+        val LightOrange = Color(0xFFFECDA4)
     }
 
     object Accent {
@@ -45,6 +49,10 @@ object Colors {
         val RedDark = Color(0xFF5D0F0F)
 
         val LightBlue = Color(0xFF7D8BFF)
+        val LightGreen = Color(0xFF4FA78C)
+        val LightPink = Color(0xFFEF83B5)
+        val LightPurple = Color(0xFFB46AFF)
+        val LightOrange = Color(0xFFF77950)
     }
 
     object Font {

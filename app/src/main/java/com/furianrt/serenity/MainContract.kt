@@ -4,7 +4,7 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.NoteFont
 
 internal data class MainState(
-    val appColor: UiThemeColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+    val appColor: UiThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
     val appFont: NoteFont = NoteFont.QuickSand,
     val isScreenLocked: Boolean = false,
 )

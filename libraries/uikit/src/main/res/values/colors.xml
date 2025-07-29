@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="green">#FF193727</color>
-    <color name="green_light">#FF497412</color>
+    <color name="purple">#FF474972</color>
 </resources>

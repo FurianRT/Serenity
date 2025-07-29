@@ -114,7 +114,7 @@ fun NoteListItem(
             border = if (isPinned) {
                 BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
             } else {
-                CardDefaults.outlinedCardBorder()
+                BorderStroke(0.5.dp, MaterialTheme.colorScheme.inverseSurface)
             }
         ) {
             content.forEachIndexed { index, item ->
