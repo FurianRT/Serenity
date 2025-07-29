@@ -62,12 +62,12 @@ private fun Pin(
         modifier = modifier
             .size(16.dp)
             .applyIf(isFilled) {
-                Modifier.background(MaterialTheme.colorScheme.primary, CircleShape)
+                Modifier.background(MaterialTheme.colorScheme.onSurface, CircleShape)
             }
             .applyIf(!isFilled) {
                 Modifier.border(
                     width = 1.dp,
-                    color = MaterialTheme.colorScheme.primary,
+                    color = MaterialTheme.colorScheme.onSurface,
                     shape = CircleShape,
                 )
             },
