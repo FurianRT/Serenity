@@ -18,7 +18,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -36,6 +36,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -196,6 +197,9 @@ private fun Content(
     val toolbarState = remember { MovableToolbarState() }
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     MovableToolbarScaffold(
         modifier = modifier
             .fillMaxSize()
@@ -205,7 +209,7 @@ private fun Content(
         enabled = false,
         toolbar = {
             Toolbar(
-                modifier = Modifier.statusBarsPadding(),
+                modifier = Modifier.padding(top = statusBarHeight.dp),
                 onBackClick = { onEvent(MediaSortingEvent.OnButtonBackClick) },
                 onDoneClick = { onEvent(MediaSortingEvent.OnButtonDoneClick) },
             )
