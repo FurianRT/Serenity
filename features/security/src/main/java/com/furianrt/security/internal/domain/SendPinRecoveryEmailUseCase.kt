@@ -32,7 +32,7 @@ internal class SendPinRecoveryEmailUseCase @Inject constructor(
             put("mail.smtp.starttls.enable", "true")
         }
 
-        val session = Session.getDefaultInstance(
+        val session = Session.getInstance(
             props,
             object : Authenticator() {
                 override fun getPasswordAuthentication() = PasswordAuthentication(
@@ -46,8 +46,8 @@ internal class SendPinRecoveryEmailUseCase @Inject constructor(
         val message = MimeMessage(session)
         message.setFrom(InternetAddress(BuildConfig.SUPPORT_EMAIL))
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(userEmail))
-        message.subject = subject
-        message.setText(text)
+        message.setSubject(subject, "UTF-8")
+        message.setText(text, "UTF-8")
         try {
             Result.success(Transport.send(message))
         } catch (e: Exception) {
