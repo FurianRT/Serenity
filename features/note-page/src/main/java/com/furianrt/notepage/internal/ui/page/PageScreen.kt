@@ -102,7 +102,9 @@ import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.getStatusBarHeight
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -155,14 +157,13 @@ internal fun NotePageScreenInternal(
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
 
     val view = LocalView.current
-    val density = LocalDensity.current
     val hazeState = remember { HazeState() }
     val keyboardOffset by rememberKeyboardOffsetState()
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
-    val statusBarHeightDp = density.run { statusBarHeight.toDp() }
+    val statusBarHeightDp = statusBarHeight.pxToDp()
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 16.dp
-    val toolbarMarginPx = density.run { toolbarMargin.toPx() }
-    val bottomFocusMargin = with(LocalDensity.current) { 90.dp.toPx().toInt() }
+    val toolbarMarginPx = toolbarMargin.dpToPx()
+    val bottomFocusMargin = 90.dp.dpToPx().toInt()
 
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
@@ -304,7 +305,7 @@ private fun SuccessScreen(
 
     var focusedTitleId: String? by remember { mutableStateOf(null) }
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
-    val statusBarHeightDp = density.run { statusBarHeight.toDp() }
+    val statusBarHeightDp = statusBarHeight.pxToDp()
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
     var listSize by remember { mutableStateOf(IntSize.Zero) }
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
@@ -379,7 +380,7 @@ private fun SuccessScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
-                        .height(density.run { listSize.height.toDp() }),
+                        .height(listSize.height.pxToDp()),
                     stickers = uiState.stickers,
                     emptyTitleHeight = { if (showStickersPadding) topEmptyTitleHeight else 0f },
                     containerSize = { listSize },
@@ -461,9 +462,8 @@ private fun ContentItems(
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    val density = LocalDensity.current
     val topTitlePadding = 8.dp
-    val topPadding = density.run { topTitlePadding.toPx() + 6.dp.toPx() }
+    val topPadding = (topTitlePadding + 6.dp).dpToPx()
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -492,9 +492,7 @@ private fun ContentItems(
                                 )
                                 .applyIf(index == 0 && item.state.text.isEmpty()) {
                                     Modifier.onSizeChanged { size ->
-                                        density.run {
-                                            onEmptyTitleHeightChange(size.height + topPadding)
-                                        }
+                                        onEmptyTitleHeightChange(size.height + topPadding)
                                     }
                                 }
                                 .animatePlacementInScope(this@LookaheadScope),

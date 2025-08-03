@@ -145,8 +145,10 @@ fun NoteContentTitle(
             .bringIntoViewRequester(title.bringIntoViewRequester)
             .focusRequester(title.focusRequester)
             .onFocusChanged { focusState ->
-                hasFocus = focusState.hasFocus
-                onTitleFocusChange(title.id, focusState.hasFocus)
+                if (focusState.hasFocus != hasFocus) {
+                    hasFocus = focusState.hasFocus
+                    onTitleFocusChange(title.id, focusState.hasFocus)
+                }
             },
         value = title.state.textValue,
         onTextLayout = { layoutResult = it },
