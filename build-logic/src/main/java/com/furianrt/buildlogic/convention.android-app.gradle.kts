@@ -1,5 +1,4 @@
 import com.furianrt.buildlogic.ConfigData
-import gradle.kotlin.dsl.accessors._324cd5068e6ae58f93836292cc57497f.kotlin
 import java.util.Properties
 
 plugins {
@@ -21,6 +20,10 @@ android {
 
     buildFeatures {
         buildConfig = true
+    }
+
+    bundle {
+        language.enableSplit = false
     }
 
     buildTypes {
