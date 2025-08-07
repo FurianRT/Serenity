@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -56,6 +57,7 @@ internal fun RegularPanel(
             )
         }
         IconButton(
+            modifier = Modifier.alpha(if (titleState == null) 0.5f else 1f),
             onClick = onBulletListClick,
         ) {
             Icon(

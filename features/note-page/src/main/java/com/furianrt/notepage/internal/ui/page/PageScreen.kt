@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -174,6 +175,7 @@ internal fun NotePageScreenInternal(
     }
 
     LaunchedEffect(Unit) {
+        var toast: Toast? = null
         viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
@@ -207,6 +209,13 @@ internal fun NotePageScreenInternal(
                         message = effect.message,
                         duration = SnackbarDuration.Short,
                     )
+                }
+
+                is PageEffect.ShowToast -> {
+                    toast?.cancel()
+                    toast = Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).apply {
+                        show()
+                    }
                 }
 
                 is PageEffect.OpenMediaSortingScreen -> openMediaSortingScreenState(
@@ -400,6 +409,7 @@ private fun SuccessScreen(
             hazeState = hazeState,
             uiState = uiState,
             focusedTitleId = { focusedTitleId },
+            onNoPositionError = { onEvent(PageEvent.OnNoPositionError) },
             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
             onVoiceRecordStart = {
@@ -415,6 +425,7 @@ private fun SuccessScreen(
             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
             onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
+            onBulletListClick = { onEvent(PageEvent.OnSelectBulletListClick) },
             onStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
             onStickerSelected = { selectedSticker ->
                 onEvent(
@@ -581,6 +592,7 @@ private fun Panel(
     uiState: PageUiState.Success,
     hazeState: HazeState,
     focusedTitleId: () -> String?,
+    onNoPositionError: () -> Unit,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
@@ -591,6 +603,7 @@ private fun Panel(
     onFontSizeSelected: (size: Int) -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
+    onBulletListClick: () -> Unit,
     onStickersClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -613,6 +626,7 @@ private fun Panel(
                     fontSize = uiState.fontSize,
                     hazeState = hazeState,
                     titleState = titleState,
+                    onNoPositionError = onNoPositionError,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
                     onVoiceRecordStart = onVoiceRecordStart,
@@ -624,6 +638,7 @@ private fun Panel(
                     onFontStyleClick = onFontStyleClick,
                     onStickersClick = onStickersClick,
                     onStickerSelected = onStickerSelected,
+                    onBulletListClick = onBulletListClick,
                 )
             }
         )

@@ -2,4 +2,5 @@
     <string name="note_title_hint_text">テキスト…</string>
     <string name="note_title_hint_write_more_here">ここにもっと書いてください…</string>
     <string name="note_sticker_limit_message">ステッカーの上限に達しました</string>
+    <string name="note_select_text_position_message">テキスト内の位置を選択してください</string>
 </resources>

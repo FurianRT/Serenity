@@ -2,4 +2,5 @@
     <string name="note_title_hint_text">Text…</string>
     <string name="note_title_hint_write_more_here">Write more here…</string>
     <string name="note_sticker_limit_message">Sticker limit reached</string>
+    <string name="note_select_text_position_message">Select a position in the text</string>
 </resources>

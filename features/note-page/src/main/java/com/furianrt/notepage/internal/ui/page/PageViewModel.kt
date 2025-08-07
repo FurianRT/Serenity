@@ -59,9 +59,11 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelect
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSortingClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoPositionError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnScreenStopped
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectBulletListClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectStickersClick
@@ -247,6 +249,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnVoiceRemoveClick -> onVoiceRemoveClick(event.voice)
             is OnSelectStickersClick -> resetStickersEditing()
+            is OnSelectBulletListClick -> resetStickersEditing()
             is OnStickerSelected -> addSticker(event.sticker)
             is OnRemoveStickerClick -> removeSticker(event.sticker)
             is OnStickerChanged -> updateSticker(event.sticker)
@@ -255,6 +258,12 @@ internal class PageViewModel @AssistedInject constructor(
                 resetStickersEditing()
                 _effect.tryEmit(PageEffect.HideKeyboard)
             }
+
+            is OnNoPositionError -> _effect.tryEmit(
+                PageEffect.ShowToast(
+                    message = resourcesManager.getString(R.string.note_select_text_position_message),
+                ),
+            )
         }
     }
 
@@ -833,7 +842,8 @@ internal class PageViewModel @AssistedInject constructor(
                             noteId = note.id,
                             content = note.content.refreshTitleTemplates(
                                 fontFamily = note.fontFamily
-                                    ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily(),
+                                    ?: appearanceRepository.getAppFont().first()
+                                        .toUiNoteFontFamily(),
                                 addTopTemplate = isInEditMode
                             ),
                             tags = with(note.tags) {

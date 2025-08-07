@@ -92,6 +92,8 @@ fun ActionsPanel(
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
     onStickersClick: () -> Unit,
+    onBulletListClick: () -> Unit,
+    onNoPositionError: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -224,9 +226,13 @@ fun ActionsPanel(
                             onStickersClick()
                         },
                         onBulletListClick = {
-                            keyboardController?.hide()
-                            isBulletPanelVisible = true
-                            onStickersClick()
+                            if (titleState == null) {
+                                onNoPositionError()
+                            } else {
+                                keyboardController?.hide()
+                                isBulletPanelVisible = true
+                                onBulletListClick()
+                            }
                         }
                     )
 

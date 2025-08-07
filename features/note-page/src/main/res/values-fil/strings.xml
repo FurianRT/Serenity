@@ -2,4 +2,5 @@
     <string name="note_title_hint_text">Teksto…</string>
     <string name="note_title_hint_write_more_here">Sumulat pa dito…</string>
     <string name="note_sticker_limit_message">Naabot na ang limit ng sticker</string>
+    <string name="note_select_text_position_message">Pumili ng posisyon sa teksto</string>
 </resources>

@@ -64,12 +64,14 @@ internal sealed interface PageEvent {
 
     data class OnStickerSelected(val sticker: StickerItem) : PageEvent
     data object OnSelectStickersClick : PageEvent
+    data object OnSelectBulletListClick : PageEvent
     data object OnSelectFontClick : PageEvent
     data class OnRemoveStickerClick(val sticker: StickerItem) : PageEvent
     data class OnStickerChanged(val sticker: StickerItem) : PageEvent
     data class OnStickerClick(val sticker: StickerItem) : PageEvent
     data object OnClickOutside : PageEvent
     data object OnScreenStopped : PageEvent
+    data object OnNoPositionError : PageEvent
 }
 
 internal sealed interface PageEffect {
@@ -93,4 +95,5 @@ internal sealed interface PageEffect {
     data class BringContentToView(val content: UiNoteContent) : PageEffect
     data object HideKeyboard : PageEffect
     data class ShowMessage(val message: String) : PageEffect
+    data class ShowToast(val message: String) : PageEffect
 }
