@@ -60,10 +60,10 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onAttachClick,
+            onClick = onFontStyleClick,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_panel_attach),
+                painter = painterResource(id = R.drawable.ic_panel_font),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -78,10 +78,10 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onFontStyleClick,
+            onClick = onAttachClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_panel_font),
+                painter = painterResource(R.drawable.ic_panel_attach),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -90,7 +90,7 @@ internal fun RegularPanel(
             onClick = onBackgroundClick,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_panel_background_1),
+                painter = painterResource(R.drawable.ic_panel_background),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )

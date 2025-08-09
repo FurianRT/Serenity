@@ -258,6 +258,7 @@ private fun Preview() {
             uiState = NoteCreateUiState.Success(
                 note = NoteItem(
                     id = "",
+                    background = null,
                     date = ZonedDateTime.now(),
                     isPinned = false,
                 ),

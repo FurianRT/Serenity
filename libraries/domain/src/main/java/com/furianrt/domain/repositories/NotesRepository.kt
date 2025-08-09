@@ -15,6 +15,7 @@ interface NotesRepository {
     suspend fun updateNoteDate(noteId: String, date: ZonedDateTime)
     suspend fun updateNoteIsPinned(noteId: String, isPinned: Boolean)
     suspend fun updateNoteIsPinned(noteIds: Set<String>, isPinned: Boolean)
+    suspend fun updateNoteBackgroundId(noteId: String, backgroundId: String?)
     suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor?,

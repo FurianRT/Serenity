@@ -27,7 +27,7 @@ internal fun AttachmentsPanel(
 ) {
     Row(
         modifier = modifier
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 4.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {

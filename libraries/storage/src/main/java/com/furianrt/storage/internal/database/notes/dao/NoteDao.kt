@@ -11,6 +11,7 @@ import androidx.room.Upsert
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.PartNoteBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteId
@@ -44,6 +45,9 @@ internal interface NoteDao {
 
     @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteIsTemplate)
+
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteBackgroundId)
 
     @Delete(entity = EntryNote::class)
     suspend fun delete(data: PartNoteId)

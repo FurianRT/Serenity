@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
+import com.furianrt.toolspanel.api.NoteBackgroundProvider
 import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -37,6 +38,7 @@ private const val KEY_DIALOG_ID = "dialogId"
 internal class NoteCreateViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
+    private val backgroundProvider: NoteBackgroundProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
@@ -49,7 +51,9 @@ internal class NoteCreateViewModel @Inject constructor(
         ),
     ) { isInEditMode, note ->
         NoteCreateUiState.Success(
-            note = note.toNoteItem(),
+            note = note.toNoteItem(
+                background = backgroundProvider.getBackground(note.backgroundId),
+            ),
             isInEditMode = isInEditMode,
         )
     }.stateIn(

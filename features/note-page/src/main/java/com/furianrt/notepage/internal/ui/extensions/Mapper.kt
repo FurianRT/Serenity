@@ -6,6 +6,7 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
@@ -23,6 +24,7 @@ import java.util.UUID
 internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
     stickerIconProvider: suspend (typeId: String) -> Int?,
+    background: UiNoteBackground?,
 ) = NoteItem(
     id = id,
     tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
@@ -35,6 +37,7 @@ internal suspend fun LocalNote.toNoteItem(
     fontColor = fontColor?.toUiNoteFontColor(),
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
+    background = background,
 )
 
 internal fun MediaResult.toMediaBlock() = MediaBlock(

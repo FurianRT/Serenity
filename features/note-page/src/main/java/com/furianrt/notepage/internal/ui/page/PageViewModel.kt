@@ -85,6 +85,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.toolspanel.api.NoteBackgroundProvider
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -132,6 +133,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
     private val audioPlayer: AudioPlayer,
     private val stickerIconProvider: StickerIconProvider,
+    private val backgroundProvider: NoteBackgroundProvider,
     private val dispatchers: DispatchersProvider,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
@@ -819,7 +821,8 @@ internal class PageViewModel @AssistedInject constructor(
                 .map { note ->
                     note?.toNoteItem(
                         appFont = note.fontFamily ?: appearanceRepository.getAppFont().first(),
-                        stickerIconProvider = { stickerIconProvider.getIcon(it) },
+                        stickerIconProvider = stickerIconProvider::getIcon,
+                        background = backgroundProvider.getBackground(note.backgroundId),
                     )
                 }
                 .distinctUntilChanged()

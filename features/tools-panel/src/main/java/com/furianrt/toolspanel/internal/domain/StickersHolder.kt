@@ -7,9 +7,7 @@ import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.entities.StickerPack
 import kotlinx.collections.immutable.ImmutableList
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
 internal class StickersHolder @Inject constructor() : StickerIconProvider {
     private var cache: ImmutableList<StickerPack>? = null
 
