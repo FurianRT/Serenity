@@ -22,11 +22,11 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 internal fun RegularPanel(
     titleState: NoteTitleState?,
     modifier: Modifier = Modifier,
-    onSelectMediaClick: () -> Unit = {},
-    onRecordVoiceClick: () -> Unit = {},
     onFontStyleClick: () -> Unit = {},
     onStickersClick: () -> Unit = {},
     onBulletListClick: () -> Unit = {},
+    onAttachClick: () -> Unit = {},
+    onBackgroundClick: () -> Unit = {},
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -47,15 +47,6 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onFontStyleClick,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_panel_font),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
             onClick = onBulletListClick,
         ) {
             Icon(
@@ -69,10 +60,10 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onSelectMediaClick,
+            onClick = onAttachClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_panel_camera),
+                painter = painterResource(R.drawable.ic_panel_attach),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )
@@ -87,10 +78,19 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            onClick = onRecordVoiceClick,
+            onClick = onFontStyleClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_panel_microphone),
+                painter = painterResource(id = R.drawable.ic_panel_font),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+        IconButton(
+            onClick = onBackgroundClick,
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_panel_background_1),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )

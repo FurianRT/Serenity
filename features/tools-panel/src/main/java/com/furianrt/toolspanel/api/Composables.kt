@@ -43,6 +43,7 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.toolspanel.internal.ui.attachments.AttachmentsPanel
 import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
 import com.furianrt.toolspanel.internal.ui.bullet.BulletTitleBar
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
@@ -70,6 +71,7 @@ private enum class PanelMode {
     FONT,
     STICKERS,
     BULLET,
+    ATTACHMENTS,
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
@@ -108,6 +110,7 @@ fun ActionsPanel(
     var isStickersPanelVisible by rememberSaveable { mutableStateOf(false) }
     var isBulletPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
+    var isAttachmentsVisible by rememberSaveable { mutableStateOf(false) }
 
     val audioRecordPermissionsState = rememberPermissionState(
         permission = PermissionsUtils.getAudioRecordPermission(),
@@ -146,6 +149,7 @@ fun ActionsPanel(
         isStickersPanelVisible -> PanelMode.STICKERS
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
+        isAttachmentsVisible -> PanelMode.ATTACHMENTS
         else -> PanelMode.REGULAR
     }
 
@@ -211,10 +215,6 @@ fun ActionsPanel(
                     PanelMode.REGULAR -> RegularPanel(
                         modifier = heightModifier.clickableNoRipple {},
                         titleState = titleState,
-                        onSelectMediaClick = onSelectMediaClick,
-                        onRecordVoiceClick = {
-                            audioRecordPermissionsState.launchPermissionRequest()
-                        },
                         onFontStyleClick = {
                             keyboardController?.hide()
                             isFontPanelVisible = true
@@ -233,7 +233,8 @@ fun ActionsPanel(
                                 isBulletPanelVisible = true
                                 onBulletListClick()
                             }
-                        }
+                        },
+                        onAttachClick = { isAttachmentsVisible = true },
                     )
 
                     PanelMode.FORMATTING -> SelectedPanel(
@@ -275,6 +276,19 @@ fun ActionsPanel(
                         modifier = heightModifier,
                         showKeyBoardButton = titleState != null,
                         onDoneClick = { isBulletPanelVisible = false },
+                    )
+
+                    PanelMode.ATTACHMENTS -> AttachmentsPanel(
+                        modifier = heightModifier,
+                        onSelectMediaClick = {
+                            isAttachmentsVisible = false
+                            onSelectMediaClick()
+                        },
+                        onRecordVoiceClick = {
+                            isAttachmentsVisible = false
+                            audioRecordPermissionsState.launchPermissionRequest()
+                        },
+                        onCloseClick = { isAttachmentsVisible = false },
                     )
                 }
             }
