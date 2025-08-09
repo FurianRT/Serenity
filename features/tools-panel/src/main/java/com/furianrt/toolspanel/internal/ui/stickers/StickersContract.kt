@@ -17,10 +17,12 @@ internal sealed interface StickersPanelEvent {
     data class OnTitleStickerPackClick(val index: Int) : StickersPanelEvent
     data class OnStickersPageChange(val index: Int) : StickersPanelEvent
     data class OnStickerSelected(val sticker: Sticker) : StickersPanelEvent
+    data object OnKeyboardClick : StickersPanelEvent
 }
 
 internal sealed interface StickersPanelEffect {
     data object ClosePanel : StickersPanelEffect
-    class ScrollContentToIndex(val index: Int) : StickersPanelEffect
-    class SelectSticker(val sticker: Sticker) : StickersPanelEffect
+    data class ScrollContentToIndex(val index: Int) : StickersPanelEffect
+    data class SelectSticker(val sticker: Sticker) : StickersPanelEffect
+    data object ShowKeyboard : StickersPanelEffect
 }

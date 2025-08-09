@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -139,6 +140,13 @@ private fun TitleContent(
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .align(Alignment.BottomCenter),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant,
+        )
     }
 }
 

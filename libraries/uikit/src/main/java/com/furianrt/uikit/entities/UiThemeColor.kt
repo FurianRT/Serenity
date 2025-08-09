@@ -29,6 +29,7 @@ enum class UiThemeColor(
     val scrim: Color = Color.Black.copy(alpha = 0.5f),
     val surfaceTint: Color = surface.copy(alpha = 0.3f),
     val surfaceDim: Color = Color.Black.copy(alpha = 0.1f),
+    val surfaceContainerLow: Color = primary.copy(alpha = 0.5f),
     val isLight: Boolean = false,
 ) {
     SCANDI_GRANDPA_GRAY_DARK(
@@ -135,6 +136,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.LightBlue,
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -161,6 +163,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.LightGreen,
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -187,6 +190,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.LightPink,
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -213,6 +217,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.LightPurple,
         surfaceDim = Color.DarkGray.copy(alpha = 0.07f),
         scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -239,6 +244,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.LightOrange,
         surfaceDim = Color.DarkGray.copy(alpha = 0.07f),
         scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     );
 

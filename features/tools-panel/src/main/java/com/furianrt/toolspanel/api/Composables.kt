@@ -267,6 +267,7 @@ fun ActionsPanel(
 
                     PanelMode.STICKERS -> StickersTitleBar(
                         modifier = heightModifier,
+                        showKeyBoardButton = titleState != null,
                         onDoneClick = { isStickersPanelVisible = false },
                     )
 

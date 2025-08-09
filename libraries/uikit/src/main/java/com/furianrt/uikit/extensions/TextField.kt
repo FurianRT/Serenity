@@ -106,7 +106,7 @@ private fun <T> List<AnnotatedString.Range<T>>.mapMoving(
         // If the change is within the range, adjust the end of the range
         selectionStart in span.start..span.end && selectionEnd in span.start..span.end -> {
             span.copy(
-                end = span.end + delta,
+                end = (span.end + delta).coerceAtLeast(span.start),
             )
         }
         // If the change overlaps the start of the range, adjust the start

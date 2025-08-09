@@ -10,7 +10,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -39,7 +38,7 @@ internal fun RegularPanel(
             onClick = { titleState?.undo() },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
             )
         ) {
             Icon(
@@ -57,13 +56,16 @@ internal fun RegularPanel(
             )
         }
         IconButton(
-            modifier = Modifier.alpha(if (titleState == null) 0.5f else 1f),
             onClick = onBulletListClick,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_panel_bullet_list),
                 contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
+                tint = if (titleState == null) {
+                    MaterialTheme.colorScheme.surfaceContainerLow
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
             )
         }
         IconButton(
@@ -98,7 +100,7 @@ internal fun RegularPanel(
             onClick = { titleState?.redo() },
             colors = IconButtonDefaults.iconButtonColors(
                 contentColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
             )
         ) {
             Icon(

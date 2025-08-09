@@ -34,6 +34,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -62,6 +63,7 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -70,12 +72,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import coil3.compose.AsyncImage
+import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.entities.StickerPack
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
+import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -87,6 +91,7 @@ private val TITLE_LIST_ITEM_HEIGHT = 36.dp
 
 @Composable
 internal fun StickersTitleBar(
+    showKeyBoardButton: Boolean,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -109,6 +114,7 @@ internal fun StickersTitleBar(
     TitleContent(
         modifier = modifier,
         uiState = uiState,
+        showKeyBoardButton = showKeyBoardButton,
         onEvent = viewModel::onEvent,
     )
 }
@@ -116,9 +122,11 @@ internal fun StickersTitleBar(
 @Composable
 private fun TitleContent(
     uiState: StickersPanelUiState,
+    showKeyBoardButton: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (event: StickersPanelEvent) -> Unit = {},
 ) {
+    val showKeyBoardButtonState = remember { showKeyBoardButton }
     val listState: LazyListState = rememberLazyListState()
     val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_HEIGHT.toPx().toInt() }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
@@ -140,36 +148,69 @@ private fun TitleContent(
         }
     }
 
-    Row(
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .clickableNoRipple {},
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        LazyRow(
-            modifier = Modifier.weight(1f),
-            state = listState,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            contentPadding = PaddingValues(horizontal = 12.dp)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            items(
-                count = uiState.packs.count(),
-                key = { uiState.packs[it].id },
-            ) { index ->
-                TitleItem(
-                    pack = uiState.packs[index],
-                    isSelected = uiState.selectedPackIndex == index,
-                    onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(index)) },
-                )
-            }
-        }
-        ButtonClose(
-            modifier = Modifier.drawBehind {
-                if (listState.canScrollForward) {
-                    drawLeftShadow(color = shadowColor)
+            if (showKeyBoardButtonState) {
+                IconButton(
+                    modifier = Modifier.drawBehind {
+                        if (listState.canScrollBackward) {
+                            drawRightShadow(
+                                color = shadowColor,
+                                elevation = 1.dp,
+                            )
+                        }
+                    },
+                    onClick = { onEvent(StickersPanelEvent.OnKeyboardClick) },
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_keyboard),
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurface,
+                    )
                 }
-            },
-            onClick = { onEvent(StickersPanelEvent.OnCloseClick) },
+            }
+
+            LazyRow(
+                modifier = Modifier.weight(1f),
+                state = listState,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                contentPadding = PaddingValues(
+                    horizontal = if (showKeyBoardButtonState) 4.dp else 12.dp,
+                )
+            ) {
+                items(
+                    count = uiState.packs.count(),
+                    key = { uiState.packs[it].id },
+                ) { index ->
+                    TitleItem(
+                        pack = uiState.packs[index],
+                        isSelected = uiState.selectedPackIndex == index,
+                        onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(index)) },
+                    )
+                }
+            }
+            ButtonClose(
+                modifier = Modifier.drawBehind {
+                    if (listState.canScrollForward) {
+                        drawLeftShadow(color = shadowColor)
+                    }
+                },
+                onClick = { onEvent(StickersPanelEvent.OnCloseClick) },
+            )
+        }
+        HorizontalDivider(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .align(Alignment.BottomCenter),
+            thickness = 1.dp,
+            color = MaterialTheme.colorScheme.outlineVariant,
         )
     }
 }
@@ -234,6 +275,7 @@ internal fun StickersContent(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val density = LocalDensity.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(density)
     val imeSource = WindowInsets.imeAnimationSource.getBottom(density)
@@ -262,6 +304,8 @@ internal fun StickersContent(
                     is StickersPanelEffect.ScrollContentToIndex -> {
                         pagerState.scrollToPage(effect.index)
                     }
+
+                    is StickersPanelEffect.ShowKeyboard -> keyboardController?.show()
                 }
             }
     }
@@ -433,6 +477,7 @@ private fun PanelPreview() {
     SerenityTheme {
         TitleContent(
             uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
+            showKeyBoardButton = true,
         )
     }
 }

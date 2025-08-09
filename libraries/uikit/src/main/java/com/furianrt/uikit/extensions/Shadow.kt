@@ -45,3 +45,16 @@ fun DrawScope.drawLeftShadow(
         endX = -elevation.toPx(),
     ),
 )
+
+fun DrawScope.drawRightShadow(
+    color: Color,
+    elevation: Dp = 2.dp,
+) = drawRect(
+    topLeft = Offset(size.width, 0f),
+    size = Size(elevation.toPx(), size.height),
+    brush = Brush.horizontalGradient(
+        colors = listOf(color, Color.Transparent),
+        startX = size.width,
+        endX = size.width + elevation.toPx(),
+    ),
+)

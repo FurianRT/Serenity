@@ -46,10 +46,15 @@ internal class StickersViewModel @Inject constructor(
             is StickersPanelEvent.OnStickerSelected -> {
                 _effect.tryEmit(StickersPanelEffect.SelectSticker(event.sticker))
             }
+
             is StickersPanelEvent.OnStickersPageChange -> selectedPageIndex.update { event.index }
             is StickersPanelEvent.OnTitleStickerPackClick -> {
                 selectedPageIndex.update { event.index }
                 _effect.tryEmit(StickersPanelEffect.ScrollContentToIndex(event.index))
+            }
+
+            is StickersPanelEvent.OnKeyboardClick -> {
+                _effect.tryEmit(StickersPanelEffect.ShowKeyboard)
             }
         }
     }

@@ -53,6 +53,7 @@ fun SerenityTheme(
         primaryContainer = color.primaryContainer,
         surfaceTint = color.surfaceTint,
         surfaceDim = color.surfaceDim,
+        surfaceContainerLow = color.surfaceContainerLow,
     )
 
     val animatedPrimaryContainer by animateColorAsState(
