@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
+import android.net.Uri
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
@@ -11,9 +12,11 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.MediaSortingResult
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
@@ -46,10 +49,15 @@ import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
+import com.furianrt.notepage.internal.ui.page.PageEffect.RequestCameraPermission
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
-import com.furianrt.notepage.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEffect.ShowCameraPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEffect.ShowStoragePermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEffect.TakePicture
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
@@ -79,6 +87,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextEntered
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTakePictureClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnTakePictureResult
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleFocusChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleTextChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoicePlayClick
@@ -101,6 +110,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -118,6 +128,8 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.io.File
+import java.time.ZonedDateTime
 import java.util.UUID
 import com.furianrt.uikit.R as uiR
 
@@ -141,6 +153,8 @@ internal class PageViewModel @AssistedInject constructor(
     private val dispatchers: DispatchersProvider,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
+    private val mediaRepository: MediaRepository,
+    private val lockAuthorizer: LockAuthorizer,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
@@ -164,6 +178,9 @@ internal class PageViewModel @AssistedInject constructor(
         }
 
     private var focusFirstTitle = isNoteCreationMode
+
+    private var cachePhoto: UiNoteContent.MediaBlock.Image? = null
+    private var cachedPhotoFile: File? = null
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
@@ -211,10 +228,18 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnTakePictureClick -> {
                 resetStickersEditing()
-                //tryRequestMediaPermissions()
+                tryRequestCameraPermissions()
             }
 
+            is OnCameraPermissionSelected -> tryOpenCamera()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
+            is OnCameraNotFoundError -> _effect.tryEmit(
+                PageEffect.ShowMessage(
+                    message = resourcesManager.getString(uiR.string.error_camera_not_found),
+                )
+            )
+
+            is OnTakePictureResult -> onTakePictureResult(event.isSuccess)
             is OnTitleFocusChange -> {
                 if (event.focused) {
                     resetStickersEditing()
@@ -520,9 +545,92 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
+    private fun tryRequestCameraPermissions() {
+        if (permissionsUtils.hasCameraPermission()) {
+            launch { takePicture() }
+        } else {
+            _effect.tryEmit(RequestCameraPermission)
+        }
+    }
+
+    private fun tryOpenCamera() {
+        if (permissionsUtils.hasCameraPermission()) {
+            launch { takePicture() }
+        } else {
+            _effect.tryEmit(ShowCameraPermissionsDeniedDialog)
+        }
+    }
+
+    private suspend fun takePicture() {
+        val uri = createPhotoFile()
+        if (uri != null) {
+            lockAuthorizer.skipNextLock()
+            _effect.tryEmit(TakePicture(uri))
+        } else {
+            _effect.tryEmit(
+                PageEffect.ShowMessage(resourcesManager.getString(uiR.string.general_error)),
+            )
+        }
+    }
+
+    private fun onTakePictureResult(isSuccess: Boolean) = launch {
+        lockAuthorizer.cancelSkipNextLock()
+        val image = cachePhoto
+        val file = cachedPhotoFile
+        if (isSuccess && image != null && file != null) {
+            addNewBlock(
+                newBlock = UiNoteContent.MediaBlock(
+                    id = UUID.randomUUID().toString(),
+                    media = persistentListOf(
+                        image.copy(
+                            ratio = mediaRepository.getRatio(file),
+                            addedDate = ZonedDateTime.now(),
+                        )
+                    ),
+                )
+            )
+        } else {
+            deletePhotoFile()
+            _effect.tryEmit(
+                PageEffect.ShowMessage(resourcesManager.getString(uiR.string.general_error)),
+            )
+        }
+        cachePhoto = null
+        cachedPhotoFile = null
+    }
+
+    private suspend fun createPhotoFile(): Uri? {
+        val mediaId = UUID.randomUUID().toString()
+        val mediaName = "camera_photo.jpg"
+        val file = mediaRepository.createMediaDestinationFile(
+            noteId = noteId,
+            mediaId = mediaId,
+            mediaName = mediaName,
+        )
+        return if (file != null) {
+            val uri = mediaRepository.getRelativeUri(file)
+            val image = UiNoteContent.MediaBlock.Image(
+                id = mediaId,
+                name = mediaName,
+                uri = uri,
+                ratio = 1f,
+                addedDate = ZonedDateTime.now(),
+            )
+            cachePhoto = image
+            cachedPhotoFile = file
+            uri
+        } else {
+            null
+        }
+    }
+
+    private suspend fun deletePhotoFile() {
+        cachedPhotoFile?.let { mediaRepository.deleteFile(it) }
+    }
+
     private fun tryOpenMediaSelector() {
         if (permissionsUtils.mediaAccessDenied()) {
-            _effect.tryEmit(ShowPermissionsDeniedDialog)
+            _effect.tryEmit(ShowStoragePermissionsDeniedDialog)
         } else {
             _effect.tryEmit(OpenMediaSelector)
         }

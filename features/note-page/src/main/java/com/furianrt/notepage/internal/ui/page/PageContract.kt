@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
+import android.net.Uri
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
@@ -45,6 +46,9 @@ internal sealed interface PageEvent {
     data object OnSelectMediaClick : PageEvent
     data object OnTakePictureClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
+    data object OnCameraPermissionSelected : PageEvent
+    data class OnTakePictureResult(val isSuccess: Boolean) : PageEvent
+    data class OnCameraNotFoundError(val error: Throwable) : PageEvent
     data class OnTitleFocusChange(val id: String, val focused: Boolean) : PageEvent
     data object OnFocusedTitleSelectionChange : PageEvent
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
@@ -81,7 +85,8 @@ internal sealed interface PageEvent {
 
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
-    data object ShowPermissionsDeniedDialog : PageEffect
+    data object ShowStoragePermissionsDeniedDialog : PageEffect
+    data object ShowCameraPermissionsDeniedDialog : PageEffect
     data object OpenMediaSelector : PageEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class OpenMediaSortingScreen(
@@ -89,6 +94,8 @@ internal sealed interface PageEffect {
         val mediaBlockId: String,
         val identifier: DialogIdentifier,
     ) : PageEffect
+
+    data object RequestCameraPermission : PageEffect
 
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
     data class OpenMediaViewScreen(
@@ -101,4 +108,5 @@ internal sealed interface PageEffect {
     data object HideKeyboard : PageEffect
     data class ShowMessage(val message: String) : PageEffect
     data class ShowToast(val message: String) : PageEffect
+    data class TakePicture(val uri: Uri) : PageEffect
 }

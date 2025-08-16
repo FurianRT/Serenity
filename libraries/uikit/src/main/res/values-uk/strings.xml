@@ -35,6 +35,8 @@
     <string name="backup_in_progress">Резервне копіювання триває</string>
     <string name="restore_in_progress">Відновлення триває</string>
 
+    <string name="error_camera_not_found">Камеру не знайдено</string>
+
     <string-array name="months_array">
         <item>Січень</item>
         <item>Лютий</item>

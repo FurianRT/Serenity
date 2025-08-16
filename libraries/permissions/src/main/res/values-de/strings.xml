@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity necesita acceso a tu micrófono para grabar voz. Ve a Configuración > Permisos y activa Micrófono</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Micrófono</string>
+
+    <string name="camera_permission_message">Serenity benötigt Zugriff auf Ihre Kamera, um Fotos aufzunehmen. Tippen Sie auf Einstellungen > Berechtigungen und aktivieren Sie Kamera</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Kamera</string>
 </resources>

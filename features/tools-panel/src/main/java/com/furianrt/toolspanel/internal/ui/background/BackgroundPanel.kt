@@ -186,7 +186,9 @@ private fun TitleContent(
                         )
                         if (index != uiState.tabs.lastIndex) {
                             VerticalDivider(
-                                modifier = Modifier.height(28.dp),
+                                modifier = Modifier
+                                    .padding(top = 2.dp)
+                                    .height(24.dp),
                                 thickness = 1.dp,
                                 color = MaterialTheme.colorScheme.outlineVariant,
                             )

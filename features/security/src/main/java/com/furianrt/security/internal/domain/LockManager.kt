@@ -5,7 +5,7 @@ import android.app.Application
 import android.content.Context
 import com.furianrt.common.ActivityLifecycleCallbacks
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.security.api.LockAuthorizer
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,6 +30,7 @@ internal class LockManager @Inject constructor(
     private val scope = CoroutineScope(dispatchers.mainImmediate)
     private val isAuthorizedFlow = MutableStateFlow(false)
     private var lockJob: Job? = null
+    private val skipLock = AtomicBoolean(false)
 
     private val lifecycleCallbacks = object : ActivityLifecycleCallbacks {
         override fun onActivityStarted(activity: Activity) {
@@ -39,7 +41,11 @@ internal class LockManager @Inject constructor(
             lockJob = scope.launch {
                 val pinRequestDelay = securityRepository.getPinRequestDelay().first().toLong()
                 delay(pinRequestDelay)
-                isAuthorizedFlow.update { false }
+                if (skipLock.get()) {
+                    skipLock.set(false)
+                } else {
+                    isAuthorizedFlow.update { false }
+                }
             }
         }
     }
@@ -57,5 +63,13 @@ internal class LockManager @Inject constructor(
 
     override fun authorize() {
         isAuthorizedFlow.update { true }
+    }
+
+    override fun skipNextLock() {
+        skipLock.set(true)
+    }
+
+    override fun cancelSkipNextLock() {
+        skipLock.set(false)
     }
 }

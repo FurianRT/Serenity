@@ -35,6 +35,8 @@
     <string name="backup_in_progress">Copia de seguridad en progreso</string>
     <string name="restore_in_progress">Restauración en progreso</string>
 
+    <string name="error_camera_not_found">Hindi natagpuan ang camera</string>
+
     <string-array name="months_array">
         <item>Enero</item>
         <item>Febrero</item>

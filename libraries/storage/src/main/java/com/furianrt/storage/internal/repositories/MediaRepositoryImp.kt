@@ -148,6 +148,14 @@ internal class MediaRepositoryImp @Inject constructor(
         return appMediaSource.createMediaFile(noteId, mediaId, mediaName)
     }
 
+    override suspend fun deleteFile(file: File) {
+        appMediaSource.deleteFile(file)
+    }
+
+    override suspend fun getRatio(file: File): Float {
+        return appMediaSource.getRatio(file)
+    }
+
     override suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File? {
         return appMediaSource.createVoiceFile(noteId, voiceId)
     }

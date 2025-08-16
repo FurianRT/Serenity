@@ -4,8 +4,8 @@ import androidx.compose.foundation.text.input.delete
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.security.api.ChangeEmailRoute
-import com.furianrt.security.api.LockAuthorizer
 import com.furianrt.security.internal.domain.ValidateEmailUseCase
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.uikit.extensions.launch

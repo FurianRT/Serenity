@@ -138,6 +138,31 @@ internal class AppMediaSource @Inject constructor(
         return FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, file)
     }
 
+    suspend fun deleteFile(file: File): Boolean = withContext(dispatchers.io) {
+        return@withContext file.delete()
+    }
+
+    suspend fun deleteFile(uri: Uri): Boolean = withContext(dispatchers.io) {
+        try {
+            val relativePath = uri.path?.removePrefix("/my_files/") ?: return@withContext false
+            val file = File(context.filesDir, relativePath)
+
+            if (file.exists()) {
+                file.delete()
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            false
+        }
+    }
+
+    suspend fun getRatio(file: File): Float = withContext(dispatchers.io) {
+        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
+        return@withContext bitmap.width.toFloat() / bitmap.height.toFloat()
+    }
+
     private suspend fun saveImage(
         image: LocalNote.Content.Image,
         noteId: String,

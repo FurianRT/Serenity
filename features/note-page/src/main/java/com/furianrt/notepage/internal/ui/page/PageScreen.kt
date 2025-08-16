@@ -1,6 +1,9 @@
 package com.furianrt.notepage.internal.ui.page
 
+import android.content.ActivityNotFoundException
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -91,6 +94,7 @@ import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
@@ -113,6 +117,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
@@ -157,7 +162,18 @@ internal fun NotePageScreenInternal(
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
 
+    val cameraPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getCameraPermission(),
+        onPermissionResult = { viewModel.onEvent(PageEvent.OnCameraPermissionSelected) },
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { viewModel.onEvent(PageEvent.OnTakePictureResult(it)) },
+    )
+
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     val view = LocalView.current
     val hazeState = remember { HazeState() }
@@ -180,7 +196,7 @@ internal fun NotePageScreenInternal(
         var toast: Toast? = null
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
+                is PageEffect.ShowStoragePermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {
                     focusManager.clearFocus(force = true)
                     state.bottomScaffoldState.bottomSheetState.expand()
@@ -195,6 +211,17 @@ internal fun NotePageScreenInternal(
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
+                }
+
+                is PageEffect.RequestCameraPermission -> {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+
+                is PageEffect.ShowCameraPermissionsDeniedDialog -> showCameraPermissionDialog = true
+                is PageEffect.TakePicture -> try {
+                    cameraLauncher.launch(effect.uri)
+                } catch (e: ActivityNotFoundException) {
+                    viewModel.onEvent(PageEvent.OnCameraNotFoundError(e))
                 }
 
                 is PageEffect.BringContentToView -> {
@@ -251,6 +278,14 @@ internal fun NotePageScreenInternal(
         MediaPermissionDialog(
             hazeState = hazeState,
             onDismissRequest = { showMediaPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
+    if (showCameraPermissionDialog) {
+        CameraPermissionDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showCameraPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )
     }

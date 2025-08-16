@@ -3,9 +3,9 @@ package com.furianrt.serenity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.notelistui.extensions.toNoteFont
-import com.furianrt.security.api.LockAuthorizer
 import com.furianrt.uikit.entities.UiThemeColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted

@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity cần quyền truy cập micro để ghi âm giọng nói. Vào Cài đặt > Quyền, bật Micro lên</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Micro</string>
+
+    <string name="camera_permission_message">Serenity cần quyền truy cập vào máy ảnh của bạn để chụp ảnh. Vào Cài đặt > Quyền và bật Máy ảnh</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Máy ảnh</string>
 </resources>

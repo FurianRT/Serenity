@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenityが音声録音をできるように、マイクへのアクセスを許可してください。設定＞権限をタップし、マイクをオンにしてください</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">マイク</string>
+
+    <string name="camera_permission_message">Serenity が写真を撮るにはカメラへのアクセスが必要です。設定 > 権限 に進み、カメラをオンにしてください</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">カメラ</string>
 </resources>

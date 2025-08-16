@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
@@ -49,7 +50,6 @@ import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
 import com.furianrt.security.api.CheckPinScreen
-import com.furianrt.security.api.LockAuthorizer
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
 import com.furianrt.uikit.anim.defaultEnterTransition
