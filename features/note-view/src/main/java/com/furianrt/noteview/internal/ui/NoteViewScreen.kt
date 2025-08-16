@@ -205,7 +205,7 @@ private fun SuccessScreen(
     )
     val pageScreensStates = remember { mutableStateMapOf<Int, PageScreenState>() }
     val currentPageState = remember(pageScreensStates.size, pagerState.currentPage) {
-        pageScreensStates[pagerState.currentPage]
+        pageScreensStates.getOrDefault(pagerState.currentPage, null)
     }
 
     val toolbarState = remember { MovableToolbarState() }
@@ -269,7 +269,7 @@ private fun SuccessScreen(
                 modifier = Modifier.padding(top = statusBarHeight.dp),
                 isInEditMode = uiState.isInEditMode,
                 date = date,
-                isPinned = uiState.notes[pagerState.currentPage].isPinned,
+                isPinned = uiState.notes.getOrNull(pagerState.currentPage)?.isPinned.orFalse(),
                 dropDownHazeState = hazeState,
                 onEditClick = { onEvent(NoteViewEvent.OnButtonEditClick) },
                 onBackButtonClick = {
