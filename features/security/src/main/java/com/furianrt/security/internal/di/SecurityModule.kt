@@ -1,6 +1,6 @@
 package com.furianrt.security.internal.di
 
-import com.furianrt.security.api.LockAuthorizer
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.security.internal.data.SecurityDataStore
 import com.furianrt.security.internal.domain.LockManager
 import com.furianrt.security.internal.domain.repositories.SecurityRepository

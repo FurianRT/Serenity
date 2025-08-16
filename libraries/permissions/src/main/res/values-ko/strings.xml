@@ -2,7 +2,12 @@
     <string name="media_permission_message">Serenity가 사진과 비디오를 첨부할 수 있도록 저장소 접근 권한이 필요합니다. 설정 > 권한으로 이동하여 사진 및 비디오 권한을 켜주세요.</string>
     <string name="media_permission_message_bold_part_1">Serenity</string>
     <string name="media_permission_message_bold_part_2">사진 및 비디오</string>
+
     <string name="audio_record_permission_message">Serenity가 음성 녹음을 할 수 있도록 마이크 접근 권한이 필요합니다. 설정 > 권한으로 이동하여 마이크 권한을 켜주세요.</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">마이크</string>
+
+    <string name="camera_permission_message">사진을 찍으려면 Serenity가 카메라에 접근할 수 있어야 합니다. 설정 > 권한으로 이동하여 카메라를 켜세요</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">카메라</string>
 </resources>

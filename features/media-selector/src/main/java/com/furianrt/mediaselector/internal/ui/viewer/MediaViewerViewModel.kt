@@ -14,7 +14,7 @@ import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -32,9 +32,9 @@ import javax.inject.Inject
 internal class MediaViewerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val mediaRepository: MediaRepository,
-    private val appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaCoordinator: SelectedMediaCoordinator,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<MediaViewerRoute>()
@@ -77,13 +77,11 @@ internal class MediaViewerViewModel @Inject constructor(
 
     private fun loadMedia() = launch {
         val media = mediaRepository.getDeviceMediaList()
-        val themeColorId = appearanceRepository.getAppThemeColorId().first()
-        val themeColor = UiThemeColor.fromId(themeColorId)
         _state.update {
             MediaViewerUiState.Success(
                 media = media.mapImmutable(DeviceMedia::toMediaItem),
                 initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
-                isLightTheme = themeColor.isLight,
+                font = appearanceRepository.getAppFont().first().toNoteFont(),
             ).setSelectedItems(mediaCoordinator.getSelectedMedia())
         }
     }

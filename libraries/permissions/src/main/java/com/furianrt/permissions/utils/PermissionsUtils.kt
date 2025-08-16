@@ -1,9 +1,10 @@
 package com.furianrt.permissions.utils
 
-import android.Manifest
+import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
+import android.Manifest.permission.RECORD_AUDIO
 import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
@@ -38,9 +39,9 @@ class PermissionsUtils @Inject constructor(
             }
         }
 
-        fun getAudioRecordPermission(): String {
-            return Manifest.permission.RECORD_AUDIO
-        }
+        fun getAudioRecordPermission(): String = RECORD_AUDIO
+
+        fun getCameraPermission(): String = CAMERA
     }
 
     fun hasPartialMediaAccess(): Boolean {
@@ -50,6 +51,8 @@ class PermissionsUtils @Inject constructor(
     fun mediaAccessDenied(): Boolean {
         return getMediaPermissionStatus() == MediaPermissionStatus.DENIED
     }
+
+    fun hasCameraPermission(): Boolean = CAMERA.isGranted()
 
     private fun getMediaPermissionStatus(): MediaPermissionStatus {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

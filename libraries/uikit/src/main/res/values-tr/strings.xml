@@ -35,6 +35,8 @@
     <string name="backup_in_progress">Yedekleme devam ediyor</string>
     <string name="restore_in_progress">Geri yükleme devam ediyor</string>
 
+    <string name="error_camera_not_found">Kamera bulunamadı</string>
+
     <string-array name="months_array">
         <item>Ocak</item>
         <item>Şubat</item>

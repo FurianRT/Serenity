@@ -48,6 +48,10 @@ import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
+import com.furianrt.uikit.theme.LocalFont
+import com.furianrt.uikit.theme.LocalHasMediaRoute
+import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
+import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -109,51 +113,75 @@ internal fun NoteCreateScreen(
                 }
             }
     }
-    when (val state = uiState) {
-        is NoteCreateUiState.Success -> SuccessContent(
-            modifier = Modifier.hazeSource(hazeState),
-            state = pageScreenState,
-            uiState = state,
-            hazeState = hazeState,
-            onEvent = viewModel::onEvent,
-            notePage = {
-                NotePageScreen(
-                    state = pageScreenState,
-                    noteId = state.note.id,
-                    isInEditMode = state.isInEditMode,
-                    isSelected = true,
-                    isNoteCreationMode = true,
-                    onTitleFocused = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocused) },
-                    openMediaViewScreen = openMediaViewScreen,
-                    openMediaViewer = openMediaViewer,
-                    openMediaSortingScreen = openMediaSortingScreen,
-                )
-            },
-        )
 
-        is NoteCreateUiState.Loading -> LoadingContent(
-            modifier = Modifier.hazeSource(hazeState),
-        )
+    val successState = uiState as? NoteCreateUiState.Success
+    val selectedBackground = successState?.note?.background
+
+    val isLightTheme = when {
+        LocalHasMediaRoute.current -> false
+        LocalHasMediaSortingRoute.current -> LocalIsLightTheme.current
+        else -> selectedBackground?.isLight ?: LocalIsLightTheme.current
     }
 
+    SerenityTheme(
+        isLightTheme = isLightTheme,
+        font = successState?.font ?: LocalFont.current,
+        colorScheme = selectedBackground?.colorScheme ?: MaterialTheme.colorScheme,
+    ) {
+        when (val state = uiState) {
+            is NoteCreateUiState.Success -> SuccessContent(
+                modifier = Modifier.hazeSource(hazeState),
+                state = pageScreenState,
+                uiState = state,
+                hazeState = hazeState,
+                onEvent = viewModel::onEvent,
+                notePage = {
+                    NotePageScreen(
+                        state = pageScreenState,
+                        noteId = state.note.id,
+                        isInEditMode = state.isInEditMode,
+                        isSelected = true,
+                        isNoteCreationMode = true,
+                        onBackgroundChanged = {
+                            viewModel.onEvent(
+                                NoteCreateEvent.OnBackgroundChanged(
+                                    state.note.id,
+                                    it
+                                )
+                            )
+                        },
+                        onTitleFocused = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocused) },
+                        openMediaViewScreen = openMediaViewScreen,
+                        openMediaViewer = openMediaViewer,
+                        openMediaSortingScreen = openMediaSortingScreen,
+                    )
+                },
+            )
 
-    calendarDialogState?.let { dialogState ->
-        SingleChoiceCalendar(
-            selectedDate = dialogState.date,
-            hasNotes = { dialogState.datesWithNotes.contains(it) },
-            hazeState = hazeState,
-            onDismissRequest = { calendarDialogState = null },
-            onDateSelected = { viewModel.onEvent(NoteCreateEvent.OnDateSelected(it.date)) },
-        )
-    }
+            is NoteCreateUiState.Loading -> LoadingContent(
+                modifier = Modifier.hazeSource(hazeState),
+            )
+        }
 
-    if (showDeleteConfirmationDialog) {
-        ConfirmNotesDeleteDialog(
-            notesCount = 1,
-            hazeState = hazeState,
-            onConfirmClick = { viewModel.onEvent(NoteCreateEvent.OnConfirmDeleteClick) },
-            onDismissRequest = { showDeleteConfirmationDialog = false },
-        )
+
+        calendarDialogState?.let { dialogState ->
+            SingleChoiceCalendar(
+                selectedDate = dialogState.date,
+                hasNotes = { dialogState.datesWithNotes.contains(it) },
+                hazeState = hazeState,
+                onDismissRequest = { calendarDialogState = null },
+                onDateSelected = { viewModel.onEvent(NoteCreateEvent.OnDateSelected(it.date)) },
+            )
+        }
+
+        if (showDeleteConfirmationDialog) {
+            ConfirmNotesDeleteDialog(
+                notesCount = 1,
+                hazeState = hazeState,
+                onConfirmClick = { viewModel.onEvent(NoteCreateEvent.OnConfirmDeleteClick) },
+                onDismissRequest = { showDeleteConfirmationDialog = false },
+            )
+        }
     }
 }
 
@@ -258,10 +286,12 @@ private fun Preview() {
             uiState = NoteCreateUiState.Success(
                 note = NoteItem(
                     id = "",
+                    background = null,
                     date = ZonedDateTime.now(),
                     isPinned = false,
                 ),
                 isInEditMode = true,
+                font = LocalFont.current,
             ),
             hazeState = HazeState(),
             onEvent = {},

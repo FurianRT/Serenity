@@ -35,6 +35,8 @@
     <string name="backup_in_progress">बैकअप चल रहा है</string>
     <string name="restore_in_progress">रीस्टोर चल रहा है</string>
 
+    <string name="error_camera_not_found">कैमरा नहीं मिला</string>
+
     <string-array name="months_array">
         <item>जनवरी</item>
         <item>फरवरी</item>

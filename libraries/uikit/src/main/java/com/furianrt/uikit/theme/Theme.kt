@@ -1,10 +1,15 @@
 package com.furianrt.uikit.theme
 
+import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalRippleConfiguration
@@ -13,48 +18,33 @@ import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.colorScheme
 
-private const val COLOR_ANIM_DURATION = 250
+private const val COLOR_ANIM_DURATION = 200
 
-private val defaultColorScheme = darkColorScheme()
+val defaultColorScheme = darkColorScheme()
+
+val LocalIsLightTheme = compositionLocalOf { false }
+val LocalFont = compositionLocalOf<NoteFont> { NoteFont.QuickSand }
+val LocalHasMediaRoute = compositionLocalOf { false }
+val LocalHasMediaSortingRoute = compositionLocalOf { false }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
-    color: UiThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
-    font: NoteFont = NoteFont.QuickSand,
+    colorScheme: ColorScheme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT.colorScheme,
+    font: NoteFont = LocalFont.current,
+    isLightTheme: Boolean = LocalIsLightTheme.current,
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = defaultColorScheme.copy(
-        primary = color.primary,
-        onPrimary = color.onPrimary,
-        secondary = color.secondary,
-        onSecondary = color.onSecondary,
-        onBackground = color.onBackground,
-        inverseSurface = color.inverseSurface,
-        onSurface = color.onSurface,
-        onSurfaceVariant = color.onSurfaceVariant,
-        surfaceContainer = color.surfaceContainer,
-        onPrimaryContainer = color.onPrimaryContainer,
-        outlineVariant = color.outlineVariant,
-        secondaryContainer = color.secondaryContainer,
-        tertiary = color.tertiary,
-        onTertiary = color.onTertiary,
-        tertiaryContainer = color.tertiaryContainer,
-        onTertiaryContainer = color.onTertiaryContainer,
-        errorContainer = color.errorContainer,
-        onErrorContainer = color.onErrorContainer,
-        scrim = color.scrim,
-        background = color.background,
-        surface = color.surface,
-        primaryContainer = color.primaryContainer,
-        surfaceTint = color.surfaceTint,
-        surfaceDim = color.surfaceDim,
-        surfaceContainerLow = color.surfaceContainerLow,
-    )
+    val activity = LocalActivity.current as? ComponentActivity
 
     val animatedPrimaryContainer by animateColorAsState(
         animationSpec = tween(COLOR_ANIM_DURATION),
@@ -82,6 +72,24 @@ fun SerenityTheme(
         surfaceContainer = animatedSurfaceContainer,
     )
 
+    LaunchedEffect(isLightTheme) {
+        val color = Color.Transparent.toArgb()
+        if (isLightTheme) {
+            activity?.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
+                navigationBarStyle = SystemBarStyle.light(
+                    scrim = color,
+                    darkScrim = color
+                ),
+            )
+        } else {
+            activity?.enableEdgeToEdge(
+                statusBarStyle = SystemBarStyle.dark(color),
+                navigationBarStyle = SystemBarStyle.dark(color),
+            )
+        }
+    }
+
     MaterialTheme(
         colorScheme = resultColorTheme,
         typography = typography,
@@ -103,6 +111,8 @@ fun SerenityTheme(
             LocalRippleConfiguration provides rippleConfig,
             LocalTextSelectionColors provides textSelectionColors,
             LocalContentColor provides resultColorTheme.onSurface,
+            LocalIsLightTheme provides isLightTheme,
+            LocalFont provides font,
             content = content,
         )
     }

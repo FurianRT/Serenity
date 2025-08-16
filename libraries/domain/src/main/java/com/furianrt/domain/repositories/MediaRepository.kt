@@ -33,6 +33,9 @@ interface MediaRepository {
         mediaName: String,
     ): File?
 
+    suspend fun deleteFile(file: File)
+    suspend fun getRatio(file: File): Float
+
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?
     suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean
 

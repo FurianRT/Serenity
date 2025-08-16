@@ -7,15 +7,17 @@ import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
-import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
+import com.furianrt.toolspanel.api.NoteBackgroundProvider
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -47,6 +49,8 @@ internal class NoteViewModel @Inject constructor(
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
+    private val backgroundProvider: NoteBackgroundProvider,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NoteViewRoute>(
@@ -105,6 +109,10 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnPinClick -> launch {
                 toggleNotePinnedState(event.noteId, event.isPinned)
             }
+
+            is NoteViewEvent.OnBackgroundChanged -> launch {
+                notesRepository.updateNoteBackgroundId(event.noteId, event.background?.id)
+            }
         }
     }
 
@@ -129,7 +137,11 @@ internal class NoteViewModel @Inject constructor(
                 when (localState) {
                     is NoteViewUiState.Success -> {
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.mapImmutable(LocalNote::toNoteItem)
+                        val notesItems = notes.mapImmutable { note ->
+                            note.toNoteItem(
+                                background = backgroundProvider.getBackground(note.backgroundId),
+                            )
+                        }
                         val currentPageIndex = notesItems.indexOfFirstOrNull {
                             it.id == localState.currentNote.id
                         } ?: min(localState.currentPageIndex, notesItems.lastIndex)
@@ -144,7 +156,11 @@ internal class NoteViewModel @Inject constructor(
 
                     is NoteViewUiState.Loading -> {
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.mapImmutable(LocalNote::toNoteItem)
+                        val notesItems = notes.mapImmutable { note ->
+                            note.toNoteItem(
+                                background = backgroundProvider.getBackground(note.backgroundId),
+                            )
+                        }
                         NoteViewUiState.Success(
                             initialPageIndex = initialPageIndex,
                             currentPageIndex = savedStateHandle[EXTRA_CURRENT_PAGE]
@@ -152,6 +168,7 @@ internal class NoteViewModel @Inject constructor(
                             notes = notesItems,
                             date = notesItems[initialPageIndex].date,
                             isInEditMode = false,
+                            font = appearanceRepository.getAppFont().first().toNoteFont(),
                         )
                     }
                 }

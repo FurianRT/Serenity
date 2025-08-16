@@ -8,4 +8,8 @@
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Микрофон</string>
 
+    <string name="camera_permission_message">Приложению Serenity нужен доступ к вашей камере, чтобы делать фото. Нажмите Настройки > Разрешения и включите Камеру</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Камера</string>
+
 </resources>

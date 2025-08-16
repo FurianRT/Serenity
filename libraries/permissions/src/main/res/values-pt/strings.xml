@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity precisa de acesso ao seu microfone para gravar áudio. Vá em Configurações > Permissões e ative Microfone</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Microfone</string>
+
+    <string name="camera_permission_message">O Serenity precisa de acesso à sua câmera para tirar fotos. Toque em Configurações > Permissões e ative Câmera</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Câmera</string>
 </resources>

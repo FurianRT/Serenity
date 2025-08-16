@@ -37,12 +37,16 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.toolspanel.internal.ui.attachments.AttachmentsPanel
+import com.furianrt.toolspanel.internal.ui.background.BackgroundContent
+import com.furianrt.toolspanel.internal.ui.background.BackgroundTitleBar
 import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
 import com.furianrt.toolspanel.internal.ui.bullet.BulletTitleBar
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
@@ -70,6 +74,8 @@ private enum class PanelMode {
     FONT,
     STICKERS,
     BULLET,
+    ATTACHMENTS,
+    BACKGROUNDS,
 }
 
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
@@ -81,8 +87,11 @@ fun ActionsPanel(
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
     fontSize: Int,
+    noteBackground: UiNoteBackground?,
+    background: Color,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
+    onTakePictureClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
@@ -94,6 +103,8 @@ fun ActionsPanel(
     onStickersClick: () -> Unit,
     onBulletListClick: () -> Unit,
     onNoPositionError: () -> Unit,
+    onBackgroundClick: () -> Unit,
+    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -108,6 +119,8 @@ fun ActionsPanel(
     var isStickersPanelVisible by rememberSaveable { mutableStateOf(false) }
     var isBulletPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
+    var isAttachmentsPanelVisible by rememberSaveable { mutableStateOf(false) }
+    var isBackgroundsPanelVisible by rememberSaveable { mutableStateOf(false) }
 
     val audioRecordPermissionsState = rememberPermissionState(
         permission = PermissionsUtils.getAudioRecordPermission(),
@@ -127,8 +140,8 @@ fun ActionsPanel(
         .hazeEffect(
             state = hazeState,
             style = HazeDefaults.style(
-                backgroundColor = MaterialTheme.colorScheme.surface,
-                tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
+                backgroundColor = background,
+                tint = HazeTint(background.copy(alpha = 0.8f)),
                 noiseFactor = 0f,
                 blurRadius = 12.dp,
             )
@@ -146,6 +159,8 @@ fun ActionsPanel(
         isStickersPanelVisible -> PanelMode.STICKERS
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
+        isAttachmentsPanelVisible -> PanelMode.ATTACHMENTS
+        isBackgroundsPanelVisible -> PanelMode.BACKGROUNDS
         else -> PanelMode.REGULAR
     }
 
@@ -160,16 +175,32 @@ fun ActionsPanel(
             isFontPanelVisible = false
             isStickersPanelVisible = false
             isBulletPanelVisible = false
+            isBackgroundsPanelVisible = false
         }
     }
 
-    LaunchedEffect(isFontPanelVisible, isStickersPanelVisible, isBulletPanelVisible) {
-        onMenuVisibilityChange(isFontPanelVisible || isStickersPanelVisible || isBulletPanelVisible)
+    LaunchedEffect(
+        isFontPanelVisible,
+        isStickersPanelVisible,
+        isBulletPanelVisible,
+        isBackgroundsPanelVisible,
+    ) {
+        onMenuVisibilityChange(
+            isFontPanelVisible ||
+                    isStickersPanelVisible ||
+                    isBulletPanelVisible ||
+                    isBackgroundsPanelVisible
+        )
     }
 
     Column(
         modifier = modifier
-            .applyIf(!isFontPanelVisible && !isStickersPanelVisible && !isBulletPanelVisible) {
+            .applyIf(
+                !isFontPanelVisible &&
+                        !isStickersPanelVisible &&
+                        !isBulletPanelVisible &&
+                        !isBackgroundsPanelVisible
+            ) {
                 Modifier.imePadding()
             }
             .fillMaxWidth()
@@ -211,10 +242,6 @@ fun ActionsPanel(
                     PanelMode.REGULAR -> RegularPanel(
                         modifier = heightModifier.clickableNoRipple {},
                         titleState = titleState,
-                        onSelectMediaClick = onSelectMediaClick,
-                        onRecordVoiceClick = {
-                            audioRecordPermissionsState.launchPermissionRequest()
-                        },
                         onFontStyleClick = {
                             keyboardController?.hide()
                             isFontPanelVisible = true
@@ -233,6 +260,12 @@ fun ActionsPanel(
                                 isBulletPanelVisible = true
                                 onBulletListClick()
                             }
+                        },
+                        onAttachClick = { isAttachmentsPanelVisible = true },
+                        onBackgroundClick = {
+                            keyboardController?.hide()
+                            isBackgroundsPanelVisible = true
+                            onBackgroundClick()
                         }
                     )
 
@@ -276,6 +309,31 @@ fun ActionsPanel(
                         showKeyBoardButton = titleState != null,
                         onDoneClick = { isBulletPanelVisible = false },
                     )
+
+                    PanelMode.ATTACHMENTS -> AttachmentsPanel(
+                        modifier = heightModifier,
+                        onSelectMediaClick = {
+                            isAttachmentsPanelVisible = false
+                            onSelectMediaClick()
+                        },
+                        onTakePictureClick = {
+                            isAttachmentsPanelVisible = false
+                            onTakePictureClick()
+                        },
+                        onRecordVoiceClick = {
+                            isAttachmentsPanelVisible = false
+                            audioRecordPermissionsState.launchPermissionRequest()
+                        },
+                        onCloseClick = { isAttachmentsPanelVisible = false },
+                    )
+
+                    PanelMode.BACKGROUNDS -> BackgroundTitleBar(
+                        modifier = heightModifier,
+                        noteId = noteId,
+                        noteBackground = noteBackground,
+                        showKeyBoardButton = titleState != null,
+                        onDoneClick = { isBackgroundsPanelVisible = false },
+                    )
                 }
             }
         }
@@ -302,6 +360,14 @@ fun ActionsPanel(
             modifier = hazeModifier,
             visible = isBulletPanelVisible,
             titleState = titleState,
+        )
+
+        BackgroundContent(
+            modifier = hazeModifier,
+            noteId = noteId,
+            noteBackground = noteBackground,
+            visible = isBackgroundsPanelVisible,
+            onBackgroundSelected = onBackgroundSelected,
         )
     }
 

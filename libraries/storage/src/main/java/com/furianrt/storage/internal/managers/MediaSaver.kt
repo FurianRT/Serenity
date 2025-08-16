@@ -2,6 +2,7 @@ package com.furianrt.storage.internal.managers
 
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.storage.BuildConfig
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
@@ -104,6 +105,9 @@ internal class MediaSaver @Inject constructor(
         }
 
         val savedMediaData = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
+        if (entry.media.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            appMediaSource.deleteFile(entry.media.uri)
+        }
 
         if (isEntryCanceled(entry)) {
             removeCanceledEntry(entry)

@@ -1,7 +1,7 @@
 package com.furianrt.security.internal.ui.lock.change
 
 import androidx.lifecycle.ViewModel
-import com.furianrt.security.api.LockAuthorizer
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.security.internal.ui.lock.change.ChangePinUiState.Mode
 import com.furianrt.security.internal.ui.lock.entities.PinConstants

@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
 import androidx.room.withTransaction
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.domain.TransactionsHelper
@@ -54,10 +55,11 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        const val VERSION = 1
+        const val VERSION = 2
 
         fun create(
             context: Context,
+            migrations: Array<Migration>,
             callback: (db: SupportSQLiteDatabase) -> Unit = {},
         ) = Room.databaseBuilder(context, SerenityDatabase::class.java, NAME)
             .addCallback(
@@ -68,6 +70,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                     }
                 },
             )
+            .addMigrations(*migrations)
             .build()
     }
 

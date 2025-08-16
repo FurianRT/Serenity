@@ -22,8 +22,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,7 +37,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -54,6 +51,8 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.bullet.composables.BulletListItem
 import com.furianrt.toolspanel.internal.ui.bullet.composables.CheckedBulletListItem
+import com.furianrt.toolspanel.internal.ui.common.ButtonClose
+import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -61,7 +60,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.max
-import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun BulletTitleBar(
@@ -108,18 +106,12 @@ private fun TitleContent(
         contentAlignment = Alignment.Center,
     ) {
         if (showKeyBoardButtonState) {
-            IconButton(
+            ButtonKeyboard(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .align(Alignment.CenterStart),
                 onClick = { onEvent(BulletPanelEvent.OnKeyboardClick) },
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_keyboard),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            )
         }
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
@@ -128,18 +120,12 @@ private fun TitleContent(
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleMedium,
         )
-        IconButton(
+        ButtonClose(
             modifier = Modifier
                 .padding(end = 4.dp)
                 .align(Alignment.CenterEnd),
             onClick = { onEvent(BulletPanelEvent.OnCloseClick) },
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_exit),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        )
         HorizontalDivider(
             modifier = Modifier
                 .padding(start = 16.dp)

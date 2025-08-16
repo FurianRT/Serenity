@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.page.entities
 
 import androidx.compose.runtime.Immutable
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -19,4 +20,5 @@ internal data class NoteItem(
     val fontFamily: UiNoteFontFamily? = null,
     val fontColor: UiNoteFontColor? = null,
     val fontSize: Int = 16,
+    val background: UiNoteBackground?,
 )

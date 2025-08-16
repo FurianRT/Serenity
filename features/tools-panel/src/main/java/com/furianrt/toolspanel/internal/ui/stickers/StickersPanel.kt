@@ -35,8 +35,6 @@ import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -64,7 +62,6 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -72,10 +69,11 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import coil3.compose.AsyncImage
-import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.entities.StickerPack
+import com.furianrt.toolspanel.internal.ui.common.ButtonClose
+import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
@@ -85,9 +83,8 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.max
-import com.furianrt.uikit.R as uiR
 
-private val TITLE_LIST_ITEM_HEIGHT = 36.dp
+private val TITLE_LIST_ITEM_SIZE = 36.dp
 
 @Composable
 internal fun StickersTitleBar(
@@ -128,7 +125,7 @@ private fun TitleContent(
 ) {
     val showKeyBoardButtonState = remember { showKeyBoardButton }
     val listState: LazyListState = rememberLazyListState()
-    val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_HEIGHT.toPx().toInt() }
+    val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_SIZE.toPx().toInt() }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     var isFirstComposition by rememberSaveable { mutableStateOf(true) }
@@ -158,7 +155,7 @@ private fun TitleContent(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             if (showKeyBoardButtonState) {
-                IconButton(
+                ButtonKeyboard(
                     modifier = Modifier.drawBehind {
                         if (listState.canScrollBackward) {
                             drawRightShadow(
@@ -168,13 +165,7 @@ private fun TitleContent(
                         }
                     },
                     onClick = { onEvent(StickersPanelEvent.OnKeyboardClick) },
-                ) {
-                    Icon(
-                        painter = painterResource(R.drawable.ic_keyboard),
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                    )
-                }
+                )
             }
 
             LazyRow(
@@ -223,7 +214,7 @@ private fun TitleItem(
     modifier: Modifier = Modifier,
 ) {
     val underlineColor = MaterialTheme.colorScheme.primaryContainer
-    Box(modifier = modifier.size(TITLE_LIST_ITEM_HEIGHT)) {
+    Box(modifier = modifier.size(TITLE_LIST_ITEM_SIZE)) {
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
@@ -243,23 +234,6 @@ private fun TitleItem(
                     .drawSelection(underlineColor)
             )
         }
-    }
-}
-
-@Composable
-private fun ButtonClose(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    IconButton(
-        modifier = modifier,
-        onClick = onClick,
-    ) {
-        Icon(
-            painter = painterResource(uiR.drawable.ic_exit),
-            tint = MaterialTheme.colorScheme.onSurface,
-            contentDescription = null,
-        )
     }
 }
 
@@ -289,7 +263,7 @@ internal fun StickersContent(
         pageCount = uiState.packs::count,
         initialPage = uiState.selectedPackIndex,
     )
-    val pageScreensStates = remember { mutableStateMapOf<Int, LazyGridState>() }
+    val contentPageStates = remember { mutableStateMapOf<Int, LazyGridState>() }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -342,7 +316,7 @@ internal fun StickersContent(
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 pagerState = pagerState,
-                listStateProvider = { pageScreensStates.getOrPut(it) { rememberLazyGridState() } },
+                listStateProvider = { contentPageStates.getOrPut(it) { rememberLazyGridState() } },
             )
         }
     }

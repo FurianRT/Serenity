@@ -35,6 +35,8 @@
     <string name="backup_in_progress">Backup in progress</string>
     <string name="restore_in_progress">Restore in progress</string>
 
+    <string name="error_camera_not_found">Camera not found</string>
+
     <string-array name="months_array">
         <item>January</item>
         <item>February</item>

@@ -60,6 +60,10 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
+import com.furianrt.uikit.theme.LocalFont
+import com.furianrt.uikit.theme.LocalHasMediaRoute
+import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
+import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -128,32 +132,48 @@ internal fun NoteViewScreen(
                 }
             }
     }
-    ScreenContent(
-        modifier = Modifier.hazeSource(hazeState),
-        uiState = uiState,
-        hazeState = hazeState,
-        snackBarHostState = snackBarHostState,
-        onEvent = viewModel::onEvent,
-        openMediaViewScreen = openMediaViewScreen,
-        openMediaViewer = openMediaViewer,
-        openMediaSortingScreen = openMediaSortingScreen,
-    )
-    calendarDialogState?.let { dialogState ->
-        SingleChoiceCalendar(
-            selectedDate = dialogState.date,
-            hasNotes = { dialogState.datesWithNotes.contains(it) },
-            hazeState = hazeState,
-            onDismissRequest = { calendarDialogState = null },
-            onDateSelected = { viewModel.onEvent(NoteViewEvent.OnDateSelected(it.date)) },
-        )
+    val successState = uiState as? NoteViewUiState.Success
+    val selectedNote = successState?.currentNote
+    val selectedBackground = selectedNote?.background
+
+    val isLightTheme = when {
+        LocalHasMediaRoute.current -> false
+        LocalHasMediaSortingRoute.current -> LocalIsLightTheme.current
+        else -> selectedBackground?.isLight ?: LocalIsLightTheme.current
     }
-    deleteConfirmationDialogState?.let { dialogState ->
-        ConfirmNotesDeleteDialog(
-            notesCount = 1,
+
+    SerenityTheme(
+        colorScheme = selectedBackground?.colorScheme ?: MaterialTheme.colorScheme,
+        isLightTheme = isLightTheme,
+        font = successState?.font ?: LocalFont.current,
+    ) {
+        ScreenContent(
+            modifier = Modifier.hazeSource(hazeState),
+            uiState = uiState,
             hazeState = hazeState,
-            onConfirmClick = { viewModel.onEvent(NoteViewEvent.OnConfirmDeleteClick(dialogState)) },
-            onDismissRequest = { deleteConfirmationDialogState = null },
+            snackBarHostState = snackBarHostState,
+            onEvent = viewModel::onEvent,
+            openMediaViewScreen = openMediaViewScreen,
+            openMediaViewer = openMediaViewer,
+            openMediaSortingScreen = openMediaSortingScreen,
         )
+        calendarDialogState?.let { dialogState ->
+            SingleChoiceCalendar(
+                selectedDate = dialogState.date,
+                hasNotes = { dialogState.datesWithNotes.contains(it) },
+                hazeState = hazeState,
+                onDismissRequest = { calendarDialogState = null },
+                onDateSelected = { viewModel.onEvent(NoteViewEvent.OnDateSelected(it.date)) },
+            )
+        }
+        deleteConfirmationDialogState?.let { dialogState ->
+            ConfirmNotesDeleteDialog(
+                notesCount = 1,
+                hazeState = hazeState,
+                onConfirmClick = { viewModel.onEvent(NoteViewEvent.OnConfirmDeleteClick(dialogState)) },
+                onDismissRequest = { deleteConfirmationDialogState = null },
+            )
+        }
     }
 }
 
@@ -262,9 +282,7 @@ private fun SuccessScreen(
         listState = currentPageState?.listState ?: rememberScrollState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
         toolbar = {
-            val date = remember(uiState.date) {
-                uiState.date.toDateString()
-            }
+            val date = remember(uiState.date) { uiState.date.toDateString() }
             Toolbar(
                 modifier = Modifier.padding(top = statusBarHeight.dp),
                 isInEditMode = uiState.isInEditMode,
@@ -329,6 +347,9 @@ private fun SuccessScreen(
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
+                onBackgroundChanged = {
+                    onEvent(NoteViewEvent.OnBackgroundChanged(uiState.notes[index].id, it))
+                },
                 onTitleFocused = { onEvent(NoteViewEvent.OnPageTitleFocused) },
                 openMediaViewScreen = openMediaViewScreen,
                 openMediaViewer = openMediaViewer,
@@ -368,6 +389,7 @@ private fun ScreenSuccessPreview() {
                 currentPageIndex = 0,
                 notes = persistentListOf(),
                 date = ZonedDateTime.now(),
+                font = LocalFont.current,
             ),
             snackBarHostState = SnackbarHostState(),
             hazeState = HazeState(),

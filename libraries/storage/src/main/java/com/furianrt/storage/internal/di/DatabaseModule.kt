@@ -1,6 +1,8 @@
 package com.furianrt.storage.internal.di
 
 import android.content.Context
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
@@ -76,7 +78,18 @@ internal interface DatabaseModule {
         @Singleton
         fun provideDatabase(
             @ApplicationContext context: Context,
-        ): SerenityDatabase = SerenityDatabase.create(context)
+        ): SerenityDatabase {
+            val MIGRATION_1_2 = object : Migration(1, 2) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE Notes ADD COLUMN background_id TEXT")
+                }
+            }
+            return SerenityDatabase
+                .create(
+                    context = context,
+                    migrations = arrayOf(MIGRATION_1_2),
+                )
+        }
 
         @Provides
         @Singleton

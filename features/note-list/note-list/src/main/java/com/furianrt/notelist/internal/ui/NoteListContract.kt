@@ -2,6 +2,7 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
+import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.collections.immutable.ImmutableList
 
@@ -15,6 +16,7 @@ internal sealed interface NoteListUiState {
         val notes: ImmutableList<NoteListScreenNote>,
         val scrollToPosition: Int?,
         val selectedNotesCount: Int,
+        val font: NoteFont,
     ) : NoteListUiState
 
     val enableSelection: Boolean

@@ -16,6 +16,7 @@ import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notepage.internal.ui.page.NotePageScreenInternal
 import com.furianrt.uikit.utils.DialogIdentifier
 
@@ -94,6 +95,7 @@ fun NotePageScreen(
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
@@ -105,6 +107,7 @@ fun NotePageScreen(
         isSelected = isSelected,
         isInEditMode = isInEditMode,
         isNoteCreationMode = isNoteCreationMode,
+        onBackgroundChanged = onBackgroundChanged,
         onTitleFocused = onTitleFocused,
         openMediaViewer = openMediaViewer,
         openMediaViewScreen = openMediaViewScreen,

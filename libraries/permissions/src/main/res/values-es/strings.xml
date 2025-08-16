@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity membutuhkan akses ke mikrofon Anda untuk merekam suara. Ketuk Pengaturan > Izin, dan aktifkan Mikrofon</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Mikrofon</string>
+
+    <string name="camera_permission_message">Serenity necesita acceso a tu cámara para tomar fotos. Toca Configuración > Permisos y activa Cámara</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Cámara</string>
 </resources>

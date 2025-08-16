@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity necesita acceso a tu micrófono para permitir grabaciones de voz. Ve a Ajustes > Permisos y activa Micrófono</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Micrófono</string>
+
+    <string name="camera_permission_message">Kailangan ng Serenity ng access sa iyong camera para makakuha ng mga larawan. Pumunta sa Settings > Permissions at i-on ang Camera</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Camera</string>
 </resources>

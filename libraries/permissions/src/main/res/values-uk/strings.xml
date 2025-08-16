@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity потребує доступ до вашого мікрофона, щоб записувати голос. Відкрийте Налаштування > Дозволи та увімкніть Мікрофон</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Мікрофон</string>
+
+    <string name="camera_permission_message">Додатку Serenity потрібен доступ до вашої камери, щоб робити фото. Відкрийте Налаштування > Дозволи та увімкніть Камеру</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Камера</string>
 </resources>

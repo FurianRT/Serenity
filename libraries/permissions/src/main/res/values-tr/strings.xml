@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity, ses kaydı yapabilmeniz için mikrofon erişimine ihtiyaç duyar. Ayarlar &gt; İzinler bölümüne dokunun ve Mikrofonu açın</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Mikrofon</string>
+
+    <string name="camera_permission_message">Serenity’in fotoğraf çekebilmesi için kameranıza erişim izni gerekir. Ayarlar > İzinler’e gidin ve Kamerayı açın</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Kamera</string>
 </resources>

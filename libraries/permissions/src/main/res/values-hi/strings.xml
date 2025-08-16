@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity को आपकी माइक्रोफ़ोन तक पहुँच चाहिए ताकि आप आवाज़ रिकॉर्ड कर सकें। सेटिंग्स > परमिशन पर जाएं, और माइक्रोफ़ोन ऑन करें</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">माइक्रोफ़ोन</string>
+
+    <string name="camera_permission_message">Serenity को फ़ोटो लेने के लिए आपके कैमरे की अनुमति चाहिए। सेटिंग्स > अनुमतियाँ पर जाएँ और कैमरा चालू करें</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">कैमरा</string>
 </resources>

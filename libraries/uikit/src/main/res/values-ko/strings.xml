@@ -35,6 +35,8 @@
     <string name="backup_in_progress">백업 진행 중</string>
     <string name="restore_in_progress">복원 진행 중</string>
 
+    <string name="error_camera_not_found">카메라를 찾을 수 없습니다</string>
+
     <string-array name="months_array">
         <item>1월</item>
         <item>2월</item>

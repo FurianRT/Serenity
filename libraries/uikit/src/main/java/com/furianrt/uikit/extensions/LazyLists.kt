@@ -8,7 +8,7 @@ private const val MAX_VISIBLE_THRESHOLD = 100f
 
 fun LazyListLayoutInfo.firstMostVisibleItemInfo(
     topOffset: Int = 0,
-): LazyListItemInfo = visibleItemsInfo.maxBy { visibilityPercent(it, topOffset) }
+): LazyListItemInfo? = visibleItemsInfo.maxByOrNull { visibilityPercent(it, topOffset) }
 
 fun LazyListLayoutInfo.visibleItemsInfo(
     itemVisiblePercentThreshold: Float,

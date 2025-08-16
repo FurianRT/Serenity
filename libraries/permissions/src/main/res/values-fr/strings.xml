@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity a besoin d’accéder à votre microphone pour permettre les enregistrements vocaux. Appuyez sur Paramètres > Autorisations, puis activez Microphone</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Microphone</string>
+
+    <string name="camera_permission_message">Serenity a besoin d’accéder à votre caméra pour prendre des photos. Touchez Paramètres > Autorisations et activez Caméra</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Caméra</string>
 </resources>

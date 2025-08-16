@@ -1,6 +1,9 @@
 package com.furianrt.notepage.internal.ui.page
 
+import android.content.ActivityNotFoundException
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
@@ -79,6 +82,7 @@ import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -90,6 +94,7 @@ import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
@@ -112,6 +117,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.collections.immutable.persistentListOf
@@ -129,6 +135,7 @@ internal fun NotePageScreenInternal(
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
@@ -155,7 +162,18 @@ internal fun NotePageScreenInternal(
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
 
+    val cameraPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getCameraPermission(),
+        onPermissionResult = { viewModel.onEvent(PageEvent.OnCameraPermissionSelected) },
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { viewModel.onEvent(PageEvent.OnTakePictureResult(it)) },
+    )
+
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     val view = LocalView.current
     val hazeState = remember { HazeState() }
@@ -178,7 +196,7 @@ internal fun NotePageScreenInternal(
         var toast: Toast? = null
         viewModel.effect.collectLatest { effect ->
             when (effect) {
-                is PageEffect.ShowPermissionsDeniedDialog -> showMediaPermissionDialog = true
+                is PageEffect.ShowStoragePermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {
                     focusManager.clearFocus(force = true)
                     state.bottomScaffoldState.bottomSheetState.expand()
@@ -193,6 +211,17 @@ internal fun NotePageScreenInternal(
                 is PageEffect.UpdateContentChangedState -> state.setContentChanged(effect.isChanged)
                 is PageEffect.RequestStoragePermissions -> {
                     storagePermissionsState.launchMultiplePermissionRequest()
+                }
+
+                is PageEffect.RequestCameraPermission -> {
+                    cameraPermissionState.launchPermissionRequest()
+                }
+
+                is PageEffect.ShowCameraPermissionsDeniedDialog -> showCameraPermissionDialog = true
+                is PageEffect.TakePicture -> try {
+                    cameraLauncher.launch(effect.uri)
+                } catch (e: ActivityNotFoundException) {
+                    viewModel.onEvent(PageEvent.OnCameraNotFoundError(e))
                 }
 
                 is PageEffect.BringContentToView -> {
@@ -241,6 +270,7 @@ internal fun NotePageScreenInternal(
         hazeState = hazeState,
         isSelected = isSelected,
         onEvent = viewModel::onEvent,
+        onBackgroundChanged = onBackgroundChanged,
         onTitleFocused = onTitleFocused,
     )
 
@@ -248,6 +278,14 @@ internal fun NotePageScreenInternal(
         MediaPermissionDialog(
             hazeState = hazeState,
             onDismissRequest = { showMediaPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
+    if (showCameraPermissionDialog) {
+        CameraPermissionDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showCameraPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )
     }
@@ -261,6 +299,7 @@ private fun PageScreenContent(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -274,6 +313,7 @@ private fun PageScreenContent(
                 hazeState = hazeState,
                 isSelected = isSelected,
                 onEvent = onEvent,
+                onBackgroundChanged = onBackgroundChanged,
                 onTitleFocused = onTitleFocused,
             )
 
@@ -291,6 +331,7 @@ private fun SuccessScreen(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -412,6 +453,7 @@ private fun SuccessScreen(
             onNoPositionError = { onEvent(PageEvent.OnNoPositionError) },
             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+            onTakePictureClick = { onEvent(PageEvent.OnTakePictureClick) },
             onVoiceRecordStart = {
                 onEvent(PageEvent.OnVoiceStarted)
                 state.isVoiceRecordActive = true
@@ -441,6 +483,11 @@ private fun SuccessScreen(
                         ),
                     )
                 )
+            },
+            onBackgroundClick = { onEvent(PageEvent.OnBackgroundsClick) },
+            onBackgroundSelected = { background ->
+                onEvent(PageEvent.OnBackgroundSelected(background))
+                onBackgroundChanged(background)
             },
         )
         DimSurfaceOverlay(
@@ -595,6 +642,7 @@ private fun Panel(
     onNoPositionError: () -> Unit,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
+    onTakePictureClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
@@ -605,6 +653,8 @@ private fun Panel(
     onFontStyleClick: () -> Unit,
     onBulletListClick: () -> Unit,
     onStickersClick: () -> Unit,
+    onBackgroundClick: () -> Unit,
+    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -624,11 +674,14 @@ private fun Panel(
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
+                    noteBackground = uiState.noteBackground,
+                    background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
                     titleState = titleState,
                     onNoPositionError = onNoPositionError,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
+                    onTakePictureClick = onTakePictureClick,
                     onVoiceRecordStart = onVoiceRecordStart,
                     onRecordComplete = onRecordComplete,
                     onVoiceRecordCancel = onVoiceRecordCancel,
@@ -639,6 +692,8 @@ private fun Panel(
                     onStickersClick = onStickersClick,
                     onStickerSelected = onStickerSelected,
                     onBulletListClick = onBulletListClick,
+                    onBackgroundClick = onBackgroundClick,
+                    onBackgroundSelected = onBackgroundSelected,
                 )
             }
         )
@@ -723,6 +778,7 @@ private fun SuccessScreenPreview() {
                 fontFamily = UiNoteFontFamily.QuickSand,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 16,
+                noteBackground = null,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",
@@ -738,6 +794,7 @@ private fun SuccessScreenPreview() {
                 ),
             ),
             onEvent = {},
+            onBackgroundChanged = {},
             onTitleFocused = {},
             hazeState = HazeState(),
             isSelected = true,

@@ -21,6 +21,7 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.extensions.join
+import com.furianrt.uikit.theme.NoteFont
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toImmutableList
 
@@ -269,6 +270,21 @@ fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) 
     is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
     is SpanType.FontColor -> SpanStyle(color = color)
     is SpanType.FillColor -> SpanStyle(background = color)
+}
+
+fun NoteFontFamily.toNoteFont() = when (this) {
+    NoteFontFamily.QUICK_SAND -> NoteFont.QuickSand
+    NoteFontFamily.SHANTELL_SANS -> NoteFont.ShantellSans
+    NoteFontFamily.PIXELIFY_SANS -> NoteFont.PixelifySans
+    NoteFontFamily.ADVENT_PRO -> NoteFont.AdventPro
+    NoteFontFamily.CORMORANT_UNICASE -> NoteFont.CormorantUnicase
+    NoteFontFamily.MONSERRAT_ALTERNATES -> NoteFont.MontserratAlternates
+    NoteFontFamily.TEKTUR -> NoteFont.Tektur
+    NoteFontFamily.DOTO -> NoteFont.Doto
+    NoteFontFamily.PLAY_WRITE_MODERN -> NoteFont.PlayWriteModern
+    NoteFontFamily.TILLANA -> NoteFont.Tillana
+    NoteFontFamily.LIFE_SEVERS -> NoteFont.LifeSavers
+    NoteFontFamily.TEXTURINA -> NoteFont.Texturina
 }
 
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(

@@ -6,4 +6,8 @@
     <string name="audio_record_permission_message">Serenity needs access to your microphone to allow voice recordings. Tap Settings > Permissions, and turn Microphone on</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2">Microphone</string>
+
+    <string name="camera_permission_message">Serenity needs access to your camera to take photos. Tap Settings > Permissions, and turn Camera on</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Camera</string>
 </resources>

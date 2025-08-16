@@ -14,8 +14,7 @@ import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
-import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.R as uiR
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -29,6 +28,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import com.furianrt.uikit.R as uiR
 
 @HiltViewModel
 internal class MediaViewModel @Inject constructor(
@@ -37,8 +37,8 @@ internal class MediaViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
-    private val appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<MediaViewRoute>()
@@ -53,9 +53,7 @@ internal class MediaViewModel @Inject constructor(
 
     init {
         launch {
-            val themeColorId = appearanceRepository.getAppThemeColorId().first()
-            val themeColor = UiThemeColor.fromId(themeColorId)
-            _state.update { it.copy(isLightTheme = themeColor.isLight) }
+            _state.update { it.copy(font = appearanceRepository.getAppFont().first().toNoteFont()) }
         }
     }
 
@@ -132,7 +130,6 @@ internal class MediaViewModel @Inject constructor(
         return MediaViewUiState(
             media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
             initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
-            isLightTheme = false,
         )
     }
 }
