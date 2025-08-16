@@ -26,6 +26,10 @@ android {
         language.enableSplit = false
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildTypes {
         val localProperties = rootProject.file("local.properties")
         val properties = Properties().apply { load(localProperties.inputStream()) }
