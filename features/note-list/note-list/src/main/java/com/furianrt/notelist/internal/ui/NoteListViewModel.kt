@@ -38,7 +38,7 @@ private const val NOTE_CREATE_DIALOG_ID = 2
 internal class NoteListViewModel @Inject constructor(
     notesRepository: NotesRepository,
     dispatchers: DispatchersProvider,
-    private val appearanceRepository: AppearanceRepository,
+    appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncManager: SyncManager,

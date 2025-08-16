@@ -3,4 +3,8 @@
     <string name="font_panel_size_selector_title">Taille</string>
 
     <string name="bullet_panel_title">Liste à puces</string>
+
+    <string name="background_panel_tab_all_title">Tous</string>
+    <string name="background_panel_tab_dark_title">Sombres</string>
+    <string name="background_panel_tab_light_title">Clairs</string>
 </resources>
