@@ -7,10 +7,10 @@ import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.notelist.internal.ui.extensions.toMainScreenNotes
-import com.furianrt.uikit.R as uiR
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import com.furianrt.uikit.R as uiR
 
 private const val TAG = "MainViewModel"
 private const val NOTE_VIEW_DIALOG_ID = 1
@@ -37,7 +38,7 @@ private const val NOTE_CREATE_DIALOG_ID = 2
 internal class NoteListViewModel @Inject constructor(
     notesRepository: NotesRepository,
     dispatchers: DispatchersProvider,
-    appearanceRepository: AppearanceRepository,
+    private val appearanceRepository: AppearanceRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val syncManager: SyncManager,
@@ -60,6 +61,7 @@ internal class NoteListViewModel @Inject constructor(
                 notes = notes.toMainScreenNotes(selectedNotes, appFont),
                 scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
                 selectedNotesCount = selectedNotes.count(),
+                font = appFont.toNoteFont(),
             )
         }
     }.flowOn(

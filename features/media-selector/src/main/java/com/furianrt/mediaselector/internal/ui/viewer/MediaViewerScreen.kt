@@ -3,10 +3,7 @@ package com.furianrt.mediaselector.internal.ui.viewer
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.net.Uri
-import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,7 +27,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,6 +43,7 @@ import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
+import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
@@ -84,16 +81,21 @@ internal fun MediaViewerScreen(
             }
     }
 
-    when (uiState) {
-        is MediaViewerUiState.Success -> SuccessContent(
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-            onCloseRequest = onCloseRequest,
-        )
+    SerenityTheme(
+        isLightTheme = false,
+        font = (uiState as? MediaViewerUiState.Success)?.font ?: LocalFont.current,
+    ) {
+        when (uiState) {
+            is MediaViewerUiState.Success -> SuccessContent(
+                uiState = uiState,
+                onEvent = viewModel::onEvent,
+                onCloseRequest = onCloseRequest,
+            )
 
-        is MediaViewerUiState.Loading -> Box(
-            modifier = Modifier.fillMaxSize(),
-        )
+            is MediaViewerUiState.Loading -> Box(
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
@@ -127,30 +129,6 @@ private fun SuccessContent(
         }
         onDispose {
             activity?.window?.showSystemUi()
-        }
-    }
-
-    DisposableEffect(uiState.isLightTheme) {
-        val barsColor = Color.Transparent.toArgb()
-        if (uiState.isLightTheme) {
-            (activity as? ComponentActivity)?.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(barsColor),
-                navigationBarStyle = SystemBarStyle.dark(barsColor),
-            )
-        }
-        onDispose {
-            if (uiState.isLightTheme) {
-                (activity as? ComponentActivity)?.enableEdgeToEdge(
-                    statusBarStyle = SystemBarStyle.light(
-                        scrim = barsColor,
-                        darkScrim = barsColor,
-                    ),
-                    navigationBarStyle = SystemBarStyle.light(
-                        scrim = barsColor,
-                        darkScrim = barsColor,
-                    ),
-                )
-            }
         }
     }
 
@@ -256,7 +234,6 @@ private fun Preview() {
         SuccessContent(
             uiState = MediaViewerUiState.Success(
                 initialMediaIndex = 1,
-                isLightTheme = false,
                 media = persistentListOf(
                     MediaItem.Image(
                         id = 1L,

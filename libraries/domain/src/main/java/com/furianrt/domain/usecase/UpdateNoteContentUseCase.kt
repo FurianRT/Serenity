@@ -26,6 +26,7 @@ class UpdateNoteContentUseCase @Inject constructor(
         fontFamily: NoteFontFamily?,
         fontColor: NoteFontColor?,
         fontSize: Int,
+        backgroundId: String?,
         updateMediaFiles: Boolean = true,
     ) {
         val allMedia = content
@@ -76,6 +77,8 @@ class UpdateNoteContentUseCase @Inject constructor(
 
             notesRepository.updateNoteText(noteId, content)
             notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
+
+            backgroundId?.let { notesRepository.updateNoteBackgroundId(noteId, it) }
 
             if (tags.isNotEmpty()) {
                 tagsRepository.insert(noteId, tags)

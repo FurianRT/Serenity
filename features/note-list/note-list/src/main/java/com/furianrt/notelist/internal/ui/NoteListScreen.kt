@@ -77,6 +77,7 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dpToPx
+import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
@@ -400,7 +401,8 @@ private fun SuccessPreview() {
             uiState = NoteListUiState.Success(
                 notes = generatePreviewNotes(withSelected = false),
                 scrollToPosition = null,
-                selectedNotesCount = 0
+                selectedNotesCount = 0,
+                font = NoteFont.QuickSand,
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
@@ -428,7 +430,8 @@ private fun SuccessWithSelectedPreview() {
             uiState = NoteListUiState.Success(
                 notes = generatePreviewNotes(withSelected = true),
                 scrollToPosition = null,
-                selectedNotesCount = 3
+                selectedNotesCount = 3,
+                font = NoteFont.QuickSand,
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},

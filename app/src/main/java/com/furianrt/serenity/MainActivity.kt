@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.view.View
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -16,6 +17,7 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -54,12 +56,16 @@ import com.furianrt.uikit.anim.defaultEnterTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
+import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.theme.LocalHasMediaRoute
+import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -105,32 +111,60 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
             val hazeState = remember { HazeState() }
+            val activity = LocalActivity.current as ComponentActivity
 
-            LaunchedEffect(uiState.appColor.isLight) {
-                val currentDestination = navController.currentDestination
-                val hasMediaViewRoute = currentDestination?.hasRoute<MediaViewRoute>()
-                val hasMediaViewerRoute = currentDestination?.hasRoute<MediaViewerRoute>()
-                if (hasMediaViewRoute != true && hasMediaViewerRoute != true) {
-                    val color = Color.Transparent.toArgb()
-                    if (uiState.appColor.isLight) {
-                        enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
-                            navigationBarStyle = SystemBarStyle.light(
-                                scrim = color,
-                                darkScrim = color
-                            ),
-                        )
-                    } else {
-                        enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.dark(color),
-                            navigationBarStyle = SystemBarStyle.dark(color),
-                        )
-                    }
+            SerenityTheme(
+                colorScheme = uiState.appColor.colorScheme,
+                font = uiState.appFont,
+                isLightTheme = uiState.appColor.isLight,
+            ) {
+                LaunchedEffect(uiState.appColor.isLight) {
+                    navController.currentBackStackEntryFlow
+                        .filter { entry ->
+                            val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>()
+                            val hasNoteCreateRoute = entry.destination.hasRoute<NoteCreateRoute>()
+                            !hasNoteViewRoute && !hasNoteCreateRoute
+                        }
+                        .collect { entry ->
+                            val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>() ||
+                                    entry.destination.hasRoute<NoteCreateRoute>()
+                            val hasMediaViewRoute = entry.destination.hasRoute<MediaViewRoute>() ||
+                                    entry.destination.hasRoute<MediaViewerRoute>()
+                            val color = Color.Transparent.toArgb()
+                            when {
+                                hasMediaViewRoute -> activity.enableEdgeToEdge(
+                                    statusBarStyle = SystemBarStyle.dark(color),
+                                    navigationBarStyle = SystemBarStyle.dark(color),
+                                )
+
+                                !hasNoteViewRoute ->  if (uiState.appColor.isLight) {
+                                    activity.enableEdgeToEdge(
+                                        statusBarStyle = SystemBarStyle.light(
+                                            scrim = color,
+                                            darkScrim = color
+                                        ),
+                                        navigationBarStyle = SystemBarStyle.light(
+                                            scrim = color,
+                                            darkScrim = color
+                                        ),
+                                    )
+                                }
+                            }
+                        }
                 }
-            }
 
-            SerenityTheme(color = uiState.appColor, font = uiState.appFont) {
-                CompositionLocalProvider(LocalAuth provides this) {
+                val currentEntry by navController.currentBackStackEntryFlow
+                    .collectAsState(null)
+                val currentDestination = currentEntry?.destination
+                val hasMediaRoute = currentDestination?.hasRoute<MediaViewRoute>() == true ||
+                        currentDestination?.hasRoute<MediaViewerRoute>() == true
+                val hasMediaSortingRoute = currentDestination?.hasRoute<MediaSortingRoute>() == true
+
+                CompositionLocalProvider(
+                    LocalAuth provides this,
+                    LocalHasMediaRoute provides hasMediaRoute,
+                    LocalHasMediaSortingRoute provides hasMediaSortingRoute,
+                ) {
                     NavHost(
                         modifier = Modifier
                             .background(MaterialTheme.colorScheme.surface)

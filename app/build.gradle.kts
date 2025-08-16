@@ -20,6 +20,7 @@ dependencies {
     implementation(projects.features.mediaView)
     implementation(projects.features.mediaSorting)
     implementation(projects.features.noteList.noteList)
+    implementation(projects.features.noteList.noteListUi)
     implementation(projects.features.security)
     implementation(projects.features.noteSearch)
     implementation(projects.features.backup)

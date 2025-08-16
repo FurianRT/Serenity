@@ -4,8 +4,10 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.doWithState
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.toolspanel.api.NoteBackgroundProvider
 import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
@@ -36,6 +38,7 @@ private const val KEY_DIALOG_ID = "dialogId"
 
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
+    appearanceRepository: AppearanceRepository,
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val backgroundProvider: NoteBackgroundProvider,
@@ -49,12 +52,14 @@ internal class NoteCreateViewModel @Inject constructor(
         notesRepository.getOrCreateTemplateNote(
             savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),
         ),
-    ) { isInEditMode, note ->
+        appearanceRepository.getAppFont(),
+    ) { isInEditMode, note, font->
         NoteCreateUiState.Success(
             note = note.toNoteItem(
                 background = backgroundProvider.getBackground(note.backgroundId),
             ),
             isInEditMode = isInEditMode,
+            font = font.toNoteFont(),
         )
     }.stateIn(
         scope = viewModelScope,
@@ -117,6 +122,9 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
             is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
+            is NoteCreateEvent.OnBackgroundChanged -> launch {
+                notesRepository.updateNoteBackgroundId(event.noteId, event.background?.id)
+            }
         }
     }
 

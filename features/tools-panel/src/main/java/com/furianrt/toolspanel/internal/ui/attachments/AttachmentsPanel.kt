@@ -1,10 +1,9 @@
 package com.furianrt.toolspanel.internal.ui.attachments
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -14,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.toolspanel.R
-import com.furianrt.uikit.R as uiR
+import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -22,6 +21,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 internal fun AttachmentsPanel(
     modifier: Modifier = Modifier,
     onSelectMediaClick: () -> Unit = {},
+    onTakePictureClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
@@ -31,36 +31,44 @@ internal fun AttachmentsPanel(
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Spacer(modifier = Modifier.width(8.dp))
-        IconButton(
-            onClick = onSelectMediaClick,
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 12.dp)
+                .weight(1f),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_panel_camera),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+            IconButton(
+                onClick = onSelectMediaClick,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_panel_gallery),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onTakePictureClick,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_panel_camera),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onRecordVoiceClick,
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_panel_microphone),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
-        Spacer(modifier = Modifier.width(4.dp))
-        IconButton(
-            onClick = onRecordVoiceClick,
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_panel_microphone),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        IconButton(
+        ButtonClose(
             onClick = onCloseClick,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_exit),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        )
     }
 }
 

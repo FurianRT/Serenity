@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
@@ -23,7 +24,7 @@ internal class StickersViewModel @Inject constructor(
 
     private val selectedPageIndex = MutableStateFlow(0)
 
-    val state = combine(
+    val state: StateFlow<StickersPanelUiState> = combine(
         flow { emit(stickersHolder.getStickersPacks()) },
         selectedPageIndex,
     ) { packs, pageIndex ->

@@ -1,11 +1,12 @@
-package com.furianrt.toolspanel.internal.ui.stickers
+package com.furianrt.toolspanel.internal.ui.background
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -13,7 +14,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -22,24 +22,31 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,51 +55,51 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.clipPath
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import coil3.compose.AsyncImage
-import com.furianrt.toolspanel.api.entities.Sticker
-import com.furianrt.toolspanel.internal.domain.StickersHolder
-import com.furianrt.toolspanel.internal.entities.StickerPack
+import com.furianrt.notelistui.entities.UiNoteBackground
+import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.internal.domain.NoteBackgroundHolder
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.max
 
-private val TITLE_LIST_ITEM_SIZE = 36.dp
+private const val NOTE_BACKGROUND_TAG = "note_panel_background"
 
 @Composable
-internal fun StickersTitleBar(
+internal fun BackgroundTitleBar(
+    noteId: String,
+    noteBackground: UiNoteBackground?,
     showKeyBoardButton: Boolean,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: StickersViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<BackgroundViewModel, BackgroundViewModel.Factory>(
+        key = NOTE_BACKGROUND_TAG + noteId,
+        creationCallback = { it.create(initialBackground = noteBackground) },
+    )
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -102,7 +109,7 @@ internal fun StickersTitleBar(
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->
-                if (effect is StickersPanelEffect.ClosePanel) {
+                if (effect is BackgroundPanelEffect.ClosePanel) {
                     onDoneClickState()
                 }
             }
@@ -118,30 +125,22 @@ internal fun StickersTitleBar(
 
 @Composable
 private fun TitleContent(
-    uiState: StickersPanelUiState,
+    uiState: BackgroundPanelUiState,
     showKeyBoardButton: Boolean,
     modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit = {},
+    onEvent: (event: BackgroundPanelEvent) -> Unit = {},
 ) {
     val showKeyBoardButtonState = remember { showKeyBoardButton }
     val listState: LazyListState = rememberLazyListState()
-    val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_SIZE.toPx().toInt() }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     var isFirstComposition by rememberSaveable { mutableStateOf(true) }
-    LaunchedEffect(uiState.selectedPackIndex) {
-        val scrollOffset = (itemWidth - listState.layoutInfo.viewportSize.width) / 2
+    LaunchedEffect(uiState.selectedTabIndex) {
         if (isFirstComposition) {
             isFirstComposition = false
-            listState.scrollToItem(
-                index = uiState.selectedPackIndex,
-                scrollOffset = scrollOffset,
-            )
+            listState.scrollToItem(index = uiState.selectedTabIndex)
         } else {
-            listState.animateScrollToItem(
-                index = uiState.selectedPackIndex,
-                scrollOffset = scrollOffset,
-            )
+            listState.animateScrollToItem(index = uiState.selectedTabIndex)
         }
     }
 
@@ -158,33 +157,41 @@ private fun TitleContent(
                 ButtonKeyboard(
                     modifier = Modifier.drawBehind {
                         if (listState.canScrollBackward) {
-                            drawRightShadow(
-                                color = shadowColor,
-                                elevation = 1.dp,
-                            )
+                            drawRightShadow(color = shadowColor, elevation = 1.dp)
                         }
                     },
-                    onClick = { onEvent(StickersPanelEvent.OnKeyboardClick) },
+                    onClick = { onEvent(BackgroundPanelEvent.OnKeyboardClick) },
                 )
             }
 
-            LazyRow(
+            Box(
                 modifier = Modifier.weight(1f),
-                state = listState,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                contentPadding = PaddingValues(
-                    horizontal = if (showKeyBoardButtonState) 4.dp else 12.dp,
-                )
+                contentAlignment = if (showKeyBoardButtonState) {
+                    Alignment.Center
+                } else {
+                    Alignment.CenterStart
+                },
             ) {
-                items(
-                    count = uiState.packs.count(),
-                    key = { uiState.packs[it].id },
-                ) { index ->
-                    TitleItem(
-                        pack = uiState.packs[index],
-                        isSelected = uiState.selectedPackIndex == index,
-                        onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(index)) },
+                LazyRow(
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        horizontal = if (showKeyBoardButtonState) 4.dp else 16.dp,
                     )
+                ) {
+                    itemsIndexed(items = uiState.tabs) { index, tab ->
+                        TabItem(
+                            tab = tab,
+                            isSelected = uiState.selectedTabIndex == index,
+                            onClick = { onEvent(BackgroundPanelEvent.OnTitleTabClick(index)) }
+                        )
+                        if (index != uiState.tabs.lastIndex) {
+                            VerticalDivider(
+                                modifier = Modifier.height(28.dp),
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                            )
+                        }
+                    }
                 }
             }
             ButtonClose(
@@ -193,7 +200,7 @@ private fun TitleContent(
                         drawLeftShadow(color = shadowColor)
                     }
                 },
-                onClick = { onEvent(StickersPanelEvent.OnCloseClick) },
+                onClick = { onEvent(BackgroundPanelEvent.OnCloseClick) },
             )
         }
         HorizontalDivider(
@@ -207,20 +214,35 @@ private fun TitleContent(
 }
 
 @Composable
-private fun TitleItem(
-    pack: StickerPack,
+private fun TabItem(
+    tab: BackgroundPanelUiState.Tab,
     isSelected: Boolean,
-    onClick: (pack: StickerPack) -> Unit,
+    onClick: (tab: BackgroundPanelUiState.Tab) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val underlineColor = MaterialTheme.colorScheme.primaryContainer
-    Box(modifier = modifier.size(TITLE_LIST_ITEM_SIZE)) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickableNoRipple { onClick(pack) },
-            model = pack.icon,
-            contentDescription = null,
+    var underlineWidth by remember { mutableIntStateOf(0) }
+    Box(
+        modifier = modifier
+            .onSizeChanged { underlineWidth = it.width }
+            .clickableNoRipple { onClick(tab) },
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            text = when (tab) {
+                is BackgroundPanelUiState.Tab.All -> {
+                    stringResource(R.string.background_panel_tab_all_title)
+                }
+
+                is BackgroundPanelUiState.Tab.Dark -> {
+                    stringResource(R.string.background_panel_tab_dark_title)
+                }
+
+                is BackgroundPanelUiState.Tab.Light -> {
+                    stringResource(R.string.background_panel_tab_light_title)
+                }
+            },
+            style = MaterialTheme.typography.bodyMedium,
         )
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -228,10 +250,9 @@ private fun TitleItem(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(fraction = 0.6f)
-                    .clip(RoundedCornerShape(bottomStart = 4.dp, bottomEnd = 4.dp))
-                    .drawSelection(underlineColor)
+                    .width(underlineWidth.pxToDp() - 16.dp)
+                    .height(2.dp)
+                    .background(MaterialTheme.colorScheme.surfaceContainer, CircleShape),
             )
         }
     }
@@ -239,12 +260,17 @@ private fun TitleItem(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-internal fun StickersContent(
+internal fun BackgroundContent(
+    noteId: String,
+    noteBackground: UiNoteBackground?,
     visible: Boolean,
-    onStickerSelected: (sticker: Sticker) -> Unit,
+    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: StickersViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<BackgroundViewModel, BackgroundViewModel.Factory>(
+        key = NOTE_BACKGROUND_TAG + noteId,
+        creationCallback = { it.create(initialBackground = noteBackground) },
+    )
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -257,11 +283,11 @@ internal fun StickersContent(
     val navigationBarsHeight = WindowInsets.navigationBars.getBottom(density)
 
     var imeHeight by remember { mutableStateOf(cachedImeHeight) }
-    val contentHeight = imeHeight - density.run { navigationBarsHeight.toDp() }
+    val contentHeight = imeHeight - navigationBarsHeight.pxToDp()
 
     val pagerState = rememberPagerState(
-        pageCount = uiState.packs::count,
-        initialPage = uiState.selectedPackIndex,
+        pageCount = uiState.tabs::count,
+        initialPage = uiState.selectedTabIndex,
     )
     val contentPageStates = remember { mutableStateMapOf<Int, LazyGridState>() }
 
@@ -270,22 +296,18 @@ internal fun StickersContent(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->
                 when (effect) {
-                    is StickersPanelEffect.ClosePanel -> Unit
-                    is StickersPanelEffect.SelectSticker -> {
-                        onStickerSelected(effect.sticker)
-                    }
-
-                    is StickersPanelEffect.ScrollContentToIndex -> {
+                    is BackgroundPanelEffect.ClosePanel -> Unit
+                    is BackgroundPanelEffect.ShowKeyboard -> keyboardController?.show()
+                    is BackgroundPanelEffect.SelectBackground -> onBackgroundSelected(effect.item)
+                    is BackgroundPanelEffect.ScrollContentToIndex -> {
                         pagerState.scrollToPage(effect.index)
                     }
-
-                    is StickersPanelEffect.ShowKeyboard -> keyboardController?.show()
                 }
             }
     }
 
     LaunchedEffect(pagerState.currentPage) {
-        viewModel.onEvent(StickersPanelEvent.OnStickersPageChange(pagerState.currentPage))
+        viewModel.onEvent(BackgroundPanelEvent.OnContentPageChange(pagerState.currentPage))
     }
 
     LaunchedEffect(imeTarget, imeSource) {
@@ -324,10 +346,10 @@ internal fun StickersContent(
 
 @Composable
 private fun Content(
-    uiState: StickersPanelUiState,
+    uiState: BackgroundPanelUiState,
     modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit = {},
-    pagerState: PagerState = rememberPagerState(pageCount = uiState.packs::count),
+    onEvent: (event: BackgroundPanelEvent) -> Unit = {},
+    pagerState: PagerState = rememberPagerState(pageCount = uiState.tabs::count),
     listStateProvider: @Composable (index: Int) -> LazyGridState,
 ) {
     HorizontalPager(
@@ -335,7 +357,8 @@ private fun Content(
         state = pagerState,
     ) { index ->
         ContentPage(
-            stickers = uiState.packs[index].stickers,
+            items = uiState.tabs[index].items,
+            selectedItem = uiState.selectedBackground,
             onEvent = onEvent,
             listState = listStateProvider(index)
         )
@@ -344,9 +367,10 @@ private fun Content(
 
 @Composable
 private fun ContentPage(
-    stickers: ImmutableList<Sticker>,
+    items: List<UiNoteBackground>,
+    selectedItem: UiNoteBackground?,
     modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit,
+    onEvent: (event: BackgroundPanelEvent) -> Unit,
     listState: LazyGridState,
 ) {
     val showShadow by remember {
@@ -357,7 +381,7 @@ private fun ContentPage(
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
     LazyVerticalGrid(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .clickableNoRipple {}
             .drawBehind {
                 if (showShadow) {
@@ -366,92 +390,101 @@ private fun ContentPage(
             },
         state = listState,
         columns = GridCells.Fixed(4),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        contentPadding = PaddingValues(vertical = 12.dp, horizontal = 8.dp),
     ) {
-        items(
-            count = stickers.count(),
-            key = { stickers[it].id },
-        ) { index ->
-            ContentItem(
-                sticker = stickers[index],
-                onClick = { onEvent(StickersPanelEvent.OnStickerSelected(it)) },
+        item {
+            ClearItem(
+                onClick = { onEvent(BackgroundPanelEvent.OnClearBackgroundClick) },
+            )
+        }
+        itemsIndexed(items = items) { _, item ->
+            BackgroundItem(
+                item = item,
+                isSelected = item.id == selectedItem?.id,
+                onClick = { onEvent(BackgroundPanelEvent.OnBackgroundSelected(it)) },
             )
         }
     }
 }
 
 @Composable
-private fun ContentItem(
-    sticker: Sticker,
-    onClick: (sticker: Sticker) -> Unit,
+private fun BackgroundItem(
+    item: UiNoteBackground,
+    isSelected: Boolean,
+    onClick: (item: UiNoteBackground) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
         modifier = modifier
             .aspectRatio(1f)
+            .applyIf(isSelected) {
+                Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
+                        shape = RoundedCornerShape(16.dp),
+                    )
+                    .padding(3.dp)
+            }
+            .clickableNoRipple { onClick(item) },
+    ) {
+        val color = (item as UiNoteBackground.Solid).colorScheme.surface
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    color = color,
+                    shape = RoundedCornerShape(if (isSelected) 14.dp else 16.dp),
+                )
+        )
+    }
+}
+
+@Composable
+private fun ClearItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .padding(4.dp)
+            .alpha(0.3f)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primary,
+                shape = RoundedCornerShape(16.dp),
+            )
             .clip(RoundedCornerShape(16.dp))
-            .clickable { onClick(sticker) }
-            .padding(horizontal = 2.dp, vertical = 8.dp),
+            .clickableWithScaleAnim(onClick = onClick, maxScale = 1.2f),
         contentAlignment = Alignment.Center,
     ) {
-        AsyncImage(
-            model = sticker.icon,
+        Icon(
+            painter = painterResource(R.drawable.ic_background_clear),
+            tint = MaterialTheme.colorScheme.primary,
             contentDescription = null,
         )
     }
 }
 
-private fun Modifier.drawSelection(
-    color: Color,
-): Modifier = then(
-    Modifier.drawWithCache {
-        val strokeWidth = 2.dp.toPx()
-        val strokeStart = Offset(x = 0f, y = size.height - strokeWidth)
-        val strokeEnd = Offset(x = size.width, y = size.height - strokeWidth)
-        val gradientOffset = Offset.Zero
-        val gradientBrush = Brush.verticalGradient(
-            colors = listOf(Color.Transparent, color),
-            startY = 0f,
-            endY = size.height,
-        )
-        val path = Path()
-        val cornerRadius = CornerRadius(16.dp.toPx())
-        path.addRoundRect(
-            RoundRect(
-                rect = Rect(gradientOffset, size),
-                topLeft = cornerRadius,
-                topRight = cornerRadius,
-            )
-        )
-        onDrawWithContent {
-            drawContent()
-            clipPath(path) {
-                drawRect(
-                    topLeft = gradientOffset,
-                    size = size,
-                    brush = gradientBrush,
-                    alpha = 0.5f,
-                )
-                drawLine(
-                    color = color,
-                    start = strokeStart,
-                    end = strokeEnd,
-                    strokeWidth = strokeWidth,
-                    cap = StrokeCap.Round,
-                )
-            }
-        }
-    },
-)
-
-
 @Composable
 @PreviewWithBackground
 private fun PanelPreview() {
+    val holder = NoteBackgroundHolder()
     SerenityTheme {
         TitleContent(
-            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
-            showKeyBoardButton = true,
+            uiState = BackgroundPanelUiState(
+                tabs = listOf(
+                    BackgroundPanelUiState.Tab.All(items = holder.getDarkBackgrounds()),
+                    BackgroundPanelUiState.Tab.Dark(items = emptyList()),
+                    BackgroundPanelUiState.Tab.Light(items = emptyList()),
+                ),
+                selectedTabIndex = 0,
+                selectedBackground = holder.getDarkBackgrounds().first(),
+            ),
+            showKeyBoardButton = false,
         )
     }
 }
@@ -460,9 +493,18 @@ private fun PanelPreview() {
 @PreviewWithBackground
 private fun ContentPreview() {
     val listState = rememberLazyGridState()
+    val holder = NoteBackgroundHolder()
     SerenityTheme {
         Content(
-            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
+            uiState = BackgroundPanelUiState(
+                tabs = listOf(
+                    BackgroundPanelUiState.Tab.All(items = holder.getDarkBackgrounds()),
+                    BackgroundPanelUiState.Tab.Dark(items = emptyList()),
+                    BackgroundPanelUiState.Tab.Light(items = emptyList()),
+                ),
+                selectedTabIndex = 0,
+                selectedBackground = holder.getDarkBackgrounds().first(),
+            ),
             listStateProvider = { listState },
         )
     }

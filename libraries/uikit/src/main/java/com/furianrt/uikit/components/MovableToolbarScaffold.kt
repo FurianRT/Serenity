@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
@@ -69,6 +70,7 @@ fun MovableToolbarScaffold(
     state: MovableToolbarState,
     toolbar: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
+    background: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true,
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
@@ -187,8 +189,8 @@ fun MovableToolbarScaffold(
                 .hazeEffect(
                     state = hazeState,
                     style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
+                        backgroundColor = background,
+                        tint = HazeTint(background.copy(alpha = 0.7f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
                     )

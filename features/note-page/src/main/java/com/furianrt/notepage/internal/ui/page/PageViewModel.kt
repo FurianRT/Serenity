@@ -20,6 +20,7 @@ import com.furianrt.domain.usecase.UpdateNoteContentUseCase
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -47,6 +48,8 @@ import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
@@ -75,6 +78,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagFocusChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextEntered
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnTakePictureClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleFocusChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleTextChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoicePlayClick
@@ -205,6 +209,11 @@ internal class PageViewModel @AssistedInject constructor(
                 tryRequestMediaPermissions()
             }
 
+            is OnTakePictureClick -> {
+                resetStickersEditing()
+                //tryRequestMediaPermissions()
+            }
+
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is OnTitleFocusChange -> {
                 if (event.focused) {
@@ -266,6 +275,9 @@ internal class PageViewModel @AssistedInject constructor(
                     message = resourcesManager.getString(R.string.note_select_text_position_message),
                 ),
             )
+
+            is OnBackgroundsClick -> resetStickersEditing()
+            is OnBackgroundSelected -> updateBackground(event.item)
         }
     }
 
@@ -861,6 +873,7 @@ internal class PageViewModel @AssistedInject constructor(
                             fontFamily = note.fontFamily,
                             fontColor = note.fontColor,
                             fontSize = note.fontSize,
+                            noteBackground = note.background,
                             isInEditMode = isNoteCreationMode,
                         ).also {
                             if (isNoteCreationMode) {
@@ -902,6 +915,7 @@ internal class PageViewModel @AssistedInject constructor(
                 fontFamily = fontFamily,
                 fontColor = fontColor,
                 fontSize = fontSize,
+                backgroundId = state.noteBackground?.id,
             )
             if (isNoteCreationMode) {
                 saveDefaultFontData(state)
@@ -940,6 +954,11 @@ internal class PageViewModel @AssistedInject constructor(
     private fun updateFontSize(size: Int) {
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { it.copy(fontSize = size) }
+    }
+
+    private fun updateBackground(background: UiNoteBackground?) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { it.copy(noteBackground = background) }
     }
 
     private fun PageUiState.Success.addTag(

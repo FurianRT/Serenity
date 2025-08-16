@@ -3,13 +3,14 @@ package com.furianrt.mediaselector.internal.ui.viewer
 import com.furianrt.core.mapImmutable
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import com.furianrt.uikit.theme.NoteFont
 import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface MediaViewerUiState {
     data class Success(
         val initialMediaIndex: Int,
         val media: ImmutableList<MediaItem>,
-        val isLightTheme: Boolean,
+        val font: NoteFont? = null,
     ) : MediaViewerUiState {
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             media = media.mapImmutable { item ->

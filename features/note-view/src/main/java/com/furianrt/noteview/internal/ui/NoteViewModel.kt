@@ -9,9 +9,11 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
+import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
@@ -48,6 +50,7 @@ internal class NoteViewModel @Inject constructor(
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
     private val backgroundProvider: NoteBackgroundProvider,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NoteViewRoute>(
@@ -106,6 +109,10 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnPinClick -> launch {
                 toggleNotePinnedState(event.noteId, event.isPinned)
             }
+
+            is NoteViewEvent.OnBackgroundChanged -> launch {
+                notesRepository.updateNoteBackgroundId(event.noteId, event.background?.id)
+            }
         }
     }
 
@@ -161,6 +168,7 @@ internal class NoteViewModel @Inject constructor(
                             notes = notesItems,
                             date = notesItems[initialPageIndex].date,
                             isInEditMode = false,
+                            font = appearanceRepository.getAppFont().first().toNoteFont(),
                         )
                     }
                 }

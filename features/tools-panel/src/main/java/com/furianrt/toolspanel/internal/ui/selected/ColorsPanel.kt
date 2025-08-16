@@ -8,24 +8,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.core.mapImmutable
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.ImmutableList
-import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ColorsPanel(
@@ -56,20 +53,14 @@ internal fun ColorsPanel(
                 )
             }
         }
-        IconButton(
+        ButtonClose(
             modifier = Modifier.drawBehind {
                 if (listState.canScrollForward) {
                     drawLeftShadow(color = shadowColor)
                 }
             },
             onClick = onCloseClick,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_exit),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        )
     }
 }
 

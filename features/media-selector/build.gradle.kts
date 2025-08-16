@@ -11,6 +11,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.features.noteList.noteListUi)
+
     implementation(projects.libraries.core)
     implementation(projects.libraries.common)
     implementation(projects.libraries.uikit)

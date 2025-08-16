@@ -1,7 +1,9 @@
 package com.furianrt.uikit.entities
 
+import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
 import com.furianrt.uikit.theme.Colors
+import com.furianrt.uikit.theme.defaultColorScheme
 
 enum class UiThemeColor(
     val id: String,
@@ -252,3 +254,32 @@ enum class UiThemeColor(
         fun fromId(id: String?) = entries.find { it.id == id } ?: STORM_IN_THE_NIGHT_BLUE_LIGHT
     }
 }
+
+val UiThemeColor.colorScheme: ColorScheme
+    get() = defaultColorScheme.copy(
+        primary = primary,
+        onPrimary = onPrimary,
+        secondary = secondary,
+        onSecondary = onSecondary,
+        onBackground = onBackground,
+        inverseSurface = inverseSurface,
+        onSurface = onSurface,
+        onSurfaceVariant = onSurfaceVariant,
+        surfaceContainer = surfaceContainer,
+        onPrimaryContainer = onPrimaryContainer,
+        outlineVariant = outlineVariant,
+        secondaryContainer = secondaryContainer,
+        tertiary = tertiary,
+        onTertiary = onTertiary,
+        tertiaryContainer = tertiaryContainer,
+        onTertiaryContainer = onTertiaryContainer,
+        errorContainer = errorContainer,
+        onErrorContainer = onErrorContainer,
+        scrim = scrim,
+        background = background,
+        surface = surface,
+        primaryContainer = primaryContainer,
+        surfaceTint = surfaceTint,
+        surfaceDim = surfaceDim,
+        surfaceContainerLow = surfaceContainerLow,
+    )

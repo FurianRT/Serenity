@@ -79,6 +79,7 @@ import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -129,6 +130,7 @@ internal fun NotePageScreenInternal(
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
@@ -241,6 +243,7 @@ internal fun NotePageScreenInternal(
         hazeState = hazeState,
         isSelected = isSelected,
         onEvent = viewModel::onEvent,
+        onBackgroundChanged = onBackgroundChanged,
         onTitleFocused = onTitleFocused,
     )
 
@@ -261,6 +264,7 @@ private fun PageScreenContent(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -274,6 +278,7 @@ private fun PageScreenContent(
                 hazeState = hazeState,
                 isSelected = isSelected,
                 onEvent = onEvent,
+                onBackgroundChanged = onBackgroundChanged,
                 onTitleFocused = onTitleFocused,
             )
 
@@ -291,6 +296,7 @@ private fun SuccessScreen(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
+    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -412,6 +418,7 @@ private fun SuccessScreen(
             onNoPositionError = { onEvent(PageEvent.OnNoPositionError) },
             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
+            onTakePictureClick = { onEvent(PageEvent.OnTakePictureClick) },
             onVoiceRecordStart = {
                 onEvent(PageEvent.OnVoiceStarted)
                 state.isVoiceRecordActive = true
@@ -441,6 +448,11 @@ private fun SuccessScreen(
                         ),
                     )
                 )
+            },
+            onBackgroundClick = { onEvent(PageEvent.OnBackgroundsClick) },
+            onBackgroundSelected = { background ->
+                onEvent(PageEvent.OnBackgroundSelected(background))
+                onBackgroundChanged(background)
             },
         )
         DimSurfaceOverlay(
@@ -595,6 +607,7 @@ private fun Panel(
     onNoPositionError: () -> Unit,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
+    onTakePictureClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
@@ -605,6 +618,8 @@ private fun Panel(
     onFontStyleClick: () -> Unit,
     onBulletListClick: () -> Unit,
     onStickersClick: () -> Unit,
+    onBackgroundClick: () -> Unit,
+    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -624,11 +639,14 @@ private fun Panel(
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
+                    noteBackground = uiState.noteBackground,
+                    background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
                     titleState = titleState,
                     onNoPositionError = onNoPositionError,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
+                    onTakePictureClick = onTakePictureClick,
                     onVoiceRecordStart = onVoiceRecordStart,
                     onRecordComplete = onRecordComplete,
                     onVoiceRecordCancel = onVoiceRecordCancel,
@@ -639,6 +657,8 @@ private fun Panel(
                     onStickersClick = onStickersClick,
                     onStickerSelected = onStickerSelected,
                     onBulletListClick = onBulletListClick,
+                    onBackgroundClick = onBackgroundClick,
+                    onBackgroundSelected = onBackgroundSelected,
                 )
             }
         )
@@ -723,6 +743,7 @@ private fun SuccessScreenPreview() {
                 fontFamily = UiNoteFontFamily.QuickSand,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 16,
+                noteBackground = null,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",
@@ -738,6 +759,7 @@ private fun SuccessScreenPreview() {
                 ),
             ),
             onEvent = {},
+            onBackgroundChanged = {},
             onTitleFocused = {},
             hazeState = HazeState(),
             isSelected = true,

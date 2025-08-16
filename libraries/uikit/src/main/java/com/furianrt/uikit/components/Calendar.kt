@@ -241,7 +241,7 @@ private fun CalendarDialog(
     LaunchedEffect(Unit) {
         snapshotFlow { state.layoutInfo.firstMostVisibleItemInfo() }
             .collect { info ->
-                state.layoutInfo.visibleMonthsInfo.find { it.index == info.index }?.let {
+                state.layoutInfo.visibleMonthsInfo.find { it.index == info?.index }?.let {
                     selectedYearMonth = SelectedYearMonth(it.month.yearMonth)
                 }
             }

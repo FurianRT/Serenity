@@ -34,8 +34,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -56,7 +54,6 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -67,6 +64,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.internal.ui.common.ButtonClose
+import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.toolspanel.internal.ui.common.ColorResetItem
 import com.furianrt.uikit.extensions.applyIf
@@ -77,7 +76,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.max
-import com.furianrt.uikit.R as uiR
 
 internal var cachedImeHeight = 320.dp
 private const val FONT_CONTENT_TAG = "font_content"
@@ -100,18 +98,12 @@ internal fun FontTitleBar(
         contentAlignment = Alignment.Center,
     ) {
         if (showKeyBoardButtonState) {
-            IconButton(
+            ButtonKeyboard(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .align(Alignment.CenterStart),
                 onClick = { keyboardController?.show() },
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.ic_keyboard),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
+            )
         }
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
@@ -120,18 +112,12 @@ internal fun FontTitleBar(
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.titleMedium,
         )
-        IconButton(
+        ButtonClose(
             modifier = Modifier
                 .padding(end = 4.dp)
                 .align(Alignment.CenterEnd),
             onClick = onDoneClick,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_exit),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
+        )
         HorizontalDivider(
             modifier = Modifier
                 .padding(start = 16.dp)

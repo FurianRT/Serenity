@@ -1,12 +1,13 @@
 package com.furianrt.mediaview.internal.ui
 
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
+import com.furianrt.uikit.theme.NoteFont
 import kotlinx.collections.immutable.ImmutableList
 
 internal data class MediaViewUiState(
     val initialMediaIndex: Int,
     val media: ImmutableList<MediaItem>,
-    val isLightTheme: Boolean,
+    val font: NoteFont? = null,
 )
 
 internal sealed interface MediaViewEvent {

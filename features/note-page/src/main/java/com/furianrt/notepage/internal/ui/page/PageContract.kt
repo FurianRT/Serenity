@@ -3,6 +3,7 @@ package com.furianrt.notepage.internal.ui.page
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -24,6 +25,7 @@ internal sealed interface PageUiState {
         val fontFamily: UiNoteFontFamily?,
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
+        val noteBackground: UiNoteBackground?,
         val isInEditMode: Boolean,
     ) : PageUiState {
 
@@ -41,6 +43,7 @@ internal sealed interface PageEvent {
     data object OnTagTextCleared : PageEvent
     data object OnTagFocusChanged : PageEvent
     data object OnSelectMediaClick : PageEvent
+    data object OnTakePictureClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
     data class OnTitleFocusChange(val id: String, val focused: Boolean) : PageEvent
     data object OnFocusedTitleSelectionChange : PageEvent
@@ -72,6 +75,8 @@ internal sealed interface PageEvent {
     data object OnClickOutside : PageEvent
     data object OnScreenStopped : PageEvent
     data object OnNoPositionError : PageEvent
+    data object OnBackgroundsClick : PageEvent
+    data class OnBackgroundSelected(val item: UiNoteBackground?) : PageEvent
 }
 
 internal sealed interface PageEffect {
