@@ -12,6 +12,8 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextDecoration
+import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.indexOfLastOrNull
 import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -241,13 +243,37 @@ class NoteTitleState(
             )
         }
 
-        val result = textValueState.copy(
+        var result = textValueState.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange(
                 (textValueState.selection.min - bulletList.bullet.length)
                     .coerceAtLeast(0)
             ),
         )
+
+        val bullet = annotatedString.subSequence(
+            startIndex = bulletIndex,
+            endIndex = bulletIndex + bulletList.bullet.length,
+        ).text
+
+        if (bullet == BulletListType.CHECKED_DONE_BULLET) {
+            val textAfterBullet = result.annotatedString.substring(
+                startIndex = bulletIndex,
+                endIndex = result.annotatedString.length,
+            )
+            result = result.copy(
+                annotatedString = buildAnnotatedString {
+                    append(
+                        result.annotatedString.removeSpansFromSelection(
+                            start = bulletIndex,
+                            end = bulletIndex + (textAfterBullet.indexOfFirstOrNull { it == '\n' }
+                                ?: textAfterBullet.length),
+                            spanType = SpanType.Strikethrough,
+                        )
+                    )
+                }
+            )
+        }
 
         recordUndo(oldValue = textValueState, newValue = result)
         textValueState = result
@@ -520,20 +546,32 @@ class NoteTitleState(
             append(newValue.annotatedString.subSequence(startIndex = 0, endIndex = bulletIndex))
             if (bullet == bulletListType.bullet) {
                 append(bulletListType.doneBullet)
-                append(
-                    newValue.annotatedString.subSequence(
-                        startIndex = bulletIndex + bulletListType.bullet.length,
-                        endIndex = newValue.annotatedString.length,
-                    )
+                val startIndex = bulletIndex + bulletListType.bullet.length
+                val textAfterBullet = newValue.annotatedString.subSequence(
+                    startIndex = startIndex,
+                    endIndex = newValue.annotatedString.length,
+                )
+                append(textAfterBullet)
+                addStyle(
+                    style = SpanStyle(textDecoration = TextDecoration.LineThrough),
+                    start = startIndex,
+                    end = startIndex + (textAfterBullet.indexOfFirstOrNull { it == '\n' }
+                        ?: textAfterBullet.length),
                 )
             } else {
                 append(bulletListType.bullet)
-                append(
-                    newValue.annotatedString.subSequence(
-                        startIndex = bulletIndex + bulletListType.doneBullet.length,
-                        endIndex = newValue.annotatedString.length,
-                    )
+                val startIndex = bulletIndex + bulletListType.doneBullet.length
+                val textAfterBullet = newValue.annotatedString.subSequence(
+                    startIndex = startIndex,
+                    endIndex = newValue.annotatedString.length,
                 )
+                val result = textAfterBullet.removeSpansFromSelection(
+                    start = 0,
+                    end = textAfterBullet.indexOfFirstOrNull { it == '\n' }
+                        ?: textAfterBullet.length,
+                    spanType = SpanType.Strikethrough,
+                )
+                append(result)
             }
         }
 
