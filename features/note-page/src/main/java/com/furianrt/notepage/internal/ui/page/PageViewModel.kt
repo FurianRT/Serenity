@@ -591,9 +591,6 @@ internal class PageViewModel @AssistedInject constructor(
             )
         } else {
             deletePhotoFile()
-            _effect.tryEmit(
-                PageEffect.ShowMessage(resourcesManager.getString(uiR.string.general_error)),
-            )
         }
         cachePhoto = null
         cachedPhotoFile = null

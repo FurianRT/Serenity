@@ -365,7 +365,7 @@ class NoteTitleState(
 
         val bulletIndex = startPart.indexOfLast { it == '\n' } + 1
 
-        val newAnnotatedString = buildAnnotatedString {
+        var newAnnotatedString = buildAnnotatedString {
             append(annotatedString.subSequence(0, bulletIndex))
             append(
                 annotatedString.subSequence(
@@ -373,6 +373,23 @@ class NoteTitleState(
                     endIndex = annotatedString.length,
                 )
             )
+        }
+
+        if (bullet == BulletListType.CHECKED_DONE_BULLET) {
+            val textAfterBullet = newAnnotatedString.substring(
+                startIndex = bulletIndex,
+                endIndex = newAnnotatedString.length,
+            )
+            newAnnotatedString = buildAnnotatedString {
+                append(
+                    newAnnotatedString.removeSpansFromSelection(
+                        start = bulletIndex,
+                        end = bulletIndex + (textAfterBullet.indexOfFirstOrNull { it == '\n' }
+                            ?: textAfterBullet.length),
+                        spanType = SpanType.Strikethrough,
+                    )
+                )
+            }
         }
 
         textValueState = textValueState.copy(
