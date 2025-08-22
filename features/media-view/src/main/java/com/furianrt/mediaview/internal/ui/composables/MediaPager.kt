@@ -130,7 +130,8 @@ private fun ImagePage(
 
     val zoomState = rememberCoilZoomState()
     LaunchedEffect(zoomState.zoomable) {
-        zoomState.zoomable.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
+        zoomState.zoomable
+        zoomState.zoomable.setScalesCalculator(ScalesCalculator.dynamic(SCALE_MULTIPLIER))
     }
 
     var dragOffset by remember { mutableFloatStateOf(0f) }
@@ -243,7 +244,7 @@ internal fun VideoPage(
 
     val zoomableState = rememberZoomableState()
     LaunchedEffect(zoomableState) {
-        zoomableState.scalesCalculator = ScalesCalculator.dynamic(SCALE_MULTIPLIER)
+        zoomableState.setScalesCalculator(ScalesCalculator.dynamic(SCALE_MULTIPLIER))
     }
 
     var dragOffset by remember { mutableFloatStateOf(0f) }
