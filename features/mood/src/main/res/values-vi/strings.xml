@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Hôm nay tâm trạng sao?</string>
+    <string name="mood_dialog_more_emoji">Thêm biểu tượng cảm xúc</string>
+    <string name="mood_dialog_clear">Xóa</string>
+</resources>

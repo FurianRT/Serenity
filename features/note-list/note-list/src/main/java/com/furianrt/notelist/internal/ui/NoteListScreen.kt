@@ -283,6 +283,7 @@ private fun SuccessContent(
                 fontColor = note.fontColor,
                 fontFamily = note.fontFamily,
                 fontSize = note.fontSize.sp,
+                moodId = note.moodId,
                 isPinned = note.isPinned,
                 isSelected = note.isSelected,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
@@ -450,6 +451,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                 fontFamily = null,
                 fontSize = 16,
                 isPinned = false,
+                moodId = null,
                 isSelected = withSelected && index % 2 == 0,
                 content = persistentListOf(
                     UiNoteContent.Title(

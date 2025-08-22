@@ -32,6 +32,9 @@ internal class EntryNote(
     @ColumnInfo(name = FIELD_BACKGROUND_ID)
     val backgroundId: String?,
 
+    @ColumnInfo(name = FIELD_MOOD_ID)
+    val moodId: String?,
+
     @ColumnInfo(name = FIELD_DATE)
     val date: ZonedDateTime,
 
@@ -50,6 +53,7 @@ internal class EntryNote(
         const val FIELD_FONT_COLOR = "font_color"
         const val FIELD_FONT_SIZE = "font_size"
         const val FIELD_BACKGROUND_ID = "background_id"
+        const val FIELD_MOOD_ID = "mood_id"
         const val FIELD_DATE = "date"
         const val FIELD_IS_PINNED = "is_pinned"
         const val FIELD_IS_TEMPLATE = "is_template"
@@ -123,4 +127,13 @@ internal class PartNoteBackgroundId(
 
     @ColumnInfo(name = EntryNote.FIELD_BACKGROUND_ID)
     val backgroundId: String?,
+)
+
+@Entity
+internal class PartNoteMoodId(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_MOOD_ID)
+    val moodId: String?,
 )

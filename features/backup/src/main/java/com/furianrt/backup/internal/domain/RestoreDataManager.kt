@@ -205,6 +205,7 @@ internal class RestoreDataManager @Inject constructor(
                     fontColor = note.fontColor,
                     fontSize = note.fontSize,
                     backgroundId = note.backgroundId,
+                    moodId = note.moodId,
                     date = note.date,
                     isPinned = note.isPinned,
                 )
@@ -218,6 +219,7 @@ internal class RestoreDataManager @Inject constructor(
                 fontColor = note.fontColor,
                 fontSize = note.fontSize,
                 backgroundId = note.backgroundId,
+                moodId = note.moodId,
                 updateMediaFiles = false,
             )
         }

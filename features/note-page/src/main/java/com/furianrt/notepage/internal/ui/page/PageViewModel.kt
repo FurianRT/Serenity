@@ -70,6 +70,8 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelect
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSortingClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoPositionError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
@@ -303,6 +305,8 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnBackgroundsClick -> resetStickersEditing()
             is OnBackgroundSelected -> updateBackground(event.item)
+            is OnMoodClick -> showMoodDialog()
+            is OnMoodSelected -> updateNoteMood(event.moodId)
         }
     }
 
@@ -979,6 +983,8 @@ internal class PageViewModel @AssistedInject constructor(
                             fontColor = note.fontColor,
                             fontSize = note.fontSize,
                             noteBackground = note.background,
+                            moodId = note.moodId,
+                            defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                             isInEditMode = isNoteCreationMode,
                         ).also {
                             if (isNoteCreationMode) {
@@ -1021,6 +1027,7 @@ internal class PageViewModel @AssistedInject constructor(
                 fontColor = fontColor,
                 fontSize = fontSize,
                 backgroundId = state.noteBackground?.id,
+                moodId = state.moodId,
             )
             if (isNoteCreationMode) {
                 saveDefaultFontData(state)
@@ -1064,6 +1071,36 @@ internal class PageViewModel @AssistedInject constructor(
     private fun updateBackground(background: UiNoteBackground?) {
         hasContentChanged = true
         _state.updateState<PageUiState.Success> { it.copy(noteBackground = background) }
+    }
+
+    private fun showMoodDialog() {
+        resetStickersEditing()
+        _state.doWithState<PageUiState.Success> { successState ->
+            _effect.tryEmit(
+                PageEffect.ShowMoodDialog(
+                    moodId = successState.moodId,
+                    defaultMoodId = successState.defaultMoodId,
+                )
+            )
+        }
+    }
+
+    private fun updateNoteMood(moodId: String?) = launch {
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(
+                moodId = moodId,
+                defaultMoodId = moodId ?: successState.defaultMoodId,
+            ).also {
+                if (isInEditMode) {
+                    hasContentChanged = true
+                } else {
+                    saveNoteContent(it)
+                }
+                if (moodId != null) {
+                    notesRepository.updateNoteDefaultMoodId(moodId)
+                }
+            }
+        }
     }
 
     private fun PageUiState.Success.addTag(

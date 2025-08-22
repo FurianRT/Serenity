@@ -38,6 +38,7 @@ internal suspend fun LocalNote.toNoteItem(
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
     background = background,
+    moodId = moodId,
 )
 
 internal fun MediaResult.toMediaBlock() = MediaBlock(

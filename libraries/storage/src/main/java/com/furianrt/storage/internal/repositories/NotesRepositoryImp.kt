@@ -18,6 +18,7 @@ import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsTemplate
+import com.furianrt.storage.internal.database.notes.entities.PartNoteMoodId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
@@ -78,6 +79,14 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteBackgroundId(noteId, backgroundId))
     }
 
+    override suspend fun updateNoteMoodId(noteId: String, moodId: String?) {
+        noteDao.update(PartNoteMoodId(noteId, moodId))
+    }
+
+    override suspend fun updateNoteDefaultMoodId(moodId: String) {
+        appearanceDataStore.setDefaultNoteMoodId(moodId)
+    }
+
     override suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor?,
@@ -135,6 +144,7 @@ internal class NotesRepositoryImp @Inject constructor(
                 fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
                 fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
                 backgroundId = null,
+                moodId = null,
                 date = ZonedDateTime.now(),
                 isPinned = false,
                 isTemplate = true,

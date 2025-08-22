@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Bugün modun nasıl?</string>
+    <string name="mood_dialog_more_emoji">Daha fazla emoji</string>
+    <string name="mood_dialog_clear">Temizle</string>
+</resources>

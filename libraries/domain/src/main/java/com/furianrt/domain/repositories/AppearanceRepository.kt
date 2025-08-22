@@ -17,4 +17,6 @@ interface AppearanceRepository {
     suspend fun setDefaultNoteFontColor(color: NoteFontColor?)
     fun getDefaultNoteFontSize(): Flow<Int>
     suspend fun setDefaultNoteFontSize(size: Int)
+    fun getDefaultNoteMoodId(): Flow<String?>
+    suspend fun setDefaultNoteMoodId(moodId: String)
 }

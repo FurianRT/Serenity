@@ -43,6 +43,7 @@ internal sealed class SearchListItem(
         val fontColor: UiNoteFontColor?,
         val fontFamily: UiNoteFontFamily?,
         val fontSize: Int,
+        val moodId: String?,
         val content: ImmutableList<UiNoteContent>,
     ) : SearchListItem(id) {
         sealed interface Date {

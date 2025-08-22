@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">気分はどう？</string>
+    <string name="mood_dialog_more_emoji">もっと絵文字</string>
+    <string name="mood_dialog_clear">クリア</string>
+</resources>

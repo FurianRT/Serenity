@@ -47,4 +47,12 @@ internal class AppearanceRepositoryImp @Inject constructor(
     override suspend fun setDefaultNoteFontSize(size: Int) {
         appearanceDataStore.setDefaultNoteFontSize(size)
     }
+
+    override fun getDefaultNoteMoodId(): Flow<String?> {
+        return appearanceDataStore.getDefaultNoteMoodId()
+    }
+
+    override suspend fun setDefaultNoteMoodId(moodId: String) {
+        appearanceDataStore.setDefaultNoteMoodId(moodId)
+    }
 }

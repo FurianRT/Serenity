@@ -3,6 +3,7 @@ package com.furianrt.uikit.extensions
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.ripple
 import androidx.compose.ui.Modifier
 
 operator fun RippleAlpha.div(value: Float) = RippleAlpha(
@@ -33,4 +34,12 @@ fun Modifier.clickableNoRipple(
     onClick = onClick,
     indication = null,
     interactionSource = interactionSource,
+)
+
+fun Modifier.clickableUnbounded(
+    onClick: () -> Unit,
+) = this.clickable(
+    onClick = onClick,
+    indication = ripple(bounded = false),
+    interactionSource = null,
 )

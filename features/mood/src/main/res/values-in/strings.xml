@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Gimana mood kamu?</string>
+    <string name="mood_dialog_more_emoji">Lebih banyak emoji</string>
+    <string name="mood_dialog_clear">Hapus</string>
+</resources>

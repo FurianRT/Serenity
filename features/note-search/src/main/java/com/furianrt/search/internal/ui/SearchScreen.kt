@@ -332,6 +332,7 @@ private fun SuccessContent(
                     fontColor = item.fontColor,
                     fontFamily = item.fontFamily,
                     fontSize = item.fontSize.sp,
+                    moodId = item.moodId,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = { onEvent(SearchEvent.OnNoteLongClick(item.id)) },
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
@@ -412,6 +413,7 @@ private fun SuccessFilledQueryPreview() {
                         fontColor = null,
                         fontFamily = null,
                         fontSize = 16,
+                        moodId = null,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",

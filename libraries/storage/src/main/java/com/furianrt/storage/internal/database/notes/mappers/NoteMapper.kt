@@ -30,6 +30,7 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     fontColor = fontColor,
     fontSize = fontSize,
     backgroundId = backgroundId,
+    moodId = moodId,
     date = date,
     isPinned = isPinned,
     isTemplate = false,
@@ -44,6 +45,7 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     fontColor = note.fontColor,
     fontSize = note.fontSize,
     backgroundId = note.backgroundId,
+    moodId = note.moodId,
     isPinned = note.isPinned,
     content = getLocalNoteContent(),
 )
@@ -87,6 +89,7 @@ internal fun EntryNote.toSimpleNote() = SimpleNote(
     fontColor = fontColor,
     fontSize = fontSize,
     backgroundId = backgroundId,
+    moodId = moodId,
     date = date,
     isPinned = isPinned,
 )

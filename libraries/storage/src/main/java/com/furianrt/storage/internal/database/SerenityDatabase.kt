@@ -55,7 +55,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        const val VERSION = 2
+        const val VERSION = 3
 
         fun create(
             context: Context,

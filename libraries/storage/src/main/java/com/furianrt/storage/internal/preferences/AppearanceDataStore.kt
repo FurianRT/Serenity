@@ -17,6 +17,7 @@ private val KEY_DEFAULT_NOTE_FONT = stringPreferencesKey("default_note_font")
 private val KEY_APP_FONT = stringPreferencesKey("app_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
 private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
+private val KEY_DEFAULT_NOTE_MOOD_ID = stringPreferencesKey("default_note_mood_id")
 
 @Singleton
 internal class AppearanceDataStore @Inject constructor(
@@ -69,5 +70,12 @@ internal class AppearanceDataStore @Inject constructor(
 
     suspend fun setDefaultNoteFontSize(size: Int) {
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_FONT_SIZE] = size }
+    }
+
+    fun getDefaultNoteMoodId(): Flow<String?> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_MOOD_ID] }
+
+    suspend fun setDefaultNoteMoodId(moodId: String) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_MOOD_ID] = moodId }
     }
 }

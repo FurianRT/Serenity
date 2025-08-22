@@ -39,6 +39,7 @@ internal fun LocalNote.toMainScreenNote(
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
         isPinned = isPinned,
+        moodId = moodId,
         isSelected = isSelected,
         content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
     )

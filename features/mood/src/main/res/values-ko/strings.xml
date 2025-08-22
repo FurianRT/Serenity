@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">기분 어때?</string>
+    <string name="mood_dialog_more_emoji">더 많은 이모지</string>
+    <string name="mood_dialog_clear">지우기</string>
+</resources>

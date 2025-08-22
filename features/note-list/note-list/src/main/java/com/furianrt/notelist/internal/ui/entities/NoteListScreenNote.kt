@@ -15,6 +15,7 @@ internal data class NoteListScreenNote(
     val fontColor: UiNoteFontColor?,
     val fontFamily: UiNoteFontFamily?,
     val fontSize: Int,
+    val moodId: String?,
     val isPinned: Boolean,
     val isSelected: Boolean,
     val content: ImmutableList<UiNoteContent>,

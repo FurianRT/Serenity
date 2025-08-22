@@ -27,6 +27,8 @@ internal sealed interface PageUiState {
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
         val noteBackground: UiNoteBackground?,
+        val moodId: String?,
+        val defaultMoodId: String?,
         val isInEditMode: Boolean,
     ) : PageUiState {
 
@@ -81,6 +83,8 @@ internal sealed interface PageEvent {
     data object OnNoPositionError : PageEvent
     data object OnBackgroundsClick : PageEvent
     data class OnBackgroundSelected(val item: UiNoteBackground?) : PageEvent
+    data object OnMoodClick : PageEvent
+    data class OnMoodSelected(val moodId: String?) : PageEvent
 }
 
 internal sealed interface PageEffect {
@@ -109,4 +113,8 @@ internal sealed interface PageEffect {
     data class ShowMessage(val message: String) : PageEffect
     data class ShowToast(val message: String) : PageEffect
     data class TakePicture(val uri: Uri) : PageEffect
+    data class ShowMoodDialog(
+        val moodId: String?,
+        val defaultMoodId: String?,
+    ) : PageEffect
 }

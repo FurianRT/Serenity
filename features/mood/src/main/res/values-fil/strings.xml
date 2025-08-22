@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Kumusta mood mo?</string>
+    <string name="mood_dialog_more_emoji">Mas maraming emoji</string>
+    <string name="mood_dialog_clear">I-clear</string>
+</resources>

@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Come va l’umore?</string>
+    <string name="mood_dialog_more_emoji">Altri emoji</string>
+    <string name="mood_dialog_clear">Cancella</string>
+</resources>

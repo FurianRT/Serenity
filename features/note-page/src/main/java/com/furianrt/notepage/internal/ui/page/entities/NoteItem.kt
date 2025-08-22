@@ -21,4 +21,5 @@ internal data class NoteItem(
     val fontColor: UiNoteFontColor? = null,
     val fontSize: Int = 16,
     val background: UiNoteBackground?,
+    val moodId: String?
 )

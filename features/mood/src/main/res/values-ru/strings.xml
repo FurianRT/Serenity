@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Как настроение?</string>
+    <string name="mood_dialog_more_emoji">Больше эмодзи</string>
+    <string name="mood_dialog_clear">Очистить</string>
+</resources>

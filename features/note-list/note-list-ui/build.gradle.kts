@@ -9,6 +9,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.features.mood)
+
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)

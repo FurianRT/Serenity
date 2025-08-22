@@ -35,6 +35,7 @@ internal fun LocalNote.toNoteItem(
         fontColor = fontColor?.toUiNoteFontColor(),
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
+        moodId = moodId,
         content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
     )
 }

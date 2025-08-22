@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.features.toolsPanel)
     implementation(projects.features.mediaSelector)
     implementation(projects.features.noteList.noteListUi)
+    implementation(projects.features.mood)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.common)

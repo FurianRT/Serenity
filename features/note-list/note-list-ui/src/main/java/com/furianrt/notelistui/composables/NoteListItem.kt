@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.CardDefaults
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -34,6 +36,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -62,6 +65,7 @@ fun NoteListItem(
     modifier: Modifier = Modifier,
     isPinned: Boolean = false,
     isSelected: Boolean = false,
+    moodId: String? = null,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
@@ -155,16 +159,28 @@ fun NoteListItem(
                     )
                 }
             }
-            if (content.isEmpty()) {
-                Spacer(modifier = Modifier.height(40.dp))
+
+            val showMood = content.isEmpty() && moodId != null
+
+            when {
+                showMood -> MoodButton(
+                    modifier = Modifier
+                        .padding(top = 12.dp)
+                        .size(70.dp)
+                        .align(Alignment.CenterHorizontally),
+                    moodId = moodId,
+                    defaultMoodId = null,
+                )
+                content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
             }
+            
             NoteTags(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(
                         start = 4.dp,
                         end = 4.dp,
-                        top = if (tags.isEmpty()) 0.dp else 16.dp,
+                        top = if (tags.isEmpty() || showMood) 0.dp else 16.dp,
                         bottom = 10.dp,
                     ),
                 tags = tags,

@@ -15,6 +15,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +26,7 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -77,6 +79,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.mood.api.composables.MoodButton
+import com.furianrt.mood.api.composables.MoodDialog
 import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
@@ -127,6 +131,11 @@ import com.furianrt.uikit.R as uiR
 private const val TAG = "NotePageScreenInternal"
 private const val ANIM_PANEL_VISIBILITY_DURATION = 200
 
+private data class MoodDialogState(
+    val moodId: String?,
+    val defaultMoodId: String?,
+)
+
 @OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 internal fun NotePageScreenInternal(
@@ -174,6 +183,7 @@ internal fun NotePageScreenInternal(
 
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
     var showCameraPermissionDialog by remember { mutableStateOf(false) }
+    var moodDialogState: MoodDialogState? by remember { mutableStateOf(null) }
 
     val view = LocalView.current
     val hazeState = remember { HazeState() }
@@ -252,6 +262,11 @@ internal fun NotePageScreenInternal(
                     effect.mediaBlockId,
                     effect.identifier
                 )
+
+                is PageEffect.ShowMoodDialog -> moodDialogState = MoodDialogState(
+                    moodId = effect.moodId,
+                    defaultMoodId = effect.defaultMoodId,
+                )
             }
         }
     }
@@ -287,6 +302,16 @@ internal fun NotePageScreenInternal(
             hazeState = hazeState,
             onDismissRequest = { showCameraPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
+    moodDialogState?.let { dialogState ->
+        MoodDialog(
+            moodId = dialogState.moodId,
+            defaultMoodId = dialogState.defaultMoodId,
+            hazeState = hazeState,
+            onDismissRequest = { moodDialogState = null },
+            onMoodSelected = { viewModel.onEvent(PageEvent.OnMoodSelected(it?.id)) },
         )
     }
 }
@@ -611,24 +636,40 @@ private fun ContentItems(
             }
 
             key(UiNoteTag.BLOCK_ID + uiState.noteId) {
-                NoteTags(
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 4.dp, top = 20.dp)
-                        .fillMaxWidth()
-                        .animatePlacementInScope(this@LookaheadScope),
-                    tags = uiState.tags,
-                    isEditable = uiState.isInEditMode,
-                    animateItemsPlacement = true,
-                    showStub = true,
-                    onTagRemoveClick = { tag ->
-                        onEvent(PageEvent.OnTagRemoveClick(tag))
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                    },
-                    onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
-                    onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
-                    onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
-                    onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
-                )
+                Row(
+                    modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    NoteTags(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .padding(top = 10.dp)
+                            .animatePlacementInScope(this@LookaheadScope),
+                        tags = uiState.tags,
+                        isEditable = uiState.isInEditMode,
+                        animateItemsPlacement = true,
+                        showStub = true,
+                        onTagRemoveClick = { tag ->
+                            onEvent(PageEvent.OnTagRemoveClick(tag))
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                        },
+                        onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
+                        onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
+                        onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
+                        onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
+                    )
+                    if (uiState.moodId != null || uiState.isInEditMode) {
+                        MoodButton(
+                            modifier = Modifier
+                                .padding(end = 12.dp, top = 6.dp)
+                                .size(48.dp),
+                            moodId = uiState.moodId,
+                            defaultMoodId = uiState.defaultMoodId,
+                            onClick = { onEvent(PageEvent.OnMoodClick) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -779,6 +820,8 @@ private fun SuccessScreenPreview() {
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 16,
                 noteBackground = null,
+                moodId = null,
+                defaultMoodId = null,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",

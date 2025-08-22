@@ -74,6 +74,7 @@ internal interface DatabaseModule {
     fun localeRepository(imp: LocaleRepositoryImp): LocaleRepository
 
     companion object {
+        @Suppress("LocalVariableName")
         @Provides
         @Singleton
         fun provideDatabase(
@@ -84,10 +85,18 @@ internal interface DatabaseModule {
                     db.execSQL("ALTER TABLE Notes ADD COLUMN background_id TEXT")
                 }
             }
+            val MIGRATION_2_3 = object : Migration(2, 3) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE Notes ADD COLUMN mood_id TEXT")
+                }
+            }
             return SerenityDatabase
                 .create(
                     context = context,
-                    migrations = arrayOf(MIGRATION_1_2),
+                    migrations = arrayOf(
+                        MIGRATION_1_2,
+                        MIGRATION_2_3,
+                    ),
                 )
         }
 

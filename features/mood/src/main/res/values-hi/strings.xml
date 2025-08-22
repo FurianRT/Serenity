@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">मूड कैसा है?</string>
+    <string name="mood_dialog_more_emoji">और इमोजी</string>
+    <string name="mood_dialog_clear">साफ़ करें</string>
+</resources>

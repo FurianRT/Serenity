@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">How are you feeling?</string>
+    <string name="mood_dialog_more_emoji">More Emoji</string>
+    <string name="mood_dialog_clear">Clear</string>
+</resources>
