@@ -63,7 +63,7 @@ internal class BackupDataManager @Inject constructor(
             return
         }
 
-        if (!deleteUnusedMediaFiles(remoteFiles)) {
+        if (!uploadNotesMediaFiles(remoteFiles)) {
             progressState.update { SyncState.Failure }
             return
         }
@@ -73,7 +73,7 @@ internal class BackupDataManager @Inject constructor(
             return
         }
 
-        if (!uploadNotesMediaFiles(remoteFiles)) {
+        if (!deleteUnusedMediaFiles(remoteFiles)) {
             progressState.update { SyncState.Failure }
             return
         }

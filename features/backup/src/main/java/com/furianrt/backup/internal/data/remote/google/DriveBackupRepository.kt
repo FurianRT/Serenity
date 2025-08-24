@@ -45,6 +45,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okio.BufferedSink
 import okio.source
 import java.io.File
+import java.io.FileNotFoundException
 import java.io.IOException
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -177,11 +178,15 @@ internal class DriveBackupRepository @Inject constructor(
         notes: List<LocalNote>,
     ): Result<Unit> = withContext(dispatchers.io) {
         runCatching {
-            val metadataRequestBody = buildJsonObject {
+            val metadataJson = buildJsonObject {
                 put("name", "NotesData")
                 put("mimeType", ACCEPT_JSON_VALUE)
                 putJsonArray("parents") { add(APP_FOLDER_NAME) }
-            }.toString().toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+            }
+
+            val metadataRequestBody = metadataJson
+                .toString()
+                .toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
 
             val jsonString = Json.encodeToString(notes)
             val filePart = MultipartBody.Part.createFormData(
@@ -240,25 +245,36 @@ internal class DriveBackupRepository @Inject constructor(
         fileUri: Uri,
         mimeType: String,
     ): Result<Unit> = withContext(dispatchers.io) {
-        runCatching {
+        try {
             val streamBody = object : RequestBody() {
                 override fun contentType(): MediaType = mimeType.toMediaType()
                 override fun writeTo(sink: BufferedSink) {
-                    context.contentResolver.openInputStream(fileUri)?.source()?.use { source ->
-                        sink.writeAll(source)
-                    } ?: throw IOException("Unable to open Uri: $fileUri")
+                    context.contentResolver.openInputStream(fileUri)
+                        ?.source()
+                        ?.use { source -> sink.writeAll(source) }
+                        ?: throw IOException("Unable to open Uri: $fileUri")
                 }
             }
 
             val filePart = MultipartBody.Part.createFormData("file", name, streamBody)
 
-            val metadataRequestBody = buildJsonObject {
+            val metadataJson = buildJsonObject {
                 put("name", name)
                 putJsonArray("parents") { add(APP_FOLDER_NAME) }
                 put("mimeType", mimeType)
-            }.toString().toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+            }
 
-            driveApiService.uploadFile(metadataRequestBody, filePart)
+            val metadataRequestBody = metadataJson.toString()
+                .toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+
+            Result.success(driveApiService.uploadFile(metadataRequestBody, filePart))
+        } catch (e: Throwable) {
+            if (e is FileNotFoundException) {
+                errorTracker.trackNonFatalError(e)
+                Result.success(Unit)
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
