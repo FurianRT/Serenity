@@ -25,12 +25,14 @@ object Colors {
         val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
 
+        val TotalBlack = Color(0xFF040009)
 
         val LightBlue = Color(0xFFC0E0F4)
         val LightGreen = Color(0xFFD3EEDF)
         val LightPink = Color(0xFFFADFEE)
         val LightPurple = Color(0xFFE1C3FF)
         val LightOrange = Color(0xFFFECDA4)
+        val LightWhite = Color(0xFFECF3F3)
     }
 
     object Accent {
@@ -53,6 +55,7 @@ object Colors {
         val LightPink = Color(0xFFEF83B5)
         val LightPurple = Color(0xFFB46AFF)
         val LightOrange = Color(0xFFF77950)
+        val LightBlue2 = Color(0xFF59A9D6)
     }
 
     object Font {
@@ -97,5 +100,6 @@ object Colors {
 
     object Common {
         val DarkGray = Color(0xFF212121)
+        val LightGray = Color(0xFFDEDEDE)
     }
 }

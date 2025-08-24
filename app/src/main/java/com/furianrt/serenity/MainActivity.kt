@@ -148,6 +148,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                             darkScrim = color
                                         ),
                                     )
+                                } else {
+                                    activity.enableEdgeToEdge(
+                                        statusBarStyle = SystemBarStyle.dark(color),
+                                        navigationBarStyle = SystemBarStyle.dark(color),
+                                    )
                                 }
                             }
                         }
