@@ -32,7 +32,7 @@ private const val COLOR_ANIM_DURATION = 200
 val defaultColorScheme = darkColorScheme()
 
 val LocalIsLightTheme = compositionLocalOf { false }
-val LocalFont = compositionLocalOf<NoteFont> { NoteFont.QuickSand }
+val LocalFont = compositionLocalOf<NoteFont> { NoteFont.NotoSans }
 val LocalHasMediaRoute = compositionLocalOf { false }
 val LocalHasMediaSortingRoute = compositionLocalOf { false }
 

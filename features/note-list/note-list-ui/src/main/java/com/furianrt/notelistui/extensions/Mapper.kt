@@ -176,7 +176,9 @@ fun List<LocalNote.Content>.getShortUiContent(
 }
 
 fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
-    NoteFontFamily.QUICK_SAND -> UiNoteFontFamily.QuickSand
+    NoteFontFamily.NOTO_SANS -> UiNoteFontFamily.NotoSans
+    NoteFontFamily.NOTO_SERIF -> UiNoteFontFamily.NotoSerif
+    NoteFontFamily.ROBOTO -> UiNoteFontFamily.Roboto
     NoteFontFamily.SHANTELL_SANS -> UiNoteFontFamily.ShantellSans
     NoteFontFamily.PIXELIFY_SANS -> UiNoteFontFamily.PixelifySans
     NoteFontFamily.ADVENT_PRO -> UiNoteFontFamily.AdventPro
@@ -191,7 +193,9 @@ fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
-    UiNoteFontFamily.QuickSand -> NoteFontFamily.QUICK_SAND
+    UiNoteFontFamily.NotoSans -> NoteFontFamily.NOTO_SANS
+    UiNoteFontFamily.NotoSerif -> NoteFontFamily.NOTO_SERIF
+    UiNoteFontFamily.Roboto -> NoteFontFamily.ROBOTO
     UiNoteFontFamily.ShantellSans -> NoteFontFamily.SHANTELL_SANS
     UiNoteFontFamily.PixelifySans -> NoteFontFamily.PIXELIFY_SANS
     UiNoteFontFamily.AdventPro -> NoteFontFamily.ADVENT_PRO
@@ -273,7 +277,9 @@ fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) 
 }
 
 fun NoteFontFamily.toNoteFont() = when (this) {
-    NoteFontFamily.QUICK_SAND -> NoteFont.QuickSand
+    NoteFontFamily.NOTO_SANS -> NoteFont.NotoSans
+    NoteFontFamily.NOTO_SERIF -> NoteFont.NotoSerif
+    NoteFontFamily.ROBOTO -> NoteFont.Roboto
     NoteFontFamily.SHANTELL_SANS -> NoteFont.ShantellSans
     NoteFontFamily.PIXELIFY_SANS -> NoteFont.PixelifySans
     NoteFontFamily.ADVENT_PRO -> NoteFont.AdventPro

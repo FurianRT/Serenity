@@ -96,7 +96,7 @@ private fun Preview() {
     SerenityTheme {
         AppFontDialog(
             fonts = persistentListOf(
-                UiNoteFontFamily.QuickSand,
+                UiNoteFontFamily.NotoSans,
                 UiNoteFontFamily.Doto,
                 UiNoteFontFamily.Tektur,
                 UiNoteFontFamily.PlayWriteModern

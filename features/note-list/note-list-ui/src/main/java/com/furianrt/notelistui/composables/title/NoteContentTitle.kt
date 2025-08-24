@@ -197,7 +197,7 @@ private fun NoteContentTitlePreview() {
             title = UiNoteContent.Title(
                 id = "1",
                 state = NoteTitleState(
-                    fontFamily = UiNoteFontFamily.QuickSand,
+                    fontFamily = UiNoteFontFamily.NotoSans,
                     initialText = AnnotatedString(
                         text = "Kotlin is a modern programming language with a " +
                                 "lot more syntactic sugar compared to Java, and as such " +

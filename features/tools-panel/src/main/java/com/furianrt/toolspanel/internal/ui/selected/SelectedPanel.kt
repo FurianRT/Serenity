@@ -368,7 +368,7 @@ private fun SelectedPanelPreview() {
     SerenityTheme {
         SelectedPanel(
             titleState = NoteTitleState(
-                fontFamily = UiNoteFontFamily.QuickSand,
+                fontFamily = UiNoteFontFamily.NotoSans,
             ),
         )
     }

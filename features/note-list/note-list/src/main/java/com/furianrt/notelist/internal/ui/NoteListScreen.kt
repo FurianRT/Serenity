@@ -403,7 +403,7 @@ private fun SuccessPreview() {
                 notes = generatePreviewNotes(withSelected = false),
                 scrollToPosition = null,
                 selectedNotesCount = 0,
-                font = NoteFont.QuickSand,
+                font = NoteFont.NotoSans,
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
@@ -432,7 +432,7 @@ private fun SuccessWithSelectedPreview() {
                 notes = generatePreviewNotes(withSelected = true),
                 scrollToPosition = null,
                 selectedNotesCount = 3,
-                font = NoteFont.QuickSand,
+                font = NoteFont.NotoSans,
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
@@ -457,7 +457,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                     UiNoteContent.Title(
                         id = index.toString(),
                         state = NoteTitleState(
-                            fontFamily = UiNoteFontFamily.QuickSand,
+                            fontFamily = UiNoteFontFamily.NotoSans,
                             initialText = AnnotatedString(
                                 text = "Kotlin is a modern programming language with a " +
                                         "lot more syntactic sugar compared to Java, and as such " +

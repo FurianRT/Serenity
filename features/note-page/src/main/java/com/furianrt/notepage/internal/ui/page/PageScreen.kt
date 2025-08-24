@@ -816,7 +816,7 @@ private fun SuccessScreenPreview() {
                 tags = persistentListOf(),
                 stickers = persistentListOf(),
                 playingVoiceId = null,
-                fontFamily = UiNoteFontFamily.QuickSand,
+                fontFamily = UiNoteFontFamily.NotoSans,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 16,
                 noteBackground = null,
@@ -826,7 +826,7 @@ private fun SuccessScreenPreview() {
                     UiNoteContent.Title(
                         id = "1",
                         state = NoteTitleState(
-                            fontFamily = UiNoteFontFamily.QuickSand,
+                            fontFamily = UiNoteFontFamily.NotoSans,
                             initialText = AnnotatedString(
                                 text = "Kotlin is a modern programming language with a " +
                                         "lot more syntactic sugar compared to Java, and as such " +

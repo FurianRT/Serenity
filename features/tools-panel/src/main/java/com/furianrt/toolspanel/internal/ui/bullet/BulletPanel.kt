@@ -282,7 +282,7 @@ private fun ContentPreview() {
                 ),
             ),
             titleState = NoteTitleState(
-                fontFamily = UiNoteFontFamily.QuickSand,
+                fontFamily = UiNoteFontFamily.NotoSans,
             ),
         )
     }

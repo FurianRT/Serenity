@@ -468,11 +468,11 @@ private fun ContentPreview() {
         Content(
             uiState = FontPanelUiState(
                 selectedFontColor = UiNoteFontColor.WHITE,
-                selectedFontFamily = UiNoteFontFamily.QuickSand,
+                selectedFontFamily = UiNoteFontFamily.NotoSans,
                 selectedFontSize = 16,
-                fontFamilies = persistentListOf(UiNoteFontFamily.QuickSand),
+                fontFamilies = persistentListOf(UiNoteFontFamily.NotoSans),
                 fontColors = UiNoteFontColor.entries.toImmutableList(),
-                defaultFontFamily = UiNoteFontFamily.QuickSand,
+                defaultFontFamily = UiNoteFontFamily.NotoSans,
             ),
             onEvent = {},
             onFontFamilySelected = {},

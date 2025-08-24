@@ -203,7 +203,7 @@ private fun NoteItemPreview() {
                 UiNoteTag.Template(id = "2"),
             ),
             fontColor = UiNoteFontColor.WHITE,
-            fontFamily = UiNoteFontFamily.QuickSand,
+            fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             content = generatePreviewContent(),
         )
@@ -222,7 +222,7 @@ private fun PinnedNoteItemPreview() {
                 UiNoteTag.Template(id = "2"),
             ),
             fontColor = UiNoteFontColor.WHITE,
-            fontFamily = UiNoteFontFamily.QuickSand,
+            fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             isPinned = true,
             content = generatePreviewContent(),
@@ -242,7 +242,7 @@ private fun SelectedNoteItemPreview() {
                 UiNoteTag.Template(id = "2"),
             ),
             fontColor = UiNoteFontColor.WHITE,
-            fontFamily = UiNoteFontFamily.QuickSand,
+            fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             isPinned = true,
             isSelected = true,
@@ -255,7 +255,7 @@ private fun generatePreviewContent(): ImmutableList<UiNoteContent> = persistentL
     UiNoteContent.Title(
         id = "1",
         state = NoteTitleState(
-            fontFamily = UiNoteFontFamily.QuickSand,
+            fontFamily = UiNoteFontFamily.NotoSans,
             initialText = AnnotatedString(
                 text = "Kotlin is a modern programming language with a " +
                         "lot more syntactic sugar compared to Java, and as such " +

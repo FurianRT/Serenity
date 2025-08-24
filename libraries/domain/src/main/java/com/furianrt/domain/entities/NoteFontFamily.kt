@@ -1,7 +1,9 @@
 package com.furianrt.domain.entities
 
 enum class NoteFontFamily {
-    QUICK_SAND,
+    NOTO_SANS,
+    NOTO_SERIF,
+    ROBOTO,
     SHANTELL_SANS,
     PIXELIFY_SANS,
     ADVENT_PRO,

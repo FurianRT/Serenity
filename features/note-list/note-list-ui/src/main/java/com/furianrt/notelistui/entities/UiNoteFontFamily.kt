@@ -12,11 +12,27 @@ sealed class UiNoteFontFamily(
     val bold: FontFamily,
 ) {
     @Immutable
-    data object QuickSand : UiNoteFontFamily(
-        name = "Quick Sand",
-        light = NoteFont.QuickSand.light,
-        regular = NoteFont.QuickSand.regular,
-        bold = NoteFont.QuickSand.bold,
+    data object NotoSans : UiNoteFontFamily(
+        name = "Noto Sans",
+        light = NoteFont.NotoSans.light,
+        regular = NoteFont.NotoSans.regular,
+        bold = NoteFont.NotoSans.bold,
+    )
+
+    @Immutable
+    data object NotoSerif : UiNoteFontFamily(
+        name = "Noto Serif",
+        light = NoteFont.NotoSerif.light,
+        regular = NoteFont.NotoSerif.regular,
+        bold = NoteFont.NotoSerif.bold,
+    )
+
+    @Immutable
+    data object Roboto : UiNoteFontFamily(
+        name = "Roboto",
+        light = NoteFont.Roboto.light,
+        regular = NoteFont.Roboto.regular,
+        bold = NoteFont.Roboto.bold,
     )
 
     @Immutable

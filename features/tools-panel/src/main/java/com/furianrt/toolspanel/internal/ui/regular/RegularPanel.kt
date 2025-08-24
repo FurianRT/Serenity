@@ -117,7 +117,7 @@ private fun RegularPanelPreview() {
     SerenityTheme {
         RegularPanel(
             titleState = NoteTitleState(
-                fontFamily = UiNoteFontFamily.QuickSand,
+                fontFamily = UiNoteFontFamily.NotoSans,
             ),
         )
     }

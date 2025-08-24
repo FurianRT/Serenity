@@ -45,7 +45,7 @@ internal class AppearanceDataStore @Inject constructor(
 
     fun getAppFont(): Flow<NoteFontFamily> = dataStore.data
         .map { prefs ->
-            NoteFontFamily.fromString(prefs[KEY_APP_FONT]) ?: NoteFontFamily.QUICK_SAND
+            NoteFontFamily.fromString(prefs[KEY_APP_FONT]) ?: NoteFontFamily.NOTO_SANS
         }
 
     suspend fun setAppFont(font: NoteFontFamily) {

@@ -9,10 +9,22 @@ sealed class NoteFont(
     val regular: FontFamily,
     val bold: FontFamily,
 ) {
-    data object QuickSand : NoteFont(
+    data object NotoSans : NoteFont(
         light = FontFamily(Font(R.font.noto_sans_light)),
         regular = FontFamily(Font(R.font.noto_sans_regular)),
         bold = FontFamily(Font(R.font.noto_sans_bold)),
+    )
+
+    data object NotoSerif : NoteFont(
+        light = FontFamily(Font(R.font.noto_serif_light)),
+        regular = FontFamily(Font(R.font.noto_serif_regular)),
+        bold = FontFamily(Font(R.font.noto_serif_bold)),
+    )
+
+    data object Roboto : NoteFont(
+        light = FontFamily(Font(R.font.roboto_light)),
+        regular = FontFamily(Font(R.font.roboto_regular)),
+        bold = FontFamily(Font(R.font.roboto_bold)),
     )
 
     data object ShantellSans : NoteFont(
