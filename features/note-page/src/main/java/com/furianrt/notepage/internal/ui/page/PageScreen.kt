@@ -663,7 +663,7 @@ private fun ContentItems(
                         MoodButton(
                             modifier = Modifier
                                 .padding(end = 12.dp, top = 6.dp)
-                                .size(48.dp),
+                                .size(52.dp),
                             moodId = uiState.moodId,
                             defaultMoodId = uiState.defaultMoodId,
                             onClick = { onEvent(PageEvent.OnMoodClick) },

@@ -31,16 +31,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.ui.BackupUiState
 import com.furianrt.uikit.components.SkipFirstEffect
@@ -62,6 +67,13 @@ internal fun Header(
     val lottieState = animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying,
+    )
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.surfaceContainer.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
     )
     SkipFirstEffect(lottieState.isPlaying) {
         isPlaying = lottieState.isPlaying
@@ -97,6 +109,7 @@ internal fun Header(
                         .clickableWithScaleAnim { isPlaying = true },
                     composition = composition,
                     progress = { lottieState.progress },
+                    dynamicProperties = dynamicProperties,
                 )
             }
         }

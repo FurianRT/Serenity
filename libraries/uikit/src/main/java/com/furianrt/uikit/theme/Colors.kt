@@ -32,7 +32,7 @@ object Colors {
         val LightPink = Color(0xFFFADFEE)
         val LightPurple = Color(0xFFE1C3FF)
         val LightOrange = Color(0xFFFECDA4)
-        val LightWhite = Color(0xFFECF3F3)
+        val LightWhite = Color(0xFFFFFFFF)
     }
 
     object Accent {
@@ -100,6 +100,6 @@ object Colors {
 
     object Common {
         val DarkGray = Color(0xFF212121)
-        val LightGray = Color(0xFFDEDEDE)
+        val LightGray = Color(0xFFE9E9E9)
     }
 }
