@@ -119,6 +119,7 @@ enum class UiThemeColor(
         surface = Colors.Primary.TotalBlack,
         primaryContainer = Colors.Accent.Purple,
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.5f),
+        surfaceTint = Color.White.copy(alpha = 0.1f),
     ),
 
     LIGHT_BLUE(
