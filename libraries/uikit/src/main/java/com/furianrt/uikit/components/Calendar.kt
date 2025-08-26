@@ -317,6 +317,7 @@ private fun CalendarDialog(
                                 scope.launch { state.scrollToMonth(it.yearMonth) }
                                 mode = Mode.DAY_PICKER
                             },
+                            onBackClick = { mode = Mode.DAY_PICKER },
                         )
                     }
                 }
@@ -418,6 +419,7 @@ private fun DayPickerContent(
 private fun YearMonthPickerContent(
     initialYearMonth: SelectedYearMonth,
     onYearMonthSelected: (yearMonth: SelectedYearMonth) -> Unit,
+    onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val monthsArray = stringArrayResource(R.array.months_array)
@@ -479,11 +481,20 @@ private fun YearMonthPickerContent(
                 )
             }
         }
-        ButtonDone(
+        Row(
             modifier = Modifier.padding(end = 24.dp, top = 8.dp, bottom = 12.dp),
-            text= stringResource(R.string.action_select),
-            onClick = { onYearMonthSelected(selectedYearMonth) },
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            ButtonDone(
+                text= stringResource(R.string.action_back),
+                onClick = onBackClick,
+            )
+            ButtonDone(
+                text= stringResource(R.string.action_select),
+                onClick = { onYearMonthSelected(selectedYearMonth) },
+            )
+        }
     }
 }
 
@@ -758,6 +769,7 @@ private fun YearMonthPickerPreview() {
                 yearMonth = YearMonth.now(),
             ),
             onYearMonthSelected = {},
+            onBackClick = {},
         )
     }
 }

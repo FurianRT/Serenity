@@ -637,15 +637,16 @@ private fun ContentItems(
 
             key(UiNoteTag.BLOCK_ID + uiState.noteId) {
                 Row(
-                    modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 10.dp),
+                    modifier = Modifier
+                        .padding(start = 4.dp, end = 4.dp, top = 10.dp)
+                        .animatePlacementInScope(this@LookaheadScope),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     NoteTags(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(top = 10.dp)
-                            .animatePlacementInScope(this@LookaheadScope),
+                            .padding(top = 10.dp),
                         tags = uiState.tags,
                         isEditable = uiState.isInEditMode,
                         animateItemsPlacement = true,
