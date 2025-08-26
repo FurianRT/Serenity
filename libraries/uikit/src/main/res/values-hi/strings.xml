@@ -14,6 +14,7 @@
     <string name="action_select">चुनें</string>
     <string name="action_continue">जारी रखें</string>
     <string name="action_change_sorting">क्रम बदलें</string>
+    <string name="action_back">वापस</string>
 
     <string name="title_email">ईमेल</string>
 

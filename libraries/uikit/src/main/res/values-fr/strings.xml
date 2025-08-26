@@ -14,6 +14,7 @@
     <string name="action_select">Sélectionner</string>
     <string name="action_continue">Continuer</string>
     <string name="action_change_sorting">Changer l’ordre</string>
+    <string name="action_back">Retour</string>
 
     <string name="title_email">Email</string>
 

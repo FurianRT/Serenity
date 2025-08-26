@@ -14,6 +14,7 @@
     <string name="action_select">Pilih</string>
     <string name="action_continue">Lanjutkan</string>
     <string name="action_change_sorting">Ubah Urutan</string>
+    <string name="action_back">Kembali</string>
 
     <string name="title_email">Email</string>
 

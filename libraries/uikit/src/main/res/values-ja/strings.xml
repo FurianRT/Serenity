@@ -14,6 +14,7 @@
     <string name="action_select">選択</string>
     <string name="action_continue">続行</string>
     <string name="action_change_sorting">並び替えを変更</string>
+    <string name="action_back">戻る</string>
 
     <string name="title_email">メール</string>
 
