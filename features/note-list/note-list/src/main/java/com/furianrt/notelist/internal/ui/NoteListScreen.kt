@@ -31,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -304,7 +305,7 @@ private fun EmptyContent(
         500.dp.dpToPx() to 0f
     }
 
-    var startAnimation by remember { mutableStateOf(false) }
+    var startAnimation by rememberSaveable { mutableStateOf(false) }
     val transition = updateTransition(targetState = startAnimation)
 
     val contentAlpha by transition.animateFloat(

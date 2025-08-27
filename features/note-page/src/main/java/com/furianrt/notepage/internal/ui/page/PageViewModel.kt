@@ -294,7 +294,11 @@ internal class PageViewModel @AssistedInject constructor(
             is OnStickerClick -> changeStickerEditing(event.sticker)
             is OnClickOutside -> {
                 resetStickersEditing()
-                _effect.tryEmit(PageEffect.HideKeyboard)
+                if (isInEditMode) {
+                    _effect.tryEmit(PageEffect.HideKeyboard)
+                } else {
+                    changeEditModeState(isEnabled = true, focusFirstTitle = true)
+                }
             }
 
             is OnNoPositionError -> _effect.tryEmit(
@@ -905,7 +909,10 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun changeEditModeState(isEnabled: Boolean) {
+    private fun changeEditModeState(
+        isEnabled: Boolean,
+        focusFirstTitle: Boolean = false,
+    ) {
         launch {
             _state.updateState<PageUiState.Success> { currentState ->
                 val fontFamily = currentState.fontFamily
@@ -931,6 +938,9 @@ internal class PageViewModel @AssistedInject constructor(
                     resetStickersEditing()
                     focusedTitleId = null
                     hasContentChanged = false
+                }
+                if (focusFirstTitle) {
+                    tryFocusFirstTitle(force = true)
                 }
             }
         }
@@ -999,8 +1009,8 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun tryFocusFirstTitle() = launch {
-        if (focusFirstTitle) {
+    private fun tryFocusFirstTitle(force: Boolean = false) = launch {
+        if (focusFirstTitle || force) {
             focusFirstTitle = false
             delay(TITLE_FOCUS_DELAY)
             _state.doWithState<PageUiState.Success> { successState ->

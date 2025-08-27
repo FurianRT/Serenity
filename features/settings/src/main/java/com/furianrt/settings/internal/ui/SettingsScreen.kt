@@ -348,6 +348,13 @@ private fun ThemeSelector(
     val selectedColorIndex = remember(themes, selectedTheme) {
         selectedTheme.colors.indexOfFirstOrNull { it == selectedTheme.selectedColor }
     }
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = selectedColorIndex ?: 0,
+        initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
+    )
+    SkipFirstEffect(selectedTheme) {
+        listState.scrollToItem(0)
+    }
     Column(
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -372,7 +379,7 @@ private fun ThemeSelector(
         ) {
             themes.forEach { theme ->
                 TagItem(
-                    title = when(theme) {
+                    title = when (theme) {
                         is UiTheme.Light -> stringResource(R.string.settings_light_theme_title)
                         is UiTheme.Dark -> stringResource(R.string.settings_dark_theme_title)
                     },
@@ -395,10 +402,7 @@ private fun ThemeSelector(
         }
         LazyRow(
             modifier = Modifier.systemGestureExclusion(),
-            state = rememberLazyListState(
-                initialFirstVisibleItemIndex = selectedColorIndex ?: 0,
-                initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
-            ),
+            state = listState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(horizontal = 20.dp),
         ) {
@@ -540,15 +544,15 @@ private fun ScreenContentPreview() {
                         isSelected = false,
                     ),
                     UiTheme.Dark(
-                       colors = persistentListOf(
-                           UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
-                           UiThemeColor.DISTANT_CASTLE_GREEN,
-                           UiThemeColor.VAMPIRE_RED_DARK,
-                           UiThemeColor.EUPHORIA_BLUE_DARK,
-                           UiThemeColor.EUPHORIA_VIOLET,
-                           UiThemeColor.EUPHORIA_BLUE,
-                           UiThemeColor.EUPHORIA_PINK,
-                       ),
+                        colors = persistentListOf(
+                            UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
+                            UiThemeColor.DISTANT_CASTLE_GREEN,
+                            UiThemeColor.VAMPIRE_RED_DARK,
+                            UiThemeColor.EUPHORIA_BLUE_DARK,
+                            UiThemeColor.EUPHORIA_VIOLET,
+                            UiThemeColor.EUPHORIA_BLUE,
+                            UiThemeColor.EUPHORIA_PINK,
+                        ),
                         selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                         isSelected = true,
                     )

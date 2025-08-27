@@ -165,15 +165,19 @@ fun NoteListItem(
             when {
                 showMood -> MoodButton(
                     modifier = Modifier
-                        .padding(top = 12.dp)
+                        .padding(
+                            top = 12.dp,
+                            bottom = if (tags.isEmpty()) 0.dp else 8.dp,
+                        )
                         .size(70.dp)
                         .align(Alignment.CenterHorizontally),
                     moodId = moodId,
                     defaultMoodId = null,
                 )
+
                 content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
             }
-            
+
             NoteTags(
                 modifier = Modifier
                     .fillMaxWidth()
