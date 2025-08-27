@@ -13,7 +13,7 @@
     <string name="action_contact_us">Contact Us</string>
     <string name="action_select">Select</string>
     <string name="action_continue">Continue</string>
-    <string name="action_change_sorting">Change Order</string>
+    <string name="action_change_sorting">Rearrange</string>
     <string name="action_back">Back</string>
 
     <string name="title_email">Email</string>
