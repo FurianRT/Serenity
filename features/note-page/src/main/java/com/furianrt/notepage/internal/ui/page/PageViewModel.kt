@@ -16,6 +16,7 @@ import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
@@ -45,15 +46,20 @@ import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeVoice
 import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
+import com.furianrt.notepage.internal.ui.extensions.toLocationState
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
+import com.furianrt.notepage.internal.ui.extensions.toNoteLocation
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestCameraPermission
+import com.furianrt.notepage.internal.ui.page.PageEffect.RequestLocationPermission
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowCameraPermissionsDeniedDialog
+import com.furianrt.notepage.internal.ui.page.PageEffect.ShowLocationPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowStoragePermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.page.PageEffect.TakePicture
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnAddLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
@@ -65,6 +71,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontColorSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontFamilySelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontSizeSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnIsSelectedChange
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnLocationPermissionSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
@@ -74,6 +81,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoPositionError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnScreenStopped
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectBulletListClick
@@ -97,6 +105,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
+import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -156,6 +165,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
     private val mediaRepository: MediaRepository,
+    private val locationRepository: LocationRepository,
     private val lockAuthorizer: LockAuthorizer,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
@@ -235,6 +245,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnCameraPermissionSelected -> tryOpenCamera()
             is OnMediaPermissionsSelected -> tryOpenMediaSelector()
+            is OnLocationPermissionSelected -> tryDetectNoteLocation()
             is OnCameraNotFoundError -> _effect.tryEmit(
                 PageEffect.ShowMessage(
                     message = resourcesManager.getString(uiR.string.error_camera_not_found),
@@ -311,6 +322,15 @@ internal class PageViewModel @AssistedInject constructor(
             is OnBackgroundSelected -> updateBackground(event.item)
             is OnMoodClick -> showMoodDialog()
             is OnMoodSelected -> updateNoteMood(event.moodId)
+            is OnAddLocationClick -> {
+                resetStickersEditing()
+                tryRequestLocationPermissions()
+            }
+
+            is OnRemoveLocationClick -> {
+                resetStickersEditing()
+                deleteLocation()
+            }
         }
     }
 
@@ -561,11 +581,36 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
+    private fun tryRequestLocationPermissions() {
+        if (permissionsUtils.hasLocationPermission()) {
+            launch { detectNoteLocation() }
+        } else {
+            _effect.tryEmit(RequestLocationPermission)
+        }
+    }
+
     private fun tryOpenCamera() {
         if (permissionsUtils.hasCameraPermission()) {
             launch { takePicture() }
         } else {
             _effect.tryEmit(ShowCameraPermissionsDeniedDialog)
+        }
+    }
+
+    private fun tryDetectNoteLocation() {
+        if (permissionsUtils.hasLocationPermission()) {
+            launch { detectNoteLocation() }
+        } else {
+            _effect.tryEmit(ShowLocationPermissionsDeniedDialog)
+        }
+    }
+
+    private fun deleteLocation() {
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(locationState = LocationState.Empty)
+        }
+        launch {
+            locationRepository.delete(noteId)
         }
     }
 
@@ -996,6 +1041,7 @@ internal class PageViewModel @AssistedInject constructor(
                             moodId = note.moodId,
                             defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                             isInEditMode = isNoteCreationMode,
+                            locationState = note.location?.toLocationState() ?: LocationState.Empty,
                         ).also {
                             if (isNoteCreationMode) {
                                 tryFocusFirstTitle()
@@ -1038,6 +1084,7 @@ internal class PageViewModel @AssistedInject constructor(
                 fontSize = fontSize,
                 backgroundId = state.noteBackground?.id,
                 moodId = state.moodId,
+                noteLocation = state.locationState.toNoteLocation(),
             )
             if (isNoteCreationMode) {
                 saveDefaultFontData(state)
@@ -1109,6 +1156,28 @@ internal class PageViewModel @AssistedInject constructor(
                 if (moodId != null) {
                     notesRepository.updateNoteDefaultMoodId(moodId)
                 }
+            }
+        }
+    }
+
+    private fun detectNoteLocation() = launch {
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(locationState = LocationState.Loading)
+        }
+        val location = locationRepository.detectLocation()
+        if (location == null) {
+            _effect.tryEmit(
+                PageEffect.ShowMessage(
+                    message = resourcesManager.getString(R.string.note_add_current_location_fail_title)
+                )
+            )
+            _state.updateState<PageUiState.Success> { successState ->
+                successState.copy(locationState = LocationState.Empty)
+            }
+        } else {
+            hasContentChanged = true
+            _state.updateState<PageUiState.Success> { successState ->
+                successState.copy(locationState = location.toLocationState())
             }
         }
     }

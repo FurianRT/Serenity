@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Serenity needs access to your camera to take photos. Tap Settings > Permissions, and turn Camera on</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Camera</string>
+
+    <string name="location_permission_message">Serenity needs access to your location to add places to your notes. Tap Settings > Permissions, and turn Location on</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Location</string>
 </resources>

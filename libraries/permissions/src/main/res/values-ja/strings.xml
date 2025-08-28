@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Serenity が写真を撮るにはカメラへのアクセスが必要です。設定 > 権限 に進み、カメラをオンにしてください</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">カメラ</string>
+
+    <string name="location_permission_message">Serenity があなたのノートに場所を追加するために位置情報へのアクセスが必要です。[設定] > [権限] をタップし、位置情報をオンにしてください</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">位置情報</string>
 </resources>

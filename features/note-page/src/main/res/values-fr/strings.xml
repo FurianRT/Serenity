@@ -3,4 +3,6 @@
     <string name="note_title_hint_write_more_here">Écrivez plus ici…</string>
     <string name="note_sticker_limit_message">Limite d\'autocollants atteinte</string>
     <string name="note_select_text_position_message">Sélectionnez une position dans le texte</string>
+    <string name="note_add_current_location_title">Ajouter la position actuelle</string>
+    <string name="note_add_current_location_fail_title">Impossible d’obtenir la position actuelle</string>
 </resources>

@@ -3,4 +3,6 @@
     <string name="note_title_hint_write_more_here">Hier mehr schreiben…</string>
     <string name="note_sticker_limit_message">Sticker-Limit erreicht</string>
     <string name="note_select_text_position_message">Wähle eine Position im Text</string>
+    <string name="note_add_current_location_title">Aktuellen Standort hinzufügen</string>
+    <string name="note_add_current_location_fail_title">Standort konnte nicht ermittelt werden</string>
 </resources>

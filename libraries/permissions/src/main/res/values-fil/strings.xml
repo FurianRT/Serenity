@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Kailangan ng Serenity ng access sa iyong camera para makakuha ng mga larawan. Pumunta sa Settings > Permissions at i-on ang Camera</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Camera</string>
+
+    <string name="location_permission_message">Kailangan ng Serenity ng access sa iyong lokasyon para makapagdagdag ng mga lugar sa iyong mga tala. Pindutin ang Settings > Permissions at i-on ang Lokasyon</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Lokasyon</string>
 </resources>

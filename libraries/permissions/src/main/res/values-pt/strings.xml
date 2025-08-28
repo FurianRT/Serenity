@@ -10,4 +10,8 @@
     <string name="camera_permission_message">O Serenity precisa de acesso à sua câmera para tirar fotos. Toque em Configurações > Permissões e ative Câmera</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Câmera</string>
+
+    <string name="location_permission_message">O Serenity precisa de acesso à sua localização para adicionar lugares às suas notas. Toque em Configurações > Permissões e ative Localização</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Localização</string>
 </resources>

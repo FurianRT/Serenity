@@ -4,6 +4,8 @@ import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteLocation
+import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
@@ -17,6 +19,7 @@ class UpdateNoteContentUseCase @Inject constructor(
     private val tagsRepository: TagsRepository,
     private val mediaRepository: MediaRepository,
     private val stickersRepository: StickersRepository,
+    private val locationRepository: LocationRepository,
 ) {
     suspend operator fun invoke(
         noteId: String,
@@ -28,6 +31,7 @@ class UpdateNoteContentUseCase @Inject constructor(
         fontSize: Int,
         backgroundId: String?,
         moodId: String?,
+        noteLocation: NoteLocation?,
         updateMediaFiles: Boolean = true,
     ) {
         val allMedia = content
@@ -98,6 +102,11 @@ class UpdateNoteContentUseCase @Inject constructor(
             }
             if (stickersToUpdate.isNotEmpty()) {
                 stickersRepository.update(stickersToUpdate)
+            }
+            if (noteLocation != null) {
+                locationRepository.insert(noteId, noteLocation)
+            } else {
+                locationRepository.delete(noteId)
             }
         }
     }

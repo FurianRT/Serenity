@@ -12,4 +12,7 @@
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Камера</string>
 
+    <string name="location_permission_message">Serenity нужен доступ к вашему местоположению, чтобы добавлять места в заметки. Нажмите Настройки > Разрешения и включите Местоположение</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Местоположение</string>
 </resources>

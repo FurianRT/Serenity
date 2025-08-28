@@ -7,6 +7,7 @@ import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.LocaleRepository
+import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.ProfileRepository
@@ -15,6 +16,7 @@ import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
+import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.StickerDao
@@ -24,6 +26,7 @@ import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.DeviceInfoRepositoryImp
 import com.furianrt.storage.internal.repositories.LocaleRepositoryImp
+import com.furianrt.storage.internal.repositories.LocationRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
 import com.furianrt.storage.internal.repositories.ProfileRepositoryImp
@@ -73,6 +76,10 @@ internal interface DatabaseModule {
     @Singleton
     fun localeRepository(imp: LocaleRepositoryImp): LocaleRepository
 
+    @Binds
+    @Singleton
+    fun locationRepository(imp: LocationRepositoryImp): LocationRepository
+
     companion object {
         @Suppress("LocalVariableName")
         @Provides
@@ -90,12 +97,35 @@ internal interface DatabaseModule {
                     db.execSQL("ALTER TABLE Notes ADD COLUMN mood_id TEXT")
                 }
             }
+            val MIGRATION_3_4 = object : Migration(3, 4) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        """
+                            CREATE TABLE IF NOT EXISTS NoteLocations (
+                                id TEXT NOT NULL PRIMARY KEY,
+                                note_id TEXT NOT NULL,
+                                title TEXT NOT NULL,
+                                latitude REAL NOT NULL,
+                                longitude REAL NOT NULL,
+                                FOREIGN KEY(note_id) 
+                                    REFERENCES Notes(id) 
+                                    ON DELETE CASCADE
+                            )
+                        """
+                    )
+                    db.execSQL(
+                        "CREATE INDEX IF NOT EXISTS index_NoteLocations_note_id ON " +
+                                "NoteLocations(note_id)"
+                    )
+                }
+            }
             return SerenityDatabase
                 .create(
                     context = context,
                     migrations = arrayOf(
                         MIGRATION_1_2,
                         MIGRATION_2_3,
+                        MIGRATION_3_4
                     ),
                 )
         }
@@ -133,6 +163,10 @@ internal interface DatabaseModule {
         fun backupProfileDao(
             database: SerenityDatabase,
         ): BackupProfileDao = database.backupProfileDao()
+
+        @Provides
+        @Singleton
+        fun locationDao(database: SerenityDatabase): LocationDao = database.locationDao()
 
         @Provides
         @Singleton

@@ -10,4 +10,8 @@
     <string name="camera_permission_message">사진을 찍으려면 Serenity가 카메라에 접근할 수 있어야 합니다. 설정 > 권한으로 이동하여 카메라를 켜세요</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">카메라</string>
+
+    <string name="location_permission_message">Serenity가 메모에 장소를 추가하려면 내 위치 접근 권한이 필요합니다. 설정 > 권한으로 이동해 위치를 켜주세요</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">위치</string>
 </resources>

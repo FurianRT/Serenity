@@ -95,10 +95,13 @@ import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
+import com.furianrt.notepage.internal.ui.page.composables.LocationCard
+import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.CameraPermissionDialog
+import com.furianrt.permissions.ui.LocationPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.ActionsPanel
@@ -176,6 +179,11 @@ internal fun NotePageScreenInternal(
         onPermissionResult = { viewModel.onEvent(PageEvent.OnCameraPermissionSelected) },
     )
 
+    val locationPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getLocationPermission(),
+        onPermissionResult = { viewModel.onEvent(PageEvent.OnLocationPermissionSelected) },
+    )
+
     val cameraLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { viewModel.onEvent(PageEvent.OnTakePictureResult(it)) },
@@ -183,6 +191,8 @@ internal fun NotePageScreenInternal(
 
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
     var showCameraPermissionDialog by remember { mutableStateOf(false) }
+    var showLocationPermissionDialog by remember { mutableStateOf(false) }
+
     var moodDialogState: MoodDialogState? by remember { mutableStateOf(null) }
 
     val view = LocalView.current
@@ -227,7 +237,16 @@ internal fun NotePageScreenInternal(
                     cameraPermissionState.launchPermissionRequest()
                 }
 
+                is PageEffect.RequestLocationPermission -> {
+                    locationPermissionState.launchPermissionRequest()
+                }
+
                 is PageEffect.ShowCameraPermissionsDeniedDialog -> showCameraPermissionDialog = true
+
+                is PageEffect.ShowLocationPermissionsDeniedDialog -> {
+                    showLocationPermissionDialog = true
+                }
+
                 is PageEffect.TakePicture -> try {
                     cameraLauncher.launch(effect.uri)
                 } catch (e: ActivityNotFoundException) {
@@ -301,6 +320,14 @@ internal fun NotePageScreenInternal(
         CameraPermissionDialog(
             hazeState = hazeState,
             onDismissRequest = { showCameraPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
+    if (showLocationPermissionDialog) {
+        LocationPermissionDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showLocationPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )
     }
@@ -548,7 +575,7 @@ private fun ContentItems(
     val topTitlePadding = 8.dp
     val topPadding = (topTitlePadding + 6.dp).dpToPx()
     Column(
-        modifier = modifier,
+        modifier = modifier.padding(bottom = 24.dp),
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         LookaheadScope {
@@ -670,6 +697,19 @@ private fun ContentItems(
                             onClick = { onEvent(PageEvent.OnMoodClick) },
                         )
                     }
+                }
+            }
+            if (uiState.showLocation) {
+                key(LocationState.BLOCK_ID + uiState.noteId) {
+                    LocationCard(
+                        modifier = Modifier
+                            .padding(start = 4.dp, end = 4.dp, top = 28.dp)
+                            .animatePlacementInScope(this@LookaheadScope),
+                        state = uiState.locationState,
+                        isRemovable = uiState.isInEditMode,
+                        onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
+                        onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
+                    )
                 }
             }
         }
@@ -823,6 +863,7 @@ private fun SuccessScreenPreview() {
                 noteBackground = null,
                 moodId = null,
                 defaultMoodId = null,
+                locationState = LocationState.Loading,
                 content = persistentListOf(
                     UiNoteContent.Title(
                         id = "1",

@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Serenity को फ़ोटो लेने के लिए आपके कैमरे की अनुमति चाहिए। सेटिंग्स > अनुमतियाँ पर जाएँ और कैमरा चालू करें</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">कैमरा</string>
+
+    <string name="location_permission_message">Serenity को आपके स्थान तक पहुँच चाहिए ताकि वह आपके नोट्स में जगह जोड़ सके। सेटिंग्स > परमिशन पर टैप करें और स्थान चालू करें</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">स्थान</string>
 </resources>

@@ -13,6 +13,7 @@ import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
+import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.NoteToTagDao
 import com.furianrt.storage.internal.database.notes.dao.StickerDao
@@ -21,6 +22,7 @@ import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteLocation
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
@@ -37,6 +39,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
         EntryNoteVoice::class,
         EntryNoteSticker::class,
         EntryBackupProfile::class,
+        EntryNoteLocation::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -52,10 +55,11 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun noteToTagDao(): NoteToTagDao
     abstract fun stickerDao(): StickerDao
     abstract fun backupProfileDao(): BackupProfileDao
+    abstract fun locationDao(): LocationDao
 
     companion object {
         private const val NAME = "Serenity.db"
-        const val VERSION = 3
+        const val VERSION = 4
 
         fun create(
             context: Context,

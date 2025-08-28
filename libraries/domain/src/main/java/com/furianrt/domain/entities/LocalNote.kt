@@ -20,6 +20,7 @@ data class LocalNote(
     val isPinned: Boolean,
     val tags: List<Tag>,
     val stickers: List<Sticker>,
+    val location: NoteLocation?,
     val content: List<Content>,
 ) {
     @Serializable

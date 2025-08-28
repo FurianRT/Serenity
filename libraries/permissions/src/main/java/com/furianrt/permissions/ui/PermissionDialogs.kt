@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -268,6 +269,85 @@ fun CameraPermissionDialog(
                 modifier = Modifier
                     .size(72.dp)
                     .scale(1.5f)
+                    .clickableWithScaleAnim { isPlaying = true },
+                composition = composition,
+                progress = { lottieState.progress },
+                dynamicProperties = dynamicProperties,
+            )
+        },
+        hazeState = hazeState,
+        onDismissRequest = onDismissRequest,
+    )
+}
+
+@Composable
+fun LocationPermissionDialog(
+    hazeState: HazeState,
+    onDismissRequest: () -> Unit,
+    onSettingsClick: () -> Unit,
+) {
+    var isPlaying by remember { mutableStateOf(true) }
+    val composition by rememberLottieComposition(
+        LottieCompositionSpec.RawRes(R.raw.anim_location_access),
+    )
+    val lottieState = animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = isPlaying,
+    )
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = MaterialTheme.colorScheme.onSurface.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+    )
+    SkipFirstEffect(lottieState.isPlaying) {
+        isPlaying = lottieState.isPlaying
+    }
+    ConfirmationDialog(
+        hint = buildAnnotatedString {
+            val title = stringResource(R.string.location_permission_message)
+            val boldPartOne = stringResource(R.string.location_permission_message_bold_part_1)
+            val boldPartTwo = stringResource(R.string.location_permission_message_bold_part_2)
+            val boldPartOneIndex = title.indexOf(boldPartOne)
+            val boldPartTwoIndex = title.indexOf(boldPartTwo)
+            append(title)
+            if (boldPartOneIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartOneIndex,
+                    end = boldPartOneIndex + boldPartOne.length,
+                )
+            }
+            if (boldPartTwoIndex != -1) {
+                addStyle(
+                    style = SpanStyle(fontWeight = FontWeight.ExtraBold),
+                    start = boldPartTwoIndex,
+                    end = boldPartTwoIndex + boldPartTwo.length,
+                )
+            }
+        },
+        cancelButton = {
+            ActionButton(
+                title = stringResource(id = uiR.string.action_not_now),
+                onClick = onDismissRequest,
+            )
+        },
+        confirmButton = {
+            ActionButton(
+                title = stringResource(id = uiR.string.settings_title),
+                textColor = MaterialTheme.colorScheme.primaryContainer,
+                onClick = {
+                    onSettingsClick()
+                    onDismissRequest()
+                },
+            )
+        },
+        icon = {
+            LottieAnimation(
+                modifier = Modifier
+                    .size(72.dp)
+                    .graphicsLayer { translationY = -8.dp.toPx() }
                     .clickableWithScaleAnim { isPlaying = true },
                 composition = composition,
                 progress = { lottieState.progress },

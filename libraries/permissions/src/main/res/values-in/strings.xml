@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Serenity memerlukan akses ke kamera Anda untuk mengambil foto. Ketuk Pengaturan > Izin, lalu aktifkan Kamera</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Kamera</string>
+
+    <string name="location_permission_message">Serenity memerlukan akses ke lokasi Anda untuk menambahkan tempat ke catatan Anda. Ketuk Pengaturan > Izin, lalu aktifkan Lokasi</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Lokasi</string>
 </resources>

@@ -47,12 +47,9 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     backgroundId = note.backgroundId,
     moodId = note.moodId,
     isPinned = note.isPinned,
-    content = getLocalNoteContent(),
+    location = location?.toNoteLocation(),
+    content = getLocalNoteContent(note.text),
 )
-
-internal fun LinkedNote.getLocalNoteContent(): List<LocalNote.Content> {
-    return getLocalNoteContent(note.text)
-}
 
 internal fun List<LocalNote.Content>.toEntryNoteText(): String {
     val builder = StringBuilder()

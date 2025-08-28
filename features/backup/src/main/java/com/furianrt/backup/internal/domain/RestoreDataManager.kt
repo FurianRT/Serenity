@@ -220,6 +220,7 @@ internal class RestoreDataManager @Inject constructor(
                 fontSize = note.fontSize,
                 backgroundId = note.backgroundId,
                 moodId = note.moodId,
+                noteLocation = note.location,
                 updateMediaFiles = false,
             )
         }

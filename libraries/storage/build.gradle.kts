@@ -34,4 +34,6 @@ dependencies {
     implementation(libs.exifinterface)
 
     implementation(libs.workManager)
+
+    implementation(libs.googleLocationGms)
 }

@@ -3,4 +3,6 @@
     <string name="note_title_hint_write_more_here">Scrivi di più qui…</string>
     <string name="note_sticker_limit_message">Limite adesivi raggiunto</string>
     <string name="note_select_text_position_message">Seleziona una posizione nel testo</string>
+    <string name="note_add_current_location_title">Aggiungi posizione attuale</string>
+    <string name="note_add_current_location_fail_title">Impossibile ottenere la posizione attuale</string>
 </resources>

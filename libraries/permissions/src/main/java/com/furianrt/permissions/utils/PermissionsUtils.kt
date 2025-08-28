@@ -5,6 +5,7 @@ import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.Manifest.permission.RECORD_AUDIO
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.content.Context
 import android.os.Build
 import androidx.core.content.ContextCompat
@@ -42,6 +43,8 @@ class PermissionsUtils @Inject constructor(
         fun getAudioRecordPermission(): String = RECORD_AUDIO
 
         fun getCameraPermission(): String = CAMERA
+
+        fun getLocationPermission(): String = ACCESS_FINE_LOCATION
     }
 
     fun hasPartialMediaAccess(): Boolean {
@@ -53,6 +56,8 @@ class PermissionsUtils @Inject constructor(
     }
 
     fun hasCameraPermission(): Boolean = CAMERA.isGranted()
+
+    fun hasLocationPermission(): Boolean = ACCESS_FINE_LOCATION.isGranted()
 
     private fun getMediaPermissionStatus(): MediaPermissionStatus {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

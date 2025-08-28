@@ -3,4 +3,6 @@
     <string name="note_title_hint_write_more_here">यहाँ और लिखें…</string>
     <string name="note_sticker_limit_message">स्टीकर सीमा पूरी हो गई है</string>
     <string name="note_select_text_position_message">टेक्स्ट में एक स्थान चुनें</string>
+    <string name="note_add_current_location_title">वर्तमान स्थान जोड़ें</string>
+    <string name="note_add_current_location_fail_title">स्थान प्राप्त नहीं हो सका</string>
 </resources>

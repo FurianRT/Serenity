@@ -10,4 +10,8 @@
     <string name="camera_permission_message">Serenity benötigt Zugriff auf Ihre Kamera, um Fotos aufzunehmen. Tippen Sie auf Einstellungen > Berechtigungen und aktivieren Sie Kamera</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2">Kamera</string>
+
+    <string name="location_permission_message">Serenity benötigt Zugriff auf deinen Standort, um Orte zu deinen Notizen hinzuzufügen. Tippe auf Einstellungen > Berechtigungen und aktiviere Standort</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Standort</string>
 </resources>

@@ -9,6 +9,7 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -29,8 +30,12 @@ internal sealed interface PageUiState {
         val noteBackground: UiNoteBackground?,
         val moodId: String?,
         val defaultMoodId: String?,
+        val locationState: LocationState,
         val isInEditMode: Boolean,
     ) : PageUiState {
+
+        val showLocation: Boolean
+            get() = isInEditMode || locationState !is LocationState.Empty
 
         val playingVoice: UiNoteContent.Voice?
             get() = content.findInstance<UiNoteContent.Voice> { it.id == playingVoiceId }
@@ -49,6 +54,7 @@ internal sealed interface PageEvent {
     data object OnTakePictureClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
     data object OnCameraPermissionSelected : PageEvent
+    data object OnLocationPermissionSelected : PageEvent
     data class OnTakePictureResult(val isSuccess: Boolean) : PageEvent
     data class OnCameraNotFoundError(val error: Throwable) : PageEvent
     data class OnTitleFocusChange(val id: String, val focused: Boolean) : PageEvent
@@ -85,12 +91,17 @@ internal sealed interface PageEvent {
     data class OnBackgroundSelected(val item: UiNoteBackground?) : PageEvent
     data object OnMoodClick : PageEvent
     data class OnMoodSelected(val moodId: String?) : PageEvent
+    data object OnAddLocationClick : PageEvent
+    data object OnRemoveLocationClick : PageEvent
 }
 
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowStoragePermissionsDeniedDialog : PageEffect
+    data object RequestCameraPermission : PageEffect
     data object ShowCameraPermissionsDeniedDialog : PageEffect
+    data object RequestLocationPermission : PageEffect
+    data object ShowLocationPermissionsDeniedDialog : PageEffect
     data object OpenMediaSelector : PageEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class OpenMediaSortingScreen(
@@ -98,8 +109,6 @@ internal sealed interface PageEffect {
         val mediaBlockId: String,
         val identifier: DialogIdentifier,
     ) : PageEffect
-
-    data object RequestCameraPermission : PageEffect
 
     data class UpdateContentChangedState(val isChanged: Boolean) : PageEffect
     data class OpenMediaViewScreen(

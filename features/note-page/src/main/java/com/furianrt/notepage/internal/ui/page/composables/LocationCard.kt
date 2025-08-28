@@ -1,0 +1,261 @@
+package com.furianrt.notepage.internal.ui.page.composables
+
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.furianrt.notepage.R
+import com.furianrt.uikit.R as uiR
+import com.furianrt.notepage.internal.ui.page.entities.LocationState
+import com.furianrt.uikit.anim.shimmer
+import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
+
+@Composable
+internal fun LocationCard(
+    state: LocationState,
+    isRemovable: Boolean,
+    onAddLocationClick: () -> Unit,
+    onRemoveLocationClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedContent(
+        modifier = modifier,
+        targetState = state,
+        contentKey = { it !is LocationState.Empty },
+        transitionSpec = {
+            fadeIn(animationSpec = tween(220, delayMillis = 90))
+                .togetherWith(fadeOut(animationSpec = tween(90)))
+        }
+    ) { targetState ->
+        when (targetState) {
+            is LocationState.Loading -> LoadingContent()
+            is LocationState.Empty -> EmptyContent(
+                onClick = onAddLocationClick,
+            )
+
+            is LocationState.Success -> SuccessContent(
+                locationTitle = targetState.title,
+                isRemovable = isRemovable,
+                onRemoveLocationClick = onRemoveLocationClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SuccessContent(
+    locationTitle: String,
+    isRemovable: Boolean,
+    onRemoveLocationClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clickableNoRipple {}
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        AnimatedContent(
+            targetState = isRemovable,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(250)).togetherWith(ExitTransition.None)
+            },
+        ) { targetState ->
+            if (targetState) {
+                ButtonRemove(
+                    onClick = onRemoveLocationClick,
+                )
+            } else {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_location),
+                    contentDescription = null,
+                )
+            }
+        }
+        Text(
+            text = locationTitle,
+            style = MaterialTheme.typography.labelSmall.copy(
+                lineHeight = MaterialTheme.typography.labelSmall.lineHeight * 0.9f,
+            ),
+        )
+    }
+}
+
+@Composable
+private fun EmptyContent(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .alpha(0.5f)
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
+            .padding(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        Icon(
+            painter = painterResource(uiR.drawable.ic_location),
+            contentDescription = null,
+        )
+        Text(
+            text = stringResource(R.string.note_add_current_location_title),
+            style = MaterialTheme.typography.labelSmall,
+        )
+    }
+}
+
+@Composable
+private fun LoadingContent(
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clickableNoRipple {}
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Icon(
+            modifier = Modifier.alpha(0.5f),
+            painter = painterResource(uiR.drawable.ic_location),
+            contentDescription = null,
+        )
+        Column(
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .widthIn(max = 255.dp)
+                    .fillMaxWidth()
+                    .height(14.dp)
+                    .clip(RoundedCornerShape(32.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .shimmer(),
+            )
+            Box(
+                modifier = Modifier
+                    .widthIn(max = 162.dp)
+                    .fillMaxWidth()
+                    .height(14.dp)
+                    .clip(RoundedCornerShape(32.dp))
+                    .background(MaterialTheme.colorScheme.background)
+                    .shimmer(),
+            )
+        }
+    }
+}
+
+@Composable
+private fun ButtonRemove(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .padding(2.dp)
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.errorContainer)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .padding(2.dp)
+                .size(16.dp),
+            painter = painterResource(uiR.drawable.ic_close_small),
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onErrorContainer,
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun SuccessPreview() {
+    SerenityTheme {
+        LocationCard(
+            state = LocationState.Success(
+                id = "",
+                title = "Komsomol'skiy Prospekt, 28А, Chelyabinsk, Chelyabinskaya oblast', 454138",
+                latitude = 0.0,
+                longitude = 0.0,
+            ),
+            isRemovable = false,
+            onAddLocationClick = {},
+            onRemoveLocationClick = {},
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun SuccessRemovablePreview() {
+    SerenityTheme {
+        LocationCard(
+            state = LocationState.Success(
+                id = "",
+                title = "Komsomol'skiy Prospekt, 28А, Chelyabinsk, Chelyabinskaya oblast', 454138",
+                latitude = 0.0,
+                longitude = 0.0,
+            ),
+            isRemovable = true,
+            onAddLocationClick = {},
+            onRemoveLocationClick = {},
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun EmptyPreview() {
+    SerenityTheme {
+        LocationCard(
+            state = LocationState.Empty,
+            isRemovable = false,
+            onAddLocationClick = {},
+            onRemoveLocationClick = {},
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun LoadingPreview() {
+    SerenityTheme {
+        LocationCard(
+            state = LocationState.Loading,
+            isRemovable = false,
+            onAddLocationClick = {},
+            onRemoveLocationClick = {},
+        )
+    }
+}

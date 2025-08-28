@@ -47,4 +47,11 @@ internal class LinkedNote(
         parentColumn = EntryNote.FIELD_ID,
     )
     val stickers: List<EntryNoteSticker>,
+
+    @Relation(
+        entity = EntryNoteLocation::class,
+        entityColumn = EntryNoteLocation.FIELD_NOTE_ID,
+        parentColumn = EntryNote.FIELD_ID,
+    )
+    val location: EntryNoteLocation?,
 )
