@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">何か問題がありますか？</string>
     <string name="settings_bad_feedback_body">あなたのフィードバックはとても大切です。体験を向上させるためにご協力ください</string>
+    <string name="settings_note_detect_location_title">位置情報を自動検出</string>
+    <string name="settings_note_content_title">ノートの内容</string>
 </resources>

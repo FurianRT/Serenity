@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">¿Algo no está bien?</string>
     <string name="settings_bad_feedback_body">Tu opinión es muy importante. Ayúdanos a mejorar tu experiencia</string>
+    <string name="settings_note_detect_location_title">Awtomatikong tukuyin ang lokasyon</string>
+    <string name="settings_note_content_title">Nilalaman ng tala</string>
 </resources>

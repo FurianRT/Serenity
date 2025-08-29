@@ -60,6 +60,7 @@ import com.furianrt.notepage.internal.ui.page.PageEffect.ShowLocationPermissions
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowStoragePermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.page.PageEffect.TakePicture
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnAddLocationClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnAutoDetectLocationClickClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
@@ -190,6 +191,7 @@ internal class PageViewModel @AssistedInject constructor(
         }
 
     private var focusFirstTitle = isNoteCreationMode
+    private var autoDetectLocation = isNoteCreationMode
 
     private var cachePhoto: UiNoteContent.MediaBlock.Image? = null
     private var cachedPhotoFile: File? = null
@@ -330,6 +332,10 @@ internal class PageViewModel @AssistedInject constructor(
             is OnRemoveLocationClick -> {
                 resetStickersEditing()
                 deleteLocation()
+            }
+
+            is OnAutoDetectLocationClickClick -> launch {
+                appearanceRepository.setAutoDetectLocationEnabled(enabled = true)
             }
         }
     }
@@ -1043,9 +1049,8 @@ internal class PageViewModel @AssistedInject constructor(
                             isInEditMode = isNoteCreationMode,
                             locationState = note.location?.toLocationState() ?: LocationState.Empty,
                         ).also {
-                            if (isNoteCreationMode) {
-                                tryFocusFirstTitle()
-                            }
+                            tryFocusFirstTitle()
+                            tryAutoDetectLocation()
                         }
                     }
 
@@ -1160,25 +1165,50 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun detectNoteLocation() = launch {
+    private suspend fun detectNoteLocation(
+        saveContent: Boolean = true,
+        skipError: Boolean = false,
+    ) {
         _state.updateState<PageUiState.Success> { successState ->
             successState.copy(locationState = LocationState.Loading)
         }
         val location = locationRepository.detectLocation()
         if (location == null) {
-            _effect.tryEmit(
-                PageEffect.ShowMessage(
-                    message = resourcesManager.getString(R.string.note_add_current_location_fail_title)
+            if (!skipError) {
+                _effect.tryEmit(
+                    PageEffect.ShowMessage(
+                        message = resourcesManager.getString(
+                            R.string.note_add_current_location_fail_title
+                        )
+                    )
                 )
-            )
+            }
             _state.updateState<PageUiState.Success> { successState ->
                 successState.copy(locationState = LocationState.Empty)
             }
         } else {
-            hasContentChanged = true
+            hasContentChanged = hasContentChanged || saveContent
             _state.updateState<PageUiState.Success> { successState ->
                 successState.copy(locationState = location.toLocationState())
             }
+            val showDialog = !appearanceRepository.isAutoDetectLocationAsked().first() &&
+                    !appearanceRepository.isAutoDetectLocationEnabled().first()
+
+            appearanceRepository.setAutoDetectLocationAsked(value = true)
+
+            if (showDialog) {
+                _effect.tryEmit(PageEffect.ShowAutoDetectLocationDialog)
+            }
+        }
+    }
+
+    private fun tryAutoDetectLocation() = launch {
+        if (autoDetectLocation &&
+            appearanceRepository.isAutoDetectLocationEnabled().first() &&
+            permissionsUtils.hasLocationPermission()
+        ) {
+            autoDetectLocation = false
+            detectNoteLocation(saveContent = false, skipError = true)
         }
     }
 

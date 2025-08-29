@@ -14,6 +14,8 @@ import com.furianrt.security.api.navigateToChangePin
 import com.furianrt.security.api.navigateToSecurity
 import com.furianrt.security.api.securityScreen
 import com.furianrt.settings.internal.ui.MainRoute
+import com.furianrt.settings.internal.ui.noteSettings.navigateToNoteSettings
+import com.furianrt.settings.internal.ui.noteSettings.noteSettingsScreen
 import com.furianrt.settings.internal.ui.settingsScreen
 import kotlinx.serialization.Serializable
 
@@ -34,6 +36,7 @@ fun NavGraphBuilder.settingsNavigation(
         settingsScreen(
             openSecurityScreen = navController::navigateToSecurity,
             openBackupScreen = navController::navigateToBackup,
+            openNoteSettingsScreen = navController::navigateToNoteSettings,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -51,6 +54,9 @@ fun NavGraphBuilder.settingsNavigation(
         )
         backupNavigation(
             navController = navController,
+        )
+        noteSettingsScreen(
+            onCloseRequest = navController::navigateUp,
         )
     }
 }

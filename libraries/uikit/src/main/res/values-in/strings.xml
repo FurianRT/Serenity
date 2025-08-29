@@ -15,6 +15,8 @@
     <string name="action_continue">Lanjutkan</string>
     <string name="action_change_sorting">Ubah Urutan</string>
     <string name="action_back">Kembali</string>
+    <string name="action_yes">Ya</string>
+    <string name="action_no">Tidak</string>
 
     <string name="title_email">Email</string>
 

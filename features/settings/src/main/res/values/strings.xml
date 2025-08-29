@@ -19,4 +19,6 @@
     <string name="settings_bad_feedback_title">Something not right?</string>
     <string name="settings_bad_feedback_body">Your feedback means a lot. Help us improve your experience</string>
 
+    <string name="settings_note_content_title">Note Content</string>
+    <string name="settings_note_detect_location_title">Auto-detect Location</string>
 </resources>

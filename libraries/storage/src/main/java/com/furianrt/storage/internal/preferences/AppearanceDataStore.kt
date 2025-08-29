@@ -2,6 +2,7 @@ package com.furianrt.storage.internal.preferences
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -18,6 +19,8 @@ private val KEY_APP_FONT = stringPreferencesKey("app_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
 private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
 private val KEY_DEFAULT_NOTE_MOOD_ID = stringPreferencesKey("default_note_mood_id")
+private val KEY_AUTO_DETECT_LOCATION = booleanPreferencesKey("auto_detect_location")
+private val KEY_AUTO_DETECT_LOCATION_ASKED = booleanPreferencesKey("auto_detect_location_asked")
 
 @Singleton
 internal class AppearanceDataStore @Inject constructor(
@@ -77,5 +80,19 @@ internal class AppearanceDataStore @Inject constructor(
 
     suspend fun setDefaultNoteMoodId(moodId: String) {
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_MOOD_ID] = moodId }
+    }
+
+    fun isAutoDetectLocationEnabled(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_AUTO_DETECT_LOCATION] ?: false }
+
+    suspend fun setAutoDetectLocationEnabled(enabled: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_AUTO_DETECT_LOCATION] = enabled }
+    }
+
+    fun isAutoDetectLocationAsked(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_AUTO_DETECT_LOCATION_ASKED] ?: false }
+
+    suspend fun setAutoDetectLocationAsked(value: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_AUTO_DETECT_LOCATION_ASKED] = value }
     }
 }

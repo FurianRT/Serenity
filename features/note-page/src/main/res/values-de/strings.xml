@@ -5,4 +5,5 @@
     <string name="note_select_text_position_message">Wähle eine Position im Text</string>
     <string name="note_add_current_location_title">Aktuellen Standort hinzufügen</string>
     <string name="note_add_current_location_fail_title">Standort konnte nicht ermittelt werden</string>
+    <string name="note_auto_detect_location_title">Möchten Sie Ihren Standort automatisch zu neuen Notizen hinzufügen?</string>
 </resources>

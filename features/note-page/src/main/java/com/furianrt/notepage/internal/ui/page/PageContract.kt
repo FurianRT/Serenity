@@ -93,6 +93,7 @@ internal sealed interface PageEvent {
     data class OnMoodSelected(val moodId: String?) : PageEvent
     data object OnAddLocationClick : PageEvent
     data object OnRemoveLocationClick : PageEvent
+    data object OnAutoDetectLocationClickClick : PageEvent
 }
 
 internal sealed interface PageEffect {
@@ -126,4 +127,6 @@ internal sealed interface PageEffect {
         val moodId: String?,
         val defaultMoodId: String?,
     ) : PageEffect
+
+    data object ShowAutoDetectLocationDialog : PageEffect
 }

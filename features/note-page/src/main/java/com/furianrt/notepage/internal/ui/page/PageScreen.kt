@@ -95,6 +95,7 @@ import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
+import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
 import com.furianrt.notepage.internal.ui.page.composables.LocationCard
 import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
@@ -192,6 +193,7 @@ internal fun NotePageScreenInternal(
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
     var showCameraPermissionDialog by remember { mutableStateOf(false) }
     var showLocationPermissionDialog by remember { mutableStateOf(false) }
+    var showDetectLocationDialog by remember { mutableStateOf(false) }
 
     var moodDialogState: MoodDialogState? by remember { mutableStateOf(null) }
 
@@ -286,6 +288,8 @@ internal fun NotePageScreenInternal(
                     moodId = effect.moodId,
                     defaultMoodId = effect.defaultMoodId,
                 )
+
+                is PageEffect.ShowAutoDetectLocationDialog -> showDetectLocationDialog = true
             }
         }
     }
@@ -329,6 +333,14 @@ internal fun NotePageScreenInternal(
             hazeState = hazeState,
             onDismissRequest = { showLocationPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
+    if (showDetectLocationDialog) {
+        DetectLocationDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showDetectLocationDialog = false },
+            onConfirmClick = { viewModel.onEvent(PageEvent.OnAutoDetectLocationClickClick) },
         )
     }
 

@@ -10,12 +10,14 @@ internal data object MainRoute
 internal fun NavGraphBuilder.settingsScreen(
     openSecurityScreen: () -> Unit,
     openBackupScreen: () -> Unit,
+    openNoteSettingsScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<MainRoute> {
         SettingsScreen(
             openSecurityScreen = openSecurityScreen,
             openBackupScreen = openBackupScreen,
+            openNoteSettingsScreen = openNoteSettingsScreen,
             onCloseRequest = onCloseRequest,
         )
     }

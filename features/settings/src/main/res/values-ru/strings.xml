@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">Что-то не так?</string>
     <string name="settings_bad_feedback_body">Нам важно ваше мнение. Помогите нам сделать приложение лучше</string>
+    <string name="settings_note_detect_location_title">Автоопределение местоположения</string>
+    <string name="settings_note_content_title">Содержимое заметки</string>
 </resources>

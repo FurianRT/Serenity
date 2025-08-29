@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">Щось не так?</string>
     <string name="settings_bad_feedback_body">Ваш відгук дуже важливий. Допоможіть нам покращити ваш досвід</string>
+    <string name="settings_note_detect_location_title">Автовизначення місцезнаходження</string>
+    <string name="settings_note_content_title">Вміст нотатки</string>
 </resources>

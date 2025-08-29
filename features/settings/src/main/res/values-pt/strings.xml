@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">Algo não está certo?</string>
     <string name="settings_bad_feedback_body">Seu feedback é muito importante. Ajude-nos a melhorar sua experiência</string>
+    <string name="settings_note_detect_location_title">Detecção automática de localização</string>
+    <string name="settings_note_content_title">Conteúdo da nota</string>
 </resources>

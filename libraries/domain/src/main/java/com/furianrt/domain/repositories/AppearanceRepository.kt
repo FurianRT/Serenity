@@ -19,4 +19,8 @@ interface AppearanceRepository {
     suspend fun setDefaultNoteFontSize(size: Int)
     fun getDefaultNoteMoodId(): Flow<String?>
     suspend fun setDefaultNoteMoodId(moodId: String)
+    fun isAutoDetectLocationEnabled(): Flow<Boolean>
+    suspend fun setAutoDetectLocationEnabled(enabled: Boolean)
+    fun isAutoDetectLocationAsked(): Flow<Boolean>
+    suspend fun setAutoDetectLocationAsked(value: Boolean)
 }

@@ -69,7 +69,7 @@ internal class SettingsViewModel @Inject constructor(
         initialValue = SettingsUiState.Loading,
     )
 
-    private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 10)
+    private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 5)
     val effect = _effect.asSharedFlow()
 
     fun onEvent(event: SettingsEvent) {
@@ -88,7 +88,6 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnAppThemeSelected -> selectedTheme.update { event.theme }
-
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
                 settingsRepository.setAppRating(event.rating)
@@ -127,6 +126,9 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnLocaleSelected -> localeRepository.setSelectedLocale(event.locale)
+            is SettingsEvent.OnButtonNoteSettingsClick -> {
+                _effect.tryEmit(SettingsEffect.OpenNoteSettingsScreen)
+            }
         }
     }
 

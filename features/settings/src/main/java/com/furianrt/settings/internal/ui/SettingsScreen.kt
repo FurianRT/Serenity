@@ -103,6 +103,7 @@ private data class LocaleDialogState(
 internal fun SettingsScreen(
     openSecurityScreen: () -> Unit,
     openBackupScreen: () -> Unit,
+    openNoteSettingsScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -115,6 +116,7 @@ internal fun SettingsScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
     val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
+    val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -160,6 +162,8 @@ internal fun SettingsScreen(
                     is SettingsEffect.ShowLocaleDialog -> {
                         localeDialogState = LocaleDialogState(effect.locale, effect.selectedLocale)
                     }
+
+                    is SettingsEffect.OpenNoteSettingsScreen -> openNoteSettingsScreenState()
                 }
             }
     }
@@ -268,21 +272,27 @@ private fun SuccessScreen(
     ) {
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_security_title),
-            iconPainter = painterResource(id = R.drawable.ic_lock),
+            title = stringResource(R.string.settings_security_title),
+            iconPainter = painterResource(R.drawable.ic_lock),
             onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_backup_title),
-            iconPainter = painterResource(id = R.drawable.ic_cloud),
+            title = stringResource(R.string.settings_backup_title),
+            iconPainter = painterResource(R.drawable.ic_cloud),
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_font_title),
-            iconPainter = painterResource(id = R.drawable.font_svgrepo_com),
+            title = stringResource(R.string.settings_font_title),
+            iconPainter = painterResource(R.drawable.ic_settings_font),
             onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
+        )
+        GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(R.string.settings_note_content_title),
+            iconPainter = painterResource(R.drawable.ic_note_content),
+            onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
         )
         ThemeSelector(
             modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
@@ -313,20 +323,20 @@ private fun SuccessScreen(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_feedback_title),
-            iconPainter = painterResource(id = R.drawable.ic_mail),
+            title = stringResource(R.string.settings_feedback_title),
+            iconPainter = painterResource(R.drawable.ic_mail),
             onClick = { onEvent(SettingsEvent.OnButtonFeedbackClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(id = R.string.settings_terms_and_conditions_title),
-            iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
+            title = stringResource(R.string.settings_terms_and_conditions_title),
+            iconPainter = painterResource(uiR.drawable.ic_text_snippet),
             onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_privacy_policy_title),
-            iconPainter = painterResource(id = uiR.drawable.ic_text_snippet),
+            iconPainter = painterResource(uiR.drawable.ic_text_snippet),
             onClick = { onEvent(SettingsEvent.OnButtonPrivacyPolicyClick) },
         )
         Spacer(modifier = Modifier.weight(1f))

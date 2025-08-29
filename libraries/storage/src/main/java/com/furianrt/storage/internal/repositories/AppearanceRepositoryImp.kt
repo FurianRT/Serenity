@@ -55,4 +55,20 @@ internal class AppearanceRepositoryImp @Inject constructor(
     override suspend fun setDefaultNoteMoodId(moodId: String) {
         appearanceDataStore.setDefaultNoteMoodId(moodId)
     }
+
+    override fun isAutoDetectLocationEnabled(): Flow<Boolean> {
+        return appearanceDataStore.isAutoDetectLocationEnabled()
+    }
+
+    override suspend fun setAutoDetectLocationEnabled(enabled: Boolean) {
+        appearanceDataStore.setAutoDetectLocationEnabled(enabled)
+    }
+
+    override fun isAutoDetectLocationAsked(): Flow<Boolean> {
+        return appearanceDataStore.isAutoDetectLocationAsked()
+    }
+
+    override suspend fun setAutoDetectLocationAsked(value: Boolean) {
+        appearanceDataStore.setAutoDetectLocationAsked(value)
+    }
 }

@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">कुछ ठीक नहीं लग रहा?</string>
     <string name="settings_bad_feedback_body">आपकी प्रतिक्रिया हमारे लिए महत्वपूर्ण है। कृपया हमें बेहतर बनाने में मदद करें</string>
+    <string name="settings_note_detect_location_title">स्थान स्वतः पहचानें</string>
+    <string name="settings_note_content_title">नोट की सामग्री</string>
 </resources>

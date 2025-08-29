@@ -16,6 +16,8 @@
     <string name="action_continue">Продолжить</string>
     <string name="action_change_sorting">Изменить порядок</string>
     <string name="action_back">Назад</string>
+    <string name="action_yes">Да</string>
+    <string name="action_no">Нет</string>
 
     <string name="title_email">Электронная почта</string>
 

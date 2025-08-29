@@ -18,4 +18,6 @@
 
     <string name="settings_bad_feedback_title">Có vấn đề gì không?</string>
     <string name="settings_bad_feedback_body">Phản hồi của bạn rất quan trọng. Giúp chúng tôi cải thiện trải nghiệm của bạn</string>
+    <string name="settings_note_detect_location_title">Tự động phát hiện vị trí</string>
+    <string name="settings_note_content_title">Nội dung ghi chú</string>
 </resources>

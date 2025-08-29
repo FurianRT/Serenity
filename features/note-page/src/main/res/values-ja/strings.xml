@@ -5,4 +5,5 @@
     <string name="note_select_text_position_message">テキスト内の位置を選択してください</string>
     <string name="note_add_current_location_title">現在地を追加</string>
     <string name="note_add_current_location_fail_title">現在地を取得できませんでした</string>
+    <string name="note_auto_detect_location_title">新しいメモに現在地を自動的に追加しますか？</string>
 </resources>

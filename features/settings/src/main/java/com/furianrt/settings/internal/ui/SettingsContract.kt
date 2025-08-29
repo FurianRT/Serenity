@@ -31,6 +31,7 @@ internal sealed interface SettingsEvent {
     data class OnLocaleSelected(val locale: AppLocale) : SettingsEvent
     data object OnButtonTermsAndConditionsClick : SettingsEvent
     data object OnButtonPrivacyPolicyClick : SettingsEvent
+    data object OnButtonNoteSettingsClick : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
@@ -60,4 +61,6 @@ internal sealed interface SettingsEffect {
         val locale: List<AppLocale>,
         val selectedLocale: AppLocale,
     ) : SettingsEffect
+
+    data object OpenNoteSettingsScreen : SettingsEffect
 }

@@ -17,4 +17,6 @@
 
     <string name="settings_bad_feedback_title">문제가 있나요?</string>
     <string name="settings_bad_feedback_body">귀하의 피드백은 매우 중요합니다. 경험 개선에 도움을 주세요</string>
+    <string name="settings_note_detect_location_title">위치 자동 감지</string>
+    <string name="settings_note_content_title">노트 내용</string>
 </resources>

@@ -15,6 +15,8 @@
     <string name="action_continue">Continuar</string>
     <string name="action_change_sorting">Cambiar orden</string>
     <string name="action_back">Atrás</string>
+    <string name="action_yes">Sí</string>
+    <string name="action_no">No</string>
 
     <string name="title_email">Correo electrónico</string>
 

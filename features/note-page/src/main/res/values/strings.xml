@@ -5,4 +5,5 @@
     <string name="note_select_text_position_message">Select a position in the text</string>
     <string name="note_add_current_location_title">Add current location</string>
     <string name="note_add_current_location_fail_title">Unable to get current location</string>
+    <string name="note_auto_detect_location_title">Do you want to automatically add your location to new notes?</string>
 </resources>
