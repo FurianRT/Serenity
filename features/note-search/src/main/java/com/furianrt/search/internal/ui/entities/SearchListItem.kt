@@ -3,7 +3,6 @@ package com.furianrt.search.internal.ui.entities
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import kotlinx.collections.immutable.ImmutableList
@@ -41,7 +40,6 @@ internal sealed class SearchListItem(
         val date: Date,
         val tags: ImmutableList<UiNoteTag>,
         val isSelected: Boolean,
-        val fontColor: UiNoteFontColor?,
         val fontFamily: UiNoteFontFamily?,
         val fontSize: Int,
         val moodId: String?,

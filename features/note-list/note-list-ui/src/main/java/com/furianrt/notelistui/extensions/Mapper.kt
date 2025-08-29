@@ -178,7 +178,7 @@ fun List<LocalNote.Content>.getShortUiContent(
                 state = NoteTitleState(
                     initialText = this@getShortUiContent
                         .filterIsInstance<LocalNote.Content.Title>()
-                        .map { it.getAnnotatedString(fontFamily) }
+                        .map { AnnotatedString(it.text) }
                         .join(separator = "\n"),
                     fontFamily = fontFamily,
                 ),

@@ -8,7 +8,6 @@ import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
-import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.uikit.extensions.toDateString
 import java.time.LocalDate
@@ -37,7 +36,6 @@ internal fun LocalNote.toMainScreenNote(
             else -> NoteListScreenNote.Date.Other(date.toDateString())
         },
         tags = tags.take(3).mapImmutable { it.toRegularUiNoteTag(isRemovable = false) },
-        fontColor = fontColor?.toUiNoteFontColor(),
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
         isPinned = isPinned,

@@ -330,7 +330,6 @@ private fun SuccessContent(
                         }
                     },
                     isSelected = item.isSelected,
-                    fontColor = item.fontColor,
                     fontFamily = item.fontFamily,
                     fontSize = item.fontSize.sp,
                     moodId = item.moodId,
@@ -412,7 +411,6 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
                         isSelected = false,
-                        fontColor = null,
                         fontFamily = null,
                         fontSize = 16,
                         moodId = null,

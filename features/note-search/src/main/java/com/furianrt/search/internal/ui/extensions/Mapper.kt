@@ -8,7 +8,6 @@ import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
-import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
@@ -34,7 +33,6 @@ internal fun LocalNote.toNoteItem(
         },
         tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
-        fontColor = fontColor?.toUiNoteFontColor(),
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
         moodId = moodId,

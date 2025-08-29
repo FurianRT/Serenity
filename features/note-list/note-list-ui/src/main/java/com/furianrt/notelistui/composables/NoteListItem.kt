@@ -29,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
@@ -40,7 +39,6 @@ import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
-import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
@@ -59,7 +57,6 @@ private const val MAX_LINES_WITHOUT_MEDIA = 6
 fun NoteListItem(
     content: ImmutableList<UiNoteContent>,
     tags: ImmutableList<UiNoteTag>,
-    fontColor: UiNoteFontColor?,
     fontFamily: UiNoteFontFamily?,
     fontSize: TextUnit,
     date: String,
@@ -140,7 +137,6 @@ fun NoteListItem(
                                     (fontSize.value /
                                             MaterialTheme.typography.bodyMedium.fontSize.value),
                         ),
-                        color = fontColor?.value ?: Color.Unspecified,
                     )
 
                     is UiNoteContent.MediaBlock -> NoteContentMedia(
@@ -216,7 +212,6 @@ private fun NoteItemPreview() {
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
             ),
-            fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             content = generatePreviewContent(),
@@ -235,7 +230,6 @@ private fun PinnedNoteItemPreview() {
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
             ),
-            fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             isPinned = true,
@@ -255,7 +249,6 @@ private fun SelectedNoteItemPreview() {
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
             ),
-            fontColor = UiNoteFontColor.WHITE,
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             isPinned = true,
