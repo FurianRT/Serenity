@@ -1,17 +1,15 @@
 package com.furianrt.toolspanel.internal.domain
 
-import com.furianrt.core.buildImmutableList
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.entities.StickerPack
-import kotlinx.collections.immutable.ImmutableList
 import javax.inject.Inject
 
 internal class StickersHolder @Inject constructor() : StickerIconProvider {
-    private var cache: ImmutableList<StickerPack>? = null
+    private var cache: List<StickerPack>? = null
 
-    fun getStickersPacks(): ImmutableList<StickerPack> {
+    fun getStickersPacks(): List<StickerPack> {
         return cache ?: loadPacks().also { cache = it }
     }
 
@@ -20,7 +18,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         .firstOrNull { it.id == stickerId }
         ?.icon
 
-    private fun loadPacks(): ImmutableList<StickerPack> = buildImmutableList {
+    private fun loadPacks(): List<StickerPack> = buildList {
         add(getPack4())
         add(getPack1())
         add(getPack6())
@@ -29,7 +27,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
     }
 
     private fun getPack1(): StickerPack {
-        val stickers = buildImmutableList {
+        val stickers = buildList {
             add(Sticker(id = "pack_1_sticker_1", icon = R.drawable.sticker_pack_1_item_1))
             add(Sticker(id = "pack_1_sticker_2", icon = R.drawable.sticker_pack_1_item_2))
             add(Sticker(id = "pack_1_sticker_3", icon = R.drawable.sticker_pack_1_item_3))
@@ -88,7 +86,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
     }
 
     private fun getPack4(): StickerPack {
-        val stickers = buildImmutableList {
+        val stickers = buildList {
             add(Sticker(id = "pack_4_sticker_1", icon = R.drawable.sticker_pack_4_item_1))
             add(Sticker(id = "pack_4_sticker_2", icon = R.drawable.sticker_pack_4_item_2))
             add(Sticker(id = "pack_4_sticker_3", icon = R.drawable.sticker_pack_4_item_3))
@@ -143,7 +141,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
     }
 
     private fun getPack6(): StickerPack {
-        val stickers = buildImmutableList {
+        val stickers = buildList {
             add(Sticker(id = "pack_6_sticker_1", icon = R.drawable.sticker_pack_6_item_1))
             add(Sticker(id = "pack_6_sticker_2", icon = R.drawable.sticker_pack_6_item_2))
             add(Sticker(id = "pack_6_sticker_3", icon = R.drawable.sticker_pack_6_item_3))
@@ -197,7 +195,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
     }
 
     private fun getPack7(): StickerPack {
-        val stickers = buildImmutableList {
+        val stickers = buildList {
             add(Sticker(id = "pack_7_sticker_1", icon = R.drawable.sticker_pack_7_item_1))
             add(Sticker(id = "pack_7_sticker_2", icon = R.drawable.sticker_pack_7_item_2))
             add(Sticker(id = "pack_7_sticker_3", icon = R.drawable.sticker_pack_7_item_3))
@@ -253,7 +251,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
     }
 
     private fun getPack8(): StickerPack {
-        val stickers = buildImmutableList {
+        val stickers = buildList {
             add(Sticker(id = "pack_8_sticker_1", icon = R.drawable.sticker_pack_8_item_1))
             add(Sticker(id = "pack_8_sticker_2", icon = R.drawable.sticker_pack_8_item_2))
             add(Sticker(id = "pack_8_sticker_3", icon = R.drawable.sticker_pack_8_item_3))

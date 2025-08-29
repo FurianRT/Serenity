@@ -57,7 +57,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -302,7 +301,7 @@ private fun Preview() {
         SuccessContent(
             uiState = MediaViewUiState(
                 initialMediaIndex = 1,
-                media = persistentListOf(
+                media = listOf(
                     MediaItem.Image(id = "1", name = "1", uri = Uri.EMPTY, ratio = 0.5f),
                     MediaItem.Image(id = "2", name = "2", uri = Uri.EMPTY, ratio = 0.5f),
                     MediaItem.Image(id = "3", name = "3", uri = Uri.EMPTY, ratio = 1.4f),

@@ -6,7 +6,6 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.core.buildImmutableList
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
@@ -31,9 +30,6 @@ import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import com.furianrt.uikit.utils.DialogResultListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -59,7 +55,7 @@ private const val QUERY_DEBOUNCE_DURATION = 300L
 private class SearchData(
     val allTags: List<LocalTag>,
     val queryText: String,
-    val selectedFilters: ImmutableList<SelectedFilter>,
+    val selectedFilters: List<SelectedFilter>,
     val scrollToPosition: Int?,
 )
 
@@ -88,8 +84,8 @@ internal class SearchViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = "",
         )
-    private val selectedFiltersFlow: MutableStateFlow<ImmutableList<SelectedFilter>> =
-        MutableStateFlow(persistentListOf())
+    private val selectedFiltersFlow: MutableStateFlow<List<SelectedFilter>> =
+        MutableStateFlow(emptyList())
 
     val state: StateFlow<SearchUiState> = combine(
         getAllUniqueTagsUseCase(),
@@ -188,7 +184,7 @@ internal class SearchViewModel @Inject constructor(
 
     private fun removeFilter(filter: SelectedFilter) {
         if (selectedNotesState.value.isEmpty()) {
-            selectedFiltersFlow.update { it.toPersistentList().remove(filter) }
+            selectedFiltersFlow.update { it.toMutableList().apply { remove(filter) } }
             scrollToPositionState.update { 0 }
         }
     }
@@ -197,7 +193,9 @@ internal class SearchViewModel @Inject constructor(
         val alreadyHasFilter = state.value.selectedFilters.any { it.isSelected && it.id == title }
         val isSelectionActive = selectedNotesState.value.isEmpty()
         if (isSelectionActive && !alreadyHasFilter) {
-            selectedFiltersFlow.update { it.toPersistentList().add(SelectedFilter.Tag(title)) }
+            selectedFiltersFlow.update {
+                it.toMutableList().apply { add(SelectedFilter.Tag(title)) }
+            }
             scrollToPositionState.update { 0 }
         }
     }
@@ -205,9 +203,12 @@ internal class SearchViewModel @Inject constructor(
     private fun addDateFilter(start: LocalDate, end: LocalDate?) {
         val filterItem = SelectedFilter.DateRange(start, end)
         selectedFiltersFlow.update { filters ->
-            filters.toPersistentList()
-                .removeAll { it.id == filterItem.id }
-                .add(filterItem)
+            filters
+                .toMutableList()
+                .apply {
+                    removeAll { it.id == filterItem.id }
+                    add(filterItem)
+                }
         }
         scrollToPositionState.update { 0 }
     }
@@ -301,8 +302,8 @@ internal class SearchViewModel @Inject constructor(
         val state = if (notes.isEmpty()) {
             SearchUiState.State.Empty
         } else {
-            val items: ImmutableList<SearchListItem> = if (hasFilters || hasQuery) {
-                buildImmutableList {
+            val items: List<SearchListItem> = if (hasFilters || hasQuery) {
+                buildList {
                     add(SearchListItem.NotesCountTitle(notes.count()))
                     val notesItems = notes.map { note ->
                         note.toNoteItem(
@@ -313,7 +314,7 @@ internal class SearchViewModel @Inject constructor(
                     addAll(notesItems)
                 }
             } else {
-                persistentListOf(data.allTags.toTagsList())
+                listOf(data.allTags.toTagsList())
             }
             SearchUiState.State.Success(
                 items = items,
@@ -332,7 +333,7 @@ internal class SearchViewModel @Inject constructor(
 
         return SearchUiState(
             searchQuery = queryState,
-            selectedFilters = data.selectedFilters.toPersistentList().addAll(unselectedTags),
+            selectedFilters = data.selectedFilters.toMutableList().apply { addAll(unselectedTags) },
             state = state,
         )
     }

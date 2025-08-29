@@ -47,7 +47,6 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.components.TagItem
@@ -59,13 +58,12 @@ import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 
 @Composable
 fun NoteTags(
-    tags: ImmutableList<UiNoteTag>,
+    tags: List<UiNoteTag>,
     modifier: Modifier = Modifier,
     date: String? = null,
     showStub: Boolean = false,
@@ -302,7 +300,7 @@ private fun NoteTagsPreview() {
     }
 }
 
-private fun generatePreviewTags() = buildImmutableList {
+private fun generatePreviewTags() = buildList {
     add(UiNoteTag.Regular(title = "Programming", isRemovable = false))
     add(UiNoteTag.Regular(title = "Programming", isRemovable = false))
     add(UiNoteTag.Regular(title = "Programming", isRemovable = false))

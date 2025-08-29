@@ -13,16 +13,15 @@ import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.utils.DialogIdentifier
-import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface PageUiState {
     data object Loading : PageUiState
     data object Empty : PageUiState
     data class Success(
         val noteId: String,
-        val content: ImmutableList<UiNoteContent>,
-        val tags: ImmutableList<UiNoteTag>,
-        val stickers: ImmutableList<StickerItem>,
+        val content: List<UiNoteContent>,
+        val tags: List<UiNoteTag>,
+        val stickers: List<StickerItem>,
         val playingVoiceId: String?,
         val fontFamily: UiNoteFontFamily?,
         val fontColor: UiNoteFontColor?,

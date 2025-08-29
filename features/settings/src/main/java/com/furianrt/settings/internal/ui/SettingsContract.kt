@@ -5,12 +5,11 @@ import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
-import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface SettingsUiState {
     data object Loading : SettingsUiState
     data class Success(
-        val themes: ImmutableList<UiTheme>,
+        val themes: List<UiTheme>,
         @param:IntRange(0L, 5L) val rating: Int,
         val appVersion: String,
         val locale: AppLocale,
@@ -52,7 +51,7 @@ internal sealed interface SettingsEffect {
     data class OpenMarketPage(val url: String) : SettingsEffect
     data object ShowBadRatingDialog : SettingsEffect
     data class ShowFontDialog(
-        val fonts: ImmutableList<UiNoteFontFamily>,
+        val fonts: List<UiNoteFontFamily>,
         val selectedFont: UiNoteFontFamily,
     ) : SettingsEffect
 

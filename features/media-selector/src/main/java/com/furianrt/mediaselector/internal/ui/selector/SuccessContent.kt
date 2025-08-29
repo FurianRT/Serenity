@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.buildImmutableList
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
@@ -117,7 +116,7 @@ private fun Preview() {
             onEvent = {},
             listState = rememberLazyGridState(),
             uiState = MediaSelectorUiState.Success(
-                items = buildImmutableList {
+                items = buildList {
                     repeat(18) { index ->
                         val item = if (index % 2 == 0) {
                             MediaItem.Image(

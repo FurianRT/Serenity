@@ -1,23 +1,21 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
-import com.furianrt.core.mapImmutable
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface MediaSelectorUiState {
     data object Loading : MediaSelectorUiState
     data class Empty(val showPartialAccessMessage: Boolean) : MediaSelectorUiState
     data class Success(
-        val items: ImmutableList<MediaItem>,
+        val items: List<MediaItem>,
         val selectedCount: Int,
         val showPartialAccessMessage: Boolean,
     ) : MediaSelectorUiState {
 
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             selectedCount = selectedItems.count(),
-            items = items.mapImmutable { item ->
+            items = items.map { item ->
                 val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
                 when {
                     selectedIndex != -1 -> {

@@ -128,7 +128,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -866,8 +865,8 @@ private fun SuccessScreenPreview() {
             uiState = PageUiState.Success(
                 noteId = "123",
                 isInEditMode = false,
-                tags = persistentListOf(),
-                stickers = persistentListOf(),
+                tags = emptyList(),
+                stickers = emptyList(),
                 playingVoiceId = null,
                 fontFamily = UiNoteFontFamily.NotoSans,
                 fontColor = UiNoteFontColor.WHITE,
@@ -876,7 +875,7 @@ private fun SuccessScreenPreview() {
                 moodId = null,
                 defaultMoodId = null,
                 locationState = LocationState.Loading,
-                content = persistentListOf(
+                content = listOf(
                     UiNoteContent.Title(
                         id = "1",
                         state = NoteTitleState(

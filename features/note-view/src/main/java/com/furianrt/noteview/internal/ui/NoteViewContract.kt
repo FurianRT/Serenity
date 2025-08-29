@@ -4,7 +4,6 @@ import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.noteview.internal.ui.entites.NoteItem
 import com.furianrt.uikit.theme.NoteFont
-import kotlinx.collections.immutable.ImmutableList
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
@@ -16,7 +15,7 @@ internal sealed interface NoteViewUiState {
         val initialPageIndex: Int,
         val currentPageIndex: Int,
         val isInEditMode: Boolean,
-        val notes: ImmutableList<NoteItem>,
+        val notes: List<NoteItem>,
         val date: ZonedDateTime,
         val font: NoteFont,
     ) : NoteViewUiState {

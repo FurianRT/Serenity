@@ -10,7 +10,6 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.composables.title.NoteTitleState
-import kotlinx.collections.immutable.ImmutableList
 import java.time.ZonedDateTime
 
 sealed class UiNoteContent(
@@ -31,7 +30,7 @@ sealed class UiNoteContent(
         val uri: Uri,
         val duration: Long,
         val progressState: ProgressState,
-        val volume: ImmutableList<Float>,
+        val volume: List<Float>,
     ) : UiNoteContent(id) {
 
         @Stable
@@ -46,7 +45,7 @@ sealed class UiNoteContent(
     @Immutable
     data class MediaBlock(
         override val id: String,
-        val media: ImmutableList<Media>,
+        val media: List<Media>,
     ) : UiNoteContent(id) {
 
         @Immutable

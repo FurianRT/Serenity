@@ -49,6 +49,4 @@ dependencies {
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.reorderableLists)
-
-    implementation(libs.immutableCollections)
 }

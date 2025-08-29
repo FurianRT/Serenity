@@ -83,14 +83,12 @@ import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private data class FontsDialogState(
-    val fonts: ImmutableList<UiNoteFontFamily>,
+    val fonts: List<UiNoteFontFamily>,
     val selectedFont: UiNoteFontFamily,
 )
 
@@ -349,7 +347,7 @@ private fun SuccessScreen(
 
 @Composable
 private fun ThemeSelector(
-    themes: ImmutableList<UiTheme>,
+    themes: List<UiTheme>,
     onThemeSelected: (theme: UiTheme) -> Unit,
     onColorSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
@@ -545,16 +543,16 @@ private fun ScreenContentPreview() {
         ScreenContent(
             snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState.Success(
-                themes = persistentListOf(
+                themes = listOf(
                     UiTheme.Light(
-                        colors = persistentListOf(
+                        colors = listOf(
                             UiThemeColor.LIGHT_BLUE,
                         ),
                         selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
                         isSelected = false,
                     ),
                     UiTheme.Dark(
-                        colors = persistentListOf(
+                        colors = listOf(
                             UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
                             UiThemeColor.DISTANT_CASTLE_GREEN,
                             UiThemeColor.VAMPIRE_RED_DARK,

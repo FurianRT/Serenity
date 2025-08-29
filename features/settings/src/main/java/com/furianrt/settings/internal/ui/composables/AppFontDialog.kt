@@ -26,15 +26,13 @@ import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AppFontDialog(
-    fonts: ImmutableList<UiNoteFontFamily>,
+    fonts: List<UiNoteFontFamily>,
     selectedFont: UiNoteFontFamily,
     hazeState: HazeState,
     onFontSelected: (font: UiNoteFontFamily) -> Unit,
@@ -95,7 +93,7 @@ internal fun AppFontDialog(
 private fun Preview() {
     SerenityTheme {
         AppFontDialog(
-            fonts = persistentListOf(
+            fonts = listOf(
                 UiNoteFontFamily.NotoSans,
                 UiNoteFontFamily.Doto,
                 UiNoteFontFamily.Tektur,

@@ -1,6 +1,5 @@
 package com.furianrt.search.internal.ui.extensions
 
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.entities.NoteFontFamily
@@ -15,7 +14,7 @@ import com.furianrt.uikit.extensions.toDateString
 import java.time.LocalDate
 
 internal fun List<LocalTag>.toTagsList() = SearchListItem.TagsList(
-    tags = mapImmutable(LocalTag::toTagsListItem),
+    tags = map(LocalTag::toTagsListItem),
 )
 
 internal fun LocalNote.toNoteItem(
@@ -31,7 +30,7 @@ internal fun LocalNote.toNoteItem(
             localDateNow.minusDays(1) == localDate -> SearchListItem.Note.Date.Yesterday
             else -> SearchListItem.Note.Date.Other(date.toDateString())
         },
-        tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
+        tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,

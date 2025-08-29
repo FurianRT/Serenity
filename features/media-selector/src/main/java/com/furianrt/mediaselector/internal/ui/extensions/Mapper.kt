@@ -1,6 +1,5 @@
 package com.furianrt.mediaselector.internal.ui.extensions
 
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
@@ -29,10 +28,10 @@ internal fun DeviceMedia.toMediaItem(
 
 internal fun List<DeviceMedia>.toMediaItems(
     state: (id: Long) -> SelectionState,
-) = mapImmutable { it.toMediaItem(state = state(it.id)) }
+) = map { it.toMediaItem(state = state(it.id)) }
 
 internal fun List<MediaItem>.toMediaSelectorResult() = MediaResult(
-    media = mapImmutable(MediaItem::toResultMedia),
+    media = map(MediaItem::toResultMedia),
 )
 
 private fun MediaItem.toResultMedia(): MediaResult.Media = when (this) {

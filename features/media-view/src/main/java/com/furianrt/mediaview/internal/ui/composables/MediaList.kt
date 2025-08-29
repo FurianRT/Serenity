@@ -33,7 +33,6 @@ import coil3.video.VideoFrameDecoder
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.extensions.clickableNoRipple
-import kotlinx.collections.immutable.ImmutableList
 
 private const val IMAGE_SCALE_ANIM_DURATION = 300
 private val SELECTED_ITEM_HEIGHT = 70.dp
@@ -43,7 +42,7 @@ private val HORIZONTAL_PADDING = 12.dp
 @Composable
 internal fun MediaList(
     state: LazyListState,
-    media: ImmutableList<MediaItem>,
+    media: List<MediaItem>,
     initialMediaIndex: Int,
     currentItem: Int,
     onItemClick: (index: Int) -> Unit,

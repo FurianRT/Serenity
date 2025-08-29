@@ -1,7 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.lifecycle.ViewModel
-import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.repositories.MediaRepository
@@ -154,7 +153,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     }
 
                     else -> MediaSelectorUiState.Success(
-                        items = media.mapImmutable(DeviceMedia::toMediaItem),
+                        items = media.map(DeviceMedia::toMediaItem),
                         selectedCount = 0,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )

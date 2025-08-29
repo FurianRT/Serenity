@@ -19,7 +19,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import com.furianrt.core.mapImmutable
 import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontBackgroundColor
@@ -284,7 +283,7 @@ private fun FontColorsStateContent(
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
 ) {
-    val colors = remember { UiNoteFontColor.entries.mapImmutable { it.value } }
+    val colors = remember { UiNoteFontColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
         titleState
             ?.getSpans(
@@ -326,7 +325,7 @@ private fun FillColorsStateContent(
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
 ) {
-    val colors = remember { UiNoteFontBackgroundColor.entries.mapImmutable { it.value } }
+    val colors = remember { UiNoteFontBackgroundColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
         titleState
             ?.getSpans(

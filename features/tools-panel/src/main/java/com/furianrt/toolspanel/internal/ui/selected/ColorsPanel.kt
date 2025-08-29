@@ -15,18 +15,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.mapImmutable
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun ColorsPanel(
-    colors: ImmutableList<Color>,
+    colors: List<Color>,
     selectedColor: Color?,
     modifier: Modifier = Modifier,
     onColorSelected: (color: Color?) -> Unit = {},
@@ -69,7 +67,7 @@ internal fun ColorsPanel(
 private fun Preview() {
     SerenityTheme {
         ColorsPanel(
-            colors = UiNoteFontColor.entries.mapImmutable { it.value },
+            colors = UiNoteFontColor.entries.map { it.value },
             selectedColor = UiNoteFontColor.BLUE_DARK.value,
         )
     }

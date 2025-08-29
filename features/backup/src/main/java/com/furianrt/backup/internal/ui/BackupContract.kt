@@ -6,7 +6,6 @@ import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress.*
 import com.furianrt.backup.internal.ui.entities.Question
-import kotlinx.collections.immutable.ImmutableList
 
 internal sealed interface BackupUiState {
 
@@ -14,7 +13,7 @@ internal sealed interface BackupUiState {
         val isAutoBackupEnabled: Boolean,
         val backupPeriod: BackupPeriod,
         val lastSyncDate: SyncDate,
-        val questions: ImmutableList<Question>,
+        val questions: List<Question>,
         val authState: AuthState,
         val syncProgress: SyncProgress,
     ) : BackupUiState {

@@ -48,7 +48,5 @@ dependencies {
 
     implementation(libs.lottie)
 
-    implementation(libs.immutableCollections)
-
     implementation(libs.blur)
 }

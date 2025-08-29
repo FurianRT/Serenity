@@ -50,7 +50,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -74,7 +73,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -373,7 +371,7 @@ private fun EmptyContent(
 private fun SuccessEmptyQueryPreview() {
     SerenityTheme {
         val tagsItem = SearchListItem.TagsList(
-            tags = buildImmutableList {
+            tags = buildList {
                 repeat(20) { index ->
                     add(
                         SearchListItem.TagsList.Tag(
@@ -387,7 +385,7 @@ private fun SuccessEmptyQueryPreview() {
         ScreenContent(
             uiState = SearchUiState(
                 state = SearchUiState.State.Success(
-                    items = persistentListOf(tagsItem),
+                    items = listOf(tagsItem),
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
@@ -399,14 +397,14 @@ private fun SuccessEmptyQueryPreview() {
 @Preview
 private fun SuccessFilledQueryPreview() {
     SerenityTheme {
-        val noteItems = buildImmutableList {
+        val noteItems = buildList {
             add(SearchListItem.NotesCountTitle(count = 5))
             repeat(5) { index ->
                 add(
                     SearchListItem.Note(
                         id = index.toString(),
                         date = SearchListItem.Note.Date.Other("19.06.2023"),
-                        tags = persistentListOf(
+                        tags = listOf(
                             UiNoteTag.Regular(title = "Programming", isRemovable = false),
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
@@ -415,7 +413,7 @@ private fun SuccessFilledQueryPreview() {
                         fontSize = 16,
                         moodId = null,
                         locationState = LocationState.Empty,
-                        content = persistentListOf(
+                        content = listOf(
                             UiNoteContent.Title(
                                 id = "1",
                                 state = NoteTitleState(
@@ -429,7 +427,7 @@ private fun SuccessFilledQueryPreview() {
                             ),
                             UiNoteContent.MediaBlock(
                                 id = "1",
-                                media = persistentListOf(
+                                media = listOf(
                                     UiNoteContent.MediaBlock.Image(
                                         id = "",
                                         name = "",
@@ -447,7 +445,7 @@ private fun SuccessFilledQueryPreview() {
         ScreenContent(
             uiState = SearchUiState(
                 searchQuery = TextFieldState("Test query"),
-                selectedFilters = persistentListOf(
+                selectedFilters = listOf(
                     SelectedFilter.Tag("Programming"),
                     SelectedFilter.DateRange(LocalDate.now(), LocalDate.now()),
                     SelectedFilter.Tag("Kotlin"),
@@ -469,7 +467,7 @@ private fun EmptyStatePreview() {
         ScreenContent(
             uiState = SearchUiState(
                 searchQuery = TextFieldState("Test query"),
-                selectedFilters = persistentListOf(
+                selectedFilters = listOf(
                     SelectedFilter.Tag("Programming"),
                     SelectedFilter.DateRange(LocalDate.now(), LocalDate.now()),
                     SelectedFilter.Tag("Kotlin"),

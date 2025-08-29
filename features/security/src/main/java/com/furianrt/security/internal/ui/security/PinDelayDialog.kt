@@ -24,12 +24,10 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val PIN_DELAYS: ImmutableList<Int> = persistentListOf(
+private val PIN_DELAYS: List<Int> = listOf(
     5 * 1000,
     15 * 1000,
     30 * 1000,

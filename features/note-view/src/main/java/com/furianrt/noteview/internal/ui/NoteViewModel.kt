@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
@@ -137,7 +136,7 @@ internal class NoteViewModel @Inject constructor(
                 when (localState) {
                     is NoteViewUiState.Success -> {
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.mapImmutable { note ->
+                        val notesItems = notes.map { note ->
                             note.toNoteItem(
                                 background = backgroundProvider.getBackground(note.backgroundId),
                             )
@@ -156,7 +155,7 @@ internal class NoteViewModel @Inject constructor(
 
                     is NoteViewUiState.Loading -> {
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.mapImmutable { note ->
+                        val notesItems = notes.map { note ->
                             note.toNoteItem(
                                 background = backgroundProvider.getBackground(note.backgroundId),
                             )

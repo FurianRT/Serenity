@@ -56,7 +56,6 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.entities.UiNoteContent.Voice
 import com.furianrt.notelistui.entities.UiNoteContent.Voice.ProgressState
 import com.furianrt.uikit.extensions.applyIf
@@ -64,7 +63,6 @@ import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 import kotlin.random.Random
 import com.furianrt.uikit.R as uiR
 
@@ -272,7 +270,7 @@ private fun Timer(
 @Composable
 private fun VoiceSlider(
     progressState: ProgressState,
-    volume: ImmutableList<Float>,
+    volume: List<Float>,
     enabled: Boolean,
     modifier: Modifier = Modifier,
     onValueChangeFinished: (value: Float) -> Unit,
@@ -315,7 +313,7 @@ private fun VoiceSlider(
 
 @Composable
 private fun Track(
-    volume: ImmutableList<Float>,
+    volume: List<Float>,
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
@@ -385,7 +383,7 @@ private fun PreviewWithPlayButton() {
                 uri = Uri.EMPTY,
                 duration = 10000,
                 progressState = ProgressState(),
-                volume = buildImmutableList {
+                volume = buildList {
                     repeat(42) {
                         add(Random.nextDouble(0.0, 0.7).toFloat())
                     }
@@ -408,7 +406,7 @@ private fun PreviewWithoutPlayButton() {
                 uri = Uri.EMPTY,
                 duration = 10000,
                 progressState = ProgressState(),
-                volume = buildImmutableList {
+                volume = buildList {
                     repeat(42) {
                         add(Random.nextDouble(0.0, 0.7).toFloat())
                     }

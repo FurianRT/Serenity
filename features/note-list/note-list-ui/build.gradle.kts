@@ -28,8 +28,6 @@ dependencies {
     implementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 
-    implementation(libs.immutableCollections)
-
     implementation(libs.coil)
     implementation(libs.coilVideo)
 

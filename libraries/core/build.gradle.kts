@@ -10,5 +10,4 @@ java {
 dependencies {
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
-    implementation(libs.immutableCollections)
 }

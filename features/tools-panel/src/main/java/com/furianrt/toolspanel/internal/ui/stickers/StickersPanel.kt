@@ -81,7 +81,6 @@ import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 import kotlin.math.max
 
 private val TITLE_LIST_ITEM_SIZE = 36.dp
@@ -344,7 +343,7 @@ private fun Content(
 
 @Composable
 private fun ContentPage(
-    stickers: ImmutableList<Sticker>,
+    stickers: List<Sticker>,
     modifier: Modifier = Modifier,
     onEvent: (event: StickersPanelEvent) -> Unit,
     listState: LazyGridState,

@@ -43,8 +43,6 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
@@ -55,8 +53,8 @@ private const val MAX_LINES_WITHOUT_MEDIA = 6
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NoteListItem(
-    content: ImmutableList<UiNoteContent>,
-    tags: ImmutableList<UiNoteTag>,
+    content: List<UiNoteContent>,
+    tags: List<UiNoteTag>,
     fontFamily: UiNoteFontFamily?,
     fontSize: TextUnit,
     date: String,
@@ -207,7 +205,7 @@ private fun NoteItemPreview() {
     SerenityTheme {
         NoteListItem(
             date = "19.06.2023",
-            tags = persistentListOf(
+            tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
@@ -225,7 +223,7 @@ private fun PinnedNoteItemPreview() {
     SerenityTheme {
         NoteListItem(
             date = "19.06.2023",
-            tags = persistentListOf(
+            tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
@@ -244,7 +242,7 @@ private fun SelectedNoteItemPreview() {
     SerenityTheme {
         NoteListItem(
             date = "19.06.2023",
-            tags = persistentListOf(
+            tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
                 UiNoteTag.Template(id = "2"),
@@ -258,7 +256,7 @@ private fun SelectedNoteItemPreview() {
     }
 }
 
-private fun generatePreviewContent(): ImmutableList<UiNoteContent> = persistentListOf(
+private fun generatePreviewContent(): List<UiNoteContent> = listOf(
     UiNoteContent.Title(
         id = "1",
         state = NoteTitleState(
@@ -272,7 +270,7 @@ private fun generatePreviewContent(): ImmutableList<UiNoteContent> = persistentL
     ),
     UiNoteContent.MediaBlock(
         id = "1",
-        media = persistentListOf(
+        media = listOf(
             UiNoteContent.MediaBlock.Image(
                 id = "",
                 name = "",

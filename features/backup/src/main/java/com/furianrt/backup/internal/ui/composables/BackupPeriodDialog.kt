@@ -26,12 +26,10 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-private val BACKUP_PERIODS: ImmutableList<BackupPeriod> = persistentListOf(
+private val BACKUP_PERIODS: List<BackupPeriod> = listOf(
     BackupPeriod.OneDay,
     BackupPeriod.TreeDays,
     BackupPeriod.OneWeek,

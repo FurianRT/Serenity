@@ -36,11 +36,9 @@ import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.doWithState
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -75,7 +73,7 @@ internal class BackupViewModel @Inject constructor(
         getPopularQuestionsUseCase(),
         expandedQuestionsState,
     ) { allQuestions, expandedQuestions ->
-        allQuestions.mapImmutable { popularQuestion ->
+        allQuestions.map { popularQuestion ->
             popularQuestion.toQuestion(
                 isExpanded = expandedQuestions.contains(popularQuestion.id),
             )
@@ -294,7 +292,7 @@ internal class BackupViewModel @Inject constructor(
     }
 
     private fun buildState(
-        questions: ImmutableList<Question>,
+        questions: List<Question>,
         authState: BackupUiState.Success.AuthState,
         isAutoBackupEnabled: Boolean,
         backupPeriod: BackupPeriod,

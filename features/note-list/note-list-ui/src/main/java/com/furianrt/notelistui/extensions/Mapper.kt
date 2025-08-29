@@ -8,8 +8,6 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.util.fastForEach
-import com.furianrt.core.buildImmutableList
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
@@ -24,8 +22,6 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.extensions.join
 import com.furianrt.uikit.theme.NoteFont
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 
 fun UiNoteContent.toLocalNoteContent() = when (this) {
     is UiNoteContent.Title -> toLocalNoteTitle()
@@ -91,14 +87,14 @@ fun LocalNote.Content.toUiNoteContent(fontFamily: UiNoteFontFamily) = when (this
 
 fun LocalNote.Content.MediaBlock.toUiMediaBlock() = UiNoteContent.MediaBlock(
     id = id,
-    media = media.mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
+    media = media.map(LocalNote.Content.Media::toUiNoteMedia),
 )
 
 fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
     id = id,
     uri = uri,
     duration = duration.toLong(),
-    volume = volume.toImmutableList(),
+    volume = volume,
     progressState = UiNoteContent.Voice.ProgressState(),
 )
 
@@ -157,7 +153,7 @@ fun NoteLocation.toLocationState() = LocationState.Success(
 
 fun List<LocalNote.Content>.getShortUiContent(
     fontFamily: UiNoteFontFamily,
-): ImmutableList<UiNoteContent> = buildImmutableList {
+): List<UiNoteContent> = buildList {
     val mediaBlock = this@getShortUiContent.firstOrNull { it is LocalNote.Content.MediaBlock }
     if (mediaBlock != null) {
         add(
@@ -166,7 +162,7 @@ fun List<LocalNote.Content>.getShortUiContent(
                 media = this@getShortUiContent
                     .filterIsInstance<LocalNote.Content.MediaBlock>()
                     .flatMap(LocalNote.Content.MediaBlock::media)
-                    .mapImmutable(LocalNote.Content.Media::toUiNoteMedia),
+                    .map(LocalNote.Content.Media::toUiNoteMedia),
             ),
         )
     }

@@ -44,8 +44,6 @@ dependencies {
 
     implementation(libs.kotlinxSerializationJson)
 
-    implementation(libs.immutableCollections)
-
     implementation(libs.mail)
     implementation(libs.mailActivaliton)
 

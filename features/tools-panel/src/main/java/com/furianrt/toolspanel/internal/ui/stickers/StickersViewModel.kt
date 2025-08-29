@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.entities.StickerPack
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -61,7 +60,7 @@ internal class StickersViewModel @Inject constructor(
     }
 
     private fun buildState(
-        packs: ImmutableList<StickerPack>,
+        packs: List<StickerPack>,
         pageIndex: Int,
     ) = StickersPanelUiState(
         packs = packs,

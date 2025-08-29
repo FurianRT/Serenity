@@ -62,7 +62,6 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import androidx.media3.common.MediaItem as ExoMediaItem
 import com.furianrt.uikit.R as uiR
@@ -73,7 +72,7 @@ private const val DRAG_TO_CLOSE_DELIMITER = 4f
 
 @Composable
 internal fun MediaPager(
-    media: ImmutableList<MediaItem>,
+    media: List<MediaItem>,
     state: PagerState,
     showControls: Boolean,
     onThumbDragStart: () -> Unit,

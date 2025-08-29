@@ -68,7 +68,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.core.buildImmutableList
 import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -87,8 +86,6 @@ import com.kizitonwose.calendar.core.yearMonth
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -423,9 +420,9 @@ private fun YearMonthPickerContent(
     modifier: Modifier = Modifier,
 ) {
     val monthsArray = stringArrayResource(R.array.months_array)
-    val months: ImmutableList<String> = remember { persistentListOf(*monthsArray) }
+    val months: List<String> = remember { listOf(*monthsArray) }
     val years = remember {
-        buildImmutableList {
+        buildList {
             for (year in MIN_YEAR..MAX_YEAR) {
                 add(year.toString())
             }
@@ -517,7 +514,7 @@ private fun ButtonDone(
 
 @Composable
 private fun MonthYearList(
-    items: ImmutableList<String>,
+    items: List<String>,
     initialIndex: Int,
     itemHeight: Dp,
     onItemSelected: (index: Int) -> Unit,

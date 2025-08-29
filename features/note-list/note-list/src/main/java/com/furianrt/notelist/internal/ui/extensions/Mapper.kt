@@ -1,6 +1,5 @@
 package com.furianrt.notelist.internal.ui.extensions
 
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
@@ -15,7 +14,7 @@ import java.time.LocalDate
 internal fun List<LocalNote>.toMainScreenNotes(
     selectedNotes: Set<String>,
     appFontFamily: NoteFontFamily,
-) = mapImmutable { note ->
+) = map { note ->
     note.toMainScreenNote(
         isSelected = selectedNotes.contains(note.id),
         appFontFamily = appFontFamily,
@@ -35,7 +34,7 @@ internal fun LocalNote.toMainScreenNote(
             localDateNow.minusDays(1) == localDate -> NoteListScreenNote.Date.Yesterday
             else -> NoteListScreenNote.Date.Other(date.toDateString())
         },
-        tags = tags.take(3).mapImmutable { it.toRegularUiNoteTag(isRemovable = false) },
+        tags = tags.take(3).map { it.toRegularUiNoteTag(isRemovable = false) },
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
         isPinned = isPinned,

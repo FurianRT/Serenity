@@ -2,7 +2,6 @@ package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.mediaselector.api.MediaResult
@@ -17,7 +16,6 @@ import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.toolspanel.api.VoiceRecord
-import kotlinx.collections.immutable.toImmutableList
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -27,11 +25,9 @@ internal suspend fun LocalNote.toNoteItem(
     background: UiNoteBackground?,
 ) = NoteItem(
     id = id,
-    tags = tags.mapImmutable(LocalNote.Tag::toRegularUiNoteTag),
-    stickers = stickers
-        .mapNotNull { it.toStickerItem(stickerIconProvider(it.typeId)) }
-        .toImmutableList(),
-    content = content.mapImmutable { item ->
+    tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
+    stickers = stickers.mapNotNull { it.toStickerItem(stickerIconProvider(it.typeId)) },
+    content = content.map { item ->
         item.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily())
     },
     fontColor = fontColor?.toUiNoteFontColor(),
@@ -44,14 +40,14 @@ internal suspend fun LocalNote.toNoteItem(
 
 internal fun MediaResult.toMediaBlock() = MediaBlock(
     id = UUID.randomUUID().toString(),
-    media = media.mapImmutable(MediaResult.Media::toMediaBlockMedia),
+    media = media.map(MediaResult.Media::toMediaBlockMedia),
 )
 
 internal fun VoiceRecord.toUiVoice() = UiNoteContent.Voice(
     id = id,
     uri = uri,
     duration = duration.toLong(),
-    volume = volume.toImmutableList(),
+    volume = volume,
     progressState = UiNoteContent.Voice.ProgressState(),
 )
 

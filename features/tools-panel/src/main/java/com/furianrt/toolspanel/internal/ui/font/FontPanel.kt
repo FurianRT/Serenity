@@ -73,8 +73,6 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
 import kotlin.math.max
 
 internal var cachedImeHeight = 320.dp
@@ -470,8 +468,8 @@ private fun ContentPreview() {
                 selectedFontColor = UiNoteFontColor.WHITE,
                 selectedFontFamily = UiNoteFontFamily.NotoSans,
                 selectedFontSize = 16,
-                fontFamilies = persistentListOf(UiNoteFontFamily.NotoSans),
-                fontColors = UiNoteFontColor.entries.toImmutableList(),
+                fontFamilies = listOf(UiNoteFontFamily.NotoSans),
+                fontColors = UiNoteFontColor.entries,
                 defaultFontFamily = UiNoteFontFamily.NotoSans,
             ),
             onEvent = {},

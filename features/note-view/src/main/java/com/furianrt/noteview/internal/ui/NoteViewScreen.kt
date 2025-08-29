@@ -69,7 +69,6 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -387,7 +386,7 @@ private fun ScreenSuccessPreview() {
                 isInEditMode = false,
                 initialPageIndex = 0,
                 currentPageIndex = 0,
-                notes = persistentListOf(),
+                notes = emptyList(),
                 date = ZonedDateTime.now(),
                 font = LocalFont.current,
             ),

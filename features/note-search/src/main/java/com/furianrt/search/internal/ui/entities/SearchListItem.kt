@@ -5,7 +5,6 @@ import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
-import kotlinx.collections.immutable.ImmutableList
 
 internal sealed class SearchListItem(
     open val id: String,
@@ -21,7 +20,7 @@ internal sealed class SearchListItem(
 
     @Immutable
     data class TagsList(
-        val tags: ImmutableList<Tag>,
+        val tags: List<Tag>,
     ) : SearchListItem(ID) {
 
         companion object {
@@ -38,13 +37,13 @@ internal sealed class SearchListItem(
     data class Note(
         override val id: String,
         val date: Date,
-        val tags: ImmutableList<UiNoteTag>,
+        val tags: List<UiNoteTag>,
         val isSelected: Boolean,
         val fontFamily: UiNoteFontFamily?,
         val fontSize: Int,
         val moodId: String?,
         val locationState: LocationState,
-        val content: ImmutableList<UiNoteContent>,
+        val content: List<UiNoteContent>,
     ) : SearchListItem(id) {
         sealed interface Date {
             data object Today : Date

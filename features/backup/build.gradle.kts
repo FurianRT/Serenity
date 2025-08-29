@@ -41,8 +41,6 @@ dependencies {
 
     implementation(libs.kotlinxSerializationJson)
 
-    implementation(libs.immutableCollections)
-
     implementation(libs.lottie)
 
     implementation(libs.blur)

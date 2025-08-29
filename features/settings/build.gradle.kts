@@ -42,8 +42,6 @@ dependencies {
     ksp(libs.hiltCompiler)
     ksp(libs.hiltAndroidCompiler)
 
-    implementation(libs.immutableCollections)
-
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.blur)

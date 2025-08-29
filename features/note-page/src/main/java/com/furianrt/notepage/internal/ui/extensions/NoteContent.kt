@@ -7,15 +7,12 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.isEmptyTitle
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 import java.util.UUID
 
 internal fun List<UiNoteContent>.refreshTitleTemplates(
     fontFamily: UiNoteFontFamily,
     addTopTemplate: Boolean,
-): ImmutableList<UiNoteContent> {
+): List<UiNoteContent> {
     val result = toMutableList()
     if (!addTopTemplate && result.firstOrNull().isEmptyTitle()) {
         result.removeAt(0)
@@ -68,50 +65,54 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
         )
     }
 
-    return result.toImmutableList()
+    return result
 }
 
-internal fun ImmutableList<UiNoteTag>.addTagTemplate(): ImmutableList<UiNoteTag> {
+internal fun List<UiNoteTag>.addTagTemplate(): List<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }
     return if (hasTemplate) {
         this
     } else {
-        toPersistentList().add(UiNoteTag.Template())
+        toMutableList().apply { add(UiNoteTag.Template()) }
     }
 }
 
-internal fun ImmutableList<UiNoteTag>.removeTagTemplate(
+internal fun List<UiNoteTag>.removeTagTemplate(
     onlyEmpty: Boolean = false,
-): ImmutableList<UiNoteTag> = toPersistentList().removeAll { tag ->
-    tag is UiNoteTag.Template && (!onlyEmpty || tag.textState.text.isBlank())
+): List<UiNoteTag> = toMutableList().apply {
+    removeAll { tag ->
+        tag is UiNoteTag.Template && (!onlyEmpty || tag.textState.text.isBlank())
+    }
 }
 
-internal fun ImmutableList<UiNoteTag>.removeTagTemplate(
+internal fun List<UiNoteTag>.removeTagTemplate(
     id: String,
-): ImmutableList<UiNoteTag> = toPersistentList().removeAll { tag ->
-    tag is UiNoteTag.Template && (tag.id == id || tag.textState.text.trim() == id)
+): List<UiNoteTag> = toMutableList().apply {
+    removeAll { tag ->
+        tag is UiNoteTag.Template && (tag.id == id || tag.textState.text.trim() == id)
+    }
 }
 
-internal fun ImmutableList<UiNoteTag>.addSecondTagTemplate(): ImmutableList<UiNoteTag> {
+internal fun List<UiNoteTag>.addSecondTagTemplate(): List<UiNoteTag> {
     val hasTemplates = count { it is UiNoteTag.Template } == 2
     return if (hasTemplates) {
         this
     } else {
-        toPersistentList().add(UiNoteTag.Template())
+        toMutableList().apply { add(UiNoteTag.Template()) }
     }
 }
 
-internal fun ImmutableList<UiNoteTag>.removeSecondTagTemplate(): ImmutableList<UiNoteTag> {
+internal fun List<UiNoteTag>.removeSecondTagTemplate(): List<UiNoteTag> {
     val hasTemplates = count { it is UiNoteTag.Template } == 2
     if (!hasTemplates) return this
     val item = findLast { it is UiNoteTag.Template } ?: return this
-    return toPersistentList().remove(item)
+    return toMutableList().apply { remove(item) }
 }
 
-internal fun ImmutableList<UiNoteContent>.removeMedia(
+internal fun List<UiNoteContent>.removeMedia(
     id: String,
     focusedTitleId: String?,
-): ImmutableList<UiNoteContent> {
+): List<UiNoteContent> {
     val mediaBlockIndex = indexOfFirst { content ->
         content is UiNoteContent.MediaBlock && content.media.any { it.id == id }
     }
@@ -120,36 +121,42 @@ internal fun ImmutableList<UiNoteContent>.removeMedia(
     }
     val mediaBlock = this[mediaBlockIndex] as UiNoteContent.MediaBlock
     val newMediaBlock = mediaBlock.copy(
-        media = mediaBlock.media.toPersistentList().removeAll { it.id == id },
+        media = mediaBlock.media.toMutableList().apply { removeAll { it.id == id } },
     )
     return if (newMediaBlock.media.isEmpty()) {
-        toPersistentList().removeAt(mediaBlockIndex).joinTitles(focusedTitleId)
+        toMutableList()
+            .apply { removeAt(mediaBlockIndex) }
+            .joinTitles(focusedTitleId)
     } else {
-        toPersistentList().set(mediaBlockIndex, newMediaBlock).joinTitles(focusedTitleId)
+        toMutableList()
+            .apply { set(mediaBlockIndex, newMediaBlock) }
+            .joinTitles(focusedTitleId)
     }
 }
 
-internal fun ImmutableList<UiNoteContent>.removeMediaBlock(
+internal fun List<UiNoteContent>.removeMediaBlock(
     id: String,
     focusedTitleId: String?,
-): ImmutableList<UiNoteContent> {
+): List<UiNoteContent> {
     val mediaBlockIndex = indexOfFirst { it is UiNoteContent.MediaBlock && it.id == id }
     if (mediaBlockIndex == -1) {
         return this
     }
-    return toPersistentList().removeAt(mediaBlockIndex).joinTitles(focusedTitleId)
+    return toMutableList()
+        .apply { removeAt(mediaBlockIndex) }
+        .joinTitles(focusedTitleId)
 }
 
-internal fun ImmutableList<UiNoteContent>.removeVoice(
+internal fun List<UiNoteContent>.removeVoice(
     id: String,
     focusedTitleId: String?,
-): ImmutableList<UiNoteContent> = toPersistentList()
-    .removeAll { it is UiNoteContent.Voice && it.id == id }
+): List<UiNoteContent> = toMutableList()
+    .apply { removeAll { it is UiNoteContent.Voice && it.id == id } }
     .joinTitles(focusedTitleId)
 
-private fun ImmutableList<UiNoteContent>.joinTitles(
+private fun List<UiNoteContent>.joinTitles(
     focusedTitleId: String?,
-): ImmutableList<UiNoteContent> {
+): List<UiNoteContent> {
     var counter = 0
     val resultMap = mutableMapOf<Int, UiNoteContent>()
     forEach { content ->
@@ -176,5 +183,5 @@ private fun ImmutableList<UiNoteContent>.joinTitles(
             else -> resultMap[++counter] = content
         }
     }
-    return resultMap.values.toImmutableList()
+    return resultMap.values.toList()
 }

@@ -81,7 +81,6 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -528,7 +527,7 @@ private fun PreviewLoading() {
 }
 
 @Composable
-private fun buildPreviewQuestionsList(expandedIndex: Int?) = persistentListOf(
+private fun buildPreviewQuestionsList(expandedIndex: Int?) = listOf(
     Question(
         id = "",
         title = stringResource(R.string.backup_popular_question_1_title),

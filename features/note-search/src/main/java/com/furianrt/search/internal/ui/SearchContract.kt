@@ -8,14 +8,12 @@ import com.furianrt.search.internal.ui.SearchUiState.State.Success
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.utils.DialogIdentifier
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 
 @Stable
 internal data class SearchUiState(
     val searchQuery: TextFieldState = TextFieldState(),
-    val selectedFilters: ImmutableList<SelectedFilter> = persistentListOf(),
+    val selectedFilters: List<SelectedFilter> = emptyList(),
     val state: State = Success(),
 ) {
     val enableSelection: Boolean
@@ -24,7 +22,7 @@ internal data class SearchUiState(
     sealed interface State {
         @Immutable
         data class Success(
-            val items: ImmutableList<SearchListItem> = persistentListOf(),
+            val items: List<SearchListItem> = emptyList(),
             val scrollToPosition: Int? = null,
             val notesCount: Int = 0,
             val selectedNotesCount: Int = 0,

@@ -63,7 +63,6 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.model.KeyPath
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelist.R
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
@@ -84,7 +83,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -442,20 +440,20 @@ private fun SuccessWithSelectedPreview() {
     }
 }
 
-private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
+private fun generatePreviewNotes(withSelected: Boolean) = buildList {
     repeat(5) { index ->
         add(
             NoteListScreenNote(
                 id = index.toString(),
                 date = NoteListScreenNote.Date.Other("19.06.2023"),
-                tags = persistentListOf(),
+                tags = emptyList(),
                 fontFamily = null,
                 fontSize = 16,
                 isPinned = false,
                 moodId = null,
                 locationState = LocationState.Empty,
                 isSelected = withSelected && index % 2 == 0,
-                content = persistentListOf(
+                content = listOf(
                     UiNoteContent.Title(
                         id = index.toString(),
                         state = NoteTitleState(

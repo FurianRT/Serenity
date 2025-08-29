@@ -22,12 +22,10 @@ import com.furianrt.backup.R
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 internal fun QuestionsList(
-    questions: ImmutableList<Question>,
+    questions: List<Question>,
     isSignedIn: Boolean,
     onQuestionClick: (question: Question) -> Unit,
     modifier: Modifier = Modifier,
@@ -91,7 +89,7 @@ private fun QuestionItem(
 private fun Preview() {
     SerenityTheme {
         QuestionsList(
-            questions = persistentListOf(
+            questions = listOf(
                 Question(
                     id = "",
                     title = stringResource(R.string.backup_popular_question_1_title),

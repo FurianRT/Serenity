@@ -2,7 +2,6 @@ package com.furianrt.toolspanel.internal.ui.font
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -14,7 +13,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -54,8 +52,8 @@ internal class FontViewModel @AssistedInject constructor(
             selectedFontFamily = initialFontFamily,
             selectedFontColor = initialFontColor,
             selectedFontSize = initialFontSize,
-            fontFamilies = persistentListOf(),
-            fontColors = persistentListOf(),
+            fontFamilies = emptyList(),
+            fontColors = emptyList(),
             defaultFontFamily = initialFontFamily,
         ),
     )
@@ -79,8 +77,8 @@ internal class FontViewModel @AssistedInject constructor(
         selectedFontFamily = fontFamily,
         selectedFontColor = fontColor,
         selectedFontSize = fontSize,
-        fontFamilies = fontFamilies.mapImmutable(NoteFontFamily::toUiNoteFontFamily),
-        fontColors = fontColors.mapImmutable(NoteFontColor::toUiNoteFontColor),
+        fontFamilies = fontFamilies.map(NoteFontFamily::toUiNoteFontFamily),
+        fontColors = fontColors.map(NoteFontColor::toUiNoteFontColor),
         defaultFontFamily = appFontFamily.toUiNoteFontFamily(),
     )
 

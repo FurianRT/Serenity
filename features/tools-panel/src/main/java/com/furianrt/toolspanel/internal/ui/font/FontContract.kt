@@ -3,12 +3,11 @@ package com.furianrt.toolspanel.internal.ui.font
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
-import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 internal data class FontPanelUiState(
-    val fontColors: ImmutableList<UiNoteFontColor>,
-    val fontFamilies: ImmutableList<UiNoteFontFamily>,
+    val fontColors: List<UiNoteFontColor>,
+    val fontFamilies: List<UiNoteFontFamily>,
     val selectedFontColor: UiNoteFontColor?,
     val selectedFontFamily: UiNoteFontFamily?,
     val selectedFontSize: Int,

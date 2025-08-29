@@ -60,7 +60,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import coil3.size.Precision
 import coil3.video.VideoFrameDecoder
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.contentHeight
@@ -73,7 +72,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
-import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.launch
 import java.time.ZonedDateTime
 import com.furianrt.uikit.R as uiR
@@ -255,7 +253,7 @@ private fun OneMediaHolder(
 
 @Composable
 private fun RowMediaHolder(
-    media: ImmutableList<MediaBlock.Media>,
+    media: List<MediaBlock.Media>,
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
@@ -294,7 +292,7 @@ private fun RowMediaHolder(
 
 @Composable
 private fun FourMediaHolder(
-    media: ImmutableList<MediaBlock.Media>,
+    media: List<MediaBlock.Media>,
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
@@ -351,7 +349,7 @@ private fun FourMediaHolder(
 
 @Composable
 private fun ManyMediaHolder(
-    media: ImmutableList<MediaBlock.Media>,
+    media: List<MediaBlock.Media>,
     clickable: Boolean,
     dropDownHazeState: HazeState?,
     onClick: (media: MediaBlock.Media) -> Unit,
@@ -622,7 +620,7 @@ private fun NoteContentOneMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -645,7 +643,7 @@ private fun NoteContentTwoMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -677,7 +675,7 @@ private fun NoteContentThreeMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -718,7 +716,7 @@ private fun NoteContentFourMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -768,7 +766,7 @@ private fun NoteContentFiveMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -827,7 +825,7 @@ private fun NoteContentSixMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",
@@ -895,7 +893,7 @@ private fun NoteContentSevenMediaPreview() {
         NoteContentMedia(
             block = MediaBlock(
                 id = "1",
-                media = buildImmutableList {
+                media = buildList {
                     add(
                         MediaBlock.Image(
                             id = "0",

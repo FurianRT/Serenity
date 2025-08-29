@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -21,7 +20,6 @@ import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -148,7 +146,7 @@ internal class SettingsViewModel @Inject constructor(
         _effect.tryEmit(
             SettingsEffect.ShowFontDialog(
                 fonts = appearanceRepository.getNoteFontsList()
-                    .mapImmutable(NoteFontFamily::toUiNoteFontFamily),
+                    .map(NoteFontFamily::toUiNoteFontFamily),
                 selectedFont = appearanceRepository.getAppFont()
                     .map(NoteFontFamily::toUiNoteFontFamily)
                     .first(),
@@ -166,7 +164,7 @@ internal class SettingsViewModel @Inject constructor(
         val lightColors = getAppLightThemeListUseCase()
         val darkColors = getAppDarkThemeListUseCase()
         return SettingsUiState.Success(
-            themes = persistentListOf(
+            themes = listOf(
                 UiTheme.Light(
                     isSelected = if (selectedTheme == null) {
                         lightColors.contains(selectedThemeColor)

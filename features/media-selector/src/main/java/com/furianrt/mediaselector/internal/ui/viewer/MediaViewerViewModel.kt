@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.core.mapImmutable
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -79,7 +78,7 @@ internal class MediaViewerViewModel @Inject constructor(
         val media = mediaRepository.getDeviceMediaList()
         _state.update {
             MediaViewerUiState.Success(
-                media = media.mapImmutable(DeviceMedia::toMediaItem),
+                media = media.map(DeviceMedia::toMediaItem),
                 initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
                 font = appearanceRepository.getAppFont().first().toNoteFont(),
             ).setSelectedItems(mediaCoordinator.getSelectedMedia())

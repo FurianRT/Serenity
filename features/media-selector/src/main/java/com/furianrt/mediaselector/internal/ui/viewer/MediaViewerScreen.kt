@@ -45,7 +45,6 @@ import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -234,7 +233,7 @@ private fun Preview() {
         SuccessContent(
             uiState = MediaViewerUiState.Success(
                 initialMediaIndex = 1,
-                media = persistentListOf(
+                media = listOf(
                     MediaItem.Image(
                         id = 1L,
                         name = "1",

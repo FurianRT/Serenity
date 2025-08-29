@@ -3,12 +3,10 @@ package com.furianrt.toolspanel.internal.ui.stickers
 import androidx.compose.runtime.Immutable
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.entities.StickerPack
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 internal data class StickersPanelUiState(
-    val packs: ImmutableList<StickerPack> = persistentListOf(),
+    val packs: List<StickerPack> = emptyList(),
     val selectedPackIndex: Int = 0,
 )
 

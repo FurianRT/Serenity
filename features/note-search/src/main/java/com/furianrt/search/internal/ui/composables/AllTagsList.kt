@@ -9,16 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.buildImmutableList
 import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun AllTagsList(
-    tags: ImmutableList<TagsList.Tag>,
+    tags: List<TagsList.Tag>,
     modifier: Modifier = Modifier,
     onTagClick: (tag: TagsList.Tag) -> Unit = {},
 ) {
@@ -49,7 +47,7 @@ internal fun AllTagsList(
 private fun Preview() {
     SerenityTheme {
         AllTagsList(
-            tags = buildImmutableList {
+            tags = buildList {
                 repeat(20) { index ->
                     add(TagsList.Tag(title = "Title", count = index + 1))
                 }

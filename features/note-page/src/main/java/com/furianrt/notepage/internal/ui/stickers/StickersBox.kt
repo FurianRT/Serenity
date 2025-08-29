@@ -13,11 +13,10 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
-import kotlinx.collections.immutable.ImmutableList
 
 @Composable
 internal fun StickersBox(
-    stickers: ImmutableList<StickerItem>,
+    stickers: List<StickerItem>,
     emptyTitleHeight: () -> Float,
     containerSize: () -> IntSize,
     onStickerClick: (sticker: StickerItem) -> Unit,

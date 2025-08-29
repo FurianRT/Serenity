@@ -8,7 +8,6 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.core.mapImmutable
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.MediaSortingResult
@@ -121,10 +120,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
-import kotlinx.collections.immutable.toImmutableList
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
@@ -365,7 +360,7 @@ internal class PageViewModel @AssistedInject constructor(
                 } else {
                     successState.content.map { content ->
                         if (content is UiNoteContent.MediaBlock && content.id == result.mediaBlockId) {
-                            content.copy(media = result.media.mapImmutable { it.toUiNoteMedia() })
+                            content.copy(media = result.media.map { it.toUiNoteMedia() })
                         } else {
                             content
                         }
@@ -453,9 +448,9 @@ internal class PageViewModel @AssistedInject constructor(
         fontFamily: UiNoteFontFamily,
         content: List<UiNoteContent>,
         newBlock: UiNoteContent,
-    ): ImmutableList<UiNoteContent> {
+    ): List<UiNoteContent> {
         val focusedTitleIndex = findTitleIndex(focusedTitleId)
-            ?: return (content + newBlock).toImmutableList()
+            ?: return (content + newBlock)
         val focusedTitle = content[focusedTitleIndex] as UiNoteContent.Title
         val selection = focusedTitle.state.selection.start
         return when {
@@ -464,7 +459,7 @@ internal class PageViewModel @AssistedInject constructor(
                     focusedTitle.state.annotatedString = focusedTitle.state.annotatedString
                         .subSequence(1, focusedTitle.state.annotatedString.length)
                 }
-                content.toPersistentList().add(focusedTitleIndex, newBlock)
+                content.toMutableList().apply { add(focusedTitleIndex, newBlock) }
             }
 
             selection >= focusedTitle.state.annotatedString.length -> {
@@ -493,7 +488,7 @@ internal class PageViewModel @AssistedInject constructor(
                 result[focusedTitleIndex] = titleFirstPart
                 result.add(focusedTitleIndex + 1, newBlock)
                 result.add(focusedTitleIndex + 2, titleSecondPart)
-                result.toImmutableList()
+                result
             }
 
             else -> {
@@ -531,7 +526,7 @@ internal class PageViewModel @AssistedInject constructor(
                 result[focusedTitleIndex] = titleFirstPart
                 result.add(focusedTitleIndex + 1, newBlock)
                 result.add(focusedTitleIndex + 2, titleSecondPart)
-                result.toImmutableList()
+                result
             }
         }
     }
@@ -640,7 +635,7 @@ internal class PageViewModel @AssistedInject constructor(
             addNewBlock(
                 newBlock = UiNoteContent.MediaBlock(
                     id = UUID.randomUUID().toString(),
-                    media = persistentListOf(
+                    media = listOf(
                         image.copy(
                             ratio = mediaRepository.getRatio(file),
                             addedDate = ZonedDateTime.now(),
@@ -888,7 +883,9 @@ internal class PageViewModel @AssistedInject constructor(
             hasContentChanged = true
             resetStickersEditing()
             _state.updateState<PageUiState.Success> { currentState ->
-                currentState.copy(stickers = currentState.stickers.toPersistentList().add(sticker))
+                currentState.copy(
+                    stickers = currentState.stickers.toMutableList().apply { add(sticker) }
+                )
             }
         } else {
             _effect.tryEmit(
@@ -902,8 +899,8 @@ internal class PageViewModel @AssistedInject constructor(
     private fun removeSticker(sticker: StickerItem) {
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(
-                stickers = currentState.stickers.toPersistentList()
-                    .removeAll { it.id == sticker.id },
+                stickers = currentState.stickers.toMutableList()
+                    .apply { removeAll { it.id == sticker.id } },
             ).also { newState ->
                 if (isInEditMode) {
                     hasContentChanged = true
@@ -943,9 +940,7 @@ internal class PageViewModel @AssistedInject constructor(
                 }
             }
             currentState.copy(
-                stickers = currentState.stickers
-                    .sortedBy { it.state.editTime }
-                    .toImmutableList(),
+                stickers = currentState.stickers.sortedBy { it.state.editTime },
             )
         }
         updateSticker(sticker)
@@ -1196,7 +1191,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             appearanceRepository.setAutoDetectLocationAsked(value = true)
 
-            if (!showDialog) {
+            if (showDialog) {
                 _effect.tryEmit(PageEffect.ShowAutoDetectLocationDialog)
             }
         }
@@ -1219,15 +1214,17 @@ internal class PageViewModel @AssistedInject constructor(
         val result = if (tags.any { it.id == tag.id }) {
             tags.removeTagTemplate(tag.id)
         } else {
-            tags.toPersistentList()
-                .add(index = tags.indexOfLast { it is UiNoteTag.Regular } + 1, element = tag)
+            tags.toMutableList()
+                .apply {
+                    add(index = tags.indexOfLast { it is UiNoteTag.Regular } + 1, element = tag)
+                }
                 .removeTagTemplate(tag.id)
         }
         return copy(tags = if (addTemplate) result.addTagTemplate() else result)
     }
 
     private fun PageUiState.Success.removeTag(tag: UiNoteTag) = copy(
-        tags = tags.toPersistentList().remove(tag),
+        tags = tags.toMutableList().apply { remove(tag) },
     )
 
     @AssistedFactory

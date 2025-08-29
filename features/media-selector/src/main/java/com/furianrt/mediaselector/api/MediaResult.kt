@@ -2,11 +2,10 @@ package com.furianrt.mediaselector.api
 
 import android.net.Uri
 import androidx.compose.runtime.Immutable
-import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 data class MediaResult(
-    val media: ImmutableList<Media>,
+    val media: List<Media>,
 ) {
     sealed class Media(
         val name: String,

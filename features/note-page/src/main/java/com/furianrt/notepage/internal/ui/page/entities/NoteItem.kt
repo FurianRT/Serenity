@@ -8,14 +8,13 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
-import kotlinx.collections.immutable.ImmutableList
 
 @Immutable
 internal data class NoteItem(
     val id: String,
-    val tags: ImmutableList<UiNoteTag>,
-    val stickers: ImmutableList<StickerItem>,
-    val content: ImmutableList<UiNoteContent>,
+    val tags: List<UiNoteTag>,
+    val stickers: List<StickerItem>,
+    val content: List<UiNoteContent>,
     val fontFamily: UiNoteFontFamily?,
     val fontColor: UiNoteFontColor?,
     val fontSize: Int,

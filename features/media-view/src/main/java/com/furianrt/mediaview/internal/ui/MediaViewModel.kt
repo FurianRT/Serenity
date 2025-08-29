@@ -4,7 +4,6 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.furianrt.core.indexOfFirstOrNull
-import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
@@ -20,7 +19,6 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -117,7 +115,7 @@ internal class MediaViewModel @Inject constructor(
     private fun deleteMedia(index: Int) {
         val media = _state.value.media.getOrNull(index) ?: return
         deletedMediaIds.add(media.id)
-        val resultMedia = _state.value.media.toPersistentList().removeAt(index)
+        val resultMedia = _state.value.media.toMutableList().apply { removeAt(index) }
         if (resultMedia.isEmpty()) {
             _effect.tryEmit(MediaViewEffect.CloseScreen)
         } else {
@@ -128,7 +126,7 @@ internal class MediaViewModel @Inject constructor(
     private fun buildInitialState(): MediaViewUiState {
         val media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
         return MediaViewUiState(
-            media = media.mapImmutable(LocalNote.Content.Media::toMediaItem),
+            media = media.map(LocalNote.Content.Media::toMediaItem),
             initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
         )
     }

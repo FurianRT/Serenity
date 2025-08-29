@@ -1,12 +1,10 @@
 package com.furianrt.settings.internal.domain.usecases
 
 import com.furianrt.uikit.entities.UiThemeColor
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import javax.inject.Inject
 
 internal class GetAppDarkThemeListUseCase @Inject constructor() {
-    operator fun invoke(): ImmutableList<UiThemeColor> = persistentListOf(
+    operator fun invoke(): List<UiThemeColor> = listOf(
         UiThemeColor.TOTAL_BLACK,
         UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
         UiThemeColor.DISTANT_CASTLE_GREEN,

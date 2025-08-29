@@ -51,7 +51,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.furianrt.core.buildImmutableList
 import com.furianrt.notesearch.R
 import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.uikit.components.ButtonBack
@@ -63,8 +62,6 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.persistentListOf
 import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
 
@@ -73,7 +70,7 @@ private const val BACK_BUTTON_ANIM_DURATION = 200
 
 @Composable
 internal fun Toolbar(
-    selectedFilters: ImmutableList<SelectedFilter>,
+    selectedFilters: List<SelectedFilter>,
     queryState: TextFieldState,
     notesCount: Int,
     selectedNotesCount: Int,
@@ -94,7 +91,7 @@ internal fun Toolbar(
         showBackButton = true
         focusRequester.requestFocus()
     }
-    val test = if (selectedNotesCount > 0) persistentListOf() else selectedFilters
+    val test = if (selectedNotesCount > 0) emptyList() else selectedFilters
     Crossfade(
         modifier = modifier
             .statusBarsPadding()
@@ -189,7 +186,7 @@ private fun SelectedContent(
 
 @Composable
 private fun UnselectedContent(
-    selectedFilters: ImmutableList<SelectedFilter>,
+    selectedFilters: List<SelectedFilter>,
     queryState: TextFieldState,
     showBackButton: Boolean,
     focusRequester: FocusRequester,
@@ -325,7 +322,7 @@ private fun SearchBar(
 
 @Composable
 private fun SelectedFiltersList(
-    filters: ImmutableList<SelectedFilter>,
+    filters: List<SelectedFilter>,
     onDateFilterClick: (date: SelectedFilter.DateRange) -> Unit,
     onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit,
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
@@ -386,7 +383,7 @@ private fun PreviewWithTags() {
             notesCount = 1,
             selectedNotesCount = 0,
             queryState = TextFieldState(),
-            selectedFilters = buildImmutableList {
+            selectedFilters = buildList {
                 add(SelectedFilter.DateRange(start = LocalDate.now(), end = LocalDate.now()))
                 repeat(5) { index ->
                     add(SelectedFilter.Tag(title = "Title$index", isSelected = index == 0))
@@ -404,7 +401,7 @@ private fun PreviewWithoutTags() {
             notesCount = 1,
             selectedNotesCount = 0,
             queryState = TextFieldState("test query"),
-            selectedFilters = persistentListOf(),
+            selectedFilters = emptyList(),
         )
     }
 }
@@ -417,7 +414,7 @@ private fun PreviewSelected() {
             notesCount = 10,
             selectedNotesCount = 2,
             queryState = TextFieldState("test query"),
-            selectedFilters = persistentListOf(),
+            selectedFilters = emptyList(),
         )
     }
 }
