@@ -13,6 +13,7 @@ import com.furianrt.storage.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -86,6 +87,7 @@ internal class AppMediaSource @Inject constructor(
             if (file.createNewFile()) {
                 return@withContext file
             } else {
+                errorTracker.trackNonFatalError(IOException("Can't create file"))
                 return@withContext null
             }
         } catch (e: Exception) {
@@ -110,6 +112,7 @@ internal class AppMediaSource @Inject constructor(
             if (file.createNewFile()) {
                 return@withContext file
             } else {
+                errorTracker.trackNonFatalError(IOException("Can't create file"))
                 return@withContext null
             }
         } catch (e: Exception) {

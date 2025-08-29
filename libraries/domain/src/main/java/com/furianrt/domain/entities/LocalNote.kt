@@ -15,12 +15,12 @@ data class LocalNote(
     val fontFamily: NoteFontFamily?,
     val fontColor: NoteFontColor?,
     val fontSize: Int,
-    val backgroundId: String?,
-    val moodId: String?,
+    val backgroundId: String? = null,
+    val moodId: String? = null,
     val isPinned: Boolean,
     val tags: List<Tag>,
     val stickers: List<Sticker>,
-    val location: NoteLocation?,
+    val location: NoteLocation? = null,
     val content: List<Content>,
 ) {
     @Serializable

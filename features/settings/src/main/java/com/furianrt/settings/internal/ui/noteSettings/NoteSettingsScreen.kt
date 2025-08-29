@@ -34,7 +34,7 @@ internal fun NoteSettingsScreen(
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteSettingsViewModel = hiltViewModel()
-    val uiState: NoteSettingsState = viewModel.state.collectAsStateWithLifecycle().value
+    val uiState: NoteSettingsState by viewModel.state.collectAsStateWithLifecycle()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
@@ -49,14 +49,24 @@ internal fun NoteSettingsScreen(
                 }
             }
     }
+    Content(
+        uiState = uiState,
+        onEvent = viewModel::onEvent,
+    )
+}
 
+@Composable
+private fun Content(
+    uiState: NoteSettingsState,
+    onEvent: (event: NoteSettingsEvent) -> Unit,
+) {
     Scaffold(
         containerColor = MaterialTheme.colorScheme.surface,
         topBar = {
             DefaultToolbar(
                 modifier = Modifier.systemBarsPadding(),
                 title = stringResource(R.string.settings_note_content_title),
-                onBackClick = { viewModel.onEvent(NoteSettingsEvent.OnButtonBackClick) },
+                onBackClick = { onEvent(NoteSettingsEvent.OnButtonBackClick) },
             )
         },
     ) { paddingValues ->
@@ -64,7 +74,7 @@ internal fun NoteSettingsScreen(
             is NoteSettingsState.Success -> SuccessContent(
                 modifier = Modifier.padding(paddingValues),
                 uiState = uiState,
-                onEvent = viewModel::onEvent,
+                onEvent = onEvent,
             )
 
             is NoteSettingsState.Loading -> LoadingContent(
@@ -84,7 +94,7 @@ private fun SuccessContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp),
+            .padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         SwitchWithLabel(
@@ -113,7 +123,7 @@ private fun LoadingContent(
 @Composable
 private fun Preview() {
     SerenityTheme {
-        SuccessContent(
+        Content(
             uiState = NoteSettingsState.Success(
                 isAutoDetectLocationEnabled = true,
             ),
