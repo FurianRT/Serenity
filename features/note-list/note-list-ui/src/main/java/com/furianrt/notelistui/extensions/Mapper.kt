@@ -13,9 +13,11 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteLocation
 import com.furianrt.domain.entities.NoteTextSpan
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -134,6 +136,23 @@ fun LocalNote.Content.Video.toUiNoteVideo() = UiNoteContent.MediaBlock.Video(
 fun LocalNote.Tag.toRegularUiNoteTag(isRemovable: Boolean = false) = UiNoteTag.Regular(
     title = title,
     isRemovable = isRemovable,
+)
+
+fun LocationState.toNoteLocation(): NoteLocation? = when (this) {
+    is LocationState.Empty, LocationState.Loading -> null
+    is LocationState.Success -> NoteLocation(
+        id = id,
+        title = title,
+        latitude = latitude,
+        longitude = longitude,
+    )
+}
+
+fun NoteLocation.toLocationState() = LocationState.Success(
+    id = id,
+    title = title,
+    latitude = latitude,
+    longitude = longitude,
 )
 
 fun List<LocalNote.Content>.getShortUiContent(

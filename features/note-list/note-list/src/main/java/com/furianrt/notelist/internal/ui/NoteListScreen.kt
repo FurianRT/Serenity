@@ -71,6 +71,7 @@ import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -285,6 +286,7 @@ private fun SuccessContent(
                 fontFamily = note.fontFamily,
                 fontSize = note.fontSize.sp,
                 moodId = note.moodId,
+                locationState = note.locationState,
                 isPinned = note.isPinned,
                 isSelected = note.isSelected,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
@@ -453,6 +455,7 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildImmutableList {
                 fontSize = 16,
                 isPinned = false,
                 moodId = null,
+                locationState = LocationState.Empty,
                 isSelected = withSelected && index % 2 == 0,
                 content = persistentListOf(
                     UiNoteContent.Title(

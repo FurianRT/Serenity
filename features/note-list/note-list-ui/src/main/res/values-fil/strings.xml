@@ -1,3 +1,4 @@
 <resources>
     <string name="note_content_add_tag_hint">Bagong tag</string>
+    <string name="note_add_current_location_title">Idagdag ang kasalukuyang lokasyon</string>
 </resources>

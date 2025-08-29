@@ -1,6 +1,6 @@
-package com.furianrt.notepage.internal.ui.page.entities
+package com.furianrt.notelistui.entities
 
-internal sealed interface LocationState {
+sealed interface LocationState {
     data object Loading : LocationState
     data object Empty : LocationState
     data class Success(

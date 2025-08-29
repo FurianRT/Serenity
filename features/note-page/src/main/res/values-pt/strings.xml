@@ -3,7 +3,6 @@
     <string name="note_title_hint_write_more_here">Escreva mais aqui…</string>
     <string name="note_sticker_limit_message">Limite de adesivos atingido</string>
     <string name="note_select_text_position_message">Selecione uma posição no texto</string>
-    <string name="note_add_current_location_title">Adicionar localização atual</string>
     <string name="note_add_current_location_fail_title">Não foi possível obter a localização atual</string>
     <string name="note_auto_detect_location_title">Deseja adicionar sua localização automaticamente às novas notas?</string>
 </resources>

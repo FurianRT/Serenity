@@ -1,6 +1,7 @@
 package com.furianrt.search.internal.ui.entities
 
 import androidx.compose.runtime.Immutable
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -44,6 +45,7 @@ internal sealed class SearchListItem(
         val fontFamily: UiNoteFontFamily?,
         val fontSize: Int,
         val moodId: String?,
+        val locationState: LocationState,
         val content: ImmutableList<UiNoteContent>,
     ) : SearchListItem(id) {
         sealed interface Date {

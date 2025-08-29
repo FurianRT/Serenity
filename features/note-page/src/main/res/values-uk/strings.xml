@@ -3,7 +3,6 @@
     <string name="note_title_hint_write_more_here">Пишіть тут більше…</string>
     <string name="note_sticker_limit_message">Досягнуто ліміт стікерів</string>
     <string name="note_select_text_position_message">Виберіть позицію в тексті</string>
-    <string name="note_add_current_location_title">Додати поточне місце</string>
     <string name="note_add_current_location_fail_title">Не вдалося отримати поточне місце</string>
     <string name="note_auto_detect_location_title">Хочете автоматично додавати своє місцезнаходження до нових нотаток?</string>
 </resources>

@@ -54,6 +54,7 @@ import com.furianrt.core.buildImmutableList
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.composables.NoteListItem
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
@@ -333,6 +334,7 @@ private fun SuccessContent(
                     fontFamily = item.fontFamily,
                     fontSize = item.fontSize.sp,
                     moodId = item.moodId,
+                    locationState = item.locationState,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = { onEvent(SearchEvent.OnNoteLongClick(item.id)) },
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
@@ -414,6 +416,7 @@ private fun SuccessFilledQueryPreview() {
                         fontFamily = null,
                         fontSize = 16,
                         moodId = null,
+                        locationState = LocationState.Empty,
                         content = persistentListOf(
                             UiNoteContent.Title(
                                 id = "1",

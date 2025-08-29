@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -66,6 +67,7 @@ fun NoteListItem(
     isPinned: Boolean = false,
     isSelected: Boolean = false,
     moodId: String? = null,
+    locationState: LocationState = LocationState.Empty,
     onClick: () -> Unit = {},
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
@@ -161,6 +163,8 @@ fun NoteListItem(
             }
 
             val showMood = content.isEmpty() && moodId != null
+            val showLocation = locationState is LocationState.Success &&
+                    !showMood && content.isEmpty()
 
             when {
                 showMood -> MoodButton(
@@ -173,6 +177,12 @@ fun NoteListItem(
                         .align(Alignment.CenterHorizontally),
                     moodId = moodId,
                     defaultMoodId = null,
+                )
+
+                showLocation -> LocationCard(
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                    state = locationState,
+                    clickable = false,
                 )
 
                 content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))

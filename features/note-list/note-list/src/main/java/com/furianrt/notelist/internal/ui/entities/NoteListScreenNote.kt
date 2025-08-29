@@ -1,6 +1,7 @@
 package com.furianrt.notelist.internal.ui.entities
 
 import androidx.compose.runtime.Immutable
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -16,6 +17,7 @@ internal data class NoteListScreenNote(
     val fontFamily: UiNoteFontFamily?,
     val fontSize: Int,
     val moodId: String?,
+    val locationState: LocationState,
     val isPinned: Boolean,
     val isSelected: Boolean,
     val content: ImmutableList<UiNoteContent>,

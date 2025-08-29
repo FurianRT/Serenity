@@ -3,7 +3,6 @@
     <string name="note_title_hint_write_more_here">Еще текст…</string>
     <string name="note_sticker_limit_message">Достигнут лимит стикеров</string>
     <string name="note_select_text_position_message">Выберите позицию в тексте</string>
-    <string name="note_add_current_location_title">Добавить текущее место</string>
     <string name="note_add_current_location_fail_title">Не удалось определить местоположение</string>
     <string name="note_auto_detect_location_title">Хотите автоматически добавлять местоположение в новые заметки?</string>
 </resources>

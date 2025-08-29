@@ -3,7 +3,6 @@
     <string name="note_title_hint_write_more_here">여기에 더 작성하세요…</string>
     <string name="note_sticker_limit_message">스티커 한도에 도달했습니다</string>
     <string name="note_select_text_position_message">텍스트에서 위치를 선택하세요</string>
-    <string name="note_add_current_location_title">현재 위치 추가</string>
     <string name="note_add_current_location_fail_title">현재 위치를 가져올 수 없습니다</string>
     <string name="note_auto_detect_location_title">새 메모에 내 위치를 자동으로 추가할까요?</string>
 </resources>

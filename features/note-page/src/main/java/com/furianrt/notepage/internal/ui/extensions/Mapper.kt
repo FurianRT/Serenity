@@ -5,7 +5,6 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
-import com.furianrt.domain.entities.NoteLocation
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -14,7 +13,6 @@ import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
-import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
@@ -66,23 +64,6 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     biasX = state.biasX,
     dpOffsetY = state.dpOffsetY.value,
     editTime = state.editTime,
-)
-
-internal fun LocationState.toNoteLocation(): NoteLocation? = when (this) {
-    is LocationState.Empty, LocationState.Loading -> null
-    is LocationState.Success -> NoteLocation(
-        id = id,
-        title = title,
-        latitude = latitude,
-        longitude = longitude,
-    )
-}
-
-internal fun NoteLocation.toLocationState() = LocationState.Success(
-    id = id,
-    title = title,
-    latitude = latitude,
-    longitude = longitude,
 )
 
 private fun LocalNote.Sticker.toStickerItem(

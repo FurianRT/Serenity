@@ -3,7 +3,6 @@
     <string name="note_title_hint_write_more_here">Buraya daha fazla yazın…</string>
     <string name="note_sticker_limit_message">Sticker sınırına ulaşıldı</string>
     <string name="note_select_text_position_message">Metinde bir konum seçin</string>
-    <string name="note_add_current_location_title">Mevcut konumu ekle</string>
     <string name="note_add_current_location_fail_title">Konum alınamadı</string>
     <string name="note_auto_detect_location_title">Yeni notlarınıza konumunuzu otomatik olarak eklemek ister misiniz?</string>
 </resources>

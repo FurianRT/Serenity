@@ -4,7 +4,9 @@ import com.furianrt.core.mapImmutable
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.extensions.getShortUiContent
+import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
@@ -36,6 +38,7 @@ internal fun LocalNote.toNoteItem(
         fontFamily = fontFamily?.toUiNoteFontFamily(),
         fontSize = fontSize,
         moodId = moodId,
+        locationState = location?.toLocationState() ?: LocationState.Empty,
         content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
     )
 }

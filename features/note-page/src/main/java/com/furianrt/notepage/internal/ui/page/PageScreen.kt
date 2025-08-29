@@ -81,11 +81,13 @@ import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.mood.api.composables.MoodDialog
+import com.furianrt.notelistui.composables.LocationCard
 import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -96,8 +98,6 @@ import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
-import com.furianrt.notepage.internal.ui.page.composables.LocationCard
-import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen

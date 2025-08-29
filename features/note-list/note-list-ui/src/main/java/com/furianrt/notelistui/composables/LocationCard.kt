@@ -1,4 +1,4 @@
-package com.furianrt.notepage.internal.ui.page.composables
+package com.furianrt.notelistui.composables
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExitTransition
@@ -30,24 +30,28 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.furianrt.notepage.R
+import com.furianrt.notelistui.R
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.uikit.R as uiR
-import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.uikit.anim.shimmer
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
-internal fun LocationCard(
+fun LocationCard(
     state: LocationState,
-    isRemovable: Boolean,
-    onAddLocationClick: () -> Unit,
-    onRemoveLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
+    isRemovable: Boolean = false,
+    clickable: Boolean = true,
+    onAddLocationClick: () -> Unit = {},
+    onRemoveLocationClick: () -> Unit = {},
 ) {
     AnimatedContent(
-        modifier = modifier,
+        modifier = modifier.applyIf(clickable) {
+            Modifier.clickableNoRipple {}
+        },
         targetState = state,
         contentKey = { it !is LocationState.Empty },
         transitionSpec = {
@@ -78,9 +82,7 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .clickableNoRipple {}
-            .padding(4.dp),
+        modifier = modifier.padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AnimatedContent(
@@ -139,9 +141,7 @@ private fun LoadingContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier
-            .clickableNoRipple {}
-            .padding(4.dp),
+        modifier = modifier.padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Icon(
@@ -228,8 +228,6 @@ private fun SuccessRemovablePreview() {
                 longitude = 0.0,
             ),
             isRemovable = true,
-            onAddLocationClick = {},
-            onRemoveLocationClick = {},
         )
     }
 }
@@ -240,9 +238,6 @@ private fun EmptyPreview() {
     SerenityTheme {
         LocationCard(
             state = LocationState.Empty,
-            isRemovable = false,
-            onAddLocationClick = {},
-            onRemoveLocationClick = {},
         )
     }
 }
@@ -253,9 +248,6 @@ private fun LoadingPreview() {
     SerenityTheme {
         LocationCard(
             state = LocationState.Loading,
-            isRemovable = false,
-            onAddLocationClick = {},
-            onRemoveLocationClick = {},
         )
     }
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="note_content_add_tag_hint">New tag</string>
+    <string name="note_add_current_location_title">Add current location</string>
 </resources>

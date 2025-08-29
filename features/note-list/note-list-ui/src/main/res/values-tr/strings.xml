@@ -1,3 +1,4 @@
 <resources>
     <string name="note_content_add_tag_hint">Yeni etiket</string>
+    <string name="note_add_current_location_title">Mevcut konumu ekle</string>
 </resources>

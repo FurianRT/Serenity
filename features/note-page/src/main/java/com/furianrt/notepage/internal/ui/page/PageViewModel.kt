@@ -24,6 +24,7 @@ import com.furianrt.domain.usecase.UpdateNoteContentUseCase
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -31,8 +32,10 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.extensions.toLocalNoteContent
 import com.furianrt.notelistui.extensions.toLocalNoteTag
+import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toNoteFontColor
 import com.furianrt.notelistui.extensions.toNoteFontFamily
+import com.furianrt.notelistui.extensions.toNoteLocation
 import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteMedia
@@ -46,10 +49,8 @@ import com.furianrt.notepage.internal.ui.extensions.removeSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.removeVoice
 import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
-import com.furianrt.notepage.internal.ui.extensions.toLocationState
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
-import com.furianrt.notepage.internal.ui.extensions.toNoteLocation
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestCameraPermission
@@ -106,7 +107,6 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
-import com.furianrt.notepage.internal.ui.page.entities.LocationState
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
