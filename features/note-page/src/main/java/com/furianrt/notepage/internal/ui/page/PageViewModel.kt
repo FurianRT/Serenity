@@ -1196,7 +1196,7 @@ internal class PageViewModel @AssistedInject constructor(
 
             appearanceRepository.setAutoDetectLocationAsked(value = true)
 
-            if (showDialog) {
+            if (!showDialog) {
                 _effect.tryEmit(PageEffect.ShowAutoDetectLocationDialog)
             }
         }
