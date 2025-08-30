@@ -352,7 +352,8 @@ private fun ThemeSelector(
     onColorSelected: (color: UiThemeColor) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val selectedTheme = themes.first { it.isSelected }
+    val selectedThemeIndex = themes.indexOfFirst { it.isSelected }
+    val selectedTheme = themes[selectedThemeIndex]
     val selectedColorIndex = remember(themes, selectedTheme) {
         selectedTheme.colors.indexOfFirstOrNull { it == selectedTheme.selectedColor }
     }
@@ -360,7 +361,7 @@ private fun ThemeSelector(
         initialFirstVisibleItemIndex = selectedColorIndex ?: 0,
         initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
     )
-    SkipFirstEffect(selectedTheme) {
+    SkipFirstEffect(selectedThemeIndex) {
         listState.scrollToItem(0)
     }
     Column(
@@ -373,8 +374,7 @@ private fun ThemeSelector(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_theme),
-                contentDescription = stringResource(R.string.settings_theme_title),
-                tint = MaterialTheme.colorScheme.onSurface,
+                contentDescription = null,
             )
             Text(
                 text = stringResource(R.string.settings_theme_title),
