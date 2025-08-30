@@ -112,5 +112,40 @@ internal object MoodHolder {
                 ),
             ),
         ),
+        MoodPack(
+            icon = R.drawable.mood_dog_default,
+            moods = listOf(
+                Mood(
+                    id = "dog_terrible",
+                    level = Mood.Level.TERRIBLE,
+                    icon = R.drawable.mood_dog_terrible,
+                ),
+                Mood(
+                    id = "dog_bad",
+                    level = Mood.Level.BAD,
+                    icon = R.drawable.mood_dog_bad,
+                ),
+                Mood(
+                    id = "dog_sad",
+                    level = Mood.Level.SAD,
+                    icon = R.drawable.mood_dog_sad,
+                ),
+                Mood(
+                    id = "dog_normal",
+                    level = Mood.Level.NORMAL,
+                    icon = R.drawable.mood_dog_normal,
+                ),
+                Mood(
+                    id = "dog_good",
+                    level = Mood.Level.GOOD,
+                    icon = R.drawable.mood_dog_good,
+                ),
+                Mood(
+                    id = "dog_perfect",
+                    level = Mood.Level.PERFECT,
+                    icon = R.drawable.mood_dog_perfect,
+                ),
+            ),
+        ),
     )
 }
