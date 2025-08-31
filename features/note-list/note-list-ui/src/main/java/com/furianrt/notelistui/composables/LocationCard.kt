@@ -82,7 +82,9 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         AnimatedContent(
@@ -141,7 +143,9 @@ private fun LoadingContent(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.padding(4.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Icon(
@@ -154,7 +158,7 @@ private fun LoadingContent(
         ) {
             Box(
                 modifier = Modifier
-                    .widthIn(max = 255.dp)
+                    .widthIn(max = 275.dp)
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))
@@ -163,7 +167,7 @@ private fun LoadingContent(
             )
             Box(
                 modifier = Modifier
-                    .widthIn(max = 162.dp)
+                    .widthIn(max = 175.dp)
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))

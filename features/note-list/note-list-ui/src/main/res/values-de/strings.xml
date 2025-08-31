@@ -1,4 +1,5 @@
 <resources>
     <string name="note_content_add_tag_hint">Neues Tag</string>
     <string name="note_add_current_location_title">Aktuellen Standort hinzufügen</string>
+    <string name="note_media_change_collage">Collage bearbeiten</string>
 </resources>

@@ -596,7 +596,7 @@ private fun PopUpMenu(
     ) {
         MenuItem(
             icon = painterResource(R.drawable.ic_change_order),
-            text = stringResource(uiR.string.action_change_sorting),
+            text = stringResource(uiR.string.note_media_change_collage),
             onClick = {
                 onSortingClick()
                 onDismissRequest()

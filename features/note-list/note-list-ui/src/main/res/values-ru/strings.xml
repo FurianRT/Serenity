@@ -1,4 +1,5 @@
 <resources>
     <string name="note_content_add_tag_hint">Новый тэг</string>
     <string name="note_add_current_location_title">Добавить текущее место</string>
+    <string name="note_media_change_collage">Изменить коллаж</string>
 </resources>

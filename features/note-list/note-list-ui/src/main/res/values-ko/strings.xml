@@ -1,4 +1,5 @@
 <resources>
     <string name="note_content_add_tag_hint">새 태그</string>
     <string name="note_add_current_location_title">현재 위치 추가</string>
+    <string name="note_media_change_collage">콜라주 편집</string>
 </resources>

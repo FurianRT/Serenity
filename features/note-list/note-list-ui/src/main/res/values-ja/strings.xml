@@ -1,4 +1,5 @@
 <resources>
     <string name="note_content_add_tag_hint">新しいタグ</string>
     <string name="note_add_current_location_title">現在地を追加</string>
+    <string name="note_media_change_collage">コラージュを編集</string>
 </resources>
