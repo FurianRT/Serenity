@@ -7,18 +7,23 @@ import kotlinx.coroutines.flow.Flow
 interface AppearanceRepository {
     suspend fun updateAppThemeColor(colorId: String)
     fun getAppThemeColorId(): Flow<String?>
+
     fun getNoteFontColorsList(): List<NoteFontColor>
     fun getNoteFontsList(): List<NoteFontFamily>
     fun getDefaultNoteFont(): Flow<NoteFontFamily?>
     fun getAppFont(): Flow<NoteFontFamily>
     suspend fun setAppFont(font: NoteFontFamily)
     suspend fun setDefaultNoteFont(font: NoteFontFamily?)
+
     fun getDefaultNoteFontColor(): Flow<NoteFontColor?>
     suspend fun setDefaultNoteFontColor(color: NoteFontColor?)
+
     fun getDefaultNoteFontSize(): Flow<Int>
     suspend fun setDefaultNoteFontSize(size: Int)
+
     fun getDefaultNoteMoodId(): Flow<String?>
     suspend fun setDefaultNoteMoodId(moodId: String)
+
     fun isAutoDetectLocationEnabled(): Flow<Boolean>
     suspend fun setAutoDetectLocationEnabled(enabled: Boolean)
     fun isAutoDetectLocationAsked(): Flow<Boolean>

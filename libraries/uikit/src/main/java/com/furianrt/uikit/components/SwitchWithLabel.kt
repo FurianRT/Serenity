@@ -15,6 +15,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
@@ -27,7 +30,9 @@ fun SwitchWithLabel(
     onCheckedChange: (isChecked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    withHaptic: Boolean = true,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -47,7 +52,13 @@ fun SwitchWithLabel(
         Switch(
             modifier = Modifier.padding(start = 8.dp),
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
+            onCheckedChange = { checked ->
+                val feedbackType = if (checked) ToggleOn else ToggleOff
+                if (withHaptic) {
+                    hapticFeedback.performHapticFeedback(feedbackType)
+                }
+                onCheckedChange(checked)
+            },
             enabled = enabled,
             colors = SwitchDefaults.colors(
                 checkedTrackColor = MaterialTheme.colorScheme.primaryContainer,

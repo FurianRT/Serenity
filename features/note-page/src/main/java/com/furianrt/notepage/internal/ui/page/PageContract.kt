@@ -38,6 +38,9 @@ internal sealed interface PageUiState {
 
         val playingVoice: UiNoteContent.Voice?
             get() = content.findInstance<UiNoteContent.Voice> { it.id == playingVoiceId }
+
+        val showMood: Boolean
+            get() = moodId != null || isInEditMode
     }
 }
 

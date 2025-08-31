@@ -698,7 +698,7 @@ private fun ContentItems(
                         onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
                         onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
                     )
-                    if (uiState.moodId != null || uiState.isInEditMode) {
+                    if (uiState.showMood) {
                         MoodButton(
                             modifier = Modifier
                                 .padding(end = 12.dp, top = 6.dp)

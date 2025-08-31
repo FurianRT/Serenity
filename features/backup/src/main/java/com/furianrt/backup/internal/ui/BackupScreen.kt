@@ -332,11 +332,6 @@ private fun SuccessContent(
                     title = stringResource(R.string.backup_auto_backup_title),
                     isChecked = uiState.isAutoBackupEnabled,
                     onCheckedChange = { isChecked ->
-                        if (isChecked) {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                        } else {
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                        }
                         onEvent(BackupScreenEvent.OnAutoBackupCheckChange(isChecked))
                     },
                     enabled = uiState.isSignedIn,

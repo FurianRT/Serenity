@@ -13,8 +13,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,7 +88,6 @@ private fun SuccessContent(
     onEvent: (event: NoteSettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val hapticFeedback = LocalHapticFeedback.current
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -101,11 +98,6 @@ private fun SuccessContent(
             title = stringResource(R.string.settings_note_detect_location_title),
             isChecked = uiState.isAutoDetectLocationEnabled,
             onCheckedChange = { isChecked ->
-                if (isChecked) {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                } else {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                }
                 onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))
             },
         )

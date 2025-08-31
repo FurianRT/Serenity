@@ -140,6 +140,7 @@ private fun SuccessScreen(
         SwitchWithLabel(
             title = stringResource(R.string.security_enable_pin_title),
             isChecked = uiState.isPinEnabled,
+            withHaptic = false,
             onCheckedChange = { isChecked ->
                 if (!isChecked) {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
@@ -176,11 +177,6 @@ private fun SuccessScreen(
             isChecked = uiState.isFingerprintEnabled,
             enabled = uiState.isPinEnabled,
             onCheckedChange = { isChecked ->
-                if (isChecked) {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
-                } else {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                }
                 onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
             },
         )
