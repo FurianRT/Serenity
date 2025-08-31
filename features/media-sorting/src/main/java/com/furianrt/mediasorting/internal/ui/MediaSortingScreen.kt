@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -38,7 +37,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -78,6 +76,7 @@ import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.time.ZonedDateTime
 
 private const val HINT_ITEM_ID = "hint"
+private const val ADD_BUTTON_ITEM_ID = "add_button"
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
 @Composable
@@ -226,13 +225,6 @@ private fun Content(
                 end = 4.dp,
             ),
         )
-        AddMediaButton(
-            modifier = Modifier
-                .padding(end = 24.dp, bottom = 24.dp)
-                .navigationBarsPadding()
-                .align(Alignment.BottomEnd),
-            onClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
-        )
     }
 }
 
@@ -316,6 +308,15 @@ private fun ContentList(
                     )
                 }
             }
+        }
+
+        item(
+            key = ADD_BUTTON_ITEM_ID,
+            span = { GridItemSpan(1) },
+        ) {
+            AddMediaButton(
+                onClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
+            )
         }
 
         item(

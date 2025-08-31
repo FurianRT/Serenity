@@ -12,9 +12,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -30,6 +32,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -52,12 +55,14 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 import com.furianrt.uikit.R as uiR
 
@@ -167,6 +172,7 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+    val scope = rememberCoroutineScope()
 
     BottomSheetScaffold(
         modifier = modifier,
@@ -184,9 +190,14 @@ internal fun MediaSelectorBottomSheetInternal(
             }
         },
         sheetContent = {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(ToolbarConstants.toolbarHeight + statusBarHeight.dp)
+                    .clickableNoRipple { scope.launch { state.bottomSheetState.hide() } },
+            )
             SheetContent(
                 modifier = Modifier
-                    .padding(top = ToolbarConstants.toolbarHeight + statusBarHeight.dp)
                     .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
                     .hazeSource(hazeState),
                 uiState = uiState,
