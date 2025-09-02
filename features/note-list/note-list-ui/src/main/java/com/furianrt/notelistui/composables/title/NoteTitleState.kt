@@ -118,6 +118,8 @@ class NoteTitleState(
     internal val textValue: TextFieldValue
         get() = textValueState
 
+    internal var onCheckedListChange: () -> Unit = {}
+
     var annotatedString: AnnotatedString
         get() = textValueState.annotatedString
         set(value) {
@@ -596,6 +598,8 @@ class NoteTitleState(
         while (BulletListType.isBulletPart(text.getOrNull(newSelection))) {
             newSelection++
         }
+
+        onCheckedListChange()
 
         return newValue.copy(
             annotatedString = newAnnotatedString,

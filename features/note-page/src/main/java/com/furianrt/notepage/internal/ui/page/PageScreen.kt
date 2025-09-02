@@ -632,6 +632,7 @@ private fun ContentItems(
                                 onTitleFocusChange(id, focused)
                             },
                             onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
+                            onCheckedListChange = { onEvent(PageEvent.OnCheckedListChange) },
                         )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(

@@ -65,6 +65,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelected
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCheckedListChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
@@ -332,6 +333,8 @@ internal class PageViewModel @AssistedInject constructor(
             is OnAutoDetectLocationClickClick -> launch {
                 appearanceRepository.setAutoDetectLocationEnabled(enabled = true)
             }
+
+            is OnCheckedListChange -> hasContentChanged = true
         }
     }
 

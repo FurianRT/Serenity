@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,12 +66,18 @@ fun NoteContentTitle(
     isInEditMode: Boolean = false,
     onTitleFocusChange: (id: String, focused: Boolean) -> Unit = {_, _ -> },
     onTitleTextChange: (id: String) -> Unit = {},
+    onCheckedListChange: () -> Unit = {},
 ) {
     val readOnly = !isInEditMode && title.isEmptyTitle()
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     var hasFocus by remember { mutableStateOf(false) }
 
     val onTitleTextChangeState by rememberUpdatedState(onTitleTextChange)
+    val onCheckedListChangeState by rememberUpdatedState(onCheckedListChange)
+
+    SideEffect {
+        title.state.onCheckedListChange = onCheckedListChangeState
+    }
 
     val view = LocalView.current
     val topFocusMargin = with(LocalDensity.current) {

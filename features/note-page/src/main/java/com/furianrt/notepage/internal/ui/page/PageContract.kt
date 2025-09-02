@@ -96,6 +96,7 @@ internal sealed interface PageEvent {
     data object OnAddLocationClick : PageEvent
     data object OnRemoveLocationClick : PageEvent
     data object OnAutoDetectLocationClickClick : PageEvent
+    data object OnCheckedListChange : PageEvent
 }
 
 internal sealed interface PageEffect {
