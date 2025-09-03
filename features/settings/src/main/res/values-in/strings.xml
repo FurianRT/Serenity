@@ -20,4 +20,5 @@
     <string name="settings_bad_feedback_body">Masukan Anda sangat berarti. Bantu kami memperbaiki pengalaman Anda</string>
     <string name="settings_note_detect_location_title">Deteksi Lokasi Otomatis</string>
     <string name="settings_note_content_title">Konten Catatan</string>
+    <string name="settings_note_detect_location_hint">Deteksi lokasi Anda secara otomatis saat membuat catatan</string>
 </resources>

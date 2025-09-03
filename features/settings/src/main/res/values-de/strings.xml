@@ -20,4 +20,5 @@
     <string name="settings_bad_feedback_body">Tu opinión es muy importante. Ayúdanos a mejorar tu experiencia</string>
     <string name="settings_note_detect_location_title">Standort automatisch erkennen</string>
     <string name="settings_note_content_title">Notizinhalte</string>
+    <string name="settings_note_detect_location_hint">Erkenne automatisch deinen aktuellen Standort beim Erstellen einer Notiz</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="settings_bad_feedback_body">Il tuo feedback è importante. Aiutaci a migliorare la tua esperienza</string>
     <string name="settings_note_detect_location_title">Rilevamento automatico della posizione</string>
     <string name="settings_note_content_title">Contenuto della nota</string>
+    <string name="settings_note_detect_location_hint">Rileva automaticamente la tua posizione attuale quando crei una nota</string>
 </resources>

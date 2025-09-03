@@ -20,4 +20,5 @@
     <string name="settings_bad_feedback_body">Geri bildiriminiz bizim için çok değerli. Deneyiminizi geliştirmemize yardımcı olun</string>
     <string name="settings_note_detect_location_title">Konumu otomatik algıla</string>
     <string name="settings_note_content_title">Not içeriği</string>
+    <string name="settings_note_detect_location_hint">Not oluştururken mevcut konumunu otomatik algıla</string>
 </resources>

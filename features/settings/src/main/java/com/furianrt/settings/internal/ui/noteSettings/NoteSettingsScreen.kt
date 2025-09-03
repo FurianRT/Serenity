@@ -96,6 +96,7 @@ private fun SuccessContent(
     ) {
         SwitchWithLabel(
             title = stringResource(R.string.settings_note_detect_location_title),
+            hint = stringResource(R.string.settings_note_detect_location_hint),
             isChecked = uiState.isAutoDetectLocationEnabled,
             onCheckedChange = { isChecked ->
                 onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))

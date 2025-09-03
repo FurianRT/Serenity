@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.bullet.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -41,6 +42,7 @@ internal fun CheckedBulletListItem(
             }
             .clickableNoRipple(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 4.dp),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         repeat(3) { index ->
             Row(

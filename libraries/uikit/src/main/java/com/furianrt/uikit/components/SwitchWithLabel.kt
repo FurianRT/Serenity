@@ -2,6 +2,7 @@ package com.furianrt.uikit.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ fun SwitchWithLabel(
     isChecked: Boolean,
     onCheckedChange: (isChecked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    hint: String? = null,
     enabled: Boolean = true,
     withHaptic: Boolean = true,
 ) {
@@ -39,16 +41,31 @@ fun SwitchWithLabel(
             .clip(RoundedCornerShape(8.dp))
             .clickable(enabled = enabled, onClick = { onCheckedChange(!isChecked) })
             .padding(horizontal = 12.dp, vertical = 8.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = if (hint == null) {
+            Alignment.CenterVertically
+        } else {
+            Alignment.Top
+        },
     ) {
-        Text(
+        Column(
             modifier = Modifier
                 .weight(1f)
                 .applyIf(!enabled) { Modifier.alpha(0.5f) },
-            text = title,
-            style = MaterialTheme.typography.bodyMedium,
-        )
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            if (hint != null) {
+                Text(
+                    modifier = Modifier.alpha(0.5f),
+                    text = hint,
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
+        }
         Switch(
             modifier = Modifier.padding(start = 8.dp),
             checked = isChecked,
@@ -90,6 +107,19 @@ private fun PreviewUnchecked() {
         SwitchWithLabel(
             title = "Test title",
             isChecked = false,
+            onCheckedChange = {},
+        )
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun PreviewHint() {
+    SerenityTheme {
+        SwitchWithLabel(
+            title = "Test title",
+            hint = "Test hint",
+            isChecked = true,
             onCheckedChange = {},
         )
     }

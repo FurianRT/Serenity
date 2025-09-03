@@ -685,7 +685,8 @@ private fun ContentItems(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
-                            .padding(top = 10.dp),
+                            .padding(top = 10.dp)
+                            .heightIn(min = 48.dp),
                         tags = uiState.tags,
                         isEditable = uiState.isInEditMode,
                         animateItemsPlacement = true,
@@ -715,7 +716,7 @@ private fun ContentItems(
                 key(LocationState.BLOCK_ID + uiState.noteId) {
                     LocationCard(
                         modifier = Modifier
-                            .padding(start = 4.dp, end = 4.dp, top = 28.dp)
+                            .padding(start = 4.dp, end = 4.dp, top = 24.dp)
                             .animatePlacementInScope(this@LookaheadScope),
                         state = uiState.locationState,
                         isRemovable = uiState.isInEditMode,

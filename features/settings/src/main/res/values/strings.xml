@@ -21,4 +21,5 @@
 
     <string name="settings_note_content_title">Note Content</string>
     <string name="settings_note_detect_location_title">Auto-detect Location</string>
+    <string name="settings_note_detect_location_hint">Automatically detect your current location when creating a note</string>
 </resources>

@@ -20,4 +20,5 @@
     <string name="settings_bad_feedback_body">あなたのフィードバックはとても大切です。体験を向上させるためにご協力ください</string>
     <string name="settings_note_detect_location_title">位置情報を自動検出</string>
     <string name="settings_note_content_title">ノートの内容</string>
+    <string name="settings_note_detect_location_hint">ノートを作成するときに現在地を自動検出</string>
 </resources>
