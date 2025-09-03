@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">Mediablok bewerken</string>
+    <string name="media_sorting_drag_and_drop_hint">Sleep om de volgorde te wijzigen</string>
+    <string name="media_sorting_save_changes_hint">Wilt u uw wijzigingen opslaan?</string>
+</resources>

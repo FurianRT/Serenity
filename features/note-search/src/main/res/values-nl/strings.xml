@@ -1,0 +1,9 @@
+<resources>
+    <string name="notes_search_bar_title">Zoeken op tekst en tags</string>
+    <string name="notes_search_empty_search_title">Geen notities gevonden</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%d notitie gevonden</item>
+        <item quantity="other">%d notities gevonden</item>
+    </plurals>
+</resources>

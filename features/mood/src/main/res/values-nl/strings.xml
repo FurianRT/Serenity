@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Hoe voel je je?</string>
+    <string name="mood_dialog_more_emoji">Meer emoji</string>
+    <string name="mood_dialog_clear">Wissen</string>
+</resources>

@@ -1,0 +1,31 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Voer uw PIN in</string>
+    <string name="lock_enter_new_pin_title">Voer nieuwe PIN in</string>
+    <string name="lock_repeat_your_pin_title">Herhaal uw PIN</string>
+    <string name="lock_forgot_pin_title">PIN vergeten?</string>
+    <string name="lock_fingerprint_title">Alleen voor geweldige mensen</string>
+    <string name="lock_use_pin_title">Gebruik PIN</string>
+    <string name="recovery_email_hint">Voer uw e-mailadres in om uw vergeten PIN-code te ontvangen</string>
+    <string name="recovery_email_format_error">Ongeldig e-mailadres</string>
+    <string name="pin_recovery_dialog_title">We sturen instructies om uw PIN opnieuw in te stellen naar %s. Controleer uw spammap als u de e-mail niet ontvangt</string>
+    <string name="pin_recovery_email_subject">PIN herstel</string>
+    <string name="pin_recovery_email_content">Uw PIN: %s</string>
+    <string name="pin_recovery_email_title">E-mailadres</string>
+    <string name="send_pin_recovery_email_failure">Er is iets misgegaan</string>
+    <string name="send_pin_recovery_email_success">Herstel-e-mail verzonden</string>
+
+    <string name="security_enable_pin_title">PIN inschakelen</string>
+    <string name="security_email_to_recover_pin_title">E-mail voor PIN-herstel</string>
+    <string name="security_pin_request_title">Vertraging PIN-verzoek</string>
+    <string name="security_enable_fingerprint_title">Vingerafdruk inschakelen</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d seconde</item>
+        <item quantity="other">%d seconden</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minuut</item>
+        <item quantity="other">%d minuten</item>
+    </plurals>
+</resources>

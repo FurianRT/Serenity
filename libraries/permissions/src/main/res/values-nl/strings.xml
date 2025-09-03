@@ -1,0 +1,17 @@
+<resources>
+    <string name="media_permission_message">Serenity heeft toegang tot uw opslag nodig om foto\'s en video\'s te kunnen toevoegen. Tik op Instellingen > Machtigingen en schakel Foto\'s en video\'s in</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Foto\'s en video\'s</string>
+
+    <string name="audio_record_permission_message">Serenity heeft toegang tot uw microfoon nodig om geluidsopnamen te kunnen maken. Tik op Instellingen > Machtigingen en schakel Microfoon in</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Microfoon</string>
+
+    <string name="camera_permission_message">Serenity heeft toegang tot uw camera nodig om foto\'s te maken. Tik op Instellingen > Machtigingen en schakel Camera in</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Camera</string>
+
+    <string name="location_permission_message">Serenity heeft toegang tot uw locatie nodig om plaatsen aan uw notities toe te voegen. Tik op Instellingen > Machtigingen en schakel Locatie in</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Locatie</string>
+</resources>

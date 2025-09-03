@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Geef alstublieft toestemming "Alles toestaan", of selecteer meer media</string>
+    <string name="media_selector_empty_list_title">Leeg</string>
+    <string name="media_selector_apply_button_title">Bevestig %d media</string>
+    <string name="media_selector_discard_title">Selectie annuleren</string>
+    <string name="media_selector_discard_hint">Wilt u het bijlage-menu sluiten?</string>
+</resources>

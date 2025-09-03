@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Zoeken</string>
+    <string name="notes_list_empty_list_title">"Elk verhaal begint met een woord"</string>
+    <string name="notes_list_empty_list_body">Tik om je eigen verhaal te beginnen!</string>
+</resources>

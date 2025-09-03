@@ -16,7 +16,8 @@ enum class AppLocale(val tag: String, val text: String) {
     FRENCH(tag ="fr", text = "Français"),
     ITALIAN(tag ="it", text = "Italiano"),
     UKRAINIAN(tag ="uk", text = "Українська"),
-    POLISH(tag ="pl", text = "Polski");
+    POLISH(tag ="pl", text = "Polski"),
+    NEDERLANDS(tag ="nl", text = "Nederlands");
 
     companion object {
         fun fromTag(tag: String?): AppLocale = when (tag) {
@@ -36,6 +37,7 @@ enum class AppLocale(val tag: String, val text: String) {
             ITALIAN.tag -> ITALIAN
             UKRAINIAN.tag -> UKRAINIAN
             POLISH.tag -> POLISH
+            NEDERLANDS.tag -> NEDERLANDS
             else -> ENGLISH
         }
     }

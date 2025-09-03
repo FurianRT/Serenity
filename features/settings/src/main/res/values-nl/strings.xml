@@ -1,0 +1,25 @@
+<resources>
+    <string name="settings_security_title">Beveiliging</string>
+    <string name="settings_backup_title">Back-up en Herstellen</string>
+    <string name="settings_theme_title">Thema</string>
+    <string name="settings_light_theme_title">Licht</string>
+    <string name="settings_dark_theme_title">Donker</string>
+    <string name="settings_font_title">App-lettertype</string>
+    <string name="settings_language_title">Taal</string>
+    <string name="settings_rate_us_title">Beoordeel ons</string>
+    <string name="settings_donate_title">Doneren</string>
+    <string name="settings_feedback_title">Probleem melden</string>
+    <string name="settings_terms_and_conditions_title">Algemene voorwaarden</string>
+    <string name="settings_privacy_policy_title">Privacybeleid</string>
+    <string name="settings_version_title">Versie %s</string>
+
+    <string name="settings_feedback_email_subject">Serenity feedback %s</string>
+    <string name="settings_feedback_email_error">E-mail verzenden mislukt</string>
+
+    <string name="settings_bad_feedback_title">Niet tevreden?</string>
+    <string name="settings_bad_feedback_body">Uw feedback is belangrijk. Help ons uw ervaring te verbeteren</string>
+
+    <string name="settings_note_content_title">Inhoud van notitie</string>
+    <string name="settings_note_detect_location_title">Locatie automatisch detecteren</string>
+    <string name="settings_note_detect_location_hint">Detecteer automatisch uw huidige locatie bij het aanmaken van een notitie</string>
+</resources>

@@ -55,6 +55,7 @@ internal class LocaleRepositoryImp @Inject constructor(
             AppLocale.FILIPINO,
             AppLocale.JAPANESE,
             AppLocale.KOREAN,
+            AppLocale.NEDERLANDS,
         )
     )
 

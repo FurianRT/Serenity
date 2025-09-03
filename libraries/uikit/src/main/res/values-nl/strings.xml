@@ -1,0 +1,66 @@
+<resources>
+    <string name="action_cancel">Annuleren</string>
+    <string name="action_discard">Verwijderen</string>
+    <string name="action_not_now">Niet nu</string>
+    <string name="action_delete">Verwijderen</string>
+    <string name="action_share">Delen</string>
+    <string name="action_save">Opslaan</string>
+    <string name="action_confirm">Bevestigen</string>
+    <string name="action_send">Verzenden</string>
+    <string name="action_done">Gereed</string>
+    <string name="action_pin">Vastpinnen</string>
+    <string name="action_unpin">Losmaken</string>
+    <string name="action_contact_us">Contacteer ons</string>
+    <string name="action_select">Selecteren</string>
+    <string name="action_continue">Doorgaan</string>
+    <string name="action_back">Terug</string>
+    <string name="action_yes">Ja</string>
+    <string name="action_no">Nee</string>
+
+    <string name="title_email">E-mail</string>
+
+    <string name="settings_title">Instellingen</string>
+    <string name="security_title">Beveiliging</string>
+
+    <string name="media_counter_pattern">%1$d van %2$d</string>
+    <string name="general_error">Er is iets misgegaan</string>
+    <string name="general_error_with_code">%d Er is iets misgegaan</string>
+    <string name="network_error">Geen internetverbinding</string>
+
+    <string name="today_title">Vandaag</string>
+    <string name="yesterday_title">Gisteren</string>
+
+    <string name="delete_notes_warning_title">Even controleren…</string>
+    <string name="delete_notes_warning_body">Weet u zeker dat u deze notities wilt verwijderen? U kunt ze later niet meer terughalen</string>
+    <string name="delete_note_warning_body">Weet u zeker dat u deze notitie wilt verwijderen? U kunt deze later niet meer terughalen</string>
+
+    <string name="backup_in_progress">Back-up bezig</string>
+    <string name="restore_in_progress">Herstellen bezig</string>
+
+    <string name="error_camera_not_found">Camera niet gevonden</string>
+
+    <string-array name="months_array">
+        <item>Januari</item>
+        <item>Februari</item>
+        <item>Maart</item>
+        <item>April</item>
+        <item>Mei</item>
+        <item>Juni</item>
+        <item>Juli</item>
+        <item>Augustus</item>
+        <item>September</item>
+        <item>Oktober</item>
+        <item>November</item>
+        <item>December</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Ma</item>
+        <item>Di</item>
+        <item>Wo</item>
+        <item>Do</item>
+        <item>Vr</item>
+        <item>Za</item>
+        <item>Zo</item>
+    </string-array>
+</resources>

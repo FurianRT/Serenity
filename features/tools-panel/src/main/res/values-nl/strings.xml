@@ -1,0 +1,10 @@
+<resources>
+    <string name="font_panel_title">Lettertype</string>
+    <string name="font_panel_size_selector_title">Grootte</string>
+
+    <string name="bullet_panel_title">Opsommingstekens</string>
+
+    <string name="background_panel_tab_all_title">Alles</string>
+    <string name="background_panel_tab_dark_title">Donker</string>
+    <string name="background_panel_tab_light_title">Licht</string>
+</resources>

@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Automatische back-up</string>
+    <string name="backup_auto_backup_period_title">Periode automatische back-up</string>
+    <string name="backup_last_sync_time_title">Laatste synchronisatie: %s</string>
+    <string name="backup_restore_data_title">Gegevens herstellen</string>
+    <string name="backup_backup_data_title">Back-up maken</string>
+    <string name="backup_last_sync_time_none_title">Geen</string>
+    <string name="backup_sign_out_title">Afmelden</string>
+    <string name="backup_tap_to_sing_in_title">Tik om in te loggen</string>
+    <string name="backup_tap_to_sing_in_underline_part">loggen</string>
+    <string name="backup_tap_to_sing_out_title">Tik om af te melden</string>
+    <string name="backup_tap_to_sing_out_underline_part">melden</string>
+    <string name="backup_confirm_sign_out_title">Gaat u al weg?</string>
+    <string name="backup_confirm_sign_out_message">U kunt op elk moment weer inloggen, maar backups worden gepauzeerd totdat u dat doet</string>
+    <string name="backup_period_one_day_title">1 dag</string>
+    <string name="backup_period_three_days_title">3 dagen</string>
+    <string name="backup_period_one_week_title">1 week</string>
+    <string name="backup_period_two_weeks_title">2 weken</string>
+    <string name="backup_period_one_month_title">1 maand</string>
+
+    <string name="backup_popular_question_1_title">Hoe werkt synchronisatie met Google Drive?</string>
+    <string name="backup_popular_question_1_answer">Uw notities worden automatisch geback-upt naar uw persoonlijke Google Drive-account. Dit zorgt ervoor dat uw gegevens veilig zijn opgeslagen en vanaf meerdere apparaten toegankelijk zijn</string>
+    <string name="backup_popular_question_2_title">Waar worden mijn notities opgeslagen in Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Uw notities worden opgeslagen in een verborgen app-specifieke map in uw Google Drive, wat betekent dat ze niet zichtbaar zijn in uw reguliere Drive-bestandenlijst. Deze map is privé en alleen toegankelijk voor u—niemand anders, inclusief de app-ontwikkelaar, kan uw notities zien</string>
+    <string name="backup_popular_question_3_title">Heb ik een Google-account nodig om synchronisatie te gebruiken?</string>
+    <string name="backup_popular_question_3_answer">Ja, u moet inloggen met een Google-account om cloud-synchronisatie in te schakelen</string>
+    <string name="backup_popular_question_4_title">Kan ik mijn notities rechtstreeks vanuit Google Drive openen?</string>
+    <string name="backup_popular_question_4_answer">Nee, de notities worden opgeslagen in een privé-appmap die niet zichtbaar is via de Google Drive-interface. U kunt er alleen via de app toegang toe krijgen</string>
+    <string name="backup_popular_question_5_title">Wat gebeurt er als ik de app verwijder? Worden mijn notities verwijderd?</string>
+    <string name="backup_popular_question_5_answer">Het verwijderen van de app verwijdert uw notities niet uit Google Drive. Wanneer u de app opnieuw installeert en inlogt met hetzelfde Google-account, worden uw notities hersteld</string>
+    <string name="backup_popular_question_6_title">Kan ik mijn notities synchroniseren op meerdere apparaten?</string>
+    <string name="backup_popular_question_6_answer">Ja! Zolang u op alle apparaten inlogt met hetzelfde Google-account, worden uw notities gesynchroniseerd</string>
+    <string name="backup_popular_question_7_title">Zijn mijn gegevens veilig?</string>
+    <string name="backup_popular_question_7_answer">Ja. Uw notities worden opgeslagen in een privé-appmap op Google Drive, en de app deelt uw gegevens met niemand</string>
+    <string name="backup_popular_question_8_title">Wat gebeurt er als ik mijn Google-account verander?</string>
+    <string name="backup_popular_question_8_answer">Als u overstapt naar een ander Google-account, zijn uw notities van het vorige account niet beschikbaar. Om ze te openen, moet u terugschakelen naar het oorspronkelijke Google-account</string>
+
+    <string name="backup_notifications_channel_name">Back-upkanaal</string>
+    <string name="backup_notifications_channel_description">Toont voortgang van back-ups</string>
+    <string name="backup_notification_initial_description">Uw notities worden geüpload. Dit kan even duren</string>
+    <string name="restore_notification_initial_description">Uw notities worden gedownload. Dit kan even duren</string>
+
+    <string name="backup_warning_title">Back-up waarschuwing</string>
+    <string name="backup_warning_body">U staat op het punt een nieuwe back-up te maken. Let op: hiermee wordt uw bestaande back-up op Google Drive overschreven. Zodra deze is vervangen, is uw vorige gegevens niet meer toegankelijk. Zorg ervoor dat u hiermee akkoord gaat voordat u doorgaat</string>
+
+    <string name="backup_progress_message">Back-up bezig %1$d/%2$d</string>
+    <string name="restore_progress_message">Herstel bezig %1$d/%2$d</string>
+    <string name="backup_starting_message">Back-up starten…</string>
+    <string name="restore_starting_message">Herstellen starten…</string>
+
+    <string name="backup_sync_in_progress_message">Synchronisatie bezig</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Inloggen onderbroken</string>
+    <string name="backup_success_message">Succesvol</string>
+</resources>
