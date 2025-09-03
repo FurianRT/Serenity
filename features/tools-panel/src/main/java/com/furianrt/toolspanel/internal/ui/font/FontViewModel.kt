@@ -15,6 +15,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -31,7 +32,7 @@ internal class FontViewModel @AssistedInject constructor(
     private val selectedFontColor = MutableStateFlow(initialFontColor)
     private val selectedFontSize = MutableStateFlow(initialFontSize)
 
-    val state = combine(
+    val state: StateFlow<FontPanelUiState> = combine(
         selectedFontFamily,
         selectedFontColor,
         selectedFontSize,

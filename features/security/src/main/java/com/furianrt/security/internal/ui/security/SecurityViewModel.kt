@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -19,7 +20,7 @@ internal class SecurityViewModel @Inject constructor(
     private val securityRepository: SecurityRepository,
 ) : ViewModel() {
 
-    val state = combine(
+    val state: StateFlow<SecurityUiState> = combine(
         securityRepository.getPin(),
         securityRepository.getPinRecoveryEmail(),
         securityRepository.getPinRequestDelay(),

@@ -21,6 +21,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
@@ -46,7 +47,7 @@ internal class VoiceViewModel @AssistedInject constructor(
     private val isPausedState = MutableStateFlow(false)
     private val volumeState = MutableStateFlow(0f)
 
-    val state = combine(
+    val state: StateFlow<VoiceUiState> = combine(
         durationState,
         isPausedState,
         volumeState,

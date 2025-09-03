@@ -20,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -47,7 +48,7 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private val isInEditModeState = MutableStateFlow(true)
 
-    val state = combine(
+    val state: StateFlow<NoteCreateUiState> = combine(
         isInEditModeState,
         notesRepository.getOrCreateTemplateNote(
             savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),

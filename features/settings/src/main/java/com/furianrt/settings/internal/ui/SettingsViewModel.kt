@@ -24,6 +24,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -53,7 +54,7 @@ internal class SettingsViewModel @Inject constructor(
 
     private val selectedTheme = MutableStateFlow<UiTheme?>(null)
 
-    val state = combine(
+    val state: StateFlow<SettingsUiState> = combine(
         selectedTheme,
         appearanceRepository.getAppThemeColorId(),
         settingsRepository.getAppRating(),

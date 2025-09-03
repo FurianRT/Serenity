@@ -9,6 +9,7 @@ import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.entities.UiThemeColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -19,7 +20,7 @@ internal class MainViewModel @Inject constructor(
     private val lockAuthorizer: LockAuthorizer,
 ) : ViewModel() {
 
-    val state = combine(
+    val state: StateFlow<MainState> = combine(
         appearanceRepository.getAppThemeColorId(),
         appearanceRepository.getAppFont(),
         lockAuthorizer.isAuthorized(),

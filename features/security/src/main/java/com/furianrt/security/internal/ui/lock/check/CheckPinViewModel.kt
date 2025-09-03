@@ -19,6 +19,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -41,7 +42,7 @@ internal class CheckPinViewModel @Inject constructor(
     private var currentPin = MutableStateFlow("")
     private val showForgotPinButtonLoading = MutableStateFlow(false)
 
-    val state = combine(
+    val state: StateFlow<CheckPinUiState> = combine(
         securityRepository.isFingerprintEnabled(),
         currentPin,
         getEmailSendTimerUseCase(),
