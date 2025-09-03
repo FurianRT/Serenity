@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">Cum te simți?</string>
+    <string name="mood_dialog_more_emoji">Mai multe emoji</string>
+    <string name="mood_dialog_clear">Șterge</string>
+</resources>

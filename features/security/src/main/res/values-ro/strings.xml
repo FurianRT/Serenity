@@ -1,0 +1,34 @@
+<resources>
+    <string name="lock_enter_your_pin_title">Introduceți PIN-ul</string>
+    <string name="lock_enter_new_pin_title">Introduceți noul PIN</string>
+    <string name="lock_repeat_your_pin_title">Reintroduceți PIN-ul</string>
+    <string name="lock_forgot_pin_title">Ați uitat PIN-ul?</string>
+    <string name="lock_fingerprint_title">Doar oameni grozavi sunt acceptați</string>
+    <string name="lock_use_pin_title">Folosește PIN-ul</string>
+    <string name="recovery_email_hint">Introduceți adresa de email pentru a primi codul PIN uitat</string>
+    <string name="recovery_email_format_error">Email invalid</string>
+    <string name="pin_recovery_dialog_title">Vom trimite instrucțiuni de resetare a PIN-ului la %s. Dacă nu primiți emailul, verificați folderul de spam</string>
+    <string name="pin_recovery_email_subject">Recuperare PIN</string>
+    <string name="pin_recovery_email_content">PIN-ul dvs.: %s</string>
+    <string name="pin_recovery_email_title">Adresă de email</string>
+    <string name="send_pin_recovery_email_failure">Ceva nu a mers bine</string>
+    <string name="send_pin_recovery_email_success">Emailul de recuperare a fost trimis</string>
+
+    <string name="security_enable_pin_title">Activează PIN</string>
+    <string name="security_email_to_recover_pin_title">Email pentru recuperarea PIN-ului</string>
+    <string name="security_pin_request_title">Întârziere cerere PIN</string>
+    <string name="security_enable_fingerprint_title">Activează amprenta</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d secundă</item>
+        <item quantity="few">%d secunde</item>
+        <item quantity="other">%d de secunde</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d minut</item>
+        <item quantity="few">%d minute</item>
+        <item quantity="other">%d de minute</item>
+    </plurals>
+
+</resources>

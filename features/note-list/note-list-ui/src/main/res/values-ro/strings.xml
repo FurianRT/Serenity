@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_content_add_tag_hint">Etichetă nouă</string>
+    <string name="note_add_current_location_title">Adaugă locația curentă</string>
+    <string name="note_media_change_collage">Editează colajul</string>
+</resources>

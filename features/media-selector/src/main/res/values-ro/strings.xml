@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">Te rog acordă permisiunea „Permite tot” sau selectează mai multe fișiere media</string>
+    <string name="media_selector_empty_list_title">Gol</string>
+    <string name="media_selector_apply_button_title">Atașează %d fișiere media</string>
+    <string name="media_selector_discard_title">Renunță la selecție</string>
+    <string name="media_selector_discard_hint">Vrei să închizi meniul de atașamente?</string>
+</resources>

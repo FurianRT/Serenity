@@ -1,0 +1,25 @@
+<resources>
+    <string name="settings_security_title">Securitate</string>
+    <string name="settings_backup_title">Backup și Restaurare</string>
+    <string name="settings_theme_title">Temă</string>
+    <string name="settings_light_theme_title">Luminoasă</string>
+    <string name="settings_dark_theme_title">Întunecată</string>
+    <string name="settings_font_title">Font aplicație</string>
+    <string name="settings_language_title">Limbă</string>
+    <string name="settings_rate_us_title">Evaluează-ne</string>
+    <string name="settings_donate_title">Donează</string>
+    <string name="settings_feedback_title">Raportează o problemă</string>
+    <string name="settings_terms_and_conditions_title">Termeni și condiții</string>
+    <string name="settings_privacy_policy_title">Politica de confidențialitate</string>
+    <string name="settings_version_title">Versiune %s</string>
+
+    <string name="settings_feedback_email_subject">Feedback Serenity %s</string>
+    <string name="settings_feedback_email_error">Trimiterea emailului a eșuat</string>
+
+    <string name="settings_bad_feedback_title">Ceva nu e în regulă?</string>
+    <string name="settings_bad_feedback_body">Feedback-ul tău contează mult. Ajută-ne să îmbunătățim experiența ta</string>
+
+    <string name="settings_note_content_title">Conținut notă</string>
+    <string name="settings_note_detect_location_title">Detectare automată locație</string>
+    <string name="settings_note_detect_location_hint">Detectează automat locația curentă când creezi o notă</string>
+</resources>

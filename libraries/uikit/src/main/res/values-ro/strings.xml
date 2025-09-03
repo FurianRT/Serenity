@@ -1,0 +1,66 @@
+<resources>
+    <string name="action_cancel">Anulează</string>
+    <string name="action_discard">Renunță</string>
+    <string name="action_not_now">Nu acum</string>
+    <string name="action_delete">Șterge</string>
+    <string name="action_share">Partajează</string>
+    <string name="action_save">Salvează</string>
+    <string name="action_confirm">Confirmă</string>
+    <string name="action_send">Trimite</string>
+    <string name="action_done">Gata</string>
+    <string name="action_pin">Fixează</string>
+    <string name="action_unpin">Detașează</string>
+    <string name="action_contact_us">Contactează-ne</string>
+    <string name="action_select">Selectează</string>
+    <string name="action_continue">Continuă</string>
+    <string name="action_back">Înapoi</string>
+    <string name="action_yes">Da</string>
+    <string name="action_no">Nu</string>
+
+    <string name="title_email">Email</string>
+
+    <string name="settings_title">Setări</string>
+    <string name="security_title">Securitate</string>
+
+    <string name="media_counter_pattern">%1$d din %2$d</string>
+    <string name="general_error">Ceva nu a mers bine</string>
+    <string name="general_error_with_code">%d Ceva nu a mers bine</string>
+    <string name="network_error">Fără conexiune la internet</string>
+
+    <string name="today_title">Astăzi</string>
+    <string name="yesterday_title">Ieri</string>
+
+    <string name="delete_notes_warning_title">Doar verific…</string>
+    <string name="delete_notes_warning_body">Sigur vrei să ștergi aceste note? Nu le vei putea recupera mai târziu</string>
+    <string name="delete_note_warning_body">Sigur vrei să ștergi această notă? Nu o vei putea recupera mai târziu</string>
+
+    <string name="backup_in_progress">Backup în curs</string>
+    <string name="restore_in_progress">Restaurare în curs</string>
+
+    <string name="error_camera_not_found">Cameră negăsită</string>
+
+    <string-array name="months_array">
+        <item>ianuarie</item>
+        <item>februarie</item>
+        <item>martie</item>
+        <item>aprilie</item>
+        <item>mai</item>
+        <item>iunie</item>
+        <item>iulie</item>
+        <item>august</item>
+        <item>septembrie</item>
+        <item>octombrie</item>
+        <item>noiembrie</item>
+        <item>decembrie</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>Lun</item>
+        <item>Mar</item>
+        <item>Mie</item>
+        <item>Joi</item>
+        <item>Vin</item>
+        <item>Sâm</item>
+        <item>Dum</item>
+    </string-array>
+</resources>

@@ -1,0 +1,57 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Backup automat</string>
+    <string name="backup_auto_backup_period_title">Perioada backup-ului automat</string>
+    <string name="backup_last_sync_time_title">Ultima sincronizare: %s</string>
+    <string name="backup_restore_data_title">Restaurează datele</string>
+    <string name="backup_backup_data_title">Backup</string>
+    <string name="backup_last_sync_time_none_title">Niciuna</string>
+    <string name="backup_sign_out_title">Deconectare</string>
+    <string name="backup_tap_to_sing_in_title">Atinge pentru a te Conecta</string>
+    <string name="backup_tap_to_sing_in_underline_part">Conecta</string>
+    <string name="backup_tap_to_sing_out_title">Atinge pentru a te Deconecta</string>
+    <string name="backup_tap_to_sing_out_underline_part">Deconecta</string>
+    <string name="backup_confirm_sign_out_title">Pleci așa repede?</string>
+    <string name="backup_confirm_sign_out_message">Te poți reconecta oricând, dar reține că backup-urile vor fi întrerupte până atunci</string>
+    <string name="backup_period_one_day_title">1 zi</string>
+    <string name="backup_period_three_days_title">3 zile</string>
+    <string name="backup_period_one_week_title">1 săptămână</string>
+    <string name="backup_period_two_weeks_title">2 săptămâni</string>
+    <string name="backup_period_one_month_title">1 lună</string>
+
+    <string name="backup_popular_question_1_title">Cum funcționează sincronizarea cu Google Drive</string>
+    <string name="backup_popular_question_1_answer">Notițele tale sunt salvate automat în contul tău personal Google Drive. Astfel, datele tale sunt stocate în siguranță și pot fi accesate de pe mai multe dispozitive</string>
+    <string name="backup_popular_question_2_title">Unde sunt stocate notițele mele în Google Drive?</string>
+    <string name="backup_popular_question_2_answer">Notițele tale sunt stocate într-un folder ascuns, specific aplicației, în Google Drive, ceea ce înseamnă că nu vor apărea în lista obișnuită de fișiere. Acest folder este privat și accesibil doar pentru tine — nimeni altcineva, inclusiv dezvoltatorul aplicației, nu are acces la notițele tale</string>
+    <string name="backup_popular_question_3_title">Am nevoie de un cont Google pentru a folosi sincronizarea</string>
+    <string name="backup_popular_question_3_answer">Da, trebuie să te conectezi cu un cont Google pentru a activa sincronizarea în cloud</string>
+    <string name="backup_popular_question_4_title">Pot să accesez notițele mele direct din Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Nu, notițele sunt stocate într-un folder privat al aplicației care nu este vizibil în interfața Google Drive. Le poți accesa doar prin aplicație</string>
+    <string name="backup_popular_question_5_title">Ce se întâmplă dacă dezinstalez aplicația? Vor fi șterse notițele mele?</string>
+    <string name="backup_popular_question_5_answer">Dezinstalarea aplicației nu șterge notițele din Google Drive. Când reinstalezi aplicația și te conectezi cu același cont Google, notițele tale vor fi restaurate</string>
+    <string name="backup_popular_question_6_title">Pot să-mi sincronizez notițele pe mai multe dispozitive?</string>
+    <string name="backup_popular_question_6_answer">Da! Atâta timp cât te conectezi cu același cont Google pe toate dispozitivele, notițele tale vor fi sincronizate</string>
+    <string name="backup_popular_question_7_title">Datele mele sunt în siguranță</string>
+    <string name="backup_popular_question_7_answer">Da. Notițele tale sunt stocate într-un folder privat, specific aplicației, pe Google Drive, iar aplicația nu îți partajează datele cu nimeni</string>
+    <string name="backup_popular_question_8_title">Ce se întâmplă dacă îmi schimb contul Google</string>
+    <string name="backup_popular_question_8_answer">Dacă treci la un alt cont Google, notițele din contul anterior nu vor fi disponibile. Pentru a le accesa, trebuie să revii la contul Google inițial</string>
+
+    <string name="backup_notifications_channel_name">Canal backup</string>
+    <string name="backup_notifications_channel_description">Arată progresul backup-ului</string>
+    <string name="backup_notification_initial_description">Notițele tale sunt încărcate. Acest lucru poate dura puțin</string>
+    <string name="restore_notification_initial_description">Notițele tale sunt descărcate. Acest lucru poate dura puțin</string>
+
+    <string name="backup_warning_title">Avertisment backup</string>
+    <string name="backup_warning_body">Ești pe cale să creezi un backup nou. Atenție: acesta va suprascrie backup-ul existent în Google Drive. Odată înlocuite, datele anterioare nu vor mai fi accesibile. Asigură-te că ești de acord înainte de a continua</string>
+
+    <string name="backup_progress_message">Backup în curs %1$d/%2$d</string>
+    <string name="restore_progress_message">Restaurare în curs %1$d/%2$d</string>
+    <string name="backup_starting_message">Se pornește backup-ul…</string>
+    <string name="restore_starting_message">Se pornește restaurarea…</string>
+
+    <string name="backup_sync_in_progress_message">Sincronizare în curs</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Conectarea a fost întreruptă</string>
+    <string name="backup_success_message">Reușit</string>
+
+</resources>

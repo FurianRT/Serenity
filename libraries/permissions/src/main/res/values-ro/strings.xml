@@ -1,0 +1,17 @@
+<resources>
+    <string name="media_permission_message">Serenity are nevoie de acces la stocarea ta pentru a putea atașa fotografii și videoclipuri. Atinge Setări > Permisiuni și activează Fotografii și videoclipuri</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Fotografii și videoclipuri</string>
+
+    <string name="audio_record_permission_message">Serenity are nevoie de acces la microfonul tău pentru a permite înregistrări vocale. Atinge Setări > Permisiuni și activează Microfonul</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Microfon</string>
+
+    <string name="camera_permission_message">Serenity are nevoie de acces la camera ta pentru a face fotografii. Atinge Setări > Permisiuni și activează Camera</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Cameră</string>
+
+    <string name="location_permission_message">Serenity are nevoie de acces la locația ta pentru a adăuga locuri în notițele tale. Atinge Setări > Permisiuni și activează Locația</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Locație</string>
+</resources>

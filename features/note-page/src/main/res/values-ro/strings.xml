@@ -1,0 +1,8 @@
+<resources>
+    <string name="note_title_hint_text">Text…</string>
+    <string name="note_title_hint_write_more_here">Scrie mai mult aici…</string>
+    <string name="note_sticker_limit_message">Limită de stickere atinsă</string>
+    <string name="note_select_text_position_message">Selectează o poziție în text</string>
+    <string name="note_add_current_location_fail_title">Nu s-a putut obține locația curentă</string>
+    <string name="note_auto_detect_location_title">Vrei să adaugi automat locația la notele noi?</string>
+</resources>
