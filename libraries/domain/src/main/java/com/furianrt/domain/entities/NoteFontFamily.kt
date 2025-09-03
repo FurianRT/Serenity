@@ -4,6 +4,7 @@ enum class NoteFontFamily {
     NOTO_SANS,
     NOTO_SERIF,
     ROBOTO,
+    SPACE_MONO,
     SHANTELL_SANS,
     PIXELIFY_SANS,
     ADVENT_PRO,
@@ -14,7 +15,8 @@ enum class NoteFontFamily {
     PLAY_WRITE_MODERN,
     TILLANA,
     LIFE_SEVERS,
-    TEXTURINA;
+    TEXTURINA,
+    PARISIENNE;
 
     companion object {
         fun fromString(value: String?): NoteFontFamily? {

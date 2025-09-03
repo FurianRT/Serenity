@@ -60,10 +60,7 @@ internal class FontViewModel @AssistedInject constructor(
 
     fun onEvent(event: FontPanelEvent) {
         when (event) {
-            is FontPanelEvent.OnFontFamilySelected -> selectedFontFamily.update { family ->
-                event.family?.takeIf { family != event.family }
-            }
-
+            is FontPanelEvent.OnFontFamilySelected -> selectedFontFamily.update { event.family }
             is FontPanelEvent.OnFontColorSelected -> selectedFontColor.update { event.color }
             is FontPanelEvent.OnFontSizeSelected -> selectedFontSize.update { event.size }
         }

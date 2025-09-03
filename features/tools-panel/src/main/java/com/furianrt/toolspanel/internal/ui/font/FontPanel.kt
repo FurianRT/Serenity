@@ -417,7 +417,7 @@ private fun SliderThumb() {
 private fun FontItem(
     family: UiNoteFontFamily,
     isSelected: (family: UiNoteFontFamily) -> Boolean,
-    onClick: (family: UiNoteFontFamily) -> Unit,
+    onClick: (family: UiNoteFontFamily?) -> Unit,
     modifier: Modifier = Modifier,
     name: String? = null,
 ) {
@@ -431,7 +431,7 @@ private fun FontItem(
                     shape = RoundedCornerShape(8.dp),
                 )
             }
-            .clickableNoRipple { onClick(family) }
+            .clickableNoRipple { if (isSelected(family)) onClick(null) else onClick(family) }
             .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {

@@ -122,4 +122,20 @@ sealed class UiNoteFontFamily(
         regular = NoteFont.Texturina.regular,
         bold = NoteFont.Texturina.bold,
     )
+
+    @Immutable
+    data object Parisienne : UiNoteFontFamily(
+        name = "Parisienne",
+        light = NoteFont.Parisienne.light,
+        regular = NoteFont.Parisienne.regular,
+        bold = NoteFont.Parisienne.bold,
+    )
+
+    @Immutable
+    data object SpaceMono : UiNoteFontFamily(
+        name = "Space Mono",
+        light = NoteFont.SpaceMono.light,
+        regular = NoteFont.SpaceMono.regular,
+        bold = NoteFont.SpaceMono.bold,
+    )
 }

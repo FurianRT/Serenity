@@ -92,4 +92,16 @@ sealed class NoteFont(
         regular = FontFamily(Font(R.font.texturina_regular)),
         bold = FontFamily(Font(R.font.texturina_bold)),
     )
+
+    data object Parisienne : NoteFont(
+        light = FontFamily(Font(R.font.parisienne_regular)),
+        regular = FontFamily(Font(R.font.parisienne_regular)),
+        bold = FontFamily(Font(R.font.parisienne_regular)),
+    )
+
+    data object SpaceMono : NoteFont(
+        light = FontFamily(Font(R.font.space_mono_regular)),
+        regular = FontFamily(Font(R.font.space_mono_regular)),
+        bold = FontFamily(Font(R.font.space_mono_bold)),
+    )
 }

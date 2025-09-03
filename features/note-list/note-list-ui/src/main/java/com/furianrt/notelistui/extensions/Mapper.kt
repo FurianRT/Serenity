@@ -205,6 +205,8 @@ fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
     NoteFontFamily.TILLANA -> UiNoteFontFamily.Tillana
     NoteFontFamily.LIFE_SEVERS -> UiNoteFontFamily.LifeSavers
     NoteFontFamily.TEXTURINA -> UiNoteFontFamily.Texturina
+    NoteFontFamily.PARISIENNE -> UiNoteFontFamily.Parisienne
+    NoteFontFamily.SPACE_MONO -> UiNoteFontFamily.SpaceMono
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
@@ -222,6 +224,8 @@ fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
     UiNoteFontFamily.Tillana -> NoteFontFamily.TILLANA
     UiNoteFontFamily.LifeSavers -> NoteFontFamily.LIFE_SEVERS
     UiNoteFontFamily.Texturina -> NoteFontFamily.TEXTURINA
+    UiNoteFontFamily.Parisienne -> NoteFontFamily.PARISIENNE
+    UiNoteFontFamily.SpaceMono -> NoteFontFamily.SPACE_MONO
 }
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
@@ -306,6 +310,8 @@ fun NoteFontFamily.toNoteFont() = when (this) {
     NoteFontFamily.TILLANA -> NoteFont.Tillana
     NoteFontFamily.LIFE_SEVERS -> NoteFont.LifeSavers
     NoteFontFamily.TEXTURINA -> NoteFont.Texturina
+    NoteFontFamily.PARISIENNE -> NoteFont.Parisienne
+    NoteFontFamily.SPACE_MONO -> NoteFont.SpaceMono
 }
 
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
