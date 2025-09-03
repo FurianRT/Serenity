@@ -1,0 +1,56 @@
+<resources>
+    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
+    <string name="backup_auto_backup_title">Automatyczna kopia zapasowa</string>
+    <string name="backup_auto_backup_period_title">Okres automatycznej kopii</string>
+    <string name="backup_last_sync_time_title">Ostatnia synchronizacja: %s</string>
+    <string name="backup_restore_data_title">Przywróć dane</string>
+    <string name="backup_backup_data_title">Utwórz kopię</string>
+    <string name="backup_last_sync_time_none_title">Brak</string>
+    <string name="backup_sign_out_title">Wyloguj się</string>
+    <string name="backup_tap_to_sing_in_title">Stuknij, aby się Zalogować</string>
+    <string name="backup_tap_to_sing_in_underline_part">Zalogować</string>
+    <string name="backup_tap_to_sing_out_title">Stuknij, aby się Wylogować</string>
+    <string name="backup_tap_to_sing_out_underline_part">Wylogować</string>
+    <string name="backup_confirm_sign_out_title">Już wychodzisz?</string>
+    <string name="backup_confirm_sign_out_message">Możesz zalogować się ponownie w dowolnym momencie, ale pamiętaj, że kopie zapasowe będą wstrzymane do tego czasu</string>
+    <string name="backup_period_one_day_title">1 dzień</string>
+    <string name="backup_period_three_days_title">3 dni</string>
+    <string name="backup_period_one_week_title">1 tydzień</string>
+    <string name="backup_period_two_weeks_title">2 tygodnie</string>
+    <string name="backup_period_one_month_title">1 miesiąc</string>
+
+    <string name="backup_popular_question_1_title">Jak działa synchronizacja z Google Drive</string>
+    <string name="backup_popular_question_1_answer">Twoje notatki są automatycznie zapisywane na Twoim koncie Google Drive. Dzięki temu są bezpieczne i możesz je otworzyć na różnych urządzeniach</string>
+    <string name="backup_popular_question_2_title">Gdzie w Google Drive są moje notatki?</string>
+    <string name="backup_popular_question_2_answer">Twoje notatki są przechowywane w ukrytym folderze aplikacji w Google Drive, więc nie zobaczysz ich w zwykłej liście plików. Ten folder jest prywatny i dostępny tylko dla Ciebie — nikt inny, nawet twórca aplikacji, nie ma do niego dostępu</string>
+    <string name="backup_popular_question_3_title">Czy potrzebuję konta Google, aby korzystać z synchronizacji</string>
+    <string name="backup_popular_question_3_answer">Tak, musisz zalogować się na konto Google, aby włączyć synchronizację w chmurze</string>
+    <string name="backup_popular_question_4_title">Czy mogę otworzyć notatki bezpośrednio z Google Drive?</string>
+    <string name="backup_popular_question_4_answer">Nie, notatki są przechowywane w prywatnym folderze aplikacji, którego nie widać w interfejsie Google Drive. Możesz je otworzyć tylko w aplikacji</string>
+    <string name="backup_popular_question_5_title">Co się stanie, jeśli odinstaluję aplikację? Czy moje notatki znikną?</string>
+    <string name="backup_popular_question_5_answer">Odinstalowanie aplikacji nie usuwa notatek z Google Drive. Po ponownej instalacji i zalogowaniu się na to samo konto Google, Twoje notatki zostaną przywrócone</string>
+    <string name="backup_popular_question_6_title">Czy mogę synchronizować notatki na wielu urządzeniach?</string>
+    <string name="backup_popular_question_6_answer">Tak! Jeśli zalogujesz się na to samo konto Google na wszystkich urządzeniach, notatki będą się synchronizować</string>
+    <string name="backup_popular_question_7_title">Czy moje dane są bezpieczne</string>
+    <string name="backup_popular_question_7_answer">Tak. Twoje notatki są przechowywane w prywatnym folderze aplikacji w Google Drive i aplikacja nie udostępnia ich nikomu</string>
+    <string name="backup_popular_question_8_title">Co się stanie, jeśli zmienię konto Google</string>
+    <string name="backup_popular_question_8_answer">Jeśli przełączysz się na inne konto Google, notatki z poprzedniego konta nie będą dostępne. Aby je odzyskać, musisz wrócić na pierwotne konto Google</string>
+
+    <string name="backup_notifications_channel_name">Kanał kopii zapasowej</string>
+    <string name="backup_notifications_channel_description">Pokazuje postęp tworzenia kopii</string>
+    <string name="backup_notification_initial_description">Twoje notatki są wysyłane. To może chwilę potrwać</string>
+    <string name="restore_notification_initial_description">Twoje notatki są pobierane. To może chwilę potrwać</string>
+
+    <string name="backup_warning_title">Ostrzeżenie o kopii zapasowej</string>
+    <string name="backup_warning_body">Zaraz utworzysz nową kopię zapasową. Pamiętaj: zastąpi ona istniejącą kopię na Google Drive. Po zastąpieniu wcześniejsze dane nie będą już dostępne. Upewnij się, że się na to zgadzasz, zanim przejdziesz dalej</string>
+
+    <string name="backup_progress_message">Tworzenie kopii w toku %1$d/%2$d</string>
+    <string name="restore_progress_message">Przywracanie w toku %1$d/%2$d</string>
+    <string name="backup_starting_message">Rozpoczynam tworzenie kopii…</string>
+    <string name="restore_starting_message">Rozpoczynam przywracanie…</string>
+
+    <string name="backup_sync_in_progress_message">Synchronizacja w toku</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">Logowanie przerwane</string>
+    <string name="backup_success_message">Zakończono pomyślnie</string>
+</resources>

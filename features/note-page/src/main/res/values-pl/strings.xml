@@ -1,0 +1,8 @@
+<resources>
+    <string name="note_title_hint_text">Tekst…</string>
+    <string name="note_title_hint_write_more_here">Napisz tu więcej…</string>
+    <string name="note_sticker_limit_message">Osiągnięto limit naklejek</string>
+    <string name="note_select_text_position_message">Wybierz pozycję w tekście</string>
+    <string name="note_add_current_location_fail_title">Nie udało się pobrać bieżącej lokalizacji</string>
+    <string name="note_auto_detect_location_title">Czy chcesz automatycznie dodawać swoją lokalizację do nowych notatek?</string>
+</resources>

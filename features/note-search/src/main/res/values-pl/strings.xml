@@ -1,0 +1,11 @@
+<resources>
+    <string name="notes_search_bar_title">Szukaj według tekstu i etykiet</string>
+    <string name="notes_search_empty_search_title">Nie znaleziono notatek</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">Znaleziono %d notatkę</item>
+        <item quantity="few">Znaleziono %d notatki</item>
+        <item quantity="many">Znaleziono %d notatki</item>
+        <item quantity="other">Znaleziono %d notatek</item>
+    </plurals>
+</resources>

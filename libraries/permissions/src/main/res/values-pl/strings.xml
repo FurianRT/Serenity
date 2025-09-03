@@ -1,0 +1,17 @@
+<resources>
+    <string name="media_permission_message">Serenity potrzebuje dostępu do Twojej pamięci, aby umożliwić dodawanie zdjęć i wideo. Przejdź do Ustawienia &gt; Uprawnienia i włącz Zdjęcia i wideo</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">Zdjęcia i wideo</string>
+
+    <string name="audio_record_permission_message">Serenity potrzebuje dostępu do mikrofonu, aby umożliwić nagrywanie głosu. Przejdź do Ustawienia &gt; Uprawnienia i włącz Mikrofon</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">Mikrofon</string>
+
+    <string name="camera_permission_message">Serenity potrzebuje dostępu do aparatu, aby robić zdjęcia. Przejdź do Ustawienia &gt; Uprawnienia i włącz Aparat</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">Aparat</string>
+
+    <string name="location_permission_message">Serenity potrzebuje dostępu do Twojej lokalizacji, aby dodawać miejsca do notatek. Przejdź do Ustawienia &gt; Uprawnienia i włącz Lokalizacja</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">Lokalizacja</string>
+</resources>

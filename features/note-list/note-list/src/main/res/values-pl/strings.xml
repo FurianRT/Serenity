@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">Szukaj</string>
+    <string name="notes_list_empty_list_title">\"Każda historia zaczyna się od słowa\"</string>
+    <string name="notes_list_empty_list_body">Stuknij, aby rozpocząć swoją!</string>
+</resources>
