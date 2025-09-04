@@ -16,6 +16,8 @@
     <string name="action_back">Voltar</string>
     <string name="action_yes">Sim</string>
     <string name="action_no">Não</string>
+    <string name="action_gallery">Galeria</string>
+    <string name="action_camera">Câmera</string>
 
     <string name="title_email">Correo electrónico</string>
 

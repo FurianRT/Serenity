@@ -16,6 +16,8 @@
     <string name="action_back">वापस</string>
     <string name="action_yes">हाँ</string>
     <string name="action_no">नहीं</string>
+    <string name="action_gallery">गैलरी</string>
+    <string name="action_camera">कैमरा</string>
 
     <string name="title_email">ईमेल</string>
 

@@ -640,7 +640,7 @@ internal class PageViewModel @AssistedInject constructor(
                     id = UUID.randomUUID().toString(),
                     media = listOf(
                         image.copy(
-                            ratio = mediaRepository.getRatio(file),
+                            ratio = mediaRepository.getAspectRatio(file),
                             addedDate = ZonedDateTime.now(),
                         )
                     ),
@@ -655,17 +655,16 @@ internal class PageViewModel @AssistedInject constructor(
 
     private suspend fun createPhotoFile(): Uri? {
         val mediaId = UUID.randomUUID().toString()
-        val mediaName = "camera_photo.jpg"
         val file = mediaRepository.createMediaDestinationFile(
             noteId = noteId,
             mediaId = mediaId,
-            mediaName = mediaName,
+            mediaName = MediaRepository.CAMERA_PICTURE_NAME,
         )
         return if (file != null) {
             val uri = mediaRepository.getRelativeUri(file)
             val image = UiNoteContent.MediaBlock.Image(
                 id = mediaId,
-                name = mediaName,
+                name = MediaRepository.CAMERA_PICTURE_NAME,
                 uri = uri,
                 ratio = 1f,
                 addedDate = ZonedDateTime.now(),

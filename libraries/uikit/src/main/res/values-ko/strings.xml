@@ -16,6 +16,8 @@
     <string name="action_back">뒤로</string>
     <string name="action_yes">예</string>
     <string name="action_no">아니요</string>
+    <string name="action_gallery">갤러리</string>
+    <string name="action_camera">카메라</string>
 
     <string name="title_email">이메일</string>
 

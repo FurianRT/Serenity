@@ -16,6 +16,8 @@
     <string name="action_back">Retour</string>
     <string name="action_yes">Oui</string>
     <string name="action_no">Non</string>
+    <string name="action_gallery">Galerie</string>
+    <string name="action_camera">Appareil photo</string>
 
     <string name="title_email">Email</string>
 

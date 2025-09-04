@@ -16,6 +16,8 @@
     <string name="action_back">戻る</string>
     <string name="action_yes">はい</string>
     <string name="action_no">いいえ</string>
+    <string name="action_gallery">ギャラリー</string>
+    <string name="action_camera">カメラ</string>
 
     <string name="title_email">メール</string>
 

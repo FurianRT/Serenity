@@ -34,14 +34,18 @@ interface MediaRepository {
     ): File?
 
     suspend fun deleteFile(file: File)
-    suspend fun getRatio(file: File): Float
 
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?
     suspend fun deleteVoiceFile(noteId: String, voiceId: String): Boolean
 
     fun getRelativeUri(file: File): Uri
+    suspend fun getAspectRatio(file: File): Float
 
     fun enqueuePeriodicMediaSave()
 
     suspend fun saveAllMedia()
+
+    companion object {
+        const val CAMERA_PICTURE_NAME = "camera_photo.jpg"
+    }
 }

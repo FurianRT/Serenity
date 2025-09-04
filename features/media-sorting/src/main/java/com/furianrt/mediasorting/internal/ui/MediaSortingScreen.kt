@@ -1,8 +1,11 @@
 package com.furianrt.mediasorting.internal.ui
 
+import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.view.animation.OvershootInterpolator
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -16,6 +19,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -27,6 +31,9 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -37,11 +44,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -58,16 +67,20 @@ import com.furianrt.mediasorting.internal.ui.composables.Toolbar
 import com.furianrt.mediasorting.internal.ui.composables.VideoItem
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.flow.collectLatest
@@ -95,6 +108,7 @@ internal fun MediaSortingScreen(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
     val hazeState = remember { HazeState() }
+    val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
@@ -108,8 +122,19 @@ internal fun MediaSortingScreen(
         onPermissionsResult = { viewModel.onEvent(MediaSortingEvent.OnMediaPermissionsSelected) },
     )
 
+    val cameraPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getCameraPermission(),
+        onPermissionResult = { viewModel.onEvent(MediaSortingEvent.OnCameraPermissionSelected) },
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { viewModel.onEvent(MediaSortingEvent.OnTakePictureResult(it)) },
+    )
+
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
     var showConfirmCloseDialog by remember { mutableStateOf(false) }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -119,6 +144,10 @@ internal fun MediaSortingScreen(
                     is MediaSortingEffect.CloseScreen -> onCloseRequestState()
                     is MediaSortingEffect.RequestStoragePermissions -> {
                         storagePermissionsState.launchMultiplePermissionRequest()
+                    }
+
+                    is MediaSortingEffect.RequestCameraPermission -> {
+                        cameraPermissionState.launchPermissionRequest()
                     }
 
                     is MediaSortingEffect.OpenMediaSelector -> {
@@ -141,6 +170,24 @@ internal fun MediaSortingScreen(
                     )
 
                     is MediaSortingEffect.OpenMediaViewer -> openMediaViewerState(effect.route)
+
+                    is MediaSortingEffect.TakePicture -> try {
+                        cameraLauncher.launch(effect.uri)
+                    } catch (e: ActivityNotFoundException) {
+                        viewModel.onEvent(MediaSortingEvent.OnCameraNotFoundError(e))
+                    }
+
+                    is MediaSortingEffect.ShowCameraPermissionsDeniedDialog -> {
+                        showCameraPermissionDialog = true
+                    }
+
+                    is MediaSortingEffect.ShowMessage -> {
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = effect.message,
+                            duration = SnackbarDuration.Short,
+                        )
+                    }
                 }
             }
     }
@@ -160,6 +207,19 @@ internal fun MediaSortingScreen(
         DimSurfaceOverlay(
             visible = bottomSheetScaffoldState.bottomSheetState.isVisible ||
                     bottomSheetScaffoldState.bottomSheetState.targetValue == SheetValue.Expanded,
+        )
+        SnackbarHost(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_info),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
         )
     }
 
@@ -182,6 +242,14 @@ internal fun MediaSortingScreen(
             onSaveClick = { viewModel.onEvent(MediaSortingEvent.OnButtonDoneClick) },
             onDiscardClick = { viewModel.onEvent(MediaSortingEvent.OnConfirmCloseClick) },
             onDismissRequest = { showConfirmCloseDialog = false },
+        )
+    }
+
+    if (showCameraPermissionDialog) {
+        CameraPermissionDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showCameraPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
         )
     }
 }
@@ -237,6 +305,7 @@ private fun ContentList(
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
+    val hazeState = remember { HazeState() }
     val reorderableLazyColumnState = rememberReorderableLazyGridState(
         lazyGridState = listState,
         scrollThresholdPadding = contentPadding,
@@ -244,7 +313,9 @@ private fun ContentList(
     )
     val listSpanCount = 3
     LazyVerticalGrid(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .hazeSource(hazeState),
         state = listState,
         columns = GridCells.Fixed(listSpanCount),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -315,7 +386,9 @@ private fun ContentList(
             span = { GridItemSpan(1) },
         ) {
             AddMediaButton(
-                onClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
+                hazeState = hazeState,
+                onGalleryClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
+                onCameraClick = { onEvent(MediaSortingEvent.OnTakePhotoClick) },
             )
         }
 

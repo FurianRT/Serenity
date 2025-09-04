@@ -141,6 +141,20 @@ internal class AppMediaSource @Inject constructor(
         return FileProvider.getUriForFile(context, BuildConfig.FILE_PROVIDER_AUTHORITY, file)
     }
 
+    suspend fun getAspectRatio(file: File): Float = withContext(dispatchers.io) {
+        val options = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        BitmapFactory.decodeFile(file.absolutePath, options)
+
+        val width = options.outWidth
+        val height = options.outHeight
+
+        if (width > 0 && height > 0) {
+            height.toFloat() / width.toFloat()
+        } else {
+            1f
+        }
+    }
+
     suspend fun deleteFile(file: File): Boolean = withContext(dispatchers.io) {
         return@withContext file.delete()
     }
@@ -159,11 +173,6 @@ internal class AppMediaSource @Inject constructor(
             errorTracker.trackNonFatalError(e)
             false
         }
-    }
-
-    suspend fun getRatio(file: File): Float = withContext(dispatchers.io) {
-        val bitmap = BitmapFactory.decodeFile(file.absolutePath)
-        return@withContext bitmap.width.toFloat() / bitmap.height.toFloat()
     }
 
     private suspend fun saveImage(

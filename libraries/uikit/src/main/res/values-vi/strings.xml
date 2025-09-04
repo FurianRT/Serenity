@@ -16,6 +16,8 @@
     <string name="action_back">Quay lại</string>
     <string name="action_yes">Có</string>
     <string name="action_no">Không</string>
+    <string name="action_gallery">Thư viện</string>
+    <string name="action_camera">Máy ảnh</string>
 
     <string name="title_email">Email</string>
 

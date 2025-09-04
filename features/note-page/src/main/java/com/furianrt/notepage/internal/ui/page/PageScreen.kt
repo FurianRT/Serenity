@@ -277,11 +277,14 @@ internal fun NotePageScreenInternal(
                     }
                 }
 
-                is PageEffect.OpenMediaSortingScreen -> openMediaSortingScreenState(
-                    effect.noteId,
-                    effect.mediaBlockId,
-                    effect.identifier
-                )
+                is PageEffect.OpenMediaSortingScreen -> {
+                    keyboardController?.hide()
+                    openMediaSortingScreenState(
+                        effect.noteId,
+                        effect.mediaBlockId,
+                        effect.identifier
+                    )
+                }
 
                 is PageEffect.ShowMoodDialog -> moodDialogState = MoodDialogState(
                     moodId = effect.moodId,

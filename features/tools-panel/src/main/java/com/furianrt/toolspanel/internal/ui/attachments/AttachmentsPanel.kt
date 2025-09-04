@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.toolspanel.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -42,7 +43,7 @@ internal fun AttachmentsPanel(
                 onClick = onSelectMediaClick,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_panel_gallery),
+                    painter = painterResource(uiR.drawable.ic_gallery),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
@@ -51,7 +52,7 @@ internal fun AttachmentsPanel(
                 onClick = onTakePictureClick,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_panel_camera),
+                    painter = painterResource(uiR.drawable.ic_camera),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
                 )

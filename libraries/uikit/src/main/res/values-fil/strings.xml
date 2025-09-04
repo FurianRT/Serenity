@@ -16,6 +16,8 @@
     <string name="action_back">Bumalik</string>
     <string name="action_yes">Oo</string>
     <string name="action_no">Hindi</string>
+    <string name="action_gallery">Gallery</string>
+    <string name="action_camera">Camera</string>
 
     <string name="title_email">Correo electrónico</string>
 

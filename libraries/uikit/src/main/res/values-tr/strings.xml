@@ -16,6 +16,8 @@
     <string name="action_back">Geri</string>
     <string name="action_yes">Evet</string>
     <string name="action_no">Hayır</string>
+    <string name="action_gallery">Galeri</string>
+    <string name="action_camera">Kamera</string>
 
     <string name="title_email">E-posta</string>
 

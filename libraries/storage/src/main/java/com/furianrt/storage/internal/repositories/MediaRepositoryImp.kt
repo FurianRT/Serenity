@@ -152,10 +152,6 @@ internal class MediaRepositoryImp @Inject constructor(
         appMediaSource.deleteFile(file)
     }
 
-    override suspend fun getRatio(file: File): Float {
-        return appMediaSource.getRatio(file)
-    }
-
     override suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File? {
         return appMediaSource.createVoiceFile(noteId, voiceId)
     }
@@ -165,6 +161,10 @@ internal class MediaRepositoryImp @Inject constructor(
     }
 
     override fun getRelativeUri(file: File): Uri = appMediaSource.getRelativeUri(file)
+
+    override suspend fun getAspectRatio(file: File): Float {
+        return appMediaSource.getAspectRatio(file)
+    }
 
     override fun enqueuePeriodicMediaSave() {
         SaveMediaWorker.enqueuePeriodic(context)

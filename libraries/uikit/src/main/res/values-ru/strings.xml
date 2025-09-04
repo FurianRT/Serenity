@@ -17,6 +17,8 @@
     <string name="action_back">Назад</string>
     <string name="action_yes">Да</string>
     <string name="action_no">Нет</string>
+    <string name="action_gallery">Галерея</string>
+    <string name="action_camera">Камера</string>
 
     <string name="title_email">Электронная почта</string>
 
