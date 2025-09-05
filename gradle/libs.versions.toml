@@ -8,6 +8,7 @@ ksp = "2.2.10-2.0.2"
 gms = "4.4.3"
 
 crashlyticsPlugin = "3.0.6"
+performancePlugin = "2.0.1"
 
 coreKtx = "1.17.0"
 lifecycle = "2.9.3"
@@ -151,6 +152,7 @@ workManager = { module = "androidx.work:work-runtime-ktx", version.ref = "workMa
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 analytics = { module = "com.google.firebase:firebase-analytics" }
 crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+performance = { module = "com.google.firebase:firebase-perf" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
@@ -167,3 +169,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 crashlyticsPlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
+performancePlugin = { id = "com.google.firebase.firebase-perf", version.ref = "performancePlugin" }

@@ -6,6 +6,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.gms)
     alias(libs.plugins.crashlyticsPlugin)
+    alias(libs.plugins.performancePlugin)
 }
 
 android {
@@ -65,4 +66,5 @@ dependencies {
     implementation(platform(libs.firebaseBom))
     implementation(libs.analytics)
     implementation(libs.crashlytics)
+    implementation(libs.performance)
 }
