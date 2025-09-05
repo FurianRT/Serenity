@@ -2,6 +2,7 @@ package com.furianrt.notelistui.composables
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -74,6 +75,7 @@ fun LocationCard(
     }
 }
 
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 private fun SuccessContent(
     locationTitle: String,
@@ -123,7 +125,7 @@ private fun EmptyContent(
             .alpha(0.5f)
             .clip(RoundedCornerShape(16.dp))
             .clickable(onClick = onClick)
-            .padding(4.dp),
+            .padding(start = 4.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
