@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.page
 
 import android.net.Uri
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
@@ -1010,49 +1011,49 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun handleNoteResult(note: NoteItem?) {
+    private suspend fun handleNoteResult(note: NoteItem?) {
         if (note == null) {
             _state.update { PageUiState.Empty }
             return
         }
 
-        launch {
-            _state.update { localState ->
-                when (localState) {
-                    is PageUiState.Empty, PageUiState.Loading -> {
-                        PageUiState.Success(
-                            noteId = note.id,
-                            content = note.content.refreshTitleTemplates(
-                                fontFamily = note.fontFamily
-                                    ?: appearanceRepository.getAppFont().first()
-                                        .toUiNoteFontFamily(),
+        _state.update { localState ->
+            when (localState) {
+                is PageUiState.Empty, PageUiState.Loading -> {
+                    val defaultMood = appearanceRepository.getDefaultNoteMoodId().first()
+                    val appFont = appearanceRepository.getAppFont().first()
+                    PageUiState.Success(
+                        noteId = note.id,
+                        content = Snapshot.withMutableSnapshot {
+                            note.content.refreshTitleTemplates(
+                                fontFamily = note.fontFamily ?: appFont.toUiNoteFontFamily(),
                                 addTopTemplate = isInEditMode
-                            ),
-                            tags = with(note.tags) {
-                                if (isNoteCreationMode || isInEditMode) {
-                                    addTagTemplate()
-                                } else {
-                                    removeTagTemplate(onlyEmpty = true)
-                                }
-                            },
-                            stickers = note.stickers,
-                            playingVoiceId = null,
-                            fontFamily = note.fontFamily,
-                            fontColor = note.fontColor,
-                            fontSize = note.fontSize,
-                            noteBackground = note.background,
-                            moodId = note.moodId,
-                            defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
-                            isInEditMode = isNoteCreationMode,
-                            locationState = note.location?.toLocationState() ?: LocationState.Empty,
-                        ).also {
-                            tryFocusFirstTitle()
-                            tryAutoDetectLocation()
-                        }
+                            )
+                        },
+                        tags = with(note.tags) {
+                            if (isNoteCreationMode || isInEditMode) {
+                                addTagTemplate()
+                            } else {
+                                removeTagTemplate(onlyEmpty = true)
+                            }
+                        },
+                        stickers = note.stickers,
+                        playingVoiceId = null,
+                        fontFamily = note.fontFamily,
+                        fontColor = note.fontColor,
+                        fontSize = note.fontSize,
+                        noteBackground = note.background,
+                        moodId = note.moodId,
+                        defaultMoodId = defaultMood,
+                        isInEditMode = isNoteCreationMode,
+                        locationState = note.location?.toLocationState() ?: LocationState.Empty,
+                    ).also {
+                        tryFocusFirstTitle()
+                        tryAutoDetectLocation()
                     }
-
-                    is PageUiState.Success -> localState
                 }
+
+                is PageUiState.Success -> localState
             }
         }
     }
