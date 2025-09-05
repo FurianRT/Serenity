@@ -174,7 +174,7 @@ fun List<LocalNote.Content>.getShortUiContent(
                 state = NoteTitleState(
                     initialText = this@getShortUiContent
                         .filterIsInstance<LocalNote.Content.Title>()
-                        .map { AnnotatedString(it.text) }
+                        .map { it.getAnnotatedString(fontFamily, withColorStyle = false) }
                         .join(separator = "\n"),
                     fontFamily = fontFamily,
                 ),
@@ -360,6 +360,7 @@ private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
 
 private fun LocalNote.Content.Title.getAnnotatedString(
     fontFamily: UiNoteFontFamily,
+    withColorStyle: Boolean = true,
 ) = buildAnnotatedString {
     append(text)
     spans.fastForEach { span ->
@@ -388,17 +389,21 @@ private fun LocalNote.Content.Title.getAnnotatedString(
                 end = span.end,
             )
 
-            is NoteTextSpan.FontColor -> addStyle(
-                style = SpanType.FontColor(Color(span.color)).toSpanStyle(fontFamily),
-                start = span.start,
-                end = span.end,
-            )
+            is NoteTextSpan.FontColor -> if (withColorStyle) {
+                addStyle(
+                    style = SpanType.FontColor(Color(span.color)).toSpanStyle(fontFamily),
+                    start = span.start,
+                    end = span.end,
+                )
+            }
 
-            is NoteTextSpan.FillColor -> addStyle(
-                style = SpanType.FillColor(Color(span.color)).toSpanStyle(fontFamily),
-                start = span.start,
-                end = span.end,
-            )
+            is NoteTextSpan.FillColor -> if (withColorStyle) {
+                addStyle(
+                    style = SpanType.FillColor(Color(span.color)).toSpanStyle(fontFamily),
+                    start = span.start,
+                    end = span.end,
+                )
+            }
         }
     }
 }
