@@ -278,7 +278,7 @@ internal fun NotePageScreenInternal(
                 }
 
                 is PageEffect.OpenMediaSortingScreen -> {
-                    keyboardController?.hide()
+                    focusManager.clearFocus(force = true)
                     openMediaSortingScreenState(
                         effect.noteId,
                         effect.mediaBlockId,
