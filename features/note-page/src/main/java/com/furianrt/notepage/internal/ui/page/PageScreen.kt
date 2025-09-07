@@ -725,6 +725,7 @@ private fun ContentItems(
                         isRemovable = uiState.isInEditMode,
                         onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
                         onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
+                        onCancelClick = { onEvent(PageEvent.OnCancelLocationClick) },
                     )
                 }
             }

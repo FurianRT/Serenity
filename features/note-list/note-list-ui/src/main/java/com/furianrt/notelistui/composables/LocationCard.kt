@@ -24,6 +24,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -48,6 +52,7 @@ fun LocationCard(
     clickable: Boolean = true,
     onAddLocationClick: () -> Unit = {},
     onRemoveLocationClick: () -> Unit = {},
+    onCancelClick: () -> Unit = {},
 ) {
     AnimatedContent(
         modifier = modifier.applyIf(clickable) {
@@ -61,7 +66,10 @@ fun LocationCard(
         }
     ) { targetState ->
         when (targetState) {
-            is LocationState.Loading -> LoadingContent()
+            is LocationState.Loading -> LoadingContent(
+                onCancelClick = onCancelClick,
+            )
+
             is LocationState.Empty -> EmptyContent(
                 onClick = onAddLocationClick,
             )
@@ -83,11 +91,13 @@ private fun SuccessContent(
     onRemoveLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var lineCount by remember { mutableIntStateOf(2) }
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = if (lineCount > 1) Alignment.Top else Alignment.CenterVertically,
     ) {
         AnimatedContent(
             targetState = isRemovable,
@@ -108,9 +118,8 @@ private fun SuccessContent(
         }
         Text(
             text = locationTitle,
-            style = MaterialTheme.typography.labelSmall.copy(
-                lineHeight = MaterialTheme.typography.labelSmall.lineHeight * 0.9f,
-            ),
+            style = MaterialTheme.typography.labelSmall,
+            onTextLayout = { lineCount = it.lineCount },
         )
     }
 }
@@ -142,6 +151,7 @@ private fun EmptyContent(
 
 @Composable
 private fun LoadingContent(
+    onCancelClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -150,10 +160,8 @@ private fun LoadingContent(
             .padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Icon(
-            modifier = Modifier.alpha(0.5f),
-            painter = painterResource(uiR.drawable.ic_location),
-            contentDescription = null,
+        ButtonRemove(
+            onClick = onCancelClick,
         )
         Column(
             verticalArrangement = Arrangement.spacedBy(10.dp),
@@ -164,8 +172,8 @@ private fun LoadingContent(
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))
-                    .background(MaterialTheme.colorScheme.background)
-                    .shimmer(),
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .shimmer(color = MaterialTheme.colorScheme.secondaryContainer),
             )
             Box(
                 modifier = Modifier
@@ -173,8 +181,8 @@ private fun LoadingContent(
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))
-                    .background(MaterialTheme.colorScheme.background)
-                    .shimmer(),
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .shimmer(color = MaterialTheme.colorScheme.secondaryContainer),
             )
         }
     }
@@ -212,6 +220,24 @@ private fun SuccessPreview() {
             state = LocationState.Success(
                 id = "",
                 title = "Komsomol'skiy Prospekt, 28А, Chelyabinsk, Chelyabinskaya oblast', 454138",
+                latitude = 0.0,
+                longitude = 0.0,
+            ),
+            isRemovable = false,
+            onAddLocationClick = {},
+            onRemoveLocationClick = {},
+        )
+    }
+}
+
+@Composable
+@PreviewWithBackground
+private fun SuccessOneLinePreview() {
+    SerenityTheme {
+        LocationCard(
+            state = LocationState.Success(
+                id = "",
+                title = "Komsomol'skiy Prospekt",
                 latitude = 0.0,
                 longitude = 0.0,
             ),

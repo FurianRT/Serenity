@@ -66,6 +66,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelected
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCancelLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCheckedListChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
@@ -124,6 +125,7 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -192,6 +194,8 @@ internal class PageViewModel @AssistedInject constructor(
 
     private var cachePhoto: UiNoteContent.MediaBlock.Image? = null
     private var cachedPhotoFile: File? = null
+
+    private var locationJob: Job? = null
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
@@ -329,6 +333,11 @@ internal class PageViewModel @AssistedInject constructor(
             is OnRemoveLocationClick -> {
                 resetStickersEditing()
                 deleteLocation()
+            }
+
+            is OnCancelLocationClick -> {
+                resetStickersEditing()
+                cancelLocation()
             }
 
             is OnAutoDetectLocationClickClick -> launch {
@@ -588,7 +597,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun tryRequestLocationPermissions() {
         if (permissionsUtils.hasLocationPermission()) {
-            launch { detectNoteLocation() }
+            locationJob = launch { detectNoteLocation() }
         } else {
             _effect.tryEmit(RequestLocationPermission)
         }
@@ -604,7 +613,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun tryDetectNoteLocation() {
         if (permissionsUtils.hasLocationPermission()) {
-            launch { detectNoteLocation() }
+            locationJob = launch { detectNoteLocation() }
         } else {
             _effect.tryEmit(ShowLocationPermissionsDeniedDialog)
         }
@@ -616,6 +625,14 @@ internal class PageViewModel @AssistedInject constructor(
         }
         launch {
             locationRepository.delete(noteId)
+        }
+    }
+
+    private fun cancelLocation() {
+        locationJob?.cancel()
+        locationJob = null
+        _state.updateState<PageUiState.Success> { currentState ->
+            currentState.copy(locationState = LocationState.Empty)
         }
     }
 

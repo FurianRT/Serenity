@@ -16,9 +16,12 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.withTimeoutOrNull
 import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
+
+private const val DETECTION_TIMEOUT = 15_000L
 
 internal class LocationRepositoryImp @Inject constructor(
     @param:ApplicationContext private val appContext: Context,
@@ -37,10 +40,10 @@ internal class LocationRepositoryImp @Inject constructor(
         locationDao.delete(noteId)
     }
 
-    override suspend fun detectLocation(): NoteLocation? {
-        val location = getCurrentLocation() ?: return null
-        val address = getAddressFromLocation(location) ?: return null
-        return NoteLocation(
+    override suspend fun detectLocation(): NoteLocation? = withTimeoutOrNull(DETECTION_TIMEOUT) {
+        val location = getCurrentLocation() ?: return@withTimeoutOrNull null
+        val address = getAddressFromLocation(location) ?: return@withTimeoutOrNull null
+        return@withTimeoutOrNull NoteLocation(
             id = UUID.randomUUID().toString(),
             title = address,
             latitude = location.latitude,

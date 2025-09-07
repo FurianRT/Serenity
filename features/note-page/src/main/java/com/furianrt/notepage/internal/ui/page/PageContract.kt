@@ -95,6 +95,7 @@ internal sealed interface PageEvent {
     data class OnMoodSelected(val moodId: String?) : PageEvent
     data object OnAddLocationClick : PageEvent
     data object OnRemoveLocationClick : PageEvent
+    data object OnCancelLocationClick : PageEvent
     data object OnAutoDetectLocationClickClick : PageEvent
     data object OnCheckedListChange : PageEvent
 }
