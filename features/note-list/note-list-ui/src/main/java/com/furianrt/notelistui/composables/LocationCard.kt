@@ -111,12 +111,14 @@ private fun SuccessContent(
                 )
             } else {
                 Icon(
+                    modifier = Modifier .alpha(0.6f),
                     painter = painterResource(uiR.drawable.ic_location),
                     contentDescription = null,
                 )
             }
         }
         Text(
+            modifier = Modifier .alpha(0.6f),
             text = locationTitle,
             style = MaterialTheme.typography.labelSmall,
             onTextLayout = { lineCount = it.lineCount },
