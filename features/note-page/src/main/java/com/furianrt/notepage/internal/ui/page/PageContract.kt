@@ -36,6 +36,9 @@ internal sealed interface PageUiState {
         val showLocation: Boolean
             get() = isInEditMode || locationState !is LocationState.Empty
 
+        val showLocationDivider: Boolean
+            get() = showLocation && !showMood && tags.isEmpty()
+
         val playingVoice: UiNoteContent.Voice?
             get() = content.findInstance<UiNoteContent.Voice> { it.id == playingVoiceId }
 

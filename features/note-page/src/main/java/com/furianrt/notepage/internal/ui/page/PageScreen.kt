@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -678,39 +679,49 @@ private fun ContentItems(
             }
 
             key(UiNoteTag.BLOCK_ID + uiState.noteId) {
-                Row(
-                    modifier = Modifier
-                        .padding(start = 4.dp, end = 4.dp, top = 10.dp)
-                        .animatePlacementInScope(this@LookaheadScope),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                Box(
+                    modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
+                    contentAlignment = Alignment.Center,
                 ) {
-                    NoteTags(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .padding(top = 10.dp)
-                            .heightIn(min = 48.dp),
-                        tags = uiState.tags,
-                        isEditable = uiState.isInEditMode,
-                        animateItemsPlacement = true,
-                        showStub = true,
-                        onTagRemoveClick = { tag ->
-                            onEvent(PageEvent.OnTagRemoveClick(tag))
-                            hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
-                        },
-                        onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
-                        onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
-                        onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
-                        onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
-                    )
-                    if (uiState.showMood) {
-                        MoodButton(
+                    Row(
+                        modifier = Modifier.padding(start = 4.dp, end = 4.dp, top = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    ) {
+                        NoteTags(
                             modifier = Modifier
-                                .padding(end = 12.dp, top = 6.dp)
-                                .size(52.dp),
-                            moodId = uiState.moodId,
-                            defaultMoodId = uiState.defaultMoodId,
-                            onClick = { onEvent(PageEvent.OnMoodClick) },
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .padding(top = 10.dp)
+                                .heightIn(min = 48.dp),
+                            tags = uiState.tags,
+                            isEditable = uiState.isInEditMode,
+                            animateItemsPlacement = true,
+                            showStub = true,
+                            onTagRemoveClick = { tag ->
+                                onEvent(PageEvent.OnTagRemoveClick(tag))
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                            },
+                            onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
+                            onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
+                            onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
+                            onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
+                        )
+                        if (uiState.showMood) {
+                            MoodButton(
+                                modifier = Modifier
+                                    .padding(end = 12.dp, top = 6.dp)
+                                    .size(52.dp),
+                                moodId = uiState.moodId,
+                                defaultMoodId = uiState.defaultMoodId,
+                                onClick = { onEvent(PageEvent.OnMoodClick) },
+                            )
+                        }
+                    }
+                    if (uiState.showLocationDivider) {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(start = 24.dp, top = 24.dp),
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.outlineVariant,
                         )
                     }
                 }
