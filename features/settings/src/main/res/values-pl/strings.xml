@@ -12,12 +12,8 @@
     <string name="settings_terms_and_conditions_title">Regulamin</string>
     <string name="settings_privacy_policy_title">Polityka prywatności</string>
     <string name="settings_version_title">Wersja %s</string>
-
-    <string name="settings_feedback_email_error">Nie udało się wysłać e-maila</string>
-
     <string name="settings_bad_feedback_title">Coś jest nie tak?</string>
     <string name="settings_bad_feedback_body">Twoja opinia jest dla nas ważna. Pomóż nam ulepszyć aplikację</string>
-
     <string name="settings_note_content_title">Zawartość notatki</string>
     <string name="settings_note_detect_location_title">Automatyczne wykrywanie lokalizacji</string>
     <string name="settings_note_detect_location_hint">Automatycznie wykrywaj bieżącą lokalizację podczas tworzenia notatki</string>

@@ -28,6 +28,7 @@
     <string name="general_error">문제가 발생했습니다</string>
     <string name="general_error_with_code">%d 문제 발생</string>
     <string name="network_error">인터넷 연결 없음</string>
+    <string name="send_email_error">이메일 전송 실패</string>
 
     <string name="today_title">오늘</string>
     <string name="yesterday_title">어제</string>

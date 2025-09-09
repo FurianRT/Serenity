@@ -28,6 +28,7 @@
     <string name="general_error">कुछ गलत हो गया</string>
     <string name="general_error_with_code">%d कुछ गलत हो गया</string>
     <string name="network_error">इंटरनेट कनेक्शन नहीं है</string>
+    <string name="send_email_error">ईमेल भेजने में विफल</string>
 
     <string name="today_title">आज</string>
     <string name="yesterday_title">कल</string>

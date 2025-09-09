@@ -7,4 +7,8 @@
     <string name="background_panel_tab_all_title">All</string>
     <string name="background_panel_tab_dark_title">Dark</string>
     <string name="background_panel_tab_light_title">Light</string>
+
+    <string name="font_panel_missing_font_title">Is there a font you’re missing?</string>
+    <string name="font_panel_write_to_us_title">Let us know!</string>
+    <string name="font_feedback_email_subject" translatable="false">Serenity font feedback %s</string>
 </resources>

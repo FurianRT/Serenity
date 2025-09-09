@@ -7,4 +7,6 @@
     <string name="background_panel_tab_all_title">すべて</string>
     <string name="background_panel_tab_dark_title">ダーク</string>
     <string name="background_panel_tab_light_title">ライト</string>
+    <string name="font_panel_missing_font_title">欲しいフォントが見つかりませんか？</string>
+    <string name="font_panel_write_to_us_title">私たちに教えてね！</string>
 </resources>

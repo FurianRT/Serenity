@@ -28,6 +28,7 @@
     <string name="general_error">Coś poszło nie tak</string>
     <string name="general_error_with_code">%d Coś poszło nie tak</string>
     <string name="network_error">Brak połączenia z internetem</string>
+    <string name="send_email_error">Nie udało się wysłać e-maila</string>
 
     <string name="today_title">Dzisiaj</string>
     <string name="yesterday_title">Wczoraj</string>

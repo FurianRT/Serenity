@@ -12,12 +12,8 @@
     <string name="settings_terms_and_conditions_title">Termeni și condiții</string>
     <string name="settings_privacy_policy_title">Politica de confidențialitate</string>
     <string name="settings_version_title">Versiune %s</string>
-
-    <string name="settings_feedback_email_error">Trimiterea emailului a eșuat</string>
-
     <string name="settings_bad_feedback_title">Ceva nu e în regulă?</string>
     <string name="settings_bad_feedback_body">Feedback-ul tău contează mult. Ajută-ne să îmbunătățim experiența ta</string>
-
     <string name="settings_note_content_title">Conținut notă</string>
     <string name="settings_note_detect_location_title">Detectare automată locație</string>
     <string name="settings_note_detect_location_hint">Detectează automat locația curentă când creezi o notă</string>

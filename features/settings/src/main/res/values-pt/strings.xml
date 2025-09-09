@@ -12,9 +12,6 @@
     <string name="settings_terms_and_conditions_title">Termos e Condições</string>
     <string name="settings_privacy_policy_title">Política de Privacidade</string>
     <string name="settings_version_title">Versão %s</string>
-
-    <string name="settings_feedback_email_error">Falha ao enviar email</string>
-
     <string name="settings_bad_feedback_title">Algo não está certo?</string>
     <string name="settings_bad_feedback_body">Seu feedback é muito importante. Ajude-nos a melhorar sua experiência</string>
     <string name="settings_note_detect_location_title">Detecção automática de localização</string>

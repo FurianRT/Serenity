@@ -28,6 +28,7 @@
     <string name="general_error">Ceva nu a mers bine</string>
     <string name="general_error_with_code">%d Ceva nu a mers bine</string>
     <string name="network_error">Fără conexiune la internet</string>
+    <string name="send_email_error">Trimiterea emailului a eșuat</string>
 
     <string name="today_title">Astăzi</string>
     <string name="yesterday_title">Ieri</string>

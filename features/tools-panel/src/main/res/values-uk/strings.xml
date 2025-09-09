@@ -7,4 +7,6 @@
     <string name="background_panel_tab_all_title">Усі</string>
     <string name="background_panel_tab_dark_title">Темні</string>
     <string name="background_panel_tab_light_title">Світлі</string>
+    <string name="font_panel_missing_font_title">Не вистачає якогось шрифту?</string>
+    <string name="font_panel_write_to_us_title">Напишіть нам!</string>
 </resources>

@@ -25,6 +25,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -72,7 +73,7 @@ internal class SettingsViewModel @Inject constructor(
     )
 
     private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 5)
-    val effect = _effect.asSharedFlow()
+    val effect: SharedFlow<SettingsEffect> = _effect.asSharedFlow()
 
     fun onEvent(event: SettingsEvent) {
         when (event) {

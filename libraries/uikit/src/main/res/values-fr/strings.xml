@@ -28,6 +28,7 @@
     <string name="general_error">Une erreur est survenue</string>
     <string name="general_error_with_code">%d Une erreur est survenue</string>
     <string name="network_error">Pas de connexion Internet</string>
+    <string name="send_email_error">Échec de l’envoi de l’e-mail</string>
 
     <string name="today_title">Aujourd’hui</string>
     <string name="yesterday_title">Hier</string>

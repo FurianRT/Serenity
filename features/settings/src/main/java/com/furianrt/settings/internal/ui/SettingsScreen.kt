@@ -138,7 +138,7 @@ internal fun SettingsScreen(
                         error.printStackTrace()
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
-                            message = context.getString(R.string.settings_feedback_email_error),
+                            message = context.getString(uiR.string.send_email_error),
                             duration = SnackbarDuration.Short,
                         )
                     }

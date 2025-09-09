@@ -7,4 +7,6 @@
     <string name="background_panel_tab_all_title">Toate</string>
     <string name="background_panel_tab_dark_title">Întunecată</string>
     <string name="background_panel_tab_light_title">Luminoasă</string>
+    <string name="font_panel_missing_font_title">Îți lipsește vreun font?</string>
+    <string name="font_panel_write_to_us_title">Scrie-ne!</string>
 </resources>

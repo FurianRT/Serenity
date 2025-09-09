@@ -28,6 +28,7 @@
     <string name="general_error">Щось пішло не так</string>
     <string name="general_error_with_code">%d: Щось пішло не так</string>
     <string name="network_error">Немає інтернет-з’єднання</string>
+    <string name="send_email_error">Не вдалося надіслати листа</string>
 
     <string name="today_title">Сьогодні</string>
     <string name="yesterday_title">Вчора</string>

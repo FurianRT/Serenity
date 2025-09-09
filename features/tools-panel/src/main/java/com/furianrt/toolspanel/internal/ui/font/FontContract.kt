@@ -18,4 +18,12 @@ internal sealed interface FontPanelEvent {
     data class OnFontColorSelected(val color: UiNoteFontColor?) : FontPanelEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily?) : FontPanelEvent
     data class OnFontSizeSelected(val size: Int) : FontPanelEvent
+    data object OnFontSendFeedbackClick : FontPanelEvent
+}
+
+internal sealed interface FontPanelEffect {
+    data class SendFeedbackEmail(
+        val supportEmail: String,
+        val text: String,
+    ) : FontPanelEffect
 }

@@ -7,4 +7,6 @@
     <string name="background_panel_tab_all_title">Semua</string>
     <string name="background_panel_tab_dark_title">Gelap</string>
     <string name="background_panel_tab_light_title">Terang</string>
+    <string name="font_panel_missing_font_title">Ada font yang kurang?</string>
+    <string name="font_panel_write_to_us_title">Tulis ke kami!</string>
 </resources>

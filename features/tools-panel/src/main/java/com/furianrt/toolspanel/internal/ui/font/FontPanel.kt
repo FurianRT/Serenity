@@ -1,15 +1,19 @@
 package com.furianrt.toolspanel.internal.ui.font
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -47,10 +51,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -60,7 +66,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
@@ -72,8 +81,11 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.max
+import com.furianrt.uikit.R as uiR
 
 internal var cachedImeHeight = 320.dp
 private const val FONT_CONTENT_TAG = "font_content"
@@ -127,7 +139,7 @@ internal fun FontTitleBar(
 }
 
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalAnimationApi::class)
 @Composable
 internal fun FontContent(
     noteId: String,
@@ -154,6 +166,32 @@ internal fun FontContent(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val density = LocalDensity.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        var toast: Toast? = null
+        viewModel.effect
+            .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
+            .collectLatest { effect ->
+                when (effect) {
+                    is FontPanelEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
+                        email = effect.supportEmail,
+                        subject = effect.text,
+                    ).onSuccess { intent ->
+                        context.startActivity(intent)
+                    }.onFailure { error ->
+                        error.printStackTrace()
+                        toast?.cancel()
+                        val message = context.getString(uiR.string.send_email_error)
+                        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT).apply {
+                            show()
+                        }
+                    }
+                }
+            }
+    }
+
     val isImeVisible = WindowInsets.isImeVisible
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(density)
     val imeSource = WindowInsets.imeAnimationSource.getBottom(density)
@@ -334,6 +372,13 @@ private fun Content(
                 },
             )
         }
+        item(
+            span = { GridItemSpan(spanCount) },
+        ) {
+            MissingFontMessage(
+                onClick = { onEvent(FontPanelEvent.OnFontSendFeedbackClick) },
+            )
+        }
     }
 }
 
@@ -444,6 +489,39 @@ private fun FontItem(
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,
             maxLines = 2,
+        )
+    }
+}
+
+@Composable
+private fun MissingFontMessage(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(
+        modifier = modifier
+            .padding(start = 12.dp, end = 12.dp, top = 20.dp, bottom = 4.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.Center,
+        itemVerticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(4.dp)
+                .alpha(0.5f),
+            text = stringResource(R.string.font_panel_missing_font_title),
+            style = MaterialTheme.typography.bodySmall,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(16.dp))
+                .clickable(onClick = onClick)
+                .padding(4.dp),
+            text = stringResource(R.string.font_panel_write_to_us_title),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.primaryContainer,
         )
     }
 }

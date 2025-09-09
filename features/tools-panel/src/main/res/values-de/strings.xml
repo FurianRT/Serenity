@@ -7,4 +7,6 @@
     <string name="background_panel_tab_all_title">Alle</string>
     <string name="background_panel_tab_dark_title">Dunkel</string>
     <string name="background_panel_tab_light_title">Hell</string>
+    <string name="font_panel_missing_font_title">Fehlt dir eine Schriftart?</string>
+    <string name="font_panel_write_to_us_title">Schreib uns!</string>
 </resources>
