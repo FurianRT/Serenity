@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Chính sách bảo mật</string>
     <string name="settings_version_title">Phiên bản %s</string>
 
-    <string name="settings_feedback_email_subject">Phản hồi Serenity %s</string>
     <string name="settings_feedback_email_error">Gửi email thất bại</string>
 
     <string name="settings_bad_feedback_title">Có vấn đề gì không?</string>

@@ -7,4 +7,5 @@ interface DeviceInfoRepository {
     fun getAndroidVersion(): String
     fun getMarketUrl(): String
     fun getAppVersionName(): String
+    fun getDeviceInfoText(): String
 }

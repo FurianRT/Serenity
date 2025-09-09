@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Privacybeleid</string>
     <string name="settings_version_title">Versie %s</string>
 
-    <string name="settings_feedback_email_subject">Serenity feedback %s</string>
     <string name="settings_feedback_email_error">E-mail verzenden mislukt</string>
 
     <string name="settings_bad_feedback_title">Niet tevreden?</string>

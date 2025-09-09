@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Gizlilik Politikası</string>
     <string name="settings_version_title">Sürüm %s</string>
 
-    <string name="settings_feedback_email_subject">Serenity geri bildirimi %s</string>
     <string name="settings_feedback_email_error">E-posta gönderilemedi</string>
 
     <string name="settings_bad_feedback_title">Bir şeyler yanlış mı?</string>

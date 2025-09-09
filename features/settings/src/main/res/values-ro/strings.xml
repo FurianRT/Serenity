@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Politica de confidențialitate</string>
     <string name="settings_version_title">Versiune %s</string>
 
-    <string name="settings_feedback_email_subject">Feedback Serenity %s</string>
     <string name="settings_feedback_email_error">Trimiterea emailului a eșuat</string>
 
     <string name="settings_bad_feedback_title">Ceva nu e în regulă?</string>

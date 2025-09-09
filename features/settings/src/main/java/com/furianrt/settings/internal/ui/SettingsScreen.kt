@@ -131,10 +131,7 @@ internal fun SettingsScreen(
                     is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
                     is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
                         email = effect.supportEmail,
-                        subject = context.getString(
-                            R.string.settings_feedback_email_subject,
-                            effect.text,
-                        ),
+                        subject = effect.text,
                     ).onSuccess { intent ->
                         context.startActivity(intent)
                     }.onFailure { error ->
@@ -323,7 +320,7 @@ private fun SuccessScreen(
                 .padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_feedback_title),
             iconPainter = painterResource(R.drawable.ic_mail),
-            onClick = { onEvent(SettingsEvent.OnButtonFeedbackClick) },
+            onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),

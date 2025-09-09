@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Політика конфіденційності</string>
     <string name="settings_version_title">Версія %s</string>
 
-    <string name="settings_feedback_email_subject">Відгук Serenity %s</string>
     <string name="settings_feedback_email_error">Не вдалося надіслати листа</string>
 
     <string name="settings_bad_feedback_title">Щось не так?</string>

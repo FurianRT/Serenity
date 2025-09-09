@@ -7,12 +7,14 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.notelistui.extensions.toNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
+import com.furianrt.settings.R
 import com.furianrt.settings.internal.domain.SettingsRepository
 import com.furianrt.settings.internal.domain.usecases.GetAppDarkThemeListUseCase
 import com.furianrt.settings.internal.domain.usecases.GetAppLightThemeListUseCase
@@ -50,6 +52,7 @@ internal class SettingsViewModel @Inject constructor(
     private val deviceInfoRepository: DeviceInfoRepository,
     private val localeRepository: LocaleRepository,
     private val buildInfoProvider: BuildInfoProvider,
+    private val resourcesManager: ResourcesManager,
 ) : ViewModel() {
 
     private val selectedTheme = MutableStateFlow<UiTheme?>(null)
@@ -88,6 +91,7 @@ internal class SettingsViewModel @Inject constructor(
 
             is SettingsEvent.OnAppThemeSelected -> selectedTheme.update { event.theme }
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
+            is SettingsEvent.OnButtonReportIssueClick -> sendIssueFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
                 settingsRepository.setAppRating(event.rating)
                 delay(RATING_CLICK_DELAY)
@@ -135,10 +139,22 @@ internal class SettingsViewModel @Inject constructor(
         _effect.tryEmit(
             SettingsEffect.SendFeedbackEmail(
                 supportEmail = BuildConfig.SUPPORT_EMAIL,
-                androidVersion = deviceInfoRepository.getAndroidVersion(),
-                language = deviceInfoRepository.getDeviceLanguage(),
-                device = deviceInfoRepository.getDeviceModel(),
-                appVersion = deviceInfoRepository.getAppVersionName(),
+                text = resourcesManager.getString(
+                    R.string.settings_feedback_email_subject,
+                    deviceInfoRepository.getDeviceInfoText(),
+                )
+            )
+        )
+    }
+
+    private fun sendIssueFeedback() {
+        _effect.tryEmit(
+            SettingsEffect.SendFeedbackEmail(
+                supportEmail = BuildConfig.SUPPORT_EMAIL,
+                text = resourcesManager.getString(
+                    R.string.settings_feedback_issue_email_subject,
+                    deviceInfoRepository.getDeviceInfoText(),
+                )
             )
         )
     }

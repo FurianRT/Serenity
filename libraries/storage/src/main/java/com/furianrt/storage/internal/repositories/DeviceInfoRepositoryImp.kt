@@ -1,9 +1,11 @@
 package com.furianrt.storage.internal.repositories
 
+import android.Manifest
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import androidx.annotation.RequiresPermission
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Locale
@@ -13,6 +15,7 @@ internal class DeviceInfoRepositoryImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : DeviceInfoRepository {
 
+    @RequiresPermission(Manifest.permission.ACCESS_NETWORK_STATE)
     override fun hasNetworkConnection(): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
@@ -22,7 +25,7 @@ internal class DeviceInfoRepositoryImp @Inject constructor(
     }
 
     override fun getAndroidVersion(): String = Build.VERSION.SDK_INT.toString()
-    override fun getDeviceLanguage(): String =  Locale.getDefault().language
+    override fun getDeviceLanguage(): String = Locale.getDefault().language
     override fun getDeviceModel(): String = Build.MODEL
     override fun getMarketUrl(): String = "market://details?id=${context.packageName}"
 
@@ -30,4 +33,7 @@ internal class DeviceInfoRepositoryImp @Inject constructor(
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         return packageInfo.versionName.orEmpty()
     }
+
+    override fun getDeviceInfoText(): String =
+        "${getDeviceModel()} ${getAndroidVersion()} ${getDeviceLanguage()} ${getAppVersionName()}"
 }

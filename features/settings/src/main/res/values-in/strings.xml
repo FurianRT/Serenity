@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Kebijakan Privasi</string>
     <string name="settings_version_title">Versi %s</string>
 
-    <string name="settings_feedback_email_subject">Masukan Serenity %s</string>
     <string name="settings_feedback_email_error">Gagal mengirim email</string>
 
     <string name="settings_bad_feedback_title">Ada yang tidak beres?</string>

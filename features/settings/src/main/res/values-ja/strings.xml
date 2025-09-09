@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">プライバシーポリシー</string>
     <string name="settings_version_title">バージョン %s</string>
 
-    <string name="settings_feedback_email_subject">Serenity フィードバック %s</string>
     <string name="settings_feedback_email_error">メールの送信に失敗しました</string>
 
     <string name="settings_bad_feedback_title">何か問題がありますか？</string>

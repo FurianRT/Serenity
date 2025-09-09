@@ -25,6 +25,7 @@ internal sealed interface SettingsEvent {
     data class OnAppThemeSelected(val theme: UiTheme) : SettingsEvent
     data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
+    data object OnButtonReportIssueClick : SettingsEvent
     data class OnRatingSelected(val rating: Int) : SettingsEvent
     data object OnLocaleClick : SettingsEvent
     data class OnLocaleSelected(val locale: AppLocale) : SettingsEvent
@@ -39,14 +40,8 @@ internal sealed interface SettingsEffect {
     data object OpenBackupScreen : SettingsEffect
     data class SendFeedbackEmail(
         val supportEmail: String,
-        val androidVersion: String,
-        val language: String,
-        val device: String,
-        val appVersion: String,
-    ) : SettingsEffect {
-        val text: String
-            get() = "$device $androidVersion $language $appVersion"
-    }
+        val text: String,
+    ) : SettingsEffect
 
     data class OpenMarketPage(val url: String) : SettingsEffect
     data object ShowBadRatingDialog : SettingsEffect

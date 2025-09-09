@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">Política de Privacidade</string>
     <string name="settings_version_title">Versão %s</string>
 
-    <string name="settings_feedback_email_subject">Feedback Serenity %s</string>
     <string name="settings_feedback_email_error">Falha ao enviar email</string>
 
     <string name="settings_bad_feedback_title">Algo não está certo?</string>

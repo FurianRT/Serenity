@@ -13,7 +13,6 @@
     <string name="settings_privacy_policy_title">गोपनीयता नीति</string>
     <string name="settings_version_title">संस्करण %s</string>
 
-    <string name="settings_feedback_email_subject">Serenity प्रतिक्रिया %s</string>
     <string name="settings_feedback_email_error">ईमेल भेजने में विफल</string>
 
     <string name="settings_bad_feedback_title">कुछ ठीक नहीं लग रहा?</string>
