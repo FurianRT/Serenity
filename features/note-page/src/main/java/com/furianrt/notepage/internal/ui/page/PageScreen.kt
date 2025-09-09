@@ -737,6 +737,7 @@ private fun ContentItems(
                         onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
                         onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
                         onCancelClick = { onEvent(PageEvent.OnCancelLocationClick) },
+                        onLocationClick = { onEvent(PageEvent.OnLocationClick) },
                     )
                 }
             }

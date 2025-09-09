@@ -177,6 +177,7 @@ fun NoteListItem(
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
                     state = locationState,
                     clickable = false,
+                    fullAlpha = true,
                 )
 
                 content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))

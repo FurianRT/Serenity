@@ -50,13 +50,15 @@ fun LocationCard(
     modifier: Modifier = Modifier,
     isRemovable: Boolean = false,
     clickable: Boolean = true,
+    fullAlpha: Boolean = false,
+    onLocationClick: () -> Unit = {},
     onAddLocationClick: () -> Unit = {},
     onRemoveLocationClick: () -> Unit = {},
     onCancelClick: () -> Unit = {},
 ) {
     AnimatedContent(
         modifier = modifier.applyIf(clickable) {
-            Modifier.clickableNoRipple {}
+            Modifier.clickableNoRipple(onClick = onLocationClick)
         },
         targetState = state,
         contentKey = { it !is LocationState.Empty },
@@ -77,6 +79,7 @@ fun LocationCard(
             is LocationState.Success -> SuccessContent(
                 locationTitle = targetState.title,
                 isRemovable = isRemovable,
+                fullAlpha = fullAlpha,
                 onRemoveLocationClick = onRemoveLocationClick,
             )
         }
@@ -88,10 +91,12 @@ fun LocationCard(
 private fun SuccessContent(
     locationTitle: String,
     isRemovable: Boolean,
+    fullAlpha: Boolean,
     onRemoveLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var lineCount by remember { mutableIntStateOf(2) }
+    val textAlpha = if (fullAlpha) 1f else 0.6f
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -111,14 +116,14 @@ private fun SuccessContent(
                 )
             } else {
                 Icon(
-                    modifier = Modifier .alpha(0.6f),
+                    modifier = Modifier.alpha(textAlpha),
                     painter = painterResource(uiR.drawable.ic_location),
                     contentDescription = null,
                 )
             }
         }
         Text(
-            modifier = Modifier .alpha(0.6f),
+            modifier = Modifier.alpha(textAlpha),
             text = locationTitle,
             style = MaterialTheme.typography.labelSmall,
             onTextLayout = { lineCount = it.lineCount },

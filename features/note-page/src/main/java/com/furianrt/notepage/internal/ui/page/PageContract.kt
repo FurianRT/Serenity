@@ -96,6 +96,7 @@ internal sealed interface PageEvent {
     data class OnBackgroundSelected(val item: UiNoteBackground?) : PageEvent
     data object OnMoodClick : PageEvent
     data class OnMoodSelected(val moodId: String?) : PageEvent
+    data object OnLocationClick : PageEvent
     data object OnAddLocationClick : PageEvent
     data object OnRemoveLocationClick : PageEvent
     data object OnCancelLocationClick : PageEvent

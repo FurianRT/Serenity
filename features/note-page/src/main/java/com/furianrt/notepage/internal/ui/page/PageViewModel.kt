@@ -75,6 +75,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontColorSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontFamilySelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontSizeSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnIsSelectedChange
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnLocationPermissionSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelected
@@ -325,6 +326,11 @@ internal class PageViewModel @AssistedInject constructor(
             is OnBackgroundSelected -> updateBackground(event.item)
             is OnMoodClick -> showMoodDialog()
             is OnMoodSelected -> updateNoteMood(event.moodId)
+            is OnLocationClick -> {
+                resetStickersEditing()
+                changeEditModeState(isEnabled = true)
+            }
+
             is OnAddLocationClick -> {
                 resetStickersEditing()
                 tryRequestLocationPermissions()
