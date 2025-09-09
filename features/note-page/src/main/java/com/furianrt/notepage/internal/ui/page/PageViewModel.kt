@@ -326,11 +326,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnBackgroundSelected -> updateBackground(event.item)
             is OnMoodClick -> showMoodDialog()
             is OnMoodSelected -> updateNoteMood(event.moodId)
-            is OnLocationClick -> {
-                resetStickersEditing()
-                changeEditModeState(isEnabled = true)
-            }
-
+            is OnLocationClick -> resetStickersEditing()
             is OnAddLocationClick -> {
                 resetStickersEditing()
                 tryRequestLocationPermissions()

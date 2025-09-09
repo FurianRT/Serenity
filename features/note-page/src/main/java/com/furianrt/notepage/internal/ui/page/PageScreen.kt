@@ -150,6 +150,7 @@ internal fun NotePageScreenInternal(
     isNoteCreationMode: Boolean,
     onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
+    onLocationClick: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
@@ -313,6 +314,7 @@ internal fun NotePageScreenInternal(
         onEvent = viewModel::onEvent,
         onBackgroundChanged = onBackgroundChanged,
         onTitleFocused = onTitleFocused,
+        onLocationClick = onLocationClick,
     )
 
     if (showMediaPermissionDialog) {
@@ -368,6 +370,7 @@ private fun PageScreenContent(
     onEvent: (event: PageEvent) -> Unit,
     onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
+    onLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -382,6 +385,7 @@ private fun PageScreenContent(
                 onEvent = onEvent,
                 onBackgroundChanged = onBackgroundChanged,
                 onTitleFocused = onTitleFocused,
+                onLocationClick = onLocationClick,
             )
 
         is PageUiState.Loading -> LoadingScreen()
@@ -400,6 +404,7 @@ private fun SuccessScreen(
     onEvent: (event: PageEvent) -> Unit,
     onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
+    onLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val view = LocalView.current
@@ -490,6 +495,7 @@ private fun SuccessScreen(
                         onTitleFocused()
                     }
                 },
+                onLocationClick = onLocationClick,
                 onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
             )
             if (uiState.stickers.isNotEmpty()) {
@@ -583,6 +589,7 @@ private fun ContentItems(
     hazeState: HazeState,
     onTitleFocusChange: (id: String, focused: Boolean) -> Unit,
     onEmptyTitleHeightChange: (height: Float) -> Unit,
+    onLocationClick: () -> Unit,
     onEvent: (event: PageEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -737,7 +744,10 @@ private fun ContentItems(
                         onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
                         onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
                         onCancelClick = { onEvent(PageEvent.OnCancelLocationClick) },
-                        onLocationClick = { onEvent(PageEvent.OnLocationClick) },
+                        onLocationClick = {
+                            onEvent(PageEvent.OnLocationClick)
+                            onLocationClick()
+                        },
                     )
                 }
             }
@@ -910,6 +920,7 @@ private fun SuccessScreenPreview() {
             onEvent = {},
             onBackgroundChanged = {},
             onTitleFocused = {},
+            onLocationClick = {},
             hazeState = HazeState(),
             isSelected = true,
         )

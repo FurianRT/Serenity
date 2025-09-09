@@ -350,6 +350,7 @@ private fun SuccessScreen(
                     onEvent(NoteViewEvent.OnBackgroundChanged(uiState.notes[index].id, it))
                 },
                 onTitleFocused = { onEvent(NoteViewEvent.OnPageTitleFocused) },
+                onLocationClick = { onEvent(NoteViewEvent.OnLocationClick) },
                 openMediaViewScreen = openMediaViewScreen,
                 openMediaViewer = openMediaViewer,
                 openMediaSortingScreen = openMediaSortingScreen,

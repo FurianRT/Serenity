@@ -54,7 +54,7 @@ internal class NoteCreateViewModel @Inject constructor(
             savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),
         ),
         appearanceRepository.getAppFont(),
-    ) { isInEditMode, note, font->
+    ) { isInEditMode, note, font ->
         NoteCreateUiState.Success(
             note = note.toNoteItem(
                 background = backgroundProvider.getBackground(note.backgroundId),
@@ -83,7 +83,10 @@ internal class NoteCreateViewModel @Inject constructor(
     @OptIn(DelicateCoroutinesApi::class)
     fun onEvent(event: NoteCreateEvent) {
         when (event) {
-            is NoteCreateEvent.OnPageTitleFocused -> enableEditMode()
+            is NoteCreateEvent.OnPageTitleFocused, is NoteCreateEvent.OnLocationClick -> {
+                enableEditMode()
+            }
+
             is NoteCreateEvent.OnButtonEditClick -> {
                 if (isInEditModeState.value && isContentChanged) {
                     GlobalScope.launch { saveTemplate() }

@@ -151,6 +151,7 @@ internal fun NoteCreateScreen(
                             )
                         },
                         onTitleFocused = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocused) },
+                        onLocationClick = { viewModel.onEvent(NoteCreateEvent.OnLocationClick) },
                         openMediaViewScreen = openMediaViewScreen,
                         openMediaViewer = openMediaViewer,
                         openMediaSortingScreen = openMediaSortingScreen,

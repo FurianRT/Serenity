@@ -18,6 +18,7 @@ internal sealed interface NoteCreateUiState {
 internal sealed interface NoteCreateEvent {
     data object OnButtonEditClick : NoteCreateEvent
     data object OnPageTitleFocused : NoteCreateEvent
+    data object OnLocationClick : NoteCreateEvent
     data object OnButtonBackClick : NoteCreateEvent
     data object OnButtonDateClick : NoteCreateEvent
     data object OnButtonDeleteClick : NoteCreateEvent
