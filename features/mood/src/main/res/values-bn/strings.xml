@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">আপনি কেমন অনুভব করছেন?</string>
+    <string name="mood_dialog_more_emoji">আরও ইমোজি</string>
+    <string name="mood_dialog_clear">মুছে দিন</string>
+</resources>

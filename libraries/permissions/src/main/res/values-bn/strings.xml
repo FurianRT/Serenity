@@ -1,0 +1,17 @@
+<resources>
+    <string name="media_permission_message">Serenity-কে আপনার স্টোরেজে অ্যাক্সেস প্রয়োজন যাতে আপনি ছবি এবং ভিডিও সংযুক্ত করতে পারেন। সেটিংস > অনুমতি ট্যাপ করুন, এবং ছবি ও ভিডিও চালু করুন</string>
+    <string name="media_permission_message_bold_part_1">Serenity</string>
+    <string name="media_permission_message_bold_part_2">ছবি ও ভিডিও</string>
+
+    <string name="audio_record_permission_message">Serenity-কে আপনার মাইক্রোফোনে অ্যাক্সেস প্রয়োজন যাতে আপনি ভয়েস রেকর্ডিং করতে পারেন। সেটিংস > অনুমতি ট্যাপ করুন, এবং মাইক্রোফোন চালু করুন</string>
+    <string name="audio_record_permission_message_bold_part_1">Serenity</string>
+    <string name="audio_record_permission_message_bold_part_2">মাইক্রোফোন </string>
+
+    <string name="camera_permission_message">Serenity-কে আপনার ক্যামেরায় অ্যাক্সেস প্রয়োজন যাতে ছবি তোলা যায়। সেটিংস > অনুমতি ট্যাপ করুন, এবং ক্যামেরা চালু করুন</string>
+    <string name="camera_permission_message_bold_part_1">Serenity</string>
+    <string name="camera_permission_message_bold_part_2">ক্যামেরা</string>
+
+    <string name="location_permission_message">Serenity-কে আপনার অবস্থানে অ্যাক্সেস প্রয়োজন যাতে নোটে স্থান যোগ করা যায়। সেটিংস > অনুমতি ট্যাপ করুন, এবং অবস্থান চালু করুন</string>
+    <string name="location_permission_message_bold_part_1">Serenity</string>
+    <string name="location_permission_message_bold_part_2">অবস্থান </string>
+</resources>

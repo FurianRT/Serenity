@@ -1,0 +1,70 @@
+<resources>
+    <string name="action_cancel">বাতিল করুন</string>
+    <string name="action_discard">বাতিল করুন</string>
+    <string name="action_not_now">এখন নয়</string>
+    <string name="action_delete">মুছুন</string>
+    <string name="action_share">শেয়ার করুন</string>
+    <string name="action_save">সংরক্ষণ করুন</string>
+    <string name="action_confirm">নিশ্চিত করুন</string>
+    <string name="action_send">পাঠান</string>
+    <string name="action_done">সম্পন্ন</string>
+    <string name="action_pin">পিন করুন</string>
+    <string name="action_unpin">আনপিন করুন</string>
+    <string name="action_contact_us">আমাদের সাথে যোগাযোগ করুন</string>
+    <string name="action_select">নির্বাচন করুন</string>
+    <string name="action_continue">চালিয়ে যান</string>
+    <string name="action_back">ফিরে যান</string>
+    <string name="action_yes">হ্যাঁ</string>
+    <string name="action_no">না</string>
+    <string name="action_gallery">গ্যালারি</string>
+    <string name="action_camera">ক্যামেরা</string>
+
+    <string name="title_email">ইমেল</string>
+
+    <string name="settings_title">সেটিংস</string>
+    <string name="security_title">নিরাপত্তা</string>
+
+    <string name="media_counter_pattern">%1$d এর মধ্যে %2$d</string>
+    <string name="general_error">কিছু ভুল হয়েছে</string>
+    <string name="general_error_with_code">%d: কিছু ভুল হয়েছে</string>
+    <string name="network_error">ইন্টারনেট সংযোগ নেই</string>
+    <string name="send_email_error">ইমেল পাঠাতে ব্যর্থ</string>
+    <string name="app_not_found_error">উপযুক্ত কোনো অ্যাপ নেই</string>
+
+    <string name="today_title">আজ</string>
+    <string name="yesterday_title">গতকাল</string>
+
+    <string name="delete_notes_warning_title">সতর্কতা…</string>
+    <string name="delete_notes_warning_body">আপনি কি সত্যিই এই নোটগুলো মুছতে চান? পরে এগুলো আর ফেরত পাবেন না</string>
+    <string name="delete_note_warning_body">আপনি কি সত্যিই এই নোটটি মুছতে চান? পরে এটি আর ফেরত পাবেন না</string>
+
+    <string name="backup_in_progress">ব্যাকআপ চলছে</string>
+    <string name="restore_in_progress">রিস্টোর চলছে</string>
+
+    <string name="error_camera_not_found">ক্যামেরা পাওয়া যায়নি</string>
+
+    <string-array name="months_array">
+        <item>জানুয়ারি</item>
+        <item>ফেব্রুয়ারি</item>
+        <item>মার্চ</item>
+        <item>এপ্রিল</item>
+        <item>মে</item>
+        <item>জুন</item>
+        <item>জুলাই</item>
+        <item>আগস্ট</item>
+        <item>সেপ্টেম্বর</item>
+        <item>অক্টোবর</item>
+        <item>নভেম্বর</item>
+        <item>ডিসেম্বর</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>সোম</item>
+        <item>মঙ্গল</item>
+        <item>বুধ</item>
+        <item>বৃহঃ</item>
+        <item>শুক্র</item>
+        <item>শনি</item>
+        <item>রবি</item>
+    </string-array>
+</resources>

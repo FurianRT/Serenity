@@ -1,0 +1,31 @@
+<resources>
+    <string name="lock_enter_your_pin_title">আপনার PIN লিখুন</string>
+    <string name="lock_enter_new_pin_title">নতুন PIN লিখুন</string>
+    <string name="lock_repeat_your_pin_title">আপনার PIN পুনরায় লিখুন</string>
+    <string name="lock_forgot_pin_title">আপনি কি PIN ভুলে গেছেন?</string>
+    <string name="lock_fingerprint_title">শুধু দারুণ মানুষদের জন্য</string>
+    <string name="lock_use_pin_title">PIN ব্যবহার করুন</string>
+    <string name="recovery_email_hint">আপনার ভুলে যাওয়া PIN পেতে অনুগ্রহ করে ইমেল ঠিকানা লিখুন</string>
+    <string name="recovery_email_format_error">অবৈধ ইমেল</string>
+    <string name="pin_recovery_dialog_title">%s-এ PIN রিসেটের নির্দেশ পাঠানো হবে। ইমেল না পেলে স্প্যাম ফোল্ডার চেক করুন</string>
+    <string name="pin_recovery_email_subject">PIN পুনরুদ্ধার</string>
+    <string name="pin_recovery_email_content">আপনার PIN: %s</string>
+    <string name="pin_recovery_email_title">ইমেল ঠিকানা</string>
+    <string name="send_pin_recovery_email_failure">কিছু ভুল হয়েছে</string>
+    <string name="send_pin_recovery_email_success">পুনরুদ্ধার ইমেল পাঠানো হয়েছে</string>
+
+    <string name="security_enable_pin_title">PIN সক্রিয় করুন</string>
+    <string name="security_email_to_recover_pin_title">PIN পুনরুদ্ধারের ইমেল</string>
+    <string name="security_pin_request_title">PIN অনুরোধের বিলম্ব</string>
+    <string name="security_enable_fingerprint_title">ফিঙ্গারপ্রিন্ট সক্রিয় করুন</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="one">%d সেকেন্ড</item>
+        <item quantity="other">%d সেকেন্ড</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="one">%d মিনিট</item>
+        <item quantity="other">%d মিনিট</item>
+    </plurals>
+</resources>

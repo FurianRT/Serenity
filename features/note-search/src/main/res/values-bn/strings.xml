@@ -1,0 +1,9 @@
+<resources>
+    <string name="notes_search_bar_title">লেখা এবং ট্যাগ দিয়ে অনুসন্ধান</string>
+    <string name="notes_search_empty_search_title">কোনো নোট পাওয়া যায়নি</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="one">%dটি নোট পাওয়া গেছে</item>
+        <item quantity="other">%dটি নোট পাওয়া গেছে</item>
+    </plurals>
+</resources>

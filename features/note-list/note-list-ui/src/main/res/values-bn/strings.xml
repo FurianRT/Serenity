@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_content_add_tag_hint">নতুন ট্যাগ</string>
+    <string name="note_add_current_location_title">বর্তমান অবস্থান যোগ করুন</string>
+    <string name="note_media_change_collage">কলাজ সম্পাদনা করুন</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">অনুগ্রহ করে "সব অনুমতি দিন" নির্বাচন করুন, অথবা আরও মিডিয়া বেছে নিন</string>
+    <string name="media_selector_empty_list_title">খালি</string>
+    <string name="media_selector_apply_button_title">%dটি মিডিয়া সংযুক্ত করুন</string>
+    <string name="media_selector_discard_title">নির্বাচন বাতিল করুন</string>
+    <string name="media_selector_discard_hint">আপনি কি অ্যাটাচমেন্ট মেনুটি বন্ধ করতে চান?</string>
+</resources>

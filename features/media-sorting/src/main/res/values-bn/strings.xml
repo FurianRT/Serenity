@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">মিডিয়া ব্লক সম্পাদনা করুন</string>
+    <string name="media_sorting_drag_and_drop_hint">অর্ডার পরিবর্তন করতে ড্র্যাগ ও ড্রপ করুন</string>
+    <string name="media_sorting_save_changes_hint">আপনি কি পরিবর্তনগুলো সংরক্ষণ করতে চান?</string>
+</resources>
