@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d Algo salió mal</string>
     <string name="network_error">Sin conexión a internet</string>
     <string name="send_email_error">Error al enviar el correo</string>
+    <string name="app_not_found_error">Walang angkop na app</string>
 
     <string name="today_title">Hoy</string>
     <string name="yesterday_title">Ayer</string>

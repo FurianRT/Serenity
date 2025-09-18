@@ -30,6 +30,7 @@
     <string name="general_error_with_code">%d Что-то пошло не так</string>
     <string name="network_error">Нет подключения к интернету</string>
     <string name="send_email_error">Не удалось отправить письмо</string>
+    <string name="app_not_found_error">Подходящее приложение не найдено</string>
 
     <string name="today_title">Сегодня</string>
     <string name="yesterday_title">Вчера</string>

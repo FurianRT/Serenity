@@ -29,6 +29,7 @@
     <string name="general_error_with_code">Lỗi %d xảy ra</string>
     <string name="network_error">Không có kết nối mạng</string>
     <string name="send_email_error">Gửi email thất bại</string>
+    <string name="app_not_found_error">Không có ứng dụng phù hợp</string>
 
     <string name="today_title">Hôm nay</string>
     <string name="yesterday_title">Hôm qua</string>

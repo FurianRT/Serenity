@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d Er is iets misgegaan</string>
     <string name="network_error">Geen internetverbinding</string>
     <string name="send_email_error">E-mail verzenden mislukt</string>
+    <string name="app_not_found_error">Geen geschikte app gevonden</string>
 
     <string name="today_title">Vandaag</string>
     <string name="yesterday_title">Gisteren</string>

@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d Qualcosa è andato storto</string>
     <string name="network_error">Nessuna connessione internet</string>
     <string name="send_email_error">Invio dell\'email non riuscito</string>
+    <string name="app_not_found_error">Nessuna app adatta trovata</string>
 
     <string name="today_title">Oggi</string>
     <string name="yesterday_title">Ieri</string>

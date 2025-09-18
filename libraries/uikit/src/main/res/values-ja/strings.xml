@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d エラーが発生しました</string>
     <string name="network_error">インターネット接続がありません</string>
     <string name="send_email_error">メールの送信に失敗しました</string>
+    <string name="app_not_found_error">適切なアプリが見つかりません</string>
 
     <string name="today_title">今日</string>
     <string name="yesterday_title">昨日</string>

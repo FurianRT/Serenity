@@ -1,5 +1,6 @@
 package com.furianrt.settings.internal.ui
 
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.IntRange
@@ -48,7 +49,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
@@ -110,6 +113,7 @@ internal fun SettingsScreen(
     val context = LocalContext.current
     val hazeState = remember { HazeState() }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val hapticFeedback = LocalHapticFeedback.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
@@ -136,6 +140,7 @@ internal fun SettingsScreen(
                         context.startActivity(intent)
                     }.onFailure { error ->
                         error.printStackTrace()
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
                             message = context.getString(uiR.string.send_email_error),
@@ -150,8 +155,17 @@ internal fun SettingsScreen(
                         selectedFont = effect.selectedFont,
                     )
 
-                    is SettingsEffect.OpenLink -> {
-                        context.startActivity(Intent(Intent.ACTION_VIEW, effect.url.toUri()))
+                    is SettingsEffect.OpenLink -> try {
+                        val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
+                        context.startActivity(intent)
+                    } catch (e: ActivityNotFoundException) {
+                        e.printStackTrace()
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
+                        snackBarHostState.currentSnackbarData?.dismiss()
+                        snackBarHostState.showSnackbar(
+                            message = context.getString(uiR.string.app_not_found_error),
+                            duration = SnackbarDuration.Short,
+                        )
                     }
 
                     is SettingsEffect.ShowLocaleDialog -> {

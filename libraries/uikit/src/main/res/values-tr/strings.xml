@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d Bir şeyler yanlış gitti</string>
     <string name="network_error">İnternet bağlantısı yok</string>
     <string name="send_email_error">E-posta gönderilemedi</string>
+    <string name="app_not_found_error">Uygun bir uygulama bulunamadı</string>
 
     <string name="today_title">Bugün</string>
     <string name="yesterday_title">Dün</string>

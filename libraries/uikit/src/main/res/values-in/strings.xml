@@ -29,6 +29,7 @@
     <string name="general_error_with_code">%d Terjadi kesalahan</string>
     <string name="network_error">Tidak ada koneksi internet</string>
     <string name="send_email_error">Gagal mengirim email</string>
+    <string name="app_not_found_error">Tidak ada aplikasi yang sesuai</string>
 
     <string name="today_title">Hari ini</string>
     <string name="yesterday_title">Kemarin</string>
