@@ -1,0 +1,62 @@
+<resources>
+    <string name="backup_auto_backup_title">สำรองข้อมูลอัตโนมัติ</string>
+    <string name="backup_auto_backup_period_title">ช่วงเวลาสำรองข้อมูลอัตโนมัติ</string>
+    <string name="backup_last_sync_time_title">ซิงค์ล่าสุด: %s</string>
+    <string name="backup_restore_data_title">กู้คืนข้อมูล</string>
+    <string name="backup_backup_data_title">สำรองข้อมูล</string>
+    <string name="backup_last_sync_time_none_title">ไม่มี</string>
+    <string name="backup_sign_out_title">ออกจากระบบ</string>
+    <string name="backup_tap_to_sing_in_title">แตะเพื่อเข้าสู่ระบบ</string>
+    <string name="backup_tap_to_sing_in_underline_part">เข้าสู่ระบบ</string>
+    <string name="backup_tap_to_sing_out_title">แตะเพื่อออกจากระบบ</string>
+    <string name="backup_tap_to_sing_out_underline_part">ออกจากระบบ</string>
+    <string name="backup_confirm_sign_out_title">จะออกไปแล้วหรือ?</string>
+    <string name="backup_confirm_sign_out_message">คุณสามารถเข้าสู่ระบบได้ทุกเวลา แต่การสำรองข้อมูลจะหยุดชั่วคราวจนกว่าจะกลับมา</string>
+    <string name="backup_period_one_day_title">1 วัน</string>
+    <string name="backup_period_three_days_title">3 วัน</string>
+    <string name="backup_period_one_week_title">1 สัปดาห์</string>
+    <string name="backup_period_two_weeks_title">2 สัปดาห์</string>
+    <string name="backup_period_one_month_title">1 เดือน</string>
+
+    <string name="backup_popular_question_1_title">การซิงค์กับ Google Drive ทำงานอย่างไร</string>
+    <string name="backup_popular_question_1_answer">โน้ตของคุณจะถูกสำรองโดยอัตโนมัติไปยังบัญชี Google Drive ของคุณ เพื่อให้ข้อมูลของคุณปลอดภัยและเข้าถึงได้จากหลายอุปกรณ์</string>
+
+    <string name="backup_popular_question_2_title">โน้ตของฉันถูกเก็บไว้ที่ไหนใน Google Drive?</string>
+    <string name="backup_popular_question_2_answer">โน้ตของคุณถูกเก็บในโฟลเดอร์เฉพาะแอปที่ซ่อนอยู่ใน Google Drive ของคุณ ดังนั้นจะไม่ปรากฏในรายการไฟล์ปกติ โฟลเดอร์นี้เป็นส่วนตัวและมีคุณเท่านั้นที่เข้าถึงได้—แม้แต่ผู้พัฒนาแอปก็ไม่สามารถเข้าถึงโน้ตของคุณได้</string>
+
+    <string name="backup_popular_question_3_title">ฉันต้องมีบัญชี Google เพื่อใช้การซิงค์ไหม</string>
+    <string name="backup_popular_question_3_answer">ใช่ คุณต้องเข้าสู่ระบบด้วยบัญชี Google เพื่อเปิดใช้งานการซิงค์บนคลาวด์</string>
+
+    <string name="backup_popular_question_4_title">ฉันสามารถเข้าถึงโน้ตจาก Google Drive ได้โดยตรงหรือไม่</string>
+    <string name="backup_popular_question_4_answer">ไม่ได้ โน้ตจะถูกเก็บในโฟลเดอร์เฉพาะแอปที่ไม่สามารถเห็นผ่าน Google Drive คุณสามารถเข้าถึงได้เฉพาะผ่านแอปเท่านั้น</string>
+
+    <string name="backup_popular_question_5_title">ถ้าฉันถอนการติดตั้งแอป โน้ตของฉันจะถูกลบไหม</string>
+    <string name="backup_popular_question_5_answer">การถอนการติดตั้งแอปจะไม่ลบโน้ตของคุณจาก Google Drive เมื่อคุณติดตั้งแอปใหม่และเข้าสู่ระบบด้วยบัญชี Google เดิม โน้ตของคุณจะถูกกู้คืน</string>
+
+    <string name="backup_popular_question_6_title">ฉันสามารถซิงค์โน้ตในหลายอุปกรณ์ได้ไหม</string>
+    <string name="backup_popular_question_6_answer">ได้! เพียงเข้าสู่ระบบด้วยบัญชี Google เดียวกันในทุกอุปกรณ์ โน้ตของคุณจะถูกซิงค์โดยอัตโนมัติ</string>
+
+    <string name="backup_popular_question_7_title">ข้อมูลของฉันปลอดภัยไหม</string>
+    <string name="backup_popular_question_7_answer">ปลอดภัย โน้ตของคุณถูกเก็บในโฟลเดอร์ส่วนตัวของแอปใน Google Drive และแอปจะไม่แชร์ข้อมูลของคุณกับใคร</string>
+
+    <string name="backup_popular_question_8_title">จะเกิดอะไรขึ้นถ้าฉันเปลี่ยนบัญชี Google</string>
+    <string name="backup_popular_question_8_answer">หากคุณเปลี่ยนไปใช้บัญชี Google อื่น โน้ตจากบัญชีเดิมจะไม่สามารถเข้าถึงได้ คุณต้องกลับไปใช้บัญชีเดิมเพื่อดูโน้ตเหล่านั้น</string>
+
+    <string name="backup_notifications_channel_name">ช่องทางสำรองข้อมูล</string>
+    <string name="backup_notifications_channel_description">แสดงความคืบหน้าการสำรองข้อมูล</string>
+    <string name="backup_notification_initial_description">กำลังอัปโหลดโน้ตของคุณ โปรดรอสักครู่</string>
+    <string name="restore_notification_initial_description">กำลังดาวน์โหลดโน้ตของคุณ โปรดรอสักครู่</string>
+
+    <string name="backup_warning_title">คำเตือนการสำรองข้อมูล</string>
+    <string name="backup_warning_body">คุณกำลังจะสร้างการสำรองข้อมูลใหม่ โปรดทราบว่าการทำเช่นนี้จะเขียนทับการสำรองข้อมูลเดิมใน Google Drive ของคุณ ข้อมูลเก่าจะไม่สามารถเข้าถึงได้อีก ตรวจสอบให้แน่ใจก่อนดำเนินการต่อ</string>
+
+    <string name="backup_progress_message">กำลังสำรองข้อมูล %1$d/%2$d</string>
+    <string name="restore_progress_message">กำลังกู้คืนข้อมูล %1$d/%2$d</string>
+    <string name="backup_starting_message">เริ่มการสำรองข้อมูล…</string>
+    <string name="restore_starting_message">เริ่มการกู้คืนข้อมูล…</string>
+
+    <string name="backup_sync_in_progress_message">กำลังซิงค์ข้อมูล</string>
+
+    <string name="backup_sing_in_resolution_canceled_error">การเข้าสู่ระบบถูกยกเลิก</string>
+    <string name="backup_success_message">สำเร็จ</string>
+</resources>

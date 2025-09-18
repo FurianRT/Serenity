@@ -1,0 +1,70 @@
+<resources>
+    <string name="action_cancel">ยกเลิก</string>
+    <string name="action_discard">ยกเลิกการเลือก</string>
+    <string name="action_not_now">ไม่ใช่ตอนนี้</string>
+    <string name="action_delete">ลบ</string>
+    <string name="action_share">แชร์</string>
+    <string name="action_save">บันทึก</string>
+    <string name="action_confirm">ยืนยัน</string>
+    <string name="action_send">ส่ง</string>
+    <string name="action_done">เสร็จแล้ว</string>
+    <string name="action_pin">ปักหมุด</string>
+    <string name="action_unpin">ปลดหมุด</string>
+    <string name="action_contact_us">ติดต่อเรา</string>
+    <string name="action_select">เลือก</string>
+    <string name="action_continue">ดำเนินการต่อ</string>
+    <string name="action_back">กลับ</string>
+    <string name="action_yes">ใช่</string>
+    <string name="action_no">ไม่</string>
+    <string name="action_gallery">แกลเลอรี</string>
+    <string name="action_camera">กล้อง</string>
+
+    <string name="title_email">อีเมล</string>
+
+    <string name="settings_title">การตั้งค่า</string>
+    <string name="security_title">ความปลอดภัย</string>
+
+    <string name="media_counter_pattern">%1$d จาก %2$d</string>
+    <string name="general_error">เกิดข้อผิดพลาด</string>
+    <string name="general_error_with_code">%d เกิดข้อผิดพลาด</string>
+    <string name="network_error">ไม่มีการเชื่อมต่ออินเทอร์เน็ต</string>
+    <string name="send_email_error">ส่งอีเมลไม่สำเร็จ</string>
+    <string name="app_not_found_error">ไม่พบแอปที่เหมาะสม</string>
+
+    <string name="today_title">วันนี้</string>
+    <string name="yesterday_title">เมื่อวาน</string>
+
+    <string name="delete_notes_warning_title">ตรวจสอบก่อน…</string>
+    <string name="delete_notes_warning_body">คุณแน่ใจหรือว่าต้องการลบโน้ตเหล่านี้? คุณจะไม่สามารถกู้คืนได้ภายหลัง</string>
+    <string name="delete_note_warning_body">คุณแน่ใจหรือว่าต้องการลบโน้ตนี้? คุณจะไม่สามารถกู้คืนได้ภายหลัง</string>
+
+    <string name="backup_in_progress">กำลังสำรองข้อมูล</string>
+    <string name="restore_in_progress">กำลังกู้คืนข้อมูล</string>
+
+    <string name="error_camera_not_found">ไม่พบกล้อง</string>
+
+    <string-array name="months_array">
+        <item>มกราคม</item>
+        <item>กุมภาพันธ์</item>
+        <item>มีนาคม</item>
+        <item>เมษายน</item>
+        <item>พฤษภาคม</item>
+        <item>มิถุนายน</item>
+        <item>กรกฎาคม</item>
+        <item>สิงหาคม</item>
+        <item>กันยายน</item>
+        <item>ตุลาคม</item>
+        <item>พฤศจิกายน</item>
+        <item>ธันวาคม</item>
+    </string-array>
+
+    <string-array name="weeks_array">
+        <item>จ.</item>
+        <item>อ.</item>
+        <item>พ.</item>
+        <item>พฤ.</item>
+        <item>ศ.</item>
+        <item>ส.</item>
+        <item>อา.</item>
+    </string-array>
+</resources>

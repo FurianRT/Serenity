@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Backup Automático</string>
     <string name="backup_auto_backup_period_title">Período de Backup Automático</string>
     <string name="backup_last_sync_time_title">Última sincronização: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">Toque para Entrar</string>
     <string name="backup_tap_to_sing_in_underline_part">Entrar</string>
     <string name="backup_tap_to_sing_out_title">Toque para Sair</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">Saindo tão cedo?</string>
     <string name="backup_confirm_sign_out_message">Você pode entrar novamente a qualquer momento, mas observe que os backups ficarão pausados até lá</string>
     <string name="backup_period_one_day_title">1 dia</string>

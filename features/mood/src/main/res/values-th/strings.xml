@@ -1,0 +1,5 @@
+<resources>
+    <string name="mood_dialog_title">คุณรู้สึกอย่างไร?</string>
+    <string name="mood_dialog_more_emoji">อีโมจิเพิ่มเติม</string>
+    <string name="mood_dialog_clear">ล้าง</string>
+</resources>

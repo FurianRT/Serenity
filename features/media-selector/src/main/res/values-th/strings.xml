@@ -1,0 +1,7 @@
+<resources>
+    <string name="media_selector_partial_access_message">กรุณาอนุญาต \"อนุญาตทั้งหมด\" หรือเลือกสื่อเพิ่ม</string>
+    <string name="media_selector_empty_list_title">ว่าง</string>
+    <string name="media_selector_apply_button_title">แนบ %d สื่อ</string>
+    <string name="media_selector_discard_title">ยกเลิกการเลือก</string>
+    <string name="media_selector_discard_hint">คุณต้องการปิดเมนูแนบไฟล์หรือไม่?</string>
+</resources>

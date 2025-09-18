@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Otomatik Yedekleme</string>
     <string name="backup_auto_backup_period_title">Otomatik Yedekleme Süresi</string>
     <string name="backup_last_sync_time_title">Son senkronizasyon: %s</string>

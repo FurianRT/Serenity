@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">ऑटो बैकअप</string>
     <string name="backup_auto_backup_period_title">ऑटो बैकअप अवधि</string>
     <string name="backup_last_sync_time_title">आखिरी सिंक: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">साइन इन के लिए टैप करें</string>
     <string name="backup_tap_to_sing_in_underline_part">साइन इन</string>
     <string name="backup_tap_to_sing_out_title">साइन आउट के लिए टैप करें</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">इतनी जल्दी जा रहे हैं?</string>
     <string name="backup_confirm_sign_out_message">आप कभी भी वापस साइन इन कर सकते हैं, लेकिन कृपया ध्यान दें कि तब तक बैकअप रुका रहेगा</string>
     <string name="backup_period_one_day_title">1 दिन</string>

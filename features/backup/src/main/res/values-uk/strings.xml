@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Автоматичне збереження</string>
     <string name="backup_auto_backup_period_title">Період автозбереження</string>
     <string name="backup_last_sync_time_title">Остання синхронізація: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">Натисніть, щоб Увійти</string>
     <string name="backup_tap_to_sing_in_underline_part">Увійти</string>
     <string name="backup_tap_to_sing_out_title">Натисніть, щоб Вийти</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">Вже йдете?</string>
     <string name="backup_confirm_sign_out_message">Ви можете увійти знову будь-коли, але зверніть увагу, що резервне копіювання буде призупинено до того часу</string>
     <string name="backup_period_one_day_title">1 день</string>

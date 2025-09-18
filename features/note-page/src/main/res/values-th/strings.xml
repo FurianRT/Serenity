@@ -1,0 +1,8 @@
+<resources>
+    <string name="note_title_hint_text">ข้อความ…</string>
+    <string name="note_title_hint_write_more_here">เขียนเพิ่มเติมที่นี่…</string>
+    <string name="note_sticker_limit_message">ถึงจำนวนสติกเกอร์สูงสุดแล้ว</string>
+    <string name="note_select_text_position_message">เลือกตำแหน่งในข้อความ</string>
+    <string name="note_add_current_location_fail_title">ไม่สามารถรับตำแหน่งปัจจุบันได้</string>
+    <string name="note_auto_detect_location_title">คุณต้องการเพิ่มตำแหน่งของคุณในโน้ตใหม่โดยอัตโนมัติหรือไม่?</string>
+</resources>

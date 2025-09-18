@@ -1,0 +1,5 @@
+<resources>
+    <string name="note_content_add_tag_hint">แท็กใหม่</string>
+    <string name="note_add_current_location_title">เพิ่มตำแหน่งปัจจุบัน</string>
+    <string name="note_media_change_collage">แก้ไขคอลลาจ</string>
+</resources>

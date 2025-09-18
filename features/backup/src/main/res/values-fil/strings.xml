@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Awtomatik na Backup</string>
     <string name="backup_auto_backup_period_title">Panahon ng Awtomatik na Backup</string>
     <string name="backup_last_sync_time_title">Huling sync: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">Pindutin para Mag-sign In</string>
     <string name="backup_tap_to_sing_in_underline_part">Mag-sign In</string>
     <string name="backup_tap_to_sing_out_title">Pindutin para Mag-sign Out</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">Umalis nang maaga?</string>
     <string name="backup_confirm_sign_out_message">Maaari kang mag-sign in muli kahit kailan, ngunit tandaan na ihihinto muna ang backup hanggang doon</string>
     <string name="backup_period_one_day_title">1 araw</string>

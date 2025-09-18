@@ -1,0 +1,22 @@
+<resources>
+    <string name="settings_security_title">ความปลอดภัย</string>
+    <string name="settings_backup_title">สำรองข้อมูลและกู้คืน</string>
+    <string name="settings_theme_title">ธีม</string>
+    <string name="settings_light_theme_title">สว่าง</string>
+    <string name="settings_dark_theme_title">มืด</string>
+    <string name="settings_font_title">ฟอนต์แอป</string>
+    <string name="settings_language_title">ภาษา</string>
+    <string name="settings_rate_us_title">ให้คะแนนเรา</string>
+    <string name="settings_donate_title">บริจาค</string>
+    <string name="settings_feedback_title">รายงานปัญหา</string>
+    <string name="settings_terms_and_conditions_title">ข้อกำหนด &amp; เงื่อนไข</string>
+    <string name="settings_privacy_policy_title">นโยบายความเป็นส่วนตัว</string>
+    <string name="settings_version_title">เวอร์ชัน %s</string>
+
+    <string name="settings_bad_feedback_title">มีอะไรไม่ถูกต้องหรือ?</string>
+    <string name="settings_bad_feedback_body">ความคิดเห็นของคุณมีความหมายมาก ช่วยให้เราปรับปรุงประสบการณ์ของคุณ</string>
+
+    <string name="settings_note_content_title">เนื้อหาโน้ต</string>
+    <string name="settings_note_detect_location_title">ตรวจจับตำแหน่งอัตโนมัติ</string>
+    <string name="settings_note_detect_location_hint">ตรวจจับตำแหน่งปัจจุบันของคุณโดยอัตโนมัติเมื่อสร้างโน้ต</string>
+</resources>

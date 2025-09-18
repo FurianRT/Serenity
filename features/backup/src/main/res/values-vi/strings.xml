@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Sao lưu tự động</string>
     <string name="backup_auto_backup_period_title">Thời gian sao lưu tự động</string>
     <string name="backup_last_sync_time_title">Đồng bộ lần cuối: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">Chạm để Đăng nhập</string>
     <string name="backup_tap_to_sing_in_underline_part">Đăng nhập</string>
     <string name="backup_tap_to_sing_out_title">Chạm để Đăng xuất</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">Rời đi sớm thế?</string>
     <string name="backup_confirm_sign_out_message">Bạn có thể đăng nhập lại bất cứ lúc nào, nhưng lưu ý rằng sao lưu sẽ tạm dừng cho đến lúc đó</string>
     <string name="backup_period_one_day_title">1 ngày</string>

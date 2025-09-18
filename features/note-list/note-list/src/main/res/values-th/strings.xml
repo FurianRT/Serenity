@@ -1,0 +1,5 @@
+<resources>
+    <string name="notes_list_search_bar_title">ค้นหา</string>
+    <string name="notes_list_empty_list_title">\"ทุกเรื่องราวเริ่มต้นด้วยคำหนึ่งคำ\"</string>
+    <string name="notes_list_empty_list_body">แตะเพื่อเริ่มเรื่องราวของคุณ!</string>
+</resources>

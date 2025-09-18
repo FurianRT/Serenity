@@ -1,0 +1,29 @@
+<resources>
+    <string name="lock_enter_your_pin_title">กรอก PIN ของคุณ</string>
+    <string name="lock_enter_new_pin_title">กรอก PIN ใหม่</string>
+    <string name="lock_repeat_your_pin_title">กรอก PIN อีกครั้ง</string>
+    <string name="lock_forgot_pin_title">ลืม PIN ของคุณหรือ?</string>
+    <string name="lock_fingerprint_title">เฉพาะคนเจ๋งเท่านั้นที่เข้าได้</string>
+    <string name="lock_use_pin_title">ใช้ PIN</string>
+    <string name="recovery_email_hint">กรุณากรอกอีเมลของคุณเพื่อรับรหัส PIN ที่ลืม</string>
+    <string name="recovery_email_format_error">อีเมลไม่ถูกต้อง</string>
+    <string name="pin_recovery_dialog_title">เราจะส่งคำแนะนำการรีเซ็ตรหัส PIN ไปที่ %s หากไม่ได้รับอีเมล โปรดตรวจสอบโฟลเดอร์สแปม</string>
+    <string name="pin_recovery_email_subject">กู้คืน PIN</string>
+    <string name="pin_recovery_email_content">PIN ของคุณ: %s</string>
+    <string name="pin_recovery_email_title">ที่อยู่อีเมล</string>
+    <string name="send_pin_recovery_email_failure">เกิดข้อผิดพลาดบางอย่าง</string>
+    <string name="send_pin_recovery_email_success">ส่งอีเมลกู้คืนเรียบร้อยแล้ว</string>
+
+    <string name="security_enable_pin_title">เปิดใช้งาน PIN</string>
+    <string name="security_email_to_recover_pin_title">อีเมลสำหรับกู้คืน PIN</string>
+    <string name="security_pin_request_title">ดีเลย์การขอ PIN</string>
+    <string name="security_enable_fingerprint_title">เปิดใช้งานลายนิ้วมือ</string>
+
+    <plurals name="security_pin_delay_seconds_plural">
+        <item quantity="other">%d วินาที</item>
+    </plurals>
+
+    <plurals name="security_pin_delay_minutes_plural">
+        <item quantity="other">%d นาที</item>
+    </plurals>
+</resources>

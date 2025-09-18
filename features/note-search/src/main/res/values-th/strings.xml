@@ -1,0 +1,8 @@
+<resources>
+    <string name="notes_search_bar_title">ค้นหาด้วยข้อความและแท็ก</string>
+    <string name="notes_search_empty_search_title">ไม่พบโน้ต</string>
+
+    <plurals name="note_search_notes_count_title">
+        <item quantity="other">พบ %d โน้ต</item>
+    </plurals>
+</resources>

@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">자동 백업</string>
     <string name="backup_auto_backup_period_title">자동 백업 주기</string>
     <string name="backup_last_sync_time_title">마지막 동기화: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">로그인하려면 탭하세요</string>
     <string name="backup_tap_to_sing_in_underline_part">로그인</string>
     <string name="backup_tap_to_sing_out_title">로그아웃하려면 탭하세요</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">벌써 나가시나요?</string>
     <string name="backup_confirm_sign_out_message">언제든지 다시 로그인할 수 있지만, 그때까지 백업이 일시 중지됨을 유의하세요</string>
     <string name="backup_period_one_day_title">1일</string>

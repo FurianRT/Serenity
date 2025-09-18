@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">অটো ব্যাকআপ</string>
     <string name="backup_auto_backup_period_title">অটো ব্যাকআপের সময়কাল</string>
     <string name="backup_last_sync_time_title">শেষ সিঙ্ক: %s</string>

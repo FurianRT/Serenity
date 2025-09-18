@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Automatische back-up</string>
     <string name="backup_auto_backup_period_title">Periode automatische back-up</string>
     <string name="backup_last_sync_time_title">Laatste synchronisatie: %s</string>

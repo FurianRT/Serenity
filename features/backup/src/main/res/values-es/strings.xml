@@ -1,5 +1,4 @@
 <resources>
-    <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Copia de seguridad automática</string>
     <string name="backup_auto_backup_period_title">Periodo de copia automática</string>
     <string name="backup_last_sync_time_title">Última sincronización: %s</string>
@@ -10,7 +9,7 @@
     <string name="backup_tap_to_sing_in_title">Toca para Iniciar sesión</string>
     <string name="backup_tap_to_sing_in_underline_part">Iniciar sesión</string>
     <string name="backup_tap_to_sing_out_title">Toca para Cerrar sesión</string>
-    <string name="backup_tap_to_sing_out_underline_part" translatable="false">@string/backup_sign_out_title</string>
+    <string name="backup_tap_to_sing_out_underline_part">@string/backup_sign_out_title</string>
     <string name="backup_confirm_sign_out_title">¿Te vas tan pronto?</string>
     <string name="backup_confirm_sign_out_message">Puedes iniciar sesión en cualquier momento, pero ten en cuenta que las copias de seguridad se pausarán hasta entonces</string>
     <string name="backup_period_one_day_title">1 día</string>

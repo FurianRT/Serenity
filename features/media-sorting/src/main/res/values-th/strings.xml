@@ -1,0 +1,5 @@
+<resources>
+    <string name="media_sorting_title">แก้ไขบล็อกสื่อ</string>
+    <string name="media_sorting_drag_and_drop_hint">ลาก &amp; วางเพื่อเปลี่ยนลำดับ</string>
+    <string name="media_sorting_save_changes_hint">คุณต้องการบันทึกการเปลี่ยนแปลงหรือไม่?</string>
+</resources>
