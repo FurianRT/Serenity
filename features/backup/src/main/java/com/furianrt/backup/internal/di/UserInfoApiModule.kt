@@ -17,8 +17,6 @@ import retrofit2.Retrofit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://people.googleapis.com"
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object UserInfoApiModule {
@@ -45,6 +43,7 @@ internal object UserInfoApiModule {
     fun provideUserInfoRetrofit(
         @UserInfoApiQualifier okHttpClient: OkHttpClient,
     ): Retrofit {
+        val baseUrl = "https://people.googleapis.com"
         val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
@@ -53,7 +52,7 @@ internal object UserInfoApiModule {
         }
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
+            .baseUrl(baseUrl)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }

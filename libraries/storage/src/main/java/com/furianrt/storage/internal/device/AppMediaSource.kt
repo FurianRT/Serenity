@@ -19,7 +19,7 @@ import javax.inject.Singleton
 
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
-private const val IMAGE_COMPRESS_AMOUNT = 75
+private const val IMAGE_COMPRESS_AMOUNT = 70
 
 internal class SavedMediaData(
     val name: String,

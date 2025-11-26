@@ -1,11 +1,9 @@
 package com.furianrt.notepage.internal.ui.page
 
 import android.net.Uri
-import androidx.compose.runtime.snapshots.Snapshot
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
@@ -136,7 +134,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -162,7 +159,6 @@ internal class PageViewModel @AssistedInject constructor(
     private val audioPlayer: AudioPlayer,
     private val stickerIconProvider: StickerIconProvider,
     private val backgroundProvider: NoteBackgroundProvider,
-    private val dispatchers: DispatchersProvider,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
     private val mediaRepository: MediaRepository,
@@ -1025,7 +1021,6 @@ internal class PageViewModel @AssistedInject constructor(
                     )
                 }
                 .distinctUntilChanged()
-                .flowOn(dispatchers.default)
                 .collectLatest(::handleNoteResult)
         }
     }
@@ -1039,16 +1034,13 @@ internal class PageViewModel @AssistedInject constructor(
         _state.update { localState ->
             when (localState) {
                 is PageUiState.Empty, PageUiState.Loading -> {
-                    val defaultMood = appearanceRepository.getDefaultNoteMoodId().first()
-                    val appFont = appearanceRepository.getAppFont().first()
                     PageUiState.Success(
                         noteId = note.id,
-                        content = Snapshot.withMutableSnapshot {
-                            note.content.refreshTitleTemplates(
-                                fontFamily = note.fontFamily ?: appFont.toUiNoteFontFamily(),
-                                addTopTemplate = isInEditMode
-                            )
-                        },
+                        content = note.content.refreshTitleTemplates(
+                            fontFamily = note.fontFamily ?: appearanceRepository.getAppFont()
+                                .first().toUiNoteFontFamily(),
+                            addTopTemplate = isInEditMode
+                        ),
                         tags = with(note.tags) {
                             if (isNoteCreationMode || isInEditMode) {
                                 addTagTemplate()
@@ -1063,7 +1055,7 @@ internal class PageViewModel @AssistedInject constructor(
                         fontSize = note.fontSize,
                         noteBackground = note.background,
                         moodId = note.moodId,
-                        defaultMoodId = defaultMood,
+                        defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
                         locationState = note.location?.toLocationState() ?: LocationState.Empty,
                     ).also {

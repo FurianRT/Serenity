@@ -18,10 +18,6 @@ import java.util.concurrent.TimeUnit
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
-private const val BASE_URL = "https://www.googleapis.com/"
-private const val READ_WRITE_TIMEOUT = 60L * 5L
-private const val CONNECT_TIMEOUT = 20L
-
 @Module
 @InstallIn(SingletonComponent::class)
 internal object DriveApiModule {
@@ -36,9 +32,9 @@ internal object DriveApiModule {
         val builder = OkHttpClient.Builder()
             .addInterceptor(tokenInterceptor)
             .authenticator(tokenAuthenticator)
-            .connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
-            .readTimeout(READ_WRITE_TIMEOUT, TimeUnit.SECONDS)
-            .writeTimeout(READ_WRITE_TIMEOUT, TimeUnit.SECONDS)
+            .connectTimeout(20, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.MINUTES)
+            .writeTimeout(5, TimeUnit.MINUTES)
         if (BuildConfig.DEBUG) {
             builder.addInterceptor(loggingInterceptor)
         }
@@ -51,6 +47,7 @@ internal object DriveApiModule {
     fun provideDriveRetrofit(
         @DriveApiQualifier okHttpClient: OkHttpClient,
     ): Retrofit {
+        val bseUrl = "https://www.googleapis.com/"
         val contentType = "application/json".toMediaType()
         val json = Json {
             ignoreUnknownKeys = true
@@ -59,7 +56,7 @@ internal object DriveApiModule {
         }
         return Retrofit.Builder()
             .client(okHttpClient)
-            .baseUrl(BASE_URL)
+            .baseUrl(bseUrl)
             .addConverterFactory(json.asConverterFactory(contentType))
             .build()
     }

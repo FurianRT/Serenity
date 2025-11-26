@@ -1,7 +1,7 @@
 package com.furianrt.notelistui.composables
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -104,11 +104,9 @@ private fun SuccessContent(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = if (lineCount > 1) Alignment.Top else Alignment.CenterVertically,
     ) {
-        AnimatedContent(
+        Crossfade(
             targetState = isRemovable,
-            transitionSpec = {
-                fadeIn(animationSpec = tween(250)).togetherWith(ExitTransition.None)
-            },
+            animationSpec = tween(durationMillis = 250),
         ) { targetState ->
             if (targetState) {
                 ButtonRemove(

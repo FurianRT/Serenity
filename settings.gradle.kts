@@ -1,3 +1,5 @@
+rootProject.name = "Serenity"
+
 pluginManagement {
 
     includeBuild("build-logic")
