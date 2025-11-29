@@ -47,8 +47,7 @@ import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
 private const val SELECTED_SCALE_DURATION = 350
-private const val MAX_LINES_WITH_MEDIA = 4
-private const val MAX_LINES_WITHOUT_MEDIA = 5
+private const val MAX_TEXT_LINES = 4
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,8 +78,6 @@ fun NoteListItem(
             }
         ),
     )
-    val onlyText = remember(content) { content.all { it is UiNoteContent.Title } }
-
     val rippleColor = MaterialTheme.colorScheme.surfaceContainer
     val rippleConfig = remember(rippleColor) {
         RippleConfiguration(
@@ -125,7 +122,7 @@ fun NoteListItem(
                     is UiNoteContent.Title -> Text(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
                         text = item.state.annotatedString,
-                        maxLines = if (onlyText) MAX_LINES_WITHOUT_MEDIA else MAX_LINES_WITH_MEDIA,
+                        maxLines = MAX_TEXT_LINES,
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = fontFamily?.regular
