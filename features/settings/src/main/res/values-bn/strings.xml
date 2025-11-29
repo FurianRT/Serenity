@@ -19,4 +19,6 @@
     <string name="settings_note_content_title">নোটের বিষয়বস্তু</string>
     <string name="settings_note_detect_location_title">অবস্থান স্বয়ংক্রিয়ভাবে সনাক্ত করুন</string>
     <string name="settings_note_detect_location_hint">নোট তৈরি করার সময় আপনার বর্তমান অবস্থান স্বয়ংক্রিয়ভাবে সনাক্ত করুন</string>
+    <string name="settings_note_minimalistic_home_screen_title">হোম স্ক্রিন মিনিমাল মোড</string>
+    <string name="settings_note_minimalistic_home_screen_hint">হোম স্ক্রিনে নোটগুলোকে শুধুমাত্র টেক্সট সহ সাধারণ তালিকা হিসেবে দেখান</string>
 </resources>

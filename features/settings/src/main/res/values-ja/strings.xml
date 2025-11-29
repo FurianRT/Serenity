@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">位置情報を自動検出</string>
     <string name="settings_note_content_title">ノートの内容</string>
     <string name="settings_note_detect_location_hint">ノートを作成するときに現在地を自動検出</string>
+    <string name="settings_note_minimalistic_home_screen_title">ホーム画面ミニマルモード</string>
+    <string name="settings_note_minimalistic_home_screen_hint">ホーム画面でノートをテキストのみのシンプルなリストとして表示</string>
 </resources>

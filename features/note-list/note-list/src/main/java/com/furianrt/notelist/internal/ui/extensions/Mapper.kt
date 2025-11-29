@@ -14,16 +14,19 @@ import java.time.LocalDate
 internal fun List<LocalNote>.toMainScreenNotes(
     selectedNotes: Set<String>,
     appFontFamily: NoteFontFamily,
+    withMedia: Boolean,
 ) = map { note ->
     note.toMainScreenNote(
         isSelected = selectedNotes.contains(note.id),
         appFontFamily = appFontFamily,
+        withMedia = withMedia,
     )
 }
 
 internal fun LocalNote.toMainScreenNote(
     isSelected: Boolean,
     appFontFamily: NoteFontFamily,
+    withMedia: Boolean,
 ): NoteListScreenNote {
     val localDateNow = LocalDate.now()
     val localDate = date.toLocalDate()
@@ -41,6 +44,9 @@ internal fun LocalNote.toMainScreenNote(
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,
         isSelected = isSelected,
-        content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
+        content = content.getShortUiContent(
+            fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
+            withMedia = withMedia,
+        ),
     )
 }

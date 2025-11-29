@@ -71,4 +71,12 @@ internal class AppearanceRepositoryImp @Inject constructor(
     override suspend fun setAutoDetectLocationAsked(value: Boolean) {
         appearanceDataStore.setAutoDetectLocationAsked(value)
     }
+
+    override fun isMinimalisticHomeScreenEnabled(): Flow<Boolean> {
+        return appearanceDataStore.isMinimalisticHomeScreenEnabled()
+    }
+
+    override suspend fun setMinimalisticHomeScreenEnabled(enabled: Boolean) {
+        appearanceDataStore.setMinimalisticHomeScreenEnabled(enabled)
+    }
 }

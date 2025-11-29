@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Tự động phát hiện vị trí</string>
     <string name="settings_note_content_title">Nội dung ghi chú</string>
     <string name="settings_note_detect_location_hint">Tự động phát hiện vị trí hiện tại của bạn khi tạo ghi chú</string>
+    <string name="settings_note_minimalistic_home_screen_title">Chế Độ Tối Giản Màn Hình Chính</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Hiển thị ghi chú dưới dạng danh sách chỉ có văn bản trên màn hình chính</string>
 </resources>

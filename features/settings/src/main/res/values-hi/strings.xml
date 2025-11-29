@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">स्थान स्वतः पहचानें</string>
     <string name="settings_note_content_title">नोट की सामग्री</string>
     <string name="settings_note_detect_location_hint">नोट बनाते समय अपना वर्तमान स्थान स्वतः पहचानें</string>
+    <string name="settings_note_minimalistic_home_screen_title">होम स्क्रीन मिनिमल मोड</string>
+    <string name="settings_note_minimalistic_home_screen_hint">होम स्क्रीन पर नोट्स को केवल टेक्स्ट वाली सरल सूची के रूप में दिखाएँ</string>
 </resources>

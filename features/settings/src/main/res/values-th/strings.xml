@@ -19,4 +19,6 @@
     <string name="settings_note_content_title">เนื้อหาโน้ต</string>
     <string name="settings_note_detect_location_title">ตรวจจับตำแหน่งอัตโนมัติ</string>
     <string name="settings_note_detect_location_hint">ตรวจจับตำแหน่งปัจจุบันของคุณโดยอัตโนมัติเมื่อสร้างโน้ต</string>
+    <string name="settings_note_minimalistic_home_screen_title">โหมดมินิมอลของหน้าจอหลัก</string>
+    <string name="settings_note_minimalistic_home_screen_hint">แสดงบันทึกเป็นรายการแบบตัวอักษรง่าย ๆ บนหน้าจอหลัก</string>
 </resources>

@@ -92,7 +92,7 @@ private fun SuccessContent(
         modifier = modifier
             .fillMaxSize()
             .padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SwitchWithLabel(
             title = stringResource(R.string.settings_note_detect_location_title),
@@ -100,6 +100,14 @@ private fun SuccessContent(
             isChecked = uiState.isAutoDetectLocationEnabled,
             onCheckedChange = { isChecked ->
                 onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))
+            },
+        )
+        SwitchWithLabel(
+            title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
+            hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
+            isChecked = uiState.isMinimalisticHomeScreenEnabled,
+            onCheckedChange = { isChecked ->
+                onEvent(NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged(isChecked))
             },
         )
     }
@@ -119,6 +127,7 @@ private fun Preview() {
         Content(
             uiState = NoteSettingsState.Success(
                 isAutoDetectLocationEnabled = true,
+                isMinimalisticHomeScreenEnabled = false,
             ),
             onEvent = {},
         )

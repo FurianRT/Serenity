@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Rilevamento automatico della posizione</string>
     <string name="settings_note_content_title">Contenuto della nota</string>
     <string name="settings_note_detect_location_hint">Rileva automaticamente la tua posizione attuale quando crei una nota</string>
+    <string name="settings_note_minimalistic_home_screen_title">Modalità Minimal nella Schermata Home</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Mostra le note come un semplice elenco di solo testo nella schermata Home</string>
 </resources>

@@ -153,9 +153,10 @@ fun NoteLocation.toLocationState() = LocationState.Success(
 
 fun List<LocalNote.Content>.getShortUiContent(
     fontFamily: UiNoteFontFamily,
+    withMedia: Boolean,
 ): List<UiNoteContent> = buildList {
     val mediaBlock = this@getShortUiContent.firstOrNull { it is LocalNote.Content.MediaBlock }
-    if (mediaBlock != null) {
+    if (mediaBlock != null && withMedia) {
         add(
             UiNoteContent.MediaBlock(
                 id = mediaBlock.id,
@@ -181,7 +182,7 @@ fun List<LocalNote.Content>.getShortUiContent(
             ),
         )
     }
-    if (mediaBlock == null) {
+    if (mediaBlock == null && withMedia) {
         val voices = this@getShortUiContent
             .filterIsInstance<LocalNote.Content.Voice>()
             .take(2)

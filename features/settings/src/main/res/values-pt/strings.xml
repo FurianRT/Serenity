@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Detecção automática de localização</string>
     <string name="settings_note_content_title">Conteúdo da nota</string>
     <string name="settings_note_detect_location_hint">Detectar automaticamente sua localização atual ao criar uma nota</string>
+    <string name="settings_note_minimalistic_home_screen_title">Modo Minimal na Tela Inicial</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Mostrar as notas como uma lista simples apenas com texto na tela inicial</string>
 </resources>

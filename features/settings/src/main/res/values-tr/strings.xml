@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Konumu otomatik algıla</string>
     <string name="settings_note_content_title">Not içeriği</string>
     <string name="settings_note_detect_location_hint">Not oluştururken mevcut konumunu otomatik algıla</string>
+    <string name="settings_note_minimalistic_home_screen_title">Ana Ekran Minimal Modu</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Ana ekranda notları basit bir metin listesi olarak göster</string>
 </resources>

@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">위치 자동 감지</string>
     <string name="settings_note_content_title">노트 내용</string>
     <string name="settings_note_detect_location_hint">노트를 작성할 때 현재 위치를 자동으로 감지</string>
+    <string name="settings_note_minimalistic_home_screen_title">홈 화면 미니멀 모드</string>
+    <string name="settings_note_minimalistic_home_screen_hint">홈 화면에서 노트를 텍스트만 있는 간단한 목록으로 표시</string>
 </resources>

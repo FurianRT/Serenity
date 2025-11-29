@@ -111,12 +111,14 @@ internal class SearchViewModel @Inject constructor(
                 endDate = dateFilter?.end,
             ),
             appearanceRepository.getAppFont(),
-        ) { selectedNotes, notes, appFont ->
+            appearanceRepository.isMinimalisticHomeScreenEnabled(),
+        ) { selectedNotes, notes, appFont, compactHomeScreen ->
             buildState(
                 notes = notes,
                 data = data,
                 selectedNotes = selectedNotes,
                 appFontFamily = appFont,
+                isMinimalisticHomeScreenEnabled = compactHomeScreen,
             )
         }
     }.flowOn(
@@ -296,6 +298,7 @@ internal class SearchViewModel @Inject constructor(
         selectedNotes: Set<String>,
         data: SearchData,
         appFontFamily: NoteFontFamily,
+        isMinimalisticHomeScreenEnabled: Boolean,
     ): SearchUiState {
         val hasFilters = data.selectedFilters.isNotEmpty()
         val hasQuery = data.queryText.isNotBlank()
@@ -309,6 +312,7 @@ internal class SearchViewModel @Inject constructor(
                         note.toNoteItem(
                             isSelected = selectedNotes.contains(note.id),
                             appFontFamily = appFontFamily,
+                            withMedia = !isMinimalisticHomeScreenEnabled,
                         )
                     }
                     addAll(notesItems)

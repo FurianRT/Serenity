@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Standort automatisch erkennen</string>
     <string name="settings_note_content_title">Notizinhalte</string>
     <string name="settings_note_detect_location_hint">Erkenne automatisch deinen aktuellen Standort beim Erstellen einer Notiz</string>
+    <string name="settings_note_minimalistic_home_screen_title">Minimalmodus für Startbildschirm</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Notizen auf dem Startbildschirm als einfache Textliste anzeigen</string>
 </resources>

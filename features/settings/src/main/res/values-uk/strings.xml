@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Автовизначення місцезнаходження</string>
     <string name="settings_note_content_title">Вміст нотатки</string>
     <string name="settings_note_detect_location_hint">Автоматично визначати поточне місцезнаходження під час створення нотатки</string>
+    <string name="settings_note_minimalistic_home_screen_title">Мінімалістичний режим головного екрана</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Показувати нотатки на головному екрані як простий список без медіа</string>
 </resources>

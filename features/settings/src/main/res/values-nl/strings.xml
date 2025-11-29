@@ -17,4 +17,6 @@
     <string name="settings_note_content_title">Inhoud van notitie</string>
     <string name="settings_note_detect_location_title">Locatie automatisch detecteren</string>
     <string name="settings_note_detect_location_hint">Detecteer automatisch uw huidige locatie bij het aanmaken van een notitie</string>
+    <string name="settings_note_minimalistic_home_screen_title">Minimale Modus voor het Startscherm</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Toon notities op het startscherm als een eenvoudige lijst met alleen tekst</string>
 </resources>

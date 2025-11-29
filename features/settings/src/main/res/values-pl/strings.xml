@@ -17,4 +17,6 @@
     <string name="settings_note_content_title">Zawartość notatki</string>
     <string name="settings_note_detect_location_title">Automatyczne wykrywanie lokalizacji</string>
     <string name="settings_note_detect_location_hint">Automatycznie wykrywaj bieżącą lokalizację podczas tworzenia notatki</string>
+    <string name="settings_note_minimalistic_home_screen_title">Tryb Minimalny na Ekranie Głównym</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Wyświetlaj notatki na ekranie głównym jako prostą listę zawierającą tylko текст</string>
 </resources>

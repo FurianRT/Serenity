@@ -20,6 +20,7 @@ internal fun List<LocalTag>.toTagsList() = SearchListItem.TagsList(
 internal fun LocalNote.toNoteItem(
     isSelected: Boolean,
     appFontFamily: NoteFontFamily,
+    withMedia: Boolean,
 ): SearchListItem.Note {
     val localDateNow = LocalDate.now()
     val localDate = date.toLocalDate()
@@ -36,7 +37,10 @@ internal fun LocalNote.toNoteItem(
         fontSize = fontSize,
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,
-        content = content.getShortUiContent((fontFamily ?: appFontFamily).toUiNoteFontFamily()),
+        content = content.getShortUiContent(
+            fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
+            withMedia = withMedia,
+        ),
     )
 }
 

@@ -53,12 +53,17 @@ internal class NoteListViewModel @Inject constructor(
         scrollToNoteState,
         selectedNotesState,
         appearanceRepository.getAppFont(),
-    ) { notes, noteId, selectedNotes, appFont ->
+        appearanceRepository.isMinimalisticHomeScreenEnabled(),
+    ) { notes, noteId, selectedNotes, appFont, compactHomeScreen ->
         if (notes.isEmpty()) {
             NoteListUiState.Empty
         } else {
             NoteListUiState.Success(
-                notes = notes.toMainScreenNotes(selectedNotes, appFont),
+                notes = notes.toMainScreenNotes(
+                    selectedNotes = selectedNotes,
+                    appFontFamily = appFont,
+                    withMedia = !compactHomeScreen,
+                ),
                 scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
                 selectedNotesCount = selectedNotes.count(),
                 font = appFont.toNoteFont(),

@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Deteksi Lokasi Otomatis</string>
     <string name="settings_note_content_title">Konten Catatan</string>
     <string name="settings_note_detect_location_hint">Deteksi lokasi Anda secara otomatis saat membuat catatan</string>
+    <string name="settings_note_minimalistic_home_screen_title">Mode Minimal Layar Utama</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Tampilkan catatan sebagai daftar sederhana tanpa media di layar utama</string>
 </resources>

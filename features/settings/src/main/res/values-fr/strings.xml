@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Détection automatique de la position</string>
     <string name="settings_note_content_title">Contenu de la note</string>
     <string name="settings_note_detect_location_hint">Détecter automatiquement votre position actuelle lors de la création d’une note</string>
+    <string name="settings_note_minimalistic_home_screen_title">Mode Minimal pour l’Écran d’Accueil</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Afficher les notes sous forme de liste simple en texte uniquement sur l’écran d’accueil</string>
 </resources>

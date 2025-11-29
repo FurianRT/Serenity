@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -19,14 +19,15 @@ internal class NoteSettingsViewModel @Inject constructor(
     private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
-    val state: StateFlow<NoteSettingsState> = appearanceRepository
-        .isAutoDetectLocationEnabled()
-        .map(::buildState)
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = NoteSettingsState.Loading,
-        )
+    val state: StateFlow<NoteSettingsState> = combine(
+        appearanceRepository.isAutoDetectLocationEnabled(),
+        appearanceRepository.isMinimalisticHomeScreenEnabled(),
+        ::buildState,
+    ).stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5_000),
+        initialValue = NoteSettingsState.Loading,
+    )
 
     private val _effect = MutableSharedFlow<NoteSettingsEffect>(extraBufferCapacity = 5)
     val effect: SharedFlow<NoteSettingsEffect> = _effect.asSharedFlow()
@@ -40,12 +41,18 @@ internal class NoteSettingsViewModel @Inject constructor(
             is NoteSettingsEvent.OnEnableAutoDetectLocationChanged -> launch {
                 appearanceRepository.setAutoDetectLocationEnabled(event.isEnabled)
             }
+
+            is NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged -> launch {
+                appearanceRepository.setMinimalisticHomeScreenEnabled(event.isEnabled)
+            }
         }
     }
 
     private fun buildState(
         isAutoDetectLocationEnabled: Boolean,
+        isMinimalisticHomeScreenEnabled: Boolean,
     ): NoteSettingsState = NoteSettingsState.Success(
         isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
+        isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,
     )
 }

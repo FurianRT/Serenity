@@ -17,4 +17,6 @@
     <string name="settings_note_content_title">Conținut notă</string>
     <string name="settings_note_detect_location_title">Detectare automată locație</string>
     <string name="settings_note_detect_location_hint">Detectează automat locația curentă când creezi o notă</string>
+    <string name="settings_note_minimalistic_home_screen_title">Mod Minimal pentru Ecranul Principal</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Afișează notițele ca o listă simplă doar text pe ecranul principal</string>
 </resources>

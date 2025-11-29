@@ -28,4 +28,7 @@ interface AppearanceRepository {
     suspend fun setAutoDetectLocationEnabled(enabled: Boolean)
     fun isAutoDetectLocationAsked(): Flow<Boolean>
     suspend fun setAutoDetectLocationAsked(value: Boolean)
+
+    fun isMinimalisticHomeScreenEnabled(): Flow<Boolean>
+    suspend fun setMinimalisticHomeScreenEnabled(enabled: Boolean)
 }

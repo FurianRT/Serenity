@@ -17,4 +17,6 @@
     <string name="settings_note_detect_location_title">Awtomatikong tukuyin ang lokasyon</string>
     <string name="settings_note_content_title">Nilalaman ng tala</string>
     <string name="settings_note_detect_location_hint">Awtomatikong tukuyin ang iyong kasalukuyang lokasyon kapag gumagawa ng tala</string>
+    <string name="settings_note_minimalistic_home_screen_title">Minimal Mode para sa Home Screen</string>
+    <string name="settings_note_minimalistic_home_screen_hint">Ipakita ang mga note bilang simpleng listahang text-only sa home screen</string>
 </resources>
