@@ -3,11 +3,15 @@ package com.furianrt.domain.entities
 import android.net.Uri
 import com.furianrt.common.UriSerializer
 import com.furianrt.common.ZonedDateTimeSerializer
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 import java.time.ZonedDateTime
 
+@OptIn(ExperimentalSerializationApi::class)
 @Serializable
+@JsonIgnoreUnknownKeys
 data class LocalNote(
     val id: String,
     @Serializable(with = ZonedDateTimeSerializer::class)
@@ -24,9 +28,11 @@ data class LocalNote(
     val content: List<Content>,
 ) {
     @Serializable
+    @JsonIgnoreUnknownKeys
     data class Tag(val title: String)
 
     @Serializable
+    @JsonIgnoreUnknownKeys
     data class Sticker(
         val id: String,
         val typeId: String,
@@ -39,9 +45,11 @@ data class LocalNote(
     )
 
     @Serializable
+    @JsonIgnoreUnknownKeys
     sealed class Content(open val id: String) {
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         @SerialName("Title")
         data class Title(
             @SerialName("title_id")
@@ -51,6 +59,7 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         @SerialName("MediaBlock")
         data class MediaBlock(
             @SerialName("media_block_id")
@@ -59,6 +68,7 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         @SerialName("Voice")
         data class Voice(
             @SerialName("voice_id")
@@ -73,6 +83,7 @@ data class LocalNote(
         ) : Content(id)
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         sealed class Media(
             open val id: String,
             open val name: String,
@@ -86,6 +97,7 @@ data class LocalNote(
         )
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         @SerialName("Image")
         data class Image(
             @SerialName("image_id")
@@ -107,6 +119,7 @@ data class LocalNote(
         ) : Media(id, name, ratio, uri, addedDate)
 
         @Serializable
+        @JsonIgnoreUnknownKeys
         @SerialName("Video")
         data class Video(
             @SerialName("video_id")

@@ -146,8 +146,7 @@ private fun ImagePage(
 
     val request = remember(item.id) {
         ImageRequest.Builder(context)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.id)
+            .diskCachePolicy(CachePolicy.DISABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .memoryCacheKey(item.id)
             .data(item.uri)

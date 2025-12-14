@@ -6,14 +6,12 @@ import androidx.navigation.toRoute
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
-import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
-import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -23,7 +21,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -33,7 +30,6 @@ internal class MediaViewerViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaCoordinator: SelectedMediaCoordinator,
-    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<MediaViewerRoute>()
@@ -80,7 +76,6 @@ internal class MediaViewerViewModel @Inject constructor(
             MediaViewerUiState.Success(
                 media = media.map(DeviceMedia::toMediaItem),
                 initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
-                font = appearanceRepository.getAppFont().first().toNoteFont(),
             ).setSelectedItems(mediaCoordinator.getSelectedMedia())
         }
     }

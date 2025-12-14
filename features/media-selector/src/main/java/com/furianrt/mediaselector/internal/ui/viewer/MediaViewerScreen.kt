@@ -11,7 +11,11 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.RippleConfiguration
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +47,6 @@ import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
-import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.SerenityTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -80,10 +83,16 @@ internal fun MediaViewerScreen(
             }
     }
 
-    SerenityTheme(
-        isLightTheme = false,
-        font = (uiState as? MediaViewerUiState.Success)?.font ?: LocalFont.current,
-    ) {
+    val rippleConfig = RippleConfiguration(
+        color = Color.White,
+        rippleAlpha = RippleAlpha(
+            draggedAlpha = 0.1f,
+            focusedAlpha = 0.1f,
+            hoveredAlpha = 0.1f,
+            pressedAlpha = 0.1f,
+        ),
+    )
+    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         when (uiState) {
             is MediaViewerUiState.Success -> SuccessContent(
                 uiState = uiState,

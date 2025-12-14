@@ -113,8 +113,7 @@ internal fun ImageItem(
     val context = LocalContext.current
     val request = remember(item.id) {
         ImageRequest.Builder(context)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.id.toString())
+            .diskCachePolicy(CachePolicy.DISABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .memoryCacheKey(item.id.toString())
             .data(item.uri)

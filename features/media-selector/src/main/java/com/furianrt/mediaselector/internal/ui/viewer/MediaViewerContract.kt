@@ -2,13 +2,11 @@ package com.furianrt.mediaselector.internal.ui.viewer
 
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import com.furianrt.uikit.theme.NoteFont
 
 internal sealed interface MediaViewerUiState {
     data class Success(
         val initialMediaIndex: Int,
         val media: List<MediaItem>,
-        val font: NoteFont? = null,
     ) : MediaViewerUiState {
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             media = media.map { item ->
