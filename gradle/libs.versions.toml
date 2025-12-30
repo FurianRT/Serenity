@@ -13,8 +13,8 @@ performancePlugin = "2.0.2"
 coreKtx = "1.17.0"
 lifecycle = "2.10.0"
 
-composeBom = "2025.12.00"
-composeActivity = "1.12.1"
+composeBom = "2025.12.01"
+composeActivity = "1.12.2"
 composeNavigation = "2.9.6"
 
 accompanist = "0.37.3"
@@ -40,7 +40,7 @@ blur = "1.7.1"
 
 zoom = "1.4.0"
 
-exoplayer = "1.8.0"
+exoplayer = "1.9.0"
 
 calendar = "2.9.0"
 
@@ -67,7 +67,7 @@ exifinterface = "1.4.2"
 
 workManager = "2.11.0"
 
-firebaseBom = "34.6.0"
+firebaseBom = "34.7.0"
 
 [libraries]
 

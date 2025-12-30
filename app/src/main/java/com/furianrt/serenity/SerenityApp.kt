@@ -41,6 +41,7 @@ internal class SerenityApp : Application(), Configuration.Provider {
             initStrictMode()
         }
         startPeriodicWorks()
+        // Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
     }
 
     override val workManagerConfiguration: Configuration
@@ -63,7 +64,7 @@ internal class SerenityApp : Application(), Configuration.Provider {
             StrictMode.ThreadPolicy.Builder()
                 .detectNetwork()
                 .detectResourceMismatches()
-                .detectUnbufferedIo()
+                //.detectUnbufferedIo()
                 .penaltyLog()
                 .penaltyDeath()
                 .build()
