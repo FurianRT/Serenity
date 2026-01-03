@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity are nevoie de acces la locația ta pentru a adăuga locuri în notițele tale. Atinge Setări > Permisiuni și activează Locația</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Locație</string>
+
+    <string name="notifications_permission_message">Serenity are nevoie de permisiunea de a trimite notificări pentru a te ține la curent cu progresul sincronizării și informațiile importante. Deschide Setări > Permisiuni și activează Notificări</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Notificări</string>
 </resources>

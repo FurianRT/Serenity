@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity cần quyền truy cập vị trí của bạn để thêm địa điểm vào ghi chú. Nhấn Cài đặt > Quyền và bật Vị trí</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Vị trí</string>
+
+    <string name="notifications_permission_message">Serenity cần quyền gửi thông báo để cập nhật cho bạn về tiến trình đồng bộ và thông tin quan trọng. Mở Cài đặt > Quyền và bật Thông báo</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Thông báo</string>
 </resources>

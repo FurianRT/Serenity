@@ -18,6 +18,8 @@
     <string name="action_no">Nu</string>
     <string name="action_gallery">Galerie</string>
     <string name="action_camera">Cameră</string>
+    <string name="action_allow">Permite</string>
+    <string name="action_skip">Sari peste</string>
 
     <string name="title_email">Email</string>
 

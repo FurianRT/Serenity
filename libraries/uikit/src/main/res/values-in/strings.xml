@@ -18,6 +18,8 @@
     <string name="action_no">Tidak</string>
     <string name="action_gallery">Galeri</string>
     <string name="action_camera">Kamera</string>
+    <string name="action_allow">Izinkan</string>
+    <string name="action_skip">Lewati</string>
 
     <string name="title_email">Email</string>
 

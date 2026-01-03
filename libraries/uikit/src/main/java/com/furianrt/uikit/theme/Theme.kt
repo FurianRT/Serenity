@@ -27,7 +27,7 @@ import androidx.compose.ui.graphics.toArgb
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
 
-private const val COLOR_ANIM_DURATION = 200
+private const val COLOR_ANIM_DURATION = 250
 
 val defaultColorScheme = darkColorScheme()
 
@@ -63,6 +63,11 @@ fun SerenityTheme(
         targetValue = colorScheme.surfaceContainer,
     )
 
+    val animatedBackground by animateColorAsState(
+        animationSpec = tween(COLOR_ANIM_DURATION),
+        targetValue = colorScheme.background,
+    )
+
     val typography = remember(font) { getTypography(font) }
 
     val resultColorTheme = colorScheme.copy(
@@ -70,6 +75,7 @@ fun SerenityTheme(
         surface = animatedSurface,
         onSurface = animatedOnSurface,
         surfaceContainer = animatedSurfaceContainer,
+        background = animatedBackground,
     )
 
     LaunchedEffect(isLightTheme) {

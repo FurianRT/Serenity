@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">চলুন শুরু করি!</string>
+    <string name="onboarding_go_to_diary_button_title">ডায়েরিতে যান</string>
+
+    <string name="onboarding_greeting_page_title">আপনার ডায়েরিতে স্বাগতম!</string>
+    <string name="onboarding_greeting_page_body">চলুন এটিকে আরামদায়ক এবং\nশুধু আপনার জন্য প্রস্তুত করি</string>
+
+    <string name="onboarding_theme_page_title">আপনার পছন্দের রূপ খুঁজুন</string>
+    <string name="onboarding_theme_light_title">হালকা</string>
+    <string name="onboarding_theme_dark_title">গাঢ়</string>
+
+    <string name="onboarding_notifications_title">আমরা কি আপনাকে নোটিফিকেশন পাঠাতে পারি?</string>
+    <string name="onboarding_notifications_body">শুধু সিঙ্ক অগ্রগতি এবং গুরুত্বপূর্ণ আপডেটের জন্য — আমরা অপ্রয়োজনীয়ভাবে বিরক্ত করব না</string>
+
+    <string name="onboarding_complete_title">সব প্রস্তুত। লেখা শুরু করা যাক!</string>
+</resources>

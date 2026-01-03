@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity a besoin d’accéder à votre position pour ajouter des lieux à vos notes. Touchez Paramètres > Autorisations et activez Position</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Position</string>
+
+    <string name="notifications_permission_message">Serenity a besoin de l\'autorisation d\'envoyer des notifications afin de vous tenir informé de la progression de la synchronisation et des informations importantes. Ouvrez Réglages > Autorisations et activez les Notifications</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Notifications</string>
 </resources>

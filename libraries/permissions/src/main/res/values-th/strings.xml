@@ -1,17 +1,21 @@
 <resources>
-    <string name="media_permission_message">Serenity ต้องการเข้าถึงพื้นที่เก็บข้อมูลของคุณเพื่อให้คุณแนบรูปภาพและวิดีโอ แตะ การตั้งค่า &gt; สิทธิ์ และเปิด รูปภาพและวิดีโอ</string>
+    <string name="media_permission_message">Serenity ต้องการเข้าถึงพื้นที่เก็บข้อมูลของคุณเพื่อให้คุณแนบรูปภาพและวิดีโอ แตะ การตั้งค่า > สิทธิ์ และเปิด รูปภาพและวิดีโอ</string>
     <string name="media_permission_message_bold_part_1">Serenity</string>
     <string name="media_permission_message_bold_part_2"> รูปภาพและวิดีโอ</string>
 
-    <string name="audio_record_permission_message">Serenity ต้องการเข้าถึงไมโครโฟนของคุณเพื่อให้สามารถบันทึกเสียงได้ แตะ การตั้งค่า &gt; สิทธิ์ และเปิด ไมโครโฟน</string>
+    <string name="audio_record_permission_message">Serenity ต้องการเข้าถึงไมโครโฟนของคุณเพื่อให้สามารถบันทึกเสียงได้ แตะ การตั้งค่า > สิทธิ์ และเปิด ไมโครโฟน</string>
     <string name="audio_record_permission_message_bold_part_1">Serenity</string>
     <string name="audio_record_permission_message_bold_part_2"> ไมโครโฟน</string>
 
-    <string name="camera_permission_message">Serenity ต้องการเข้าถึงกล้องของคุณเพื่อถ่ายรูป แตะ การตั้งค่า &gt; สิทธิ์ และเปิด กล้อง</string>
+    <string name="camera_permission_message">Serenity ต้องการเข้าถึงกล้องของคุณเพื่อถ่ายรูป แตะ การตั้งค่า > สิทธิ์ และเปิด กล้อง</string>
     <string name="camera_permission_message_bold_part_1">Serenity</string>
     <string name="camera_permission_message_bold_part_2"> กล้อง</string>
 
-    <string name="location_permission_message">Serenity ต้องการเข้าถึงตำแหน่งของคุณเพื่อเพิ่มสถานที่ในโน้ต แตะ การตั้งค่า &gt; สิทธิ์ และเปิด ตำแหน่ง</string>
+    <string name="location_permission_message">Serenity ต้องการเข้าถึงตำแหน่งของคุณเพื่อเพิ่มสถานที่ในโน้ต แตะ การตั้งค่า > สิทธิ์ และเปิด ตำแหน่ง</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2"> ตำแหน่ง</string>
+
+    <string name="notifications_permission_message">Serenity ต้องการสิทธิ์ในการส่งการแจ้งเตือนเพื่อแจ้งความคืบหน้าการซิงค์และข้อมูลสำคัญให้คุณทราบ ไปที่ การตั้งค่า > สิทธิ์ และเปิด การแจ้งเตือน</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">การแจ้งเตือน</string>
 </resources>

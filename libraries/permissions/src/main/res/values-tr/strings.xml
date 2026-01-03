@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity, notlarınıza yer eklemek için konumunuza erişim ister. Ayarlar > İzinler’e dokunun ve Konum’u açın</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Konum</string>
+
+    <string name="notifications_permission_message">Serenity, senkronizasyon durumu ve önemli bilgiler hakkında seni bilgilendirmek için bildirim gönderme iznine ihtiyaç duyar. Ayarlar > İzinler bölümüne gidin ve Bildirimler\'i açın</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Bildirimler</string>
 </resources>

@@ -18,6 +18,8 @@
     <string name="action_no">Hayır</string>
     <string name="action_gallery">Galeri</string>
     <string name="action_camera">Kamera</string>
+    <string name="action_allow">İzin ver</string>
+    <string name="action_skip">Atla</string>
 
     <string name="title_email">E-posta</string>
 

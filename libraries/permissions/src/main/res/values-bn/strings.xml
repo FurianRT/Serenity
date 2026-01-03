@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity-কে আপনার অবস্থানে অ্যাক্সেস প্রয়োজন যাতে নোটে স্থান যোগ করা যায়। সেটিংস > অনুমতি ট্যাপ করুন, এবং অবস্থান চালু করুন</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">অবস্থান </string>
+
+    <string name="notifications_permission_message">সিঙ্ক অগ্রগতি এবং গুরুত্বপূর্ণ তথ্য সম্পর্কে আপনাকে জানাতে Serenity-এর নোটিফিকেশন পাঠানোর অনুমতি প্রয়োজন। সেটিংস > পারমিশন এ যান এবং নোটিফিকেশন চালু করুন</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">নোটিফিকেশন</string>
 </resources>

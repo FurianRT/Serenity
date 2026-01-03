@@ -14,4 +14,8 @@
     <string name="location_permission_message">Додатку Serenity потрібен доступ до вашого місцеположення, щоб додавати його в нотатки. Натисніть Налаштування > Дозволи та увімкніть Місцеположення</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Місцеположення</string>
+
+    <string name="notifications_permission_message">Serenity потребує дозволу на надсилання сповіщень, щоб інформувати вас про хід синхронізації та важливу інформацію. Відкрийте Налаштування > Дозволи та увімкніть Сповіщення</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Сповіщення</string>
 </resources>

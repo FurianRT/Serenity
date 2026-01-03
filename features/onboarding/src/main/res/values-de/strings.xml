@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Los geht\'s!</string>
+    <string name="onboarding_go_to_diary_button_title">Zum Tagebuch</string>
+
+    <string name="onboarding_greeting_page_title">Willkommen in deinem Tagebuch!</string>
+    <string name="onboarding_greeting_page_body">Lass es gemütlich werden und\nperfekt für dich bereit</string>
+
+    <string name="onboarding_theme_page_title">Finde deinen perfekten Look</string>
+    <string name="onboarding_theme_light_title">Hell</string>
+    <string name="onboarding_theme_dark_title">Dunkel</string>
+
+    <string name="onboarding_notifications_title">Dürfen wir dir Benachrichtigungen senden?</string>
+    <string name="onboarding_notifications_body">Nur für Synchronisationsfortschritte und wichtige Updates — wir stören dich nicht unnötig</string>
+
+    <string name="onboarding_complete_title">Alles bereit. Lass das Schreiben beginnen!</string>
+</resources>

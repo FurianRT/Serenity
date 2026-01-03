@@ -18,6 +18,8 @@
     <string name="action_no">Không</string>
     <string name="action_gallery">Thư viện</string>
     <string name="action_camera">Máy ảnh</string>
+    <string name="action_allow">Cho phép</string>
+    <string name="action_skip">Bỏ qua</string>
 
     <string name="title_email">Email</string>
 

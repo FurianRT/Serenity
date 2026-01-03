@@ -15,4 +15,8 @@
     <string name="location_permission_message">Serenity нужен доступ к вашему местоположению, чтобы добавлять места в заметки. Нажмите Настройки > Разрешения и включите Местоположение</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Местоположение</string>
+
+    <string name="notifications_permission_message">Serenity требуется разрешение на отправку уведомлений, чтобы информировать вас о ходе синхронизации и важной информации. Откройте Настройки > Разрешения и включите Уведомления</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Уведомления</string>
 </resources>

@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.LockAuthorizer
+import com.furianrt.domain.repositories.AppInfoRepository
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -17,6 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MainViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
+    private val appInfoRepository: AppInfoRepository,
     private val lockAuthorizer: LockAuthorizer,
 ) : ViewModel() {
 
@@ -24,6 +27,7 @@ internal class MainViewModel @Inject constructor(
         appearanceRepository.getAppThemeColorId(),
         appearanceRepository.getAppFont(),
         lockAuthorizer.isAuthorized(),
+        appInfoRepository.isOnboardingShown(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
@@ -34,6 +38,9 @@ internal class MainViewModel @Inject constructor(
     fun onEvent(event: MainEvent) {
         when (event) {
             is MainEvent.OnUnlockScreenRequest -> lockAuthorizer.authorize()
+            is MainEvent.OnOnboardingCompleted -> launch {
+                appInfoRepository.setOnboardingShown()
+            }
         }
     }
 
@@ -41,9 +48,11 @@ internal class MainViewModel @Inject constructor(
         appColorId: String?,
         appFont: NoteFontFamily,
         isAuthorized: Boolean,
+        isOnboardingShown: Boolean,
     ) = MainState(
         appColor = UiThemeColor.fromId(appColorId),
         appFont = appFont.toNoteFont(),
         isScreenLocked = !isAuthorized,
+        isOnboardingNeeded = !isOnboardingShown,
     )
 }

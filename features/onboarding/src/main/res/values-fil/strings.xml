@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Simulan na!</string>
+    <string name="onboarding_go_to_diary_button_title">Pumunta sa diary</string>
+
+    <string name="onboarding_greeting_page_title">Maligayang pagdating sa iyong diary!</string>
+    <string name="onboarding_greeting_page_body">Gawin natin itong komportable at handa\npara lang sa iyo</string>
+
+    <string name="onboarding_theme_page_title">Hanapin ang perpektong itsura</string>
+    <string name="onboarding_theme_light_title">Maliwanag</string>
+    <string name="onboarding_theme_dark_title">Madilim</string>
+
+    <string name="onboarding_notifications_title">Maaari ba kaming magpadala ng mga notification?</string>
+    <string name="onboarding_notifications_body">Para lamang sa sync progress at mahahalagang update — hindi ka namin iistorbohin nang hindi kinakailangan</string>
+
+    <string name="onboarding_complete_title">Handa na ang lahat. Simulan na ang pagsusulat!</string>
+</resources>

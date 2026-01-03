@@ -14,4 +14,8 @@
     <string name="location_permission_message">Kailangan ng Serenity ng access sa iyong lokasyon para makapagdagdag ng mga lugar sa iyong mga tala. Pindutin ang Settings > Permissions at i-on ang Lokasyon</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Lokasyon</string>
+
+    <string name="notifications_permission_message">Kailangan ng Serenity ng pahintulot upang magpadala ng mga notification para manatili kang updated sa progreso ng pag-sync at mahahalagang impormasyon. Buksan ang Settings > Permissions at i-on ang Notifications</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Notifications</string>
 </resources>

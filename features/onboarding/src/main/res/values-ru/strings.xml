@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Поехали!</string>
+    <string name="onboarding_go_to_diary_button_title">Перейти к дневнику</string>
+
+    <string name="onboarding_greeting_page_title">Добро пожаловать в ваш дневник!</string>
+    <string name="onboarding_greeting_page_body">Давайте сделаем его уютным и готовым\nименно для вас</string>
+
+    <string name="onboarding_theme_page_title">Найдите свой идеальный стиль</string>
+    <string name="onboarding_theme_light_title">Светлая</string>
+    <string name="onboarding_theme_dark_title">Тёмная</string>
+
+    <string name="onboarding_notifications_title">Можно отправлять вам уведомления?</string>
+    <string name="onboarding_notifications_body">Только о синхронизации и важных обновлениях — мы не будем беспокоить вас без необходимости</string>
+
+    <string name="onboarding_complete_title">Всё готово. Пора начинать писать!</string>
+</resources>

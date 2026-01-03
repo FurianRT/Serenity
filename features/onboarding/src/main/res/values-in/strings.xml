@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Ayo mulai!</string>
+    <string name="onboarding_go_to_diary_button_title">Buka buku harian</string>
+
+    <string name="onboarding_greeting_page_title">Selamat datang di buku harianmu!</string>
+    <string name="onboarding_greeting_page_body">Mari buat nyaman dan siap\nkhusus untukmu</string>
+
+    <string name="onboarding_theme_page_title">Temukan tampilan yang pas</string>
+    <string name="onboarding_theme_light_title">Terang</string>
+    <string name="onboarding_theme_dark_title">Gelap</string>
+
+    <string name="onboarding_notifications_title">Bolehkah kami mengirim notifikasi?</string>
+    <string name="onboarding_notifications_body">Hanya untuk progres sinkronisasi dan pembaruan penting — kami tidak akan mengganggumu tanpa alasan</string>
+
+    <string name="onboarding_complete_title">Semuanya siap. Saatnya menulis!</string>
+</resources>

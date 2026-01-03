@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">चलो शुरू करें!</string>
+    <string name="onboarding_go_to_diary_button_title">डायरी खोलें</string>
+
+    <string name="onboarding_greeting_page_title">आपकी डायरी में स्वागत है!</string>
+    <string name="onboarding_greeting_page_body">आइए इसे आरामदायक और\nसिर्फ आपके लिए तैयार करें</string>
+
+    <string name="onboarding_theme_page_title">अपना परफेक्ट लुक चुनें</string>
+    <string name="onboarding_theme_light_title">हल्का</string>
+    <string name="onboarding_theme_dark_title">गहरा</string>
+
+    <string name="onboarding_notifications_title">क्या हम आपको नोटिफ़िकेशन भेज सकते हैं?</string>
+    <string name="onboarding_notifications_body">केवल सिंक प्रगति और ज़रूरी अपडेट के लिए — हम आपको बेवजह परेशान नहीं करेंगे</string>
+
+    <string name="onboarding_complete_title">सब तैयार है। लिखना शुरू करें!</string>
+</resources>

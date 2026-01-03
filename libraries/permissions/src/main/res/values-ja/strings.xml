@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity があなたのノートに場所を追加するために位置情報へのアクセスが必要です。[設定] > [権限] をタップし、位置情報をオンにしてください</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">位置情報</string>
+
+    <string name="notifications_permission_message">Serenity は、同期の進行状況や重要な情報をお知らせするために通知の送信許可が必要です。設定 > 権限 を開き、通知をオンにしてください</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">通知</string>
 </resources>

@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity memerlukan akses ke lokasi Anda untuk menambahkan tempat ke catatan Anda. Ketuk Pengaturan > Izin, lalu aktifkan Lokasi</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Lokasi</string>
+
+    <string name="notifications_permission_message">Serenity memerlukan izin untuk mengirim notifikasi agar Anda tetap mendapatkan informasi tentang progres sinkronisasi dan informasi penting. Buka Setelan > Izin, lalu aktifkan Notifikasi</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Notifikasi</string>
 </resources>

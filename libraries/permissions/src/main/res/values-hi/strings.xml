@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity को आपके स्थान तक पहुँच चाहिए ताकि वह आपके नोट्स में जगह जोड़ सके। सेटिंग्स > परमिशन पर टैप करें और स्थान चालू करें</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">स्थान</string>
+
+    <string name="notifications_permission_message">Serenity को सिंक प्रगति और महत्वपूर्ण जानकारी के बारे में आपको अपडेट रखने के लिए सूचनाएँ भेजने की अनुमति चाहिए। सेटिंग्स > परमिशन में जाकर सूचनाएँ चालू करें</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">सूचनाएँ</string>
 </resources>

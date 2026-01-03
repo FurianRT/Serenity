@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.repositories.AppInfoRepository
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.LocaleRepository
@@ -23,6 +24,7 @@ import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
+import com.furianrt.storage.internal.repositories.AppInfoRepositoryImp
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.DeviceInfoRepositoryImp
 import com.furianrt.storage.internal.repositories.LocaleRepositoryImp
@@ -79,6 +81,10 @@ internal interface DatabaseModule {
     @Binds
     @Singleton
     fun locationRepository(imp: LocationRepositoryImp): LocationRepository
+
+    @Binds
+    @Singleton
+    fun AppInfoRepository(imp: AppInfoRepositoryImp): AppInfoRepository
 
     companion object {
         @Suppress("LocalVariableName")

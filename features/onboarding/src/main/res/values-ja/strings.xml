@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">始めよう！</string>
+    <string name="onboarding_go_to_diary_button_title">日記へ</string>
+
+    <string name="onboarding_greeting_page_title">あなたの日記へようこそ！</string>
+    <string name="onboarding_greeting_page_body">あなただけのために\n心地よく整えましょう</string>
+
+    <string name="onboarding_theme_page_title">理想のデザインを見つけよう</string>
+    <string name="onboarding_theme_light_title">ライト</string>
+    <string name="onboarding_theme_dark_title">ダーク</string>
+
+    <string name="onboarding_notifications_title">通知を送ってもいいですか？</string>
+    <string name="onboarding_notifications_body">同期の進行状況や重要なお知らせのみ — 不要な通知は送りません</string>
+
+    <string name="onboarding_complete_title">準備完了。書き始めましょう！</string>
+</resources>

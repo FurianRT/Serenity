@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity potrzebuje dostępu do Twojej lokalizacji, aby dodawać miejsca do notatek. Przejdź do Ustawienia &gt; Uprawnienia i włącz Lokalizacja</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Lokalizacja</string>
+
+    <string name="notifications_permission_message">Serenity potrzebuje zgody na wysyłanie powiadomień, aby informować Cię o postępie synchronizacji i ważnych informacjach. Otwórz Ustawienia > Uprawnienia i włącz Powiadomienia</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Powiadomienia</string>
 </resources>

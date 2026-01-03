@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Să începem!</string>
+    <string name="onboarding_go_to_diary_button_title">Mergi la jurnal</string>
+
+    <string name="onboarding_greeting_page_title">Bine ai venit în jurnalul tău!</string>
+    <string name="onboarding_greeting_page_body">Hai să-l facem primitor și pregătit\nspecial pentru tine</string>
+
+    <string name="onboarding_theme_page_title">Găsește-ți stilul perfect</string>
+    <string name="onboarding_theme_light_title">Deschis</string>
+    <string name="onboarding_theme_dark_title">Închis</string>
+
+    <string name="onboarding_notifications_title">Putem să îți trimitem notificări?</string>
+    <string name="onboarding_notifications_body">Doar pentru progresul sincronizării și actualizări importante — nu te vom deranja inutil</string>
+
+    <string name="onboarding_complete_title">Totul este gata. Hai să scriem!</string>
+</resources>

@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Bắt đầu nhé!</string>
+    <string name="onboarding_go_to_diary_button_title">Vào nhật ký</string>
+
+    <string name="onboarding_greeting_page_title">Chào mừng bạn đến với nhật ký của mình!</string>
+    <string name="onboarding_greeting_page_body">Hãy làm cho nó ấm áp và sẵn sàng\nchỉ dành riêng cho bạn</string>
+
+    <string name="onboarding_theme_page_title">Tìm phong cách hoàn hảo của bạn</string>
+    <string name="onboarding_theme_light_title">Sáng</string>
+    <string name="onboarding_theme_dark_title">Tối</string>
+
+    <string name="onboarding_notifications_title">Chúng tôi có thể gửi thông báo cho bạn không?</string>
+    <string name="onboarding_notifications_body">Chỉ để cập nhật tiến trình đồng bộ và thông tin quan trọng — chúng tôi sẽ không làm phiền bạn không cần thiết</string>
+
+    <string name="onboarding_complete_title">Mọi thứ đã sẵn sàng. Hãy bắt đầu viết!</string>
+</resources>

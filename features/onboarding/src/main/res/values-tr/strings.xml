@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Hadi başlayalım!</string>
+    <string name="onboarding_go_to_diary_button_title">Günlüğe git</string>
+
+    <string name="onboarding_greeting_page_title">Günlüğüne hoş geldin!</string>
+    <string name="onboarding_greeting_page_body">Onu senin için rahat ve hazır\nhale getirelim</string>
+
+    <string name="onboarding_theme_page_title">Mükemmel görünümünü bul</string>
+    <string name="onboarding_theme_light_title">Açık</string>
+    <string name="onboarding_theme_dark_title">Koyu</string>
+
+    <string name="onboarding_notifications_title">Bildirim göndermemize izin verir misin?</string>
+    <string name="onboarding_notifications_body">Yalnızca senkronizasyon durumu ve önemli güncellemeler için — gereksiz yere rahatsız etmeyiz</string>
+
+    <string name="onboarding_complete_title">Her şey hazır. Yazmaya başla!</string>
+</resources>

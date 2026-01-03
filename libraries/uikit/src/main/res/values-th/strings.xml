@@ -18,6 +18,8 @@
     <string name="action_no">ไม่</string>
     <string name="action_gallery">แกลเลอรี</string>
     <string name="action_camera">กล้อง</string>
+    <string name="action_allow">อนุญาต</string>
+    <string name="action_skip">ข้าม</string>
 
     <string name="title_email">อีเมล</string>
 

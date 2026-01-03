@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Let\’s go!</string>
+    <string name="onboarding_go_to_diary_button_title">Go to diary</string>
+
+    <string name="onboarding_greeting_page_title">Welcome to your diary!</string>
+    <string name="onboarding_greeting_page_body">Let’s make it cozy and ready just\nfor you</string>
+
+    <string name="onboarding_theme_page_title">Find your perfect look</string>
+    <string name="onboarding_theme_light_title">Light</string>
+    <string name="onboarding_theme_dark_title">Dark</string>
+
+    <string name="onboarding_notifications_title">Can we send you notifications?</string>
+    <string name="onboarding_notifications_body">Only for sync progress and important updates - we\’ll never bother you unnecessarily</string>
+
+    <string name="onboarding_complete_title">You’re all set. Let the writing begin!</string>
+</resources>

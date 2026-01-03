@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
@@ -46,6 +47,7 @@ import com.furianrt.notelist.api.noteListScreen
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
+import com.furianrt.onboarding.api.OnboardingScreen
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
@@ -137,7 +139,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     navigationBarStyle = SystemBarStyle.dark(color),
                                 )
 
-                                !hasNoteViewRoute ->  if (uiState.appColor.isLight) {
+                                !hasNoteViewRoute -> if (uiState.appColor.isLight) {
                                     activity.enableEdgeToEdge(
                                         statusBarStyle = SystemBarStyle.light(
                                             scrim = color,
@@ -302,6 +304,18 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         CheckPinScreen(
                             hazeState = hazeState,
                             onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
+                        )
+                    }
+
+                    AnimatedVisibility(
+                        visible = uiState.isOnboardingNeeded,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        OnboardingScreen(
+                            onCloseRequest = {
+                                viewModel.onEvent(MainEvent.OnOnboardingCompleted)
+                            },
                         )
                     }
                 }

@@ -19,6 +19,8 @@
     <string name="action_no">Нет</string>
     <string name="action_gallery">Галерея</string>
     <string name="action_camera">Камера</string>
+    <string name="action_allow">Разрешить</string>
+    <string name="action_skip">Пропустить</string>
 
     <string name="title_email">Электронная почта</string>
 

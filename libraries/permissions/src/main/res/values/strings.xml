@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity needs access to your location to add places to your notes. Tap Settings > Permissions, and turn Location on</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Location</string>
+
+    <string name="notifications_permission_message">Serenity needs permission to send notifications to keep you updated on sync progress and important information. Tap Settings > Permissions, and turn Notifications on</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Notifications</string>
 </resources>

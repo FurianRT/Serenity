@@ -18,6 +18,8 @@
     <string name="action_no">아니요</string>
     <string name="action_gallery">갤러리</string>
     <string name="action_camera">카메라</string>
+    <string name="action_allow">허용</string>
+    <string name="action_skip">건너뛰기</string>
 
     <string name="title_email">이메일</string>
 

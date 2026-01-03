@@ -18,6 +18,8 @@
     <string name="action_no">Hindi</string>
     <string name="action_gallery">Gallery</string>
     <string name="action_camera">Camera</string>
+    <string name="action_allow">Payagan</string>
+    <string name="action_skip">Laktawan</string>
 
     <string name="title_email">Correo electrónico</string>
 

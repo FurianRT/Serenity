@@ -16,8 +16,6 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.domain.SettingsRepository
-import com.furianrt.settings.internal.domain.usecases.GetAppDarkThemeListUseCase
-import com.furianrt.settings.internal.domain.usecases.GetAppLightThemeListUseCase
 import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
@@ -46,8 +44,6 @@ private const val TERMS_AND_CONDITIONS_LINK =
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     dispatchers: DispatchersProvider,
-    private val getAppDarkThemeListUseCase: GetAppDarkThemeListUseCase,
-    private val getAppLightThemeListUseCase: GetAppLightThemeListUseCase,
     private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
@@ -179,8 +175,8 @@ internal class SettingsViewModel @Inject constructor(
         locale: AppLocale,
     ): SettingsUiState {
         val selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId)
-        val lightColors = getAppLightThemeListUseCase()
-        val darkColors = getAppDarkThemeListUseCase()
+        val lightColors = UiThemeColor.getLightThemesList()
+        val darkColors = UiThemeColor.getDarkThemesList()
         return SettingsUiState.Success(
             themes = listOf(
                 UiTheme.Light(

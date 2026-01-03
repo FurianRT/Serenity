@@ -18,6 +18,8 @@
     <string name="action_no">No</string>
     <string name="action_gallery">Galleria</string>
     <string name="action_camera">Fotocamera</string>
+    <string name="action_allow">Consenti</string>
+    <string name="action_skip">Salta</string>
 
     <string name="title_email">Email</string>
 

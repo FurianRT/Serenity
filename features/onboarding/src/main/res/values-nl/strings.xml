@@ -1,0 +1,16 @@
+<resources>
+    <string name="onboarding_start_button_title">Aan de slag!</string>
+    <string name="onboarding_go_to_diary_button_title">Ga naar dagboek</string>
+
+    <string name="onboarding_greeting_page_title">Welkom in je dagboek!</string>
+    <string name="onboarding_greeting_page_body">Laten we het gezellig maken en klaarzetten\nspeciaal voor jou</string>
+
+    <string name="onboarding_theme_page_title">Vind jouw perfecte uitstraling</string>
+    <string name="onboarding_theme_light_title">Licht</string>
+    <string name="onboarding_theme_dark_title">Donker</string>
+
+    <string name="onboarding_notifications_title">Mogen we je meldingen sturen?</string>
+    <string name="onboarding_notifications_body">Alleen voor synchronisatie en belangrijke updates — we storen je niet onnodig</string>
+
+    <string name="onboarding_complete_title">Alles is klaar. Tijd om te schrijven!</string>
+</resources>

@@ -16,8 +16,8 @@ import com.furianrt.uikit.extensions.applyIf
 fun RegularButton(
     text: String,
     onClick: () -> Unit,
-    enabled: Boolean,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
 ) {
     Button(
         modifier = modifier.applyIf(!enabled) { Modifier.alpha(0.5f) },

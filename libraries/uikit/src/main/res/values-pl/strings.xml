@@ -18,6 +18,8 @@
     <string name="action_no">Nie</string>
     <string name="action_gallery">Galeria</string>
     <string name="action_camera">Aparat</string>
+    <string name="action_allow">Zezwól</string>
+    <string name="action_skip">Pomiń</string>
 
     <string name="title_email">E-mail</string>
 

@@ -18,6 +18,8 @@
     <string name="action_no">Ні</string>
     <string name="action_gallery">Галерея</string>
     <string name="action_camera">Камера</string>
+    <string name="action_allow">Дозволити</string>
+    <string name="action_skip">Пропустити</string>
 
     <string name="title_email">Електронна пошта</string>
 

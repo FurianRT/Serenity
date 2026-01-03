@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity heeft toegang tot uw locatie nodig om plaatsen aan uw notities toe te voegen. Tik op Instellingen > Machtigingen en schakel Locatie in</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Locatie</string>
+
+    <string name="notifications_permission_message">Serenity heeft toestemming nodig om meldingen te sturen zodat je op de hoogte blijft van synchronisatievoortgang en belangrijke informatie. Ga naar Instellingen > Machtigingen en zet Meldingen aan</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Meldingen</string>
 </resources>

@@ -286,6 +286,32 @@ enum class UiThemeColor(
 
     companion object {
         fun fromId(id: String?) = entries.find { it.id == id } ?: STORM_IN_THE_NIGHT_BLUE_LIGHT
+        fun getDarkThemesList() = listOf(
+            STORM_IN_THE_NIGHT_BLUE_LIGHT,
+            DISTANT_CASTLE_BLUE,
+            IRIS_RED_DARK,
+            STORM_IN_THE_NIGHT_BLUE,
+            SCANDI_GRANDPA_GRAY_DARK,
+            DISTANT_CASTLE_GREEN,
+            TOTAL_BLACK,
+            EUPHORIA_BLUE_DARK,
+            EUPHORIA_BLUE,
+            UNICORN_2012_BLUE,
+            EUPHORIA_PINK,
+            UNICORN_2012_PINK_DARK,
+            EUPHORIA_VIOLET,
+            VAMPIRE_RED_DARK,
+            IRIS_RED,
+        )
+
+        fun getLightThemesList() = listOf(
+            GREEN_LIGHT,
+            LIGHT_BLUE,
+            LIGHT_WHITE,
+            PINK_LIGHT,
+            PURPLE_LIGHT,
+            ORANGE_LIGHT,
+        )
     }
 }
 

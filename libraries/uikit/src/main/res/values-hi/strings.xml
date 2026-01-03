@@ -18,6 +18,8 @@
     <string name="action_no">नहीं</string>
     <string name="action_gallery">गैलरी</string>
     <string name="action_camera">कैमरा</string>
+    <string name="action_allow">अनुमति दें</string>
+    <string name="action_skip">छोड़ें</string>
 
     <string name="title_email">ईमेल</string>
 

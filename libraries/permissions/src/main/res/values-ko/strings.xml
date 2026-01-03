@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity가 메모에 장소를 추가하려면 내 위치 접근 권한이 필요합니다. 설정 > 권한으로 이동해 위치를 켜주세요</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">위치</string>
+
+    <string name="notifications_permission_message">Serenity에서 동기화 진행 상황과 중요한 정보를 안내하기 위해 알림 전송 권한이 필요합니다. 설정 > 권한으로 이동하여 알림을 켜세요</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">알림</string>
 </resources>

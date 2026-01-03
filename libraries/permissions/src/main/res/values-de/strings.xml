@@ -14,4 +14,8 @@
     <string name="location_permission_message">Serenity benötigt Zugriff auf deinen Standort, um Orte zu deinen Notizen hinzuzufügen. Tippe auf Einstellungen > Berechtigungen und aktiviere Standort</string>
     <string name="location_permission_message_bold_part_1">Serenity</string>
     <string name="location_permission_message_bold_part_2">Standort</string>
+
+    <string name="notifications_permission_message">Serenity benötigt die Berechtigung, Benachrichtigungen zu senden, um dich über den Synchronisationsfortschritt und wichtige Informationen auf dem Laufenden zu halten. Öffne Einstellungen > Berechtigungen und aktiviere Benachrichtigungen</string>
+    <string name="notifications_permission_message_bold_part_1">Serenity</string>
+    <string name="notifications_permission_message_bold_part_2">Benachrichtigungen</string>
 </resources>

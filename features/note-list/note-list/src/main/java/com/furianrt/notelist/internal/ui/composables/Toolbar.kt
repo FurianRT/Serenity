@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.furianrt.notelist.R
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
@@ -174,7 +173,7 @@ private fun SettingsButton(
                 }
                 onClick()
             },
-        painter = painterResource(id = R.drawable.ic_settings),
+        painter = painterResource(uiR.drawable.ic_settings),
         contentDescription = null,
         tint = MaterialTheme.colorScheme.onSurface,
     )

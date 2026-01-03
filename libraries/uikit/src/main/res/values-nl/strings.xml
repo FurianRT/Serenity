@@ -18,6 +18,8 @@
     <string name="action_no">Nee</string>
     <string name="action_gallery">Galerij</string>
     <string name="action_camera">Camera</string>
+    <string name="action_allow">Toestaan</string>
+    <string name="action_skip">Overslaan</string>
 
     <string name="title_email">E-mail</string>
 

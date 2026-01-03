@@ -9,10 +9,13 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.serenity.domain.IncrementLaunchCountUseCase
 import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,16 +33,24 @@ internal class SerenityApp : Application(), Configuration.Provider {
     lateinit var notesRepository: NotesRepository
 
     @Inject
+    lateinit var incrementLaunchCountUseCase: IncrementLaunchCountUseCase
+
+    @Inject
     lateinit var syncManager: SyncManager
 
     @Inject
     lateinit var dispatchers: DispatchersProvider
+
+    private val scope by lazy(LazyThreadSafetyMode.NONE) {
+        CoroutineScope(dispatchers.main + SupervisorJob())
+    }
 
     override fun onCreate() {
         super.onCreate()
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
+        updateLaunchCount()
         startPeriodicWorks()
         // Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
     }
@@ -80,6 +91,10 @@ internal class SerenityApp : Application(), Configuration.Provider {
                 .penaltyLog()
                 .build()
         )
+    }
+
+    private fun updateLaunchCount() {
+        scope.launch { incrementLaunchCountUseCase() }
     }
 }
 
