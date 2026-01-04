@@ -14,17 +14,23 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottieDynamicProperties
+import com.airbnb.lottie.model.KeyPath
 import com.furianrt.onboarding.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.utils.brighterBy
 
 @Composable
 internal fun GreetingScreen(
@@ -35,6 +41,50 @@ internal fun GreetingScreen(
     )
 
     val animatable = rememberLottieAnimatable()
+
+    val mainColor = MaterialTheme.colorScheme.primaryContainer.brighterBy(0.05f)
+
+    val dynamicProperties = rememberLottieDynamicProperties(
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = mainColor.toArgb(),
+            keyPath = KeyPath("**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.GRADIENT_COLOR,
+            value = arrayOf(
+                mainColor.toArgb(),
+                mainColor.brighterBy(0.05f).toArgb(),
+                mainColor.brighterBy(0.2f).toArgb(),
+            ),
+            keyPath = KeyPath(
+                "Top Flower",
+                "Lotus Icon w BG",
+                "Lotus Animated",
+                "Lotus",
+                "Bulb Parts",
+                "Lines",
+                "**",
+            ),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.GRADIENT_COLOR,
+            value = arrayOf(
+                mainColor.toArgb(),
+                mainColor.brighterBy(0.05f).toArgb(),
+                mainColor.brighterBy(0.1f).toArgb(),
+            ),
+            keyPath = KeyPath(
+                "Top Flower",
+                "Lotus Icon w BG",
+                "Lotus Animated",
+                "Lotus",
+                "Bulb Parts",
+                "bulb",
+                "**",
+            ),
+        ),
+    )
 
     LaunchedEffect(composition) {
         animatable.animate(
@@ -56,6 +106,7 @@ internal fun GreetingScreen(
                 .height(150.dp)
                 .scale(2.5f),
             composition = composition,
+            dynamicProperties = dynamicProperties,
             progress = { animatable.progress },
         )
         Spacer(Modifier.height(24.dp))
@@ -65,7 +116,7 @@ internal fun GreetingScreen(
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(12.dp))
+        Spacer(Modifier.height(16.dp))
         Text(
             modifier = Modifier.padding(horizontal = 32.dp),
             text = stringResource(R.string.onboarding_greeting_page_body),

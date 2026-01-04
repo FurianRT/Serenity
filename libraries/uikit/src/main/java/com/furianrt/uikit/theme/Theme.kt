@@ -29,8 +29,9 @@ import com.furianrt.uikit.entities.colorScheme
 
 private const val COLOR_ANIM_DURATION = 250
 
-val defaultColorScheme = darkColorScheme()
+internal val defaultColorScheme = darkColorScheme()
 
+val LocalColorScheme = compositionLocalOf { UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT.colorScheme }
 val LocalIsLightTheme = compositionLocalOf { false }
 val LocalFont = compositionLocalOf<NoteFont> { NoteFont.NotoSans }
 val LocalHasMediaRoute = compositionLocalOf { false }
@@ -39,7 +40,7 @@ val LocalHasMediaSortingRoute = compositionLocalOf { false }
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SerenityTheme(
-    colorScheme: ColorScheme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT.colorScheme,
+    colorScheme: ColorScheme = LocalColorScheme.current,
     font: NoteFont = LocalFont.current,
     isLightTheme: Boolean = LocalIsLightTheme.current,
     content: @Composable () -> Unit,
@@ -118,6 +119,7 @@ fun SerenityTheme(
             LocalTextSelectionColors provides textSelectionColors,
             LocalContentColor provides resultColorTheme.onSurface,
             LocalIsLightTheme provides isLightTheme,
+            LocalColorScheme provides resultColorTheme,
             LocalFont provides font,
             content = content,
         )

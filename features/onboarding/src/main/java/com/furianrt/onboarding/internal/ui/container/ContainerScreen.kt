@@ -2,9 +2,9 @@ package com.furianrt.onboarding.internal.ui.container
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -137,29 +137,12 @@ private fun SuccessContent(
                 .statusBarsPadding()
                 .clickableNoRipple {},
         ) {
-            AnimatedContent(
+            Crossfade(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 targetState = uiState.page,
-                transitionSpec = {
-                    val enterTransition = slideIntoContainer(
-                        towards = SlideDirection.Left,
-                        animationSpec = tween(durationMillis = 550),
-                    ) + fadeIn(
-                        animationSpec = tween(
-                            durationMillis = 450,
-                            delayMillis = 100,
-                        ),
-                    )
-                    val exitTransition = slideOutOfContainer(
-                        towards = SlideDirection.Left,
-                        animationSpec = tween(durationMillis = 550),
-                    ) + fadeOut(
-                        animationSpec = tween(durationMillis = 550),
-                    )
-                    enterTransition.togetherWith(exitTransition)
-                },
+                animationSpec = tween(durationMillis = 400, easing = LinearEasing),
             ) { targetState ->
                 when (targetState) {
                     is OnboardingPage.Greeting -> GreetingScreen()

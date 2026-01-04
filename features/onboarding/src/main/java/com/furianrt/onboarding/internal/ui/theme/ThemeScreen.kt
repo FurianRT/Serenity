@@ -16,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +31,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.onboarding.R
 import com.furianrt.onboarding.internal.ui.theme.elements.ThemePreviewPage
-import com.furianrt.onboarding.internal.ui.theme.model.ThemeTab
 import com.furianrt.uikit.components.TabsSelector
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
@@ -63,7 +61,6 @@ internal fun ThemeScreen(
                     .collect { currentPage ->
                         val realIndex = currentPage % uiState.themes.count()
                         state.selectedTheme = uiState.themes[realIndex]
-                        viewModel.onEvent(ThemeEvent.OnThemeChange(state.selectedTheme))
                     }
             }
             LaunchedEffect(Unit) {
@@ -80,6 +77,7 @@ internal fun ThemeScreen(
             Content(
                 modifier = modifier,
                 pagerState = pagerState,
+                state = state,
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
             )
@@ -89,15 +87,14 @@ internal fun ThemeScreen(
 
 @Composable
 private fun Content(
+    state: ThemeScreenState,
     uiState: ThemeState.Success,
     onEvent: (event: ThemeEvent) -> Unit,
     pagerState: PagerState,
     modifier: Modifier = Modifier,
 ) {
-
-    val tabs = remember { uiState.tabs.map { it.title } }
     Column(
-        modifier = modifier.padding(vertical = 32.dp),
+        modifier = modifier.padding(top = 40.dp, bottom = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
@@ -106,11 +103,14 @@ private fun Content(
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(40.dp))
         TabsSelector(
-            tabs = tabs,
-            selectedIndex = uiState.tabs.indexOf(uiState.selectedTab),
-            onClick = { onEvent(ThemeEvent.OnThemeTabClick) },
+            tabs = uiState.tabs,
+            selectedIndex = if (state.selectedTheme.isLight) 1 else 0,
+            onClick = {
+                val selectedThemeIndex = pagerState.currentPage % uiState.themes.count()
+                onEvent(ThemeEvent.OnThemeTabClick(uiState.themes[selectedThemeIndex]))
+            },
         )
         Spacer(Modifier.height(24.dp))
         HorizontalPager(
@@ -154,9 +154,9 @@ private fun Preview() {
             uiState = ThemeState.Success(
                 initialPageIndex = 1,
                 themes = UiThemeColor.getDarkThemesList() + UiThemeColor.getLightThemesList(),
-                tabs = listOf(ThemeTab.Dark("Dark"), ThemeTab.Light("Light")),
-                selectedTab = ThemeTab.Dark("Dark"),
+                tabs = listOf("Dark", "Light"),
             ),
+            state = ThemeScreenState(UiThemeColor.DISTANT_CASTLE_GREEN),
             onEvent = {},
         )
     }

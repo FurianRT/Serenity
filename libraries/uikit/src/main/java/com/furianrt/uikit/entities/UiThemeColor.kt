@@ -288,11 +288,11 @@ enum class UiThemeColor(
         fun fromId(id: String?) = entries.find { it.id == id } ?: STORM_IN_THE_NIGHT_BLUE_LIGHT
         fun getDarkThemesList() = listOf(
             STORM_IN_THE_NIGHT_BLUE_LIGHT,
+            DISTANT_CASTLE_GREEN,
             DISTANT_CASTLE_BLUE,
             IRIS_RED_DARK,
             STORM_IN_THE_NIGHT_BLUE,
             SCANDI_GRANDPA_GRAY_DARK,
-            DISTANT_CASTLE_GREEN,
             TOTAL_BLACK,
             EUPHORIA_BLUE_DARK,
             EUPHORIA_BLUE,
@@ -305,12 +305,12 @@ enum class UiThemeColor(
         )
 
         fun getLightThemesList() = listOf(
+            ORANGE_LIGHT,
             GREEN_LIGHT,
             LIGHT_BLUE,
             LIGHT_WHITE,
             PINK_LIGHT,
             PURPLE_LIGHT,
-            ORANGE_LIGHT,
         )
     }
 }
