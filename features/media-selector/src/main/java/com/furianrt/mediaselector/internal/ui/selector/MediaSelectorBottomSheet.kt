@@ -43,6 +43,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
@@ -61,8 +62,10 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -76,7 +79,8 @@ import com.furianrt.uikit.R as uiR
 private const val CONTENT_ANIM_DURATION = 300
 private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
+@OptIn(
+    ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
     ExperimentalFoundationApi::class
 )
 @Composable
@@ -125,6 +129,7 @@ internal fun MediaSelectorBottomSheetInternal(
                     is MediaSelectorEffect.OpenMediaViewer -> openMediaViewerState(
                         MediaViewerRoute(
                             mediaId = effect.mediaId,
+                            albumId = effect.albumId,
                             dialogId = effect.dialogId,
                             requestId = effect.requestId,
                         ),
@@ -134,7 +139,10 @@ internal fun MediaSelectorBottomSheetInternal(
                         onMediaSelectedState(effect.result)
                     }
 
-                    is MediaSelectorEffect.ShowAlbumsList -> albumsDialogState = effect.albums
+                    is MediaSelectorEffect.ShowAlbumsList -> {
+                        albumsDialogState = effect.albums.takeIf { it.isNotEmpty() }
+                    }
+
                     is MediaSelectorEffect.HideAlbumsList -> albumsDialogState = null
                 }
             }
@@ -268,13 +276,23 @@ private fun SheetContent(
     albumsDialogState: List<MediaAlbumItem>?,
     modifier: Modifier = Modifier,
 ) {
+    val shadowColor = MaterialTheme.colorScheme.surfaceDim
+    SkipFirstEffect(uiState.selectedAlbum?.id ?: MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
+        listState.scrollToItem(0)
+    }
     Surface(
         modifier = modifier,
         tonalElevation = 8.dp,
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     ) {
         Column {
-            DragHandle()
+            DragHandle(
+                modifier = Modifier.drawBehind {
+                    if (listState.canScrollBackward) {
+                        drawBottomShadow(shadowColor)
+                    }
+                },
+            )
             AnimatedContent(
                 targetState = uiState,
                 transitionSpec = {
@@ -290,6 +308,7 @@ private fun SheetContent(
                     is MediaSelectorUiState.Empty -> EmptyContent(
                         uiState = targetState,
                         onEvent = onEvent,
+                        albumsDialogState = albumsDialogState,
                     )
 
                     is MediaSelectorUiState.Success -> SuccessContent(

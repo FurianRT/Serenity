@@ -20,10 +20,6 @@ internal class SelectedMediaCoordinator @Inject constructor() : Closeable {
         selectedMedia.removeAll { it.id == media.id }
     }
 
-    fun unselectMedia(predicate: (media: MediaItem) -> Boolean) {
-        selectedMedia.removeAll(predicate)
-    }
-
     fun unselectAllMedia() {
         selectedMedia.clear()
     }

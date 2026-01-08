@@ -5,15 +5,21 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 
-internal sealed interface MediaSelectorUiState {
-    data object Loading : MediaSelectorUiState
-    data class Empty(val showPartialAccessMessage: Boolean) : MediaSelectorUiState
+internal sealed class MediaSelectorUiState(
+    open val selectedAlbum: MediaAlbumItem?,
+) {
+    data object Loading : MediaSelectorUiState(selectedAlbum = null)
+    data class Empty(
+        override val selectedAlbum: MediaAlbumItem?,
+        val showPartialAccessMessage: Boolean,
+    ) : MediaSelectorUiState(selectedAlbum)
+
     data class Success(
         val items: List<MediaItem>,
         val selectedCount: Int,
-        val selectedAlbum: MediaAlbumItem,
+        override val selectedAlbum: MediaAlbumItem?,
         val showPartialAccessMessage: Boolean,
-    ) : MediaSelectorUiState {
+    ) : MediaSelectorUiState(selectedAlbum) {
 
         fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
             selectedCount = selectedItems.count(),
@@ -59,5 +65,6 @@ internal sealed interface MediaSelectorEffect {
         val dialogId: Int,
         val requestId: String,
         val mediaId: Long,
+        val albumId: String?,
     ) : MediaSelectorEffect
 }

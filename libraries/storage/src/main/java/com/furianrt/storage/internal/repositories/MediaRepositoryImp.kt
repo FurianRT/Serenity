@@ -108,7 +108,9 @@ internal class MediaRepositoryImp @Inject constructor(
         videoDao.getAllVideos().deepMap(EntryNoteVideo::toNoteContentVideo),
     ) { images, videos -> images + videos }
 
-    override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
+    override suspend fun getDeviceMediaList(
+        albumId: String?,
+    ): List<DeviceMedia> = sharedMediaSource.getMediaList(albumId)
 
     override suspend fun getDeviceAlbumsList(): List<DeviceAlbum> {
         return sharedMediaSource.getAlbumsList()

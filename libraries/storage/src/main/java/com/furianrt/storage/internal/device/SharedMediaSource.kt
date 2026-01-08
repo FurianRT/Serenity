@@ -62,7 +62,7 @@ internal class SharedMediaSource @Inject constructor(
         }
     }
 
-    suspend fun getMediaList(): List<DeviceMedia> = withContext(dispatchers.io) {
+    suspend fun getMediaList(albumId: String?): List<DeviceMedia> = withContext(dispatchers.io) {
         val mediaList = mutableListOf<DeviceMedia>()
         val volumes = MediaStore.getExternalVolumeNames(context)
         volumes.forEach { volume ->
@@ -70,11 +70,16 @@ internal class SharedMediaSource @Inject constructor(
                 mediaList.addAll(getMediaFiles(volume))
             }
         }
-        return@withContext mediaList.sortedByDescending(DeviceMedia::date)
+        val filteredList = if (albumId != null) {
+            mediaList.filter { it.albumId.toString() == albumId }
+        } else {
+            mediaList
+        }
+        return@withContext filteredList.sortedByDescending(DeviceMedia::date)
     }
 
     suspend fun getAlbumsList(): List<DeviceAlbum> = withContext(dispatchers.default) {
-        getMediaList()
+        getMediaList(albumId = null)
             .groupBy { it.albumId }
             .map { entry ->
                 val firstMedia = entry.value.first()

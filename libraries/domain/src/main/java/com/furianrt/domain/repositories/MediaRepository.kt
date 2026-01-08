@@ -19,7 +19,7 @@ interface MediaRepository {
     fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
     fun getAllMedia(): Flow<List<LocalNote.Content.Media>>
 
-    suspend fun getDeviceMediaList(): List<DeviceMedia>
+    suspend fun getDeviceMediaList(albumId: String? = null): List<DeviceMedia>
     suspend fun getDeviceAlbumsList(): List<DeviceAlbum>
 
     suspend fun saveToGallery(media: LocalMedia): Boolean

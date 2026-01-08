@@ -15,9 +15,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,13 +34,15 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.BottomPanel
 import com.furianrt.mediaselector.internal.ui.selector.composables.ImageItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
-import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.UserScrollState
 import com.furianrt.uikit.utils.rememberUserInputScrollConnection
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import kotlinx.coroutines.delay
+
+private const val BOTTOM_PANEL_SHOW_DELAY = 500L
 
 @Composable
 internal fun SuccessContent(
@@ -51,22 +56,21 @@ internal fun SuccessContent(
     val listSpanCount = 3
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val userScrollConnection = rememberUserInputScrollConnection(
-        initialState = UserScrollState.SCROLLING_UP,
-        withIdleState = false,
-    )
+    val userScrollConnection = rememberUserInputScrollConnection()
 
-    val showBottomPanel by remember(uiState.selectedCount) {
-        derivedStateOf {
-            uiState.selectedCount > 0 ||
-                    userScrollConnection.scrollState == UserScrollState.SCROLLING_UP ||
-                    !listState.canScrollForward ||
-                    !listState.canScrollBackward
-        }
+    val isListScrolling by remember {
+        derivedStateOf { userScrollConnection.scrollState != UserScrollState.IDLE }
     }
 
-    SkipFirstEffect(uiState.selectedAlbum.id) {
-        listState.requestScrollToItem(0)
+    var showBottomPanel by remember { mutableStateOf(true) }
+
+    LaunchedEffect(isListScrolling) {
+        if (isListScrolling) {
+            showBottomPanel = false
+        } else {
+            delay(BOTTOM_PANEL_SHOW_DELAY)
+            showBottomPanel = true
+        }
     }
 
     Box(

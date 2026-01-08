@@ -54,12 +54,12 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import com.furianrt.uikit.R as uiR
 
-private const val ACTION_PANEL_ANIM_DURATION = 350
+private const val ACTION_PANEL_ANIM_DURATION = 250
 private const val ACTION_FAB_ANIM_DURATION = 250
 
 @Composable
 internal fun BottomPanel(
-    selectedAlbum: MediaAlbumItem,
+    selectedAlbum: MediaAlbumItem?,
     selectedCount: Int,
     visible: Boolean,
     hazeState: HazeState,
@@ -198,7 +198,7 @@ internal fun BottomPanel(
 
 @Composable
 private fun AlbumsButton(
-    selectedAlbum: MediaAlbumItem,
+    selectedAlbum: MediaAlbumItem?,
     albumsDialogState: List<MediaAlbumItem>?,
     hazeState: HazeState,
     onAlbumsClick: () -> Unit,
@@ -226,7 +226,7 @@ private fun AlbumsButton(
                 .clickable(onClick = onAlbumsClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             contentAlignment = Alignment.Center,
-            targetState = if (selectedAlbum.id == MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
+            targetState = if (selectedAlbum == null || selectedAlbum.id == MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
                 stringResource(R.string.media_selector_albums)
             } else {
                 selectedAlbum.name

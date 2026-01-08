@@ -71,7 +71,7 @@ internal class MediaViewerViewModel @Inject constructor(
     }
 
     private fun loadMedia() = launch {
-        val media = mediaRepository.getDeviceMediaList()
+        val media = mediaRepository.getDeviceMediaList(route.albumId)
         _state.update {
             MediaViewerUiState.Success(
                 media = media.map(DeviceMedia::toMediaItem),

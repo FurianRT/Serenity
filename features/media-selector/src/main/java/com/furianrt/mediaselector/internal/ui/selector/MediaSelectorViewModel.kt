@@ -63,7 +63,6 @@ internal class MediaSelectorViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private var isDataLoaded = false
-    private var allMedia: List<DeviceMedia> = emptyList()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -87,13 +86,16 @@ internal class MediaSelectorViewModel @Inject constructor(
     fun onEvent(event: MediaSelectorEvent) {
         when (event) {
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
-            is OnMediaPermissionsSelected -> loadMediaItems()
+            is OnMediaPermissionsSelected -> loadMediaItems(selectedAlbum = null)
             is OnSelectItemClick -> toggleItemSelection(event.item)
             is OnMediaClick -> _effect.tryEmit(
                 OpenMediaViewer(
                     dialogId = MEDIA_VIEWER_DIALOG_ID,
                     requestId = TAG,
                     mediaId = event.id,
+                    albumId = (_state.value as? MediaSelectorUiState.Success)
+                        ?.selectedAlbum?.id
+                        ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
                 )
             )
 
@@ -118,14 +120,15 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnExpanded -> if (!isDataLoaded) {
-                loadMediaItems()
+                loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
             }
 
             is OnScreenResumed -> if (isDataLoaded) {
-                loadMediaItems()
+                loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
             }
 
             is OnAlbumsClick -> launch {
+                val allMedia = mediaRepository.getDeviceMediaList()
                 val allMediaAlbum = MediaAlbumItem(
                     id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
                     name = resourcesManager.getString(R.string.media_selector_all_media),
@@ -139,18 +142,20 @@ internal class MediaSelectorViewModel @Inject constructor(
                 _effect.tryEmit(MediaSelectorEffect.ShowAlbumsList(albumsItems))
             }
 
-            is OnAlbumSelected -> {
-                _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.copy(selectedAlbum = event.album)
+            is OnAlbumSelected -> when (val currentState = _state.value) {
+                is MediaSelectorUiState.Success -> if (currentState.selectedAlbum?.id != event.album.id) {
+                    loadMediaItems(selectedAlbum = event.album)
                 }
-                loadMediaItems()
+
+                is MediaSelectorUiState.Empty -> loadMediaItems(selectedAlbum = event.album)
+                is MediaSelectorUiState.Loading -> Unit
             }
 
             is OnAlbumsDismissed -> _effect.tryEmit(MediaSelectorEffect.HideAlbumsList)
         }
     }
 
-    private fun loadMediaItems() {
+    private fun loadMediaItems(selectedAlbum: MediaAlbumItem?) {
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
             mediaCoordinator.unselectAllMedia()
@@ -161,46 +166,40 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
         launch {
             _state.update { currentState ->
-                allMedia = mediaRepository.getDeviceMediaList()
+                val media = mediaRepository.getDeviceMediaList(
+                    albumId = selectedAlbum?.id
+                        ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
+                )
                 when {
-                    allMedia.isEmpty() -> MediaSelectorUiState.Empty(
+                    media.isEmpty() -> MediaSelectorUiState.Empty(
+                        selectedAlbum = selectedAlbum,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
-                        mediaCoordinator.unselectMedia { allMedia.none { item -> item.id == it.id } }
                         currentState.copy(
-                            items = allMedia
-                                .filter { item ->
-                                    currentState.selectedAlbum.id == MediaAlbumItem.ALL_MEDIA_ALBUM_ID ||
-                                            item.albumId.toString() == currentState.selectedAlbum.id
-                                }
-                                .toMediaItems(
-                                    state = { id ->
-                                        val selectedIndex = mediaCoordinator.getSelectedMedia()
-                                            .indexOfFirst { it.id == id }
-                                        if (selectedIndex != -1) {
-                                            SelectionState.Selected(order = selectedIndex + 1)
-                                        } else {
-                                            SelectionState.Default
-                                        }
+                            items = media.toMediaItems(
+                                state = { id ->
+                                    val selectedIndex = mediaCoordinator.getSelectedMedia()
+                                        .indexOfFirst { it.id == id }
+                                    if (selectedIndex != -1) {
+                                        SelectionState.Selected(order = selectedIndex + 1)
+                                    } else {
+                                        SelectionState.Default
                                     }
-                                ),
+                                },
+                            ),
+                            selectedAlbum = selectedAlbum,
                             selectedCount = mediaCoordinator.getSelectedMedia().count(),
                             showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                         )
                     }
 
                     else -> MediaSelectorUiState.Success(
-                        items = allMedia.map(DeviceMedia::toMediaItem),
+                        items = media.map(DeviceMedia::toMediaItem),
                         selectedCount = 0,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
-                        selectedAlbum = MediaAlbumItem(
-                            id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
-                            name = resourcesManager.getString(R.string.media_selector_all_media),
-                            thumbnail = allMedia.firstOrNull()?.toMediaAlbumItem(),
-                            mediaCount = allMedia.size,
-                        ),
+                        selectedAlbum = selectedAlbum,
                     )
                 }
             }
