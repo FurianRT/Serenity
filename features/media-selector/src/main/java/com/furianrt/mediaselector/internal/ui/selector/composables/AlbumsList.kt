@@ -78,7 +78,6 @@ internal fun AlbumsList(
             .background(MaterialTheme.colorScheme.background),
         containerColor = Color.Transparent,
         shape = RoundedCornerShape(16.dp),
-        shadowElevation = 8.dp,
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {
