@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Joindre %d médias</string>
     <string name="media_selector_discard_title">Annuler la sélection</string>
     <string name="media_selector_discard_hint">Voulez-vous fermer le menu des pièces jointes ?</string>
+    <string name="media_selector_albums">Albums</string>
+    <string name="media_selector_all_media">Tous les médias</string>
 </resources>

@@ -3,11 +3,14 @@ package com.furianrt.mediaselector.internal.ui.selector
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -15,15 +18,18 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -51,6 +57,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
@@ -69,7 +76,9 @@ import com.furianrt.uikit.R as uiR
 private const val CONTENT_ANIM_DURATION = 300
 private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
+    ExperimentalFoundationApi::class
+)
 @Composable
 internal fun MediaSelectorBottomSheetInternal(
     state: BottomSheetScaffoldState,
@@ -88,9 +97,12 @@ internal fun MediaSelectorBottomSheetInternal(
     )
 
     var showConfirmDialog by remember { mutableStateOf(false) }
+    var albumsDialogState: List<MediaAlbumItem>? by remember { mutableStateOf(null) }
     var skipConfirmation by remember { mutableStateOf(false) }
 
-    val listState = rememberLazyGridState()
+    val listState = rememberLazyGridState(
+        cacheWindow = LazyLayoutCacheWindow(ahead = 200.dp, behind = 150.dp),
+    )
     val onMediaSelectedState by rememberUpdatedState(onMediaSelected)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
 
@@ -121,6 +133,9 @@ internal fun MediaSelectorBottomSheetInternal(
                     is MediaSelectorEffect.SendMediaResult -> {
                         onMediaSelectedState(effect.result)
                     }
+
+                    is MediaSelectorEffect.ShowAlbumsList -> albumsDialogState = effect.albums
+                    is MediaSelectorEffect.HideAlbumsList -> albumsDialogState = null
                 }
             }
     }
@@ -203,6 +218,7 @@ internal fun MediaSelectorBottomSheetInternal(
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,
+                albumsDialogState = albumsDialogState,
             )
         },
     )
@@ -249,6 +265,7 @@ private fun SheetContent(
     uiState: MediaSelectorUiState,
     onEvent: (event: MediaSelectorEvent) -> Unit,
     listState: LazyGridState,
+    albumsDialogState: List<MediaAlbumItem>?,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -277,11 +294,23 @@ private fun SheetContent(
 
                     is MediaSelectorUiState.Success -> SuccessContent(
                         uiState = targetState,
-                        listState = listState,
                         onEvent = onEvent,
+                        listState = listState,
+                        albumsDialogState = albumsDialogState,
                     )
                 }
             }
+        }
+        AnimatedVisibility(
+            visible = albumsDialogState != null,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.scrim),
+            )
         }
     }
 }

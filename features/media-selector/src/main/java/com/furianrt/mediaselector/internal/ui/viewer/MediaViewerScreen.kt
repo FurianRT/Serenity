@@ -249,6 +249,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Default,
+                        album = MediaItem.Album(id = "1", name = ""),
                     ),
                     MediaItem.Image(
                         id = 2L,
@@ -256,6 +257,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Selected(order = 1),
+                        album = MediaItem.Album(id = "1", name = ""),
                     ),
                     MediaItem.Image(
                         id = 3L,
@@ -263,6 +265,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Default,
+                        album = MediaItem.Album(id = "1", name = ""),
                     ),
                 ),
             ),

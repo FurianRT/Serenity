@@ -4,6 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
@@ -108,6 +109,10 @@ internal class MediaRepositoryImp @Inject constructor(
     ) { images, videos -> images + videos }
 
     override suspend fun getDeviceMediaList(): List<DeviceMedia> = sharedMediaSource.getMediaList()
+
+    override suspend fun getDeviceAlbumsList(): List<DeviceAlbum> {
+        return sharedMediaSource.getAlbumsList()
+    }
 
     override suspend fun saveToGallery(media: LocalMedia): Boolean {
         return sharedMediaSource.saveToGallery(media)

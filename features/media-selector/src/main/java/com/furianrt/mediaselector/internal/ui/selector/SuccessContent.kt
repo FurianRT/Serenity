@@ -15,11 +15,15 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
+import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
@@ -27,22 +31,44 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.BottomPanel
 import com.furianrt.mediaselector.internal.ui.selector.composables.ImageItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.utils.UserScrollState
+import com.furianrt.uikit.utils.rememberUserInputScrollConnection
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
-
 
 @Composable
 internal fun SuccessContent(
     uiState: MediaSelectorUiState.Success,
     listState: LazyGridState,
+    albumsDialogState: List<MediaAlbumItem>?,
     onEvent: (event: MediaSelectorEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hazeState = remember { HazeState() }
     val listSpanCount = 3
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+
+    val userScrollConnection = rememberUserInputScrollConnection(
+        initialState = UserScrollState.SCROLLING_UP,
+        withIdleState = false,
+    )
+
+    val showBottomPanel by remember(uiState.selectedCount) {
+        derivedStateOf {
+            uiState.selectedCount > 0 ||
+                    userScrollConnection.scrollState == UserScrollState.SCROLLING_UP ||
+                    !listState.canScrollForward ||
+                    !listState.canScrollBackward
+        }
+    }
+
+    SkipFirstEffect(uiState.selectedAlbum.id) {
+        listState.requestScrollToItem(0)
+    }
+
     Box(
         modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.BottomCenter,
@@ -50,6 +76,7 @@ internal fun SuccessContent(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize()
+                .nestedScroll(userScrollConnection)
                 .hazeSource(state = hazeState),
             state = listState,
             columns = GridCells.Fixed(listSpanCount),
@@ -68,7 +95,7 @@ internal fun SuccessContent(
             }
 
             items(
-                count = uiState.items.count(),
+                count = uiState.items.size,
                 key = { uiState.items[it].id },
                 contentType = { uiState.items[it].javaClass.name },
             ) { index ->
@@ -101,9 +128,15 @@ internal fun SuccessContent(
         }
 
         BottomPanel(
+            selectedAlbum = uiState.selectedAlbum,
             selectedCount = uiState.selectedCount,
+            visible = showBottomPanel,
+            albumsDialogState = albumsDialogState,
             hazeState = hazeState,
             onSendClick = { onEvent(MediaSelectorEvent.OnSendClick) },
+            onAlbumsClick = { onEvent(MediaSelectorEvent.OnAlbumsClick) },
+            onAlbumSelected = { onEvent(MediaSelectorEvent.OnAlbumSelected(it)) },
+            onAlbumsDismissed = { onEvent(MediaSelectorEvent.OnAlbumsDismissed) },
         )
     }
 }
@@ -115,6 +148,7 @@ private fun Preview() {
         SuccessContent(
             onEvent = {},
             listState = rememberLazyGridState(),
+            albumsDialogState = null,
             uiState = MediaSelectorUiState.Success(
                 items = buildList {
                     repeat(18) { index ->
@@ -129,6 +163,10 @@ private fun Preview() {
                                 } else {
                                     SelectionState.Default
                                 },
+                                album = MediaItem.Album(
+                                    id = "1",
+                                    name = "Camera",
+                                ),
                             )
                         } else {
                             MediaItem.Video(
@@ -142,12 +180,22 @@ private fun Preview() {
                                     SelectionState.Default
                                 },
                                 duration = 10 * 60 * 1000,
+                                album = MediaItem.Album(
+                                    id = "2",
+                                    name = "Recent",
+                                ),
                             )
                         }
                         add(item)
                     }
                 },
                 selectedCount = 2,
+                selectedAlbum = MediaAlbumItem(
+                    id = "",
+                    name = "Albums",
+                    thumbnail = null,
+                    mediaCount = 10,
+                ),
                 showPartialAccessMessage = true,
             ),
         )

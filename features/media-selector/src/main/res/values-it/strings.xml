@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Allega %d media</string>
     <string name="media_selector_discard_title">Annulla selezione</string>
     <string name="media_selector_discard_hint">Vuoi chiudere il menu degli allegati?</string>
+    <string name="media_selector_albums">Album</string>
+    <string name="media_selector_all_media">Tutti i media</string>
 </resources>

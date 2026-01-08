@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">%d개의 미디어 첨부</string>
     <string name="media_selector_discard_title">선택 취소</string>
     <string name="media_selector_discard_hint">첨부 메뉴를 닫으시겠습니까?</string>
+    <string name="media_selector_albums">앨범</string>
+    <string name="media_selector_all_media">모든 미디어</string>
 </resources>

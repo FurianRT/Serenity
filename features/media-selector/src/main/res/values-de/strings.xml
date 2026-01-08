@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">%d Medien anhängen</string>
     <string name="media_selector_discard_title">Auswahl verwerfen</string>
     <string name="media_selector_discard_hint">Möchtest du das Anhangsmenü schließen?</string>
+    <string name="media_selector_albums">Alben</string>
+    <string name="media_selector_all_media">Alle Medien</string>
 </resources>

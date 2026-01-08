@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">%d medya ekle</string>
     <string name="media_selector_discard_title">Seçimi iptal et</string>
     <string name="media_selector_discard_hint">Ek dosyalar menüsünü kapatmak istiyor musunuz?</string>
+    <string name="media_selector_albums">Albümler</string>
+    <string name="media_selector_all_media">Tüm Medyalar</string>
 </resources>

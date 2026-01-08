@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">I-attach ang %d na media</string>
     <string name="media_selector_discard_title">Itapon ang napili</string>
     <string name="media_selector_discard_hint">Gusto mo bang isara ang attachment menu?</string>
+    <string name="media_selector_albums">Mga Album</string>
+    <string name="media_selector_all_media">Lahat ng Media</string>
 </resources>

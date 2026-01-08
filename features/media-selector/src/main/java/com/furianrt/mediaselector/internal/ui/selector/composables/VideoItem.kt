@@ -103,6 +103,7 @@ private fun Preview() {
                 ratio = 1f,
                 state = SelectionState.Selected(1),
                 duration = 10 * 60 * 1000,
+                album = MediaItem.Album(id = "1", name = ""),
             ),
         )
     }

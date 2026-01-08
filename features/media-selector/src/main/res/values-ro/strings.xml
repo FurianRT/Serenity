@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Atașează %d fișiere media</string>
     <string name="media_selector_discard_title">Renunță la selecție</string>
     <string name="media_selector_discard_hint">Vrei să închizi meniul de atașamente?</string>
+    <string name="media_selector_albums">Albume</string>
+    <string name="media_selector_all_media">Toate mediile</string>
 </resources>

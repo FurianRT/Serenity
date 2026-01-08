@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">%d मीडिया संलग्न करें</string>
     <string name="media_selector_discard_title">चयन हटाएँ</string>
     <string name="media_selector_discard_hint">क्या आप अटैचमेंट मेनू बंद करना चाहते हैं?</string>
+    <string name="media_selector_albums">एल्बम</string>
+    <string name="media_selector_all_media">सभी मीडिया</string>
 </resources>

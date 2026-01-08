@@ -93,6 +93,7 @@ private fun Preview() {
                 uri = Uri.EMPTY,
                 ratio = 1f,
                 state = SelectionState.Selected(1),
+                album = MediaItem.Album(id = "1", name = ""),
             ),
         )
     }

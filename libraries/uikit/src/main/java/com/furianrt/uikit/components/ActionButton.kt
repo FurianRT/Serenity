@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,6 +16,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
 import com.furianrt.uikit.theme.SerenityTheme
@@ -27,6 +29,7 @@ fun ActionButton(
     icon: Painter,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    elevation: Dp = 6.dp,
 ) {
     val scope = rememberCoroutineScope()
     val scale = remember { Animatable(1f) }
@@ -39,6 +42,7 @@ fun ActionButton(
                 scaleY = scale.value
             },
         shape = CircleShape,
+        elevation = FloatingActionButtonDefaults.elevation(defaultElevation = elevation),
         onClick = {
             if (scale.isRunning) {
                 return@FloatingActionButton

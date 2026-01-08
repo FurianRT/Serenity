@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Đính kèm %d phương tiện</string>
     <string name="media_selector_discard_title">Hủy lựa chọn</string>
     <string name="media_selector_discard_hint">Bạn có muốn đóng menu đính kèm không?</string>
+    <string name="media_selector_albums">Album</string>
+    <string name="media_selector_all_media">Tất cả phương tiện</string>
 </resources>

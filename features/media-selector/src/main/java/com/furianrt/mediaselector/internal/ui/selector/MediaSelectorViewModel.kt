@@ -2,18 +2,27 @@ package com.furianrt.mediaselector.internal.ui.selector
 
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.updateState
+import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
+import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
+import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import com.furianrt.mediaselector.internal.ui.extensions.toMediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaSelectorResult
+import com.furianrt.mediaselector.internal.ui.extensions.toThumbnailItem
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.CloseScreen
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.OpenMediaViewer
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.RequestMediaPermissions
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.SendMediaResult
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumSelected
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsDismissed
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCloseScreenRequest
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpanded
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
@@ -44,6 +53,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val permissionsUtils: PermissionsUtils,
     private val mediaCoordinator: SelectedMediaCoordinator,
+    private val resourcesManager: ResourcesManager,
 ) : ViewModel(), DialogResultListener {
 
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
@@ -53,6 +63,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private var isDataLoaded = false
+    private var allMedia: List<DeviceMedia> = emptyList()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -113,6 +124,29 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnScreenResumed -> if (isDataLoaded) {
                 loadMediaItems()
             }
+
+            is OnAlbumsClick -> launch {
+                val allMediaAlbum = MediaAlbumItem(
+                    id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+                    name = resourcesManager.getString(R.string.media_selector_all_media),
+                    thumbnail = allMedia.firstOrNull()?.toThumbnailItem(),
+                    mediaCount = allMedia.size,
+                )
+                val albumsItems = mediaRepository.getDeviceAlbumsList()
+                    .map(DeviceAlbum::toMediaAlbumItem)
+                    .toMutableList()
+                    .apply { add(0, allMediaAlbum) }
+                _effect.tryEmit(MediaSelectorEffect.ShowAlbumsList(albumsItems))
+            }
+
+            is OnAlbumSelected -> {
+                _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                    currentState.copy(selectedAlbum = event.album)
+                }
+                loadMediaItems()
+            }
+
+            is OnAlbumsDismissed -> _effect.tryEmit(MediaSelectorEffect.HideAlbumsList)
         }
     }
 
@@ -126,36 +160,47 @@ internal class MediaSelectorViewModel @Inject constructor(
             return
         }
         launch {
-            val media = mediaRepository.getDeviceMediaList()
             _state.update { currentState ->
+                allMedia = mediaRepository.getDeviceMediaList()
                 when {
-                    media.isEmpty() -> MediaSelectorUiState.Empty(
+                    allMedia.isEmpty() -> MediaSelectorUiState.Empty(
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )
 
                     currentState is MediaSelectorUiState.Success -> {
-                        mediaCoordinator.unselectMedia { !media.any { item -> item.id == it.id } }
-                        MediaSelectorUiState.Success(
-                            items = media.toMediaItems(
-                                state = { id ->
-                                    val selectedIndex = mediaCoordinator.getSelectedMedia()
-                                        .indexOfFirst { it.id == id }
-                                    if (selectedIndex != -1) {
-                                        SelectionState.Selected(order = selectedIndex + 1)
-                                    } else {
-                                        SelectionState.Default
-                                    }
+                        mediaCoordinator.unselectMedia { allMedia.none { item -> item.id == it.id } }
+                        currentState.copy(
+                            items = allMedia
+                                .filter { item ->
+                                    currentState.selectedAlbum.id == MediaAlbumItem.ALL_MEDIA_ALBUM_ID ||
+                                            item.albumId.toString() == currentState.selectedAlbum.id
                                 }
-                            ),
+                                .toMediaItems(
+                                    state = { id ->
+                                        val selectedIndex = mediaCoordinator.getSelectedMedia()
+                                            .indexOfFirst { it.id == id }
+                                        if (selectedIndex != -1) {
+                                            SelectionState.Selected(order = selectedIndex + 1)
+                                        } else {
+                                            SelectionState.Default
+                                        }
+                                    }
+                                ),
                             selectedCount = mediaCoordinator.getSelectedMedia().count(),
                             showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                         )
                     }
 
                     else -> MediaSelectorUiState.Success(
-                        items = media.map(DeviceMedia::toMediaItem),
+                        items = allMedia.map(DeviceMedia::toMediaItem),
                         selectedCount = 0,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
+                        selectedAlbum = MediaAlbumItem(
+                            id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+                            name = resourcesManager.getString(R.string.media_selector_all_media),
+                            thumbnail = allMedia.firstOrNull()?.toMediaAlbumItem(),
+                            mediaCount = allMedia.size,
+                        ),
                     )
                 }
             }

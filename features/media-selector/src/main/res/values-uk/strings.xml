@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Прикріпити %d медіафайлів</string>
     <string name="media_selector_discard_title">Відхилити вибір</string>
     <string name="media_selector_discard_hint">Ви хочете закрити меню вкладень?</string>
+    <string name="media_selector_albums">Альбоми</string>
+    <string name="media_selector_all_media">Усі медіа</string>
 </resources>

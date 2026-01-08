@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Прикрепить %d медиа</string>
     <string name="media_selector_discard_title">Сбросить выбор</string>
     <string name="media_selector_discard_hint">Вы действительно хотите закрыть меню вложений?</string>
+    <string name="media_selector_albums">Альбомы</string>
+    <string name="media_selector_all_media">Все медиа</string>
 </resources>

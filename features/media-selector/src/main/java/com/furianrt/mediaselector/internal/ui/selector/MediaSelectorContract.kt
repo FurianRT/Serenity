@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 
@@ -10,6 +11,7 @@ internal sealed interface MediaSelectorUiState {
     data class Success(
         val items: List<MediaItem>,
         val selectedCount: Int,
+        val selectedAlbum: MediaAlbumItem,
         val showPartialAccessMessage: Boolean,
     ) : MediaSelectorUiState {
 
@@ -42,11 +44,16 @@ internal sealed interface MediaSelectorEvent {
     data object OnCloseScreenRequest : MediaSelectorEvent
     data object OnExpanded : MediaSelectorEvent
     data object OnScreenResumed : MediaSelectorEvent
+    data object OnAlbumsClick : MediaSelectorEvent
+    data class OnAlbumSelected(val album: MediaAlbumItem) : MediaSelectorEvent
+    data object OnAlbumsDismissed : MediaSelectorEvent
 }
 
 internal sealed interface MediaSelectorEffect {
     data object RequestMediaPermissions : MediaSelectorEffect
     data object CloseScreen : MediaSelectorEffect
+    data class ShowAlbumsList(val albums: List<MediaAlbumItem>) : MediaSelectorEffect
+    data object HideAlbumsList : MediaSelectorEffect
     data class SendMediaResult(val result: MediaResult) : MediaSelectorEffect
     data class OpenMediaViewer(
         val dialogId: Int,

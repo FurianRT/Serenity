@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Adjuntar %d medios</string>
     <string name="media_selector_discard_title">Descartar selección</string>
     <string name="media_selector_discard_hint">¿Quieres cerrar el menú de adjuntos?</string>
+    <string name="media_selector_albums">Álbumes</string>
+    <string name="media_selector_all_media">Todos los medios</string>
 </resources>

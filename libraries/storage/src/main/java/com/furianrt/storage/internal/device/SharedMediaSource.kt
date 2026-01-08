@@ -7,8 +7,10 @@ import android.os.Environment
 import android.provider.MediaStore
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
+import com.furianrt.storage.internal.device.mappers.toAlbumThumbnail
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -71,6 +73,20 @@ internal class SharedMediaSource @Inject constructor(
         return@withContext mediaList.sortedByDescending(DeviceMedia::date)
     }
 
+    suspend fun getAlbumsList(): List<DeviceAlbum> = withContext(dispatchers.default) {
+        getMediaList()
+            .groupBy { it.albumId }
+            .map { entry ->
+                val firstMedia = entry.value.first()
+                DeviceAlbum(
+                    id = entry.key,
+                    name = firstMedia.albumName,
+                    thumbnail = firstMedia.toAlbumThumbnail(),
+                    mediaCount = entry.value.size,
+                )
+            }
+    }
+
     private suspend fun getMediaFiles(
         volumeName: String,
     ): List<DeviceMedia> = withContext(dispatchers.io) {
@@ -86,6 +102,8 @@ internal class SharedMediaSource @Inject constructor(
             MediaStore.Files.FileColumns.ORIENTATION,
             MediaStore.Files.FileColumns.DISPLAY_NAME,
             MediaStore.Files.FileColumns.MIME_TYPE,
+            MediaStore.Files.FileColumns.BUCKET_ID,
+            MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME,
         )
 
         val selection = "(${MediaStore.Files.FileColumns.MEDIA_TYPE} = ? OR " +
@@ -116,10 +134,16 @@ internal class SharedMediaSource @Inject constructor(
             val heightColumn = cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.HEIGHT)
             val orientationColumn =
                 cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.ORIENTATION)
+            val bucketIdColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.BUCKET_ID)
+            val bucketNameColumn =
+                cursor.getColumnIndexOrThrow(MediaStore.Files.FileColumns.BUCKET_DISPLAY_NAME)
             while (cursor.moveToNext() && isActive) {
                 val id = cursor.getLong(idColumn)
                 val mediaType = cursor.getInt(mediaTypeColumn)
                 val orientation = cursor.getInt(orientationColumn)
+                val bucketId = cursor.getLong(bucketIdColumn)
+                val bucketName = cursor.getString(bucketNameColumn)
                 val item = when (mediaType) {
                     MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
                         id = id,
@@ -127,6 +151,8 @@ internal class SharedMediaSource @Inject constructor(
                         uri = ContentUris.withAppendedId(collection, id),
                         date = cursor.getLong(dateColumn),
                         ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
+                        albumId = bucketId,
+                        albumName = bucketName,
                     )
 
                     MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> DeviceMedia.Video(
@@ -140,6 +166,8 @@ internal class SharedMediaSource @Inject constructor(
                         } else {
                             cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
                         },
+                        albumId = bucketId,
+                        albumName = bucketName,
                     )
 
                     else -> continue

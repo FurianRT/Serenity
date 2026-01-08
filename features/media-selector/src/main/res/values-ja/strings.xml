@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">%d 件のメディアを添付</string>
     <string name="media_selector_discard_title">選択を破棄</string>
     <string name="media_selector_discard_hint">添付メニューを閉じますか？</string>
+    <string name="media_selector_albums">アルバム</string>
+    <string name="media_selector_all_media">すべてのメディア</string>
 </resources>

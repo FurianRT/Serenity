@@ -4,4 +4,6 @@
     <string name="media_selector_apply_button_title">Anexar %d mídias</string>
     <string name="media_selector_discard_title">Descartar seleção</string>
     <string name="media_selector_discard_hint">Você quer fechar o menu de anexos?</string>
+    <string name="media_selector_albums">Álbuns</string>
+    <string name="media_selector_all_media">Todos os mídias</string>
 </resources>

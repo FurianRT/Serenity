@@ -1,6 +1,7 @@
 package com.furianrt.domain.repositories
 
 import android.net.Uri
+import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
@@ -19,6 +20,7 @@ interface MediaRepository {
     fun getAllMedia(): Flow<List<LocalNote.Content.Media>>
 
     suspend fun getDeviceMediaList(): List<DeviceMedia>
+    suspend fun getDeviceAlbumsList(): List<DeviceAlbum>
 
     suspend fun saveToGallery(media: LocalMedia): Boolean
 
