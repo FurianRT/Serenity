@@ -54,7 +54,7 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import com.furianrt.uikit.R as uiR
 
-private const val ACTION_PANEL_ANIM_DURATION = 250
+private const val ACTION_PANEL_ANIM_DURATION = 350
 private const val ACTION_FAB_ANIM_DURATION = 250
 
 @Composable

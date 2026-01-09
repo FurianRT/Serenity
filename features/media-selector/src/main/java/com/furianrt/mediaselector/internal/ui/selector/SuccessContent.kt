@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,21 +54,18 @@ internal fun SuccessContent(
     val hazeState = remember { HazeState() }
     val listSpanCount = 3
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
     val userScrollConnection = rememberUserInputScrollConnection()
-
-    val isListScrolling by remember {
-        derivedStateOf { userScrollConnection.scrollState != UserScrollState.IDLE }
-    }
 
     var showBottomPanel by remember { mutableStateOf(true) }
 
-    LaunchedEffect(isListScrolling) {
-        if (isListScrolling) {
-            showBottomPanel = false
-        } else {
-            delay(BOTTOM_PANEL_SHOW_DELAY)
-            showBottomPanel = true
+    LaunchedEffect(userScrollConnection.scrollState) {
+        when (userScrollConnection.scrollState) {
+            UserScrollState.SCROLLING_DOWN -> showBottomPanel = false
+            UserScrollState.SCROLLING_UP -> showBottomPanel = true
+            UserScrollState.IDLE -> {
+                delay(BOTTOM_PANEL_SHOW_DELAY)
+                showBottomPanel = true
+            }
         }
     }
 
