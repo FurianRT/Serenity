@@ -10,30 +10,46 @@ import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 internal fun DeviceMedia.toMediaItem(
     state: SelectionState = SelectionState.Default,
 ): MediaItem = when (this) {
-    is DeviceMedia.Image -> MediaItem.Image(
-        id = id,
-        name = name,
-        uri = uri,
-        ratio = ratio,
-        state = state,
-        album = MediaItem.Album(
-            id = albumId.toString(),
-            name = albumName,
-        ),
-    )
+    is DeviceMedia.Image -> {
+        val albumId = albumId
+        val albumName = albumName
+        MediaItem.Image(
+            id = id,
+            name = name,
+            uri = uri,
+            ratio = ratio,
+            state = state,
+            album = if (albumId != null && albumName != null) {
+                MediaItem.Album(
+                    id = albumId.toString(),
+                    name = albumName,
+                )
+            } else {
+                null
+            },
+        )
+    }
 
-    is DeviceMedia.Video -> MediaItem.Video(
-        id = id,
-        name = name,
-        uri = uri,
-        ratio = ratio,
-        duration = duration,
-        state = state,
-        album = MediaItem.Album(
-            id = albumId.toString(),
-            name = albumName,
-        ),
-    )
+    is DeviceMedia.Video -> {
+        val albumId = albumId
+        val albumName = albumName
+        MediaItem.Video(
+            id = id,
+            name = name,
+            uri = uri,
+            ratio = ratio,
+            duration = duration,
+            state = state,
+            album = if (albumId != null && albumName != null) {
+                MediaItem.Album(
+                    id = albumId.toString(),
+                    name = albumName,
+                )
+            } else {
+                null
+            },
+        )
+    }
 }
 
 internal fun List<DeviceMedia>.toMediaItems(
@@ -43,19 +59,6 @@ internal fun List<DeviceMedia>.toMediaItems(
 internal fun List<MediaItem>.toMediaSelectorResult() = MediaResult(
     media = map(MediaItem::toResultMedia),
 )
-
-internal fun DeviceMedia.toMediaAlbumItem(): MediaAlbumItem.Thumbnail = when (this) {
-    is DeviceMedia.Image -> MediaAlbumItem.Thumbnail.Image(
-        id = id.toString(),
-        uri = uri,
-    )
-
-    is DeviceMedia.Video -> MediaAlbumItem.Thumbnail.Video(
-        id = id.toString(),
-        uri = uri,
-        duration = duration,
-    )
-}
 
 internal fun DeviceAlbum.toMediaAlbumItem() = MediaAlbumItem(
     id = id.toString(),

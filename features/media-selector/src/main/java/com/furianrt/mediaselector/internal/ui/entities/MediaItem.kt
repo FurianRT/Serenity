@@ -8,7 +8,7 @@ internal sealed class MediaItem(
     open val uri: Uri,
     open val ratio: Float,
     open val state: SelectionState,
-    open val album: Album,
+    open val album: Album?,
 ) {
     val isSelected: Boolean
         get() = state is SelectionState.Selected
@@ -29,7 +29,7 @@ internal sealed class MediaItem(
         override val uri: Uri,
         override val ratio: Float,
         override val state: SelectionState,
-        override val album: Album,
+        override val album: Album?,
     ) : MediaItem(id, name, uri, ratio, state, album)
 
     data class Video(
@@ -38,7 +38,7 @@ internal sealed class MediaItem(
         override val uri: Uri,
         override val ratio: Float,
         override val state: SelectionState,
-        override val album: Album,
+        override val album: Album?,
         val duration: Int,
     ) : MediaItem(id, name, uri, ratio, state, album)
 }

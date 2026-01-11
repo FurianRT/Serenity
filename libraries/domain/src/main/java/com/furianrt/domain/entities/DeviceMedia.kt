@@ -8,8 +8,8 @@ sealed class DeviceMedia(
     val uri: Uri,
     val date: Long,
     val ratio: Float,
-    val albumId: Long,
-    val albumName: String,
+    val albumId: Long?,
+    val albumName: String?,
 ) {
     class Image(
         id: Long,
@@ -17,8 +17,8 @@ sealed class DeviceMedia(
         uri: Uri,
         date: Long,
         ratio: Float,
-        albumId: Long,
-        albumName: String,
+        albumId: Long?,
+        albumName: String?,
     ) : DeviceMedia(id, name, uri, date, ratio, albumId, albumName)
 
     class Video(
@@ -27,8 +27,8 @@ sealed class DeviceMedia(
         uri: Uri,
         date: Long,
         ratio: Float,
-        albumId: Long,
-        albumName: String,
+        albumId: Long?,
+        albumName: String?,
         val duration: Int,
     ) : DeviceMedia(id, name, uri, date, ratio, albumId, albumName)
 }

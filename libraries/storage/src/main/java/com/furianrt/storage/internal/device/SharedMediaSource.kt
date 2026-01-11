@@ -81,14 +81,20 @@ internal class SharedMediaSource @Inject constructor(
     suspend fun getAlbumsList(): List<DeviceAlbum> = withContext(dispatchers.default) {
         getMediaList(albumId = null)
             .groupBy { it.albumId }
-            .map { entry ->
+            .mapNotNull { entry ->
                 val firstMedia = entry.value.first()
-                DeviceAlbum(
-                    id = entry.key,
-                    name = firstMedia.albumName,
-                    thumbnail = firstMedia.toAlbumThumbnail(),
-                    mediaCount = entry.value.size,
-                )
+                val albumId = entry.key
+                val albumName = firstMedia.albumName
+                if (albumId == null || albumName == null) {
+                    null
+                } else {
+                    DeviceAlbum(
+                        id = albumId,
+                        name = albumName,
+                        thumbnail = firstMedia.toAlbumThumbnail(),
+                        mediaCount = entry.value.size,
+                    )
+                }
             }
     }
 
@@ -147,7 +153,11 @@ internal class SharedMediaSource @Inject constructor(
                 val id = cursor.getLong(idColumn)
                 val mediaType = cursor.getInt(mediaTypeColumn)
                 val orientation = cursor.getInt(orientationColumn)
-                val bucketId = cursor.getLong(bucketIdColumn)
+                val bucketId = if (cursor.isNull(bucketIdColumn)) {
+                    null
+                } else {
+                    cursor.getLong(bucketIdColumn)
+                }
                 val bucketName = cursor.getString(bucketNameColumn)
                 val item = when (mediaType) {
                     MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
@@ -156,7 +166,7 @@ internal class SharedMediaSource @Inject constructor(
                         uri = ContentUris.withAppendedId(collection, id),
                         date = cursor.getLong(dateColumn),
                         ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
-                        albumId = bucketId,
+                        albumId = bucketId.takeIf { it != 0L },
                         albumName = bucketName,
                     )
 
@@ -171,7 +181,7 @@ internal class SharedMediaSource @Inject constructor(
                         } else {
                             cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
                         },
-                        albumId = bucketId,
+                        albumId = bucketId.takeIf { it != 0L },
                         albumName = bucketName,
                     )
 
