@@ -8,6 +8,7 @@ interface TagsRepository {
     suspend fun insert(noteId: String, tag: LocalNote.Tag)
     suspend fun insert(noteId: String, tags: List<LocalNote.Tag>)
     fun getAllTags(): Flow<List<LocalTag>>
+    fun searchTags(query: String): Flow<List<String>>
     fun getTags(noteId: String): Flow<List<LocalNote.Tag>>
     suspend fun deleteForNote(noteId: String, tags: List<LocalNote.Tag>)
     suspend fun deleteUnusedTags()

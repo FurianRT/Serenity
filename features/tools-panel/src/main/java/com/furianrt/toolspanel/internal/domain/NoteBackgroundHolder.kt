@@ -85,6 +85,11 @@ internal class NoteBackgroundHolder @Inject constructor() : NoteBackgroundProvid
             isLight = false,
             colorScheme = UiThemeColor.IRIS_RED_DARK.colorScheme,
         ),
+        UiNoteBackground.Solid(
+            id = "solid_dark_13",
+            isLight = false,
+            colorScheme = UiThemeColor.DISTANT_CASTLE_GREEN.colorScheme,
+        ),
     )
 
     override fun getLightBackgrounds(): List<UiNoteBackground> = listOf(

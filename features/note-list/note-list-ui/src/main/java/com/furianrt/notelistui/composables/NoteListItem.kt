@@ -191,6 +191,7 @@ fun NoteListItem(
                     ),
                 tags = tags,
                 date = date,
+                popupHazeState = null,
                 onTagClick = onTagClick,
             )
         }
@@ -206,7 +207,10 @@ private fun NoteItemPreview() {
             tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
-                UiNoteTag.Template(id = "2"),
+                UiNoteTag.Template(
+                    id = "2",
+                    suggestsProvider = null,
+                ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
@@ -224,7 +228,10 @@ private fun PinnedNoteItemPreview() {
             tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
-                UiNoteTag.Template(id = "2"),
+                UiNoteTag.Template(
+                    id = "2",
+                    suggestsProvider = null,
+                ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
@@ -243,7 +250,10 @@ private fun SelectedNoteItemPreview() {
             tags = listOf(
                 UiNoteTag.Regular(title = "Programming", isRemovable = false),
                 UiNoteTag.Regular(title = "Android", isRemovable = false),
-                UiNoteTag.Template(id = "2"),
+                UiNoteTag.Template(
+                    id = "2",
+                    suggestsProvider = null,
+                ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,

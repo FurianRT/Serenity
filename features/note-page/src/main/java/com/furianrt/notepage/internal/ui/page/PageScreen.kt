@@ -704,6 +704,7 @@ private fun ContentItems(
                             isEditable = uiState.isInEditMode,
                             animateItemsPlacement = true,
                             showStub = true,
+                            popupHazeState = hazeState,
                             onTagRemoveClick = { tag ->
                                 onEvent(PageEvent.OnTagRemoveClick(tag))
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)

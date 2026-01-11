@@ -44,6 +44,12 @@ internal sealed interface PageUiState {
 
         val showMood: Boolean
             get() = moodId != null || isInEditMode
+
+        val visibleTags: Set<String>
+            get() = tags
+                .filterIsInstance<UiNoteTag.Regular>()
+                .map(UiNoteTag.Regular::title)
+                .toSet()
     }
 }
 

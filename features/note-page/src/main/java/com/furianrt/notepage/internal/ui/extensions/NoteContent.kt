@@ -68,12 +68,14 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
     return result
 }
 
-internal fun List<UiNoteTag>.addTagTemplate(): List<UiNoteTag> {
+internal fun List<UiNoteTag>.addTagTemplate(
+    suggestsProvider: (suspend (query: String) -> List<String>),
+): List<UiNoteTag> {
     val hasTemplate = any { it is UiNoteTag.Template }
     return if (hasTemplate) {
         this
     } else {
-        toMutableList().apply { add(UiNoteTag.Template()) }
+        toMutableList().apply { add(UiNoteTag.Template(suggestsProvider = suggestsProvider)) }
     }
 }
 
@@ -93,12 +95,14 @@ internal fun List<UiNoteTag>.removeTagTemplate(
     }
 }
 
-internal fun List<UiNoteTag>.addSecondTagTemplate(): List<UiNoteTag> {
+internal fun List<UiNoteTag>.addSecondTagTemplate(
+    suggestsProvider: (suspend (query: String) -> List<String>),
+): List<UiNoteTag> {
     val hasTemplates = count { it is UiNoteTag.Template } == 2
     return if (hasTemplates) {
         this
     } else {
-        toMutableList().apply { add(UiNoteTag.Template()) }
+        toMutableList().apply { add(UiNoteTag.Template(suggestsProvider = suggestsProvider)) }
     }
 }
 

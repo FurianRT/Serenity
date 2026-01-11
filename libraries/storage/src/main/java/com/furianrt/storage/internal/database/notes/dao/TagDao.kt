@@ -22,6 +22,18 @@ internal interface TagDao {
     @Query("SELECT * FROM ${EntryNoteTag.TABLE_NAME}")
     fun getAllTags(): Flow<List<TagWithRelatedNoteIds>>
 
+    @Query(
+        """
+    SELECT *
+    FROM ${EntryNoteTag.TABLE_NAME}
+    WHERE ${EntryNoteTag.FIELD_TITLE} LIKE :query || '%'
+    ORDER BY 
+        LENGTH(${EntryNoteTag.FIELD_TITLE}) - LENGTH(:query) ASC,
+        ${EntryNoteTag.FIELD_TITLE} ASC
+"""
+    )
+    fun searchTags(query: String): Flow<List<EntryNoteTag>>
+
     @Transaction
     @Query(
         "SELECT ${EntryNoteTag.TABLE_NAME}.* FROM ${EntryNoteTag.TABLE_NAME} " +

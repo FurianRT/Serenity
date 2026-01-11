@@ -3,20 +3,27 @@ package com.furianrt.notelistui.composables
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.delete
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuAnchorType
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.platform.LocalDensity
@@ -45,6 +53,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.R
@@ -53,17 +62,23 @@ import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 
 @Composable
 fun NoteTags(
     tags: List<UiNoteTag>,
+    popupHazeState: HazeState?,
     modifier: Modifier = Modifier,
     date: String? = null,
     showStub: Boolean = false,
@@ -81,7 +96,8 @@ fun NoteTags(
     if (tags.isEmpty() && showStub) {
         TemplateNoteTagItem(
             modifier = modifier.alpha(0f),
-            tag = UiNoteTag.Template(),
+            tag = UiNoteTag.Template(suggestsProvider = null),
+            hazeState = popupHazeState,
             enabled = false,
             onDoneEditing = {},
             onTextEntered = {},
@@ -119,6 +135,7 @@ fun NoteTags(
                                         Modifier.animatePlacementInScope(this@LookaheadScope)
                                     },
                                     tag = tag,
+                                    hazeState = popupHazeState,
                                     onDoneEditing = onDoneEditing,
                                     onTextEntered = onTextEntered,
                                     onTextCleared = onTextCleared,
@@ -141,10 +158,11 @@ fun NoteTags(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, FlowPreview::class)
+@OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun TemplateNoteTagItem(
     tag: UiNoteTag.Template,
+    hazeState: HazeState?,
     onTextEntered: () -> Unit,
     onTextCleared: () -> Unit,
     onDoneEditing: (tag: UiNoteTag.Template) -> Unit,
@@ -179,6 +197,7 @@ private fun TemplateNoteTagItem(
                 }
             }
     }
+
     LaunchedEffect(hasFocus) {
         snapshotFlow { tag.textState.selection }
             .collect { selection ->
@@ -198,6 +217,29 @@ private fun TemplateNoteTagItem(
         if (hasText) onTextEnteredState() else onTextClearedState()
     }
 
+    var tagsSuggests by remember { mutableStateOf(emptyList<String>()) }
+    var showTagSuggests by remember { mutableStateOf(false)}
+
+    if (tag.suggestsProvider != null) {
+        LaunchedEffect(tag.suggestsProvider) {
+            snapshotFlow { tag.textState.text }
+                .debounce(100)
+                .collectLatest { tagText ->
+                    if (tagText.isNotBlank()) {
+                        val result = tag.suggestsProvider(tagText.toString())
+                        if (result.isNotEmpty()) {
+                            tagsSuggests = result
+                            showTagSuggests = true
+                        } else {
+                            showTagSuggests = false
+                        }
+                    } else {
+                        showTagSuggests = false
+                    }
+                }
+        }
+    }
+
     val textMeasurer = rememberTextMeasurer()
     val hintStyle = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic)
     val hintText = stringResource(R.string.note_content_add_tag_hint)
@@ -206,52 +248,96 @@ private fun TemplateNoteTagItem(
     }
 
     val strokeColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
-    Box(modifier = modifier) {
-        Box(
+    ExposedDropdownMenuBox(
+        modifier = modifier,
+        expanded = showTagSuggests,
+        onExpandedChange = { expanded ->
+            if (!expanded) {
+                showTagSuggests = false
+            }
+        },
+    ) {
+        BasicTextField(
             modifier = Modifier
+                .bringIntoViewRequester(bringIntoViewRequester)
                 .padding(4.dp)
-                .dashedRoundedRectBorder(color = strokeColor),
-            contentAlignment = Alignment.Center,
-        ) {
-            BasicTextField(
-                modifier = Modifier
-                    .bringIntoViewRequester(bringIntoViewRequester)
-                    .padding(horizontal = 10.dp, vertical = 6.dp)
-                    .widthIn(min = hintWidth.pxToDp())
-                    .width(IntrinsicSize.Min)
-                    .onFocusChanged { focusState ->
-                        onFocusChanged()
-                        hasFocus = focusState.hasFocus
-                        if (!focusState.hasFocus) {
-                            onDoneEditing(tag)
-                        }
-                    },
-                state = tag.textState,
-                enabled = enabled,
-                textStyle = MaterialTheme.typography.labelSmall.copy(
-                    color = MaterialTheme.colorScheme.onSurface,
-                ),
-                lineLimits = TextFieldLineLimits.SingleLine,
-                cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
-                onTextLayout = { layoutResult = it() },
-                keyboardOptions = KeyboardOptions(
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Done,
-                    showKeyboardOnFocus = false,
-                ),
-                onKeyboardAction = { focusManager.clearFocus() },
-                decorator = { innerTextField ->
-                    if (tag.textState.text.isEmpty()) {
-                        Text(
-                            modifier = Modifier.alpha(0.5f),
-                            text = hintText,
-                            style = hintStyle,
-                            maxLines = 1,
-                        )
+                .dashedRoundedRectBorder(color = strokeColor)
+                .padding(horizontal = 10.dp, vertical = 6.dp)
+                .widthIn(min = hintWidth.pxToDp())
+                .width(IntrinsicSize.Min)
+                .menuAnchor(
+                    type = ExposedDropdownMenuAnchorType.PrimaryEditable
+                )
+                .onFocusChanged { focusState ->
+                    onFocusChanged()
+                    hasFocus = focusState.hasFocus
+                    if (!focusState.hasFocus) {
+                        onDoneEditing(tag)
                     }
-                    innerTextField()
                 },
-            )
+            state = tag.textState,
+            enabled = enabled,
+            textStyle = MaterialTheme.typography.labelSmall.copy(
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+            lineLimits = TextFieldLineLimits.SingleLine,
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
+            onTextLayout = { layoutResult = it() },
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction = ImeAction.Done,
+                showKeyboardOnFocus = false,
+            ),
+            onKeyboardAction = { focusManager.clearFocus() },
+            decorator = { innerTextField ->
+                if (tag.textState.text.isEmpty()) {
+                    Text(
+                        modifier = Modifier.alpha(0.5f),
+                        text = hintText,
+                        style = hintStyle,
+                        maxLines = 1,
+                    )
+                }
+                innerTextField()
+            },
+        )
+        ExposedDropdownMenu(
+            modifier = Modifier
+                .widthIn(min = 64.dp, max = 200.dp)
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 12.dp,
+                    )
+                )
+                .background(MaterialTheme.colorScheme.background),
+            expanded = showTagSuggests,
+            containerColor = Color.Transparent,
+            shape = RoundedCornerShape(16.dp),
+            shadowElevation = 4.dp,
+            tonalElevation = 0.dp,
+            matchAnchorWidth = false,
+            onDismissRequest = { showTagSuggests = false },
+        ) {
+            tagsSuggests.forEach { suggest ->
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickableNoRipple {
+                            tag.textState.edit { 
+                                delete(0, length)
+                                append(suggest)
+                            }
+                            showTagSuggests = false
+                        }
+                        .padding(vertical = 10.dp, horizontal = 12.dp),
+                    text = suggest,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
         }
     }
 }
@@ -293,6 +379,7 @@ private fun NoteTagsPreview() {
     SerenityTheme {
         NoteTags(
             tags = generatePreviewTags(),
+            popupHazeState = HazeState(),
             date = "Sat 9:12 PM",
             onTagRemoveClick = {},
             onTagClick = {},
@@ -308,5 +395,5 @@ private fun generatePreviewTags() = buildList {
     add(UiNoteTag.Regular(title = "Android", isRemovable = true))
     add(UiNoteTag.Regular(title = "Android", isRemovable = true))
     add(UiNoteTag.Regular(title = "Kotlin", isRemovable = true))
-    add(UiNoteTag.Template())
+    add(UiNoteTag.Template(suggestsProvider = null))
 }

@@ -46,6 +46,10 @@ internal class TagsRepositoryImp @Inject constructor(
         return tagDao.getAllTags().deepMap(TagWithRelatedNoteIds::toLocalTag)
     }
 
+    override fun searchTags(query: String): Flow<List<String>> {
+        return tagDao.searchTags(query).deepMap(EntryNoteTag::title)
+    }
+
     override fun getTags(noteId: String): Flow<List<LocalNote.Tag>> {
         return tagDao.getTags(noteId).deepMap(EntryNoteTag::toNoteContentTag)
     }

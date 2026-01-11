@@ -38,6 +38,7 @@ import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteMedia
 import com.furianrt.notepage.R
+import com.furianrt.notepage.internal.domain.SearchTagsUseCase
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.refreshTitleTemplates
@@ -153,6 +154,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
     private val stickersRepository: StickersRepository,
     private val notesRepository: NotesRepository,
+    private val searchTagsUseCase: SearchTagsUseCase,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val permissionsUtils: PermissionsUtils,
     private val appearanceRepository: AppearanceRepository,
@@ -193,6 +195,9 @@ internal class PageViewModel @AssistedInject constructor(
     private var cachedPhotoFile: File? = null
 
     private var locationJob: Job? = null
+
+    private val visibleTags: Set<String>
+        get() = (_state.value as? PageUiState.Success)?.visibleTags.orEmpty()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = noteId, listener = this)
@@ -561,7 +566,11 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun addSecondTagTemplate() {
         _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(tags = currentState.tags.addSecondTagTemplate())
+            currentState.copy(
+                tags = currentState.tags.addSecondTagTemplate(
+                    suggestsProvider = { searchTagsUseCase(it, visibleTags) },
+                )
+            )
         }
     }
 
@@ -987,7 +996,13 @@ internal class PageViewModel @AssistedInject constructor(
                         addTopTemplate = isEnabled
                     ),
                     tags = with(currentState.tags) {
-                        if (isEnabled) addTagTemplate() else removeTagTemplate(onlyEmpty = true)
+                        if (isEnabled) {
+                            addTagTemplate(
+                                suggestsProvider = { searchTagsUseCase(it, visibleTags) },
+                            )
+                        } else {
+                            removeTagTemplate(onlyEmpty = true)
+                        }
                     },
                     isInEditMode = isEnabled,
                 )
@@ -1043,7 +1058,9 @@ internal class PageViewModel @AssistedInject constructor(
                         ),
                         tags = with(note.tags) {
                             if (isNoteCreationMode || isInEditMode) {
-                                addTagTemplate()
+                                addTagTemplate(
+                                    suggestsProvider = { searchTagsUseCase(it, visibleTags) },
+                                )
                             } else {
                                 removeTagTemplate(onlyEmpty = true)
                             }
@@ -1234,7 +1251,13 @@ internal class PageViewModel @AssistedInject constructor(
                 }
                 .removeTagTemplate(tag.id)
         }
-        return copy(tags = if (addTemplate) result.addTagTemplate() else result)
+        return copy(
+            tags = if (addTemplate) {
+                result.addTagTemplate(suggestsProvider = { searchTagsUseCase(it, visibleTags) })
+            } else {
+                result
+            }
+        )
     }
 
     private fun PageUiState.Success.removeTag(tag: UiNoteTag) = copy(

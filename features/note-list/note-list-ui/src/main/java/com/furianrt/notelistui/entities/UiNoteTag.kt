@@ -15,6 +15,7 @@ sealed class UiNoteTag(
     @Stable
     data class Template(
         val textState: TextFieldState = TextFieldState(),
+        val suggestsProvider: (suspend (query: String) -> List<String>)?,
         override val id: String = UUID.randomUUID().toString(),
     ) : UiNoteTag(id)
 
