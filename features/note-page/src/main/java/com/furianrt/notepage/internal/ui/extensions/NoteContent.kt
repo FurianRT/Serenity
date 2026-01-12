@@ -164,22 +164,25 @@ private fun List<UiNoteContent>.joinTitles(
     var counter = 0
     val resultMap = mutableMapOf<Int, UiNoteContent>()
     forEach { content ->
-        val entry = resultMap[counter]
-        when {
-            entry == null && content is UiNoteContent.Title -> resultMap[counter] = content
-
-            entry is UiNoteContent.Title && content is UiNoteContent.Title -> {
+        when (val entry = resultMap[counter]) {
+            null if content is UiNoteContent.Title -> resultMap[counter] = content
+            is UiNoteContent.Title if content is UiNoteContent.Title -> {
                 val contentText = content.state.annotatedString
                 val entryText = entry.state.annotatedString
-                if (contentText.isNotEmpty() && entryText.isNotEmpty()) {
+                if (contentText.isNotEmpty() || entryText.isNotEmpty()) {
+                    val separator = if (contentText.isNotEmpty() && entryText.isNotEmpty()) {
+                        AnnotatedString("\n")
+                    } else {
+                        AnnotatedString("")
+                    }
                     if (content.id == focusedTitleId) {
-                        content.state.annotatedString =
-                            entryText + AnnotatedString("\n") + contentText
-                        content.state.selection =
-                            TextRange(entryText.length + content.state.selection.max + 1)
+                        content.state.annotatedString = entryText + separator + contentText
+                        content.state.selection = TextRange(
+                            entryText.length + separator.length + content.state.selection.max,
+                        )
                         resultMap[counter] = content
                     } else {
-                        entry.state.annotatedString += AnnotatedString("\n") + contentText
+                        entry.state.annotatedString += separator + contentText
                     }
                 }
             }
