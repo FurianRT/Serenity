@@ -315,7 +315,7 @@ private fun TemplateNoteTagItem(
             expanded = showTagSuggests,
             containerColor = Color.Transparent,
             shape = RoundedCornerShape(16.dp),
-            shadowElevation = 4.dp,
+            shadowElevation = 2.dp,
             tonalElevation = 0.dp,
             matchAnchorWidth = false,
             onDismissRequest = { showTagSuggests = false },
