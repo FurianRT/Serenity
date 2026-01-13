@@ -69,6 +69,11 @@ fun SerenityTheme(
         targetValue = colorScheme.background,
     )
 
+    val animatedSecondaryContainer by animateColorAsState(
+        animationSpec = tween(COLOR_ANIM_DURATION),
+        targetValue = colorScheme.secondaryContainer,
+    )
+
     val typography = remember(font) { getTypography(font) }
 
     val resultColorTheme = colorScheme.copy(
@@ -77,6 +82,7 @@ fun SerenityTheme(
         onSurface = animatedOnSurface,
         surfaceContainer = animatedSurfaceContainer,
         background = animatedBackground,
+        secondaryContainer = animatedSecondaryContainer,
     )
 
     LaunchedEffect(isLightTheme) {

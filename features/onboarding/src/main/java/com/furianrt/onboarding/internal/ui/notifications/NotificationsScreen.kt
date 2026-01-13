@@ -79,7 +79,7 @@ internal fun NotificationsScreen(
                 .height(240.dp)
                 .scale(1.8f)
                 .offset(x = 16.dp)
-                .alpha(0.6f),
+                .alpha(0.7f),
             composition = composition,
             dynamicProperties = dynamicProperties,
             progress = { lottieState.progress },

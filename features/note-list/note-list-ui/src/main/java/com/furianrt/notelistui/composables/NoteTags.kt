@@ -265,9 +265,7 @@ private fun TemplateNoteTagItem(
                 .padding(horizontal = 10.dp, vertical = 6.dp)
                 .widthIn(min = hintWidth.pxToDp())
                 .width(IntrinsicSize.Min)
-                .menuAnchor(
-                    type = ExposedDropdownMenuAnchorType.PrimaryEditable
-                )
+                .menuAnchor(type = ExposedDropdownMenuAnchorType.PrimaryEditable)
                 .onFocusChanged { focusState ->
                     onFocusChanged()
                     hasFocus = focusState.hasFocus
