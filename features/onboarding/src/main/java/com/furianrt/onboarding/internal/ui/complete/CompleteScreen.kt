@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import com.airbnb.lottie.LottieProperty
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.LottieDynamicProperty
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
@@ -40,47 +39,66 @@ internal fun CompleteScreen(
     val composition by rememberLottieComposition(
         spec = LottieCompositionSpec.RawRes(R.raw.anim_onboadring_complete),
     )
-    val lottieState = animateLottieCompositionAsState(
-        composition = composition,
-        iterations = LottieConstants.IterateForever,
-        reverseOnRepeat = true,
-        speed = 2.3f,
-    )
+    val lottieState = animateLottieCompositionAsState(composition = composition)
 
-    val leafsColor = MaterialTheme.colorScheme.primaryContainer.brighterBy(0.03f).toArgb()
-    val stemColor = MaterialTheme.colorScheme.primaryContainer.brighterBy(0.08f).toArgb()
-    val edgeColor = MaterialTheme.colorScheme.primaryContainer.brighterBy(-0.03f).toArgb()
+    val flowersColor = MaterialTheme.colorScheme.onPrimaryContainer.brighterBy(-0.08f).toArgb()
+    val stemColor = MaterialTheme.colorScheme.primaryContainer.brighterBy(-0.08f).toArgb()
 
     val dynamicProperties = rememberLottieDynamicProperties(
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
-            value = leafsColor,
+            value = MaterialTheme.colorScheme.primaryContainer.toArgb(),
             keyPath = KeyPath("**"),
         ),
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
-            value = stemColor,
-            keyPath = KeyPath("Long Line", "**"),
+            value = flowersColor,
+            keyPath = KeyPath("Layer 49 Outlines", "Group 3", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = flowersColor,
+            keyPath = KeyPath("Layer 48 Outlines", "Group 3", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = flowersColor,
+            keyPath = KeyPath("Layer 47 Outlines", "Group 3", "**"),
         ),
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
             value = stemColor,
-            keyPath = KeyPath("Left Leaf", "Group 3", "Group 1", "**"),
-        ),
-        LottieDynamicProperty(
-            property = LottieProperty.COLOR,
-            value = edgeColor,
-            keyPath = KeyPath("Left Leaf", "Group 3", "Group 3", "**"),
+            keyPath = KeyPath("Layer 46 Outlines", "Group 1", "**"),
         ),
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
             value = stemColor,
-            keyPath = KeyPath("Right Leaf", "Group 2", "Group 1", "**"),
+            keyPath = KeyPath("Layer 41 Outlines", "**"),
         ),
         LottieDynamicProperty(
             property = LottieProperty.COLOR,
-            value = edgeColor,
-            keyPath = KeyPath("Right Leaf", "Group 2", "Group 3", "**"),
+            value = stemColor,
+            keyPath = KeyPath("Layer 41 Outlines", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = stemColor,
+            keyPath = KeyPath("Layer 39 Outlines", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = stemColor,
+            keyPath = KeyPath("Layer 36 Outlines", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = stemColor,
+            keyPath = KeyPath("Layer 32 Outlines", "**"),
+        ),
+        LottieDynamicProperty(
+            property = LottieProperty.COLOR,
+            value = stemColor,
+            keyPath = KeyPath("Layer 29 Outlines", "**"),
         ),
     )
 
@@ -94,7 +112,7 @@ internal fun CompleteScreen(
         ) {
             LottieAnimation(
                 modifier = Modifier
-                    .height(180.dp)
+                    .height(150.dp)
                     .scale(1.4f),
                 composition = composition,
                 dynamicProperties = dynamicProperties,
