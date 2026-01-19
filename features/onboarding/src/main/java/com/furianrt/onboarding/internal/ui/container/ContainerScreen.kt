@@ -45,7 +45,7 @@ import com.furianrt.onboarding.internal.ui.greeting.GreetingScreen
 import com.furianrt.onboarding.internal.ui.notifications.NotificationsScreen
 import com.furianrt.onboarding.internal.ui.theme.ThemeScreen
 import com.furianrt.onboarding.internal.ui.theme.ThemeScreenState
-import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.extensions.openNotificationsSettingsScreen
 import com.furianrt.permissions.ui.NotificationsPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.RegularButton
@@ -113,7 +113,7 @@ internal fun ContainerScreen(
     if (showNotificationsPermissionDialog) {
         NotificationsPermissionDialog(
             hazeState = hazeState,
-            onSettingsClick = context::openAppSettingsScreen,
+            onSettingsClick = context::openNotificationsSettingsScreen,
             onDismissRequest = { showNotificationsPermissionDialog = false },
         )
     }

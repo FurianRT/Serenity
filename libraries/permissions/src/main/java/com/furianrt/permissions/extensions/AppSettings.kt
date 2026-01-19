@@ -13,3 +13,10 @@ fun Context.openAppSettingsScreen() = startActivity(
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 )
+
+fun Context.openNotificationsSettingsScreen() = startActivity(
+    Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+        putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+)
