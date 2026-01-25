@@ -10,7 +10,6 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +20,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -35,9 +35,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
-import com.furianrt.uikit.R as uiR
-import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import com.furianrt.uikit.R as uiR
 
 private const val ANIM_OFFSET_DURATION = 400
 private const val ANIM_BUTTON_SCROLL_DURATION = 350
@@ -45,6 +48,7 @@ private const val ANIM_BUTTON_SCROLL_DURATION = 350
 @Composable
 internal fun BottomNavigationBar(
     modifier: Modifier = Modifier,
+    hazeState: HazeState,
     needToHideNavigation: () -> Boolean = { false },
     needToShowScrollUpButton: () -> Boolean = { true },
     onScrollToTopClick: () -> Unit = {},
@@ -54,34 +58,16 @@ internal fun BottomNavigationBar(
     val verticalBias by animateFloatAsState(
         targetValue = if (needToHideNavigation()) 1f else 0f,
         animationSpec = tween(durationMillis = ANIM_OFFSET_DURATION),
-        label = "BottomNavigationBarOffsetAnim",
     )
 
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
-
-    val infiniteTransition = rememberInfiniteTransition(label = "ActionButtonInfiniteAnim")
-    val scale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.06f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 250,
-                delayMillis = 1500,
-                easing = LinearEasing,
-            ),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "ActionButtonScaleAnim",
-    )
 
     Row(
         modifier = modifier
             .navigationBarsPadding()
             .padding(contentPadding)
             .graphicsLayer {
-                val bottomPadding = contentPadding
-                    .calculateBottomPadding()
-                    .toPx()
+                val bottomPadding = contentPadding.calculateBottomPadding().toPx()
                 translationY = (size.height + bottomPadding + navBarsHeight.toPx()) * verticalBias
             },
         verticalAlignment = Alignment.Bottom,
@@ -89,15 +75,12 @@ internal fun BottomNavigationBar(
     ) {
         ButtonScrollToTop(
             modifier = Modifier.padding(bottom = 4.dp),
+            hazeState = hazeState,
             isVisible = needToShowScrollUpButton,
             onClick = onScrollToTopClick,
         )
-        ActionButton(
-            modifier = Modifier.graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            },
-            icon = painterResource(uiR.drawable.ic_add),
+        ButtonCreateNote(
+            hazeState = hazeState,
             onClick = onAddNoteClick,
         )
     }
@@ -105,6 +88,7 @@ internal fun BottomNavigationBar(
 
 @Composable
 private fun ButtonScrollToTop(
+    hazeState: HazeState,
     isVisible: () -> Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -115,12 +99,19 @@ private fun ButtonScrollToTop(
         enter = fadeIn(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
         exit = fadeOut(animationSpec = tween(durationMillis = ANIM_BUTTON_SCROLL_DURATION)),
     ) {
-
         Box(
             modifier = Modifier
                 .shadow(elevation = 6.dp, shape = CircleShape)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primaryContainer)
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                        tint = HazeTint(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
+                        noiseFactor = 0f,
+                        blurRadius = 12.dp,
+                    )
+                )
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
         ) {
@@ -134,10 +125,61 @@ private fun ButtonScrollToTop(
     }
 }
 
+@Composable
+private fun ButtonCreateNote(
+    hazeState: HazeState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val infiniteTransition = rememberInfiniteTransition()
+    val scale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.06f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 250,
+                delayMillis = 1500,
+                easing = LinearEasing,
+            ),
+            repeatMode = RepeatMode.Reverse,
+        ),
+    )
+    Box(
+        modifier = modifier
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .size(56.dp)
+            .shadow(elevation = 6.dp, shape = CircleShape)
+            .clip(CircleShape)
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                    tint = HazeTint(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
+                    noiseFactor = 0f,
+                    blurRadius = 12.dp,
+                )
+            )
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            modifier = Modifier.padding(8.dp),
+            painter = painterResource(uiR.drawable.ic_add),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentDescription = null,
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun BottomNavigationBarPreview() {
     SerenityTheme {
-        BottomNavigationBar()
+        BottomNavigationBar(
+            hazeState = HazeState(),
+        )
     }
 }

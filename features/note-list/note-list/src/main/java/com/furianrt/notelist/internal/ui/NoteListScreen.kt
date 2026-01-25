@@ -83,6 +83,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -168,6 +169,8 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     screenState: NoteListScreenState = rememberMainState(),
 ) {
+    val hazeState = rememberHazeState()
+
     val needToShowScrollUpButton by remember {
         derivedStateOf {
             screenState.listState.firstVisibleItemIndex > SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX
@@ -207,6 +210,7 @@ private fun MainScreenContent(
             is NoteListUiState.Loading -> LoadingContent()
             is NoteListUiState.Empty -> EmptyContent(onEvent = onEvent)
             is NoteListUiState.Success -> SuccessContent(
+                modifier = Modifier.hazeSource(hazeState),
                 uiState = uiState,
                 screenState = screenState,
                 toolbarPadding = topPadding,
@@ -216,6 +220,7 @@ private fun MainScreenContent(
 
         BottomNavigationBar(
             modifier = Modifier.align(Alignment.BottomEnd),
+            hazeState = hazeState,
             contentPadding = PaddingValues(start = 24.dp, end = 24.dp, bottom = 24.dp),
             onScrollToTopClick = { onEvent(NoteListEvent.OnScrollToTopClick) },
             needToHideNavigation = {
