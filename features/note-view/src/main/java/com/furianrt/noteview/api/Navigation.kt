@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.NavType
@@ -12,6 +13,8 @@ import androidx.navigation.compose.composable
 import com.furianrt.common.LocalDateSerializer
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.noteview.internal.ui.NoteViewScreen
+import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
@@ -80,12 +83,25 @@ fun NavGraphBuilder.noteViewScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    hasMediaSortingRoute: (destination: NavDestination) -> Boolean,
     onCloseRequest: () -> Unit,
 ) {
     composable<NoteViewRoute>(
-        exitTransition = { ExitTransition.None },
+        exitTransition = {
+            if (hasMediaSortingRoute(targetState.destination)) {
+                defaultExitTransition()
+            } else {
+                ExitTransition.None
+            }
+        },
         popExitTransition = { defaultPopExitTransition() },
-        popEnterTransition = { EnterTransition.None },
+        popEnterTransition = {
+            if (hasMediaSortingRoute(initialState.destination)) {
+                defaultPopEnterTransition()
+            } else {
+                EnterTransition.None
+            }
+        },
         typeMap = mapOf(typeOf<NoteViewRoute.SearchData?>() to SearchDataType),
     ) {
         NoteViewScreen(

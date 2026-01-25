@@ -231,6 +231,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 )
                             },
                             openMediaViewer = navController::navigateToMediaViewer,
+                            hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
 
@@ -256,6 +257,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 )
                             },
                             openMediaViewer = navController::navigateToMediaViewer,
+                            hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
 
