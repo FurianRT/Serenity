@@ -3,7 +3,6 @@ import java.util.Properties
 
 plugins {
     id("com.android.application")
-    kotlin("android")
 }
 
 android {
@@ -50,11 +49,6 @@ android {
     compileOptions {
         sourceCompatibility = ConfigData.JAVA_VERSION
         targetCompatibility = ConfigData.JAVA_VERSION
-    }
-    kotlin {
-        compilerOptions {
-            jvmTarget = ConfigData.JVM_TARGET
-        }
     }
     packaging {
         resources {
