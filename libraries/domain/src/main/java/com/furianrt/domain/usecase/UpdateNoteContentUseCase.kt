@@ -30,6 +30,7 @@ class UpdateNoteContentUseCase @Inject constructor(
         fontColor: NoteFontColor?,
         fontSize: Int,
         backgroundId: String?,
+        backgroundImageId: String?,
         moodId: String?,
         noteLocation: NoteLocation?,
         updateMediaFiles: Boolean = true,
@@ -83,7 +84,11 @@ class UpdateNoteContentUseCase @Inject constructor(
             notesRepository.updateNoteText(noteId, content)
             notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
 
-            notesRepository.updateNoteBackgroundId(noteId, backgroundId)
+            notesRepository.updateNoteBackgroundId(
+                noteId = noteId,
+                backgroundId = backgroundId,
+                backgroundImageId = backgroundImageId,
+            )
             notesRepository.updateNoteMoodId(noteId, moodId)
 
             if (tags.isNotEmpty()) {

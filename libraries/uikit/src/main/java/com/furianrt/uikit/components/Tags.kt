@@ -31,6 +31,10 @@ import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 private const val ANIM_EDIT_MODE_DURATION = 250
 
@@ -39,6 +43,7 @@ fun TagItem(
     title: String,
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     background: Color = MaterialTheme.colorScheme.secondaryContainer,
     textStyle: TextStyle = MaterialTheme.typography.labelSmall,
     textColor: Color = Color.Unspecified,
@@ -55,7 +60,20 @@ fun TagItem(
             modifier = Modifier
                 .padding(all = 4.dp)
                 .clip(RoundedCornerShape(size = 16.dp))
-                .background(background)
+                .then(
+                    if (hazeState != null) {
+                        Modifier.hazeEffect(
+                            state = hazeState,
+                            style = HazeDefaults.style(
+                                backgroundColor = MaterialTheme.colorScheme.surface,
+                                blurRadius = 12.dp,
+                                tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
+                            )
+                        )
+                    } else {
+                        Modifier.background(background)
+                    }
+                )
                 .applyIf(onClick != null) { Modifier.clickable { onClick?.invoke() } }
                 .padding(horizontal = horizontalPadding, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically,

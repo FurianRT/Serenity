@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Licht</string>
     <string name="font_panel_missing_font_title">Mis je een lettertype?</string>
     <string name="font_panel_write_to_us_title">Schrijf ons!</string>
+
+    <string name="background_panel_tab_solid_title">Kleur</string>
+    <string name="background_panel_tab_pattern_title">Patroon</string>
+    <string name="background_panel_tab_picture_title">Afbeelding</string>
+    <string name="background_panel_background_title">Achtergrond</string>
+    <string name="background_panel_theme_title">Thema</string>
 </resources>

@@ -4,8 +4,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
 import androidx.compose.foundation.text.selection.TextSelectionColors
 import androidx.compose.material.ripple.RippleAlpha
@@ -47,31 +48,43 @@ fun SerenityTheme(
 ) {
     val activity = LocalActivity.current as? ComponentActivity
 
-    val animatedPrimaryContainer by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.primaryContainer,
-    )
-    val animatedSurface by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.surface,
-    )
-    val animatedOnSurface by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.onSurface,
-    )
-    val animatedSurfaceContainer by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.surfaceContainer,
-    )
+    val colorTransition = updateTransition(targetState = colorScheme)
 
-    val animatedBackground by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.background,
+    val animatedPrimaryContainer by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.primaryContainer },
     )
-
-    val animatedSecondaryContainer by animateColorAsState(
-        animationSpec = tween(COLOR_ANIM_DURATION),
-        targetValue = colorScheme.secondaryContainer,
+    val animatedSurface by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.surface },
+    )
+    val animatedOnSurface by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.onSurface },
+    )
+    val animatedSurfaceContainer by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.surfaceContainer },
+    )
+    val animatedBackground by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.background },
+    )
+    val animatedSecondaryContainer by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.secondaryContainer },
+    )
+    val animatedTertiary by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.tertiary },
+    )
+    val animatedTertiaryContainer by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.tertiaryContainer },
+    )
+    val animatedOnTertiaryContainer by colorTransition.animateColor(
+        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        targetValueByState = { it.onTertiaryContainer },
     )
 
     val typography = remember(font) { getTypography(font) }
@@ -83,6 +96,9 @@ fun SerenityTheme(
         surfaceContainer = animatedSurfaceContainer,
         background = animatedBackground,
         secondaryContainer = animatedSecondaryContainer,
+        tertiary = animatedTertiary,
+        tertiaryContainer = animatedTertiaryContainer,
+        onTertiaryContainer = animatedOnTertiaryContainer,
     )
 
     LaunchedEffect(isLightTheme) {

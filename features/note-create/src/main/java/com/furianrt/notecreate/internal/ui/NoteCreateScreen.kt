@@ -38,6 +38,7 @@ import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.composables.Toolbar
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -115,7 +116,11 @@ internal fun NoteCreateScreen(
     }
 
     val successState = uiState as? NoteCreateUiState.Success
-    val selectedBackground = successState?.note?.background
+    val selectedBackground = when (val theme = successState?.note?.theme) {
+        is UiNoteTheme.Solid -> theme.color
+        is UiNoteTheme.Image -> theme.color
+        null -> null
+    }
 
     val isLightTheme = when {
         LocalHasMediaRoute.current -> false
@@ -142,14 +147,6 @@ internal fun NoteCreateScreen(
                         isInEditMode = state.isInEditMode,
                         isSelected = true,
                         isNoteCreationMode = true,
-                        onBackgroundChanged = {
-                            viewModel.onEvent(
-                                NoteCreateEvent.OnBackgroundChanged(
-                                    state.note.id,
-                                    it
-                                )
-                            )
-                        },
                         onTitleFocused = { viewModel.onEvent(NoteCreateEvent.OnPageTitleFocused) },
                         onLocationClick = { viewModel.onEvent(NoteCreateEvent.OnLocationClick) },
                         openMediaViewScreen = openMediaViewScreen,
@@ -287,7 +284,7 @@ private fun Preview() {
             uiState = NoteCreateUiState.Success(
                 note = NoteItem(
                     id = "",
-                    background = null,
+                    theme = null,
                     date = ZonedDateTime.now(),
                     isPinned = false,
                 ),

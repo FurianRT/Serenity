@@ -10,4 +10,10 @@
 
     <string name="font_panel_missing_font_title">คุณกำลังขาดฟอนต์หรือไม่?</string>
     <string name="font_panel_write_to_us_title">แจ้งให้เราทราบ!</string>
+
+    <string name="background_panel_tab_solid_title">สี</string>
+    <string name="background_panel_tab_pattern_title">ลวดลาย</string>
+    <string name="background_panel_tab_picture_title">รูปภาพ</string>
+    <string name="background_panel_background_title">พื้นหลัง</string>
+    <string name="background_panel_theme_title">ธีม</string>
 </resources>

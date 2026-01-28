@@ -80,6 +80,7 @@ fun NoteTags(
     tags: List<UiNoteTag>,
     popupHazeState: HazeState?,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     date: String? = null,
     showStub: Boolean = false,
     isEditable: Boolean = false,
@@ -119,6 +120,7 @@ fun NoteTags(
                                     Modifier.animatePlacementInScope(this@LookaheadScope)
                                 },
                                 title = tag.title,
+                                hazeState = hazeState,
                                 isRemovable = isEditable,
                                 onClick = onTagClick?.let { { onTagClick(tag) } },
                                 onRemoveClick = { onTagRemoveClick(tag) },
@@ -218,7 +220,7 @@ private fun TemplateNoteTagItem(
     }
 
     var tagsSuggests by remember { mutableStateOf(emptyList<String>()) }
-    var showTagSuggests by remember { mutableStateOf(false)}
+    var showTagSuggests by remember { mutableStateOf(false) }
 
     if (tag.suggestsProvider != null) {
         LaunchedEffect(tag.suggestsProvider) {
@@ -323,7 +325,7 @@ private fun TemplateNoteTagItem(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickableNoRipple {
-                            tag.textState.edit { 
+                            tag.textState.edit {
                                 delete(0, length)
                                 append(suggest)
                             }

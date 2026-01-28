@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Sáng</string>
     <string name="font_panel_missing_font_title">Bạn thấy thiếu phông chữ nào không?</string>
     <string name="font_panel_write_to_us_title">Hãy viết cho chúng tôi!</string>
+
+    <string name="background_panel_tab_solid_title">Màu</string>
+    <string name="background_panel_tab_pattern_title">Hoa văn</string>
+    <string name="background_panel_tab_picture_title">Hình ảnh</string>
+    <string name="background_panel_background_title">Nền</string>
+    <string name="background_panel_theme_title">Chủ đề</string>
 </resources>

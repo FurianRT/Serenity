@@ -3,6 +3,8 @@ package com.furianrt.serenity
 import android.app.Application
 import android.os.StrictMode
 import android.util.Log
+import androidx.compose.runtime.Composer
+import androidx.compose.runtime.tooling.ComposeStackTraceMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
 import com.furianrt.core.DispatchersProvider
@@ -52,16 +54,15 @@ internal class SerenityApp : Application(), Configuration.Provider {
         }
         updateLaunchCount()
         startPeriodicWorks()
-        // Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
+        Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
     }
 
-    override val workManagerConfiguration: Configuration
-        get() = Configuration.Builder()
-            .setWorkerFactory(workerFactory)
-            .setExecutor(Dispatchers.Default.asExecutor())
-            .setTaskExecutor(Dispatchers.Default.asExecutor())
-            .setMinimumLoggingLevel(Log.INFO)
-            .build()
+    override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
+        .setWorkerFactory(workerFactory)
+        .setExecutor(Dispatchers.Default.asExecutor())
+        .setTaskExecutor(Dispatchers.Default.asExecutor())
+        .setMinimumLoggingLevel(Log.INFO)
+        .build()
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun startPeriodicWorks() {

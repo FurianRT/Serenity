@@ -1,8 +1,8 @@
 package com.furianrt.toolspanel.internal.di
 
-import com.furianrt.toolspanel.api.NoteBackgroundProvider
+import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.toolspanel.api.StickerIconProvider
-import com.furianrt.toolspanel.internal.domain.NoteBackgroundHolder
+import com.furianrt.toolspanel.internal.domain.NoteThemesHolder
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import dagger.Binds
 import dagger.Module
@@ -20,5 +20,5 @@ internal interface ToolsPanelModule {
 
     @Binds
     @Singleton
-    fun noteBackgroundProvider(imp: NoteBackgroundHolder): NoteBackgroundProvider
+    fun noteThemeProvider(imp: NoteThemesHolder): NoteThemeProvider
 }

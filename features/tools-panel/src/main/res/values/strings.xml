@@ -11,4 +11,10 @@
     <string name="font_panel_missing_font_title">Is there a font you’re missing?</string>
     <string name="font_panel_write_to_us_title">Let us know!</string>
     <string name="font_feedback_email_subject" translatable="false">Serenity font feedback %s</string>
+
+    <string name="background_panel_tab_solid_title">Color</string>
+    <string name="background_panel_tab_pattern_title">Pattern</string>
+    <string name="background_panel_tab_picture_title">Image</string>
+    <string name="background_panel_background_title">Background</string>
+    <string name="background_panel_theme_title">Theme</string>
 </resources>

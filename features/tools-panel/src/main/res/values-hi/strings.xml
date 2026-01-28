@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">हल्के</string>
     <string name="font_panel_missing_font_title">क्या कोई फ़ॉन्ट गायब है?</string>
     <string name="font_panel_write_to_us_title">हमें लिखें!</string>
+
+    <string name="background_panel_tab_solid_title">रंग</string>
+    <string name="background_panel_tab_pattern_title">पैटर्न</string>
+    <string name="background_panel_tab_picture_title">छवि</string>
+    <string name="background_panel_background_title">पृष्ठभूमि</string>
+    <string name="background_panel_theme_title">थीम</string>
 </resources>

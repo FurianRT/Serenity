@@ -48,6 +48,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
@@ -133,7 +134,11 @@ internal fun NoteViewScreen(
     }
     val successState = uiState as? NoteViewUiState.Success
     val selectedNote = successState?.currentNote
-    val selectedBackground = selectedNote?.background
+    val selectedBackground = when (val noteTheme = selectedNote?.theme) {
+        is UiNoteTheme.Solid -> noteTheme.color
+        is UiNoteTheme.Image -> noteTheme.color
+        null -> null
+    }
 
     val isLightTheme = when {
         LocalHasMediaRoute.current -> false
@@ -346,9 +351,6 @@ private fun SuccessScreen(
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
-                onBackgroundChanged = {
-                    onEvent(NoteViewEvent.OnBackgroundChanged(uiState.notes[index].id, it))
-                },
                 onTitleFocused = { onEvent(NoteViewEvent.OnPageTitleFocused) },
                 onLocationClick = { onEvent(NoteViewEvent.OnLocationClick) },
                 openMediaViewScreen = openMediaViewScreen,

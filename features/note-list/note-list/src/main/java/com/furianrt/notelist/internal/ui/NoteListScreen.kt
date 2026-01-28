@@ -100,7 +100,7 @@ internal fun NoteListScreen(
     val viewModel: NoteListViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val screenState = rememberMainState()
@@ -207,14 +207,22 @@ private fun MainScreenContent(
         },
     ) { topPadding ->
         when (uiState) {
-            is NoteListUiState.Loading -> LoadingContent()
-            is NoteListUiState.Empty -> EmptyContent(onEvent = onEvent)
+            is NoteListUiState.Loading -> LoadingContent(
+                modifier = Modifier.hazeSource(hazeState),
+            )
+
+            is NoteListUiState.Empty -> EmptyContent(
+                modifier = Modifier.hazeSource(hazeState),
+                onEvent = onEvent,
+            )
+
             is NoteListUiState.Success -> SuccessContent(
                 modifier = Modifier.hazeSource(hazeState),
                 uiState = uiState,
                 screenState = screenState,
                 toolbarPadding = topPadding,
                 onEvent = onEvent,
+                hazeState = hazeState,
             )
         }
 
@@ -251,6 +259,7 @@ private fun SuccessContent(
     uiState: NoteListUiState.Success,
     screenState: NoteListScreenState,
     toolbarPadding: Dp,
+    hazeState: HazeState,
     onEvent: (event: NoteListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -291,6 +300,7 @@ private fun SuccessContent(
                 locationState = note.locationState,
                 isPinned = note.isPinned,
                 isSelected = note.isSelected,
+                hazeState = hazeState,
                 onClick = { onEvent(NoteListEvent.OnNoteClick(note)) },
                 onLongClick = { onEvent(NoteListEvent.OnNoteLongClick(note)) },
             )

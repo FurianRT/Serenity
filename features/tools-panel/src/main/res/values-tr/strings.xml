@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Açık</string>
     <string name="font_panel_missing_font_title">Eksik bir yazı tipi mi var?</string>
     <string name="font_panel_write_to_us_title">Bize yazın!</string>
+
+    <string name="background_panel_tab_solid_title">Renk</string>
+    <string name="background_panel_tab_pattern_title">Desen</string>
+    <string name="background_panel_tab_picture_title">Görsel</string>
+    <string name="background_panel_background_title">Arka Plan</string>
+    <string name="background_panel_theme_title">Tema</string>
 </resources>

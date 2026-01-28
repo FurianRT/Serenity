@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Jasne</string>
     <string name="font_panel_missing_font_title">Brakuje jakiejś czcionki?</string>
     <string name="font_panel_write_to_us_title">Napisz do nas!</string>
+
+    <string name="background_panel_tab_solid_title">Kolor</string>
+    <string name="background_panel_tab_pattern_title">Wzór</string>
+    <string name="background_panel_tab_picture_title">Obraz</string>
+    <string name="background_panel_background_title">Tło</string>
+    <string name="background_panel_theme_title">Motyw</string>
 </resources>

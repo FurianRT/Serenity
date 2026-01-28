@@ -20,15 +20,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -63,6 +60,10 @@ import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import kotlin.random.Random
 import com.furianrt.uikit.R as uiR
 
@@ -78,6 +79,7 @@ fun NoteContentVoice(
     isRemovable: Boolean,
     isPayable: Boolean,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     onRemoveClick: (voice: Voice) -> Unit = {},
     onPlayClick: (voice: Voice) -> Unit = {},
     onProgressSelected: (voice: Voice, value: Float) -> Unit = { _, _ -> },
@@ -86,6 +88,7 @@ fun NoteContentVoice(
         VoiceContent(
             modifier = Modifier.padding(top = 4.dp, end = 2.dp),
             voice = voice,
+            hazeState = hazeState,
             isPlaying = isPlaying,
             isPayable = isPayable,
             onPlayClick = onPlayClick,
@@ -112,52 +115,61 @@ private fun VoiceContent(
     onPlayClick: (voice: Voice) -> Unit,
     onProgressSelected: (voice: Voice, value: Float) -> Unit,
     modifier: Modifier = Modifier,
+    hazeState: HazeState?,
 ) {
     var wasStarted by rememberSaveable { mutableStateOf(false) }
     val isZeroProgress by remember {
         derivedStateOf { voice.progressState.progress.floatValue == 0f }
     }
-    Card(
-        modifier = modifier.width(if (isPayable) 240.dp else 200.dp),
-        shape = RoundedCornerShape(24),
-        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.tertiary),
-        elevation = CardDefaults.cardElevation(0.dp),
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(4.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            if (isPayable) {
-                ButtonPlay(
-                    isPaused = !isPlaying,
-                    onClick = {
-                        if (!isPlaying) {
-                            wasStarted = true
-                        }
-                        onPlayClick(voice)
-                    },
-                )
-            } else {
-                Spacer(Modifier.width(6.dp))
-            }
-            VoiceSlider(
-                modifier = Modifier.weight(1f),
-                enabled = isPayable,
-                progressState = voice.progressState,
-                volume = voice.volume,
-                onValueChangeFinished = { onProgressSelected(voice, it) },
-            )
-            Timer(
-                time = if (!wasStarted || isZeroProgress) {
-                    voice.duration.toTimeString()
+    Row(
+        modifier = modifier
+            .width(if (isPayable) 240.dp else 200.dp)
+            .clip(RoundedCornerShape(24))
+            .then(
+                if (hazeState != null) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            tint = HazeTint(MaterialTheme.colorScheme.tertiary),
+                        )
+                    )
                 } else {
-                    voice.currentDuration.toTimeString()
+                    Modifier.background(MaterialTheme.colorScheme.tertiary)
+                }
+            )
+            .padding(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (isPayable) {
+            ButtonPlay(
+                isPaused = !isPlaying,
+                onClick = {
+                    if (!isPlaying) {
+                        wasStarted = true
+                    }
+                    onPlayClick(voice)
                 },
             )
+        } else {
+            Spacer(Modifier.width(6.dp))
         }
+        VoiceSlider(
+            modifier = Modifier.weight(1f),
+            enabled = isPayable,
+            progressState = voice.progressState,
+            volume = voice.volume,
+            onValueChangeFinished = { onProgressSelected(voice, it) },
+        )
+        Timer(
+            time = if (!wasStarted || isZeroProgress) {
+                voice.duration.toTimeString()
+            } else {
+                voice.currentDuration.toTimeString()
+            },
+        )
     }
 }
 

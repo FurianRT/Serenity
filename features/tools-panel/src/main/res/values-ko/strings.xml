@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">밝음</string>
     <string name="font_panel_missing_font_title">찾는 폰트가 없나요?</string>
     <string name="font_panel_write_to_us_title">저희에게 알려주세요!</string>
+
+    <string name="background_panel_tab_solid_title">색상</string>
+    <string name="background_panel_tab_pattern_title">패턴</string>
+    <string name="background_panel_tab_picture_title">이미지</string>
+    <string name="background_panel_background_title">배경</string>
+    <string name="background_panel_theme_title">테마</string>
 </resources>

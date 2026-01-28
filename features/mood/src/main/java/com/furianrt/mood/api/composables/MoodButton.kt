@@ -22,12 +22,17 @@ import com.furianrt.mood.internal.entites.MoodPack
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 fun MoodButton(
     moodId: String?,
     defaultMoodId: String?,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     onClick: (() -> Unit)? = null,
 ) {
     val moodPacks = remember { MoodHolder.getMoodPacks() }
@@ -47,7 +52,20 @@ fun MoodButton(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(20.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .then(
+                if (hazeState != null) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
+                        )
+                    )
+                } else {
+                    Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                }
+            )
             .applyIf(onClick != null) {
                 Modifier.clickable { onClick?.invoke() }
             }

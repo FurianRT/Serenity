@@ -75,8 +75,18 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(noteIds.map { PartNoteIsPinned(it, isPinned) })
     }
 
-    override suspend fun updateNoteBackgroundId(noteId: String, backgroundId: String?) {
-        noteDao.update(PartNoteBackgroundId(noteId, backgroundId))
+    override suspend fun updateNoteBackgroundId(
+        noteId: String,
+        backgroundId: String?,
+        backgroundImageId: String?,
+    ) {
+        noteDao.update(
+            PartNoteBackgroundId(
+                id = noteId,
+                backgroundId = backgroundId,
+                backgroundImageId = backgroundImageId,
+            )
+        )
     }
 
     override suspend fun updateNoteMoodId(noteId: String, moodId: String?) {
@@ -144,6 +154,7 @@ internal class NotesRepositoryImp @Inject constructor(
                 fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
                 fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
                 backgroundId = null,
+                backgroundImageId = null,
                 moodId = null,
                 date = ZonedDateTime.now(),
                 isPinned = false,

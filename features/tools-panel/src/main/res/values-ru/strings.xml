@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Светлые</string>
     <string name="font_panel_missing_font_title">Не хватает какого-то шрифта?</string>
     <string name="font_panel_write_to_us_title">Напишите нам!</string>
+
+    <string name="background_panel_tab_solid_title">Цвет</string>
+    <string name="background_panel_tab_pattern_title">Узор</string>
+    <string name="background_panel_tab_picture_title">Картинка</string>
+    <string name="background_panel_background_title">Фон</string>
+    <string name="background_panel_theme_title">Тема</string>
 </resources>

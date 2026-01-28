@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Terang</string>
     <string name="font_panel_missing_font_title">Ada font yang kurang?</string>
     <string name="font_panel_write_to_us_title">Tulis ke kami!</string>
+
+    <string name="background_panel_tab_solid_title">Warna</string>
+    <string name="background_panel_tab_pattern_title">Pola</string>
+    <string name="background_panel_tab_picture_title">Gambar</string>
+    <string name="background_panel_background_title">Latar Belakang</string>
+    <string name="background_panel_theme_title">Tema</string>
 </resources>

@@ -43,6 +43,7 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
@@ -57,6 +58,7 @@ fun NoteListItem(
     fontFamily: UiNoteFontFamily?,
     fontSize: TextUnit,
     date: String,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     isPinned: Boolean = false,
     isSelected: Boolean = false,
@@ -173,6 +175,7 @@ fun NoteListItem(
                 showLocation -> LocationCard(
                     modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
                     state = locationState,
+                    hazeState = hazeState,
                     clickable = false,
                     fullAlpha = true,
                 )
@@ -215,6 +218,7 @@ private fun NoteItemPreview() {
             fontFamily = UiNoteFontFamily.NotoSans,
             fontSize = 16.sp,
             content = generatePreviewContent(),
+            hazeState = HazeState(),
         )
     }
 }
@@ -237,6 +241,7 @@ private fun PinnedNoteItemPreview() {
             fontSize = 16.sp,
             isPinned = true,
             content = generatePreviewContent(),
+            hazeState = HazeState(),
         )
     }
 }
@@ -260,6 +265,7 @@ private fun SelectedNoteItemPreview() {
             isPinned = true,
             isSelected = true,
             content = generatePreviewContent(),
+            hazeState = HazeState(),
         )
     }
 }

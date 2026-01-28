@@ -8,7 +8,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
 import com.furianrt.notelistui.extensions.toNoteFont
-import com.furianrt.toolspanel.api.NoteBackgroundProvider
+import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -42,7 +42,7 @@ internal class NoteCreateViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
-    private val backgroundProvider: NoteBackgroundProvider,
+    private val noteThemeProvider: NoteThemeProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
@@ -57,7 +57,10 @@ internal class NoteCreateViewModel @Inject constructor(
     ) { isInEditMode, note, font ->
         NoteCreateUiState.Success(
             note = note.toNoteItem(
-                background = backgroundProvider.getBackground(note.backgroundId),
+                theme = noteThemeProvider.findTheme(
+                    colorId = note.backgroundId,
+                    imageId = note.backgroundImageId,
+                ),
             ),
             isInEditMode = isInEditMode,
             font = font.toNoteFont(),
@@ -126,9 +129,6 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
             is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
-            is NoteCreateEvent.OnBackgroundChanged -> launch {
-                notesRepository.updateNoteBackgroundId(event.noteId, event.background?.id)
-            }
         }
     }
 

@@ -43,10 +43,15 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 fun LocationCard(
     state: LocationState,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     isRemovable: Boolean = false,
     clickable: Boolean = true,
@@ -69,6 +74,7 @@ fun LocationCard(
     ) { targetState ->
         when (targetState) {
             is LocationState.Loading -> LoadingContent(
+                hazeState = hazeState,
                 onCancelClick = onCancelClick,
             )
 
@@ -157,8 +163,17 @@ private fun EmptyContent(
 @Composable
 private fun LoadingContent(
     onCancelClick: () -> Unit,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
+    val hazeModifier = Modifier.hazeEffect(
+        state = hazeState,
+        style = HazeDefaults.style(
+            backgroundColor = MaterialTheme.colorScheme.surface,
+            blurRadius = 12.dp,
+            tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
+        )
+    )
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -177,7 +192,7 @@ private fun LoadingContent(
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .then(hazeModifier)
                     .shimmer(color = MaterialTheme.colorScheme.secondaryContainer),
             )
             Box(
@@ -186,7 +201,7 @@ private fun LoadingContent(
                     .fillMaxWidth()
                     .height(14.dp)
                     .clip(RoundedCornerShape(32.dp))
-                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .then(hazeModifier)
                     .shimmer(color = MaterialTheme.colorScheme.secondaryContainer),
             )
         }
@@ -228,6 +243,7 @@ private fun SuccessPreview() {
                 latitude = 0.0,
                 longitude = 0.0,
             ),
+            hazeState = HazeState(),
             isRemovable = false,
             onAddLocationClick = {},
             onRemoveLocationClick = {},
@@ -246,6 +262,7 @@ private fun SuccessOneLinePreview() {
                 latitude = 0.0,
                 longitude = 0.0,
             ),
+            hazeState = HazeState(),
             isRemovable = false,
             onAddLocationClick = {},
             onRemoveLocationClick = {},
@@ -264,6 +281,7 @@ private fun SuccessRemovablePreview() {
                 latitude = 0.0,
                 longitude = 0.0,
             ),
+            hazeState = HazeState(),
             isRemovable = true,
         )
     }
@@ -275,6 +293,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         LocationCard(
             state = LocationState.Empty,
+            hazeState = HazeState(),
         )
     }
 }
@@ -285,6 +304,7 @@ private fun LoadingPreview() {
     SerenityTheme {
         LocationCard(
             state = LocationState.Loading,
+            hazeState = HazeState(),
         )
     }
 }

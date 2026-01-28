@@ -151,6 +151,7 @@ internal fun SearchScreen(
         modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         snackBarHostState = snackBarHostState,
+        hazeState = hazeState,
         onEvent = viewModel::onEvent,
         toolbarState = toolbarState,
     )
@@ -182,6 +183,7 @@ internal fun SearchScreen(
 private fun ScreenContent(
     uiState: SearchUiState,
     snackBarHostState: SnackbarHostState,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onEvent: (event: SearchEvent) -> Unit = {},
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
@@ -233,6 +235,7 @@ private fun ScreenContent(
                     listState = listState,
                     toolbarState = toolbarState,
                     toolbarHeight = topPadding,
+                    hazeState = hazeState,
                 )
 
                 is SearchUiState.State.Empty -> EmptyContent(
@@ -261,6 +264,7 @@ private fun SuccessContent(
     listState: LazyListState,
     toolbarState: MovableToolbarState,
     toolbarHeight: Dp,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
@@ -332,6 +336,7 @@ private fun SuccessContent(
                     fontSize = item.fontSize.sp,
                     moodId = item.moodId,
                     locationState = item.locationState,
+                    hazeState = hazeState,
                     onClick = { onEvent(SearchEvent.OnNoteItemClick(item.id)) },
                     onLongClick = { onEvent(SearchEvent.OnNoteLongClick(item.id)) },
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
@@ -389,6 +394,7 @@ private fun SuccessEmptyQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
+            hazeState = HazeState(),
         )
     }
 }
@@ -456,6 +462,7 @@ private fun SuccessFilledQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
+            hazeState = HazeState(),
         )
     }
 }
@@ -476,6 +483,7 @@ private fun EmptyStatePreview() {
                 state = SearchUiState.State.Empty,
             ),
             snackBarHostState = SnackbarHostState(),
+            hazeState = HazeState(),
         )
     }
 }

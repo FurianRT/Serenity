@@ -1,7 +1,6 @@
 package com.furianrt.notecreate.internal.ui
 
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.uikit.theme.NoteFont
 import java.time.LocalDate
 
@@ -26,10 +25,6 @@ internal sealed interface NoteCreateEvent {
     data object OnPinClick : NoteCreateEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
     data class OnDateSelected(val date: LocalDate) : NoteCreateEvent
-    data class OnBackgroundChanged(
-        val noteId: String,
-        val background: UiNoteBackground?,
-    ) : NoteCreateEvent
 }
 
 internal sealed interface NoteCreateEffect {

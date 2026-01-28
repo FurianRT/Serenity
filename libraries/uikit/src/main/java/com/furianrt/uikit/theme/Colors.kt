@@ -27,6 +27,14 @@ object Colors {
 
         val TotalBlack = Color(0xFF040009)
 
+        val FireflyOlive = Color(0xFF2D3526)
+
+        val AvatarBlue = Color(0xFF0C1125)
+        val Blue1 = Color(0xFF00366E)
+        val Blue2 = Color(0xFF012B39)
+
+        val Green1 = Color(0xFF06272C)
+
         val LightBlue = Color(0xFFC0E0F4)
         val LightGreen = Color(0xFFD3EEDF)
         val LightPink = Color(0xFFFADFEE)
@@ -40,15 +48,18 @@ object Colors {
         val Purple = Color(0xFF8D6EFD)
         val Purple2 = Color(0xFF8F63BF)
         val PurpleDark = Color(0xFF8D4BF6)
+        val AvatarPurple = Color(0xFF9C4BD2)
         val Turquoise = Color(0xFF39A0A8)
         val Blue = Color(0xFF446DFF)
         val Blue2 = Color(0xFF5A8DEE)
         val Blue3 = Color(0xFF66C28E)
+        val Blue4 = Color(0xFF3F85A2)
         val RichMulberry = Color(0xFFFF5EB2)
         val Pink = Color(0xFFBC8AC3)
         val Pink3 = Color(0xFFA65768)
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
+        val FireflyYellow = Color(0xFFADAE62)
 
         val LightBlue = Color(0xFF7D8BFF)
         val LightGreen = Color(0xFF4FA78C)

@@ -16,7 +16,7 @@ import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
-import com.furianrt.toolspanel.api.NoteBackgroundProvider
+import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -48,7 +48,7 @@ internal class NoteViewModel @Inject constructor(
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
-    private val backgroundProvider: NoteBackgroundProvider,
+    private val noteThemeProvider: NoteThemeProvider,
     private val appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
@@ -111,10 +111,6 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnPinClick -> launch {
                 toggleNotePinnedState(event.noteId, event.isPinned)
             }
-
-            is NoteViewEvent.OnBackgroundChanged -> launch {
-                notesRepository.updateNoteBackgroundId(event.noteId, event.background?.id)
-            }
         }
     }
 
@@ -141,7 +137,10 @@ internal class NoteViewModel @Inject constructor(
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
                         val notesItems = notes.map { note ->
                             note.toNoteItem(
-                                background = backgroundProvider.getBackground(note.backgroundId),
+                                theme = noteThemeProvider.findTheme(
+                                    colorId = note.backgroundId,
+                                    imageId = note.backgroundImageId,
+                                ),
                             )
                         }
                         val currentPageIndex = notesItems.indexOfFirstOrNull {
@@ -160,7 +159,10 @@ internal class NoteViewModel @Inject constructor(
                         val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
                         val notesItems = notes.map { note ->
                             note.toNoteItem(
-                                background = backgroundProvider.getBackground(note.backgroundId),
+                                theme = noteThemeProvider.findTheme(
+                                    colorId = note.backgroundId,
+                                    imageId = note.backgroundImageId,
+                                ),
                             )
                         }
                         NoteViewUiState.Success(

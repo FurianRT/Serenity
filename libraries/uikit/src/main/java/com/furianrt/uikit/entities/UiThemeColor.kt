@@ -19,6 +19,7 @@ enum class UiThemeColor(
     val onSurface: Color = Color.White,
     val onPrimaryContainer: Color = Color.White,
     val surfaceContainer: Color = Color.White,
+    val surfaceContainerLowest: Color = surface,
     val onSurfaceVariant: Color = primaryContainer.copy(alpha = 0.2f),
     val outlineVariant: Color = Color.White.copy(alpha = 0.05f),
     val background: Color = Color.White.copy(alpha = 0.1f),
@@ -118,8 +119,36 @@ enum class UiThemeColor(
         id = "dark_15",
         surface = Colors.Primary.TotalBlack,
         primaryContainer = Colors.Accent.Purple,
-        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
-        surfaceTint = Color.White.copy(alpha = 0.1f),
+    ),
+
+    FIREFLY_OLIVE(
+        id = "dark_16",
+        surface = Colors.Primary.FireflyOlive,
+        primaryContainer = Colors.Accent.FireflyYellow,
+    ),
+
+    AVATAR_BLUE(
+        id = "dark_16",
+        surface = Colors.Primary.AvatarBlue,
+        primaryContainer = Colors.Accent.AvatarPurple,
+    ),
+
+    BLUE_NIGHT(
+        id = "dark_16",
+        surface = Colors.Primary.Blue1,
+        primaryContainer = Colors.Accent.Blue4,
+    ),
+
+    GREEN_FOREST(
+        id = "dark_17",
+        surface = Colors.Primary.Green1,
+        primaryContainer = Colors.Accent.Turquoise,
+    ),
+
+    NIGHT_RAIN(
+        id = "dark_18",
+        surface = Colors.Primary.Blue2,
+        primaryContainer = Colors.Accent.Turquoise,
     ),
 
     LIGHT_BLUE(
@@ -326,6 +355,7 @@ val UiThemeColor.colorScheme: ColorScheme
         onSurface = onSurface,
         onSurfaceVariant = onSurfaceVariant,
         surfaceContainer = surfaceContainer,
+        surfaceContainerLowest = surfaceContainerLowest,
         onPrimaryContainer = onPrimaryContainer,
         outlineVariant = outlineVariant,
         secondaryContainer = secondaryContainer,

@@ -68,6 +68,7 @@ internal fun AttachmentsPanel(
             }
         }
         ButtonClose(
+            painter = painterResource(uiR.drawable.ic_exit),
             onClick = onCloseClick,
         )
     }

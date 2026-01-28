@@ -5,16 +5,16 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.mediaselector.api.MediaResult
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
 import com.furianrt.notelistui.extensions.toUiNoteContent
 import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
-import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
+import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import java.time.ZonedDateTime
 import java.util.UUID
@@ -22,7 +22,7 @@ import java.util.UUID
 internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
     stickerIconProvider: suspend (typeId: String) -> Int?,
-    background: UiNoteBackground?,
+    theme: UiNoteTheme?,
 ) = NoteItem(
     id = id,
     tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
@@ -33,7 +33,7 @@ internal suspend fun LocalNote.toNoteItem(
     fontColor = fontColor?.toUiNoteFontColor(),
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
-    background = background,
+    theme = theme,
     moodId = moodId,
     location = location,
 )

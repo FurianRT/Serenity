@@ -20,6 +20,7 @@ data class LocalNote(
     val fontColor: NoteFontColor?,
     val fontSize: Int,
     val backgroundId: String? = null,
+    val backgroundImageId: String? = null,
     val moodId: String? = null,
     val isPinned: Boolean,
     val tags: List<Tag>,

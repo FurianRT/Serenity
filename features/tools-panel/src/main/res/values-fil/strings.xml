@@ -9,4 +9,10 @@
     <string name="background_panel_tab_light_title">Maliwanag</string>
     <string name="font_panel_missing_font_title">May nawawalang font?</string>
     <string name="font_panel_write_to_us_title">Sumulat ka sa amin!</string>
+
+    <string name="background_panel_tab_solid_title">Kulay</string>
+    <string name="background_panel_tab_pattern_title">Pattern</string>
+    <string name="background_panel_tab_picture_title">Larawan</string>
+    <string name="background_panel_background_title">Background</string>
+    <string name="background_panel_theme_title">Tema</string>
 </resources>

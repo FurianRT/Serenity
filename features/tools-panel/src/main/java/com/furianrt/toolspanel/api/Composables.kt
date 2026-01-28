@@ -37,26 +37,26 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.composables.title.NoteTitleState
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.ui.attachments.AttachmentsPanel
-import com.furianrt.toolspanel.internal.ui.background.BackgroundContent
-import com.furianrt.toolspanel.internal.ui.background.BackgroundTitleBar
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContent
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundTitleBar
 import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
 import com.furianrt.toolspanel.internal.ui.bullet.BulletTitleBar
-import com.furianrt.toolspanel.internal.ui.voice.LineContent
-import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
-import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
-import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.toolspanel.internal.ui.font.FontContent
 import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
+import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
+import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
 import com.furianrt.toolspanel.internal.ui.stickers.StickersContent
 import com.furianrt.toolspanel.internal.ui.stickers.StickersTitleBar
+import com.furianrt.toolspanel.internal.ui.voice.LineContent
+import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
@@ -87,7 +87,7 @@ fun ActionsPanel(
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
     fontSize: Int,
-    noteBackground: UiNoteBackground?,
+    noteTheme: UiNoteTheme?,
     background: Color,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
@@ -104,7 +104,7 @@ fun ActionsPanel(
     onBulletListClick: () -> Unit,
     onNoPositionError: () -> Unit,
     onBackgroundClick: () -> Unit,
-    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
+    onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -330,7 +330,7 @@ fun ActionsPanel(
                     PanelMode.BACKGROUNDS -> BackgroundTitleBar(
                         modifier = heightModifier,
                         noteId = noteId,
-                        noteBackground = noteBackground,
+                        noteTheme = noteTheme,
                         showKeyBoardButton = titleState != null,
                         onDoneClick = { isBackgroundsPanelVisible = false },
                     )
@@ -365,9 +365,9 @@ fun ActionsPanel(
         BackgroundContent(
             modifier = hazeModifier,
             noteId = noteId,
-            noteBackground = noteBackground,
+            noteTheme = noteTheme,
             visible = isBackgroundsPanelVisible,
-            onBackgroundSelected = onBackgroundSelected,
+            onThemeSelected = onThemeSelected,
         )
     }
 

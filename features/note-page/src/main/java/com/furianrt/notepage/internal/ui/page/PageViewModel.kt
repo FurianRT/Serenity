@@ -23,11 +23,11 @@ import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.extensions.toLocalNoteContent
 import com.furianrt.notelistui.extensions.toLocalNoteTag
 import com.furianrt.notelistui.extensions.toLocationState
@@ -61,7 +61,6 @@ import com.furianrt.notepage.internal.ui.page.PageEffect.ShowStoragePermissionsD
 import com.furianrt.notepage.internal.ui.page.PageEffect.TakePicture
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnAddLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnAutoDetectLocationClickClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelected
@@ -84,6 +83,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSortingClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoPositionError
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoteThemeSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
@@ -112,7 +112,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.toolspanel.api.NoteBackgroundProvider
+import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.toolspanel.api.StickerIconProvider
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -160,7 +160,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
     private val audioPlayer: AudioPlayer,
     private val stickerIconProvider: StickerIconProvider,
-    private val backgroundProvider: NoteBackgroundProvider,
+    private val noteThemeProvider: NoteThemeProvider,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
     private val mediaRepository: MediaRepository,
@@ -324,7 +324,7 @@ internal class PageViewModel @AssistedInject constructor(
             )
 
             is OnBackgroundsClick -> resetStickersEditing()
-            is OnBackgroundSelected -> updateBackground(event.item)
+            is OnNoteThemeSelected -> updateNoteTheme(event.theme)
             is OnMoodClick -> showMoodDialog()
             is OnMoodSelected -> updateNoteMood(event.moodId)
             is OnLocationClick -> resetStickersEditing()
@@ -1032,7 +1032,10 @@ internal class PageViewModel @AssistedInject constructor(
                     note?.toNoteItem(
                         appFont = note.fontFamily ?: appearanceRepository.getAppFont().first(),
                         stickerIconProvider = stickerIconProvider::getIcon,
-                        background = backgroundProvider.getBackground(note.backgroundId),
+                        theme = noteThemeProvider.findTheme(
+                            colorId = note.backgroundId,
+                            imageId = note.backgroundImageId,
+                        ),
                     )
                 }
                 .distinctUntilChanged()
@@ -1070,7 +1073,7 @@ internal class PageViewModel @AssistedInject constructor(
                         fontFamily = note.fontFamily,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
-                        noteBackground = note.background,
+                        theme = note.theme,
                         moodId = note.moodId,
                         defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
@@ -1113,7 +1116,8 @@ internal class PageViewModel @AssistedInject constructor(
                 fontFamily = fontFamily,
                 fontColor = fontColor,
                 fontSize = fontSize,
-                backgroundId = state.noteBackground?.id,
+                backgroundId = state.theme?.colorId,
+                backgroundImageId = state.theme?.imageId,
                 moodId = state.moodId,
                 noteLocation = state.locationState.toNoteLocation(),
             )
@@ -1156,9 +1160,18 @@ internal class PageViewModel @AssistedInject constructor(
         _state.updateState<PageUiState.Success> { it.copy(fontSize = size) }
     }
 
-    private fun updateBackground(background: UiNoteBackground?) {
+    private fun updateNoteTheme(theme: UiNoteTheme?) {
         hasContentChanged = true
-        _state.updateState<PageUiState.Success> { it.copy(noteBackground = background) }
+        launch {
+            notesRepository.updateNoteBackgroundId(
+                noteId = noteId,
+                backgroundId = theme?.colorId,
+                backgroundImageId = theme?.imageId,
+            )
+            _state.updateState<PageUiState.Success> { successState ->
+                successState.copy(theme = theme)
+            }
+        }
     }
 
     private fun showMoodDialog() {

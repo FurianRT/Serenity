@@ -11,6 +11,7 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,7 +28,6 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -54,12 +54,18 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.geometry.toRect
+import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.Path
+import androidx.compose.ui.graphics.ShaderBrush
+import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LookaheadScope
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -67,9 +73,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -89,11 +97,12 @@ import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
-import com.furianrt.notelistui.entities.UiNoteBackground
+import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
@@ -148,7 +157,6 @@ internal fun NotePageScreenInternal(
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
-    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     onLocationClick: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
@@ -312,7 +320,6 @@ internal fun NotePageScreenInternal(
         hazeState = hazeState,
         isSelected = isSelected,
         onEvent = viewModel::onEvent,
-        onBackgroundChanged = onBackgroundChanged,
         onTitleFocused = onTitleFocused,
         onLocationClick = onLocationClick,
     )
@@ -368,25 +375,33 @@ private fun PageScreenContent(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
-    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     onLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
-        is PageUiState.Success ->
-            SuccessScreen(
-                modifier = modifier,
-                state = state,
-                uiState = uiState,
-                snackBarHostState = snackBarHostState,
-                hazeState = hazeState,
-                isSelected = isSelected,
-                onEvent = onEvent,
-                onBackgroundChanged = onBackgroundChanged,
-                onTitleFocused = onTitleFocused,
-                onLocationClick = onLocationClick,
-            )
+        is PageUiState.Success -> {
+            val selectedBackground = when (val noteTheme = uiState.theme) {
+                is UiNoteTheme.Solid -> noteTheme.color
+                is UiNoteTheme.Image -> noteTheme.color
+                null -> null
+            }
+            SerenityTheme(
+                colorScheme = selectedBackground?.colorScheme ?: MaterialTheme.colorScheme,
+            ) {
+                SuccessScreen(
+                    modifier = modifier,
+                    state = state,
+                    uiState = uiState,
+                    snackBarHostState = snackBarHostState,
+                    hazeState = hazeState,
+                    isSelected = isSelected,
+                    onEvent = onEvent,
+                    onTitleFocused = onTitleFocused,
+                    onLocationClick = onLocationClick,
+                )
+            }
+        }
 
         is PageUiState.Loading -> LoadingScreen()
         is PageUiState.Empty -> EmptyScreen()
@@ -402,7 +417,6 @@ private fun SuccessScreen(
     hazeState: HazeState,
     isSelected: Boolean,
     onEvent: (event: PageEvent) -> Unit,
-    onBackgroundChanged: (background: UiNoteBackground?) -> Unit,
     onTitleFocused: () -> Unit,
     onLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -410,7 +424,7 @@ private fun SuccessScreen(
     val view = LocalView.current
     val density = LocalDensity.current
     var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
-    var toolsPanelRect by remember { mutableStateOf(Rect.Zero) }
+    var toolsPanelRect by remember { mutableStateOf(IntRect.Zero) }
     val toolsPanelHeight by remember(
         uiState.isInEditMode,
         isToolsPanelMenuVisible,
@@ -462,6 +476,16 @@ private fun SuccessScreen(
             }
         },
     ) {
+        var listBounds by remember { mutableStateOf(IntRect.Zero) }
+        NoteBackgroundImage(
+            modifier = Modifier
+                .applyIf(uiState.isInEditMode) {
+                    Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
+                }
+                .hazeSource(hazeState, 0f),
+            theme = uiState.theme,
+            listBounds = { listBounds },
+        )
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -470,12 +494,16 @@ private fun SuccessScreen(
                 .applyIf(uiState.isInEditMode) {
                     Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                 }
-                .hazeSource(hazeState)
+                .hazeSource(hazeState, 1f)
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
-                .padding(top = toolbarMargin, bottom = navBarPadding)
-                .background(MaterialTheme.colorScheme.background, RoundedCornerShape(8.dp))
-                .padding(bottom = listPanelPadding)
+                .padding(top = toolbarMargin)
+                .onLayoutRectChanged(
+                    debounceMillis = 0,
+                    throttleMillis = 0,
+                    callback = { listBounds = it.boundsInRoot },
+                )
+                .padding(bottom = listPanelPadding + navBarPadding)
                 .imePadding(),
         ) {
             ContentItems(
@@ -518,7 +546,11 @@ private fun SuccessScreen(
                 .align(Alignment.BottomCenter)
                 .navigationBarsPadding()
                 .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
-                .onGloballyPositioned { toolsPanelRect = it.boundsInParent() }
+                .onLayoutRectChanged(
+                    debounceMillis = 0,
+                    throttleMillis = 0,
+                    callback = { toolsPanelRect = it.boundsInRoot },
+                )
                 .applyIf(state.isVoiceRecordActive) { Modifier.zIndex(1f) },
             hazeState = hazeState,
             uiState = uiState,
@@ -558,10 +590,7 @@ private fun SuccessScreen(
                 )
             },
             onBackgroundClick = { onEvent(PageEvent.OnBackgroundsClick) },
-            onBackgroundSelected = { background ->
-                onEvent(PageEvent.OnBackgroundSelected(background))
-                onBackgroundChanged(background)
-            },
+            onThemeSelected = { onEvent(PageEvent.OnNoteThemeSelected(it)) },
         )
         DimSurfaceOverlay(
             modifier = Modifier
@@ -580,6 +609,118 @@ private fun SuccessScreen(
                 )
             },
         )
+    }
+}
+
+@Composable
+private fun NoteBackgroundImage(
+    theme: UiNoteTheme?,
+    listBounds: () -> IntRect,
+    modifier: Modifier = Modifier,
+) {
+    val drawable = when (theme) {
+        is UiNoteTheme.Image -> ImageBitmap.imageResource(theme.image.resId)
+        is UiNoteTheme.Solid, null -> null
+    }
+    val tint = MaterialTheme.colorScheme.onSurface
+    Box(
+        modifier = modifier
+            .padding(horizontal = 8.dp)
+            .fillMaxSize()
+            .drawWithCache {
+                val path = Path()
+                val cornerRadius = CornerRadius(8.dp.toPx())
+                onDrawWithContent {
+                    path.reset()
+                    val bounds = listBounds()
+                    path.addRoundRect(
+                        RoundRect(
+                            rect = Rect(
+                                left = 0f,
+                                right = size.width,
+                                top = bounds.top.toFloat(),
+                                bottom = bounds.bottom.toFloat(),
+                            ),
+                            cornerRadius = cornerRadius
+                        )
+                    )
+                    clipPath(path) {
+                        this@onDrawWithContent.drawContent()
+                    }
+                }
+            }
+            .applyIf(theme !is UiNoteTheme.Image.Picture) {
+                Modifier
+
+                    .background(MaterialTheme.colorScheme.background)
+            },
+    ) {
+        AnimatedVisibility(
+            visible = drawable != null,
+            enter = fadeIn(tween(350)),
+            exit = fadeOut(tween(350)),
+        ) {
+            when ((theme as? UiNoteTheme.Image)?.image?.scaleType) {
+                UiNoteBackgroundImage.ScaleType.REPEAT, null -> Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .drawWithCache {
+                            if (drawable == null) {
+                                return@drawWithCache onDrawBehind {}
+                            }
+                            val brush = ShaderBrush(
+                                ImageShader(
+                                    image = drawable,
+                                    tileModeX = TileMode.Repeated,
+                                    tileModeY = TileMode.Repeated,
+                                )
+                            )
+                            val colorFilter: ColorFilter?
+                            val alpha: Float
+                            if (theme is UiNoteTheme.Image.Pattern) {
+                                colorFilter = ColorFilter.tint(
+                                    color = tint,
+                                    blendMode = BlendMode.SrcIn
+                                )
+                                alpha = 0.3f
+                            } else {
+                                colorFilter = null
+                                alpha = 1f
+                            }
+                            onDrawBehind {
+                                drawRect(brush = brush, alpha = alpha, colorFilter = colorFilter)
+                            }
+                        }
+                )
+
+                UiNoteBackgroundImage.ScaleType.FILL -> if (drawable != null) {
+                    Image(
+                        modifier = Modifier.fillMaxSize(),
+                        bitmap = drawable,
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = null
+                    )
+                }
+
+                UiNoteBackgroundImage.ScaleType.CENTER -> if (drawable != null) {
+                    val color = theme.color
+                    Image(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(
+                                if (color != null) {
+                                    Modifier.background(color.colorScheme.surface)
+                                } else {
+                                    Modifier
+                                }
+                            ),
+                        bitmap = drawable,
+                        contentScale = ContentScale.Inside,
+                        contentDescription = null
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -669,6 +810,7 @@ private fun ContentItems(
                                 )
                                 .animatePlacementInScope(this@LookaheadScope),
                             voice = item,
+                            hazeState = hazeState,
                             isPayable = true,
                             isPlaying = item.id == uiState.playingVoiceId,
                             isRemovable = uiState.isInEditMode,
@@ -702,6 +844,7 @@ private fun ContentItems(
                                 .heightIn(min = 48.dp),
                             tags = uiState.tags,
                             isEditable = uiState.isInEditMode,
+                            hazeState = hazeState,
                             animateItemsPlacement = true,
                             showStub = true,
                             popupHazeState = hazeState,
@@ -721,6 +864,7 @@ private fun ContentItems(
                                     .size(52.dp),
                                 moodId = uiState.moodId,
                                 defaultMoodId = uiState.defaultMoodId,
+                                hazeState = hazeState,
                                 onClick = { onEvent(PageEvent.OnMoodClick) },
                             )
                         }
@@ -742,6 +886,7 @@ private fun ContentItems(
                             .animatePlacementInScope(this@LookaheadScope),
                         state = uiState.locationState,
                         isRemovable = uiState.isInEditMode,
+                        hazeState = hazeState,
                         onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
                         onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
                         onCancelClick = { onEvent(PageEvent.OnCancelLocationClick) },
@@ -776,7 +921,7 @@ private fun Panel(
     onBulletListClick: () -> Unit,
     onStickersClick: () -> Unit,
     onBackgroundClick: () -> Unit,
-    onBackgroundSelected: (item: UiNoteBackground?) -> Unit,
+    onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -796,7 +941,7 @@ private fun Panel(
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
-                    noteBackground = uiState.noteBackground,
+                    noteTheme = uiState.theme,
                     background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
                     titleState = titleState,
@@ -815,7 +960,7 @@ private fun Panel(
                     onStickerSelected = onStickerSelected,
                     onBulletListClick = onBulletListClick,
                     onBackgroundClick = onBackgroundClick,
-                    onBackgroundSelected = onBackgroundSelected,
+                    onThemeSelected = onThemeSelected,
                 )
             }
         )
@@ -843,7 +988,7 @@ private fun DimSurfaceOverlay(
 }
 
 private fun Modifier.clipPanel(
-    toolsPanelTop: () -> Float,
+    toolsPanelTop: () -> Int,
 ): Modifier = then(
     Modifier.drawWithCache {
         val path = Path()
@@ -900,7 +1045,7 @@ private fun SuccessScreenPreview() {
                 fontFamily = UiNoteFontFamily.NotoSans,
                 fontColor = UiNoteFontColor.WHITE,
                 fontSize = 16,
-                noteBackground = null,
+                theme = null,
                 moodId = null,
                 defaultMoodId = null,
                 locationState = LocationState.Loading,
@@ -919,7 +1064,6 @@ private fun SuccessScreenPreview() {
                 ),
             ),
             onEvent = {},
-            onBackgroundChanged = {},
             onTitleFocused = {},
             onLocationClick = {},
             hazeState = HazeState(),

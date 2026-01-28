@@ -5,11 +5,11 @@ import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.LocationState
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -26,7 +26,7 @@ internal sealed interface PageUiState {
         val fontFamily: UiNoteFontFamily?,
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
-        val noteBackground: UiNoteBackground?,
+        val theme: UiNoteTheme?,
         val moodId: String?,
         val defaultMoodId: String?,
         val locationState: LocationState,
@@ -99,7 +99,8 @@ internal sealed interface PageEvent {
     data object OnScreenStopped : PageEvent
     data object OnNoPositionError : PageEvent
     data object OnBackgroundsClick : PageEvent
-    data class OnBackgroundSelected(val item: UiNoteBackground?) : PageEvent
+    data class OnNoteThemeSelected(val theme: UiNoteTheme?) : PageEvent
+
     data object OnMoodClick : PageEvent
     data class OnMoodSelected(val moodId: String?) : PageEvent
     data object OnLocationClick : PageEvent

@@ -1,7 +1,6 @@
 package com.furianrt.noteview.internal.ui
 
 import androidx.compose.runtime.Immutable
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.noteview.internal.ui.entites.NoteItem
 import com.furianrt.uikit.theme.NoteFont
 import java.time.LocalDate
@@ -37,10 +36,6 @@ internal sealed interface NoteViewEvent {
     data class OnPinClick(val noteId: String, val isPinned: Boolean) : NoteViewEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteViewEvent
     data class OnDateSelected(val date: LocalDate) : NoteViewEvent
-    data class OnBackgroundChanged(
-        val noteId: String,
-        val background: UiNoteBackground?,
-    ) : NoteViewEvent
 }
 
 internal sealed interface NoteViewEffect {

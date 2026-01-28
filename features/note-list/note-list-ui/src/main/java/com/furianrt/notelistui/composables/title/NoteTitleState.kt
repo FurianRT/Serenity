@@ -636,7 +636,7 @@ private fun AnnotatedString.updateBoldFontFamily(
         return@flatMapAnnotations listOf(span)
     }
 
-    val item = (spanStyle as? SpanStyle)?.toSpanType()
+    val item = spanStyle.toSpanType()
 
     if (item !is SpanType.Bold) {
         return@flatMapAnnotations listOf(span)

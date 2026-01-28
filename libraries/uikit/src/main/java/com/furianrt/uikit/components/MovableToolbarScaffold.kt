@@ -190,7 +190,7 @@ fun MovableToolbarScaffold(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = background,
-                        tint = HazeTint(background.copy(alpha = 0.7f)),
+                        tint = HazeTint(background.copy(alpha = 0.5f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
                     )
