@@ -96,13 +96,25 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
         ),
         UiNoteTheme.Image.Picture(
             color = UiNoteBackground(
-                id = "picture_color_1",
+                id = "picture_color_12",
                 isLight = false,
-                colorScheme = UiThemeColor.NIGHT_RAIN.colorScheme,
+                colorScheme = UiThemeColor.TOTAL_BLACK.colorScheme,
             ),
             image = UiNoteBackgroundImage(
-                id = "picture_image_1",
-                resId = R.drawable.background_picture_1,
+                id = "picture_image_12",
+                resId = R.drawable.background_picture_12,
+                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_10",
+                isLight = false,
+                colorScheme = UiThemeColor.TOTAL_BLACK.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_10",
+                resId = R.drawable.background_picture_10,
                 scaleType = UiNoteBackgroundImage.ScaleType.FILL,
             )
         ),
@@ -116,6 +128,42 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
                 id = "picture_image_6",
                 resId = R.drawable.background_picture_6,
                 scaleType = UiNoteBackgroundImage.ScaleType.CENTER,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_11",
+                isLight = false,
+                colorScheme = UiThemeColor.BLUE_NIGHT.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_11",
+                resId = R.drawable.background_picture_11,
+                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_1",
+                isLight = false,
+                colorScheme = UiThemeColor.NIGHT_RAIN.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_1",
+                resId = R.drawable.background_picture_1,
+                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_13",
+                isLight = false,
+                colorScheme = UiThemeColor.PINK_DARK.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_13",
+                resId = R.drawable.background_picture_13,
+                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
             )
         ),
         UiNoteTheme.Image.Picture(

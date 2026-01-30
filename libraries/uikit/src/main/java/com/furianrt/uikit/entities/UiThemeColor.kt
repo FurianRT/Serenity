@@ -151,6 +151,13 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.Turquoise,
     ),
 
+    PINK_DARK(
+        id = "dark_19",
+        surface = Colors.Primary.Pink,
+        primaryContainer = Colors.Accent.Orange,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+    ),
+
     LIGHT_BLUE(
         id = "15",
         primary = Color.Black,

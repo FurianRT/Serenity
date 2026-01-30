@@ -121,8 +121,8 @@ private fun Content(
             },
         state = listState,
         columns = GridCells.Fixed(4),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
     ) {
         item {

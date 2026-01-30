@@ -22,6 +22,8 @@ object Colors {
         val Unicorn2012Blue = Color(0xFF6197B1)
         val Unicorn2012PinkDark = Color(0xFFB26C86)
 
+        val Pink = Color(0xFFCD4B81)
+
         val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
 
@@ -60,6 +62,7 @@ object Colors {
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
         val FireflyYellow = Color(0xFFADAE62)
+        val Orange = Color(0xFFE6812F)
 
         val LightBlue = Color(0xFF7D8BFF)
         val LightGreen = Color(0xFF4FA78C)
