@@ -13,9 +13,9 @@ performancePlugin = "2.0.2"
 coreKtx = "1.17.0"
 lifecycle = "2.10.0"
 
-composeBom = "2026.01.00"
-composeActivity = "1.12.2"
-composeNavigation = "2.9.6"
+composeBom = "2026.01.01"
+composeActivity = "1.12.3"
+composeNavigation = "2.9.7"
 
 accompanist = "0.37.3"
 
@@ -65,7 +65,7 @@ kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.2"
 
-workManager = "2.11.0"
+workManager = "2.11.1"
 
 firebaseBom = "34.8.0"
 
