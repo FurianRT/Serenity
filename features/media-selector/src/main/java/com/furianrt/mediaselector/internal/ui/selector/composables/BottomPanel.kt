@@ -3,6 +3,7 @@ package com.furianrt.mediaselector.internal.ui.selector.composables
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
@@ -37,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -70,6 +72,7 @@ internal fun BottomPanel(
     onAlbumSelected: (album: MediaAlbumItem) -> Unit = {},
     onAlbumsDismissed: () -> Unit = {},
 ) {
+    val counterScale = remember { Animatable(1f) }
     val hasSelected = selectedCount > 0
     val fabShadowAnim by animateDpAsState(
         targetValue = if (hasSelected) 6.dp else 0.dp,
@@ -86,6 +89,16 @@ internal fun BottomPanel(
             )
         },
     )
+    LaunchedEffect(selectedCount.fastCoerceAtLeast(1)) {
+        counterScale.animateTo(
+            targetValue = 0.92f,
+            animationSpec = tween(durationMillis = 30, easing = LinearEasing),
+        )
+        counterScale.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = 70, easing = LinearEasing),
+        )
+    }
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter,
@@ -149,6 +162,10 @@ internal fun BottomPanel(
                 Box(
                     modifier = Modifier
                         .offset(x = 4.dp, y = 4.dp)
+                        .graphicsLayer {
+                            scaleX = counterScale.value
+                            scaleY = counterScale.value
+                        }
                         .size(28.dp)
                         .clip(CircleShape)
                         .hazeEffect(
@@ -159,11 +176,15 @@ internal fun BottomPanel(
                                 blurRadius = 12.dp,
                             )
                         )
-                        .background(MaterialTheme.colorScheme.outlineVariant)
+                        .background(MaterialTheme.colorScheme.outlineVariant),
                 )
                 Box(
                     modifier = Modifier
                         .offset(x = 2.dp, y = 2.dp)
+                        .graphicsLayer {
+                            scaleX = counterScale.value
+                            scaleY = counterScale.value
+                        }
                         .size(24.dp)
                         .background(
                             color = MaterialTheme.colorScheme.primaryContainer,
