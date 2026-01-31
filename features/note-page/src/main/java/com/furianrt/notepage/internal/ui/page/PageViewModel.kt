@@ -114,6 +114,7 @@ import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.toolspanel.api.StickerIconProvider
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -1073,7 +1074,10 @@ internal class PageViewModel @AssistedInject constructor(
                         fontFamily = note.fontFamily,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
-                        theme = note.theme,
+                        appTheme = UiThemeColor.fromId(
+                            appearanceRepository.getAppThemeColorId().first(),
+                        ),
+                        noteTheme = note.theme,
                         moodId = note.moodId,
                         defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
@@ -1116,8 +1120,8 @@ internal class PageViewModel @AssistedInject constructor(
                 fontFamily = fontFamily,
                 fontColor = fontColor,
                 fontSize = fontSize,
-                backgroundId = state.theme?.colorId,
-                backgroundImageId = state.theme?.imageId,
+                backgroundId = state.noteTheme?.colorId,
+                backgroundImageId = state.noteTheme?.imageId,
                 moodId = state.moodId,
                 noteLocation = state.locationState.toNoteLocation(),
             )
@@ -1169,7 +1173,7 @@ internal class PageViewModel @AssistedInject constructor(
                 backgroundImageId = theme?.imageId,
             )
             _state.updateState<PageUiState.Success> { successState ->
-                successState.copy(theme = theme)
+                successState.copy(noteTheme = theme)
             }
         }
     }

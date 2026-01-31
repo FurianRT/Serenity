@@ -119,6 +119,7 @@ import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
@@ -377,13 +378,13 @@ private fun PageScreenContent(
 ) {
     when (uiState) {
         is PageUiState.Success -> {
-            val selectedBackground = when (val noteTheme = uiState.theme) {
+            val selectedBackground = when (val noteTheme = uiState.noteTheme) {
                 is UiNoteTheme.Solid -> noteTheme.color
                 is UiNoteTheme.Image -> noteTheme.color
                 null -> null
             }
             SerenityTheme(
-                colorScheme = selectedBackground?.colorScheme ?: MaterialTheme.colorScheme,
+                colorScheme = selectedBackground?.colorScheme ?: uiState.appTheme.colorScheme,
             ) {
                 SuccessScreen(
                     modifier = modifier,
@@ -479,7 +480,7 @@ private fun SuccessScreen(
                     Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
                 }
                 .hazeSource(hazeState, 0f),
-            theme = uiState.theme,
+            theme = uiState.noteTheme,
             listBounds = { listBounds },
         )
         Box(
@@ -936,7 +937,7 @@ private fun Panel(
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
-                    noteTheme = uiState.theme,
+                    noteTheme = uiState.noteTheme,
                     background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
                     titleState = titleState,

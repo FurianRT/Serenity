@@ -12,6 +12,7 @@ import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.utils.DialogIdentifier
 
 internal sealed interface PageUiState {
@@ -26,7 +27,8 @@ internal sealed interface PageUiState {
         val fontFamily: UiNoteFontFamily?,
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
-        val theme: UiNoteTheme?,
+        val appTheme: UiThemeColor,
+        val noteTheme: UiNoteTheme?,
         val moodId: String?,
         val defaultMoodId: String?,
         val locationState: LocationState,
