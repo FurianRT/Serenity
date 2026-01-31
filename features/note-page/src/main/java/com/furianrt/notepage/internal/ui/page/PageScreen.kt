@@ -76,7 +76,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
@@ -95,7 +94,6 @@ import com.furianrt.notelistui.composables.NoteContentMedia
 import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
-import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -106,7 +104,6 @@ import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
-import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
@@ -132,7 +129,6 @@ import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
-import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -649,10 +645,9 @@ private fun NoteBackgroundImage(
                     }
                 }
             }
+            .background(MaterialTheme.colorScheme.surface)
             .applyIf(theme !is UiNoteTheme.Image.Picture) {
-                Modifier
-
-                    .background(MaterialTheme.colorScheme.background)
+                Modifier.background(MaterialTheme.colorScheme.background)
             },
     ) {
         AnimatedVisibility(
@@ -1026,48 +1021,4 @@ private fun EmptyScreen(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
     )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@PreviewWithBackground
-@Composable
-private fun SuccessScreenPreview() {
-    SerenityTheme {
-        SuccessScreen(
-            state = rememberPageScreenState(),
-            snackBarHostState = SnackbarHostState(),
-            uiState = PageUiState.Success(
-                noteId = "123",
-                isInEditMode = false,
-                tags = emptyList(),
-                stickers = emptyList(),
-                playingVoiceId = null,
-                fontFamily = UiNoteFontFamily.NotoSans,
-                fontColor = UiNoteFontColor.WHITE,
-                fontSize = 16,
-                theme = null,
-                moodId = null,
-                defaultMoodId = null,
-                locationState = LocationState.Loading,
-                content = listOf(
-                    UiNoteContent.Title(
-                        id = "1",
-                        state = NoteTitleState(
-                            fontFamily = UiNoteFontFamily.NotoSans,
-                            initialText = AnnotatedString(
-                                text = "Kotlin is a modern programming language with a " +
-                                        "lot more syntactic sugar compared to Java, and as such " +
-                                        "there is equally more black magic",
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-            onEvent = {},
-            onTitleFocused = {},
-            onLocationClick = {},
-            hazeState = HazeState(),
-            isSelected = true,
-        )
-    }
 }
