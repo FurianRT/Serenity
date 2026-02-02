@@ -42,11 +42,8 @@ internal class ImageBackgroundViewModel @AssistedInject constructor(
     fun onEvent(event: ImageBackgroundEvent) {
         when (event) {
             is ImageBackgroundEvent.OnThemeSelected -> {
-                val theme = if (selectedThemeProvider.selectedThemeState.value == event.theme) {
-                    null
-                } else {
-                    event.theme
-                }
+                val currentThemeId = selectedThemeProvider.selectedThemeState.value?.imageId
+                val theme = event.theme.takeIf { currentThemeId != event.theme.imageId }
                 _effect.tryEmit(ImageBackgroundEffect.OnThemeSelected(theme))
             }
 

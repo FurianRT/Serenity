@@ -42,11 +42,8 @@ internal class SolidBackgroundViewModel @AssistedInject constructor(
     fun onEvent(event: SolidBackgroundEvent) {
         when (event) {
             is SolidBackgroundEvent.OnThemeSelected -> {
-                val theme = if (selectedThemeProvider.selectedThemeState.value == event.theme) {
-                    null
-                } else {
-                    event.theme
-                }
+                val currentThemeId = selectedThemeProvider.selectedThemeState.value?.colorId
+                val theme = event.theme.takeIf { currentThemeId != event.theme.colorId }
                 _effect.tryEmit(SolidBackgroundEffect.OnThemeSelected(theme))
             }
 

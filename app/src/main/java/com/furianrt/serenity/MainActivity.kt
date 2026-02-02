@@ -299,17 +299,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
                     }
                     AnimatedVisibility(
-                        visible = uiState.isScreenLocked,
-                        enter = EnterTransition.None,
-                        exit = fadeOut(),
-                    ) {
-                        CheckPinScreen(
-                            hazeState = hazeState,
-                            onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
-                        )
-                    }
-
-                    AnimatedVisibility(
                         visible = uiState.isOnboardingNeeded,
                         enter = fadeIn(),
                         exit = fadeOut(),
@@ -318,6 +307,16 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             onCloseRequest = {
                                 viewModel.onEvent(MainEvent.OnOnboardingCompleted)
                             },
+                        )
+                    }
+                    AnimatedVisibility(
+                        visible = uiState.isScreenLocked,
+                        enter = EnterTransition.None,
+                        exit = fadeOut(),
+                    ) {
+                        CheckPinScreen(
+                            hazeState = hazeState,
+                            onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
                         )
                     }
                 }

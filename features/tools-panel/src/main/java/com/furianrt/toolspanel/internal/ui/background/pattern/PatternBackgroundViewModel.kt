@@ -63,24 +63,34 @@ internal class PatternBackgroundViewModel @AssistedInject constructor(
             }
 
             is PatternBackgroundEvent.OnImageSelected -> {
-                _effect.tryEmit(
-                    SendThemeSelected(
-                        theme = UiNoteTheme.Image.Pattern(
-                            color = selectedColorState.value,
-                            image = event.image,
+                val theme = selectedThemeProvider.selectedThemeState.value
+                if (theme?.imageId == event.image.id) {
+                    selectedColorState.update { null }
+                    _effect.tryEmit(SendThemeSelected(theme = null))
+                } else {
+                    _effect.tryEmit(
+                        SendThemeSelected(
+                            theme = UiNoteTheme.Image.Pattern(
+                                color = selectedColorState.value,
+                                image = event.image,
+                            )
                         )
                     )
-                )
+                }
             }
 
             is PatternBackgroundEvent.OnColorSelected -> {
                 val theme = selectedThemeProvider.selectedThemeState.value
                 val image = (theme as? UiNoteTheme.Image.Pattern)?.image
-                selectedColorState.update { event.color }
+                val color = event.color.takeIf { selectedColorState.value?.id != event.color.id }
+                selectedColorState.update { color }
                 if (image != null) {
                     _effect.tryEmit(
                         SendThemeSelected(
-                            theme = UiNoteTheme.Image.Pattern(color = event.color, image = image)
+                            theme = UiNoteTheme.Image.Pattern(
+                                color = event.color,
+                                image = image,
+                            )
                         )
                     )
                 }
