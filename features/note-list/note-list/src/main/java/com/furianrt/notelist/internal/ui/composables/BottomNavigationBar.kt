@@ -134,7 +134,7 @@ private fun ButtonCreateNote(
     val infiniteTransition = rememberInfiniteTransition()
     val scale by infiniteTransition.animateFloat(
         initialValue = 1f,
-        targetValue = 1.06f,
+        targetValue = 1.07f,
         animationSpec = infiniteRepeatable(
             animation = tween(
                 durationMillis = 250,
