@@ -37,8 +37,8 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.UserScrollState
 import com.furianrt.uikit.utils.rememberUserInputScrollConnection
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 
 private const val BOTTOM_PANEL_SHOW_DELAY = 500L
@@ -51,7 +51,7 @@ internal fun SuccessContent(
     onEvent: (event: MediaSelectorEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val listSpanCount = 3
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val userScrollConnection = rememberUserInputScrollConnection()

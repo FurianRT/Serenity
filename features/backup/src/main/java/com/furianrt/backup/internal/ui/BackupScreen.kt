@@ -77,10 +77,10 @@ import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -93,7 +93,7 @@ internal fun BackupScreen(
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val hapticFeedback = LocalHapticFeedback.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     var showSignOutConfirmationDialog by remember { mutableStateOf(false) }
 
     val authLauncher = rememberLauncherForActivityResult(
@@ -271,7 +271,7 @@ private fun SuccessContent(
 ) {
     val hapticFeedback = LocalHapticFeedback.current
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     var backupBlockHeight by remember { mutableIntStateOf(0) }
 
     val backupShakeState = rememberShakingState(

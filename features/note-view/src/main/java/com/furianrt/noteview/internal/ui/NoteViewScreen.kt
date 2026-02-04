@@ -61,6 +61,7 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
+import com.furianrt.uikit.theme.LocalColorScheme
 import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.LocalHasMediaRoute
 import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
@@ -70,6 +71,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -95,7 +97,7 @@ internal fun NoteViewScreen(
 
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     var deleteConfirmationDialogState: String? by remember { mutableStateOf(null) }
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val snackBarHostState = remember { SnackbarHostState() }
     val focusManager = LocalFocusManager.current
 
@@ -147,7 +149,7 @@ internal fun NoteViewScreen(
     }
 
     SerenityTheme(
-        colorScheme = selectedBackground?.colorScheme ?: MaterialTheme.colorScheme,
+        colorScheme = selectedBackground?.colorScheme ?: LocalColorScheme.current,
         isLightTheme = isLightTheme,
         font = successState?.font ?: LocalFont.current,
     ) {
@@ -278,6 +280,12 @@ private fun SuccessScreen(
         currentPageState?.dimSurface?.let { cachedDimValue = it }
     }
 
+    val hasPictureBackground by remember(uiState.notes) {
+        derivedStateOf {
+            uiState.notes.getOrNull(pagerState.currentPage)?.theme is UiNoteTheme.Image.Picture
+        }
+    }
+
     MovableToolbarScaffold(
         modifier = modifier
             .fillMaxSize()
@@ -285,6 +293,8 @@ private fun SuccessScreen(
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberScrollState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
+        blurAlpha = if (hasPictureBackground) 0.4f else 0.5f,
+        blurRadius = if (hasPictureBackground) 8.dp else 12.dp,
         toolbar = {
             val date = remember(uiState.date) { uiState.date.toDateString() }
             Toolbar(

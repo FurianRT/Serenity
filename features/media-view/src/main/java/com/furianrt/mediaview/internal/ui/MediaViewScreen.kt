@@ -55,8 +55,8 @@ import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -76,7 +76,7 @@ internal fun MediaViewScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     val imageSavedMessage = stringResource(R.string.media_view_saved_to_gallery)
-    val imageNotSavedMessage = stringResource(uiR.string.general_error)
+    val generalErrorMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
@@ -105,7 +105,7 @@ internal fun MediaViewScreen(
                     is MediaViewEffect.ShowMediaSaveErrorMessage -> {
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
-                            message = imageNotSavedMessage,
+                            message = generalErrorMessage,
                             duration = SnackbarDuration.Short,
                         )
                     }
@@ -130,7 +130,7 @@ internal fun MediaViewScreen(
                         error.printStackTrace()
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
-                            message = context.getString(uiR.string.general_error),
+                            message = generalErrorMessage,
                             duration = SnackbarDuration.Short,
                         )
                     }
@@ -161,7 +161,7 @@ private fun SuccessContent(
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
     val hapticFeedback = LocalHapticFeedback.current

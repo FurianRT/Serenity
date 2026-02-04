@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.spring
@@ -25,7 +26,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.verticalScroll
@@ -40,6 +40,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -48,20 +49,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.RoundRect
-import androidx.compose.ui.geometry.toRect
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LookaheadScope
@@ -76,7 +70,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -135,6 +128,7 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -204,7 +198,7 @@ internal fun NotePageScreenInternal(
     var moodDialogState: MoodDialogState? by remember { mutableStateOf(null) }
 
     val view = LocalView.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val keyboardOffset by rememberKeyboardOffsetState()
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = statusBarHeight.pxToDp()
@@ -421,16 +415,16 @@ private fun SuccessScreen(
     val view = LocalView.current
     val density = LocalDensity.current
     var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
-    var toolsPanelRect by remember { mutableStateOf(IntRect.Zero) }
-    val toolsPanelHeight by remember(
+    var toolsPanelHeight by remember { mutableIntStateOf(0) }
+    val listPanelPadding by remember(
         uiState.isInEditMode,
         isToolsPanelMenuVisible,
-        toolsPanelRect.height,
+        toolsPanelHeight,
     ) {
         mutableStateOf(
             when {
                 !uiState.isInEditMode -> ToolsPanelConstants.PANEL_HEIGHT
-                isToolsPanelMenuVisible -> density.run { toolsPanelRect.height.toDp() }
+                isToolsPanelMenuVisible -> toolsPanelHeight.pxToDp(density)
                 else -> ToolsPanelConstants.PANEL_HEIGHT
             } + 24.dp
         )
@@ -443,8 +437,8 @@ private fun SuccessScreen(
     var listSize by remember { mutableStateOf(IntSize.Zero) }
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
         .calculateBottomPadding() + 8.dp
-    val listPanelPadding by animateDpAsState(
-        targetValue = toolsPanelHeight,
+    val listPanelPaddingAnim by animateDpAsState(
+        targetValue = listPanelPadding,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
     )
 
@@ -473,34 +467,19 @@ private fun SuccessScreen(
             }
         },
     ) {
-        var listBounds by remember { mutableStateOf(IntRect.Zero) }
         NoteBackgroundImage(
-            modifier = Modifier
-                .applyIf(uiState.isInEditMode) {
-                    Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
-                }
-                .hazeSource(hazeState, 0f),
+            modifier = Modifier.hazeSource(hazeState, 0f),
             theme = uiState.noteTheme,
-            listBounds = { listBounds },
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
-                .clipToBounds()
-                .applyIf(uiState.isInEditMode) {
-                    Modifier.clipPanel(toolsPanelTop = { toolsPanelRect.top })
-                }
                 .hazeSource(hazeState, 1f)
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin)
-                .onLayoutRectChanged(
-                    debounceMillis = 0,
-                    throttleMillis = 0,
-                    callback = { listBounds = it.boundsInRoot },
-                )
-                .padding(bottom = listPanelPadding + navBarPadding)
+                .padding(bottom = listPanelPaddingAnim + navBarPadding)
                 .imePadding(),
         ) {
             ContentItems(
@@ -541,12 +520,10 @@ private fun SuccessScreen(
         Panel(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .navigationBarsPadding()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp)
                 .onLayoutRectChanged(
                     debounceMillis = 0,
                     throttleMillis = 0,
-                    callback = { toolsPanelRect = it.boundsInRoot },
+                    callback = { toolsPanelHeight = it.boundsInRoot.height },
                 )
                 .applyIf(state.isVoiceRecordActive) { Modifier.zIndex(1f) },
             hazeState = hazeState,
@@ -579,7 +556,7 @@ private fun SuccessScreen(
                             icon = selectedSticker.icon,
                             scrollOffset = state.listState.value,
                             viewPortHeight = state.listState.viewportSize,
-                            toolsPanelHeight = density.run { toolsPanelRect.height.toDp() },
+                            toolsPanelHeight = toolsPanelHeight.pxToDp(density),
                             toolBarHeight = toolbarMargin,
                             density = density,
                         ),
@@ -612,107 +589,85 @@ private fun SuccessScreen(
 @Composable
 private fun NoteBackgroundImage(
     theme: UiNoteTheme?,
-    listBounds: () -> IntRect,
     modifier: Modifier = Modifier,
 ) {
-    val drawable = when (theme) {
-        is UiNoteTheme.Image -> ImageBitmap.imageResource(theme.image.resId)
-        is UiNoteTheme.Solid, null -> null
-    }
     val tint = MaterialTheme.colorScheme.onSurface
-    Box(
-        modifier = modifier
-            .padding(horizontal = 8.dp)
-            .fillMaxSize()
-            .drawWithCache {
-                val path = Path()
-                val cornerRadius = CornerRadius(8.dp.toPx())
-                onDrawWithContent {
-                    path.reset()
-                    val bounds = listBounds()
-                    path.addRoundRect(
-                        RoundRect(
-                            rect = Rect(
-                                left = 0f,
-                                right = size.width,
-                                top = bounds.top.toFloat(),
-                                bottom = bounds.bottom.toFloat(),
-                            ),
-                            cornerRadius = cornerRadius
-                        )
-                    )
-                    clipPath(path) {
-                        this@onDrawWithContent.drawContent()
-                    }
-                }
-            }
-            .background(MaterialTheme.colorScheme.surface)
-            .applyIf(theme !is UiNoteTheme.Image.Picture) {
-                Modifier.background(MaterialTheme.colorScheme.background)
-            },
-    ) {
-        AnimatedVisibility(
-            visible = drawable != null,
-            enter = fadeIn(tween(350)),
-            exit = fadeOut(tween(350)),
-        ) {
-            when ((theme as? UiNoteTheme.Image)?.image?.scaleType) {
-                UiNoteBackgroundImage.ScaleType.REPEAT, null -> Box(
+    Crossfade(
+        modifier = modifier.fillMaxSize(),
+        targetState = theme,
+        animationSpec = tween(550),
+    ) { targetState ->
+        when (targetState) {
+            null -> Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surface),
+            )
+
+            is UiNoteTheme.Solid -> Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(targetState.color.colorScheme.surface),
+            )
+
+            is UiNoteTheme.Image.Pattern -> {
+                val bitmap = ImageBitmap.imageResource(targetState.image.resId)
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .drawWithCache {
-                            if (drawable == null) {
-                                return@drawWithCache onDrawBehind {}
-                            }
                             val brush = ShaderBrush(
                                 ImageShader(
-                                    image = drawable,
+                                    image = bitmap,
                                     tileModeX = TileMode.Repeated,
                                     tileModeY = TileMode.Repeated,
                                 )
                             )
-                            val colorFilter: ColorFilter?
-                            val alpha: Float
-                            if (theme is UiNoteTheme.Image.Pattern) {
-                                colorFilter = ColorFilter.tint(
-                                    color = tint,
-                                    blendMode = BlendMode.SrcIn
-                                )
-                                alpha = 0.3f
-                            } else {
-                                colorFilter = null
-                                alpha = 1f
-                            }
+                            val colorFilter = ColorFilter.tint(
+                                color = tint,
+                                blendMode = BlendMode.SrcIn
+                            )
                             onDrawBehind {
-                                drawRect(brush = brush, alpha = alpha, colorFilter = colorFilter)
+                                drawRect(brush = brush, alpha = 0.3f, colorFilter = colorFilter)
                             }
                         }
                 )
+            }
 
-                UiNoteBackgroundImage.ScaleType.FILL -> if (drawable != null) {
-                    Image(
-                        modifier = Modifier.fillMaxSize(),
-                        bitmap = drawable,
-                        contentScale = ContentScale.FillBounds,
-                        contentDescription = null
-                    )
-                }
-
-                UiNoteBackgroundImage.ScaleType.CENTER -> if (drawable != null) {
-                    val color = theme.color
-                    Image(
+            is UiNoteTheme.Image.Picture -> {
+                val bitmap = ImageBitmap.imageResource(targetState.image.resId)
+                when (targetState.image.scaleType) {
+                    UiNoteBackgroundImage.ScaleType.REPEAT -> Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .then(
-                                if (color != null) {
-                                    Modifier.background(color.colorScheme.surface)
-                                } else {
-                                    Modifier
+                            .drawWithCache {
+                                val brush = ShaderBrush(
+                                    ImageShader(
+                                        image = bitmap,
+                                        tileModeX = TileMode.Repeated,
+                                        tileModeY = TileMode.Repeated,
+                                    )
+                                )
+                                onDrawBehind {
+                                    drawRect(brush = brush)
                                 }
-                            ),
-                        bitmap = drawable,
+                            }
+                    )
+
+                    UiNoteBackgroundImage.ScaleType.FILL -> Image(
+                        modifier = Modifier.fillMaxSize(),
+                        bitmap = bitmap,
+                        contentScale = ContentScale.FillBounds,
+                        contentDescription = null,
+                    )
+
+                    UiNoteBackgroundImage.ScaleType.CENTER -> Image(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(targetState.color.colorScheme.surface),
+                        bitmap = bitmap,
                         contentScale = ContentScale.Inside,
-                        contentDescription = null
+                        contentDescription = null,
                     )
                 }
             }
@@ -982,29 +937,6 @@ private fun DimSurfaceOverlay(
         )
     }
 }
-
-private fun Modifier.clipPanel(
-    toolsPanelTop: () -> Int,
-): Modifier = then(
-    Modifier.drawWithCache {
-        val path = Path()
-        val rect = size.toRect()
-        val cornerRadius = CornerRadius(8.dp.toPx())
-        val panelHeightPx = ToolsPanelConstants.PANEL_HEIGHT.toPx()
-        path.addRoundRect(
-            RoundRect(
-                rect = rect.copy(bottom = toolsPanelTop() + panelHeightPx),
-                bottomLeft = cornerRadius,
-                bottomRight = cornerRadius,
-            )
-        )
-        onDrawWithContent {
-            clipPath(path) {
-                this@onDrawWithContent.drawContent()
-            }
-        }
-    }
-)
 
 @Composable
 private fun LoadingScreen(modifier: Modifier = Modifier) {

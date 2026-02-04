@@ -84,8 +84,8 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
@@ -111,7 +111,7 @@ internal fun SettingsScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val context = LocalContext.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val hapticFeedback = LocalHapticFeedback.current
 
@@ -124,6 +124,9 @@ internal fun SettingsScreen(
     var showBadRatingDialog by remember { mutableStateOf(false) }
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
     var localeDialogState: LocaleDialogState? by remember { mutableStateOf(null) }
+
+    val sendEmailErrorMessage = stringResource(uiR.string.send_email_error)
+    val appNotFoundMessage = stringResource(uiR.string.app_not_found_error)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -143,7 +146,7 @@ internal fun SettingsScreen(
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
-                            message = context.getString(uiR.string.send_email_error),
+                            message = sendEmailErrorMessage,
                             duration = SnackbarDuration.Short,
                         )
                     }
@@ -163,7 +166,7 @@ internal fun SettingsScreen(
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
-                            message = context.getString(uiR.string.app_not_found_error),
+                            message = appNotFoundMessage,
                             duration = SnackbarDuration.Short,
                         )
                     }

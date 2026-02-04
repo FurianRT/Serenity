@@ -134,7 +134,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             color = UiNoteBackground(
                 id = "picture_color_11",
                 isLight = false,
-                colorScheme = UiThemeColor.BLUE_NIGHT.colorScheme,
+                colorScheme = UiThemeColor.BLUE_NIGHT_2.colorScheme,
             ),
             image = UiNoteBackgroundImage(
                 id = "picture_image_11",

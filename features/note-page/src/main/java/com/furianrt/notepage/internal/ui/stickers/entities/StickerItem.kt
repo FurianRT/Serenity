@@ -6,6 +6,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.notepage.internal.ui.stickers.StickerState
+import com.furianrt.uikit.extensions.pxToDp
 import java.util.UUID
 import kotlin.random.Random
 
@@ -35,33 +36,31 @@ internal data class StickerItem(
             toolBarHeight: Dp,
             density: Density,
         ): StickerItem {
-            with(density) {
-                val randXOffset = Random.nextDouble(
-                    from = -X_OFFSET_PERCENT,
-                    until = X_OFFSET_PERCENT,
-                ).toFloat()
+            val randXOffset = Random.nextDouble(
+                from = -X_OFFSET_PERCENT,
+                until = X_OFFSET_PERCENT,
+            ).toFloat()
 
-                val randYOffset = Random.nextDouble(
-                    from = -Y_OFFSET_DP.value.toDouble(),
-                    until = Y_OFFSET_DP.value.toDouble(),
-                ).dp
+            val randYOffset = Random.nextDouble(
+                from = -Y_OFFSET_DP.value.toDouble(),
+                until = Y_OFFSET_DP.value.toDouble(),
+            ).dp
 
-                val halfViewPort = (viewPortHeight / 2f).toDp()
-                return StickerItem(
-                    id = UUID.randomUUID().toString(),
-                    typeId = typeId,
-                    icon = icon,
-                    animate = true,
-                    state = StickerState(
-                        initialBiasX = 0.5f + randXOffset,
-                        initialDpOffsetY = scrollOffset.toDp() +
-                                toolBarHeight +
-                                halfViewPort -
-                                toolsPanelHeight +
-                                randYOffset,
-                    ),
-                )
-            }
+            val halfViewPort = (viewPortHeight / 2f).pxToDp(density)
+            return StickerItem(
+                id = UUID.randomUUID().toString(),
+                typeId = typeId,
+                icon = icon,
+                animate = true,
+                state = StickerState(
+                    initialBiasX = 0.5f + randXOffset,
+                    initialDpOffsetY = scrollOffset.pxToDp(density) +
+                            toolBarHeight +
+                            halfViewPort -
+                            toolsPanelHeight +
+                            randYOffset,
+                ),
+            )
         }
     }
 }

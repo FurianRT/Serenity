@@ -30,7 +30,7 @@ enum class UiThemeColor(
     val errorContainer: Color = Color(0xFFF2402F),
     val onErrorContainer: Color = Color.White,
     val scrim: Color = Color.Black.copy(alpha = 0.5f),
-    val surfaceTint: Color = surface.copy(alpha = 0.3f),
+    val surfaceTint: Color = Color.Transparent,
     val surfaceDim: Color = Color.Black.copy(alpha = 0.1f),
     val surfaceContainerLow: Color = primary.copy(alpha = 0.5f),
     val isLight: Boolean = false,
@@ -112,6 +112,7 @@ enum class UiThemeColor(
         id = "14",
         surface = Colors.Primary.DistantCastleBlue,
         primaryContainer = Colors.Accent.Purple,
+        surfaceTint = Color.White.copy(alpha = 0.2f),
         surfaceDim = Color.Black.copy(alpha = 0.2f),
     ),
 
@@ -119,6 +120,8 @@ enum class UiThemeColor(
         id = "dark_15",
         surface = Colors.Primary.TotalBlack,
         primaryContainer = Colors.Accent.Purple,
+        surfaceTint = Color.White.copy(alpha = 0.2f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
     ),
 
     FIREFLY_OLIVE(
@@ -156,6 +159,12 @@ enum class UiThemeColor(
         surface = Colors.Primary.Pink,
         primaryContainer = Colors.Accent.Orange,
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+    ),
+
+    BLUE_NIGHT_2(
+        id = "dark_20",
+        surface = Colors.Primary.Blue3,
+        primaryContainer = Colors.Accent.Blue4,
     ),
 
     LIGHT_BLUE(

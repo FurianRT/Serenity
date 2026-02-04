@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,8 +19,8 @@ import com.furianrt.mediaselector.internal.ui.selector.composables.BottomPanel
 import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 
 // TODO Сделать пустое состояние покрасивше
 @Composable
@@ -31,7 +30,7 @@ internal fun EmptyContent(
     albumsDialogState: List<MediaAlbumItem>?,
     modifier: Modifier = Modifier,
 ) {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     Column(
         modifier = modifier
             .fillMaxSize()

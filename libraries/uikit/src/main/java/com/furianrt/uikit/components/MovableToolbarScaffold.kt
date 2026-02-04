@@ -1,6 +1,8 @@
 package com.furianrt.uikit.components
 
 import androidx.compose.animation.core.AnimationState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
@@ -39,10 +41,10 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -72,6 +74,8 @@ fun MovableToolbarScaffold(
     modifier: Modifier = Modifier,
     background: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true,
+    blurRadius: Dp = 12.dp,
+    blurAlpha: Float = 0.5f,
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -126,7 +130,7 @@ fun MovableToolbarScaffold(
         }
     }
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
 
     LaunchedEffect(listState.isScrollInProgress) {
         var forceShowToolbar = false
@@ -171,12 +175,20 @@ fun MovableToolbarScaffold(
 
     val showShadow by remember(listState) {
         derivedStateOf {
-            (totalScroll - toolbarOffset).absoluteValue > 1 &&
+            (totalScroll - toolbarOffset).absoluteValue > 15 &&
                     listState.canScrollBackward ||
                     (toolbarOffset == 0f && listState.canScrollBackward)
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
+
+    val test by animateFloatAsState(
+        targetValue = if (showShadow) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 200,
+            easing = LinearEasing,
+        ),
+    )
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
@@ -190,9 +202,9 @@ fun MovableToolbarScaffold(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = background,
-                        tint = HazeTint(background.copy(alpha = 0.5f)),
+                        tint = HazeTint(background.copy(alpha = blurAlpha * test)),
                         noiseFactor = 0f,
-                        blurRadius = 12.dp,
+                        blurRadius = blurRadius * test,
                     )
                 )
                 .drawBehind {

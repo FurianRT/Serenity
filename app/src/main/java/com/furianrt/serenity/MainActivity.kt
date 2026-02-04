@@ -20,7 +20,6 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
@@ -65,8 +64,8 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -112,7 +111,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         setContent {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
-            val hazeState = remember { HazeState() }
+            val hazeState = rememberHazeState()
             val activity = LocalActivity.current as ComponentActivity
 
             SerenityTheme(

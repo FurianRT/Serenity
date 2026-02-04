@@ -55,8 +55,8 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -69,7 +69,7 @@ internal fun ContainerScreen(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 

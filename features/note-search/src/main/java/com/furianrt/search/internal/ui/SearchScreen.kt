@@ -73,6 +73,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -101,7 +102,7 @@ internal fun SearchScreen(
 
     var calendarState: CalendarState? by remember { mutableStateOf(null) }
     var showDeleteConfirmDialogState: Int? by remember { mutableStateOf(null) }
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)

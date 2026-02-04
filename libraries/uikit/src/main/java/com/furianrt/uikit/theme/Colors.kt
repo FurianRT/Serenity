@@ -31,9 +31,10 @@ object Colors {
 
         val FireflyOlive = Color(0xFF2D3526)
 
-        val AvatarBlue = Color(0xFF0C1125)
+        val AvatarBlue = Color(0xFF193579)
         val Blue1 = Color(0xFF00366E)
         val Blue2 = Color(0xFF012B39)
+        val Blue3 = Color(0xFF153455)
 
         val Green1 = Color(0xFF06272C)
 

@@ -1,14 +1,11 @@
 package com.furianrt.toolspanel.api
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
@@ -16,8 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,10 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -136,17 +129,15 @@ fun ActionsPanel(
 
     val heightModifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT)
     val hazeModifier = Modifier
-        .background(MaterialTheme.colorScheme.background)
         .hazeEffect(
             state = hazeState,
             style = HazeDefaults.style(
                 backgroundColor = background,
-                tint = HazeTint(background.copy(alpha = 0.8f)),
+                tint = HazeTint(background.copy(alpha = 0.7f)),
                 noiseFactor = 0f,
                 blurRadius = 12.dp,
             )
         )
-        .background(MaterialTheme.colorScheme.background)
         .background(MaterialTheme.colorScheme.background)
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
@@ -204,137 +195,112 @@ fun ActionsPanel(
                 Modifier.imePadding()
             }
             .fillMaxWidth()
-            .clip(RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)),
+            .then(hazeModifier)
+            .navigationBarsPadding(),
     ) {
-        AnimatedVisibility(
-            visible = panelMode != PanelMode.VOICE_RECORD,
-            enter = fadeIn(tween(delayMillis = 300)),
-            exit = ExitTransition.None,
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(8.dp)
-                    .offset(y = 4.dp)
-                    .background(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(Color.Transparent, MaterialTheme.colorScheme.surfaceDim)
-                        )
-                    ),
-            )
-        }
-        Box {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .then(heightModifier)
-                    .then(hazeModifier)
-                    .align(Alignment.BottomCenter),
-            )
-            AnimatedContent(
-                targetState = panelMode,
-                transitionSpec = {
-                    (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)))
-                        .togetherWith(fadeOut(animationSpec = tween(durationMillis = 90)))
-                },
-            ) { targetState ->
-                when (targetState) {
-                    PanelMode.REGULAR -> RegularPanel(
-                        modifier = heightModifier.clickableNoRipple {},
-                        titleState = titleState,
-                        onFontStyleClick = {
+        AnimatedContent(
+            targetState = panelMode,
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)))
+                    .togetherWith(fadeOut(animationSpec = tween(durationMillis = 90)))
+            },
+        ) { targetState ->
+            when (targetState) {
+                PanelMode.REGULAR -> RegularPanel(
+                    modifier = heightModifier.clickableNoRipple {},
+                    titleState = titleState,
+                    onFontStyleClick = {
+                        keyboardController?.hide()
+                        isFontPanelVisible = true
+                        onFontStyleClick()
+                    },
+                    onStickersClick = {
+                        keyboardController?.hide()
+                        isStickersPanelVisible = true
+                        onStickersClick()
+                    },
+                    onBulletListClick = {
+                        if (titleState == null) {
+                            onNoPositionError()
+                        } else {
                             keyboardController?.hide()
-                            isFontPanelVisible = true
-                            onFontStyleClick()
-                        },
-                        onStickersClick = {
-                            keyboardController?.hide()
-                            isStickersPanelVisible = true
-                            onStickersClick()
-                        },
-                        onBulletListClick = {
-                            if (titleState == null) {
-                                onNoPositionError()
-                            } else {
-                                keyboardController?.hide()
-                                isBulletPanelVisible = true
-                                onBulletListClick()
-                            }
-                        },
-                        onAttachClick = { isAttachmentsPanelVisible = true },
-                        onBackgroundClick = {
-                            keyboardController?.hide()
-                            isBackgroundsPanelVisible = true
-                            onBackgroundClick()
+                            isBulletPanelVisible = true
+                            onBulletListClick()
                         }
-                    )
+                    },
+                    onAttachClick = { isAttachmentsPanelVisible = true },
+                    onBackgroundClick = {
+                        keyboardController?.hide()
+                        isBackgroundsPanelVisible = true
+                        onBackgroundClick()
+                    }
+                )
 
-                    PanelMode.FORMATTING -> SelectedPanel(
-                        modifier = heightModifier.clickableNoRipple {},
-                        titleState = titleState,
-                    )
+                PanelMode.FORMATTING -> SelectedPanel(
+                    modifier = heightModifier.clickableNoRipple {},
+                    titleState = titleState,
+                )
 
-                    PanelMode.VOICE_RECORD -> VoicePanel(
-                        noteId = noteId,
-                        onRecordComplete = { record ->
-                            isVoiceRecordingActive = false
-                            onRecordComplete(record)
-                        },
-                        onCancelRequest = {
-                            isVoiceRecordingActive = false
-                            onVoiceRecordCancel()
-                        },
-                        lineContent = {
-                            LineContent(
-                                modifier = heightModifier.clickableNoRipple {},
-                                noteId = noteId,
-                            )
-                        },
-                    )
+                PanelMode.VOICE_RECORD -> VoicePanel(
+                    noteId = noteId,
+                    onRecordComplete = { record ->
+                        isVoiceRecordingActive = false
+                        onRecordComplete(record)
+                    },
+                    onCancelRequest = {
+                        isVoiceRecordingActive = false
+                        onVoiceRecordCancel()
+                    },
+                    lineContent = {
+                        LineContent(
+                            modifier = heightModifier.clickableNoRipple {},
+                            noteId = noteId,
+                        )
+                    },
+                )
 
-                    PanelMode.FONT -> FontTitleBar(
-                        modifier = heightModifier,
-                        showKeyBoardButton = titleState != null,
-                        onDoneClick = { isFontPanelVisible = false },
-                    )
+                PanelMode.FONT -> FontTitleBar(
+                    modifier = heightModifier,
+                    showKeyBoardButton = titleState != null,
+                    onDoneClick = { isFontPanelVisible = false },
+                )
 
-                    PanelMode.STICKERS -> StickersTitleBar(
-                        modifier = heightModifier,
-                        showKeyBoardButton = titleState != null,
-                        onDoneClick = { isStickersPanelVisible = false },
-                    )
+                PanelMode.STICKERS -> StickersTitleBar(
+                    modifier = heightModifier,
+                    showKeyBoardButton = titleState != null,
+                    onDoneClick = { isStickersPanelVisible = false },
+                )
 
-                    PanelMode.BULLET -> BulletTitleBar(
-                        modifier = heightModifier,
-                        showKeyBoardButton = titleState != null,
-                        onDoneClick = { isBulletPanelVisible = false },
-                    )
+                PanelMode.BULLET -> BulletTitleBar(
+                    modifier = heightModifier,
+                    showKeyBoardButton = titleState != null,
+                    onDoneClick = { isBulletPanelVisible = false },
+                )
 
-                    PanelMode.ATTACHMENTS -> AttachmentsPanel(
-                        modifier = heightModifier,
-                        onSelectMediaClick = {
-                            isAttachmentsPanelVisible = false
-                            onSelectMediaClick()
-                        },
-                        onTakePictureClick = {
-                            isAttachmentsPanelVisible = false
-                            onTakePictureClick()
-                        },
-                        onRecordVoiceClick = {
-                            isAttachmentsPanelVisible = false
-                            audioRecordPermissionsState.launchPermissionRequest()
-                        },
-                        onCloseClick = { isAttachmentsPanelVisible = false },
-                    )
+                PanelMode.ATTACHMENTS -> AttachmentsPanel(
+                    modifier = heightModifier,
+                    onSelectMediaClick = {
+                        isAttachmentsPanelVisible = false
+                        onSelectMediaClick()
+                    },
+                    onTakePictureClick = {
+                        isAttachmentsPanelVisible = false
+                        onTakePictureClick()
+                    },
+                    onRecordVoiceClick = {
+                        isAttachmentsPanelVisible = false
+                        audioRecordPermissionsState.launchPermissionRequest()
+                    },
+                    onCloseClick = { isAttachmentsPanelVisible = false },
+                )
 
-                    PanelMode.BACKGROUNDS -> BackgroundTitleBar(
-                        modifier = heightModifier,
-                        noteId = noteId,
-                        noteTheme = noteTheme,
-                        showKeyBoardButton = titleState != null,
-                        onDoneClick = { isBackgroundsPanelVisible = false },
-                    )
-                }
+                PanelMode.BACKGROUNDS -> BackgroundTitleBar(
+                    modifier = heightModifier,
+                    noteId = noteId,
+                    noteTheme = noteTheme,
+                    showKeyBoardButton = titleState != null,
+                    onDoneClick = { isBackgroundsPanelVisible = false },
+                )
             }
         }
 

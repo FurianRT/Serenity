@@ -1,16 +1,9 @@
 package com.furianrt.noteview.internal.ui.composables
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -36,8 +29,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 
-private const val ANIM_DATE_VISIBILITY_DURATION = 250
-
 @Composable
 internal fun Toolbar(
     isInEditMode: Boolean,
@@ -62,7 +53,6 @@ internal fun Toolbar(
     ) {
         if (date != null) {
             DateLabel(
-                isClickable = isInEditMode,
                 date = date,
                 onClick = onDateClick,
             )
@@ -101,36 +91,17 @@ internal fun Toolbar(
 @Composable
 private fun DateLabel(
     date: String,
-    isClickable: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
+    Text(
         modifier = modifier
-            .width(IntrinsicSize.Max)
-            .height(IntrinsicSize.Max),
-        contentAlignment = Alignment.Center,
-    ) {
-        AnimatedVisibility(
-            visible = isClickable,
-            enter = fadeIn(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
-            exit = fadeOut(animationSpec = tween(ANIM_DATE_VISIBILITY_DURATION)),
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp)),
-            )
-        }
-        Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
-                .clickable(onClick = onClick)
-                .padding(vertical = 6.dp, horizontal = 12.dp),
-            text = date,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick)
+            .padding(vertical = 6.dp, horizontal = 12.dp),
+        text = date,
+        style = MaterialTheme.typography.bodyMedium,
+    )
 }
 
 @PreviewWithBackground

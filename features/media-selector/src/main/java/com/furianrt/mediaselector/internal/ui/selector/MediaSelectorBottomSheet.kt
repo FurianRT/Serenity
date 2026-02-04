@@ -69,8 +69,8 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
@@ -191,7 +191,7 @@ internal fun MediaSelectorBottomSheetInternal(
         }
     }
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }

@@ -59,6 +59,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -84,7 +85,7 @@ internal fun NoteCreateScreen(
 
     val pageScreenState = rememberPageScreenState()
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val focusManager = LocalFocusManager.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
@@ -221,6 +222,8 @@ private fun SuccessContent(
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
+        blurAlpha = if (uiState.note.theme is UiNoteTheme.Image.Picture) 0.4f else 0.5f,
+        blurRadius = if (uiState.note.theme is UiNoteTheme.Image.Picture) 8.dp else 12.dp,
         listState = state.listState,
         toolbar = {
             val date = remember(uiState.note.date) {

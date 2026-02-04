@@ -34,8 +34,8 @@ import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -49,7 +49,7 @@ internal fun SecurityScreen(
 
     var showPinDelayDialog by remember { mutableStateOf(false) }
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openChangePinScreenState by rememberUpdatedState(openChangePinScreen)

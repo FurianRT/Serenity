@@ -81,8 +81,8 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
-import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
@@ -107,7 +107,7 @@ internal fun MediaSortingScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
@@ -305,7 +305,7 @@ private fun ContentList(
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberHazeState()
     val reorderableLazyColumnState = rememberReorderableLazyGridState(
         lazyGridState = listState,
         scrollThresholdPadding = contentPadding,
