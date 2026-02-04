@@ -112,7 +112,7 @@ enum class UiThemeColor(
         id = "14",
         surface = Colors.Primary.DistantCastleBlue,
         primaryContainer = Colors.Accent.Purple,
-        surfaceTint = Color.White.copy(alpha = 0.2f),
+        surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Color.Black.copy(alpha = 0.2f),
     ),
 
@@ -120,7 +120,7 @@ enum class UiThemeColor(
         id = "dark_15",
         surface = Colors.Primary.TotalBlack,
         primaryContainer = Colors.Accent.Purple,
-        surfaceTint = Color.White.copy(alpha = 0.2f),
+        surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
     ),
 
