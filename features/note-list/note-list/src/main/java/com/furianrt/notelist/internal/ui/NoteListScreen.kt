@@ -48,7 +48,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -295,7 +294,6 @@ private fun SuccessContent(
                 tags = note.tags,
                 date = note.date.getTitle(),
                 fontFamily = note.fontFamily,
-                fontSize = note.fontSize.sp,
                 moodId = note.moodId,
                 locationState = note.locationState,
                 isPinned = note.isPinned,
@@ -463,7 +461,6 @@ private fun generatePreviewNotes(withSelected: Boolean) = buildList {
                 date = NoteListScreenNote.Date.Other("19.06.2023"),
                 tags = emptyList(),
                 fontFamily = null,
-                fontSize = 16,
                 isPinned = false,
                 moodId = null,
                 locationState = LocationState.Empty,

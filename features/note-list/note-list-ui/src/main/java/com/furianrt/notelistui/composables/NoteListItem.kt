@@ -32,9 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
@@ -56,7 +54,6 @@ fun NoteListItem(
     content: List<UiNoteContent>,
     tags: List<UiNoteTag>,
     fontFamily: UiNoteFontFamily?,
-    fontSize: TextUnit,
     date: String,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
@@ -129,10 +126,7 @@ fun NoteListItem(
                         style = MaterialTheme.typography.bodyMedium.copy(
                             fontFamily = fontFamily?.regular
                                 ?: MaterialTheme.typography.bodyMedium.fontFamily,
-                            fontSize = fontSize,
-                            lineHeight = MaterialTheme.typography.bodyMedium.lineHeight *
-                                    (fontSize.value /
-                                            MaterialTheme.typography.bodyMedium.fontSize.value),
+
                         ),
                     )
 
@@ -216,7 +210,6 @@ private fun NoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
-            fontSize = 16.sp,
             content = generatePreviewContent(),
             hazeState = HazeState(),
         )
@@ -238,7 +231,6 @@ private fun PinnedNoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
-            fontSize = 16.sp,
             isPinned = true,
             content = generatePreviewContent(),
             hazeState = HazeState(),
@@ -261,7 +253,6 @@ private fun SelectedNoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
-            fontSize = 16.sp,
             isPinned = true,
             isSelected = true,
             content = generatePreviewContent(),

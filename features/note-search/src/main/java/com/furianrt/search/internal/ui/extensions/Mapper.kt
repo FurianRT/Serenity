@@ -34,7 +34,6 @@ internal fun LocalNote.toNoteItem(
         tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
         fontFamily = fontFamily?.toUiNoteFontFamily(),
-        fontSize = fontSize,
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,
         content = content.getShortUiContent(

@@ -12,7 +12,6 @@ internal data class NoteListScreenNote(
     val date: Date,
     val tags: List<UiNoteTag>,
     val fontFamily: UiNoteFontFamily?,
-    val fontSize: Int,
     val moodId: String?,
     val locationState: LocationState,
     val isPinned: Boolean,

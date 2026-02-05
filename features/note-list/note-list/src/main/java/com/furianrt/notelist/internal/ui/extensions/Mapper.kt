@@ -39,7 +39,6 @@ internal fun LocalNote.toMainScreenNote(
         },
         tags = tags.take(3).map { it.toRegularUiNoteTag(isRemovable = false) },
         fontFamily = fontFamily?.toUiNoteFontFamily(),
-        fontSize = fontSize,
         isPinned = isPinned,
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,

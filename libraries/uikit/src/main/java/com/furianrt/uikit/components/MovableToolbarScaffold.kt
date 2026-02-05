@@ -1,5 +1,6 @@
 package com.furianrt.uikit.components
 
+import android.util.Log
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -10,6 +11,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollableState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -39,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeTint
@@ -79,9 +86,9 @@ fun MovableToolbarScaffold(
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
-    var toolbarHeight by remember { mutableFloatStateOf(0f) }
-    var totalScroll by rememberSaveable { mutableFloatStateOf(0f) }
+    var toolbarOffset by rememberSaveable(listState) { mutableFloatStateOf(0f) }
+    var toolbarHeight by remember(listState) { mutableFloatStateOf(0f) }
+    var totalScroll by rememberSaveable(listState) { mutableFloatStateOf(0f) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -90,6 +97,7 @@ fun MovableToolbarScaffold(
                 source: NestedScrollSource,
             ): Offset {
                 val delta = consumed.y
+                Log.e("gwgwegwegweg", "totalScroll = $totalScroll toolbarOffset = $toolbarOffset toolbarHeight = $toolbarHeight")
                 totalScroll += delta
                 when {
                     !enabled -> scope.launch {
@@ -114,9 +122,13 @@ fun MovableToolbarScaffold(
     }
 
     LaunchedEffect(listState.canScrollBackward, listState.canScrollForward) {
-        if (!listState.canScrollBackward && !listState.canScrollForward) {
-            state.expand()
-            totalScroll = 0f
+        when {
+            !listState.canScrollBackward && !listState.canScrollForward -> {
+                state.expand()
+                totalScroll = 0f
+            }
+
+            !listState.canScrollBackward -> totalScroll = 0f
         }
     }
 
@@ -132,7 +144,7 @@ fun MovableToolbarScaffold(
 
     val hazeState = rememberHazeState()
 
-    LaunchedEffect(listState.isScrollInProgress) {
+    LaunchedEffect(listState, listState.isScrollInProgress) {
         var forceShowToolbar = false
         when (listState) {
             is LazyGridState -> {
@@ -141,12 +153,14 @@ fun MovableToolbarScaffold(
                 val scrollOffset = listState.firstVisibleItemScrollOffset
                 forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
             }
+
             is LazyListState -> {
                 val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
                 val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull(LazyListItemInfo::index)
                 val scrollOffset = listState.firstVisibleItemScrollOffset
                 forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
             }
+
             is ScrollState -> {
                 forceShowToolbar = listState.value <= toolbarHeight
             }
@@ -175,14 +189,14 @@ fun MovableToolbarScaffold(
 
     val showShadow by remember(listState) {
         derivedStateOf {
-            (totalScroll - toolbarOffset).absoluteValue > 15 &&
+            (totalScroll - toolbarOffset).absoluteValue > 5 &&
                     listState.canScrollBackward ||
                     (toolbarOffset == 0f && listState.canScrollBackward)
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
-    val test by animateFloatAsState(
+    val blurAnimValue by animateFloatAsState(
         targetValue = if (showShadow) 1f else 0f,
         animationSpec = tween(
             durationMillis = 200,
@@ -190,7 +204,40 @@ fun MovableToolbarScaffold(
         ),
     )
 
+    val isToolbarCollapsed by remember(toolbarHeight) {
+        derivedStateOf { -toolbarHeight == toolbarOffset }
+    }
+
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .zIndex(2f)
+                .fadingBottomEdge()
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(
+                            MaterialTheme.colorScheme.surface.copy(
+                                alpha = if (showShadow && !isToolbarCollapsed) {
+                                    blurAlpha
+                                } else {
+                                    0.3f
+                                },
+                            ),
+                        ),
+                        blurRadius = if (showShadow && !isToolbarCollapsed) {
+                            blurRadius
+                        } else {
+                            4.dp
+                        },
+                    )
+                )
+                .padding(12.dp)
+                .windowInsetsTopHeight(WindowInsets.statusBars),
+        )
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
@@ -202,9 +249,9 @@ fun MovableToolbarScaffold(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = background,
-                        tint = HazeTint(background.copy(alpha = blurAlpha * test)),
+                        tint = HazeTint(background.copy(alpha = blurAlpha * blurAnimValue)),
                         noiseFactor = 0f,
-                        blurRadius = blurRadius * test,
+                        blurRadius = blurRadius * blurAnimValue,
                     )
                 )
                 .drawBehind {

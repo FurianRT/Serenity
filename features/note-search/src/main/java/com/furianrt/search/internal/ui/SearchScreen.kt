@@ -44,7 +44,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -334,7 +333,6 @@ private fun SuccessContent(
                     },
                     isSelected = item.isSelected,
                     fontFamily = item.fontFamily,
-                    fontSize = item.fontSize.sp,
                     moodId = item.moodId,
                     locationState = item.locationState,
                     hazeState = hazeState,
@@ -417,7 +415,6 @@ private fun SuccessFilledQueryPreview() {
                         ),
                         isSelected = false,
                         fontFamily = null,
-                        fontSize = 16,
                         moodId = null,
                         locationState = LocationState.Empty,
                         content = listOf(
