@@ -1,6 +1,5 @@
 package com.furianrt.uikit.components
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.LinearEasing
@@ -32,6 +31,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -94,9 +94,10 @@ fun MovableToolbarScaffold(
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
-    var toolbarOffset by rememberSaveable(listState) { mutableFloatStateOf(0f) }
-    var toolbarHeight by remember(listState) { mutableFloatStateOf(0f) }
+    var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
+    var toolbarHeight by rememberSaveable { mutableFloatStateOf(0f) }
     var totalScroll by rememberSaveable(listState) { mutableFloatStateOf(0f) }
+    var isFirstComposition by remember { mutableStateOf(true) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -105,7 +106,6 @@ fun MovableToolbarScaffold(
                 source: NestedScrollSource,
             ): Offset {
                 val delta = consumed.y
-                Log.e("gwgwegwegweg", "totalScroll = $totalScroll toolbarOffset = $toolbarOffset toolbarHeight = $toolbarHeight")
                 totalScroll += delta
                 when {
                     !enabled -> scope.launch {
@@ -130,14 +130,17 @@ fun MovableToolbarScaffold(
     }
 
     LaunchedEffect(listState.canScrollBackward, listState.canScrollForward) {
-        when {
-            !listState.canScrollBackward && !listState.canScrollForward -> {
-                state.expand()
-                totalScroll = 0f
-            }
+        if (!isFirstComposition) {
+            when {
+                !listState.canScrollBackward && !listState.canScrollForward -> {
+                    state.expand()
+                    totalScroll = 0f
+                }
 
-            !listState.canScrollBackward -> totalScroll = 0f
+                !listState.canScrollBackward -> totalScroll = 0f
+            }
         }
+        isFirstComposition = false
     }
 
     state.setExpandRequestListener { duration ->
@@ -208,29 +211,41 @@ fun MovableToolbarScaffold(
         derivedStateOf { -toolbarHeight == toolbarOffset }
     }
 
-    val blurAnimValue by animateFloatAsState(
-        targetValue = if (showShadow) 1f else 0f,
-        animationSpec = tween(
-            durationMillis = 200,
-            easing = LinearEasing,
-        ),
-    )
+    val blurAnimValue = if (isFirstComposition) {
+        if (showShadow) 1f else 0f
+    } else {
+        animateFloatAsState(
+            targetValue = if (showShadow) 1f else 0f,
+            animationSpec = tween(
+                durationMillis = 200,
+                easing = LinearEasing,
+            ),
+        ).value
+    }
 
-    val alphaStatusBarAnimValue by animateFloatAsState(
-        targetValue = if (showShadow && !isToolbarCollapsed) blurAlpha else 0f,
-        animationSpec = tween(
-            durationMillis = 200,
-            easing = LinearEasing,
-        ),
-    )
+    val alphaStatusBarAnimValue = if (isFirstComposition) {
+        if (showShadow && !isToolbarCollapsed) blurAlpha else 0f
+    } else {
+        animateFloatAsState(
+            targetValue = if (showShadow && !isToolbarCollapsed) blurAlpha else 0f,
+            animationSpec = tween(
+                durationMillis = 200,
+                easing = LinearEasing,
+            ),
+        ).value
+    }
 
-    val blurStatusBarAnimValue by animateDpAsState(
-        targetValue = if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp,
-        animationSpec = tween(
-            durationMillis = 200,
-            easing = LinearEasing,
-        ),
-    )
+    val blurStatusBarAnimValue = if (isFirstComposition) {
+        if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp
+    } else {
+        animateDpAsState(
+            targetValue = if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp,
+            animationSpec = tween(
+                durationMillis = 200,
+                easing = LinearEasing,
+            ),
+        ).value
+    }
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
