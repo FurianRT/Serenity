@@ -104,7 +104,9 @@ internal class MediaSaver @Inject constructor(
             return@withLock
         }
 
-        val savedMediaData = appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return
+        val savedMediaData =
+            appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return@withLock
+
         if (entry.media.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
             appMediaSource.deleteFile(entry.media.uri)
         }

@@ -8,11 +8,9 @@ enum class NoteFontColor {
     GREY,
 
     PINK_LIGHT,
-    PINK,
     PINK_DARK,
 
     YELLOW_LIGHT,
-    YELLOW,
     YELLOW_DARK,
 
     GREEN_LIGHT,
@@ -27,7 +25,6 @@ enum class NoteFontColor {
     PURPLE,
     PURPLE_DARK,
 
-    RED_LIGHT,
     RED,
     RED_DARK;
 

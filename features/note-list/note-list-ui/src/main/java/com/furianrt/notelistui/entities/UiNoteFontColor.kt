@@ -13,11 +13,9 @@ enum class UiNoteFontColor(val value: Color) {
     GREY(Colors.Font.Grey),
 
     PINK_LIGHT(Colors.Font.PinkLight),
-    PINK(Colors.Font.Pink),
     PINK_DARK(Colors.Font.PinkDark),
 
     YELLOW_LIGHT(Colors.Font.YellowLight),
-    YELLOW(Colors.Font.Yellow),
     YELLOW_DARK(Colors.Font.YellowDark),
 
     GREEN_LIGHT(Colors.Font.GreenLight),
@@ -32,7 +30,6 @@ enum class UiNoteFontColor(val value: Color) {
     PURPLE(Colors.Font.Purple),
     PURPLE_DARK(Colors.Font.PurpleDark),
 
-    RED_LIGHT(Colors.Font.RedLight),
     RED(Colors.Font.Red),
     RED_DARK(Colors.Font.RedDark);
 

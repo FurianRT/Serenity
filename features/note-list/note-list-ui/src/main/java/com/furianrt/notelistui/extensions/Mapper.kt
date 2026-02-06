@@ -234,10 +234,8 @@ fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
     NoteFontColor.GREY -> UiNoteFontColor.GREY
     NoteFontColor.BLACK -> UiNoteFontColor.BLACK
     NoteFontColor.PINK_LIGHT -> UiNoteFontColor.PINK_LIGHT
-    NoteFontColor.PINK -> UiNoteFontColor.PINK
     NoteFontColor.PINK_DARK -> UiNoteFontColor.PINK_DARK
     NoteFontColor.YELLOW_LIGHT -> UiNoteFontColor.YELLOW_LIGHT
-    NoteFontColor.YELLOW -> UiNoteFontColor.YELLOW
     NoteFontColor.YELLOW_DARK -> UiNoteFontColor.YELLOW_DARK
     NoteFontColor.GREEN_LIGHT -> UiNoteFontColor.GREEN_LIGHT
     NoteFontColor.GREEN -> UiNoteFontColor.GREEN
@@ -248,7 +246,6 @@ fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
     NoteFontColor.PURPLE_LIGHT -> UiNoteFontColor.PURPLE_LIGHT
     NoteFontColor.PURPLE -> UiNoteFontColor.PURPLE
     NoteFontColor.PURPLE_DARK -> UiNoteFontColor.PURPLE_DARK
-    NoteFontColor.RED_LIGHT -> UiNoteFontColor.RED_LIGHT
     NoteFontColor.RED -> UiNoteFontColor.RED
     NoteFontColor.RED_DARK -> UiNoteFontColor.RED_DARK
 }
@@ -258,10 +255,8 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.GREY -> NoteFontColor.GREY
     UiNoteFontColor.BLACK -> NoteFontColor.BLACK
     UiNoteFontColor.PINK_LIGHT -> NoteFontColor.PINK_LIGHT
-    UiNoteFontColor.PINK -> NoteFontColor.PINK
     UiNoteFontColor.PINK_DARK -> NoteFontColor.PINK_DARK
     UiNoteFontColor.YELLOW_LIGHT -> NoteFontColor.YELLOW_LIGHT
-    UiNoteFontColor.YELLOW -> NoteFontColor.YELLOW
     UiNoteFontColor.YELLOW_DARK -> NoteFontColor.YELLOW_DARK
     UiNoteFontColor.GREEN_LIGHT -> NoteFontColor.GREEN_LIGHT
     UiNoteFontColor.GREEN -> NoteFontColor.GREEN
@@ -272,7 +267,6 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.PURPLE_LIGHT -> NoteFontColor.PURPLE_LIGHT
     UiNoteFontColor.PURPLE -> NoteFontColor.PURPLE
     UiNoteFontColor.PURPLE_DARK -> NoteFontColor.PURPLE_DARK
-    UiNoteFontColor.RED_LIGHT -> NoteFontColor.RED_LIGHT
     UiNoteFontColor.RED -> NoteFontColor.RED
     UiNoteFontColor.RED_DARK -> NoteFontColor.RED_DARK
 }
