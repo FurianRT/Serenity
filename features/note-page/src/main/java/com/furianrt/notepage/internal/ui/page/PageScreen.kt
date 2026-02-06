@@ -12,7 +12,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -57,7 +56,6 @@ import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LookaheadScope
 import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.layout.onSizeChanged
@@ -77,6 +75,8 @@ import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
@@ -88,13 +88,15 @@ import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.entities.LocationState
-import com.furianrt.notelistui.entities.UiNoteBackgroundImage
+import com.furianrt.notelistui.entities.UiNoteBackgroundImage.ScaleType
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.entities.isEmptyTitle
+import com.furianrt.notelistui.entities.toContentAlignment
+import com.furianrt.notelistui.entities.toContentScale
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
@@ -615,6 +617,10 @@ private fun NoteBackgroundImage(
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
+                        .background(
+                            targetState.color?.colorScheme?.surface
+                                ?: MaterialTheme.colorScheme.surface
+                        )
                         .drawWithCache {
                             val brush = ShaderBrush(
                                 ImageShader(
@@ -635,9 +641,9 @@ private fun NoteBackgroundImage(
             }
 
             is UiNoteTheme.Image.Picture -> {
-                val bitmap = ImageBitmap.imageResource(targetState.image.resId)
-                when (targetState.image.scaleType) {
-                    UiNoteBackgroundImage.ScaleType.REPEAT -> Box(
+                if (targetState.image.scaleType == ScaleType.REPEAT) {
+                    val bitmap = ImageBitmap.imageResource(targetState.image.resId)
+                    Box(
                         modifier = Modifier
                             .fillMaxSize()
                             .drawWithCache {
@@ -653,20 +659,18 @@ private fun NoteBackgroundImage(
                                 }
                             }
                     )
-
-                    UiNoteBackgroundImage.ScaleType.FILL -> Image(
-                        modifier = Modifier.fillMaxSize(),
-                        bitmap = bitmap,
-                        contentScale = ContentScale.FillBounds,
-                        contentDescription = null,
-                    )
-
-                    UiNoteBackgroundImage.ScaleType.CENTER -> Image(
+                } else {
+                    AsyncImage(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(targetState.color.colorScheme.surface),
-                        bitmap = bitmap,
-                        contentScale = ContentScale.Inside,
+                            .applyIf(targetState.image.scaleType == ScaleType.CENTER) {
+                                Modifier.background(targetState.color.colorScheme.surface)
+                            },
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(targetState.image.resId)
+                            .build(),
+                        contentScale = targetState.image.scaleType.toContentScale(),
+                        alignment = targetState.image.scaleType.toContentAlignment(),
                         contentDescription = null,
                     )
                 }

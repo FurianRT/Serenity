@@ -43,7 +43,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             image = UiNoteBackgroundImage(
                 id = "picture_image_0",
                 resId = R.drawable.background_picture_0,
-                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
             )
         ),
         UiNoteTheme.Image.Picture(
@@ -67,7 +67,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             image = UiNoteBackgroundImage(
                 id = "picture_image_3",
                 resId = R.drawable.background_picture_3,
-                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
             )
         ),
         UiNoteTheme.Image.Picture(
@@ -79,7 +79,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             image = UiNoteBackgroundImage(
                 id = "picture_image_2",
                 resId = R.drawable.background_picture_2,
-                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
             )
         ),
         UiNoteTheme.Image.Picture(
@@ -91,7 +91,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             image = UiNoteBackgroundImage(
                 id = "picture_image_4",
                 resId = R.drawable.background_picture_4,
-                scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
             )
         ),
         UiNoteTheme.Image.Picture(
@@ -164,6 +164,54 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
                 id = "picture_image_13",
                 resId = R.drawable.background_picture_13,
                 scaleType = UiNoteBackgroundImage.ScaleType.FILL,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_14",
+                isLight = false,
+                colorScheme = UiThemeColor.TOTAL_BLACK.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_14",
+                resId = R.drawable.background_picture_14,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_TOP,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_15",
+                isLight = false,
+                colorScheme = UiThemeColor.BLUE_NIGHT_3.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_15",
+                resId = R.drawable.background_picture_15,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_16",
+                isLight = false,
+                colorScheme = UiThemeColor.ORANGE.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_16",
+                resId = R.drawable.background_picture_16,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
+            )
+        ),
+        UiNoteTheme.Image.Picture(
+            color = UiNoteBackground(
+                id = "picture_color_17",
+                isLight = false,
+                colorScheme = UiThemeColor.PINK_PANTHER.colorScheme,
+            ),
+            image = UiNoteBackgroundImage(
+                id = "picture_image_17",
+                resId = R.drawable.background_picture_17,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
             )
         ),
         UiNoteTheme.Image.Picture(

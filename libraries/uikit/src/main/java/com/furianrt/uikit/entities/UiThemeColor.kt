@@ -167,6 +167,25 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.Blue4,
     ),
 
+    BLUE_NIGHT_3(
+        id = "dark_21",
+        surface = Colors.Primary.Blue4,
+        primaryContainer = Colors.Accent.Blue4,
+    ),
+
+    ORANGE(
+        id = "dark_22",
+        surface = Colors.Primary.Orange,
+        primaryContainer = Colors.Accent.Green,
+        surfaceDim = Color.Black.copy(alpha = 0.05f),
+    ),
+
+    PINK_PANTHER(
+        id = "dark_23",
+        surface = Colors.Primary.Blue5,
+        primaryContainer = Colors.Accent.Pink2,
+    ),
+
     LIGHT_BLUE(
         id = "15",
         primary = Color.Black,

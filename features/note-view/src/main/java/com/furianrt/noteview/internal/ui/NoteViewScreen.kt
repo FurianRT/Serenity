@@ -1,16 +1,11 @@
 package com.furianrt.noteview.internal.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.pager.HorizontalPager
@@ -39,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -58,8 +52,6 @@ import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.components.SnackBar
-import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalColorScheme
 import com.furianrt.uikit.theme.LocalFont
@@ -295,6 +287,8 @@ private fun SuccessScreen(
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
         blurAlpha = if (hasPictureBackground) 0.4f else 0.5f,
         blurRadius = if (hasPictureBackground) 8.dp else 12.dp,
+        dimSurface = currentPageState?.dimSurface ?: cachedDimValue,
+        onDimClick = { scope.launch { currentPageState?.bottomSheetState?.hide() } },
         toolbar = {
             val date = remember(uiState.date) { uiState.date.toDateString() }
             Toolbar(
@@ -323,23 +317,6 @@ private fun SuccessScreen(
                     )
                 }
             )
-            AnimatedVisibility(
-                modifier = Modifier.zIndex(1f),
-                visible = currentPageState?.dimSurface ?: cachedDimValue,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Box(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.scrim)
-                        .padding(top = statusBarHeight.dp)
-                        .height(ToolbarConstants.toolbarHeight)
-                        .clickableNoRipple {
-                            scope.launch { currentPageState?.bottomSheetState?.hide() }
-                        },
-                )
-            }
         },
     ) {
         HorizontalPager(

@@ -1,11 +1,15 @@
 package com.furianrt.uikit.components
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.ScrollableState
@@ -13,8 +17,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
@@ -42,7 +48,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
+import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.fadingBottomEdge
@@ -83,6 +89,8 @@ fun MovableToolbarScaffold(
     enabled: Boolean = true,
     blurRadius: Dp = 12.dp,
     blurAlpha: Float = 0.5f,
+    dimSurface: Boolean = false,
+    onDimClick: () -> Unit = {},
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -196,6 +204,10 @@ fun MovableToolbarScaffold(
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
+    val isToolbarCollapsed by remember(toolbarHeight) {
+        derivedStateOf { -toolbarHeight == toolbarOffset }
+    }
+
     val blurAnimValue by animateFloatAsState(
         targetValue = if (showShadow) 1f else 0f,
         animationSpec = tween(
@@ -204,44 +216,30 @@ fun MovableToolbarScaffold(
         ),
     )
 
-    val isToolbarCollapsed by remember(toolbarHeight) {
-        derivedStateOf { -toolbarHeight == toolbarOffset }
-    }
+    val alphaStatusBarAnimValue by animateFloatAsState(
+        targetValue = if (showShadow && !isToolbarCollapsed) blurAlpha else 0f,
+        animationSpec = tween(
+            durationMillis = 200,
+            easing = LinearEasing,
+        ),
+    )
+
+    val blurStatusBarAnimValue by animateDpAsState(
+        targetValue = if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp,
+        animationSpec = tween(
+            durationMillis = 200,
+            easing = LinearEasing,
+        ),
+    )
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .zIndex(2f)
-                .fadingBottomEdge()
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(
-                            MaterialTheme.colorScheme.surface.copy(
-                                alpha = if (showShadow && !isToolbarCollapsed) {
-                                    blurAlpha
-                                } else {
-                                    0.3f
-                                },
-                            ),
-                        ),
-                        blurRadius = if (showShadow && !isToolbarCollapsed) {
-                            blurRadius
-                        } else {
-                            4.dp
-                        },
-                    )
-                )
-                .padding(12.dp)
-                .windowInsetsTopHeight(WindowInsets.statusBars),
+            modifier = Modifier.hazeSource(hazeState),
+            content = { content(toolbarHeight.pxToDp()) },
         )
         Box(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .zIndex(1f)
                 .graphicsLayer { translationY = toolbarOffset }
                 .onSizeChanged { toolbarHeight = it.height.toFloat() }
                 .background(MaterialTheme.colorScheme.surface)
@@ -263,8 +261,37 @@ fun MovableToolbarScaffold(
             content = { toolbar() },
         )
         Box(
-            modifier = Modifier.hazeSource(hazeState),
-            content = { content(toolbarHeight.pxToDp()) },
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .fillMaxWidth()
+                .fadingBottomEdge()
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(
+                            MaterialTheme.colorScheme.surface.copy(alpha = alphaStatusBarAnimValue),
+                        ),
+                        blurRadius = blurStatusBarAnimValue,
+                    )
+                )
+                .padding(12.dp)
+                .windowInsetsTopHeight(WindowInsets.statusBars),
         )
+        AnimatedVisibility(
+            modifier = Modifier.align(Alignment.TopCenter),
+            visible = dimSurface,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.scrim)
+                    .statusBarsPadding()
+                    .height(ToolbarConstants.toolbarHeight)
+                    .clickableNoRipple(onClick = onDimClick),
+            )
+        }
     }
 }

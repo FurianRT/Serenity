@@ -1,16 +1,11 @@
 package com.furianrt.notecreate.internal.ui
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -46,8 +40,6 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
-import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.LocalHasMediaRoute
@@ -225,6 +217,8 @@ private fun SuccessContent(
         blurAlpha = if (uiState.note.theme is UiNoteTheme.Image.Picture) 0.4f else 0.5f,
         blurRadius = if (uiState.note.theme is UiNoteTheme.Image.Picture) 8.dp else 12.dp,
         listState = state.listState,
+        dimSurface = state.dimSurface,
+        onDimClick = { scope.launch { state.bottomSheetState.hide() } },
         toolbar = {
             val date = remember(uiState.note.date) {
                 uiState.note.date.toDateString()
@@ -244,23 +238,6 @@ private fun SuccessContent(
                 onDeleteClick = { onEvent(NoteCreateEvent.OnButtonDeleteClick) },
                 onPinClick = { onEvent(NoteCreateEvent.OnPinClick) },
             )
-            AnimatedVisibility(
-                modifier = Modifier.zIndex(1f),
-                visible = state.dimSurface,
-                enter = fadeIn(),
-                exit = fadeOut(),
-            ) {
-                Box(
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .background(MaterialTheme.colorScheme.scrim)
-                        .padding(top = statusBarHeight.dp)
-                        .height(ToolbarConstants.toolbarHeight)
-                        .clickableNoRipple {
-                            scope.launch { state.bottomSheetState.hide() }
-                        }
-                )
-            }
         },
         content = { notePage() },
     )

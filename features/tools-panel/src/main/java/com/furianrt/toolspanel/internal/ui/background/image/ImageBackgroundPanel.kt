@@ -1,6 +1,5 @@
 package com.furianrt.toolspanel.internal.ui.background.image
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +40,7 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -49,6 +49,8 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.R
@@ -197,54 +199,64 @@ private fun ThemeItem(
             )
         }
 
-        UiNoteBackgroundImage.ScaleType.FILL, UiNoteBackgroundImage.ScaleType.CENTER -> Image(
-            modifier = modifier
-                .fillMaxWidth()
-                .aspectRatio(0.6f)
-                .then(
-                    if (isSelected) {
-                        Modifier.border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.surfaceContainer,
-                            shape = RoundedCornerShape(16.dp),
-                        )
-                    } else {
-                        Modifier.shadow(2.dp, RoundedCornerShape(16.dp))
-                    }
-                )
-                .drawWithCache {
-                    val path = Path().apply {
-                        val padding = if (isSelected) 4.dp.toPx() else 0f
-                        addRoundRect(
-                            RoundRect(
-                                rect = Rect(
-                                    left = padding,
-                                    right = size.width - padding,
-                                    top = padding,
-                                    bottom = size.height - padding,
-                                ),
-                                cornerRadius = CornerRadius(15.dp.toPx())
+        UiNoteBackgroundImage.ScaleType.FILL,
+        UiNoteBackgroundImage.ScaleType.CENTER,
+        UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
+        UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
+        UiNoteBackgroundImage.ScaleType.CROP_ALIGN_TOP,
+            -> {
+            AsyncImage(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.6f)
+                    .then(
+                        if (isSelected) {
+                            Modifier.border(
+                                width = 1.dp,
+                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                shape = RoundedCornerShape(16.dp),
                             )
-                        )
-                    }
-                    onDrawWithContent {
-                        clipPath(path) {
-                            this@onDrawWithContent.drawContent()
+                        } else {
+                            Modifier.shadow(2.dp, RoundedCornerShape(16.dp))
+                        }
+                    )
+                    .drawWithCache {
+                        val path = Path().apply {
+                            val padding = if (isSelected) 4.dp.toPx() else 0f
+                            addRoundRect(
+                                RoundRect(
+                                    rect = Rect(
+                                        left = padding,
+                                        right = size.width - padding,
+                                        top = padding,
+                                        bottom = size.height - padding,
+                                    ),
+                                    cornerRadius = CornerRadius(15.dp.toPx())
+                                )
+                            )
+                        }
+                        onDrawWithContent {
+                            clipPath(path) {
+                                this@onDrawWithContent.drawContent()
+                            }
                         }
                     }
-                }
-                .applyIf(theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
-                    Modifier.background(theme.color.colorScheme.surface)
-                }
-                .clickableNoRipple { onClick(theme) },
-            painter = painterResource(theme.image.resId),
-            contentScale = if (theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
-                ContentScale.Inside
-            } else {
-                ContentScale.Crop
-            },
-            contentDescription = null,
-        )
+                    .applyIf(theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
+                        Modifier.background(theme.color.colorScheme.surface)
+                    }
+                    .clickableNoRipple { onClick(theme) },
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(theme.image.resId)
+                    .size(300)
+                    .build(),
+                contentScale = if (theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
+                    ContentScale.Inside
+                } else {
+                    ContentScale.Crop
+                },
+                contentDescription = null,
+            )
+        }
     }
 }
 
