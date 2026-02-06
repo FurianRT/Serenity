@@ -88,7 +88,7 @@ internal class PatternBackgroundViewModel @AssistedInject constructor(
                     _effect.tryEmit(
                         SendThemeSelected(
                             theme = UiNoteTheme.Image.Pattern(
-                                color = event.color,
+                                color = color,
                                 image = image,
                             )
                         )
