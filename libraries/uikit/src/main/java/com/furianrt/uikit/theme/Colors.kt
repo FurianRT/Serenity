@@ -35,7 +35,7 @@ object Colors {
         val Blue1 = Color(0xFF00366E)
         val Blue2 = Color(0xFF012B39)
         val Blue3 = Color(0xFF153455)
-        val Blue4 = Color(0xFF022D4D)
+        val Blue4 = Color(0xFF013358)
         val Blue5 = Color(0xFF5B6EA5)
 
         val Orange = Color(0xFFFC9337)
