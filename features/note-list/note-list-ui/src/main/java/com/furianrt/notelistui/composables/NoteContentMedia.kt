@@ -174,7 +174,7 @@ private fun OneMediaHolder(
             modifier = modifier
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(8.dp)),
-            cornerRadius = 0.dp,
+            cornerRadius = 8.dp,
             media = media,
             dropDownHazeState = dropDownHazeState,
             clickable = clickable,

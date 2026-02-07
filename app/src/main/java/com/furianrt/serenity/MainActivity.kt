@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -311,7 +312,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                     AnimatedVisibility(
                         visible = uiState.isScreenLocked,
                         enter = EnterTransition.None,
-                        exit = fadeOut(),
+                        exit = fadeOut(spring(stiffness = 300f)),
                     ) {
                         CheckPinScreen(
                             hazeState = hazeState,
