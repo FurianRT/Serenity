@@ -25,6 +25,7 @@ import com.furianrt.notelistui.entities.UiNoteFontBackgroundColor
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -39,6 +40,7 @@ internal fun SelectedPanel(
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
     AnimatedContent(
+        modifier = modifier.clickableNoRipple {},
         targetState = panelState,
         transitionSpec = {
             (fadeIn(animationSpec = tween(durationMillis = 220, delayMillis = 90)))
@@ -47,20 +49,17 @@ internal fun SelectedPanel(
     ) { targetState ->
         when (targetState) {
             PanelState.DEFAULT -> SelectedStateContent(
-                modifier = modifier,
                 titleState = titleState,
                 onFontColorsClick = { panelState = PanelState.FONT_COLOR },
                 onFillColorsClick = { panelState = PanelState.FILL_COLOR },
             )
 
             PanelState.FONT_COLOR -> FontColorsStateContent(
-                modifier = modifier,
                 titleState = titleState,
                 onCloseClick = { panelState = PanelState.DEFAULT },
             )
 
             PanelState.FILL_COLOR -> FillColorsStateContent(
-                modifier = modifier,
                 titleState = titleState,
                 onCloseClick = { panelState = PanelState.DEFAULT },
             )
@@ -70,7 +69,7 @@ internal fun SelectedPanel(
 
 @Composable
 private fun SelectedStateContent(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     titleState: NoteTitleState?,
     onFontColorsClick: () -> Unit,
     onFillColorsClick: () -> Unit,
@@ -279,7 +278,7 @@ private fun SelectedStateContent(
 
 @Composable
 private fun FontColorsStateContent(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
 ) {
@@ -321,7 +320,7 @@ private fun FontColorsStateContent(
 
 @Composable
 private fun FillColorsStateContent(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
 ) {

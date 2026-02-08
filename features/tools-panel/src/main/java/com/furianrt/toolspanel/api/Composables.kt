@@ -51,7 +51,6 @@ import com.furianrt.toolspanel.internal.ui.stickers.StickersTitleBar
 import com.furianrt.toolspanel.internal.ui.voice.LineContent
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.uikit.extensions.applyIf
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
@@ -207,7 +206,7 @@ fun ActionsPanel(
         ) { targetState ->
             when (targetState) {
                 PanelMode.REGULAR -> RegularPanel(
-                    modifier = heightModifier.clickableNoRipple {},
+                    modifier = heightModifier,
                     titleState = titleState,
                     onFontStyleClick = {
                         keyboardController?.hide()
@@ -237,7 +236,7 @@ fun ActionsPanel(
                 )
 
                 PanelMode.FORMATTING -> SelectedPanel(
-                    modifier = heightModifier.clickableNoRipple {},
+                    modifier = heightModifier,
                     titleState = titleState,
                 )
 
@@ -253,7 +252,7 @@ fun ActionsPanel(
                     },
                     lineContent = {
                         LineContent(
-                            modifier = heightModifier.clickableNoRipple {},
+                            modifier = hazeModifier,
                             noteId = noteId,
                         )
                     },
