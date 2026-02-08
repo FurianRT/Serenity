@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
@@ -136,6 +137,7 @@ private fun BoxScope.VoiceLineContent(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .clickableNoRipple {}
             .align(Alignment.BottomCenter),
     ) {
         Timer(
@@ -209,7 +211,6 @@ private fun Timer(
                 .size(22.dp)
                 .alpha(0.5f),
             targetState = isPaused,
-            label = "PlayAnim",
         ) { targetState ->
             if (targetState) {
                 Icon(
@@ -246,13 +247,11 @@ private fun ButtonDone(
             ),
             repeatMode = RepeatMode.Reverse,
         ),
-        label = "ActionButtonScaleAnim",
     )
 
     val scale by animateFloatAsState(
         targetValue = (volume * VOLUME_MULTIPLIER).coerceAtMost(1f),
-        animationSpec = spring(stiffness = 200f),
-        label = "ActionButtonVolumeAnim",
+        animationSpec = spring(stiffness = Spring.StiffnessLow),
     )
 
     Box(

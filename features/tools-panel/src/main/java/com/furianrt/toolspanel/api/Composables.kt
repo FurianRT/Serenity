@@ -305,7 +305,6 @@ fun ActionsPanel(
         }
 
         FontContent(
-            modifier = hazeModifier,
             noteId = noteId,
             fontColor = fontColor,
             fontFamily = fontFamily,
@@ -317,19 +316,16 @@ fun ActionsPanel(
         )
 
         StickersContent(
-            modifier = hazeModifier,
             visible = isStickersPanelVisible,
             onStickerSelected = onStickerSelected,
         )
 
         BulletContent(
-            modifier = hazeModifier,
             visible = isBulletPanelVisible,
             titleState = titleState,
         )
 
         BackgroundContent(
-            modifier = hazeModifier,
             noteId = noteId,
             noteTheme = noteTheme,
             visible = isBackgroundsPanelVisible,
