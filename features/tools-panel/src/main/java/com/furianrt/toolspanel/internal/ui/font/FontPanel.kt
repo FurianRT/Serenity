@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeAnimationSource
@@ -103,7 +104,7 @@ internal fun FontTitleBar(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
@@ -169,6 +170,8 @@ internal fun FontContent(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
 
+    val emailErrorMessage = stringResource(uiR.string.send_email_error)
+
     LaunchedEffect(Unit) {
         var toast: Toast? = null
         viewModel.effect
@@ -183,10 +186,10 @@ internal fun FontContent(
                     }.onFailure { error ->
                         error.printStackTrace()
                         toast?.cancel()
-                        val message = context.getString(uiR.string.send_email_error)
-                        toast = Toast.makeText(context, message, Toast.LENGTH_SHORT).apply {
-                            show()
-                        }
+                        toast = Toast
+                            .makeText(context, emailErrorMessage, Toast.LENGTH_SHORT).apply {
+                                show()
+                            }
                     }
                 }
             }

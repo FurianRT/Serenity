@@ -3,7 +3,7 @@ package com.furianrt.toolspanel.internal.ui.selected
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -33,7 +33,7 @@ internal fun ColorsPanel(
     val listState = rememberLazyListState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         LazyRow(

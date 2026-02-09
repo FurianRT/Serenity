@@ -2,7 +2,7 @@ package com.furianrt.toolspanel.internal.ui.regular
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -31,7 +31,7 @@ internal fun RegularPanel(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .clickableNoRipple {},
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,

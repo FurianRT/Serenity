@@ -2,7 +2,7 @@ package com.furianrt.toolspanel.internal.ui.attachments
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -29,7 +29,7 @@ internal fun AttachmentsPanel(
     Row(
         modifier = modifier
             .padding(horizontal = 4.dp)
-            .fillMaxWidth(),
+            .fillMaxSize(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(

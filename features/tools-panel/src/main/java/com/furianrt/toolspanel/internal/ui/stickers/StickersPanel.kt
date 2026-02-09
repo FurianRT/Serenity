@@ -146,7 +146,7 @@ private fun TitleContent(
 
     Box(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .clickableNoRipple {},
     ) {
         Row(
