@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -143,13 +144,15 @@ fun MovableToolbarScaffold(
         isFirstComposition = false
     }
 
-    state.setExpandRequestListener { duration ->
-        scope.launch {
-            AnimationState(toolbarOffset).animateTo(
-                targetValue = 0f,
-                animationSpec = tween(duration),
-                block = { toolbarOffset = value },
-            )
+    SideEffect {
+        state.setExpandRequestListener { duration ->
+            scope.launch {
+                AnimationState(toolbarOffset).animateTo(
+                    targetValue = 0f,
+                    animationSpec = tween(duration),
+                    block = { toolbarOffset = value },
+                )
+            }
         }
     }
 
@@ -178,7 +181,7 @@ fun MovableToolbarScaffold(
         }
         val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
         when {
-            !isToolbarInHalfState || listState.isScrollInProgress -> {}
+            !enabled || !isToolbarInHalfState || listState.isScrollInProgress -> {}
 
             toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || !listState.canScrollBackward -> {
                 AnimationState(toolbarOffset).animateTo(

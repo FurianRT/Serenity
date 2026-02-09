@@ -113,7 +113,7 @@ fun NoteListItem(
             border = if (isPinned) {
                 BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
             } else {
-                BorderStroke(0.5.dp, MaterialTheme.colorScheme.inverseSurface)
+                BorderStroke(1.dp, MaterialTheme.colorScheme.background)
             }
         ) {
             content.forEachIndexed { index, item ->
