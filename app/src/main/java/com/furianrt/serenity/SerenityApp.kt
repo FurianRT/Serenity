@@ -49,12 +49,12 @@ internal class SerenityApp : Application(), Configuration.Provider {
 
     override fun onCreate() {
         super.onCreate()
+        Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
         updateLaunchCount()
         startPeriodicWorks()
-        Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
     }
 
     override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
@@ -98,23 +98,3 @@ internal class SerenityApp : Application(), Configuration.Provider {
         scope.launch { incrementLaunchCountUseCase() }
     }
 }
-
-/*
-* TODO Главный экран
-* 3.Открытие других экранов через SharedElement
-* */
-
-/*
-* TODO Экран заметки
-*
-* 1.Восстанавливать предыдущий фокус
-* 3.Исправить фокус при вставке медиа
-* */
-
-/*
-* TODO Общее
-*
-* 1.Сменить иконку
-* 4.Проверить RTL
-* 7.Сделать шаблоны
-* */
