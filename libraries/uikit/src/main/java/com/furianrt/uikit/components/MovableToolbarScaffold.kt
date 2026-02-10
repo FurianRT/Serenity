@@ -1,10 +1,9 @@
 package com.furianrt.uikit.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -32,7 +31,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -98,7 +96,6 @@ fun MovableToolbarScaffold(
     var toolbarOffset by rememberSaveable { mutableFloatStateOf(0f) }
     var toolbarHeight by rememberSaveable { mutableFloatStateOf(0f) }
     var totalScroll by rememberSaveable(listState) { mutableFloatStateOf(0f) }
-    var isFirstComposition by remember { mutableStateOf(true) }
     val toolbarScrollConnection = remember(listState, enabled) {
         object : NestedScrollConnection {
             override fun onPostScroll(
@@ -130,18 +127,15 @@ fun MovableToolbarScaffold(
         }
     }
 
-    LaunchedEffect(listState.canScrollBackward, listState.canScrollForward) {
-        if (!isFirstComposition) {
-            when {
-                !listState.canScrollBackward && !listState.canScrollForward -> {
-                    state.expand()
-                    totalScroll = 0f
-                }
-
-                !listState.canScrollBackward -> totalScroll = 0f
+    SkipFirstEffect(listState.canScrollBackward, listState.canScrollForward) {
+        when {
+            !listState.canScrollBackward && !listState.canScrollForward -> {
+                state.expand()
+                totalScroll = 0f
             }
+
+            !listState.canScrollBackward -> totalScroll = 0f
         }
-        isFirstComposition = false
     }
 
     SideEffect {
@@ -210,73 +204,10 @@ fun MovableToolbarScaffold(
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
-    val isToolbarCollapsed by remember(toolbarHeight) {
-        derivedStateOf { -toolbarHeight == toolbarOffset }
-    }
-
-    val blurAnimValue = if (isFirstComposition) {
-        if (showShadow) 1f else 0f
-    } else {
-        animateFloatAsState(
-            targetValue = if (showShadow) 1f else 0f,
-            animationSpec = tween(
-                durationMillis = 200,
-                easing = LinearEasing,
-            ),
-        ).value
-    }
-
-    val alphaStatusBarAnimValue = if (isFirstComposition) {
-        if (showShadow && !isToolbarCollapsed) blurAlpha else 0f
-    } else {
-        animateFloatAsState(
-            targetValue = if (showShadow && !isToolbarCollapsed) blurAlpha else 0f,
-            animationSpec = tween(
-                durationMillis = 200,
-                easing = LinearEasing,
-            ),
-        ).value
-    }
-
-    val blurStatusBarAnimValue = if (isFirstComposition) {
-        if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp
-    } else {
-        animateDpAsState(
-            targetValue = if (showShadow && !isToolbarCollapsed) blurRadius else 4.dp,
-            animationSpec = tween(
-                durationMillis = 200,
-                easing = LinearEasing,
-            ),
-        ).value
-    }
-
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
             modifier = Modifier.hazeSource(hazeState),
             content = { content(toolbarHeight.pxToDp()) },
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .graphicsLayer { translationY = toolbarOffset }
-                .onSizeChanged { toolbarHeight = it.height.toFloat() }
-                .background(MaterialTheme.colorScheme.surface)
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = background,
-                        tint = HazeTint(background.copy(alpha = blurAlpha * blurAnimValue)),
-                        noiseFactor = 0f,
-                        blurRadius = blurRadius * blurAnimValue,
-                    )
-                )
-                .drawBehind {
-                    if (showShadow) {
-                        drawBottomShadow(color = shadowColor)
-                    }
-                }
-                .clickableNoRipple {},
-            content = { toolbar() },
         )
         Box(
             modifier = Modifier
@@ -287,15 +218,48 @@ fun MovableToolbarScaffold(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(
-                            MaterialTheme.colorScheme.surface.copy(alpha = alphaStatusBarAnimValue),
-                        ),
-                        blurRadius = blurStatusBarAnimValue,
+                        tint = HazeTint(Color.Transparent),
+                        blurRadius = 4.dp,
                     )
                 )
                 .padding(12.dp)
                 .windowInsetsTopHeight(WindowInsets.statusBars),
         )
+        Box(
+            modifier = Modifier
+                .align(Alignment.TopCenter)
+                .graphicsLayer { translationY = toolbarOffset }
+                .onSizeChanged { toolbarHeight = it.height.toFloat() }
+                .clickableNoRipple {},
+        ) {
+            AnimatedVisibility(
+                modifier = Modifier.matchParentSize(),
+                visible = showShadow,
+                enter = EnterTransition.None,
+                exit = fadeOut(tween(durationMillis = 200, easing = LinearEasing)),
+            ) {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(MaterialTheme.colorScheme.surface)
+                        .hazeEffect(
+                            state = hazeState,
+                            style = HazeDefaults.style(
+                                backgroundColor = background,
+                                tint = HazeTint(background.copy(alpha = blurAlpha)),
+                                noiseFactor = 0f,
+                                blurRadius = blurRadius,
+                            )
+                        )
+                        .drawBehind {
+                            if (showShadow) {
+                                drawBottomShadow(color = shadowColor)
+                            }
+                        }
+                )
+            }
+            toolbar()
+        }
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.TopCenter),
             visible = dimSurface,
