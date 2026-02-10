@@ -271,6 +271,7 @@ internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
             image = UiNoteBackgroundImage(
                 id = "picture_image_7",
                 resId = R.drawable.background_picture_7,
+                scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
             )
         ),
         UiNoteTheme.Image.Picture(
