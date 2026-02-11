@@ -410,7 +410,7 @@ internal fun VideoPage(
             ) {
                 VideoSlider(
                     modifier = Modifier
-                        .background(SystemBarsConstants.Color)
+                        .background(SystemBarsConstants.MediaBarsColor)
                         .applyIf(configuration.orientation == ORIENTATION_LANDSCAPE) {
                             Modifier
                                 .navigationBarsPadding()

@@ -198,7 +198,7 @@ private fun SuccessContent(
         ) {
             Toolbar(
                 modifier = Modifier
-                    .background(SystemBarsConstants.Color)
+                    .background(SystemBarsConstants.MediaBarsColor)
                     .statusBarsPadding(),
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
@@ -223,7 +223,7 @@ private fun SuccessContent(
         ) {
             MediaList(
                 modifier = Modifier
-                    .background(SystemBarsConstants.Color)
+                    .background(SystemBarsConstants.MediaBarsColor)
                     .navigationBarsPadding(),
                 media = uiState.media,
                 state = listState,

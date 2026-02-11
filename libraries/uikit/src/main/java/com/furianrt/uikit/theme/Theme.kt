@@ -23,8 +23,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
 
@@ -102,7 +102,7 @@ fun SerenityTheme(
     )
 
     LaunchedEffect(isLightTheme) {
-        val color = Color.Transparent.toArgb()
+        val color = SystemBarsConstants.InsetsColor.toArgb()
         if (isLightTheme) {
             activity?.enableEdgeToEdge(
                 statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),

@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -58,6 +57,7 @@ import com.furianrt.uikit.anim.defaultEnterTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
+import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.theme.LocalHasMediaRoute
 import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
@@ -128,34 +128,24 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             !hasNoteViewRoute && !hasNoteCreateRoute
                         }
                         .collect { entry ->
-                            val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>() ||
-                                    entry.destination.hasRoute<NoteCreateRoute>()
                             val hasMediaViewRoute = entry.destination.hasRoute<MediaViewRoute>() ||
                                     entry.destination.hasRoute<MediaViewerRoute>()
-                            val color = Color.Transparent.toArgb()
+                            val color = SystemBarsConstants.InsetsColor.toArgb()
                             when {
                                 hasMediaViewRoute -> activity.enableEdgeToEdge(
                                     statusBarStyle = SystemBarStyle.dark(color),
                                     navigationBarStyle = SystemBarStyle.dark(color),
                                 )
 
-                                !hasNoteViewRoute -> if (uiState.appColor.isLight) {
-                                    activity.enableEdgeToEdge(
-                                        statusBarStyle = SystemBarStyle.light(
-                                            scrim = color,
-                                            darkScrim = color
-                                        ),
-                                        navigationBarStyle = SystemBarStyle.light(
-                                            scrim = color,
-                                            darkScrim = color
-                                        ),
-                                    )
-                                } else {
-                                    activity.enableEdgeToEdge(
-                                        statusBarStyle = SystemBarStyle.dark(color),
-                                        navigationBarStyle = SystemBarStyle.dark(color),
-                                    )
-                                }
+                                uiState.appColor.isLight -> activity.enableEdgeToEdge(
+                                    statusBarStyle = SystemBarStyle.light(color, color),
+                                    navigationBarStyle = SystemBarStyle.light(color, color),
+                                )
+
+                                else -> activity.enableEdgeToEdge(
+                                    statusBarStyle = SystemBarStyle.dark(color),
+                                    navigationBarStyle = SystemBarStyle.dark(color),
+                                )
                             }
                         }
                 }
