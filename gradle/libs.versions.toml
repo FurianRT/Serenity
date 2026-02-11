@@ -1,9 +1,9 @@
 [versions]
 
 agp = "9.0.0"
-kotlin = "2.3.0"
+kotlin = "2.3.10"
 
-ksp = "2.3.4"
+ksp = "2.3.5"
 
 gms = "4.4.4"
 
@@ -36,7 +36,7 @@ coil = "3.3.0"
 
 kotlinxSerializationJson = "1.10.0"
 
-blur = "1.7.1"
+blur = "1.7.2"
 
 zoom = "1.4.0"
 
