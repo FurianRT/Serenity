@@ -4,67 +4,74 @@ import android.content.Intent
 import android.content.IntentSender
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
-import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress.*
+import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress.*
 import com.furianrt.backup.internal.ui.entities.Question
+import com.furianrt.uikit.entities.UiThemeColor
 
-internal sealed interface BackupUiState {
+internal data class BackupUiState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data class Success(
+            val isAutoBackupEnabled: Boolean,
+            val backupPeriod: BackupPeriod,
+            val lastSyncDate: SyncDate,
+            val questions: List<Question>,
+            val authState: AuthState,
+            val syncProgress: SyncProgress,
+        ) : Content {
 
-    data class Success(
-        val isAutoBackupEnabled: Boolean,
-        val backupPeriod: BackupPeriod,
-        val lastSyncDate: SyncDate,
-        val questions: List<Question>,
-        val authState: AuthState,
-        val syncProgress: SyncProgress,
-    ) : BackupUiState {
+            val isSignedIn = authState is AuthState.SignedIn
+            val isBackupInProgress =
+                syncProgress is BackupStarting || syncProgress is BackupProgress
+            val isRestoreInProgress =
+                syncProgress is RestoreStarting || syncProgress is RestoreProgress
+            val isSyncInProgress = isBackupInProgress || isRestoreInProgress
+            val hasSyncError = syncProgress is Failure
 
-        val isSignedIn = authState is AuthState.SignedIn
-        val isBackupInProgress = syncProgress is BackupStarting || syncProgress is BackupProgress
-        val isRestoreInProgress = syncProgress is RestoreStarting || syncProgress is RestoreProgress
-        val isSyncInProgress = isBackupInProgress || isRestoreInProgress
-        val hasSyncError = syncProgress is Failure
+            sealed class AuthState(open val isLoading: Boolean) {
+                data class SignedIn(
+                    override val isLoading: Boolean,
+                    val email: String,
+                ) : AuthState(isLoading)
 
-        sealed class AuthState(open val isLoading: Boolean) {
-            data class SignedIn(
-                override val isLoading: Boolean,
-                val email: String,
-            ) : AuthState(isLoading)
+                data class SignedOut(
+                    override val isLoading: Boolean,
+                ) : AuthState(isLoading)
+            }
 
-            data class SignedOut(
-                override val isLoading: Boolean,
-            ) : AuthState(isLoading)
+            sealed interface SyncDate {
+                data object Today : SyncDate
+                data object Yesterday : SyncDate
+                data object None : SyncDate
+                data class Other(val text: String) : SyncDate
+            }
+
+            sealed interface SyncProgress {
+                data object Idle : SyncProgress
+                data object BackupStarting : SyncProgress
+                data object RestoreStarting : SyncProgress
+                data object Success : SyncProgress
+                data class BackupProgress(
+                    val syncedNotesCount: Int,
+                    val totalNotesCount: Int,
+                ) : SyncProgress
+
+                data class RestoreProgress(
+                    val syncedNotesCount: Int,
+                    val totalNotesCount: Int,
+                ) : SyncProgress
+
+                data class Failure(
+                    val backup: Boolean,
+                    val restore: Boolean,
+                ) : SyncProgress
+            }
         }
 
-        sealed interface SyncDate {
-            data object Today : SyncDate
-            data object Yesterday : SyncDate
-            data object None : SyncDate
-            data class Other(val text: String) : SyncDate
-        }
-
-        sealed interface SyncProgress {
-            data object Idle : SyncProgress
-            data object BackupStarting : SyncProgress
-            data object RestoreStarting : SyncProgress
-            data object Success : SyncProgress
-            data class BackupProgress(
-                val syncedNotesCount: Int,
-                val totalNotesCount: Int,
-            ) : SyncProgress
-
-            data class RestoreProgress(
-                val syncedNotesCount: Int,
-                val totalNotesCount: Int,
-            ) : SyncProgress
-
-            data class Failure(
-                val backup: Boolean,
-                val restore: Boolean,
-            ) : SyncProgress
-        }
+        data object Loading : Content
     }
-
-    data object Loading : BackupUiState
 }
 
 internal sealed interface BackupScreenEvent {

@@ -1,7 +1,6 @@
 package com.furianrt.uikit.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateTo
@@ -31,10 +30,12 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -53,6 +54,7 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
@@ -86,9 +88,10 @@ fun MovableToolbarScaffold(
     modifier: Modifier = Modifier,
     background: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true,
-    blurRadius: Dp = 12.dp,
-    blurAlpha: Float = 0.5f,
+    blurRadius: Dp = 8.dp,
+    blurAlpha: Float = 0.4f,
     dimSurface: Boolean = false,
+    contentHazeState: HazeState? = null,
     onDimClick: () -> Unit = {},
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
@@ -150,7 +153,7 @@ fun MovableToolbarScaffold(
         }
     }
 
-    val hazeState = rememberHazeState()
+    val hazeState = contentHazeState ?: rememberHazeState()
 
     LaunchedEffect(listState, listState.isScrollInProgress) {
         var forceShowToolbar = false
@@ -204,6 +207,13 @@ fun MovableToolbarScaffold(
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
+    var showBlur by rememberSaveable { mutableStateOf(showShadow) }
+
+    LaunchedEffect(listState) {
+        snapshotFlow { toolbarOffset + totalScroll }
+            .collect { showBlur = showShadow }
+    }
+
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
             modifier = Modifier.hazeSource(hazeState),
@@ -234,8 +244,8 @@ fun MovableToolbarScaffold(
         ) {
             AnimatedVisibility(
                 modifier = Modifier.matchParentSize(),
-                visible = showShadow,
-                enter = EnterTransition.None,
+                visible = showBlur,
+                enter = fadeIn(tween(durationMillis = 200, easing = LinearEasing)),
                 exit = fadeOut(tween(durationMillis = 200, easing = LinearEasing)),
             ) {
                 Box(

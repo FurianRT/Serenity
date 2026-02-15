@@ -9,6 +9,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mediaselector.api.MediaResult
@@ -19,6 +20,7 @@ import com.furianrt.mediasorting.internal.extensions.toMediaItem
 import com.furianrt.mediasorting.internal.extensions.toMediaItems
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -50,6 +52,7 @@ internal class MediaSortingViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val lockAuthorizer: LockAuthorizer,
     private val mediaRepository: MediaRepository,
+    private val appearanceRepository: AppearanceRepository,
 ) : ViewModel(), DialogResultListener {
 
     private val route = savedStateHandle.toRoute<MediaSortingRoute>()
@@ -302,5 +305,6 @@ internal class MediaSortingViewModel @Inject constructor(
         media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
             .map(LocalNote.Content.Media::toMediaItem),
         hasContentChanged = false,
+        theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
     )
 }

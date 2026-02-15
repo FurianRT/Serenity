@@ -1,13 +1,20 @@
 package com.furianrt.security.internal.ui.security
 
-internal sealed interface SecurityUiState {
-    data object Loading : SecurityUiState
-    data class Success(
-        val isPinEnabled: Boolean,
-        val isFingerprintEnabled: Boolean,
-        val recoveryEmail: String?,
-        val requestDelay: Int,
-    ) : SecurityUiState
+import com.furianrt.uikit.entities.UiThemeColor
+
+internal data class SecurityUiState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data object Loading : Content
+        data class Success(
+            val isPinEnabled: Boolean,
+            val isFingerprintEnabled: Boolean,
+            val recoveryEmail: String?,
+            val requestDelay: Int,
+        ) : Content
+    }
 }
 
 internal sealed interface SecurityEvent {

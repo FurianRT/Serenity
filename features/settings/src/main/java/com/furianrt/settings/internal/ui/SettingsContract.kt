@@ -6,14 +6,19 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 
-internal sealed interface SettingsUiState {
-    data object Loading : SettingsUiState
-    data class Success(
-        val themes: List<UiTheme>,
-        @param:IntRange(0L, 5L) val rating: Int,
-        val appVersion: String,
-        val locale: AppLocale,
-    ) : SettingsUiState
+internal data class SettingsUiState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data object Loading : Content
+        data class Success(
+            val themes: List<UiTheme>,
+            @param:IntRange(0L, 5L) val rating: Int,
+            val appVersion: String,
+            val locale: AppLocale,
+        ) : Content
+    }
 }
 
 internal sealed interface SettingsEvent {

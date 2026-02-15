@@ -2,28 +2,34 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.utils.DialogIdentifier
 
-internal sealed interface NoteListUiState {
-    data object Loading : NoteListUiState
+internal data class NoteListUiState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data object Loading : Content
 
-    data object Empty : NoteListUiState
+        data object Empty : Content
 
-    @Immutable
-    data class Success(
-        val notes: List<NoteListScreenNote>,
-        val scrollToPosition: Int?,
-        val selectedNotesCount: Int,
-        val font: NoteFont,
-    ) : NoteListUiState
+        @Immutable
+        data class Success(
+            val notes: List<NoteListScreenNote>,
+            val scrollToPosition: Int?,
+            val selectedNotesCount: Int,
+            val font: NoteFont,
+        ) : Content
 
-    val enableSelection: Boolean
-        get() = this is Success && selectedNotesCount > 0
+        val enableSelection: Boolean
+            get() = this is Success && selectedNotesCount > 0
+    }
 }
 
 internal val NoteListUiState.hasNotes
-    get() = this is NoteListUiState.Success && notes.isNotEmpty()
+    get() = content is NoteListUiState.Content.Success && content.notes.isNotEmpty()
 
 internal sealed interface NoteListEvent {
     data class OnNoteClick(val note: NoteListScreenNote) : NoteListEvent

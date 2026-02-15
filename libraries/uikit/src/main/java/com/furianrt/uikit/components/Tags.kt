@@ -33,6 +33,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 
@@ -44,6 +45,8 @@ fun TagItem(
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
     hazeState: HazeState? = null,
+    hazeStyle: HazeStyle? = null,
+    hazeStyleExtraColor: Boolean = false,
     background: Color = MaterialTheme.colorScheme.secondaryContainer,
     textStyle: TextStyle = MaterialTheme.typography.labelSmall,
     textColor: Color = Color.Unspecified,
@@ -62,14 +65,18 @@ fun TagItem(
                 .clip(RoundedCornerShape(size = 16.dp))
                 .then(
                     if (hazeState != null) {
-                        Modifier.hazeEffect(
-                            state = hazeState,
-                            style = HazeDefaults.style(
-                                backgroundColor = MaterialTheme.colorScheme.surface,
-                                blurRadius = 12.dp,
-                                tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
+                        Modifier
+                            .hazeEffect(
+                                state = hazeState,
+                                style = hazeStyle ?: HazeDefaults.style(
+                                    backgroundColor = MaterialTheme.colorScheme.surface,
+                                    blurRadius = 12.dp,
+                                    tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
+                                )
                             )
-                        )
+                            .applyIf(hazeStyleExtraColor) {
+                                Modifier.background(background)
+                            }
                     } else {
                         Modifier.background(background)
                     }

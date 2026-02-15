@@ -37,6 +37,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -53,7 +55,8 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
-import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress
+import com.furianrt.backup.internal.ui.BackupUiState.Content
+import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
 import com.furianrt.backup.internal.ui.composables.BackupDate
 import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
@@ -68,15 +71,18 @@ import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
 import com.furianrt.uikit.anim.shakable
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
@@ -194,7 +200,7 @@ internal fun BackupScreen(
     }
     if (showBackupPeriodDialog) {
         BackupPeriodDialog(
-            selectedPeriod = (viewModel.state.value as? BackupUiState.Success)?.backupPeriod
+            selectedPeriod = (viewModel.state.value.content as? Content.Success)?.backupPeriod
                 ?: BackupPeriod.TreeDays,
             hazeState = hazeState,
             onPeriodSelected = { viewModel.onEvent(BackupScreenEvent.OnBackupPeriodSelected(it)) },
@@ -219,6 +225,7 @@ private fun ScreenContent(
 ) {
     val scrollState = rememberScrollState()
     val toolbarState = remember { MovableToolbarState() }
+    val hazeState = rememberHazeState()
 
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
@@ -231,18 +238,23 @@ private fun ScreenContent(
                 title = stringResource(R.string.backup_google_drive_title),
                 onBackClick = { onEvent(BackupScreenEvent.OnButtonBackClick) },
             )
-        }
+        },
     ) { topPadding ->
-        when (uiState) {
-            is BackupUiState.Success -> SuccessContent(
-                uiState = uiState,
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
+        when (uiState.content) {
+            is Content.Success -> SuccessContent(
+                uiState = uiState.content,
                 onEvent = onEvent,
                 scrollState = scrollState,
                 snackBarHostState = snackBarHostState,
                 toolbarPadding = topPadding,
+                backgroundHazeState = hazeState,
             )
 
-            is BackupUiState.Loading -> LoadingContent()
+            is Content.Loading -> LoadingContent()
         }
         SnackbarHost(
             modifier = Modifier
@@ -262,16 +274,15 @@ private fun ScreenContent(
 
 @Composable
 private fun SuccessContent(
-    uiState: BackupUiState.Success,
+    uiState: Content.Success,
     scrollState: ScrollState,
     snackBarHostState: SnackbarHostState,
     toolbarPadding: Dp,
+    backgroundHazeState: HazeState,
     modifier: Modifier = Modifier,
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-
-    val hazeState = rememberHazeState()
     var backupBlockHeight by remember { mutableIntStateOf(0) }
 
     val backupShakeState = rememberShakingState(
@@ -306,7 +317,7 @@ private fun SuccessContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .hazeSource(hazeState)
+                .hazeSource(backgroundHazeState, zIndex = 1f)
                 .verticalScroll(scrollState)
                 .padding(top = toolbarPadding, bottom = backupBlockHeight.pxToDp()),
             verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -320,9 +331,15 @@ private fun SuccessContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(
-                        color = MaterialTheme.colorScheme.inverseSurface,
-                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                    .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
+                    .hazeEffect(
+                        state = backgroundHazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 6.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(MaterialTheme.colorScheme.inverseSurface),
+                        ),
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -380,15 +397,14 @@ private fun SuccessContent(
             modifier = Modifier
                 .fillMaxWidth()
                 .hazeEffect(
-                    state = hazeState,
+                    state = backgroundHazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)),
+                        tint = HazeTint(MaterialTheme.colorScheme.inverseSurface),
                         noiseFactor = 0f,
-                        blurRadius = 12.dp,
+                        blurRadius = 6.dp,
                     )
                 )
-                .background(MaterialTheme.colorScheme.inverseSurface)
                 .onSizeChanged { backupBlockHeight = it.height }
                 .padding(bottom = 16.dp)
                 .align(Alignment.BottomCenter)
@@ -469,16 +485,19 @@ private fun LoadingContent(
 private fun PreviewSignedIn() {
     SerenityTheme {
         ScreenContent(
-            uiState = BackupUiState.Success(
-                isAutoBackupEnabled = true,
-                backupPeriod = BackupPeriod.TreeDays,
-                lastSyncDate = BackupUiState.Success.SyncDate.None,
-                questions = buildPreviewQuestionsList(expandedIndex = 0),
-                authState = BackupUiState.Success.AuthState.SignedIn(
-                    email = "felmemfmelflmfe",
-                    isLoading = false,
+            uiState = BackupUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = Content.Success(
+                    isAutoBackupEnabled = true,
+                    backupPeriod = BackupPeriod.TreeDays,
+                    lastSyncDate = Content.Success.SyncDate.None,
+                    questions = buildPreviewQuestionsList(expandedIndex = 0),
+                    authState = Content.Success.AuthState.SignedIn(
+                        email = "felmemfmelflmfe",
+                        isLoading = false,
+                    ),
+                    syncProgress = SyncProgress.Idle,
                 ),
-                syncProgress = SyncProgress.Idle,
             ),
         )
     }
@@ -489,13 +508,16 @@ private fun PreviewSignedIn() {
 private fun PreviewSignedOut() {
     SerenityTheme {
         ScreenContent(
-            uiState = BackupUiState.Success(
-                isAutoBackupEnabled = true,
-                backupPeriod = BackupPeriod.TreeDays,
-                lastSyncDate = BackupUiState.Success.SyncDate.None,
-                questions = buildPreviewQuestionsList(expandedIndex = 1),
-                authState = BackupUiState.Success.AuthState.SignedOut(isLoading = false),
-                syncProgress = SyncProgress.Idle,
+            uiState = BackupUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = Content.Success(
+                    isAutoBackupEnabled = true,
+                    backupPeriod = BackupPeriod.TreeDays,
+                    lastSyncDate = Content.Success.SyncDate.None,
+                    questions = buildPreviewQuestionsList(expandedIndex = 1),
+                    authState = Content.Success.AuthState.SignedOut(isLoading = false),
+                    syncProgress = SyncProgress.Idle,
+                ),
             ),
         )
     }
@@ -506,16 +528,19 @@ private fun PreviewSignedOut() {
 private fun PreviewLoading() {
     SerenityTheme {
         ScreenContent(
-            uiState = BackupUiState.Success(
-                isAutoBackupEnabled = false,
-                backupPeriod = BackupPeriod.TreeDays,
-                lastSyncDate = BackupUiState.Success.SyncDate.None,
-                questions = buildPreviewQuestionsList(expandedIndex = null),
-                authState = BackupUiState.Success.AuthState.SignedIn(
-                    email = "felmemfmelflmfe",
-                    isLoading = true,
+            uiState = BackupUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = Content.Success(
+                    isAutoBackupEnabled = false,
+                    backupPeriod = BackupPeriod.TreeDays,
+                    lastSyncDate = Content.Success.SyncDate.None,
+                    questions = buildPreviewQuestionsList(expandedIndex = null),
+                    authState = Content.Success.AuthState.SignedIn(
+                        email = "felmemfmelflmfe",
+                        isLoading = true,
+                    ),
+                    syncProgress = SyncProgress.Idle,
                 ),
-                syncProgress = SyncProgress.Idle,
             ),
         )
     }

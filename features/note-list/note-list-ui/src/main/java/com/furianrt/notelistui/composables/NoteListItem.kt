@@ -6,8 +6,9 @@ import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,11 +16,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.RippleAlpha
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,7 +40,10 @@ import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
@@ -89,8 +91,13 @@ fun NoteListItem(
             ),
         )
     }
+    val backgroundColor = if (isSelected) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        MaterialTheme.colorScheme.background
+    }
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
-        OutlinedCard(
+        Column(
             modifier = modifier
                 .fillMaxWidth()
                 .graphicsLayer {
@@ -98,23 +105,33 @@ fun NoteListItem(
                     scaleY = scale
                 }
                 .clip(RoundedCornerShape(8.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = backgroundColor,
+                        blurRadius = 12.dp,
+                        tint = HazeTint(backgroundColor.copy(alpha = 0.1f)),
+                    )
+                )
+                .then(
+                    if (isPinned) {
+                        Modifier.border(
+                            width = 0.5.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                    } else {
+                        Modifier.border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.background,
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                    }
+                )
                 .combinedClickable(
                     onClick = onClick,
                     onLongClick = onLongClick,
                 ),
-            shape = RoundedCornerShape(8.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (isSelected) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.background
-                },
-            ),
-            border = if (isPinned) {
-                BorderStroke(0.5.dp, MaterialTheme.colorScheme.primaryContainer)
-            } else {
-                BorderStroke(1.dp, MaterialTheme.colorScheme.background)
-            }
         ) {
             content.forEachIndexed { index, item ->
                 when (item) {
@@ -127,7 +144,7 @@ fun NoteListItem(
                             fontFamily = fontFamily?.regular
                                 ?: MaterialTheme.typography.bodyMedium.fontFamily,
 
-                        ),
+                            ),
                     )
 
                     is UiNoteContent.MediaBlock -> NoteContentMedia(

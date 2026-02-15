@@ -272,12 +272,6 @@ private fun SuccessScreen(
         currentPageState?.dimSurface?.let { cachedDimValue = it }
     }
 
-    val hasPictureBackground by remember(uiState.notes) {
-        derivedStateOf {
-            uiState.notes.getOrNull(pagerState.currentPage)?.theme is UiNoteTheme.Image.Picture
-        }
-    }
-
     MovableToolbarScaffold(
         modifier = modifier
             .fillMaxSize()
@@ -285,8 +279,6 @@ private fun SuccessScreen(
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberScrollState(),
         enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
-        blurAlpha = if (hasPictureBackground) 0.4f else 0.5f,
-        blurRadius = if (hasPictureBackground) 8.dp else 12.dp,
         dimSurface = currentPageState?.dimSurface ?: cachedDimValue,
         onDimClick = { scope.launch { currentPageState?.bottomSheetState?.hide() } },
         toolbar = {

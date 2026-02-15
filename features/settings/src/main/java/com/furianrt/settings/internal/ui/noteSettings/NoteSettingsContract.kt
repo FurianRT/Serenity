@@ -1,11 +1,18 @@
 package com.furianrt.settings.internal.ui.noteSettings
 
-internal sealed interface NoteSettingsState {
-    data object Loading : NoteSettingsState
-    data class Success(
-        val isAutoDetectLocationEnabled: Boolean,
-        val isMinimalisticHomeScreenEnabled: Boolean,
-    ) : NoteSettingsState
+import com.furianrt.uikit.entities.UiThemeColor
+
+internal data class NoteSettingsState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data object Loading : Content
+        data class Success(
+            val isAutoDetectLocationEnabled: Boolean,
+            val isMinimalisticHomeScreenEnabled: Boolean,
+        ) : Content
+    }
 }
 
 internal sealed interface NoteSettingsEffect {

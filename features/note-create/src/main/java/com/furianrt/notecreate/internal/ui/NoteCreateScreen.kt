@@ -214,8 +214,6 @@ private fun SuccessContent(
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
-        blurAlpha = if (uiState.note.theme is UiNoteTheme.Image.Picture) 0.4f else 0.5f,
-        blurRadius = if (uiState.note.theme is UiNoteTheme.Image.Picture) 8.dp else 12.dp,
         listState = state.listState,
         dimSurface = state.dimSurface,
         onDimClick = { scope.launch { state.bottomSheetState.hide() } },

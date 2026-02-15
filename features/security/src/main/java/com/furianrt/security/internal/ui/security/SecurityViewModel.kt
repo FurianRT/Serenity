@@ -2,8 +2,10 @@ package com.furianrt.security.internal.ui.security
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.security.internal.ui.security.SecurityEvent.*
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -18,19 +20,23 @@ import javax.inject.Inject
 @HiltViewModel
 internal class SecurityViewModel @Inject constructor(
     private val securityRepository: SecurityRepository,
+    appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
 
     val state: StateFlow<SecurityUiState> = combine(
         securityRepository.getPin(),
         securityRepository.getPinRecoveryEmail(),
         securityRepository.getPinRequestDelay(),
-        securityRepository.isFingerprintEnabled()
-    ) { pin, email, delay, fingerprint ->
-        buildState(pin, delay, email, fingerprint)
-    }.stateIn(
+        securityRepository.isFingerprintEnabled(),
+        appearanceRepository.getAppThemeColorId(),
+        ::buildState,
+    ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SecurityUiState.Loading,
+        initialValue = SecurityUiState(
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            content = SecurityUiState.Content.Loading,
+        ),
     )
 
     private val _effect = MutableSharedFlow<SecurityEffect>(extraBufferCapacity = 10)
@@ -76,13 +82,17 @@ internal class SecurityViewModel @Inject constructor(
 
     private fun buildState(
         pin: String?,
-        requestDelay: Int,
         recoveryEmail: String?,
+        requestDelay: Int,
         isFingerprintEnabled: Boolean,
-    ) = SecurityUiState.Success(
-        isPinEnabled = pin != null,
-        isFingerprintEnabled = isFingerprintEnabled,
-        recoveryEmail = recoveryEmail,
-        requestDelay = requestDelay,
+        appThemeColorId: String?,
+    ) = SecurityUiState(
+        theme = UiThemeColor.fromId(appThemeColorId),
+        content = SecurityUiState.Content.Success(
+            isPinEnabled = pin != null,
+            isFingerprintEnabled = isFingerprintEnabled,
+            recoveryEmail = recoveryEmail,
+            requestDelay = requestDelay,
+        ),
     )
 }

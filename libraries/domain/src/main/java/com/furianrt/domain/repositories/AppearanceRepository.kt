@@ -3,10 +3,11 @@ package com.furianrt.domain.repositories
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface AppearanceRepository {
     suspend fun updateAppThemeColor(colorId: String)
-    fun getAppThemeColorId(): Flow<String?>
+    fun getAppThemeColorId(): StateFlow<String?>
 
     fun getNoteFontColorsList(): List<NoteFontColor>
     fun getNoteFontsList(): List<NoteFontFamily>

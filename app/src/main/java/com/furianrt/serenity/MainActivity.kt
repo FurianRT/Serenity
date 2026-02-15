@@ -19,7 +19,6 @@ import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
@@ -113,7 +112,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val uiState by viewModel.state.collectAsStateWithLifecycle()
             val navController = rememberNavController()
             val hazeState = rememberHazeState()
-            val activity = LocalActivity.current as ComponentActivity
+            val activity = LocalActivity.current as? ComponentActivity
 
             SerenityTheme(
                 colorScheme = uiState.appColor.colorScheme,
@@ -132,17 +131,17 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     entry.destination.hasRoute<MediaViewerRoute>()
                             val color = SystemBarsConstants.InsetsColor.toArgb()
                             when {
-                                hasMediaViewRoute -> activity.enableEdgeToEdge(
+                                hasMediaViewRoute -> activity?.enableEdgeToEdge(
                                     statusBarStyle = SystemBarStyle.dark(color),
                                     navigationBarStyle = SystemBarStyle.dark(color),
                                 )
 
-                                uiState.appColor.isLight -> activity.enableEdgeToEdge(
+                                uiState.appColor.isLight -> activity?.enableEdgeToEdge(
                                     statusBarStyle = SystemBarStyle.light(color, color),
                                     navigationBarStyle = SystemBarStyle.light(color, color),
                                 )
 
-                                else -> activity.enableEdgeToEdge(
+                                else -> activity?.enableEdgeToEdge(
                                     statusBarStyle = SystemBarStyle.dark(color),
                                     navigationBarStyle = SystemBarStyle.dark(color),
                                 )
@@ -151,7 +150,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                 }
 
                 val currentEntry by navController.currentBackStackEntryFlow
-                    .collectAsState(null)
+                    .collectAsStateWithLifecycle(null)
                 val currentDestination = currentEntry?.destination
                 val hasMediaRoute = currentDestination?.hasRoute<MediaViewRoute>() == true ||
                         currentDestination?.hasRoute<MediaViewerRoute>() == true

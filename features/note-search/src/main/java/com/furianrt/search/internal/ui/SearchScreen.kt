@@ -63,6 +63,7 @@ import com.furianrt.search.internal.ui.composables.NotesCountItem
 import com.furianrt.search.internal.ui.composables.Toolbar
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
@@ -151,7 +152,6 @@ internal fun SearchScreen(
         modifier = Modifier.hazeSource(hazeState),
         uiState = uiState,
         snackBarHostState = snackBarHostState,
-        hazeState = hazeState,
         onEvent = viewModel::onEvent,
         toolbarState = toolbarState,
     )
@@ -183,12 +183,13 @@ internal fun SearchScreen(
 private fun ScreenContent(
     uiState: SearchUiState,
     snackBarHostState: SnackbarHostState,
-    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onEvent: (event: SearchEvent) -> Unit = {},
     toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
     val listState = rememberLazyListState()
+    val hazeState = rememberHazeState()
+    val backgroundHazeState = rememberHazeState()
 
     LaunchedEffect(uiState.enableSelection) {
         if (uiState.enableSelection) {
@@ -212,6 +213,7 @@ private fun ScreenContent(
                 selectedNotesCount = successState?.selectedNotesCount ?: 0,
                 selectedFilters = uiState.selectedFilters,
                 queryState = uiState.searchQuery,
+                hazeState = hazeState,
                 onBackClick = { onEvent(SearchEvent.OnButtonBackClick) },
                 onCalendarClick = { onEvent(SearchEvent.OnButtonCalendarClick) },
                 onClearQueryClick = { onEvent(SearchEvent.OnButtonClearQueryClick) },
@@ -223,6 +225,12 @@ private fun ScreenContent(
             )
         },
     ) { topPadding ->
+        AppBackground(
+            modifier = Modifier
+                .hazeSource(backgroundHazeState)
+                .hazeSource(hazeState, zIndex = 0f),
+            theme = uiState.theme,
+        )
         AnimatedContent(
             targetState = uiState.state,
             transitionSpec = { fadeIn().togetherWith(fadeOut()) },
@@ -230,6 +238,7 @@ private fun ScreenContent(
         ) { targetState ->
             when (targetState) {
                 is SearchUiState.State.Success -> SuccessContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     uiState = targetState,
                     onEvent = onEvent,
                     listState = listState,
@@ -239,6 +248,7 @@ private fun ScreenContent(
                 )
 
                 is SearchUiState.State.Empty -> EmptyContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     toolbarHeight = topPadding,
                 )
             }
@@ -281,7 +291,7 @@ private fun SuccessContent(
 
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
-            listState.requestScrollToItem( uiState.scrollToPosition)
+            listState.requestScrollToItem(uiState.scrollToPosition)
             toolbarState.expand()
             onEvent(SearchEvent.OnScrolledToItem)
         }
@@ -308,6 +318,7 @@ private fun SuccessContent(
                         .animateItem()
                         .animateContentSize(),
                     tags = item.tags,
+                    hazeState = hazeState,
                     onTagClick = { onEvent(SearchEvent.OnTagClick(it.title)) },
                 )
 
@@ -393,7 +404,6 @@ private fun SuccessEmptyQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
-            hazeState = HazeState(),
         )
     }
 }
@@ -460,7 +470,6 @@ private fun SuccessFilledQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
-            hazeState = HazeState(),
         )
     }
 }
@@ -481,7 +490,6 @@ private fun EmptyStatePreview() {
                 state = SearchUiState.State.Empty,
             ),
             snackBarHostState = SnackbarHostState(),
-            hazeState = HazeState(),
         )
     }
 }

@@ -3,6 +3,7 @@ package com.furianrt.notelist.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.core.combine
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
@@ -11,6 +12,7 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.notelist.internal.ui.extensions.toMainScreenNotes
 import com.furianrt.notelistui.extensions.toNoteFont
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -23,7 +25,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -53,28 +54,35 @@ internal class NoteListViewModel @Inject constructor(
         scrollToNoteState,
         selectedNotesState,
         appearanceRepository.getAppFont(),
+        appearanceRepository.getAppThemeColorId(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
-    ) { notes, noteId, selectedNotes, appFont, compactHomeScreen ->
-        if (notes.isEmpty()) {
-            NoteListUiState.Empty
-        } else {
-            NoteListUiState.Success(
-                notes = notes.toMainScreenNotes(
-                    selectedNotes = selectedNotes,
-                    appFontFamily = appFont,
-                    withMedia = !compactHomeScreen,
-                ),
-                scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
-                selectedNotesCount = selectedNotes.count(),
-                font = appFont.toNoteFont(),
-            )
-        }
+    ) { notes, noteId, selectedNotes, appFont, appThemeColorId, compactHomeScreen ->
+        NoteListUiState(
+            theme = UiThemeColor.fromId(appThemeColorId),
+            content = if (notes.isEmpty()) {
+                NoteListUiState.Content.Empty
+            } else {
+                NoteListUiState.Content.Success(
+                    notes = notes.toMainScreenNotes(
+                        selectedNotes = selectedNotes,
+                        appFontFamily = appFont,
+                        withMedia = !compactHomeScreen,
+                    ),
+                    scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
+                    selectedNotesCount = selectedNotes.count(),
+                    font = appFont.toNoteFont(),
+                )
+            },
+        )
     }.flowOn(
         context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = NoteListUiState.Loading,
+        initialValue = NoteListUiState(
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            content = NoteListUiState.Content.Loading,
+        ),
     )
 
     private val _effect = MutableSharedFlow<NoteListEffect>(extraBufferCapacity = 10)

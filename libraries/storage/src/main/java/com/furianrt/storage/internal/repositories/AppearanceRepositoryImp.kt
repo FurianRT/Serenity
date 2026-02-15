@@ -5,6 +5,7 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 internal class AppearanceRepositoryImp @Inject constructor(
@@ -15,7 +16,7 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.updateAppThemeColor(colorId)
     }
 
-    override fun getAppThemeColorId(): Flow<String?> = appearanceDataStore.getAppThemeColorId()
+    override fun getAppThemeColorId(): StateFlow<String?> = appearanceDataStore.appThemeColorId
 
     override fun getNoteFontColorsList(): List<NoteFontColor> = NoteFontColor.entries
 

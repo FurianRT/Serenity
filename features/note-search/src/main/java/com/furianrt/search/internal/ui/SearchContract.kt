@@ -7,6 +7,7 @@ import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.ui.SearchUiState.State.Success
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.utils.DialogIdentifier
 import java.time.LocalDate
 
@@ -14,6 +15,7 @@ import java.time.LocalDate
 internal data class SearchUiState(
     val searchQuery: TextFieldState = TextFieldState(),
     val selectedFilters: List<SelectedFilter> = emptyList(),
+    val theme: UiThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
     val state: State = Success(),
 ) {
     val enableSelection: Boolean

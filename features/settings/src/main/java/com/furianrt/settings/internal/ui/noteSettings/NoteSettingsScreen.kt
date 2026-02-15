@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,9 +20,14 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.settings.R
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.SwitchWithLabel
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -57,34 +60,40 @@ internal fun NoteSettingsScreen(
 private fun Content(
     uiState: NoteSettingsState,
     onEvent: (event: NoteSettingsEvent) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    Scaffold(
-        containerColor = MaterialTheme.colorScheme.surface,
-        topBar = {
+    val hazeState = rememberHazeState()
+    Box(
+        modifier = modifier,
+    ) {
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
+        Column {
             DefaultToolbar(
                 modifier = Modifier.systemBarsPadding(),
                 title = stringResource(R.string.settings_note_content_title),
                 onBackClick = { onEvent(NoteSettingsEvent.OnButtonBackClick) },
             )
-        },
-    ) { paddingValues ->
-        when (uiState) {
-            is NoteSettingsState.Success -> SuccessContent(
-                modifier = Modifier.padding(paddingValues),
-                uiState = uiState,
-                onEvent = onEvent,
-            )
+            when (uiState.content) {
+                is NoteSettingsState.Content.Success -> SuccessContent(
+                    uiState = uiState.content,
+                    onEvent = onEvent,
+                    hazeState = hazeState,
+                )
 
-            is NoteSettingsState.Loading -> LoadingContent(
-                modifier = Modifier.padding(paddingValues),
-            )
+                is NoteSettingsState.Content.Loading -> LoadingContent()
+            }
         }
+
     }
 }
 
 @Composable
 private fun SuccessContent(
-    uiState: NoteSettingsState.Success,
+    uiState: NoteSettingsState.Content.Success,
+    hazeState: HazeState,
     onEvent: (event: NoteSettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -98,6 +107,7 @@ private fun SuccessContent(
             title = stringResource(R.string.settings_note_detect_location_title),
             hint = stringResource(R.string.settings_note_detect_location_hint),
             isChecked = uiState.isAutoDetectLocationEnabled,
+            hazeState = hazeState,
             onCheckedChange = { isChecked ->
                 onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))
             },
@@ -106,6 +116,7 @@ private fun SuccessContent(
             title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
             hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
             isChecked = uiState.isMinimalisticHomeScreenEnabled,
+            hazeState = hazeState,
             onCheckedChange = { isChecked ->
                 onEvent(NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged(isChecked))
             },
@@ -125,9 +136,12 @@ private fun LoadingContent(
 private fun Preview() {
     SerenityTheme {
         Content(
-            uiState = NoteSettingsState.Success(
-                isAutoDetectLocationEnabled = true,
-                isMinimalisticHomeScreenEnabled = false,
+            uiState = NoteSettingsState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = NoteSettingsState.Content.Success(
+                    isAutoDetectLocationEnabled = true,
+                    isMinimalisticHomeScreenEnabled = false,
+                ),
             ),
             onEvent = {},
         )

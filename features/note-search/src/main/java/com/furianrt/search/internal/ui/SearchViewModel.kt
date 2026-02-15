@@ -23,6 +23,7 @@ import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.search.internal.ui.extensions.toNoteItem
 import com.furianrt.search.internal.ui.extensions.toSelectedTag
 import com.furianrt.search.internal.ui.extensions.toTagsList
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -111,13 +112,15 @@ internal class SearchViewModel @Inject constructor(
                 endDate = dateFilter?.end,
             ),
             appearanceRepository.getAppFont(),
+            appearanceRepository.getAppThemeColorId(),
             appearanceRepository.isMinimalisticHomeScreenEnabled(),
-        ) { selectedNotes, notes, appFont, compactHomeScreen ->
+        ) { selectedNotes, notes, appFont, appThemeColorId, compactHomeScreen ->
             buildState(
                 notes = notes,
                 data = data,
                 selectedNotes = selectedNotes,
                 appFontFamily = appFont,
+                appThemeColorId = appThemeColorId,
                 isMinimalisticHomeScreenEnabled = compactHomeScreen,
             )
         }
@@ -126,7 +129,10 @@ internal class SearchViewModel @Inject constructor(
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SearchUiState(searchQuery = queryState),
+        initialValue = SearchUiState(
+            searchQuery = queryState,
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+        ),
     )
 
     private val _effect = MutableSharedFlow<SearchEffect>(extraBufferCapacity = 5)
@@ -298,6 +304,7 @@ internal class SearchViewModel @Inject constructor(
         selectedNotes: Set<String>,
         data: SearchData,
         appFontFamily: NoteFontFamily,
+        appThemeColorId: String?,
         isMinimalisticHomeScreenEnabled: Boolean,
     ): SearchUiState {
         val hasFilters = data.selectedFilters.isNotEmpty()
@@ -339,6 +346,7 @@ internal class SearchViewModel @Inject constructor(
             searchQuery = queryState,
             selectedFilters = data.selectedFilters.toMutableList().apply { addAll(unselectedTags) },
             state = state,
+            theme = UiThemeColor.fromId(appThemeColorId),
         )
     }
 }

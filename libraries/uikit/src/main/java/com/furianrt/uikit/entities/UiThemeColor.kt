@@ -1,9 +1,49 @@
 package com.furianrt.uikit.entities
 
+import androidx.annotation.DrawableRes
 import androidx.compose.material3.ColorScheme
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import com.furianrt.uikit.R
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CENTER
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_BOTTOM
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_CENTER
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_TOP
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.FILL
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.REPEAT
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.defaultColorScheme
+
+data class UiThemeImage(
+    @get:DrawableRes val resId: Int,
+    val scaleType: ScaleType = FILL,
+) {
+    enum class ScaleType {
+        REPEAT,
+        FILL,
+        CENTER,
+        CROP_ALIGN_BOTTOM,
+        CROP_ALIGN_CENTER,
+        CROP_ALIGN_TOP,
+    }
+}
+
+fun UiThemeImage.ScaleType.toContentScale() = when (this) {
+    REPEAT -> ContentScale.FillBounds
+    FILL -> ContentScale.FillBounds
+    CENTER -> ContentScale.Inside
+    CROP_ALIGN_BOTTOM, CROP_ALIGN_CENTER, CROP_ALIGN_TOP -> ContentScale.Crop
+}
+
+fun UiThemeImage.ScaleType.toContentAlignment() = when (this) {
+    REPEAT -> Alignment.Center
+    FILL -> Alignment.Center
+    CENTER -> Alignment.Center
+    CROP_ALIGN_BOTTOM -> Alignment.BottomCenter
+    CROP_ALIGN_CENTER -> Alignment.Center
+    CROP_ALIGN_TOP -> Alignment.TopCenter
+}
 
 enum class UiThemeColor(
     val id: String,
@@ -34,6 +74,7 @@ enum class UiThemeColor(
     val surfaceDim: Color = Color.Black.copy(alpha = 0.1f),
     val surfaceContainerLow: Color = primary.copy(alpha = 0.5f),
     val isLight: Boolean = false,
+    val image: UiThemeImage? = null,
 ) {
     SCANDI_GRANDPA_GRAY_DARK(
         id = "1",
@@ -171,6 +212,10 @@ enum class UiThemeColor(
         id = "dark_21",
         surface = Colors.Primary.Blue4,
         primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_0,
+            scaleType = CROP_ALIGN_CENTER,
+        ),
     ),
 
     ORANGE(
@@ -366,6 +411,7 @@ enum class UiThemeColor(
             EUPHORIA_VIOLET,
             VAMPIRE_RED_DARK,
             IRIS_RED,
+            BLUE_NIGHT_3,
         )
 
         fun getLightThemesList() = listOf(

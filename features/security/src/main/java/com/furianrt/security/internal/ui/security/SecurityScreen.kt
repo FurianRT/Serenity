@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.security
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -19,7 +16,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.pluralStringResource
@@ -28,12 +24,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.security.R
+import com.furianrt.security.internal.ui.security.SecurityUiState.Content
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
@@ -74,7 +73,7 @@ internal fun SecurityScreen(
 
     if (showPinDelayDialog) {
         PinDelayDialog(
-            selectedDelay = (uiState as? SecurityUiState.Success)?.requestDelay ?: 0,
+            selectedDelay = (uiState.content as? Content.Success)?.requestDelay ?: 0,
             hazeState = hazeState,
             onDismissRequest = { showPinDelayDialog = false },
             onDelayClick = { viewModel.onEvent(SecurityEvent.OnPinDelaySelected(it)) },
@@ -88,44 +87,36 @@ private fun ScreenContent(
     onEvent: (event: SecurityEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val scrollState = rememberScrollState()
-    val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    Scaffold(
-        modifier = modifier,
-        containerColor = MaterialTheme.colorScheme.surface,
-        topBar = {
+    val hazeState = rememberHazeState()
+
+    Box(modifier = modifier) {
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
+        Column {
             DefaultToolbar(
-                modifier = Modifier
-                    .systemBarsPadding()
-                    .drawBehind {
-                        if (scrollState.canScrollBackward) {
-                            drawBottomShadow(color = shadowColor)
-                        }
-                    },
+                modifier = Modifier.systemBarsPadding(),
                 title = stringResource(uiR.string.security_title),
                 onBackClick = { onEvent(SecurityEvent.OnButtonBackClick) },
             )
-        },
-    ) { paddingValues ->
-        when (uiState) {
-            is SecurityUiState.Success -> SuccessScreen(
-                modifier = Modifier.padding(paddingValues),
-                uiState = uiState,
-                scrollState = scrollState,
-                onEvent = onEvent
-            )
+            when (uiState.content) {
+                is Content.Success -> SuccessScreen(
+                    uiState = uiState.content,
+                    hazeState = hazeState,
+                    onEvent = onEvent
+                )
 
-            is SecurityUiState.Loading -> LoadingScreen(
-                modifier = Modifier.padding(paddingValues),
-            )
+                is Content.Loading -> LoadingScreen()
+            }
         }
     }
 }
 
 @Composable
 private fun SuccessScreen(
-    uiState: SecurityUiState.Success,
-    scrollState: ScrollState,
+    uiState: Content.Success,
+    hazeState: HazeState,
     onEvent: (event: SecurityEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -133,7 +124,7 @@ private fun SuccessScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(scrollState)
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
@@ -141,6 +132,7 @@ private fun SuccessScreen(
             title = stringResource(R.string.security_enable_pin_title),
             isChecked = uiState.isPinEnabled,
             withHaptic = false,
+            hazeState = hazeState,
             onCheckedChange = { isChecked ->
                 if (!isChecked) {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
@@ -152,6 +144,7 @@ private fun SuccessScreen(
             title = stringResource(R.string.security_email_to_recover_pin_title),
             hint = uiState.recoveryEmail,
             enabled = uiState.isPinEnabled,
+            hazeState = hazeState,
             onClick = { onEvent(SecurityEvent.OnChangeEmailClick) },
         )
         GeneralButton(
@@ -170,12 +163,14 @@ private fun SuccessScreen(
                 )
             },
             enabled = uiState.isPinEnabled,
+            hazeState = hazeState,
             onClick = { onEvent(SecurityEvent.OnPinDelayClick) },
         )
         SwitchWithLabel(
             title = stringResource(R.string.security_enable_fingerprint_title),
             isChecked = uiState.isFingerprintEnabled,
             enabled = uiState.isPinEnabled,
+            hazeState = hazeState,
             onCheckedChange = { isChecked ->
                 onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
             },
@@ -195,11 +190,14 @@ private fun LoadingScreen(
 private fun Preview() {
     SerenityTheme {
         ScreenContent(
-            uiState = SecurityUiState.Success(
-                isPinEnabled = true,
-                isFingerprintEnabled = false,
-                recoveryEmail = "DiaryApps@gmail.com",
-                requestDelay = 0,
+            uiState = SecurityUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = Content.Success(
+                    isPinEnabled = true,
+                    isFingerprintEnabled = false,
+                    recoveryEmail = "DiaryApps@gmail.com",
+                    requestDelay = 0,
+                ),
             ),
             onEvent = {},
         )

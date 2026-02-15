@@ -68,4 +68,6 @@ dependencies {
     implementation(libs.analytics)
     implementation(libs.crashlytics)
     implementation(libs.performance)
+
+    implementation(libs.coil)
 }

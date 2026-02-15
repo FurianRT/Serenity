@@ -30,6 +30,7 @@ import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
@@ -40,6 +41,7 @@ private const val ANIM_BUTTON_SETTINGS_ROTATION = 60f
 internal fun Toolbar(
     notesCount: Int,
     selectedNotesCount: Int,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onSettingsClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
@@ -63,6 +65,7 @@ internal fun Toolbar(
             )
         } else {
             UnselectedContent(
+                hazeState = hazeState,
                 onSettingsClick = onSettingsClick,
                 onSearchClick = onSearchClick,
             )
@@ -129,6 +132,7 @@ private fun SelectedContent(
 
 @Composable
 private fun UnselectedContent(
+    hazeState: HazeState,
     onSettingsClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -143,6 +147,7 @@ private fun UnselectedContent(
             modifier = Modifier
                 .padding(end = 16.dp)
                 .weight(1f),
+            hazeState = hazeState,
             onClick = onSearchClick,
         )
         SettingsButton(onClick = onSettingsClick)
@@ -186,6 +191,7 @@ private fun Preview() {
         Toolbar(
             notesCount = 6,
             selectedNotesCount = 0,
+            hazeState = HazeState(),
         )
     }
 }
@@ -197,6 +203,7 @@ private fun SelectedPreview() {
         Toolbar(
             notesCount = 6,
             selectedNotesCount = 3,
+            hazeState = HazeState(),
         )
     }
 }

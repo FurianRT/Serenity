@@ -8,8 +8,14 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,8 +33,15 @@ private val KEY_MINIMALISTIC_HOME_SCREEN = booleanPreferencesKey("minimalistic_h
 internal class AppearanceDataStore @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) {
-    fun getAppThemeColorId(): Flow<String?> = dataStore.data
+    private val scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
+
+    val appThemeColorId: StateFlow<String?> = dataStore.data
         .map { prefs -> prefs[KEY_THEME_COLOR] }
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Lazily,
+            initialValue = null,
+        )
 
     suspend fun updateAppThemeColor(colorId: String) {
         dataStore.edit { prefs -> prefs[KEY_THEME_COLOR] = colorId }

@@ -40,6 +40,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
@@ -62,6 +63,10 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
 
@@ -74,6 +79,7 @@ internal fun Toolbar(
     queryState: TextFieldState,
     notesCount: Int,
     selectedNotesCount: Int,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onCalendarClick: () -> Unit = {},
@@ -113,6 +119,7 @@ internal fun Toolbar(
                 queryState = queryState,
                 showBackButton = showBackButton,
                 focusRequester = focusRequester,
+                hazeState = hazeState,
                 onBackClick = {
                     showBackButton = false
                     onBackClick()
@@ -190,6 +197,7 @@ private fun UnselectedContent(
     queryState: TextFieldState,
     showBackButton: Boolean,
     focusRequester: FocusRequester,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit,
     onCalendarClick: () -> Unit,
@@ -226,6 +234,7 @@ private fun UnselectedContent(
                 modifier = Modifier.weight(1f),
                 state = queryState,
                 focusRequester = focusRequester,
+                hazeState = hazeState,
                 onClearClick = onClearQueryClick,
             )
             ButtonCalendar(
@@ -236,6 +245,7 @@ private fun UnselectedContent(
         if (selectedFilters.isNotEmpty()) {
             SelectedFiltersList(
                 filters = selectedFilters,
+                hazeState = hazeState,
                 onDateFilterClick = onDateFilterClick,
                 onUnselectedTagClick = onUnselectedTagClick,
                 onRemoveFilterClick = onRemoveFilterClick,
@@ -270,13 +280,24 @@ private fun ButtonCalendar(
 private fun SearchBar(
     state: TextFieldState,
     focusRequester: FocusRequester,
+    hazeState: HazeState,
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val showCloseButton by remember { derivedStateOf { state.text.isNotEmpty() } }
     Row(
         modifier = modifier
-            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(16.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+                    noiseFactor = 0f,
+                    blurRadius = 8.dp,
+                ),
+            )
+            .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -323,6 +344,7 @@ private fun SearchBar(
 @Composable
 private fun SelectedFiltersList(
     filters: List<SelectedFilter>,
+    hazeState: HazeState,
     onDateFilterClick: (date: SelectedFilter.DateRange) -> Unit,
     onUnselectedTagClick: (tag: SelectedFilter.Tag) -> Unit,
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
@@ -344,6 +366,14 @@ private fun SelectedFiltersList(
                         modifier = Modifier.animateItem(),
                         title = filter.title,
                         isRemovable = true,
+                        hazeState = hazeState,
+                        hazeStyle = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+                            noiseFactor = 0f,
+                            blurRadius = 8.dp,
+                        ),
+                        hazeStyleExtraColor = true,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                     )
                 } else {
@@ -353,6 +383,14 @@ private fun SelectedFiltersList(
                             .animateItem(),
                         title = filter.title,
                         isRemovable = false,
+                        hazeState = hazeState,
+                        hazeStyle = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+                            noiseFactor = 0f,
+                            blurRadius = 8.dp,
+                        ),
+                        hazeStyleExtraColor = true,
                         onRemoveClick = { onRemoveFilterClick(filter) },
                         onClick = { onUnselectedTagClick(filter) },
                     )
@@ -367,6 +405,14 @@ private fun SelectedFiltersList(
                         filter.start.toDateString()
                     },
                     isRemovable = true,
+                    hazeState = hazeState,
+                    hazeStyle = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+                        noiseFactor = 0f,
+                        blurRadius = 8.dp,
+                    ),
+                    hazeStyleExtraColor = true,
                     onClick = { onDateFilterClick(filter) },
                     onRemoveClick = { onRemoveFilterClick(filter) },
                 )
@@ -382,6 +428,7 @@ private fun PreviewWithTags() {
         Toolbar(
             notesCount = 1,
             selectedNotesCount = 0,
+            hazeState = HazeState(),
             queryState = TextFieldState(),
             selectedFilters = buildList {
                 add(SelectedFilter.DateRange(start = LocalDate.now(), end = LocalDate.now()))
@@ -400,6 +447,7 @@ private fun PreviewWithoutTags() {
         Toolbar(
             notesCount = 1,
             selectedNotesCount = 0,
+            hazeState = HazeState(),
             queryState = TextFieldState("test query"),
             selectedFilters = emptyList(),
         )
@@ -413,6 +461,7 @@ private fun PreviewSelected() {
         Toolbar(
             notesCount = 10,
             selectedNotesCount = 2,
+            hazeState = HazeState(),
             queryState = TextFieldState("test query"),
             selectedFilters = emptyList(),
         )

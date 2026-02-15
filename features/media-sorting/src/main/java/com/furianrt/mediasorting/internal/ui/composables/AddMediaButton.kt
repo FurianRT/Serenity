@@ -33,6 +33,7 @@ import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.launch
 
@@ -47,12 +48,21 @@ internal fun AddMediaButton(
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
+            .clip(RoundedCornerShape(24.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    blurRadius = 6.dp,
+                    noiseFactor = 0f,
+                    tint = HazeTint(Color.Transparent),
+                ),
+            )
             .border(
                 width = 2.dp,
                 color = MaterialTheme.colorScheme.tertiaryContainer,
                 shape = RoundedCornerShape(24.dp),
             )
-            .clip(RoundedCornerShape(24.dp))
             .clickable { showDropDown = true }
             .aspectRatio(1f),
         contentAlignment = Alignment.Center,

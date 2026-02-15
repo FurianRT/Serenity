@@ -2,10 +2,10 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,9 +71,11 @@ import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.NoteFont
@@ -169,6 +170,7 @@ private fun MainScreenContent(
     screenState: NoteListScreenState = rememberMainState(),
 ) {
     val hazeState = rememberHazeState()
+    val backgroundHazeState = rememberHazeState()
 
     val needToShowScrollUpButton by remember {
         derivedStateOf {
@@ -176,28 +178,30 @@ private fun MainScreenContent(
         }
     }
 
-    val successState = uiState as? NoteListUiState.Success
+    val successState = uiState.content as? NoteListUiState.Content.Success
 
-    LaunchedEffect(uiState.enableSelection) {
-        if (uiState.enableSelection) {
+    LaunchedEffect(uiState.content.enableSelection) {
+        if (uiState.content.enableSelection) {
             screenState.toolbarState.expand()
         }
     }
 
-    BackHandler(enabled = uiState.enableSelection) {
+    BackHandler(enabled = uiState.content.enableSelection) {
         onEvent(NoteListEvent.OnCloseSelectionClick)
     }
 
     MovableToolbarScaffold(
-        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier,
         listState = screenState.listState
-            .takeIf { uiState is NoteListUiState.Success } ?: rememberLazyListState(),
+            .takeIf { uiState.content is NoteListUiState.Content.Success }
+            ?: rememberLazyListState(),
         state = screenState.toolbarState,
-        enabled = !uiState.enableSelection,
+        enabled = !uiState.content.enableSelection,
         toolbar = {
             Toolbar(
                 notesCount = successState?.notes?.count() ?: 0,
                 selectedNotesCount = successState?.selectedNotesCount ?: 0,
+                hazeState = hazeState,
                 onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
                 onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
                 onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
@@ -205,23 +209,29 @@ private fun MainScreenContent(
             )
         },
     ) { topPadding ->
-        when (uiState) {
-            is NoteListUiState.Loading -> LoadingContent(
-                modifier = Modifier.hazeSource(hazeState),
+        AppBackground(
+            modifier = Modifier
+                .hazeSource(backgroundHazeState)
+                .hazeSource(hazeState, zIndex = 0f),
+            theme = uiState.theme,
+        )
+        when (uiState.content) {
+            is NoteListUiState.Content.Loading -> LoadingContent(
+                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
             )
 
-            is NoteListUiState.Empty -> EmptyContent(
-                modifier = Modifier.hazeSource(hazeState),
+            is NoteListUiState.Content.Empty -> EmptyContent(
+                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                 onEvent = onEvent,
             )
 
-            is NoteListUiState.Success -> SuccessContent(
-                modifier = Modifier.hazeSource(hazeState),
-                uiState = uiState,
+            is NoteListUiState.Content.Success -> SuccessContent(
+                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
+                uiState = uiState.content,
                 screenState = screenState,
                 toolbarPadding = topPadding,
+                hazeState = backgroundHazeState,
                 onEvent = onEvent,
-                hazeState = hazeState,
             )
         }
 
@@ -255,7 +265,7 @@ private fun MainScreenContent(
 
 @Composable
 private fun SuccessContent(
-    uiState: NoteListUiState.Success,
+    uiState: NoteListUiState.Content.Success,
     screenState: NoteListScreenState,
     toolbarPadding: Dp,
     hazeState: HazeState,
@@ -263,6 +273,7 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
+
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
             screenState.scrollToPosition(
@@ -272,7 +283,6 @@ private fun SuccessContent(
             onEvent(NoteListEvent.OnScrolledToItem)
         }
     }
-
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         state = screenState.listState,
@@ -280,7 +290,8 @@ private fun SuccessContent(
             start = 8.dp,
             end = 8.dp,
             top = toolbarPadding + 8.dp,
-            bottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 16.dp,
+            bottom = WindowInsets.navigationBars.asPaddingValues()
+                .calculateBottomPadding() + 16.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -317,8 +328,10 @@ private fun EmptyContent(
         500.dp.dpToPx() to 0f
     }
 
-    var startAnimation by rememberSaveable { mutableStateOf(false) }
-    val transition = updateTransition(targetState = startAnimation)
+    val transitionState = MutableTransitionState(initialState = false).apply {
+        targetState = true
+    }
+    val transition = rememberTransition(transitionState)
 
     val contentAlpha by transition.animateFloat(
         transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },
@@ -349,10 +362,6 @@ private fun EmptyContent(
             keyPath = KeyPath("**"),
         ),
     )
-
-    LaunchedEffect(Unit) {
-        startAnimation = true
-    }
 
     Box(
         modifier = modifier
@@ -412,11 +421,14 @@ private fun NoteListScreenNote.Date.getTitle() = when (this) {
 private fun SuccessPreview() {
     SerenityTheme {
         MainScreenContent(
-            uiState = NoteListUiState.Success(
-                notes = generatePreviewNotes(withSelected = false),
-                scrollToPosition = null,
-                selectedNotesCount = 0,
-                font = NoteFont.NotoSans,
+            uiState = NoteListUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = NoteListUiState.Content.Success(
+                    notes = generatePreviewNotes(withSelected = false),
+                    scrollToPosition = null,
+                    selectedNotesCount = 0,
+                    font = NoteFont.NotoSans,
+                )
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
@@ -429,7 +441,10 @@ private fun SuccessPreview() {
 private fun EmptyPreview() {
     SerenityTheme {
         MainScreenContent(
-            uiState = NoteListUiState.Empty,
+            uiState = NoteListUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = NoteListUiState.Content.Empty,
+            ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},
         )
@@ -441,11 +456,14 @@ private fun EmptyPreview() {
 private fun SuccessWithSelectedPreview() {
     SerenityTheme {
         MainScreenContent(
-            uiState = NoteListUiState.Success(
-                notes = generatePreviewNotes(withSelected = true),
-                scrollToPosition = null,
-                selectedNotesCount = 3,
-                font = NoteFont.NotoSans,
+            uiState = NoteListUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = NoteListUiState.Content.Success(
+                    notes = generatePreviewNotes(withSelected = true),
+                    scrollToPosition = null,
+                    selectedNotesCount = 3,
+                    font = NoteFont.NotoSans,
+                ),
             ),
             snackBarHostState = SnackbarHostState(),
             onEvent = {},

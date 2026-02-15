@@ -5,11 +5,13 @@ import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.utils.DialogIdentifier
 
 internal data class MediaSortingUiState(
     val media: List<MediaItem>,
     val hasContentChanged: Boolean,
+    val theme: UiThemeColor,
 )
 
 internal sealed interface MediaSortingEvent {

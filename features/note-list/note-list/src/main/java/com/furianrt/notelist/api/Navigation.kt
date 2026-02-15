@@ -1,5 +1,7 @@
 package com.furianrt.notelist.api
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,10 +31,15 @@ fun NavGraphBuilder.noteListScreen(
     composable<NoteListRoute>(
         exitTransition = {
             when {
-                hasSearchScreenRoute(targetState.destination) -> fadeOut() + scaleOut(
-                    targetScale = 0.95f,
-                    transformOrigin = TransformOrigin(pivotFractionX = 0.5f, pivotFractionY = 0f),
-                )
+                hasSearchScreenRoute(targetState.destination) -> {
+                    fadeOut(spring(stiffness = Spring.StiffnessMedium)) + scaleOut(
+                        targetScale = 0.95f,
+                        transformOrigin = TransformOrigin(
+                            pivotFractionX = 0.5f,
+                            pivotFractionY = 0f,
+                        ),
+                    )
+                }
 
                 hasNoteCreateScreenRoute(targetState.destination) -> fadeOut(tween(250))
 

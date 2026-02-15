@@ -13,10 +13,12 @@ import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 
 @Composable
 internal fun AllTagsList(
     tags: List<TagsList.Tag>,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onTagClick: (tag: TagsList.Tag) -> Unit = {},
 ) {
@@ -29,6 +31,7 @@ internal fun AllTagsList(
             TagItem(
                 title = tag.title,
                 isRemovable = false,
+                hazeState = hazeState,
                 onClick = { onTagClick(tag) },
                 icon = {
                     Text(
@@ -52,6 +55,7 @@ private fun Preview() {
                     add(TagsList.Tag(title = "Title", count = index + 1))
                 }
             },
+            hazeState = HazeState(),
         )
     }
 }

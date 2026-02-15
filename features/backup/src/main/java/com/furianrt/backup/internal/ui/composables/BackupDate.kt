@@ -16,25 +16,25 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun BackupDate(
-    date: BackupUiState.Success.SyncDate,
+    date: BackupUiState.Content.Success.SyncDate,
     modifier: Modifier = Modifier,
 ) {
     val title = stringResource(
         R.string.backup_last_sync_time_title,
         when (date) {
-            is BackupUiState.Success.SyncDate.None -> {
+            is BackupUiState.Content.Success.SyncDate.None -> {
                 stringResource(R.string.backup_last_sync_time_none_title)
             }
 
-            is BackupUiState.Success.SyncDate.Today -> {
+            is BackupUiState.Content.Success.SyncDate.Today -> {
                 stringResource(uiR.string.today_title)
             }
 
-            is BackupUiState.Success.SyncDate.Yesterday -> {
+            is BackupUiState.Content.Success.SyncDate.Yesterday -> {
                 stringResource(uiR.string.yesterday_title)
             }
 
-            is BackupUiState.Success.SyncDate.Other -> date.text
+            is BackupUiState.Content.Success.SyncDate.Other -> date.text
         },
     )
     Crossfade(
@@ -54,6 +54,6 @@ internal fun BackupDate(
 @PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
-        BackupDate(date = BackupUiState.Success.SyncDate.Yesterday)
+        BackupDate(date = BackupUiState.Content.Success.SyncDate.Yesterday)
     }
 }

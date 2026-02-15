@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.core.doWithState
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
@@ -59,13 +58,17 @@ internal class SettingsViewModel @Inject constructor(
         appearanceRepository.getAppThemeColorId(),
         settingsRepository.getAppRating(),
         localeRepository.getSelectedLocale(),
+        appearanceRepository.getAppThemeColorId(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = SettingsUiState.Loading,
+        initialValue = SettingsUiState(
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            content = SettingsUiState.Content.Loading,
+        ),
     )
 
     private val _effect = MutableSharedFlow<SettingsEffect>(extraBufferCapacity = 5)
@@ -114,14 +117,17 @@ internal class SettingsViewModel @Inject constructor(
                 _effect.tryEmit(SettingsEffect.OpenLink(PRIVACY_POLICY_LINK))
             }
 
-            is SettingsEvent.OnLocaleClick -> launch {
-                state.doWithState<SettingsUiState.Success> { successState ->
-                    _effect.tryEmit(
-                        SettingsEffect.ShowLocaleDialog(
-                            locale = localeRepository.getLocaleList().first(),
-                            selectedLocale = successState.locale,
+            is SettingsEvent.OnLocaleClick -> {
+                val content = state.value.content
+                if (content is SettingsUiState.Content.Success) {
+                    launch {
+                        _effect.tryEmit(
+                            SettingsEffect.ShowLocaleDialog(
+                                locale = localeRepository.getLocaleList().first(),
+                                selectedLocale = content.locale,
+                            )
                         )
-                    )
+                    }
                 }
             }
 
@@ -173,34 +179,38 @@ internal class SettingsViewModel @Inject constructor(
         selectedThemeColorId: String?,
         rating: Int,
         locale: AppLocale,
+        appThemeColorId: String?,
     ): SettingsUiState {
         val selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId)
         val lightColors = UiThemeColor.getLightThemesList()
         val darkColors = UiThemeColor.getDarkThemesList()
-        return SettingsUiState.Success(
-            themes = listOf(
-                UiTheme.Light(
-                    isSelected = if (selectedTheme == null) {
-                        lightColors.contains(selectedThemeColor)
-                    } else {
-                        selectedTheme is UiTheme.Light
-                    },
-                    colors = lightColors,
-                    selectedColor = selectedThemeColor,
+        return SettingsUiState(
+            theme = UiThemeColor.fromId(appThemeColorId),
+            content = SettingsUiState.Content.Success(
+                themes = listOf(
+                    UiTheme.Light(
+                        isSelected = if (selectedTheme == null) {
+                            lightColors.contains(selectedThemeColor)
+                        } else {
+                            selectedTheme is UiTheme.Light
+                        },
+                        colors = lightColors,
+                        selectedColor = selectedThemeColor,
+                    ),
+                    UiTheme.Dark(
+                        isSelected = if (selectedTheme == null) {
+                            darkColors.contains(selectedThemeColor)
+                        } else {
+                            selectedTheme is UiTheme.Dark
+                        },
+                        colors = darkColors,
+                        selectedColor = selectedThemeColor,
+                    ),
                 ),
-                UiTheme.Dark(
-                    isSelected = if (selectedTheme == null) {
-                        darkColors.contains(selectedThemeColor)
-                    } else {
-                        selectedTheme is UiTheme.Dark
-                    },
-                    colors = darkColors,
-                    selectedColor = selectedThemeColor,
-                ),
+                rating = rating,
+                appVersion = buildInfoProvider.getAppVersionName(),
+                locale = locale,
             ),
-            rating = rating,
-            appVersion = buildInfoProvider.getAppVersionName(),
-            locale = locale,
         )
     }
 }

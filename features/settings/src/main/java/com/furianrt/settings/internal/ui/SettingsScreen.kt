@@ -70,6 +70,7 @@ import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
 import com.furianrt.settings.internal.ui.entities.UiTheme
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -84,6 +85,7 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -223,12 +225,13 @@ private fun ScreenContent(
 ) {
     val scrollState = rememberScrollState()
     val toolbarState = remember { MovableToolbarState() }
+    val hazeState = rememberHazeState()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
 
     MovableToolbarScaffold(
-        modifier = modifier.background(MaterialTheme.colorScheme.surface),
+        modifier = modifier,
         state = toolbarState,
         listState = scrollState,
         enabled = false,
@@ -240,15 +243,20 @@ private fun ScreenContent(
             )
         }
     ) { topPadding ->
-        when (uiState) {
-            is SettingsUiState.Success -> SuccessScreen(
-                uiState = uiState,
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
+        when (uiState.content) {
+            is SettingsUiState.Content.Success -> SuccessScreen(
+                uiState = uiState.content,
                 scrollState = scrollState,
                 topPadding = topPadding,
+                hazeState = hazeState,
                 onEvent = onEvent,
             )
 
-            is SettingsUiState.Loading -> LoadingScreen()
+            is SettingsUiState.Content.Loading -> LoadingScreen()
         }
         SnackbarHost(
             modifier = Modifier
@@ -268,9 +276,10 @@ private fun ScreenContent(
 
 @Composable
 private fun SuccessScreen(
-    uiState: SettingsUiState.Success,
+    uiState: SettingsUiState.Content.Success,
     scrollState: ScrollState,
     topPadding: Dp,
+    hazeState: HazeState,
     onEvent: (event: SettingsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -286,24 +295,28 @@ private fun SuccessScreen(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_security_title),
             iconPainter = painterResource(R.drawable.ic_lock),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_backup_title),
             iconPainter = painterResource(R.drawable.ic_cloud),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_font_title),
             iconPainter = painterResource(R.drawable.ic_settings_font),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_note_content_title),
             iconPainter = painterResource(R.drawable.ic_note_content),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
         )
         ThemeSelector(
@@ -317,6 +330,7 @@ private fun SuccessScreen(
             modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
+            hazeState = hazeState,
             hint = uiState.locale.text,
             onClick = { onEvent(SettingsEvent.OnLocaleClick) },
         )
@@ -337,18 +351,21 @@ private fun SuccessScreen(
                 .padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_feedback_title),
             iconPainter = painterResource(R.drawable.ic_mail),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_terms_and_conditions_title),
             iconPainter = painterResource(uiR.drawable.ic_text_snippet),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_privacy_policy_title),
             iconPainter = painterResource(uiR.drawable.ic_text_snippet),
+            hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonPrivacyPolicyClick) },
         )
         Spacer(modifier = Modifier.weight(1f))
@@ -556,32 +573,35 @@ private fun ScreenContentPreview() {
     SerenityTheme {
         ScreenContent(
             snackBarHostState = SnackbarHostState(),
-            uiState = SettingsUiState.Success(
-                themes = listOf(
-                    UiTheme.Light(
-                        colors = listOf(
-                            UiThemeColor.LIGHT_BLUE,
+            uiState = SettingsUiState(
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                content = SettingsUiState.Content.Success(
+                    themes = listOf(
+                        UiTheme.Light(
+                            colors = listOf(
+                                UiThemeColor.LIGHT_BLUE,
+                            ),
+                            selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+                            isSelected = false,
                         ),
-                        selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
-                        isSelected = false,
+                        UiTheme.Dark(
+                            colors = listOf(
+                                UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
+                                UiThemeColor.DISTANT_CASTLE_GREEN,
+                                UiThemeColor.VAMPIRE_RED_DARK,
+                                UiThemeColor.EUPHORIA_BLUE_DARK,
+                                UiThemeColor.EUPHORIA_VIOLET,
+                                UiThemeColor.EUPHORIA_BLUE,
+                                UiThemeColor.EUPHORIA_PINK,
+                            ),
+                            selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
+                            isSelected = true,
+                        )
                     ),
-                    UiTheme.Dark(
-                        colors = listOf(
-                            UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
-                            UiThemeColor.DISTANT_CASTLE_GREEN,
-                            UiThemeColor.VAMPIRE_RED_DARK,
-                            UiThemeColor.EUPHORIA_BLUE_DARK,
-                            UiThemeColor.EUPHORIA_VIOLET,
-                            UiThemeColor.EUPHORIA_BLUE,
-                            UiThemeColor.EUPHORIA_PINK,
-                        ),
-                        selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
-                        isSelected = true,
-                    )
+                    rating = 4,
+                    appVersion = "1.0",
+                    locale = AppLocale.ENGLISH,
                 ),
-                rating = 4,
-                appVersion = "1.0",
-                locale = AppLocale.ENGLISH,
             ),
         )
     }

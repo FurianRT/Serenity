@@ -7,6 +7,10 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.tooling.ComposeStackTraceMode
 import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
+import coil3.request.CachePolicy
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
@@ -23,7 +27,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-internal class SerenityApp : Application(), Configuration.Provider {
+internal class SerenityApp : Application(), Configuration.Provider, SingletonImageLoader.Factory {
 
     @Inject
     lateinit var workerFactory: HiltWorkerFactory
@@ -50,6 +54,7 @@ internal class SerenityApp : Application(), Configuration.Provider {
     override fun onCreate() {
         super.onCreate()
         Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
+        SingletonImageLoader.setSafe(this)
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
@@ -63,6 +68,12 @@ internal class SerenityApp : Application(), Configuration.Provider {
         .setTaskExecutor(Dispatchers.Default.asExecutor())
         .setMinimumLoggingLevel(Log.INFO)
         .build()
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader {
+        return ImageLoader.Builder(this)
+            .diskCachePolicy(CachePolicy.DISABLED)
+            .build()
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     private fun startPeriodicWorks() {

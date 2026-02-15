@@ -3,6 +3,7 @@ package com.furianrt.settings.internal.ui.noteSettings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,11 +23,15 @@ internal class NoteSettingsViewModel @Inject constructor(
     val state: StateFlow<NoteSettingsState> = combine(
         appearanceRepository.isAutoDetectLocationEnabled(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
+        appearanceRepository.getAppThemeColorId(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = NoteSettingsState.Loading,
+        initialValue = NoteSettingsState(
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            content = NoteSettingsState.Content.Loading,
+        ),
     )
 
     private val _effect = MutableSharedFlow<NoteSettingsEffect>(extraBufferCapacity = 5)
@@ -51,8 +56,12 @@ internal class NoteSettingsViewModel @Inject constructor(
     private fun buildState(
         isAutoDetectLocationEnabled: Boolean,
         isMinimalisticHomeScreenEnabled: Boolean,
-    ): NoteSettingsState = NoteSettingsState.Success(
-        isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
-        isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,
+        appThemeColorId: String?,
+    ): NoteSettingsState = NoteSettingsState(
+        theme = UiThemeColor.fromId(appThemeColorId),
+        content = NoteSettingsState.Content.Success(
+            isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
+            isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,
+        ),
     )
 }

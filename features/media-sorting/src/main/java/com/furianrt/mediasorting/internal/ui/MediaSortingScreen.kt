@@ -70,10 +70,12 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SnackBar
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -81,6 +83,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -262,6 +265,7 @@ private fun Content(
 ) {
     val listState = rememberLazyGridState()
     val toolbarState = remember { MovableToolbarState() }
+    val hazeState = rememberHazeState()
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
@@ -282,10 +286,15 @@ private fun Content(
             )
         }
     ) { topPadding ->
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
         ContentList(
             uiState = uiState,
             onEvent = onEvent,
             listState = listState,
+            hazeState = hazeState,
             contentPadding = PaddingValues(
                 top = topPadding + 8.dp,
                 bottom = 80.dp + bottomInsetPadding,
@@ -301,11 +310,11 @@ private fun ContentList(
     uiState: MediaSortingUiState,
     onEvent: (event: MediaSortingEvent) -> Unit,
     listState: LazyGridState,
+    hazeState: HazeState,
     contentPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    val hazeState = rememberHazeState()
     val reorderableLazyColumnState = rememberReorderableLazyGridState(
         lazyGridState = listState,
         scrollThresholdPadding = contentPadding,
@@ -315,7 +324,7 @@ private fun ContentList(
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
-            .hazeSource(hazeState),
+            .hazeSource(hazeState, zIndex = 1f),
         state = listState,
         columns = GridCells.Fixed(listSpanCount),
         verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -396,7 +405,10 @@ private fun ContentList(
             key = HINT_ITEM_ID,
             span = { GridItemSpan(listSpanCount) },
         ) {
-            DragAndDropHint()
+            DragAndDropHint(
+                modifier = Modifier.padding(top = 8.dp),
+                hazeState = hazeState,
+            )
         }
     }
 }
@@ -428,6 +440,7 @@ private fun Preview() {
         Content(
             uiState = MediaSortingUiState(
                 hasContentChanged = false,
+                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
                 media = buildList {
                     repeat(7) { index ->
                         add(

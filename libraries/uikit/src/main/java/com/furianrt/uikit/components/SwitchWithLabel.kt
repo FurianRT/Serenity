@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOff
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType.Companion.ToggleOn
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -23,6 +24,10 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 fun SwitchWithLabel(
@@ -30,6 +35,7 @@ fun SwitchWithLabel(
     isChecked: Boolean,
     onCheckedChange: (isChecked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     hint: String? = null,
     enabled: Boolean = true,
     withHaptic: Boolean = true,
@@ -39,6 +45,21 @@ fun SwitchWithLabel(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
+            .then(
+                if (hazeState != null) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .clickable(enabled = enabled, onClick = { onCheckedChange(!isChecked) })
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),

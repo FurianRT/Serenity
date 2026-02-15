@@ -55,7 +55,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 
 @Composable
 internal fun Header(
-    authState: BackupUiState.Success.AuthState,
+    authState: BackupUiState.Content.Success.AuthState,
     onSingInClick: () -> Unit,
     onSingOutClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -117,12 +117,12 @@ internal fun Header(
             targetState = authState,
         ) { targetState ->
             when (targetState) {
-                is BackupUiState.Success.AuthState.SignedOut -> SignedOutHeader(
+                is BackupUiState.Content.Success.AuthState.SignedOut -> SignedOutHeader(
                     isEnabled = !targetState.isLoading,
                     onSingInClick = onSingInClick,
                 )
 
-                is BackupUiState.Success.AuthState.SignedIn -> SignedInHeader(
+                is BackupUiState.Content.Success.AuthState.SignedIn -> SignedInHeader(
                     email = targetState.email,
                     isEnabled = !targetState.isLoading,
                     onSingOutClick = onSingOutClick,
@@ -234,7 +234,7 @@ private fun SignedOutHeader(
 private fun SignedInPreview() {
     SerenityTheme {
         Header(
-            authState = BackupUiState.Success.AuthState.SignedIn(
+            authState = BackupUiState.Content.Success.AuthState.SignedIn(
                 email = "testtest@gmail.com",
                 isLoading = false,
             ),
@@ -249,7 +249,7 @@ private fun SignedInPreview() {
 private fun SignedOutPreview() {
     SerenityTheme {
         Header(
-            authState = BackupUiState.Success.AuthState.SignedOut(
+            authState = BackupUiState.Content.Success.AuthState.SignedOut(
                 isLoading = false,
             ),
             onSingInClick = {},
@@ -263,7 +263,7 @@ private fun SignedOutPreview() {
 private fun LoadingPreview() {
     SerenityTheme {
         Header(
-            authState = BackupUiState.Success.AuthState.SignedIn(
+            authState = BackupUiState.Content.Success.AuthState.SignedIn(
                 email = "testtest@gmail.com",
                 isLoading = true,
             ),

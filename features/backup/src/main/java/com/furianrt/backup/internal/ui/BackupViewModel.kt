@@ -32,11 +32,13 @@ import com.furianrt.backup.internal.ui.BackupScreenEvent.OnQuestionClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignInClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignOutClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignOutConfirmClick
-import com.furianrt.backup.internal.ui.BackupUiState.Success.SyncProgress
+import com.furianrt.backup.internal.ui.BackupUiState.Content
+import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
-import com.furianrt.core.doWithState
 import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -56,6 +58,7 @@ import com.furianrt.uikit.R as uiR
 internal class BackupViewModel @Inject constructor(
     getPopularQuestionsUseCase: GetPopularQuestionsUseCase,
     getBackupProfileUseCase: GetBackupProfileUseCase,
+    appearanceRepository: AppearanceRepository,
     private val restoreDataManager: RestoreDataManager,
     private val backupDataManager: BackupDataManager,
     private val backupRepository: BackupRepository,
@@ -85,12 +88,12 @@ internal class BackupViewModel @Inject constructor(
         isAuthInProgressState,
     ) { profile, isInProgress ->
         if (profile != null) {
-            BackupUiState.Success.AuthState.SignedIn(
+            Content.Success.AuthState.SignedIn(
                 email = profile.email,
                 isLoading = isInProgress,
             )
         } else {
-            BackupUiState.Success.AuthState.SignedOut(
+            Content.Success.AuthState.SignedOut(
                 isLoading = isInProgress,
             )
         }
@@ -136,11 +139,15 @@ internal class BackupViewModel @Inject constructor(
         backupRepository.getAutoBackupPeriod(),
         backupRepository.getLastSyncDate(),
         syncProgressState,
+        appearanceRepository.getAppThemeColorId(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = BackupUiState.Loading,
+        initialValue = BackupUiState(
+            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            content = Content.Loading,
+        ),
     )
 
     private val _effect = MutableSharedFlow<BackupEffect>(extraBufferCapacity = 5)
@@ -183,18 +190,7 @@ internal class BackupViewModel @Inject constructor(
             is OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
             is OnQuestionClick -> toggleQuestionExpandedState(event.question)
             is OnSignInClick -> authorize()
-            is OnSignOutClick -> state.doWithState<BackupUiState.Success> { successState ->
-                if (successState.isBackupInProgress || successState.isRestoreInProgress) {
-                    _effect.tryEmit(
-                        BackupEffect.ShowErrorToast(
-                            resourcesManager.getString(R.string.backup_sync_in_progress_message),
-                        )
-                    )
-                } else {
-                    _effect.tryEmit(BackupEffect.ShowConfirmSignOutDialog)
-                }
-            }
-
+            is OnSignOutClick -> onSignOutClick()
             is OnSignOutConfirmClick -> {
                 backupDataManager.clearFailureState()
                 restoreDataManager.clearFailureState()
@@ -230,6 +226,20 @@ internal class BackupViewModel @Inject constructor(
         }
     }
 
+    private fun onSignOutClick() {
+        (state.value.content as? Content.Success)?.let { content ->
+            if (content.isBackupInProgress || content.isRestoreInProgress) {
+                _effect.tryEmit(
+                    BackupEffect.ShowErrorToast(
+                        resourcesManager.getString(R.string.backup_sync_in_progress_message),
+                    )
+                )
+            } else {
+                _effect.tryEmit(BackupEffect.ShowConfirmSignOutDialog)
+            }
+        }
+    }
+
     private suspend fun signIn(
         accessToken: String? = null,
         intent: Intent? = null,
@@ -245,13 +255,12 @@ internal class BackupViewModel @Inject constructor(
     }
 
     private fun signOut() {
-        state.doWithState<BackupUiState.Success> { successState ->
-            if (successState.authState is BackupUiState.Success.AuthState.SignedIn) {
-                isAuthInProgressState.update { true }
-                launch {
-                    signOutUseCase(successState.authState.email).onFailure(::showError)
-                    isAuthInProgressState.update { false }
-                }
+        val content = state.value.content
+        if (content is Content.Success && content.authState is Content.Success.AuthState.SignedIn) {
+            isAuthInProgressState.update { true }
+            launch {
+                signOutUseCase(content.authState.email).onFailure(::showError)
+                isAuthInProgressState.update { false }
             }
         }
     }
@@ -284,26 +293,29 @@ internal class BackupViewModel @Inject constructor(
     }
 
     private suspend fun updateBackupPeriod(period: BackupPeriod) {
-        state.doWithState<BackupUiState.Success> { successState ->
-            if (successState.backupPeriod != period) {
-                backupRepository.setAutoBackupPeriod(period)
-            }
+        val content = state.value.content
+        if (content is Content.Success && content.backupPeriod != period) {
+            backupRepository.setAutoBackupPeriod(period)
         }
     }
 
     private fun buildState(
         questions: List<Question>,
-        authState: BackupUiState.Success.AuthState,
+        authState: Content.Success.AuthState,
         isAutoBackupEnabled: Boolean,
         backupPeriod: BackupPeriod,
         lastSyncDate: ZonedDateTime?,
         syncProgress: SyncProgress,
-    ) = BackupUiState.Success(
-        isAutoBackupEnabled = isAutoBackupEnabled,
-        backupPeriod = backupPeriod,
-        lastSyncDate = lastSyncDate.toSyncDate(),
-        questions = questions,
-        authState = authState,
-        syncProgress = syncProgress,
+        appThemeColorId: String?,
+    ) = BackupUiState(
+        theme = UiThemeColor.fromId(appThemeColorId),
+        content = Content.Success(
+            isAutoBackupEnabled = isAutoBackupEnabled,
+            backupPeriod = backupPeriod,
+            lastSyncDate = lastSyncDate.toSyncDate(),
+            questions = questions,
+            authState = authState,
+            syncProgress = syncProgress,
+        ),
     )
 }

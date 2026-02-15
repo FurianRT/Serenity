@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -23,12 +24,17 @@ import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 fun GeneralButton(
     title: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    hazeState: HazeState? = null,
     iconPainter: Painter? = null,
     hint: String? = null,
     enabled: Boolean = true,
@@ -37,6 +43,21 @@ fun GeneralButton(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
+            .then(
+                if (hazeState != null) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .clickable(enabled = enabled, onClick = onClick)
             .applyIf(!enabled) { Modifier.alpha(0.5f) }
             .padding(12.dp)
