@@ -50,6 +50,7 @@ import com.furianrt.notepage.internal.ui.extensions.removeVoice
 import com.furianrt.notepage.internal.ui.extensions.toLocalNoteSticker
 import com.furianrt.notepage.internal.ui.extensions.toMediaBlock
 import com.furianrt.notepage.internal.ui.extensions.toNoteItem
+import com.furianrt.notepage.internal.ui.extensions.toNoteTheme
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestCameraPermission
@@ -1074,10 +1075,9 @@ internal class PageViewModel @AssistedInject constructor(
                         fontFamily = note.fontFamily,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
-                        appTheme = UiThemeColor.fromId(
+                        noteTheme = note.theme ?: UiThemeColor.fromId(
                             appearanceRepository.getAppThemeColorId().first(),
-                        ),
-                        noteTheme = note.theme,
+                        ).toNoteTheme(),
                         moodId = note.moodId,
                         defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
@@ -1120,8 +1120,8 @@ internal class PageViewModel @AssistedInject constructor(
                 fontFamily = fontFamily,
                 fontColor = fontColor,
                 fontSize = fontSize,
-                backgroundId = state.noteTheme?.colorId,
-                backgroundImageId = state.noteTheme?.imageId,
+                backgroundId = state.noteTheme.takeUnless { it.isAppTheme }?.colorId,
+                backgroundImageId = state.noteTheme.takeUnless { it.isAppTheme }?.imageId,
                 moodId = state.moodId,
                 noteLocation = state.locationState.toNoteLocation(),
             )
@@ -1173,7 +1173,11 @@ internal class PageViewModel @AssistedInject constructor(
                 backgroundImageId = theme?.imageId,
             )
             _state.updateState<PageUiState.Success> { successState ->
-                successState.copy(noteTheme = theme)
+                successState.copy(
+                    noteTheme = theme ?: UiThemeColor.fromId(
+                        appearanceRepository.getAppThemeColorId().first(),
+                    ).toNoteTheme()
+                )
             }
         }
     }

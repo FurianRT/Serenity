@@ -114,7 +114,6 @@ import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.extensions.animatePlacementInScope
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.bringIntoView
@@ -123,6 +122,7 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.getStatusBarHeight
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
+import com.furianrt.uikit.theme.LocalColorScheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -377,10 +377,9 @@ private fun PageScreenContent(
             val selectedBackground = when (val noteTheme = uiState.noteTheme) {
                 is UiNoteTheme.Solid -> noteTheme.color
                 is UiNoteTheme.Image -> noteTheme.color
-                null -> null
             }
             SerenityTheme(
-                colorScheme = selectedBackground?.colorScheme ?: uiState.appTheme.colorScheme,
+                colorScheme = selectedBackground?.colorScheme ?: LocalColorScheme.current,
             ) {
                 SuccessScreen(
                     modifier = modifier,

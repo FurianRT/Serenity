@@ -1,24 +1,30 @@
 package com.furianrt.notelistui.entities
 
-sealed interface UiNoteTheme {
+sealed class UiNoteTheme(
+    open val isAppTheme: Boolean,
+) {
     data class Solid(
         val color: UiNoteBackground,
-    ) : UiNoteTheme
+        override val isAppTheme: Boolean = false,
+    ) : UiNoteTheme(isAppTheme)
 
     sealed class Image(
         open val color: UiNoteBackground?,
         open val image: UiNoteBackgroundImage,
-    ) : UiNoteTheme {
+        override val isAppTheme: Boolean,
+    ) : UiNoteTheme(isAppTheme) {
 
         data class Picture(
             override val color: UiNoteBackground,
             override val image: UiNoteBackgroundImage,
-        ) : Image(color, image)
+            override val isAppTheme: Boolean = false,
+        ) : Image(color, image, isAppTheme)
 
         data class Pattern(
             override val color: UiNoteBackground?,
             override val image: UiNoteBackgroundImage,
-        ) : Image(color, image)
+            override val isAppTheme: Boolean = false,
+        ) : Image(color, image, isAppTheme)
     }
 
     val colorId: String?

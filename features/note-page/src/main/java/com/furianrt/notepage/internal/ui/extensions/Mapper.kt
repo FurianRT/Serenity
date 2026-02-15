@@ -5,6 +5,8 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.notelistui.entities.UiNoteBackground
+import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.UiNoteTheme
@@ -16,8 +18,13 @@ import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
+import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiThemeImage
+import com.furianrt.uikit.entities.colorScheme
 import java.time.ZonedDateTime
 import java.util.UUID
+
+private const val APP_THEME_POSTFIX = "app_theme"
 
 internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
@@ -61,6 +68,40 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     dpOffsetY = state.dpOffsetY.value,
     editTime = state.editTime,
 )
+
+internal fun UiThemeColor.toNoteTheme(): UiNoteTheme = if (image != null) {
+    UiNoteTheme.Image.Picture(
+        isAppTheme = true,
+        color = UiNoteBackground(
+            id = id + APP_THEME_POSTFIX,
+            isLight = isLight,
+            colorScheme = colorScheme,
+        ),
+        image = UiNoteBackgroundImage(
+            id = id + APP_THEME_POSTFIX,
+            resId = image!!.resId,
+            scaleType = image!!.scaleType.toNoteThemeScaleType(),
+        ),
+    )
+} else {
+    UiNoteTheme.Solid(
+        isAppTheme = true,
+        color = UiNoteBackground(
+            id = id + APP_THEME_POSTFIX,
+            isLight = isLight,
+            colorScheme = colorScheme,
+        ),
+    )
+}
+
+private fun UiThemeImage.ScaleType.toNoteThemeScaleType() = when (this) {
+    UiThemeImage.ScaleType.REPEAT -> UiNoteBackgroundImage.ScaleType.REPEAT
+    UiThemeImage.ScaleType.FILL -> UiNoteBackgroundImage.ScaleType.FILL
+    UiThemeImage.ScaleType.CENTER -> UiNoteBackgroundImage.ScaleType.CENTER
+    UiThemeImage.ScaleType.CROP_ALIGN_BOTTOM -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM
+    UiThemeImage.ScaleType.CROP_ALIGN_CENTER -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER
+    UiThemeImage.ScaleType.CROP_ALIGN_TOP -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_TOP
+}
 
 private fun LocalNote.Sticker.toStickerItem(
     @DrawableRes icon: Int?,
