@@ -8,6 +8,11 @@
 
     <uses-permission android:name="android.permission.VIBRATE" />
 
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
     <!-- TODO Убрать allowBackup=false -->
     <!-- android:dataExtractionRules=""-->
     <application
