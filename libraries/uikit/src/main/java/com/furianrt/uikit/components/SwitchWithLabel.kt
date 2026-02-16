@@ -45,23 +45,8 @@ fun SwitchWithLabel(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .then(
-                if (hazeState != null) {
-                    Modifier.hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
-                    )
-                } else {
-                    Modifier
-                }
-            )
             .clickable(enabled = enabled, onClick = { onCheckedChange(!isChecked) })
-            .padding(horizontal = 12.dp, vertical = 8.dp),
+            .padding(start = 8.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = if (hint == null) {
             Alignment.CenterVertically
@@ -76,12 +61,46 @@ fun SwitchWithLabel(
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
+                modifier = Modifier
+                    .then(
+                        if (hazeState != null) {
+                            Modifier.hazeEffect(
+                                state = hazeState,
+                                style = HazeDefaults.style(
+                                    backgroundColor = MaterialTheme.colorScheme.surface,
+                                    blurRadius = 12.dp,
+                                    noiseFactor = 0f,
+                                    tint = HazeTint(Color.Transparent),
+                                ),
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .padding(horizontal = 4.dp),
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
             )
             if (hint != null) {
                 Text(
-                    modifier = Modifier.alpha(0.5f),
+                    modifier = Modifier
+                        .then(
+                            if (hazeState != null) {
+                                Modifier.hazeEffect(
+                                    state = hazeState,
+                                    style = HazeDefaults.style(
+                                        backgroundColor = MaterialTheme.colorScheme.surface,
+                                        blurRadius = 12.dp,
+                                        noiseFactor = 0f,
+                                        tint = HazeTint(Color.Transparent),
+                                    ),
+                                )
+                            } else {
+                                Modifier
+                            }
+                        )
+                        .padding(horizontal = 4.dp)
+                        .alpha(0.5f),
                     text = hint,
                     style = MaterialTheme.typography.labelSmall,
                 )

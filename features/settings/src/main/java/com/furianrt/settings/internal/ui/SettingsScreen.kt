@@ -85,11 +85,15 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
 private data class FontsDialogState(
@@ -372,6 +376,7 @@ private fun SuccessScreen(
         Version(
             modifier = Modifier.padding(top = 8.dp),
             name = uiState.appVersion,
+            hazeState = hazeState,
         )
     }
 }
@@ -384,7 +389,7 @@ private fun ThemeSelector(
     modifier: Modifier = Modifier,
 ) {
     val selectedThemeIndex = themes.indexOfFirst { it.isSelected }
-    val selectedTheme = themes[selectedThemeIndex]
+    val selectedTheme = themes[max(selectedThemeIndex, 0)]
     val selectedColorIndex = remember(themes, selectedTheme) {
         selectedTheme.colors.indexOfFirstOrNull { it == selectedTheme.selectedColor }
     }
@@ -534,6 +539,7 @@ private fun Rating(
 @Composable
 private fun Version(
     name: String,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -543,7 +549,19 @@ private fun Version(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.alpha(0.5f),
+            modifier = Modifier
+                .clip(RoundedCornerShape(8.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 6.dp)
+                .alpha(0.5f),
             text = stringResource(R.string.settings_version_title, name),
             style = MaterialTheme.typography.labelSmall,
         )

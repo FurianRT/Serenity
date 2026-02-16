@@ -5,6 +5,7 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.text.selection.LocalTextSelectionColors
@@ -51,39 +52,84 @@ fun SerenityTheme(
     val colorTransition = updateTransition(targetState = colorScheme)
 
     val animatedPrimaryContainer by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.primaryContainer },
     )
     val animatedSurface by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.surface },
     )
     val animatedOnSurface by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.onSurface },
     )
     val animatedSurfaceContainer by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.surfaceContainer },
     )
     val animatedBackground by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.background },
     )
     val animatedSecondaryContainer by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.secondaryContainer },
     )
     val animatedTertiary by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.tertiary },
     )
     val animatedTertiaryContainer by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.tertiaryContainer },
     )
     val animatedOnTertiaryContainer by colorTransition.animateColor(
-        transitionSpec = { tween(COLOR_ANIM_DURATION) },
+        transitionSpec = {
+            tween(
+                durationMillis = THEME_COLOR_ANIM_DURATION,
+                easing = LinearEasing,
+            )
+        },
         targetValueByState = { it.onTertiaryContainer },
     )
 

@@ -43,30 +43,16 @@ fun GeneralButton(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .then(
-                if (hazeState != null) {
-                    Modifier.hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
-                    )
-                } else {
-                    Modifier
-                }
-            )
             .clickable(enabled = enabled, onClick = onClick)
             .applyIf(!enabled) { Modifier.alpha(0.5f) }
-            .padding(12.dp)
+            .padding(start = 8.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
             .animateContentSize(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = if (hint != null) Alignment.Top else Alignment.CenterVertically
     ) {
         if (iconPainter != null) {
             Icon(
+                modifier = Modifier.padding(start = 4.dp),
                 painter = iconPainter,
                 contentDescription = title,
                 tint = MaterialTheme.colorScheme.onSurface,
@@ -74,12 +60,48 @@ fun GeneralButton(
         }
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
+                    .then(
+                        if (hazeState != null) {
+                            Modifier.hazeEffect(
+                                state = hazeState,
+                                style = HazeDefaults.style(
+                                    backgroundColor = MaterialTheme.colorScheme.surface,
+                                    blurRadius = 16.dp,
+                                    noiseFactor = 0f,
+                                    tint = HazeTint(Color.Transparent),
+                                ),
+                            )
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .padding(horizontal = 4.dp),
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
             )
             if (hint != null) {
                 Text(
-                    modifier = Modifier.alpha(0.5f),
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
+                        .then(
+                            if (hazeState != null) {
+                                Modifier.hazeEffect(
+                                    state = hazeState,
+                                    style = HazeDefaults.style(
+                                        backgroundColor = MaterialTheme.colorScheme.surface,
+                                        blurRadius = 16.dp,
+                                        noiseFactor = 0f,
+                                        tint = HazeTint(Color.Transparent),
+                                    ),
+                                )
+                            } else {
+                                Modifier
+                            }
+                        )
+                        .padding(horizontal = 4.dp)
+                        .alpha(0.5f),
                     text = hint,
                     style = MaterialTheme.typography.labelMedium,
                 )

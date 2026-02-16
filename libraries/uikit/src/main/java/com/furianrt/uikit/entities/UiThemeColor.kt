@@ -171,18 +171,6 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.FireflyYellow,
     ),
 
-    AVATAR_BLUE(
-        id = "dark_16",
-        surface = Colors.Primary.AvatarBlue,
-        primaryContainer = Colors.Accent.AvatarPurple,
-    ),
-
-    BLUE_NIGHT(
-        id = "dark_16",
-        surface = Colors.Primary.Blue1,
-        primaryContainer = Colors.Accent.Blue4,
-    ),
-
     GREEN_FOREST(
         id = "dark_17",
         surface = Colors.Primary.Green1,
@@ -229,6 +217,22 @@ enum class UiThemeColor(
         id = "dark_23",
         surface = Colors.Primary.Blue5,
         primaryContainer = Colors.Accent.Pink2,
+    ),
+
+    AVATAR_BLUE(
+        id = "dark_24",
+        surface = Colors.Primary.AvatarBlue,
+        primaryContainer = Colors.Accent.AvatarPurple,
+    ),
+
+    BLUE_NIGHT(
+        id = "dark_25",
+        surface = Colors.Primary.Blue1,
+        primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_1,
+            scaleType = CROP_ALIGN_BOTTOM,
+        ),
     ),
 
     LIGHT_BLUE(
@@ -412,6 +416,7 @@ enum class UiThemeColor(
             VAMPIRE_RED_DARK,
             IRIS_RED,
             BLUE_NIGHT_3,
+            BLUE_NIGHT,
         )
 
         fun getLightThemesList() = listOf(
