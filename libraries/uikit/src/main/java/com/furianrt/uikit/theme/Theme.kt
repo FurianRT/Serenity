@@ -29,7 +29,7 @@ import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
 
-private const val COLOR_ANIM_DURATION = 250
+private const val THEME_COLOR_ANIM_DURATION = 250
 
 internal val defaultColorScheme = darkColorScheme()
 

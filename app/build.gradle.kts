@@ -70,4 +70,6 @@ dependencies {
     implementation(libs.performance)
 
     implementation(libs.coil)
+
+    implementation(libs.startupRuntime)
 }

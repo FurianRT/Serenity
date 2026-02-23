@@ -1,6 +1,6 @@
 [versions]
 
-agp = "9.0.0"
+agp = "9.0.1"
 kotlin = "2.3.10"
 
 ksp = "2.3.5"
@@ -13,8 +13,8 @@ performancePlugin = "2.0.2"
 coreKtx = "1.17.0"
 lifecycle = "2.10.0"
 
-composeBom = "2026.01.01"
-composeActivity = "1.12.3"
+composeBom = "2026.02.00"
+composeActivity = "1.12.4"
 composeNavigation = "2.9.7"
 
 accompanist = "0.37.3"
@@ -66,6 +66,8 @@ kotlinSerializationConverter = "1.0.0"
 exifinterface = "1.4.2"
 
 workManager = "2.11.1"
+
+startupRuntime = "1.2.0"
 
 firebaseBom = "34.9.0"
 
@@ -148,6 +150,8 @@ kotlinSerializationConverter = { module = "com.jakewharton.retrofit:retrofit2-ko
 exifinterface = { module = "androidx.exifinterface:exifinterface", version.ref = "exifinterface" }
 
 workManager = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
+
+startupRuntime = { module = "androidx.startup:startup-runtime", version.ref = "startupRuntime" }
 
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 analytics = { module = "com.google.firebase:firebase-analytics" }

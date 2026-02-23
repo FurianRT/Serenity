@@ -20,7 +20,6 @@ import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
@@ -54,12 +53,12 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     override fun onCreate() {
         super.onCreate()
         Composer.setDiagnosticStackTraceMode(ComposeStackTraceMode.Auto)
-        SingletonImageLoader.setSafe(this)
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
-        updateLaunchCount()
+        SingletonImageLoader.setSafe(this)
         startPeriodicWorks()
+        updateLaunchCount()
     }
 
     override fun getWorkManagerConfiguration(): Configuration = Configuration.Builder()
@@ -79,7 +78,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     private fun startPeriodicWorks() {
         notesRepository.enqueuePeriodicCleanup()
         mediaRepository.enqueuePeriodicMediaSave()
-        GlobalScope.launch { syncManager.tryStartAutoBackup() }
+        scope.launch { syncManager.tryStartAutoBackup() }
     }
 
     private fun initStrictMode() {
