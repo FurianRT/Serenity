@@ -199,6 +199,7 @@ enum class UiThemeColor(
     BLUE_NIGHT_3(
         id = "dark_21",
         surface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4,
         primaryContainer = Colors.Accent.Blue4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_0,
@@ -228,6 +229,7 @@ enum class UiThemeColor(
     BLUE_NIGHT(
         id = "dark_25",
         surface = Colors.Primary.Blue1,
+        inverseSurface = Colors.Primary.Blue1,
         primaryContainer = Colors.Accent.Blue4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_1,

@@ -37,7 +37,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -330,15 +329,9 @@ private fun SuccessContent(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp))
-                    .hazeEffect(
-                        state = backgroundHazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 6.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(MaterialTheme.colorScheme.inverseSurface),
-                        ),
+                    .background(
+                        color = MaterialTheme.colorScheme.inverseSurface,
+                        shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
