@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +14,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -28,9 +31,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.model.KeyPath
 import com.furianrt.onboarding.R
+import com.furianrt.onboarding.internal.ui.container.LocalHazeState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 internal fun GreetingScreen(
@@ -111,14 +118,38 @@ internal fun GreetingScreen(
         )
         Spacer(Modifier.height(24.dp))
         Text(
-            modifier = Modifier.padding(horizontal = 32.dp),
+            modifier = Modifier
+                .padding(horizontal = 32.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .hazeEffect(
+                    state = LocalHazeState.current,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(vertical = 2.dp, horizontal = 4.dp),
             text = stringResource(R.string.onboarding_greeting_page_title),
             style = MaterialTheme.typography.titleLarge,
             textAlign = TextAlign.Center,
         )
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(12.dp))
         Text(
-            modifier = Modifier.padding(horizontal = 32.dp),
+            modifier = Modifier
+                .padding(horizontal = 28.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .hazeEffect(
+                    state = LocalHazeState.current,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(vertical = 2.dp, horizontal = 4.dp),
             text = stringResource(R.string.onboarding_greeting_page_body),
             style = MaterialTheme.typography.bodyMedium,
             textAlign = TextAlign.Center,

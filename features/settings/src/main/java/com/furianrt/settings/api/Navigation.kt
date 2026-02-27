@@ -5,6 +5,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.navigation
+import com.furianrt.apptheme.api.appThemeScreen
+import com.furianrt.apptheme.api.navigateToAppTheme
 import com.furianrt.backup.api.backupNavigation
 import com.furianrt.backup.api.navigateToBackup
 import com.furianrt.security.api.changeEmailScreen
@@ -37,6 +39,7 @@ fun NavGraphBuilder.settingsNavigation(
             openSecurityScreen = navController::navigateToSecurity,
             openBackupScreen = navController::navigateToBackup,
             openNoteSettingsScreen = navController::navigateToNoteSettings,
+            openAppThemeScreen = navController::navigateToAppTheme,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -57,6 +60,9 @@ fun NavGraphBuilder.settingsNavigation(
         )
         noteSettingsScreen(
             onCloseRequest = navController::navigateUp,
+        )
+        appThemeScreen(
+            onCloseRequest = navController::navigateUp
         )
     }
 }

@@ -2,19 +2,17 @@ package com.furianrt.onboarding.internal.ui.theme
 
 import com.furianrt.uikit.entities.UiThemeColor
 
-internal sealed interface ThemeState {
-    data object Loading : ThemeState
-    data class Success(
-        val initialPageIndex: Int,
-        val themes: List<UiThemeColor>,
-        val tabs: List<String>,
-    ) : ThemeState
+internal data class ThemeState(
+    val theme: UiThemeColor,
+    val content: Content,
+) {
+    sealed interface Content {
+        data object Loading : Content
+        data class Success(
+            val initialPageIndex: Int,
+            val themes: List<UiThemeColor>,
+        ) : Content
+    }
 }
 
-internal sealed interface ThemeEvent {
-    data class OnThemeTabClick(val theme: UiThemeColor) : ThemeEvent
-}
-
-internal sealed interface ThemeEffect {
-    data class ScrollToTheme(val index: Int) : ThemeEffect
-}
+internal sealed interface ThemeEvent

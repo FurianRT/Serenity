@@ -7,12 +7,9 @@ import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -21,13 +18,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -62,14 +55,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
-import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
@@ -77,11 +68,8 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
-import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -93,7 +81,6 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
 private data class FontsDialogState(
@@ -111,6 +98,7 @@ internal fun SettingsScreen(
     openSecurityScreen: () -> Unit,
     openBackupScreen: () -> Unit,
     openNoteSettingsScreen: () -> Unit,
+    openAppThemeScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -125,6 +113,7 @@ internal fun SettingsScreen(
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
     val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
     val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
+    val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -142,6 +131,7 @@ internal fun SettingsScreen(
                     is SettingsEffect.CloseScreen -> onCloseRequestState()
                     is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
                     is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
+                    is SettingsEffect.OpenAppThemeScreen -> openAppThemeScreenState()
                     is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
                         email = effect.supportEmail,
                         subject = effect.text,
@@ -311,6 +301,13 @@ private fun SuccessScreen(
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(uiR.string.title_theme),
+            iconPainter = painterResource(R.drawable.ic_theme),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
+        )
+        GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_font_title),
             iconPainter = painterResource(R.drawable.ic_settings_font),
             hazeState = hazeState,
@@ -323,15 +320,8 @@ private fun SuccessScreen(
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
         )
-        ThemeSelector(
-            modifier = Modifier.padding(top = 10.dp, bottom = 4.dp),
-            themes = uiState.themes,
-            onThemeSelected = { onEvent(SettingsEvent.OnAppThemeSelected(it)) },
-            onColorSelected = { onEvent(SettingsEvent.OnAppThemeColorSelected(it)) },
-        )
-
         GeneralButton(
-            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
             hazeState = hazeState,
@@ -379,106 +369,6 @@ private fun SuccessScreen(
             hazeState = hazeState,
         )
     }
-}
-
-@Composable
-private fun ThemeSelector(
-    themes: List<UiTheme>,
-    onThemeSelected: (theme: UiTheme) -> Unit,
-    onColorSelected: (color: UiThemeColor) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val selectedThemeIndex = themes.indexOfFirst { it.isSelected }
-    val selectedTheme = themes[max(selectedThemeIndex, 0)]
-    val selectedColorIndex = remember(themes, selectedTheme) {
-        selectedTheme.colors.indexOfFirstOrNull { it == selectedTheme.selectedColor }
-    }
-    val listState = rememberLazyListState(
-        initialFirstVisibleItemIndex = selectedColorIndex ?: 0,
-        initialFirstVisibleItemScrollOffset = -24.dp.dpToPx().toInt(),
-    )
-    SkipFirstEffect(selectedThemeIndex) {
-        listState.scrollToItem(0)
-    }
-    Column(
-        modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-    ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 20.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp),
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_theme),
-                contentDescription = null,
-            )
-            Text(
-                text = stringResource(R.string.settings_theme_title),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            themes.forEach { theme ->
-                TagItem(
-                    title = when (theme) {
-                        is UiTheme.Light -> stringResource(R.string.settings_light_theme_title)
-                        is UiTheme.Dark -> stringResource(R.string.settings_dark_theme_title)
-                    },
-                    isRemovable = false,
-                    textStyle = MaterialTheme.typography.bodySmall,
-                    background = if (theme.isSelected) {
-                        MaterialTheme.colorScheme.primaryContainer
-                    } else {
-                        MaterialTheme.colorScheme.secondaryContainer
-                    },
-                    textColor = if (theme.isSelected) {
-                        MaterialTheme.colorScheme.onPrimaryContainer
-                    } else {
-                        Color.Unspecified
-                    },
-                    horizontalPadding = 20.dp,
-                    onClick = { onThemeSelected(theme) },
-                )
-            }
-        }
-        LazyRow(
-            modifier = Modifier.systemGestureExclusion(),
-            state = listState,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            contentPadding = PaddingValues(horizontal = 20.dp),
-        ) {
-            items(count = selectedTheme.colors.count()) { index ->
-                ThemeItem(
-                    theme = selectedTheme.colors[index],
-                    selected = selectedTheme.selectedColor,
-                    onSelected = onColorSelected,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ThemeItem(
-    theme: UiThemeColor,
-    selected: UiThemeColor?,
-    onSelected: (color: UiThemeColor) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    val shape = RoundedCornerShape(16.dp)
-    Box(
-        modifier = modifier
-            .size(50.dp)
-            .clip(shape)
-            .background(theme.surface)
-            .applyIf(theme == selected) {
-                Modifier.border(1.dp, theme.primaryContainer, shape)
-            }
-            .clickableNoRipple { onSelected(theme) },
-    )
 }
 
 @Composable
@@ -594,28 +484,6 @@ private fun ScreenContentPreview() {
             uiState = SettingsUiState(
                 theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
                 content = SettingsUiState.Content.Success(
-                    themes = listOf(
-                        UiTheme.Light(
-                            colors = listOf(
-                                UiThemeColor.LIGHT_BLUE,
-                            ),
-                            selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
-                            isSelected = false,
-                        ),
-                        UiTheme.Dark(
-                            colors = listOf(
-                                UiThemeColor.SCANDI_GRANDPA_GRAY_DARK,
-                                UiThemeColor.DISTANT_CASTLE_GREEN,
-                                UiThemeColor.VAMPIRE_RED_DARK,
-                                UiThemeColor.EUPHORIA_BLUE_DARK,
-                                UiThemeColor.EUPHORIA_VIOLET,
-                                UiThemeColor.EUPHORIA_BLUE,
-                                UiThemeColor.EUPHORIA_PINK,
-                            ),
-                            selectedColor = UiThemeColor.DISTANT_CASTLE_GREEN,
-                            isSelected = true,
-                        )
-                    ),
                     rating = 4,
                     appVersion = "1.0",
                     locale = AppLocale.ENGLISH,

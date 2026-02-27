@@ -15,13 +15,11 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.domain.SettingsRepository
-import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +29,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 private const val MIN_GOOD_RATING = 4
@@ -51,11 +48,7 @@ internal class SettingsViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
 ) : ViewModel() {
 
-    private val selectedTheme = MutableStateFlow<UiTheme?>(null)
-
     val state: StateFlow<SettingsUiState> = combine(
-        selectedTheme,
-        appearanceRepository.getAppThemeColorId(),
         settingsRepository.getAppRating(),
         localeRepository.getSelectedLocale(),
         appearanceRepository.getAppThemeColorId(),
@@ -85,11 +78,6 @@ internal class SettingsViewModel @Inject constructor(
                 _effect.tryEmit(SettingsEffect.OpenBackupScreen)
             }
 
-            is SettingsEvent.OnAppThemeColorSelected -> launch {
-                appearanceRepository.updateAppThemeColor(event.color.id)
-            }
-
-            is SettingsEvent.OnAppThemeSelected -> selectedTheme.update { event.theme }
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
             is SettingsEvent.OnButtonReportIssueClick -> sendIssueFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
@@ -135,6 +123,10 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonNoteSettingsClick -> {
                 _effect.tryEmit(SettingsEffect.OpenNoteSettingsScreen)
             }
+
+            is SettingsEvent.OnButtonThemeClick -> {
+                _effect.tryEmit(SettingsEffect.OpenAppThemeScreen)
+            }
         }
     }
 
@@ -175,42 +167,15 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun buildState(
-        selectedTheme: UiTheme?,
-        selectedThemeColorId: String?,
         rating: Int,
         locale: AppLocale,
         appThemeColorId: String?,
-    ): SettingsUiState {
-        val selectedThemeColor = UiThemeColor.fromId(selectedThemeColorId)
-        val lightColors = UiThemeColor.getLightThemesList()
-        val darkColors = UiThemeColor.getDarkThemesList()
-        return SettingsUiState(
-            theme = UiThemeColor.fromId(appThemeColorId),
-            content = SettingsUiState.Content.Success(
-                themes = listOf(
-                    UiTheme.Light(
-                        isSelected = if (selectedTheme == null) {
-                            lightColors.contains(selectedThemeColor)
-                        } else {
-                            selectedTheme is UiTheme.Light
-                        },
-                        colors = lightColors,
-                        selectedColor = selectedThemeColor,
-                    ),
-                    UiTheme.Dark(
-                        isSelected = if (selectedTheme == null) {
-                            darkColors.contains(selectedThemeColor)
-                        } else {
-                            selectedTheme is UiTheme.Dark
-                        },
-                        colors = darkColors,
-                        selectedColor = selectedThemeColor,
-                    ),
-                ),
-                rating = rating,
-                appVersion = buildInfoProvider.getAppVersionName(),
-                locale = locale,
-            ),
-        )
-    }
+    ): SettingsUiState = SettingsUiState(
+        theme = UiThemeColor.fromId(appThemeColorId),
+        content = SettingsUiState.Content.Success(
+            rating = rating,
+            appVersion = buildInfoProvider.getAppVersionName(),
+            locale = locale,
+        ),
+    )
 }

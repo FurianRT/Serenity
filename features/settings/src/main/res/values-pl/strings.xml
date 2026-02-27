@@ -1,7 +1,6 @@
 <resources>
     <string name="settings_security_title">Bezpieczeństwo</string>
     <string name="settings_backup_title">Kopia i przywracanie</string>
-    <string name="settings_theme_title">Motyw</string>
     <string name="settings_light_theme_title">Jasny</string>
     <string name="settings_dark_theme_title">Ciemny</string>
     <string name="settings_font_title">Czcionka aplikacji</string>

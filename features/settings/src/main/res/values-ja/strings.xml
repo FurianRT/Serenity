@@ -1,7 +1,6 @@
 <resources>
     <string name="settings_security_title">セキュリティ</string>
     <string name="settings_backup_title">バックアップと復元</string>
-    <string name="settings_theme_title">テーマ</string>
     <string name="settings_light_theme_title">ライト</string>
     <string name="settings_dark_theme_title">ダーク</string>
     <string name="settings_font_title">アプリのフォント</string>

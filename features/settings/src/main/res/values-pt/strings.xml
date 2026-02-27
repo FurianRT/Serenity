@@ -1,7 +1,6 @@
 <resources>
     <string name="settings_security_title">Segurança</string>
     <string name="settings_backup_title">Backup e Restauração</string>
-    <string name="settings_theme_title">Tema</string>
     <string name="settings_light_theme_title">Claro</string>
     <string name="settings_dark_theme_title">Escuro</string>
     <string name="settings_font_title">Fonte do App</string>

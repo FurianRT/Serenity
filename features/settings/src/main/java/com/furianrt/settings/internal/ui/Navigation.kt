@@ -11,6 +11,7 @@ internal fun NavGraphBuilder.settingsScreen(
     openSecurityScreen: () -> Unit,
     openBackupScreen: () -> Unit,
     openNoteSettingsScreen: () -> Unit,
+    openAppThemeScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<MainRoute> {
@@ -18,6 +19,7 @@ internal fun NavGraphBuilder.settingsScreen(
             openSecurityScreen = openSecurityScreen,
             openBackupScreen = openBackupScreen,
             openNoteSettingsScreen = openNoteSettingsScreen,
+            openAppThemeScreen = openAppThemeScreen,
             onCloseRequest = onCloseRequest,
         )
     }

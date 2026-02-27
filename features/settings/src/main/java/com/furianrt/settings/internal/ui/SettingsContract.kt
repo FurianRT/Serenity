@@ -3,7 +3,6 @@ package com.furianrt.settings.internal.ui
 import androidx.annotation.IntRange
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
-import com.furianrt.settings.internal.ui.entities.UiTheme
 import com.furianrt.uikit.entities.UiThemeColor
 
 internal data class SettingsUiState(
@@ -13,7 +12,6 @@ internal data class SettingsUiState(
     sealed interface Content {
         data object Loading : Content
         data class Success(
-            val themes: List<UiTheme>,
             @param:IntRange(0L, 5L) val rating: Int,
             val appVersion: String,
             val locale: AppLocale,
@@ -27,8 +25,6 @@ internal sealed interface SettingsEvent {
     data object OnButtonBackupClick : SettingsEvent
     data object OnButtonFontClick : SettingsEvent
     data class OnFontSelected(val font: UiNoteFontFamily) : SettingsEvent
-    data class OnAppThemeSelected(val theme: UiTheme) : SettingsEvent
-    data class OnAppThemeColorSelected(val color: UiThemeColor) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
     data object OnButtonReportIssueClick : SettingsEvent
     data class OnRatingSelected(val rating: Int) : SettingsEvent
@@ -37,12 +33,14 @@ internal sealed interface SettingsEvent {
     data object OnButtonTermsAndConditionsClick : SettingsEvent
     data object OnButtonPrivacyPolicyClick : SettingsEvent
     data object OnButtonNoteSettingsClick : SettingsEvent
+    data object OnButtonThemeClick : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
     data object CloseScreen : SettingsEffect
     data object OpenSecurityScreen : SettingsEffect
     data object OpenBackupScreen : SettingsEffect
+    data object OpenAppThemeScreen : SettingsEffect
     data class SendFeedbackEmail(
         val supportEmail: String,
         val text: String,

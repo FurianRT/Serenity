@@ -1,7 +1,6 @@
 <resources>
     <string name="settings_security_title">নিরাপত্তা</string>
     <string name="settings_backup_title">ব্যাকআপ এবং পুনরুদ্ধার</string>
-    <string name="settings_theme_title">থিম</string>
     <string name="settings_light_theme_title">হালকা</string>
     <string name="settings_dark_theme_title">গাঢ়</string>
     <string name="settings_font_title">অ্যাপ ফন্ট</string>

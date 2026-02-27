@@ -6,13 +6,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -27,9 +30,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.model.KeyPath
 import com.furianrt.onboarding.R
+import com.furianrt.onboarding.internal.ui.container.LocalHazeState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 
 @Composable
 internal fun CompleteScreen(
@@ -119,7 +126,19 @@ internal fun CompleteScreen(
                 progress = { if (isInspectionMode) 1f else lottieState.progress },
             )
             Text(
-                modifier = Modifier.padding(horizontal = 32.dp),
+                modifier = Modifier
+                    .padding(horizontal = 32.dp)
+                    .clip(RoundedCornerShape(12.dp))
+                    .hazeEffect(
+                        state = LocalHazeState.current,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 16.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                    .padding(vertical = 2.dp, horizontal = 4.dp),
                 text = stringResource(R.string.onboarding_complete_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,

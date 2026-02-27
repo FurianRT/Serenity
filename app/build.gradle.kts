@@ -26,6 +26,7 @@ dependencies {
     implementation(projects.features.noteSearch)
     implementation(projects.features.backup)
     implementation(projects.features.onboarding)
+    implementation(projects.features.appTheme)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

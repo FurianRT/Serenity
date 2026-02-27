@@ -7,11 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -19,13 +21,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -33,12 +43,14 @@ internal fun ThemePreviewPage(
     color: UiThemeColor,
     modifier: Modifier = Modifier,
 ) {
+    val hazeState = rememberHazeState()
     SerenityTheme(
         colorScheme = color.colorScheme,
     ) {
         Box(
             modifier = modifier
-                .fillMaxSize()
+                .fillMaxWidth()
+                .aspectRatio(0.5f)
                 .shadow(8.dp, RoundedCornerShape(16.dp))
                 .background(
                     color = MaterialTheme.colorScheme.surface,
@@ -48,25 +60,34 @@ internal fun ThemePreviewPage(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
                     shape = RoundedCornerShape(16.dp),
-                )
-                .padding(vertical = 24.dp),
+                ),
         ) {
+            AppBackground(
+                modifier = Modifier.hazeSource(hazeState),
+                theme = color,
+            )
             Column(
-                modifier = Modifier.padding(horizontal = 5.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 5.dp)
+                    .padding(top = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(7.dp),
             ) {
                 Toolbar(
                     modifier = Modifier.padding(horizontal = 4.dp),
+                    hazeState = hazeState,
                 )
                 Spacer(Modifier.height(4.dp))
-                SkeletonItem1()
-                SkeletonItem2()
-                SkeletonItem1()
-                SkeletonItem2()
+                SkeletonItem1(
+                    hazeState = hazeState,
+                )
+                SkeletonItem2(
+                    hazeState = hazeState,
+                )
             }
             ActionButton(
                 modifier = Modifier
-                    .padding(end = 18.dp)
+                    .padding(end = 18.dp, bottom = 16.dp)
                     .align(Alignment.BottomEnd),
             )
         }
@@ -75,6 +96,7 @@ internal fun ThemePreviewPage(
 
 @Composable
 private fun Toolbar(
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -86,7 +108,15 @@ private fun Toolbar(
             modifier = Modifier
                 .height(18.dp)
                 .weight(1f)
-                .background(MaterialTheme.colorScheme.background, RoundedCornerShape(16.dp)),
+                .clip(RoundedCornerShape(16.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.background,
+                        blurRadius = 12.dp,
+                        tint = HazeTint(MaterialTheme.colorScheme.background.copy(alpha = 0.1f)),
+                    )
+                ),
         )
         Icon(
             modifier = Modifier.size(14.dp),
@@ -119,12 +149,21 @@ private fun ActionButton(
 
 @Composable
 private fun SkeletonItem1(
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    blurRadius = 12.dp,
+                    tint = HazeTint(MaterialTheme.colorScheme.background.copy(alpha = 0.1f)),
+                )
+            )
             .padding(vertical = 6.dp, horizontal = 4.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
@@ -174,12 +213,21 @@ private fun SkeletonItem1(
 
 @Composable
 private fun SkeletonItem2(
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    blurRadius = 12.dp,
+                    tint = HazeTint(MaterialTheme.colorScheme.background.copy(alpha = 0.1f)),
+                )
+            )
             .padding(vertical = 6.dp, horizontal = 4.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),
     ) {
@@ -208,7 +256,7 @@ private fun SkeletonItem2(
 @Composable
 private fun Preview() {
     ThemePreviewPage(
-        modifier = Modifier.size(height = 420.dp, width = 200.dp),
+        modifier = Modifier.width(200.dp),
         color = UiThemeColor.DISTANT_CASTLE_GREEN,
     )
 }

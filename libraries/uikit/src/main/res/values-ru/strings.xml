@@ -23,6 +23,7 @@
     <string name="action_skip">Пропустить</string>
 
     <string name="title_email">Электронная почта</string>
+    <string name="title_theme">Тема</string>
 
     <string name="settings_title">Настройки</string>
     <string name="security_title">Безопасность</string>

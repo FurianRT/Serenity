@@ -190,23 +190,6 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
     ),
 
-    BLUE_NIGHT_2(
-        id = "dark_20",
-        surface = Colors.Primary.Blue3,
-        primaryContainer = Colors.Accent.Blue4,
-    ),
-
-    BLUE_NIGHT_3(
-        id = "dark_21",
-        surface = Colors.Primary.Blue4,
-        inverseSurface = Colors.Primary.Blue4,
-        primaryContainer = Colors.Accent.Blue4,
-        image = UiThemeImage(
-            resId = R.drawable.app_background_picture_0,
-            scaleType = CROP_ALIGN_CENTER,
-        ),
-    ),
-
     ORANGE(
         id = "dark_22",
         surface = Colors.Primary.Orange,
@@ -220,20 +203,225 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.Pink2,
     ),
 
-    AVATAR_BLUE(
-        id = "dark_24",
-        surface = Colors.Primary.AvatarBlue,
-        primaryContainer = Colors.Accent.AvatarPurple,
+    APP_BACKGROUND_PICTURE_0(
+        id = "app_background_picture_0",
+        surface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface,
+        primaryContainer = TOTAL_BLACK.primaryContainer,
+        surfaceTint = TOTAL_BLACK.surfaceTint,
+        surfaceDim = TOTAL_BLACK.surfaceDim,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_0,
+            scaleType = CROP_ALIGN_CENTER,
+        ),
     ),
 
-    BLUE_NIGHT(
-        id = "dark_25",
+    APP_BACKGROUND_PICTURE_1(
+        id = "app_background_picture_1",
         surface = Colors.Primary.Blue1,
         inverseSurface = Colors.Primary.Blue1,
         primaryContainer = Colors.Accent.Blue4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_1,
             scaleType = CROP_ALIGN_BOTTOM,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_2(
+        id = "app_background_picture_2",
+        surface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface,
+        primaryContainer = TOTAL_BLACK.primaryContainer,
+        surfaceTint = TOTAL_BLACK.surfaceTint,
+        surfaceDim = TOTAL_BLACK.surfaceDim,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_2,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_3(
+        id = "app_background_picture_3",
+        surface = Colors.Primary.Blue3,
+        inverseSurface = Colors.Primary.Blue3,
+        primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_3,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_4(
+        id = "app_background_picture_4",
+        surface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface,
+        primaryContainer = TOTAL_BLACK.primaryContainer,
+        surfaceTint = TOTAL_BLACK.surfaceTint,
+        surfaceDim = TOTAL_BLACK.surfaceDim,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_4,
+            scaleType = CROP_ALIGN_TOP,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_5(
+        id = "app_background_picture_5",
+        surface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4,
+        primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_5,
+            scaleType = CROP_ALIGN_BOTTOM,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_6(
+        id = "app_background_picture_6",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.LightPink.copy(alpha = 0.15f),
+        outlineVariant = Colors.Accent.LightPink.copy(alpha = 0.15f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.2f),
+        onTertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.25f),
+        background = Color.White.copy(alpha = 0.25f),
+        secondaryContainer = Color.White.copy(alpha = 0.35f),
+        inverseSurface = Colors.Primary.LightPink,
+        onSurfaceVariant = Colors.Accent.LightPink.copy(alpha = 0.1f),
+        surface = Colors.Primary.LightPink,
+        surfaceContainer = Colors.Accent.LightPink,
+        primaryContainer = Colors.Accent.LightPink,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_6,
+            scaleType = CROP_ALIGN_BOTTOM,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_7(
+        id = "app_background_picture_7",
+        surface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4,
+        primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_7,
+            scaleType = CROP_ALIGN_CENTER,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_8(
+        id = "app_background_picture_8",
+        surface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4,
+        primaryContainer = Colors.Accent.Blue4,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_8,
+            scaleType = CROP_ALIGN_CENTER,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_9(
+        id = "app_background_picture_9",
+        surface = EUPHORIA_VIOLET.surface,
+        inverseSurface = EUPHORIA_VIOLET.surface,
+        primaryContainer = EUPHORIA_VIOLET.primaryContainer,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_9,
+            scaleType = CROP_ALIGN_CENTER,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_10(
+        id = "app_background_picture_10",
+        surface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface,
+        primaryContainer = TOTAL_BLACK.primaryContainer,
+        surfaceTint = TOTAL_BLACK.surfaceTint,
+        surfaceDim = TOTAL_BLACK.surfaceDim,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_10,
+            scaleType = CROP_ALIGN_BOTTOM,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_11(
+        id = "app_background_picture_11",
+        surface = Colors.Primary.AvatarBlue,
+        inverseSurface = Colors.Primary.AvatarBlue,
+        primaryContainer = Colors.Accent.AvatarPurple,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_11,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_12(
+        id = "app_background_picture_12",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.LightGreen.copy(alpha = 0.1f),
+        outlineVariant = Colors.Accent.LightGreen.copy(alpha = 0.1f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.LightGreen.copy(alpha = 0.15f),
+        onTertiaryContainer = Colors.Accent.LightGreen.copy(alpha = 0.2f),
+        background = Color.White.copy(alpha = 0.3f),
+        secondaryContainer = Color.White.copy(alpha = 0.3f),
+        inverseSurface = Colors.Primary.LightGreen,
+        onSurfaceVariant = Colors.Accent.LightGreen.copy(alpha = 0.1f),
+        surface = Colors.Primary.LightGreen,
+        surfaceContainer = Colors.Accent.LightGreen,
+        primaryContainer = Colors.Accent.LightGreen,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_12,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_13(
+        id = "app_background_picture_13",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.LightPink.copy(alpha = 0.15f),
+        outlineVariant = Colors.Accent.LightPink.copy(alpha = 0.15f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.2f),
+        onTertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.25f),
+        background = Color.White.copy(alpha = 0.25f),
+        secondaryContainer = Color.White.copy(alpha = 0.35f),
+        inverseSurface = Colors.Primary.LightPink,
+        onSurfaceVariant = Colors.Accent.LightPink.copy(alpha = 0.1f),
+        surface = Colors.Primary.LightPink,
+        surfaceContainer = Colors.Accent.LightPink,
+        primaryContainer = Colors.Accent.LightPink,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_13,
+            scaleType = FILL,
         ),
     ),
 
@@ -417,8 +605,6 @@ enum class UiThemeColor(
             EUPHORIA_VIOLET,
             VAMPIRE_RED_DARK,
             IRIS_RED,
-            BLUE_NIGHT_3,
-            BLUE_NIGHT,
         )
 
         fun getLightThemesList() = listOf(
@@ -428,6 +614,23 @@ enum class UiThemeColor(
             LIGHT_WHITE,
             PINK_LIGHT,
             PURPLE_LIGHT,
+        )
+
+        fun getPictureThemes() = listOf(
+            APP_BACKGROUND_PICTURE_0,
+            APP_BACKGROUND_PICTURE_1,
+            APP_BACKGROUND_PICTURE_2,
+            APP_BACKGROUND_PICTURE_3,
+            APP_BACKGROUND_PICTURE_4,
+            APP_BACKGROUND_PICTURE_5,
+            APP_BACKGROUND_PICTURE_7,
+            APP_BACKGROUND_PICTURE_8,
+            APP_BACKGROUND_PICTURE_9,
+            APP_BACKGROUND_PICTURE_10,
+            APP_BACKGROUND_PICTURE_11,
+            APP_BACKGROUND_PICTURE_12,
+            APP_BACKGROUND_PICTURE_13,
+            APP_BACKGROUND_PICTURE_6,
         )
     }
 }

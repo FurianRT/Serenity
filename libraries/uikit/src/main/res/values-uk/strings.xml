@@ -22,6 +22,7 @@
     <string name="action_skip">Пропустити</string>
 
     <string name="title_email">Електронна пошта</string>
+    <string name="title_theme">Тема</string>
 
     <string name="settings_title">Налаштування</string>
     <string name="security_title">Безпека</string>

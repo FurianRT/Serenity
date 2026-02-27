@@ -19,7 +19,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +50,7 @@ import com.furianrt.onboarding.internal.ui.theme.ThemeScreenState
 import com.furianrt.permissions.extensions.openNotificationsSettingsScreen
 import com.furianrt.permissions.ui.NotificationsPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
@@ -55,9 +58,12 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+
+internal val LocalHazeState = compositionLocalOf { HazeState() }
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -126,57 +132,74 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
 ) {
     val themeScreenState = remember { ThemeScreenState(uiState.appThemeColor) }
+    val hazeState = rememberHazeState()
+
     SerenityTheme(
         colorScheme = themeScreenState.selectedTheme.colorScheme,
         isLightTheme = themeScreenState.selectedTheme.isLight,
     ) {
-        Column(
+        Box(
             modifier = modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.surface)
-                .statusBarsPadding()
                 .clickableNoRipple {},
         ) {
             Crossfade(
+                modifier = Modifier.hazeSource(hazeState),
+                targetState = themeScreenState.selectedTheme,
+            ) { targetState ->
+                AppBackground(
+                    theme = targetState,
+                )
+            }
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f),
-                targetState = uiState.page,
-                animationSpec = tween(durationMillis = 400, easing = LinearEasing),
-            ) { targetState ->
-                when (targetState) {
-                    is OnboardingPage.Greeting -> GreetingScreen()
-                    is OnboardingPage.Theme -> ThemeScreen(state = themeScreenState)
-                    is OnboardingPage.Notification -> NotificationsScreen()
-                    is OnboardingPage.Complete -> CompleteScreen()
+                    .statusBarsPadding(),
+            ) {
+                CompositionLocalProvider(LocalHazeState provides hazeState) {
+                    Crossfade(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
+                        targetState = uiState.page,
+                        animationSpec = tween(durationMillis = 400, easing = LinearEasing),
+                    ) { targetState ->
+                        when (targetState) {
+                            is OnboardingPage.Greeting -> GreetingScreen()
+                            is OnboardingPage.Theme -> ThemeScreen(state = themeScreenState)
+                            is OnboardingPage.Notification -> NotificationsScreen()
+                            is OnboardingPage.Complete -> CompleteScreen()
+                        }
+                    }
                 }
-            }
-            AnimatedContent(
-                modifier = Modifier.fillMaxWidth(),
-                targetState = uiState.page.buttonState,
-                transitionSpec = {
-                    slideIntoContainer(
-                        towards = SlideDirection.Up,
-                        animationSpec = tween(durationMillis = 450, delayMillis = 500),
-                    ).togetherWith(
-                        slideOutOfContainer(
-                            towards = SlideDirection.Down,
-                            animationSpec = tween(durationMillis = 400),
+                AnimatedContent(
+                    modifier = Modifier.fillMaxWidth(),
+                    targetState = uiState.page.buttonState,
+                    transitionSpec = {
+                        slideIntoContainer(
+                            towards = SlideDirection.Up,
+                            animationSpec = tween(durationMillis = 450, delayMillis = 500),
+                        ).togetherWith(
+                            slideOutOfContainer(
+                                towards = SlideDirection.Down,
+                                animationSpec = tween(durationMillis = 400),
+                            )
                         )
-                    )
-                },
-            ) { targetState ->
-                Buttons(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp, bottom = 8.dp)
-                        .navigationBarsPadding(),
-                    state = targetState,
-                    onMainClick = {
-                        onEvent(ContainerEvent.OnMainButtonClick(themeScreenState.selectedTheme))
                     },
-                    onSkipClick = { onEvent(ContainerEvent.OnSkipButtonClick) },
-                )
+                ) { targetState ->
+                    Buttons(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 24.dp, bottom = 8.dp)
+                            .navigationBarsPadding(),
+                        state = targetState,
+                        onMainClick = {
+                            onEvent(ContainerEvent.OnMainButtonClick(themeScreenState.selectedTheme))
+                        },
+                        onSkipClick = { onEvent(ContainerEvent.OnSkipButtonClick) },
+                    )
+                }
             }
         }
     }
