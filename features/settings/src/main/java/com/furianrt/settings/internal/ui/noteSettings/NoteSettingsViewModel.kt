@@ -23,6 +23,7 @@ internal class NoteSettingsViewModel @Inject constructor(
     val state: StateFlow<NoteSettingsState> = combine(
         appearanceRepository.isAutoDetectLocationEnabled(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
+        appearanceRepository.isKeepPrevBackgroundEnabled(),
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
     ).stateIn(
@@ -50,18 +51,24 @@ internal class NoteSettingsViewModel @Inject constructor(
             is NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged -> launch {
                 appearanceRepository.setMinimalisticHomeScreenEnabled(event.isEnabled)
             }
+
+            is NoteSettingsEvent.OnKeepNotePrevBackgroundChanged -> launch {
+                appearanceRepository.setKeepPrevBackgroundEnabled(event.isEnabled)
+            }
         }
     }
 
     private fun buildState(
         isAutoDetectLocationEnabled: Boolean,
         isMinimalisticHomeScreenEnabled: Boolean,
+        isKeepPrevBackgroundEnabled: Boolean,
         appThemeColorId: String?,
     ): NoteSettingsState = NoteSettingsState(
         theme = UiThemeColor.fromId(appThemeColorId),
         content = NoteSettingsState.Content.Success(
             isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
             isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,
+            isKeepPrevBackgroundEnabled = isKeepPrevBackgroundEnabled,
         ),
     )
 }

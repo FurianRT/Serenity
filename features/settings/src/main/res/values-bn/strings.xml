@@ -11,13 +11,13 @@
     <string name="settings_terms_and_conditions_title">শর্তাবলী</string>
     <string name="settings_privacy_policy_title">গোপনীয়তা নীতি</string>
     <string name="settings_version_title">ভার্সন %s</string>
-
     <string name="settings_bad_feedback_title">কিছু ঠিকমতো নেই?</string>
     <string name="settings_bad_feedback_body">আপনার প্রতিক্রিয়া আমাদের জন্য গুরুত্বপূর্ণ। আমাদের সাহায্য করুন আপনার অভিজ্ঞতা উন্নত করতে</string>
-
     <string name="settings_note_content_title">নোটের বিষয়বস্তু</string>
     <string name="settings_note_detect_location_title">অবস্থান স্বয়ংক্রিয়ভাবে সনাক্ত করুন</string>
     <string name="settings_note_detect_location_hint">নোট তৈরি করার সময় আপনার বর্তমান অবস্থান স্বয়ংক্রিয়ভাবে সনাক্ত করুন</string>
     <string name="settings_note_minimalistic_home_screen_title">হোম স্ক্রিন মিনিমাল মোড</string>
     <string name="settings_note_minimalistic_home_screen_hint">হোম স্ক্রিনে নোটগুলোকে শুধুমাত্র টেক্সট সহ সাধারণ তালিকা হিসেবে দেখান</string>
+    <string name="settings_note_keep_prev_background_title">পূর্বের ব্যাকগ্রাউন্ড রাখুন</string>
+    <string name="settings_note_keep_prev_background_hint">নতুন নোটে সর্বশেষ ব্যবহৃত ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
 </resources>

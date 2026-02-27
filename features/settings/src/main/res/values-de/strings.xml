@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Erkenne automatisch deinen aktuellen Standort beim Erstellen einer Notiz</string>
     <string name="settings_note_minimalistic_home_screen_title">Minimalmodus für Startbildschirm</string>
     <string name="settings_note_minimalistic_home_screen_hint">Notizen auf dem Startbildschirm als einfache Textliste anzeigen</string>
+    <string name="settings_note_keep_prev_background_title">Vorherigen Hintergrund beibehalten</string>
+    <string name="settings_note_keep_prev_background_hint">Den zuletzt verwendeten Hintergrund automatisch auf neue Notizen anwenden</string>
 </resources>

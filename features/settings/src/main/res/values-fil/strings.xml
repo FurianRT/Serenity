@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Awtomatikong tukuyin ang iyong kasalukuyang lokasyon kapag gumagawa ng tala</string>
     <string name="settings_note_minimalistic_home_screen_title">Minimal Mode para sa Home Screen</string>
     <string name="settings_note_minimalistic_home_screen_hint">Ipakita ang mga note bilang simpleng listahang text-only sa home screen</string>
+    <string name="settings_note_keep_prev_background_title">Panatilihin ang Nakaraang Background</string>
+    <string name="settings_note_keep_prev_background_hint">Awtomatikong gamitin ang huling ginamit na background sa mga bagong tala</string>
 </resources>

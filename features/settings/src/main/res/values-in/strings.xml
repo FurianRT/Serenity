@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Deteksi lokasi Anda secara otomatis saat membuat catatan</string>
     <string name="settings_note_minimalistic_home_screen_title">Mode Minimal Layar Utama</string>
     <string name="settings_note_minimalistic_home_screen_hint">Tampilkan catatan sebagai daftar sederhana tanpa media di layar utama</string>
+    <string name="settings_note_keep_prev_background_title">Simpan Latar Belakang Sebelumnya</string>
+    <string name="settings_note_keep_prev_background_hint">Secara otomatis gunakan latar belakang terakhir pada catatan baru</string>
 </resources>

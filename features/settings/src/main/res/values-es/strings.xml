@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Detecta automáticamente tu ubicación actual al crear una nota</string>
     <string name="settings_note_minimalistic_home_screen_title">Modo Minimal en la Pantalla Principal</string>
     <string name="settings_note_minimalistic_home_screen_hint">Mostrar las notas como una lista simple solo de texto en la pantalla principal</string>
+    <string name="settings_note_keep_prev_background_title">Mantener fondo anterior</string>
+    <string name="settings_note_keep_prev_background_hint">Aplicar automáticamente el último fondo usado a las nuevas notas</string>
 </resources>

@@ -57,6 +57,22 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.setDefaultNoteMoodId(moodId)
     }
 
+    override fun getDefaultNoteBackgroundColorId(): Flow<String?> {
+        return appearanceDataStore.getDefaultNoteBackgroundColorId()
+    }
+
+    override suspend fun setDefaultNoteBackgroundColorId(colorId: String?) {
+        appearanceDataStore.setDefaultNoteBackgroundColorId(colorId)
+    }
+
+    override fun getDefaultNoteBackgroundImageId(): Flow<String?> {
+        return appearanceDataStore.getDefaultNoteBackgroundImageId()
+    }
+
+    override suspend fun setDefaultNoteBackgroundImageId(imageId: String?) {
+        appearanceDataStore.setDefaultNoteBackgroundImageId(imageId)
+    }
+
     override fun isAutoDetectLocationEnabled(): Flow<Boolean> {
         return appearanceDataStore.isAutoDetectLocationEnabled()
     }
@@ -79,5 +95,13 @@ internal class AppearanceRepositoryImp @Inject constructor(
 
     override suspend fun setMinimalisticHomeScreenEnabled(enabled: Boolean) {
         appearanceDataStore.setMinimalisticHomeScreenEnabled(enabled)
+    }
+
+    override fun isKeepPrevBackgroundEnabled(): Flow<Boolean> {
+        return appearanceDataStore.isKeepPrevBackgroundEnabled()
+    }
+
+    override suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean) {
+        appearanceDataStore.setKeepPrevBackgroundEnabled(enabled)
     }
 }

@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Not oluştururken mevcut konumunu otomatik algıla</string>
     <string name="settings_note_minimalistic_home_screen_title">Ana Ekran Minimal Modu</string>
     <string name="settings_note_minimalistic_home_screen_hint">Ana ekranda notları basit bir metin listesi olarak göster</string>
+    <string name="settings_note_keep_prev_background_title">Önceki Arka Planı Koru</string>
+    <string name="settings_note_keep_prev_background_hint">Yeni notlara son kullanılan arka planı otomatik olarak uygula</string>
 </resources>

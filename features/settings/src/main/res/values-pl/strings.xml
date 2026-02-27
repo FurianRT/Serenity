@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Automatycznie wykrywaj bieżącą lokalizację podczas tworzenia notatki</string>
     <string name="settings_note_minimalistic_home_screen_title">Tryb Minimalny na Ekranie Głównym</string>
     <string name="settings_note_minimalistic_home_screen_hint">Wyświetlaj notatki na ekranie głównym jako prostą listę zawierającą tylko текст</string>
+    <string name="settings_note_keep_prev_background_title">Zachowaj poprzednie tło</string>
+    <string name="settings_note_keep_prev_background_hint">Automatycznie stosuj ostatnio użyte tło do nowych notatek</string>
 </resources>

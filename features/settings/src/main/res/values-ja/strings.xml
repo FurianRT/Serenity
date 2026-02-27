@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">ノートを作成するときに現在地を自動検出</string>
     <string name="settings_note_minimalistic_home_screen_title">ホーム画面ミニマルモード</string>
     <string name="settings_note_minimalistic_home_screen_hint">ホーム画面でノートをテキストのみのシンプルなリストとして表示</string>
+    <string name="settings_note_keep_prev_background_title">前回の背景を保持</string>
+    <string name="settings_note_keep_prev_background_hint">新しいノートに前回使用した背景を自動的に適用します</string>
 </resources>

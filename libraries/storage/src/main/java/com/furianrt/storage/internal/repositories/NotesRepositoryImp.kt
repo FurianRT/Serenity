@@ -153,8 +153,16 @@ internal class NotesRepositoryImp @Inject constructor(
                 font = appearanceDataStore.getDefaultNoteFont().first(),
                 fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
                 fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
-                backgroundId = null,
-                backgroundImageId = null,
+                backgroundId = if (appearanceDataStore.isKeepPrevBackgroundEnabled().first()) {
+                    appearanceDataStore.getDefaultNoteBackgroundColorId().first()
+                } else {
+                    null
+                },
+                backgroundImageId = if (appearanceDataStore.isKeepPrevBackgroundEnabled().first()) {
+                    appearanceDataStore.getDefaultNoteBackgroundImageId().first()
+                } else {
+                    null
+                },
                 moodId = null,
                 date = ZonedDateTime.now(),
                 isPinned = false,

@@ -20,4 +20,6 @@
     <string name="settings_note_detect_location_hint">ตรวจจับตำแหน่งปัจจุบันของคุณโดยอัตโนมัติเมื่อสร้างโน้ต</string>
     <string name="settings_note_minimalistic_home_screen_title">โหมดมินิมอลของหน้าจอหลัก</string>
     <string name="settings_note_minimalistic_home_screen_hint">แสดงบันทึกเป็นรายการแบบตัวอักษรง่าย ๆ บนหน้าจอหลัก</string>
+    <string name="settings_note_keep_prev_background_title">เก็บพื้นหลังเดิมไว้</string>
+    <string name="settings_note_keep_prev_background_hint">ใช้พื้นหลังล่าสุดโดยอัตโนมัติกับบันทึกใหม่</string>
 </resources>

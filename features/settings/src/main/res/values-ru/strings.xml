@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Автоматически определять текущее местоположение при создании заметки</string>
     <string name="settings_note_minimalistic_home_screen_title">Минималистичный режим главного экрана</string>
     <string name="settings_note_minimalistic_home_screen_hint">Показывать заметки на главном экране в виде простого списка без медиа</string>
+    <string name="settings_note_keep_prev_background_title">Сохранять предыдущий фон</string>
+    <string name="settings_note_keep_prev_background_hint">Автоматически применять последний использованный фон к новым заметкам</string>
 </resources>

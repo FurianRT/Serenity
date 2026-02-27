@@ -25,9 +25,14 @@ private val KEY_APP_FONT = stringPreferencesKey("app_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
 private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
 private val KEY_DEFAULT_NOTE_MOOD_ID = stringPreferencesKey("default_note_mood_id")
+private val KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID =
+    stringPreferencesKey("default_note_background_color_id")
+private val KEY_DEFAULT_NOTE_BACKGROUND_IMAGE_ID =
+    stringPreferencesKey("default_note_background_image_id")
 private val KEY_AUTO_DETECT_LOCATION = booleanPreferencesKey("auto_detect_location")
 private val KEY_AUTO_DETECT_LOCATION_ASKED = booleanPreferencesKey("auto_detect_location_asked")
 private val KEY_MINIMALISTIC_HOME_SCREEN = booleanPreferencesKey("minimalistic_home_screen")
+private val KEY_PREV_NOTE_BACKGROUND = booleanPreferencesKey("prev_note_background")
 
 @Singleton
 internal class AppearanceDataStore @Inject constructor(
@@ -96,6 +101,33 @@ internal class AppearanceDataStore @Inject constructor(
         dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_MOOD_ID] = moodId }
     }
 
+    fun getDefaultNoteBackgroundColorId(): Flow<String?> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID] }
+
+    fun getDefaultNoteBackgroundImageId(): Flow<String?> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_BACKGROUND_IMAGE_ID] }
+
+
+    suspend fun setDefaultNoteBackgroundColorId(colorId: String?) {
+        dataStore.edit { prefs ->
+            if (colorId == null) {
+                prefs.remove(KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID)
+            } else {
+                prefs[KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID] = colorId
+            }
+        }
+    }
+
+    suspend fun setDefaultNoteBackgroundImageId(imageId: String?) {
+        dataStore.edit { prefs ->
+            if (imageId == null) {
+                prefs.remove(KEY_DEFAULT_NOTE_BACKGROUND_IMAGE_ID)
+            } else {
+                prefs[KEY_DEFAULT_NOTE_BACKGROUND_IMAGE_ID] = imageId
+            }
+        }
+    }
+
     fun isAutoDetectLocationEnabled(): Flow<Boolean> = dataStore.data
         .map { prefs -> prefs[KEY_AUTO_DETECT_LOCATION] ?: false }
 
@@ -115,5 +147,12 @@ internal class AppearanceDataStore @Inject constructor(
 
     suspend fun setMinimalisticHomeScreenEnabled(enabled: Boolean) {
         dataStore.edit { prefs -> prefs[KEY_MINIMALISTIC_HOME_SCREEN] = enabled }
+    }
+
+    fun isKeepPrevBackgroundEnabled(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_PREV_NOTE_BACKGROUND] ?: true }
+
+    suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_PREV_NOTE_BACKGROUND] = enabled }
     }
 }

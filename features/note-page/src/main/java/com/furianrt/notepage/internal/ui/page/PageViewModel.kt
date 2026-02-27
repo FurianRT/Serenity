@@ -1136,6 +1136,8 @@ internal class PageViewModel @AssistedInject constructor(
         appearanceRepository.setDefaultNoteFont(state.fontFamily?.toNoteFontFamily())
         appearanceRepository.setDefaultNoteFontColor(state.fontColor?.toNoteFontColor())
         appearanceRepository.setDefaultNoteFontSize(state.fontSize)
+        appearanceRepository.setDefaultNoteBackgroundColorId(state.noteTheme.colorId)
+        appearanceRepository.setDefaultNoteBackgroundImageId(state.noteTheme.imageId)
     }
 
     private fun updateFontFamily(family: UiNoteFontFamily?) {

@@ -25,6 +25,11 @@ interface AppearanceRepository {
     fun getDefaultNoteMoodId(): Flow<String?>
     suspend fun setDefaultNoteMoodId(moodId: String)
 
+    fun getDefaultNoteBackgroundColorId(): Flow<String?>
+    fun getDefaultNoteBackgroundImageId(): Flow<String?>
+    suspend fun setDefaultNoteBackgroundColorId(colorId: String?)
+    suspend fun setDefaultNoteBackgroundImageId(imageId: String?)
+
     fun isAutoDetectLocationEnabled(): Flow<Boolean>
     suspend fun setAutoDetectLocationEnabled(enabled: Boolean)
     fun isAutoDetectLocationAsked(): Flow<Boolean>
@@ -32,4 +37,7 @@ interface AppearanceRepository {
 
     fun isMinimalisticHomeScreenEnabled(): Flow<Boolean>
     suspend fun setMinimalisticHomeScreenEnabled(enabled: Boolean)
+
+    fun isKeepPrevBackgroundEnabled(): Flow<Boolean>
+    suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean)
 }

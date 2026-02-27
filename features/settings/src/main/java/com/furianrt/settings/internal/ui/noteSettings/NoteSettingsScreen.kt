@@ -113,6 +113,15 @@ private fun SuccessContent(
             },
         )
         SwitchWithLabel(
+            title = stringResource(R.string.settings_note_keep_prev_background_title),
+            hint = stringResource(R.string.settings_note_keep_prev_background_hint),
+            isChecked = uiState.isKeepPrevBackgroundEnabled,
+            hazeState = hazeState,
+            onCheckedChange = { isChecked ->
+                onEvent(NoteSettingsEvent.OnKeepNotePrevBackgroundChanged(isChecked))
+            },
+        )
+        SwitchWithLabel(
             title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
             hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
             isChecked = uiState.isMinimalisticHomeScreenEnabled,
@@ -141,6 +150,7 @@ private fun Preview() {
                 content = NoteSettingsState.Content.Success(
                     isAutoDetectLocationEnabled = true,
                     isMinimalisticHomeScreenEnabled = false,
+                    isKeepPrevBackgroundEnabled = true,
                 ),
             ),
             onEvent = {},

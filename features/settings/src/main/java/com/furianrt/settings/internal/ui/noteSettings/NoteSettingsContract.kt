@@ -11,6 +11,7 @@ internal data class NoteSettingsState(
         data class Success(
             val isAutoDetectLocationEnabled: Boolean,
             val isMinimalisticHomeScreenEnabled: Boolean,
+            val isKeepPrevBackgroundEnabled: Boolean,
         ) : Content
     }
 }
@@ -23,4 +24,5 @@ internal sealed interface NoteSettingsEvent {
     data object OnButtonBackClick : NoteSettingsEvent
     data class OnEnableAutoDetectLocationChanged(val isEnabled: Boolean) : NoteSettingsEvent
     data class OnEnableMinimalisticHomeScreenChanged(val isEnabled: Boolean) : NoteSettingsEvent
+    data class OnKeepNotePrevBackgroundChanged(val isEnabled: Boolean) : NoteSettingsEvent
 }

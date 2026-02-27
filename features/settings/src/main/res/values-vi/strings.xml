@@ -18,4 +18,6 @@
     <string name="settings_note_detect_location_hint">Tự động phát hiện vị trí hiện tại của bạn khi tạo ghi chú</string>
     <string name="settings_note_minimalistic_home_screen_title">Chế Độ Tối Giản Màn Hình Chính</string>
     <string name="settings_note_minimalistic_home_screen_hint">Hiển thị ghi chú dưới dạng danh sách chỉ có văn bản trên màn hình chính</string>
+    <string name="settings_note_keep_prev_background_title">Giữ nền trước đó</string>
+    <string name="settings_note_keep_prev_background_hint">Tự động áp dụng nền đã sử dụng gần nhất cho ghi chú mới</string>
 </resources>
