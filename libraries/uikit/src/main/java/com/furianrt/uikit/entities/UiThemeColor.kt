@@ -332,7 +332,7 @@ enum class UiThemeColor(
         id = "app_background_picture_9",
         surface = EUPHORIA_VIOLET.surface,
         inverseSurface = EUPHORIA_VIOLET.surface,
-        primaryContainer = EUPHORIA_VIOLET.primaryContainer,
+        primaryContainer = Colors.Accent.Pink4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_9,
             scaleType = CROP_ALIGN_CENTER,
