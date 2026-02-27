@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -37,6 +38,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -71,7 +74,10 @@ import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
+import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -249,6 +255,7 @@ private fun ScreenContent(
 
                 is SearchUiState.State.Empty -> EmptyContent(
                     modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
+                    hazeState = hazeState,
                     toolbarHeight = topPadding,
                 )
             }
@@ -364,6 +371,7 @@ private fun SuccessContent(
 @Composable
 private fun EmptyContent(
     toolbarHeight: Dp,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -373,7 +381,19 @@ private fun EmptyContent(
         contentAlignment = Alignment.TopCenter,
     ) {
         Text(
-            modifier = Modifier.padding(top = 100.dp),
+            modifier = Modifier
+                .padding(top = 100.dp)
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 4.dp),
             text = stringResource(R.string.notes_search_empty_search_title),
             style = MaterialTheme.typography.titleMedium,
         )
