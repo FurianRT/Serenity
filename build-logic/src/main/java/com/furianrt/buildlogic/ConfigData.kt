@@ -7,8 +7,8 @@ object ConfigData {
     const val MIN_SDK_VERSION = 33
     const val TARGET_SDK_VERSION = 36
 
-    const val VERSION_CODE = 37
-    const val VERSION_NAME = "2.0.5"
+    const val VERSION_CODE = 38
+    const val VERSION_NAME = "2.1.0"
 
     val JAVA_VERSION = JavaVersion.VERSION_17
 }
