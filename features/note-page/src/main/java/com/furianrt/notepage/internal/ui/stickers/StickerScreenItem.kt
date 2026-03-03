@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -113,7 +114,10 @@ internal fun StickerScreenItem(
         visibleState = visibleState,
         enter = if (item.animate) {
             scaleIn(
-                animationSpec = tween(200, easing = rememberOvershootEasing(tension = 5.0f)),
+                animationSpec = tween(
+                    durationMillis = 200,
+                    easing = rememberOvershootEasing(tension = 5.0f),
+                ),
                 initialScale = 0.95f,
             )
         } else {
@@ -129,6 +133,7 @@ internal fun StickerScreenItem(
                         Modifier.border(
                             width = 1.5.dp / item.state.scale,
                             color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = RoundedCornerShape(4.dp),
                         )
                     }
                     .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
