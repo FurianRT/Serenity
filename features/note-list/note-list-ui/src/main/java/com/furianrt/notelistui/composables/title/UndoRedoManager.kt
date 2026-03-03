@@ -1,5 +1,7 @@
 package com.furianrt.notelistui.composables.title
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
@@ -27,11 +29,8 @@ internal class UndoRedoManager {
     private val undoStack = SnapshotStateList<UndoRedoOperation>()
     private val redoStack = SnapshotStateList<UndoRedoOperation>()
 
-    val canUndo: Boolean
-        get() = undoStack.isNotEmpty()
-
-    val canRedo: Boolean
-        get() = redoStack.isNotEmpty()
+    val canUndo: Boolean by derivedStateOf { undoStack.isNotEmpty() }
+    val canRedo: Boolean by derivedStateOf { redoStack.isNotEmpty() }
 
     fun record(operation: UndoRedoOperation) {
         redoStack.clear()

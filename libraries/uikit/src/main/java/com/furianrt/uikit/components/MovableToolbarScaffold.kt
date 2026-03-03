@@ -59,6 +59,7 @@ import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
@@ -86,7 +87,6 @@ fun MovableToolbarScaffold(
     state: MovableToolbarState,
     toolbar: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
-    background: Color = MaterialTheme.colorScheme.surface,
     enabled: Boolean = true,
     blurRadius: Dp = 8.dp,
     blurAlpha: Float = 0.4f,
@@ -155,41 +155,44 @@ fun MovableToolbarScaffold(
 
     val hazeState = contentHazeState ?: rememberHazeState()
 
-    LaunchedEffect(listState, listState.isScrollInProgress) {
-        var forceShowToolbar = false
-        when (listState) {
-            is LazyGridState -> {
-                val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-                val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull { it.index }
-                val scrollOffset = listState.firstVisibleItemScrollOffset
-                forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
-            }
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.isScrollInProgress }.collectLatest {
+            var forceShowToolbar = false
+            when (listState) {
+                is LazyGridState -> {
+                    val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                    val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull { it.index }
+                    val scrollOffset = listState.firstVisibleItemScrollOffset
+                    forceShowToolbar =
+                        scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
+                }
 
-            is LazyListState -> {
-                val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
-                val firstVisibleItemIndex = visibleItemsInfo.minOfOrNull(LazyListItemInfo::index)
-                val scrollOffset = listState.firstVisibleItemScrollOffset
-                forceShowToolbar = scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
-            }
+                is LazyListState -> {
+                    val visibleItemsInfo = listState.layoutInfo.visibleItemsInfo
+                    val firstVisibleItemIndex =
+                        visibleItemsInfo.minOfOrNull(LazyListItemInfo::index)
+                    val scrollOffset = listState.firstVisibleItemScrollOffset
+                    forceShowToolbar =
+                        scrollOffset <= toolbarHeight && firstVisibleItemIndex == 0
+                }
 
-            is ScrollState -> {
-                forceShowToolbar = listState.value <= toolbarHeight
+                is ScrollState -> {
+                    forceShowToolbar = listState.value <= toolbarHeight
+                }
             }
-        }
-        val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
-        when {
-            !enabled || !isToolbarInHalfState || listState.isScrollInProgress -> {}
+            val isToolbarInHalfState = toolbarOffset != 0f && toolbarOffset != -toolbarHeight
+            when {
+                !enabled || !isToolbarInHalfState || listState.isScrollInProgress -> {}
 
-            toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || !listState.canScrollBackward -> {
-                AnimationState(toolbarOffset).animateTo(
-                    targetValue = 0f,
-                    animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
-                    block = { toolbarOffset = value },
-                )
-            }
+                toolbarOffset > -toolbarHeight / 2 || forceShowToolbar || !listState.canScrollBackward -> {
+                    AnimationState(toolbarOffset).animateTo(
+                        targetValue = 0f,
+                        animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
+                        block = { toolbarOffset = value },
+                    )
+                }
 
-            toolbarOffset <= -toolbarHeight / 2 -> {
-                AnimationState(toolbarOffset).animateTo(
+                toolbarOffset <= -toolbarHeight / 2 -> AnimationState(toolbarOffset).animateTo(
                     targetValue = -toolbarHeight,
                     animationSpec = tween(MovableToolbarState.TOOLBAR_SNAP_DURATION),
                     block = { toolbarOffset = value },
@@ -206,7 +209,6 @@ fun MovableToolbarScaffold(
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
-
     var showBlur by rememberSaveable { mutableStateOf(showShadow) }
 
     LaunchedEffect(listState) {
@@ -216,7 +218,11 @@ fun MovableToolbarScaffold(
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
-            modifier = Modifier.hazeSource(hazeState),
+            modifier = if (contentHazeState == null) {
+                Modifier.hazeSource(hazeState)
+            } else {
+                Modifier
+            },
             content = { content(toolbarHeight.pxToDp()) },
         )
         Box(
@@ -251,12 +257,11 @@ fun MovableToolbarScaffold(
                 Box(
                     modifier = Modifier
                         .matchParentSize()
-                        .background(MaterialTheme.colorScheme.surface)
                         .hazeEffect(
                             state = hazeState,
                             style = HazeDefaults.style(
-                                backgroundColor = background,
-                                tint = HazeTint(background.copy(alpha = blurAlpha)),
+                                backgroundColor = MaterialTheme.colorScheme.surface,
+                                tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = blurAlpha)),
                                 noiseFactor = 0f,
                                 blurRadius = blurRadius,
                             )

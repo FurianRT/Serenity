@@ -1,9 +1,12 @@
 package com.furianrt.notepage.internal.ui.stickers
 
-import android.view.animation.OvershootInterpolator
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -18,20 +21,18 @@ import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
@@ -43,12 +44,12 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.debounce
 import kotlin.math.absoluteValue
 import kotlin.math.atan2
 import kotlin.math.hypot
@@ -71,162 +72,167 @@ internal fun StickerScreenItem(
     var initialDragOffset by remember { mutableStateOf<Offset?>(null) }
     var initialAngle by remember { mutableFloatStateOf(item.state.rotation) }
 
-    var transformTrigger by remember { mutableIntStateOf(0) }
-    var isFirstLaunch by remember { mutableStateOf(true) }
-
     val onTransformedState by rememberUpdatedState(onTransformed)
 
-    var triggerAdditionalScale by remember { mutableStateOf(true) }
-    val interpolator = remember { OvershootInterpolator(5.0f) }
-    val additionalScale by animateFloatAsState(
-        targetValue = if (triggerAdditionalScale && item.animate) -0.05f else 0f,
-        animationSpec = tween(200, easing = { interpolator.getInterpolation(it) }),
-    )
+    val visibleState = remember { MutableTransitionState(false).apply { targetState = true } }
 
-    LaunchedEffect(Unit) {
-        triggerAdditionalScale = false
-        snapshotFlow { transformTrigger }
-            .debounce(150)
-            .collect {
-                if (!isFirstLaunch) {
-                    onTransformedState()
-                }
-                isFirstLaunch = false
-            }
-    }
-
-    Box(
+    AnimatedVisibility(
         modifier = modifier
             .applyIf(item.state.isEditing) {
-                Modifier.pointerInput(Unit) {
-                    detectTransformGestures { _, pan, scale, rotation ->
-                        val resultRotation = (item.state.rotation + rotation) % 360
-                        val resultScale = (item.state.scale * scale).coerceIn(
-                            minimumValue = StickerItem.MIN_SIZE_PERCENT,
-                            maximumValue = StickerItem.MAX_SIZE_PERCENT,
-                        )
-                        initialAngle = resultRotation
-                        item.state.rotation = resultRotation
-                        item.state.scale = resultScale
-                        onDragged(pan)
-                        transformTrigger++
+                Modifier
+                    .pointerInput(Unit) {
+                        detectTransformGestures { _, pan, scale, rotation ->
+                            val resultRotation = (item.state.rotation + rotation) % 360
+                            val resultScale = (item.state.scale * scale).coerceIn(
+                                minimumValue = StickerItem.MIN_SIZE_PERCENT,
+                                maximumValue = StickerItem.MAX_SIZE_PERCENT,
+                            )
+                            initialAngle = resultRotation
+                            item.state.rotation = resultRotation
+                            item.state.scale = resultScale
+                            onDragged(pan)
+                        }
                     }
-                }
+                    .pointerInput(Unit) {
+                        awaitPointerEventScope {
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                if (event.type == PointerEventType.Release) {
+                                    onTransformedState()
+                                }
+                            }
+                        }
+                    }
             }
             .onGloballyPositioned { parentCoordinates = it }
             .graphicsLayer {
                 rotationZ = item.state.rotation
-                scaleX = item.state.scale + additionalScale
-                scaleY = item.state.scale + additionalScale
+                scaleX = item.state.scale
+                scaleY = item.state.scale
             },
+        visibleState = visibleState,
+        enter = if (item.animate) {
+            scaleIn(
+                animationSpec = tween(200, easing = rememberOvershootEasing(tension = 5.0f)),
+                initialScale = 0.95f,
+            )
+        } else {
+            EnterTransition.None
+        },
+        exit = ExitTransition.None,
     ) {
-        Sticker(
-            modifier = Modifier
-                .padding(8.dp)
-                .applyIf(item.state.isEditing) {
-                    Modifier.border(
-                        width = 1.5.dp / item.state.scale,
-                        color = MaterialTheme.colorScheme.primaryContainer,
-                    )
-                }
-                .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
-            icon = item.icon,
-            isFlipped = item.state.isFlipped,
-            onClick = { onClick(item) },
-        )
-
-        if (item.state.isEditing) {
-            val buttonSize = 24.dp
-            val scaledSize = buttonSize * item.state.scale
-            val offsetPx = with(LocalDensity.current) { (scaledSize - buttonSize).toPx() / 6 }
-            val sizeModifier = Modifier.size(buttonSize)
-
-            ButtonClose(
-                modifier = sizeModifier
-                    .graphicsLayer {
-                        val scale = 1f / item.state.scale
-                        scaleX = scale
-                        scaleY = scale
+        Box {
+            Sticker(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .applyIf(item.state.isEditing) {
+                        Modifier.border(
+                            width = 1.5.dp / item.state.scale,
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                        )
                     }
-                    .offset { IntOffset(-offsetPx.toInt(), -offsetPx.toInt()) },
-                onClick = { onRemoveClick(item) },
+                    .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
+                icon = item.icon,
+                isFlipped = item.state.isFlipped,
+                onClick = { onClick(item) },
             )
 
-            ButtonResize(
-                modifier = sizeModifier
-                    .align(Alignment.BottomEnd)
-                    .graphicsLayer {
-                        val scale = 1f / item.state.scale
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                    .onGloballyPositioned { coordinates ->
-                        childCoordinates = coordinates
-                    }
-                    .pointerInput(Unit) {
-                        detectDragGestures(
-                            onDragStart = { offset ->
-                                initialDragOffset = getOffsetInParent(
-                                    childCoordinates ?: return@detectDragGestures,
-                                    parentCoordinates ?: return@detectDragGestures,
-                                    offset,
-                                )
-                            },
-                            onDragEnd = {
-                                initialDragOffset = null
-                                initialAngle = item.state.rotation
-                                onTransformedState()
-                            }
-                        ) { change, _ ->
-                            change.consume()
-                            val center = stickerCenter ?: return@detectDragGestures
-                            val initialOffset = initialDragOffset ?: return@detectDragGestures
-                            val currentOffset = getOffsetInParent(
-                                childCoordinates = childCoordinates ?: return@detectDragGestures,
-                                parentCoordinates = parentCoordinates ?: return@detectDragGestures,
-                                offset = change.position,
-                            )
+            if (item.state.isEditing) {
+                val buttonSize = 24.dp
+                val scaledSize = buttonSize * item.state.scale
+                val offsetPx = with(LocalDensity.current) { (scaledSize - buttonSize).toPx() / 6 }
+                val sizeModifier = Modifier.size(buttonSize)
 
-                            val newAngle = calculateRotationAngle(
-                                center = center,
-                                start = initialOffset,
-                                current = currentOffset,
-                            )
-
-                            val angle = initialAngle + newAngle
-                            val hypot = hypot(currentOffset.x - center.x, currentOffset.y - center.y)
-                            val newSize = sqrt(hypot * hypot * 2)
-                            val defaultSize = StickerItem.DEFAULT_SIZE.toPx()
-
-                            if (angle.absoluteValue >= StickerItem.MIN_ANGLE) {
-                                item.state.rotation = angle
-                            } else {
-                                item.state.rotation = 0f
-                            }
-                            item.state.scale = (newSize / defaultSize).coerceIn(
-                                minimumValue = StickerItem.MIN_SIZE_PERCENT,
-                                maximumValue = StickerItem.MAX_SIZE_PERCENT,
-                            )
+                ButtonClose(
+                    modifier = sizeModifier
+                        .graphicsLayer {
+                            val scale = 1f / item.state.scale
+                            scaleX = scale
+                            scaleY = scale
                         }
-                    }
-                    .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
-                    .systemGestureExclusion(),
-            )
+                        .offset { IntOffset(-offsetPx.toInt(), -offsetPx.toInt()) },
+                    onClick = { onRemoveClick(item) },
+                )
 
-            ButtonFlip(
-                modifier = sizeModifier
-                    .align(Alignment.TopEnd)
-                    .graphicsLayer {
-                        val scale = 1f / item.state.scale
-                        scaleX = scale
-                        scaleY = scale
-                    }
-                    .offset { IntOffset(offsetPx.toInt(), -offsetPx.toInt()) },
-                onClick = {
-                    item.state.isFlipped = !item.state.isFlipped
-                    onTransformedState()
-                },
-            )
+                ButtonResize(
+                    modifier = sizeModifier
+                        .align(Alignment.BottomEnd)
+                        .graphicsLayer {
+                            val scale = 1f / item.state.scale
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .onGloballyPositioned { coordinates ->
+                            childCoordinates = coordinates
+                        }
+                        .pointerInput(Unit) {
+                            detectDragGestures(
+                                onDragStart = { offset ->
+                                    initialDragOffset = getOffsetInParent(
+                                        childCoordinates ?: return@detectDragGestures,
+                                        parentCoordinates ?: return@detectDragGestures,
+                                        offset,
+                                    )
+                                },
+                                onDragEnd = {
+                                    initialDragOffset = null
+                                    initialAngle = item.state.rotation
+                                    onTransformedState()
+                                }
+                            ) { change, _ ->
+                                change.consume()
+                                val center = stickerCenter ?: return@detectDragGestures
+                                val initialOffset = initialDragOffset ?: return@detectDragGestures
+                                val currentOffset = getOffsetInParent(
+                                    childCoordinates = childCoordinates
+                                        ?: return@detectDragGestures,
+                                    parentCoordinates = parentCoordinates
+                                        ?: return@detectDragGestures,
+                                    offset = change.position,
+                                )
+
+                                val newAngle = calculateRotationAngle(
+                                    center = center,
+                                    start = initialOffset,
+                                    current = currentOffset,
+                                )
+
+                                val angle = initialAngle + newAngle
+                                val hypot =
+                                    hypot(currentOffset.x - center.x, currentOffset.y - center.y)
+                                val newSize = sqrt(hypot * hypot * 2)
+                                val defaultSize = StickerItem.DEFAULT_SIZE.toPx()
+
+                                if (angle.absoluteValue >= StickerItem.MIN_ANGLE) {
+                                    item.state.rotation = angle
+                                } else {
+                                    item.state.rotation = 0f
+                                }
+                                item.state.scale = (newSize / defaultSize).coerceIn(
+                                    minimumValue = StickerItem.MIN_SIZE_PERCENT,
+                                    maximumValue = StickerItem.MAX_SIZE_PERCENT,
+                                )
+                            }
+                        }
+                        .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
+                        .systemGestureExclusion(),
+                )
+
+                ButtonFlip(
+                    modifier = sizeModifier
+                        .align(Alignment.TopEnd)
+                        .graphicsLayer {
+                            val scale = 1f / item.state.scale
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .offset { IntOffset(offsetPx.toInt(), -offsetPx.toInt()) },
+                    onClick = {
+                        item.state.isFlipped = !item.state.isFlipped
+                        onTransformedState()
+                    },
+                )
+            }
         }
     }
 }

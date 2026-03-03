@@ -50,6 +50,8 @@ internal sealed interface PageUiState {
                 .filterIsInstance<UiNoteTag.Regular>()
                 .map(UiNoteTag.Regular::title)
                 .toSet()
+
+        val hasTopTitle: Boolean = (content.firstOrNull() as? UiNoteContent.Title) != null
     }
 }
 

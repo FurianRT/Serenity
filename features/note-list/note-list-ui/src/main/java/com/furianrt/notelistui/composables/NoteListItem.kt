@@ -1,8 +1,6 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
-import android.view.animation.OvershootInterpolator
-import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -38,6 +36,7 @@ import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
@@ -67,16 +66,12 @@ fun NoteListItem(
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
 ) {
-    val interpolator = remember { OvershootInterpolator(5.0f) }
+    val overshootEasing = rememberOvershootEasing(tension = 5.0f)
     val scale by animateFloatAsState(
         targetValue = if (isSelected) SELECTED_SCALE else 1f,
         animationSpec = tween(
             durationMillis = SELECTED_SCALE_DURATION,
-            easing = if (isSelected) {
-                Easing { interpolator.getInterpolation(it) }
-            } else {
-                FastOutSlowInEasing
-            }
+            easing = if (isSelected) overshootEasing else FastOutSlowInEasing,
         ),
     )
     val rippleColor = MaterialTheme.colorScheme.surfaceContainer

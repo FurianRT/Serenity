@@ -203,6 +203,7 @@ private fun MainScreenContent(
             ?: rememberLazyListState(),
         state = screenState.toolbarState,
         enabled = !uiState.content.enableSelection,
+        contentHazeState = hazeState,
         toolbar = {
             Toolbar(
                 notesCount = successState?.notes?.count() ?: 0,

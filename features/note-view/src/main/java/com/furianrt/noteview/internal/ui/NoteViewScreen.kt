@@ -216,6 +216,7 @@ private fun SuccessScreen(
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {
+    val scope = rememberCoroutineScope()
     val focusManager = LocalFocusManager.current
     val pagerState = rememberPagerState(
         initialPage = uiState.initialPageIndex,
@@ -258,8 +259,6 @@ private fun SuccessScreen(
         enabled = uiState.isInEditMode,
         onBack = { onEvent(NoteViewEvent.OnButtonEditClick) },
     )
-
-    val scope = rememberCoroutineScope()
 
     LaunchedEffect(uiState.isInEditMode) {
         if (uiState.isInEditMode) {
@@ -317,15 +316,12 @@ private fun SuccessScreen(
             state = pagerState,
             key = { uiState.notes[it].id },
         ) { index ->
-            val pageScreenState = rememberPageScreenState()
-            pageScreensStates[index] = pageScreenState
-
             val isCurrentPage by remember(index) {
                 derivedStateOf { pagerState.currentPage == index }
             }
 
             NotePageScreen(
-                state = pageScreenState,
+                state = pageScreensStates.getOrPut(index) { rememberPageScreenState() },
                 noteId = uiState.notes[index].id,
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
