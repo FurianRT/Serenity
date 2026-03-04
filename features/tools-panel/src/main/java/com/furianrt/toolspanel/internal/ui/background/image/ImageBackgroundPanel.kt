@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.R
@@ -62,6 +63,8 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_image_background"
 
@@ -292,7 +295,21 @@ private fun ClearItem(
 @Composable
 @PreviewWithBackground
 private fun Preview() {
-    val holder = NoteThemesHolder()
+    val holder = NoteThemesHolder(
+        dispatchers = object : DispatchersProvider {
+            override val mainImmediate: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val main: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val io: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val default: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val unconfined: CoroutineDispatcher
+                get() = Dispatchers.Main
+
+        },
+    )
     SerenityTheme {
         Content(
             uiState = ImageBackgroundUiState(

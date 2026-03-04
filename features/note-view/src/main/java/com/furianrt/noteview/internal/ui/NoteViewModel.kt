@@ -3,6 +3,7 @@ package com.furianrt.noteview.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.updateState
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -50,6 +52,7 @@ internal class NoteViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val noteThemeProvider: NoteThemeProvider,
     private val appearanceRepository: AppearanceRepository,
+    private val dispatchers: DispatchersProvider,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NoteViewRoute>(
@@ -131,49 +134,52 @@ internal class NoteViewModel @Inject constructor(
                 _effect.tryEmit(NoteViewEffect.CloseScreen)
                 return@collectLatest
             }
-            _state.update { localState ->
-                when (localState) {
-                    is NoteViewUiState.Success -> {
-                        val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.map { note ->
-                            note.toNoteItem(
-                                theme = noteThemeProvider.findTheme(
-                                    colorId = note.backgroundId,
-                                    imageId = note.backgroundImageId,
-                                ),
+            withContext(dispatchers.default) {
+                _state.update { localState ->
+                    when (localState) {
+                        is NoteViewUiState.Success -> {
+                            val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
+                            val notesItems =
+                                notes.map { note ->
+                                    note.toNoteItem(
+                                        theme = noteThemeProvider.findTheme(
+                                            colorId = note.backgroundId,
+                                            imageId = note.backgroundImageId,
+                                        ),
+                                    )
+                                }
+                            val currentPageIndex = notesItems.indexOfFirstOrNull {
+                                it.id == localState.currentNote.id
+                            } ?: min(localState.currentPageIndex, notesItems.lastIndex)
+
+                            localState.copy(
+                                initialPageIndex = initialPageIndex,
+                                currentPageIndex = currentPageIndex,
+                                notes = notesItems,
+                                date = notesItems[currentPageIndex].date,
                             )
                         }
-                        val currentPageIndex = notesItems.indexOfFirstOrNull {
-                            it.id == localState.currentNote.id
-                        } ?: min(localState.currentPageIndex, notesItems.lastIndex)
 
-                        localState.copy(
-                            initialPageIndex = initialPageIndex,
-                            currentPageIndex = currentPageIndex,
-                            notes = notesItems,
-                            date = notesItems[currentPageIndex].date,
-                        )
-                    }
-
-                    is NoteViewUiState.Loading -> {
-                        val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
-                        val notesItems = notes.map { note ->
-                            note.toNoteItem(
-                                theme = noteThemeProvider.findTheme(
-                                    colorId = note.backgroundId,
-                                    imageId = note.backgroundImageId,
-                                ),
+                        is NoteViewUiState.Loading -> {
+                            val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
+                            val notesItems = notes.map { note ->
+                                note.toNoteItem(
+                                    theme = noteThemeProvider.findTheme(
+                                        colorId = note.backgroundId,
+                                        imageId = note.backgroundImageId,
+                                    ),
+                                )
+                            }
+                            NoteViewUiState.Success(
+                                initialPageIndex = initialPageIndex,
+                                currentPageIndex = savedStateHandle[EXTRA_CURRENT_PAGE]
+                                    ?: initialPageIndex,
+                                notes = notesItems,
+                                date = notesItems[initialPageIndex].date,
+                                isInEditMode = false,
+                                font = appearanceRepository.getAppFont().first().toNoteFont(),
                             )
                         }
-                        NoteViewUiState.Success(
-                            initialPageIndex = initialPageIndex,
-                            currentPageIndex = savedStateHandle[EXTRA_CURRENT_PAGE]
-                                ?: initialPageIndex,
-                            notes = notesItems,
-                            date = notesItems[initialPageIndex].date,
-                            isInEditMode = false,
-                            font = appearanceRepository.getAppFont().first().toNoteFont(),
-                        )
                     }
                 }
             }

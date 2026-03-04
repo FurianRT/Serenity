@@ -3,6 +3,7 @@ package com.furianrt.notecreate.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -24,9 +25,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -40,6 +43,7 @@ private const val KEY_DIALOG_ID = "dialogId"
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
+    dispatchers: DispatchersProvider,
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val noteThemeProvider: NoteThemeProvider,
@@ -65,7 +69,9 @@ internal class NoteCreateViewModel @Inject constructor(
             isInEditMode = isInEditMode,
             font = font.toNoteFont(),
         )
-    }.stateIn(
+    }.flowOn(
+        context = dispatchers.default,
+    ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = NoteCreateUiState.Loading,
@@ -106,20 +112,7 @@ internal class NoteCreateViewModel @Inject constructor(
             }
 
             is NoteCreateEvent.OnButtonDateClick -> launch { showDateSelector() }
-            is NoteCreateEvent.OnDateSelected -> {
-                state.doWithState<NoteCreateUiState.Success> { successState ->
-                    launch {
-                        notesRepository.updateNoteDate(
-                            noteId = successState.note.id,
-                            date = ZonedDateTime.of(
-                                event.date,
-                                LocalTime.now(),
-                                ZoneId.systemDefault()
-                            ),
-                        )
-                    }
-                }
-            }
+            is NoteCreateEvent.OnDateSelected -> updateNoteDate(event.date)
 
             is NoteCreateEvent.OnButtonDeleteClick -> if (isContentChanged) {
                 _effect.tryEmit(NoteCreateEffect.ShowDeleteConfirmationDialog)
@@ -129,6 +122,17 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
             is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
+        }
+    }
+
+    private fun updateNoteDate(date: LocalDate) {
+        state.doWithState<NoteCreateUiState.Success> { successState ->
+            launch {
+                notesRepository.updateNoteDate(
+                    noteId = successState.note.id,
+                    date = ZonedDateTime.of(date, LocalTime.now(), ZoneId.systemDefault()),
+                )
+            }
         }
     }
 

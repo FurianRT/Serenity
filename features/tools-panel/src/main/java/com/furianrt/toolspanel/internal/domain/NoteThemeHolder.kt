@@ -1,5 +1,6 @@
 package com.furianrt.toolspanel.internal.domain
 
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
@@ -8,16 +9,22 @@ import com.furianrt.uikit.R as uiR
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-internal class NoteThemesHolder @Inject constructor() : NoteThemeProvider {
+internal class NoteThemesHolder @Inject constructor(
+    private val dispatchers: DispatchersProvider,
+) : NoteThemeProvider {
 
-    override suspend fun findTheme(colorId: String?, imageId: String?): UiNoteTheme? {
+    override suspend fun findTheme(
+        colorId: String?,
+        imageId: String?,
+    ): UiNoteTheme? = withContext(dispatchers.default) {
         val pictureTheme = getPictureThemes()
             .find { it.colorId == colorId && it.imageId == imageId }
         val pattern = getPatternImages().find { it.id == imageId }
         val solidTheme = getSolidThemes().find { it.colorId == colorId }
-        return when {
+        return@withContext when {
             pictureTheme != null -> pictureTheme
             pattern != null -> UiNoteTheme.Image.Pattern(
                 color = solidTheme?.color,

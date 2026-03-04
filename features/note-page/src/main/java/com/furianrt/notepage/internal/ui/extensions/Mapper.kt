@@ -26,9 +26,9 @@ import java.util.UUID
 
 private const val APP_THEME_POSTFIX = "app_theme"
 
-internal suspend fun LocalNote.toNoteItem(
+internal fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
-    stickerIconProvider: suspend (typeId: String) -> Int?,
+    stickerIconProvider: (typeId: String) -> Int?,
     theme: UiNoteTheme?,
 ) = NoteItem(
     id = id,

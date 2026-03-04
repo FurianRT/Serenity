@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.lifecycle.ViewModel
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
@@ -137,6 +138,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -168,6 +170,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val mediaRepository: MediaRepository,
     private val locationRepository: LocationRepository,
     private val lockAuthorizer: LockAuthorizer,
+    private val dispatchers: DispatchersProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
@@ -1040,6 +1043,7 @@ internal class PageViewModel @AssistedInject constructor(
                         ),
                     )
                 }
+                .flowOn(dispatchers.default)
                 .distinctUntilChanged()
                 .collectLatest(::handleNoteResult)
         }

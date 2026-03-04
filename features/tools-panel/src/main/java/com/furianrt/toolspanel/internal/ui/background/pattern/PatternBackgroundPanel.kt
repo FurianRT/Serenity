@@ -55,6 +55,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
@@ -67,6 +68,8 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_pattern_background"
 
@@ -341,7 +344,21 @@ private fun ColorItem(
 @Preview(heightDp = 300, showBackground = true, backgroundColor = 0xFF474972)
 @Composable
 private fun Preview() {
-    val themesHolder = NoteThemesHolder()
+    val themesHolder = NoteThemesHolder(
+        dispatchers = object : DispatchersProvider {
+            override val mainImmediate: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val main: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val io: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val default: CoroutineDispatcher
+                get() = Dispatchers.Main
+            override val unconfined: CoroutineDispatcher
+                get() = Dispatchers.Main
+
+        },
+    )
     SerenityTheme {
         SuccessContent(
             uiState = PatternBackgroundUiState.Success(
