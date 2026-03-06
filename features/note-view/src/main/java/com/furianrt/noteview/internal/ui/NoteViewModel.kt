@@ -35,6 +35,7 @@ import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.reflect.typeOf
 import com.furianrt.uikit.R as uiR
@@ -161,7 +162,9 @@ internal class NoteViewModel @Inject constructor(
                         }
 
                         is NoteViewUiState.Loading -> {
-                            val initialPageIndex = notes.indexOfFirst { it.id == route.noteId }
+                            val initialPageIndex = max(
+                                notes.indexOfFirst { it.id == route.noteId }, 0,
+                            )
                             val notesItems = notes.map { note ->
                                 note.toNoteItem(
                                     theme = noteThemeProvider.findTheme(
