@@ -5,6 +5,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
@@ -272,10 +273,11 @@ private fun Sticker(
             .data(icon)
             .build()
     }
+    val scaleXAnim by animateFloatAsState(targetValue = if (isFlipped) -1f else 1f)
     AsyncImage(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
-            .graphicsLayer { scaleX = if (isFlipped) -1f else 1f }
+            .graphicsLayer { scaleX = scaleXAnim }
             .clickableNoRipple(onClick),
         model = request,
         contentDescription = null,
@@ -307,7 +309,7 @@ private fun ButtonResize(
         modifier = modifier
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),
-        painter = painterResource(R.drawable.ic_rotate_sticker),
+        painter = painterResource(R.drawable.ic_expand_sticker),
         tint = MaterialTheme.colorScheme.onPrimaryContainer,
         contentDescription = null
     )
