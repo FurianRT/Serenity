@@ -38,11 +38,15 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
+import coil3.request.ImageRequest
+import coil3.size.Precision
 import com.furianrt.notepage.R
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.uikit.anim.rememberOvershootEasing
@@ -261,12 +265,19 @@ private fun Sticker(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
+    val request = remember(icon) {
+        ImageRequest.Builder(context)
+            .precision(Precision.EXACT)
+            .data(icon)
+            .build()
+    }
     AsyncImage(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
             .graphicsLayer { scaleX = if (isFlipped) -1f else 1f }
             .clickableNoRipple(onClick),
-        model = icon,
+        model = request,
         contentDescription = null,
     )
 }
