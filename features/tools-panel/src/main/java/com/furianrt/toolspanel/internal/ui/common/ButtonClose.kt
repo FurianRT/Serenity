@@ -7,13 +7,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
-import com.furianrt.uikit.R
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ButtonClose(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    painter: Painter = painterResource(R.drawable.ic_action_done),
+    painter: Painter = painterResource(uiR.drawable.ic_arrow_down),
 ) {
     IconButton(
         modifier = modifier,

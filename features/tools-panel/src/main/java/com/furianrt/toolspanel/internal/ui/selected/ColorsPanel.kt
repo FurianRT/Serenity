@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
@@ -21,6 +22,7 @@ import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ColorsPanel(
@@ -57,6 +59,7 @@ internal fun ColorsPanel(
                     drawLeftShadow(color = shadowColor)
                 }
             },
+            painter = painterResource(uiR.drawable.ic_exit),
             onClick = onCloseClick,
         )
     }
