@@ -244,7 +244,7 @@ enum class UiThemeColor(
         id = "app_background_picture_3",
         surface = Colors.Primary.Blue3,
         inverseSurface = Colors.Primary.Blue3,
-        primaryContainer = Colors.Accent.Blue4,
+        primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_3,
             scaleType = FILL,
@@ -310,7 +310,7 @@ enum class UiThemeColor(
         id = "app_background_picture_7",
         surface = Colors.Primary.Blue4,
         inverseSurface = Colors.Primary.Blue4,
-        primaryContainer = Colors.Accent.Blue4,
+        primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_7,
             scaleType = CROP_ALIGN_CENTER,
@@ -321,7 +321,7 @@ enum class UiThemeColor(
         id = "app_background_picture_8",
         surface = Colors.Primary.Blue4,
         inverseSurface = Colors.Primary.Blue4,
-        primaryContainer = Colors.Accent.Blue4,
+        primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_8,
             scaleType = CROP_ALIGN_CENTER,
