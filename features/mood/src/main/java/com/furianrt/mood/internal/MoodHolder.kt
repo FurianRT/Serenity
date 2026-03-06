@@ -8,6 +8,76 @@ internal object MoodHolder {
 
     fun getMoodPacks(): List<MoodPack> = listOf(
         MoodPack(
+            icon = R.drawable.mood_pack_1_default,
+            moods = listOf(
+                Mood(
+                    id = "mood_pack_1_terrible",
+                    level = Mood.Level.TERRIBLE,
+                    icon = R.drawable.mood_pack_1_terrible,
+                ),
+                Mood(
+                    id = "mood_pack_1_bad",
+                    level = Mood.Level.BAD,
+                    icon = R.drawable.mood_pack_1_bad,
+                ),
+                Mood(
+                    id = "mood_pack_1_sad",
+                    level = Mood.Level.SAD,
+                    icon = R.drawable.mood_pack_1_sad,
+                ),
+                Mood(
+                    id = "mood_pack_1_normal",
+                    level = Mood.Level.NORMAL,
+                    icon = R.drawable.mood_pack_1_normal,
+                ),
+                Mood(
+                    id = "mood_pack_1_good",
+                    level = Mood.Level.GOOD,
+                    icon = R.drawable.mood_pack_1_good,
+                ),
+                Mood(
+                    id = "mood_pack_1_perfect",
+                    level = Mood.Level.PERFECT,
+                    icon = R.drawable.mood_pack_1_perfect,
+                ),
+            ),
+        ),
+        MoodPack(
+            icon = R.drawable.mood_pack_2_default,
+            moods = listOf(
+                Mood(
+                    id = "mood_pack_2_terrible",
+                    level = Mood.Level.TERRIBLE,
+                    icon = R.drawable.mood_pack_2_terrible,
+                ),
+                Mood(
+                    id = "mood_pack_2_bad",
+                    level = Mood.Level.BAD,
+                    icon = R.drawable.mood_pack_2_bad,
+                ),
+                Mood(
+                    id = "mood_pack_2_sad",
+                    level = Mood.Level.SAD,
+                    icon = R.drawable.mood_pack_2_sad,
+                ),
+                Mood(
+                    id = "mood_pack_2_normal",
+                    level = Mood.Level.NORMAL,
+                    icon = R.drawable.mood_pack_2_normal,
+                ),
+                Mood(
+                    id = "mood_pack_2_good",
+                    level = Mood.Level.GOOD,
+                    icon = R.drawable.mood_pack_2_good,
+                ),
+                Mood(
+                    id = "mood_pack_2_perfect",
+                    level = Mood.Level.PERFECT,
+                    icon = R.drawable.mood_pack_2_perfect,
+                ),
+            ),
+        ),
+        MoodPack(
             icon = R.drawable.mood_raccoon_default,
             moods = listOf(
                 Mood(
@@ -144,41 +214,6 @@ internal object MoodHolder {
                     id = "dog_perfect",
                     level = Mood.Level.PERFECT,
                     icon = R.drawable.mood_dog_perfect,
-                ),
-            ),
-        ),
-        MoodPack(
-            icon = R.drawable.mood_pack_1_default,
-            moods = listOf(
-                Mood(
-                    id = "mood_pack_1_terrible",
-                    level = Mood.Level.TERRIBLE,
-                    icon = R.drawable.mood_pack_1_terrible,
-                ),
-                Mood(
-                    id = "mood_pack_1_bad",
-                    level = Mood.Level.BAD,
-                    icon = R.drawable.mood_pack_1_bad,
-                ),
-                Mood(
-                    id = "mood_pack_1_sad",
-                    level = Mood.Level.SAD,
-                    icon = R.drawable.mood_pack_1_sad,
-                ),
-                Mood(
-                    id = "mood_pack_1_normal",
-                    level = Mood.Level.NORMAL,
-                    icon = R.drawable.mood_pack_1_normal,
-                ),
-                Mood(
-                    id = "mood_pack_1_good",
-                    level = Mood.Level.GOOD,
-                    icon = R.drawable.mood_pack_1_good,
-                ),
-                Mood(
-                    id = "mood_pack_1_perfect",
-                    level = Mood.Level.PERFECT,
-                    icon = R.drawable.mood_pack_1_perfect,
                 ),
             ),
         ),
