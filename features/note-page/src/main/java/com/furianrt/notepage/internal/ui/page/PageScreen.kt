@@ -443,7 +443,7 @@ private fun SuccessScreen(
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
     )
 
-    var topEmptyTitleHeight by remember { mutableFloatStateOf(0f) }
+    var topEmptyTitleHeight by rememberSaveable { mutableFloatStateOf(0f) }
 
     LaunchedEffect(focusedTitleId) {
         val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
