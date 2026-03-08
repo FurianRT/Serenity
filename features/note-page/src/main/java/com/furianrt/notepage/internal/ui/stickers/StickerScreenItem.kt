@@ -9,7 +9,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -18,7 +17,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -54,6 +52,7 @@ import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.extensions.dashedRoundedRectBorder
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
@@ -143,10 +142,11 @@ internal fun StickerScreenItem(
                 modifier = Modifier
                     .padding(8.dp)
                     .applyIf(item.state.isEditing) {
-                        Modifier.border(
-                            width = 1.5.dp / item.state.scale,
+                        Modifier.dashedRoundedRectBorder(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(4.dp),
+                            width = 2.dp / item.state.scale,
+                            cornerRadius = 4.dp / item.state.scale,
+                            interval = 8.dp,
                         )
                     }
                     .onGloballyPositioned { stickerCenter = it.boundsInParent().center },

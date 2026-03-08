@@ -20,12 +20,15 @@ inline fun Modifier.applyIf(condition: Boolean, ifTrue: () -> Modifier) =
 
 fun Modifier.dashedRoundedRectBorder(
     color: Color,
+    width: Dp = 1.dp,
     interval: Dp = 6.dp,
+    cornerRadius: Dp = 16.dp,
 ): Modifier = this.then(
     Modifier.drawWithCache {
+        val radius = CornerRadius(cornerRadius.toPx())
         val strokeInterval = interval.toPx()
         val stroke = Stroke(
-            width = 1.dp.toPx(),
+            width = width.toPx(),
             pathEffect = PathEffect.dashPathEffect(
                 intervals = floatArrayOf(strokeInterval, strokeInterval),
                 phase = 0f,
@@ -35,7 +38,7 @@ fun Modifier.dashedRoundedRectBorder(
             drawRoundRect(
                 color = color,
                 style = stroke,
-                cornerRadius = CornerRadius(16.dp.toPx()),
+                cornerRadius = radius,
             )
         }
     }
