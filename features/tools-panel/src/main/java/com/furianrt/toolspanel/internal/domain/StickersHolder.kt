@@ -25,6 +25,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         add(getPack7())
         add(getPack8())
         add(getPack9())
+        add(getPack10())
     }
 
     private fun getPack1(): StickerPack {
@@ -323,6 +324,34 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
             id = "pack_9",
             isPremium = false,
             icon = R.drawable.sticker_pack_9_item_8,
+            stickers = stickers,
+        )
+    }
+
+    private fun getPack10(): StickerPack {
+        val stickers = buildList {
+            add(Sticker(id = "pack_10_sticker_1", icon = R.drawable.pack_10_sticker_1))
+            add(Sticker(id = "pack_10_sticker_2", icon = R.drawable.pack_10_sticker_2))
+            add(Sticker(id = "pack_10_sticker_3", icon = R.drawable.pack_10_sticker_3))
+            add(Sticker(id = "pack_10_sticker_4", icon = R.drawable.pack_10_sticker_4))
+            add(Sticker(id = "pack_10_sticker_5", icon = R.drawable.pack_10_sticker_5))
+            add(Sticker(id = "pack_10_sticker_6", icon = R.drawable.pack_10_sticker_6))
+            add(Sticker(id = "pack_10_sticker_7", icon = R.drawable.pack_10_sticker_7))
+            add(Sticker(id = "pack_10_sticker_8", icon = R.drawable.pack_10_sticker_8))
+            add(Sticker(id = "pack_10_sticker_9", icon = R.drawable.pack_10_sticker_9))
+            add(Sticker(id = "pack_10_sticker_10", icon = R.drawable.pack_10_sticker_10))
+            add(Sticker(id = "pack_10_sticker_11", icon = R.drawable.pack_10_sticker_11))
+            add(Sticker(id = "pack_10_sticker_12", icon = R.drawable.pack_10_sticker_12))
+            add(Sticker(id = "pack_10_sticker_13", icon = R.drawable.pack_10_sticker_13))
+            add(Sticker(id = "pack_10_sticker_14", icon = R.drawable.pack_10_sticker_14))
+            add(Sticker(id = "pack_10_sticker_15", icon = R.drawable.pack_10_sticker_15))
+            add(Sticker(id = "pack_10_sticker_16", icon = R.drawable.pack_10_sticker_16))
+        }
+
+        return StickerPack(
+            id = "pack_10",
+            isPremium = false,
+            icon = R.drawable.pack_10_sticker_2,
             stickers = stickers,
         )
     }
