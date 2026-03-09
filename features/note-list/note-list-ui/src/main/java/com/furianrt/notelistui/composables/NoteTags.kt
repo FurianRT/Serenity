@@ -249,7 +249,6 @@ private fun TemplateNoteTagItem(
         textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
     }
 
-    val strokeColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = showTagSuggests,
@@ -263,7 +262,9 @@ private fun TemplateNoteTagItem(
             modifier = Modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .padding(4.dp)
-                .dashedRoundedRectBorder(color = strokeColor)
+                .dashedRoundedRectBorder(
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                )
                 .padding(horizontal = 10.dp, vertical = 6.dp)
                 .widthIn(min = hintWidth.pxToDp())
                 .width(IntrinsicSize.Min)
