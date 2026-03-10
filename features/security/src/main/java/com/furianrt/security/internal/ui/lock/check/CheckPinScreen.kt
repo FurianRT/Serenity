@@ -72,6 +72,8 @@ import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.Executors
 import com.furianrt.uikit.R as uiR
@@ -88,6 +90,7 @@ internal fun CheckPinScreenInternal(
     val activity = LocalActivity.current
     val focusManager = LocalFocusManager.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val dialogHazeState = rememberHazeState()
 
     var recoveryDialogState: String? by remember { mutableStateOf(null) }
 
@@ -163,6 +166,7 @@ internal fun CheckPinScreenInternal(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .hazeSource(dialogHazeState)
             .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
@@ -195,7 +199,7 @@ internal fun CheckPinScreenInternal(
     recoveryDialogState?.let { state ->
         ForgotPinDialog(
             email = state,
-            hazeState = hazeState,
+            hazeState = dialogHazeState,
             onConfirmClick = { viewModel.onEvent(CheckPinEvent.OnSendRecoveryEmailClick) },
             onDismissRequest = { recoveryDialogState = null },
         )

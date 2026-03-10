@@ -144,7 +144,7 @@ internal fun StickerScreenItem(
                     .applyIf(item.state.isEditing) {
                         Modifier.dashedRoundedRectBorder(
                             color = MaterialTheme.colorScheme.primaryContainer,
-                            width = 2.dp / item.state.scale,
+                            width = 1.6.dp / item.state.scale,
                             cornerRadius = 4.dp / item.state.scale,
                             interval = 8.dp,
                         )
