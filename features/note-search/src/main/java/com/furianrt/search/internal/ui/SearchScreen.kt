@@ -360,8 +360,9 @@ private fun SuccessContent(
                 )
 
                 is SearchListItem.NotesCountTitle -> NotesCountItem(
-                    modifier = Modifier.padding(horizontal = 16.dp),
+                    modifier = Modifier.padding(horizontal = 8.dp),
                     count = item.count,
+                    hazeState = hazeState,
                 )
             }
         }

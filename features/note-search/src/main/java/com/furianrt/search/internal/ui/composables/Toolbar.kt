@@ -361,40 +361,32 @@ private fun SelectedFiltersList(
             contentType = { filters[it]::class.simpleName }
         ) { index ->
             when (val filter = filters[index]) {
-                is SelectedFilter.Tag -> if (filter.isSelected) {
-                    TagItem(
-                        modifier = Modifier.animateItem(),
-                        title = filter.title,
-                        isRemovable = true,
-                        hazeState = hazeState,
-                        hazeStyle = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                            noiseFactor = 0f,
-                            blurRadius = 8.dp,
-                        ),
-                        hazeStyleExtraColor = true,
-                        onRemoveClick = { onRemoveFilterClick(filter) },
-                    )
-                } else {
-                    TagItem(
-                        modifier = Modifier
-                            .alpha(0.5f)
-                            .animateItem(),
-                        title = filter.title,
-                        isRemovable = false,
-                        hazeState = hazeState,
-                        hazeStyle = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                            noiseFactor = 0f,
-                            blurRadius = 8.dp,
-                        ),
-                        hazeStyleExtraColor = true,
-                        onRemoveClick = { onRemoveFilterClick(filter) },
-                        onClick = { onUnselectedTagClick(filter) },
-                    )
-                }
+                is SelectedFilter.Tag -> TagItem(
+                    modifier = Modifier.animateItem(),
+                    title = filter.title,
+                    textColor = if (filter.isSelected) {
+                        MaterialTheme.colorScheme.onSurface
+                    } else {
+                        MaterialTheme.colorScheme.onSurface.copy(
+                            alpha = MaterialTheme.colorScheme.onSurface.alpha * 0.5f,
+                        )
+                    },
+                    isRemovable = filter.isSelected,
+                    hazeState = hazeState,
+                    hazeStyle = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
+                        noiseFactor = 0f,
+                        blurRadius = 8.dp,
+                    ),
+                    hazeStyleExtraColor = true,
+                    onRemoveClick = { onRemoveFilterClick(filter) },
+                    onClick = if (filter.isSelected) {
+                        null
+                    } else {
+                        { onUnselectedTagClick(filter) }
+                    },
+                )
 
                 is SelectedFilter.DateRange -> TagItem(
                     modifier = Modifier.animateItem(),
