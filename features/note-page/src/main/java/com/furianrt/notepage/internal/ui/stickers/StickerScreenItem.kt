@@ -91,6 +91,11 @@ internal fun StickerScreenItem(
 
     AnimatedVisibility(
         modifier = modifier
+            .onGloballyPositioned { parentCoordinates = it }
+            .graphicsLayer {
+                scaleX = item.state.scale
+                scaleY = item.state.scale
+            }
             .applyIf(item.state.isEditing) {
                 Modifier
                     .pointerInput(Unit) {
@@ -103,7 +108,7 @@ internal fun StickerScreenItem(
                             initialAngle = resultRotation
                             item.state.rotation = resultRotation
                             item.state.scale = resultScale
-                            onDragged(pan)
+                            onDragged(pan * resultScale)
                         }
                     }
                     .pointerInput(Unit) {
@@ -117,11 +122,8 @@ internal fun StickerScreenItem(
                         }
                     }
             }
-            .onGloballyPositioned { parentCoordinates = it }
             .graphicsLayer {
                 rotationZ = item.state.rotation
-                scaleX = item.state.scale
-                scaleY = item.state.scale
             },
         visibleState = visibleState,
         enter = if (animateItem) {
