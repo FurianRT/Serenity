@@ -62,6 +62,7 @@ fun SwitchWithLabel(
         ) {
             Text(
                 modifier = Modifier
+                    .clip(RoundedCornerShape(6.dp))
                     .then(
                         if (hazeState != null) {
                             Modifier.hazeEffect(
@@ -84,6 +85,7 @@ fun SwitchWithLabel(
             if (hint != null) {
                 Text(
                     modifier = Modifier
+                        .clip(RoundedCornerShape(6.dp))
                         .then(
                             if (hazeState != null) {
                                 Modifier.hazeEffect(
