@@ -41,7 +41,10 @@ internal class NoteCache @Inject constructor(
         cache[noteId].orEmpty()
 
     @Synchronized
-    fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>) {
+    fun cacheNoteContent(
+        noteId: String,
+        content: List<LocalNote.Content>,
+    ) {
         cache[noteId] = content
     }
 
@@ -51,11 +54,19 @@ internal class NoteCache @Inject constructor(
         saveToDiskAsync()
     }
 
-    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-        restoreFromDiskAsync()
+    override fun onActivityCreated(
+        activity: Activity,
+        savedInstanceState: Bundle?,
+    ) {
+        if (cache.isEmpty() && savedInstanceState != null) {
+            restoreFromDiskAsync()
+        }
     }
 
-    override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+    override fun onActivitySaveInstanceState(
+        activity: Activity,
+        outState: Bundle,
+    ) {
         saveToDiskAsync()
     }
 
