@@ -30,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
@@ -52,10 +53,16 @@ import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 internal fun Header(
     authState: BackupUiState.Content.Success.AuthState,
+    hazeState: HazeState,
     onSingInClick: () -> Unit,
     onSingOutClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,12 +126,14 @@ internal fun Header(
             when (targetState) {
                 is BackupUiState.Content.Success.AuthState.SignedOut -> SignedOutHeader(
                     isEnabled = !targetState.isLoading,
+                    hazeState = hazeState,
                     onSingInClick = onSingInClick,
                 )
 
                 is BackupUiState.Content.Success.AuthState.SignedIn -> SignedInHeader(
                     email = targetState.email,
                     isEnabled = !targetState.isLoading,
+                    hazeState = hazeState,
                     onSingOutClick = onSingOutClick,
                 )
             }
@@ -136,6 +145,7 @@ internal fun Header(
 private fun SignedInHeader(
     email: String,
     isEnabled: Boolean,
+    hazeState: HazeState,
     onSingOutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -162,14 +172,38 @@ private fun SignedInHeader(
             .alpha(0.5f)
             .clip(RoundedCornerShape(16.dp))
             .clickable(enabled = isEnabled, onClick = onSingOutClick)
-            .padding(8.dp),
+            .padding(horizontal = 4.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 4.dp),
             text = email,
             style = MaterialTheme.typography.bodySmall,
         )
         Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 4.dp),
             text = title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -179,6 +213,7 @@ private fun SignedInHeader(
 @Composable
 private fun SignedOutHeader(
     isEnabled: Boolean,
+    hazeState: HazeState,
     onSingInClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -214,19 +249,34 @@ private fun SignedOutHeader(
             }
         }
     }
-    Text(
+    Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
             .clickable(enabled = isEnabled, onClick = onSingInClick)
-            .padding(horizontal = 8.dp, vertical = 16.dp)
+            .padding(horizontal = 4.dp, vertical = 16.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
                 this.alpha = alpha
-            },
-        text = title,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+            }
+    ) {
+        Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 4.dp),
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
 }
 
 @Composable
@@ -238,6 +288,7 @@ private fun SignedInPreview() {
                 email = "testtest@gmail.com",
                 isLoading = false,
             ),
+            hazeState = rememberHazeState(),
             onSingInClick = {},
             onSingOutClick = {},
         )
@@ -252,6 +303,7 @@ private fun SignedOutPreview() {
             authState = BackupUiState.Content.Success.AuthState.SignedOut(
                 isLoading = false,
             ),
+            hazeState = rememberHazeState(),
             onSingInClick = {},
             onSingOutClick = {},
         )
@@ -267,6 +319,7 @@ private fun LoadingPreview() {
                 email = "testtest@gmail.com",
                 isLoading = true,
             ),
+            hazeState = rememberHazeState(),
             onSingInClick = {},
             onSingOutClick = {},
         )

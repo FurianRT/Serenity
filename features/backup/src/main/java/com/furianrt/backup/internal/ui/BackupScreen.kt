@@ -228,6 +228,7 @@ private fun ScreenContent(
     snackBarHostState: SnackbarHostState = SnackbarHostState(),
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
+    val backgroundHazeState = rememberHazeState()
     val scrollState = rememberScrollState()
     val toolbarState = remember { MovableToolbarState() }
 
@@ -246,6 +247,7 @@ private fun ScreenContent(
         },
     ) { topPadding ->
         AppBackground(
+            modifier = Modifier.hazeSource(backgroundHazeState),
             theme = uiState.theme,
         )
         when (uiState.content) {
@@ -253,6 +255,7 @@ private fun ScreenContent(
                 uiState = uiState.content,
                 onEvent = onEvent,
                 scrollState = scrollState,
+                backgroundHazeState = backgroundHazeState,
                 snackBarHostState = snackBarHostState,
                 toolbarPadding = topPadding,
             )
@@ -279,6 +282,7 @@ private fun ScreenContent(
 private fun SuccessContent(
     uiState: Content.Success,
     scrollState: ScrollState,
+    backgroundHazeState: HazeState,
     snackBarHostState: SnackbarHostState,
     toolbarPadding: Dp,
     modifier: Modifier = Modifier,
@@ -330,6 +334,7 @@ private fun SuccessContent(
             Header(
                 modifier = Modifier.padding(top = 4.dp),
                 authState = uiState.authState,
+                hazeState = backgroundHazeState,
                 onSingInClick = { onEvent(BackupScreenEvent.OnSignInClick) },
                 onSingOutClick = { onEvent(BackupScreenEvent.OnSignOutClick) },
             )
