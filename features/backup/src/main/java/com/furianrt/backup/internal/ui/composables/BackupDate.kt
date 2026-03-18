@@ -6,6 +6,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import com.furianrt.backup.R
@@ -42,7 +43,9 @@ internal fun BackupDate(
         targetState = title,
     ) { targetState ->
         Text(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .alpha(0.5f),
             text = targetState,
             style = MaterialTheme.typography.labelMedium,
             textAlign = TextAlign.Center

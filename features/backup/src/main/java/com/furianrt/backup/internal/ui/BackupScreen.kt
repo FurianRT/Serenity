@@ -6,15 +6,21 @@ import android.content.IntentSender
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.IntentSenderRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -36,9 +42,10 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -55,16 +62,15 @@ import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.BackupUiState.Content
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
-import com.furianrt.backup.internal.ui.composables.BackupDate
 import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
+import com.furianrt.backup.internal.ui.composables.BottomPanel
 import com.furianrt.backup.internal.ui.composables.ConfirmBackupDialog
 import com.furianrt.backup.internal.ui.composables.ConfirmSignOutDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.composables.RestoreButton
 import com.furianrt.backup.internal.ui.composables.SuccessSyncSnackBar
-import com.furianrt.backup.internal.ui.composables.SyncButton
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
@@ -77,6 +83,7 @@ import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
@@ -223,12 +230,12 @@ private fun ScreenContent(
 ) {
     val scrollState = rememberScrollState()
     val toolbarState = remember { MovableToolbarState() }
-    val hazeState = rememberHazeState()
 
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         listState = scrollState,
+        blurRadius = 12.dp,
         enabled = false,
         toolbar = {
             DefaultToolbar(
@@ -239,7 +246,6 @@ private fun ScreenContent(
         },
     ) { topPadding ->
         AppBackground(
-            modifier = Modifier.hazeSource(hazeState),
             theme = uiState.theme,
         )
         when (uiState.content) {
@@ -249,7 +255,6 @@ private fun ScreenContent(
                 scrollState = scrollState,
                 snackBarHostState = snackBarHostState,
                 toolbarPadding = topPadding,
-                backgroundHazeState = hazeState,
             )
 
             is Content.Loading -> LoadingContent()
@@ -276,12 +281,14 @@ private fun SuccessContent(
     scrollState: ScrollState,
     snackBarHostState: SnackbarHostState,
     toolbarPadding: Dp,
-    backgroundHazeState: HazeState,
     modifier: Modifier = Modifier,
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
+    val hazeState = rememberHazeState()
+    val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current
     var backupBlockHeight by remember { mutableIntStateOf(0) }
+    val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     val backupShakeState = rememberShakingState(
         strength = ShakingState.Strength.Strong,
@@ -315,9 +322,9 @@ private fun SuccessContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .hazeSource(backgroundHazeState, zIndex = 1f)
+                .hazeSource(hazeState)
                 .verticalScroll(scrollState)
-                .padding(top = toolbarPadding, bottom = backupBlockHeight.pxToDp()),
+                .padding(top = toolbarPadding),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             Header(
@@ -332,6 +339,13 @@ private fun SuccessContent(
                     .background(
                         color = MaterialTheme.colorScheme.inverseSurface,
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
+                    )
+                    .padding(
+                        bottom = if (uiState.isSignedIn) {
+                            backupBlockHeight.pxToDp() + navBarPadding
+                        } else {
+                            navBarPadding
+                        },
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -385,81 +399,37 @@ private fun SuccessContent(
                 }
             }
         }
-        Column(
+        AnimatedVisibility(
             modifier = Modifier
-                .fillMaxWidth()
-                .hazeEffect(
-                    state = backgroundHazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.inverseSurface),
-                        noiseFactor = 0f,
-                        blurRadius = 6.dp,
-                    )
-                )
-                .onSizeChanged { backupBlockHeight = it.height }
-                .padding(bottom = 16.dp)
-                .align(Alignment.BottomCenter)
-                .navigationBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+                .onSizeChanged {
+                    backupBlockHeight = it.height - navBarPadding.dpToPx(density).toInt()
+                }
+                .align(Alignment.BottomCenter),
+            visible = uiState.isSignedIn,
+            enter = fadeIn(),
+            exit = fadeOut(),
         ) {
-            HorizontalDivider(
-                thickness = 1.dp,
-                color = MaterialTheme.colorScheme.tertiary,
-            )
-            SyncButton(
+            BottomPanel(
                 modifier = Modifier
-                    .padding(horizontal = 24.dp)
-                    .fillMaxWidth()
-                    .shakable(backupShakeState),
-                text = when (val progress = uiState.syncProgress) {
-                    is SyncProgress.BackupStarting -> {
-                        stringResource(R.string.backup_starting_message)
-                    }
-
-                    is SyncProgress.RestoreStarting -> {
-                        stringResource(R.string.restore_starting_message)
-                    }
-
-                    is SyncProgress.BackupProgress -> stringResource(
-                        R.string.backup_progress_message,
-                        progress.syncedNotesCount,
-                        progress.totalNotesCount,
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            tint = HazeTint(Color.Transparent),
+                            noiseFactor = 0f,
+                            blurRadius = 12.dp,
+                        ),
                     )
-
-                    is SyncProgress.RestoreProgress -> stringResource(
-                        R.string.restore_progress_message,
-                        progress.syncedNotesCount,
-                        progress.totalNotesCount,
-                    )
-
-                    else -> stringResource(R.string.backup_backup_data_title)
-                },
-                progress = when (val progress = uiState.syncProgress) {
-                    is SyncProgress.BackupStarting, SyncProgress.RestoreStarting -> 0f
-                    is SyncProgress.BackupProgress -> {
-                        progress.syncedNotesCount / progress.totalNotesCount.toFloat()
-                    }
-
-                    is SyncProgress.RestoreProgress -> {
-                        progress.syncedNotesCount / progress.totalNotesCount.toFloat()
-                    }
-
-                    else -> null
-                },
-                isEnabled = uiState.isSignedIn,
-                onClick = {
+                    .padding(bottom = 12.dp)
+                    .navigationBarsPadding(),
+                syncProgress = uiState.syncProgress,
+                lastSyncDate = uiState.lastSyncDate,
+                shakingState = backupShakeState,
+                onBackupClick = {
                     if (!uiState.isSyncInProgress) {
                         onEvent(BackupScreenEvent.OnButtonBackupClick)
                     }
                 },
-            )
-            BackupDate(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .fillMaxWidth()
-                    .alpha(if (uiState.isSignedIn) 1f else 0.5f),
-                date = uiState.lastSyncDate,
             )
         }
     }
