@@ -34,7 +34,6 @@ internal class NoteCache @Inject constructor(
 
     init {
         (context as Application).registerActivityLifecycleCallbacks(this)
-        restoreFromDiskAsync()
     }
 
     @Synchronized
@@ -50,6 +49,10 @@ internal class NoteCache @Inject constructor(
     fun deleteCache(noteId: String) {
         cache.remove(noteId)
         saveToDiskAsync()
+    }
+
+    override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+        restoreFromDiskAsync()
     }
 
     override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
@@ -73,7 +76,7 @@ internal class NoteCache @Inject constructor(
         scope.launch {
             synchronized(this@NoteCache) {
                 try {
-                    if (cacheFile.exists()) return@launch
+                    if (!cacheFile.exists()) return@launch
                     val json = cacheFile.readText()
                     val restored = Json.decodeFromString<Map<String, List<LocalNote.Content>>>(json)
                     cache.clear()
