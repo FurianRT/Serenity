@@ -18,6 +18,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
@@ -190,7 +191,6 @@ internal fun BottomPanel(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = CircleShape,
                         ),
-                    contentAlignment = Alignment.Center,
                 ) {
                     AnimatedContent(
                         targetState = selectedCount.fastCoerceAtLeast(1),
@@ -204,12 +204,17 @@ internal fun BottomPanel(
                             )
                         },
                     ) { targetState ->
-                        Text(
-                            text = targetState.toString(),
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                text = targetState.toString(),
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.ExtraBold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            )
+                        }
                     }
                 }
             }
