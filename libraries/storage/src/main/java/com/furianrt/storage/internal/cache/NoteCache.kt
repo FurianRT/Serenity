@@ -51,9 +51,7 @@ internal class NoteCache @Inject constructor(
     @Synchronized
     fun deleteCache(noteId: String) {
         cache.remove(noteId)
-        if (cache.isNotEmpty()) {
-            saveToDiskAsync()
-        }
+        saveToDiskAsync()
     }
 
     override fun onActivityCreated(
@@ -69,9 +67,7 @@ internal class NoteCache @Inject constructor(
         activity: Activity,
         outState: Bundle,
     ) {
-        if (cache.isNotEmpty()) {
-            saveToDiskAsync()
-        }
+        saveToDiskAsync()
     }
 
     private fun saveToDiskAsync() {
