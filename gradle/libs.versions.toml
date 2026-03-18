@@ -10,11 +10,11 @@ gms = "4.4.4"
 crashlyticsPlugin = "3.0.6"
 performancePlugin = "2.0.2"
 
-coreKtx = "1.17.0"
+coreKtx = "1.18.0"
 lifecycle = "2.10.0"
 
-composeBom = "2026.02.01"
-composeActivity = "1.12.4"
+composeBom = "2026.03.00"
+composeActivity = "1.13.0"
 composeNavigation = "2.9.7"
 
 accompanist = "0.37.3"
@@ -44,7 +44,7 @@ exoplayer = "1.9.2"
 
 calendar = "2.10.0"
 
-dataStore = "1.2.0"
+dataStore = "1.2.1"
 
 biometric = "1.4.0-alpha02"
 
