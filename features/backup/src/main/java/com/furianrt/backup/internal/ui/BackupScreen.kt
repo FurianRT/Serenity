@@ -425,7 +425,7 @@ private fun SuccessContent(
                             blurRadius = 12.dp,
                         ),
                     )
-                    .padding(bottom = 12.dp)
+                    .padding(bottom = 8.dp)
                     .navigationBarsPadding(),
                 syncProgress = uiState.syncProgress,
                 lastSyncDate = uiState.lastSyncDate,
