@@ -48,10 +48,10 @@ import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.components.SnackBar
+import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalColorScheme
 import com.furianrt.uikit.theme.LocalFont
@@ -227,7 +227,7 @@ private fun SuccessScreen(
         pageScreensStates.getOrDefault(pagerState.currentPage, null)
     }
 
-    val toolbarState = remember { MovableToolbarState() }
+    val toolbarState = rememberMovableToolbarState()
     var skipToolbarExpand by remember { mutableStateOf(true) }
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()

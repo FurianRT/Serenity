@@ -65,7 +65,6 @@ import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
@@ -218,7 +217,6 @@ private fun ScreenContent(
     onEvent: (event: SettingsEvent) -> Unit = {},
 ) {
     val scrollState = rememberScrollState()
-    val toolbarState = remember { MovableToolbarState() }
     val hazeState = rememberHazeState()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
@@ -226,7 +224,6 @@ private fun ScreenContent(
 
     MovableToolbarScaffold(
         modifier = modifier,
-        state = toolbarState,
         listState = scrollState,
         enabled = false,
         toolbar = {

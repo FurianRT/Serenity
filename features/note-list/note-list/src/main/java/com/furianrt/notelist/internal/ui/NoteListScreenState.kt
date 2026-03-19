@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.extensions.visibleItemsInfo
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -42,6 +43,6 @@ internal class NoteListScreenState(
 @Composable
 internal fun rememberMainState(): NoteListScreenState {
     val listState = rememberLazyListState()
-    val toolbarState = remember { MovableToolbarState() }
+    val toolbarState = rememberMovableToolbarState()
     return remember { NoteListScreenState(listState, toolbarState) }
 }

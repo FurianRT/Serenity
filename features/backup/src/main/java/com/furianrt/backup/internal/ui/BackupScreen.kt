@@ -78,7 +78,6 @@ import com.furianrt.uikit.anim.shakable
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
@@ -230,13 +229,10 @@ private fun ScreenContent(
 ) {
     val backgroundHazeState = rememberHazeState()
     val scrollState = rememberScrollState()
-    val toolbarState = remember { MovableToolbarState() }
 
     MovableToolbarScaffold(
         modifier = modifier.background(MaterialTheme.colorScheme.surface),
-        state = toolbarState,
         listState = scrollState,
-        blurRadius = 12.dp,
         enabled = false,
         toolbar = {
             DefaultToolbar(

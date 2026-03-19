@@ -37,9 +37,9 @@ import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
+import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalFont
 import com.furianrt.uikit.theme.LocalHasMediaRoute
@@ -188,7 +188,7 @@ private fun SuccessContent(
 ) {
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
-    val toolbarState = remember { MovableToolbarState() }
+    val toolbarState = rememberMovableToolbarState()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }

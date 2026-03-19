@@ -63,6 +63,11 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
+@Composable
+fun rememberMovableToolbarState(): MovableToolbarState {
+    return remember { MovableToolbarState() }
+}
+
 @Stable
 class MovableToolbarState {
 
@@ -84,11 +89,11 @@ class MovableToolbarState {
 @Composable
 fun MovableToolbarScaffold(
     listState: ScrollableState,
-    state: MovableToolbarState,
     toolbar: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
+    state: MovableToolbarState = rememberMovableToolbarState(),
     enabled: Boolean = true,
-    blurRadius: Dp = 8.dp,
+    blurRadius: Dp = 12.dp,
     blurAlpha: Float = 0.4f,
     dimSurface: Boolean = false,
     contentHazeState: HazeState? = null,

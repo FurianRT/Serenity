@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -28,13 +27,12 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.uikit.R as uiR
 import com.furianrt.apptheme.internal.ui.composables.ThemeItem
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import kotlinx.coroutines.flow.collectLatest
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun AppThemeScreen(
@@ -70,14 +68,11 @@ private fun Content(
     onEvent: (event: AppThemeEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val toolbarState = remember { MovableToolbarState() }
     val listState = rememberLazyGridState()
 
     MovableToolbarScaffold(
         modifier = modifier,
-        state = toolbarState,
         listState = listState,
-        blurRadius = 12.dp,
         blurAlpha = 0.5f,
         enabled = false,
         toolbar = {

@@ -73,7 +73,6 @@ import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -264,7 +263,6 @@ private fun Content(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyGridState()
-    val toolbarState = remember { MovableToolbarState() }
     val hazeState = rememberHazeState()
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
@@ -275,7 +273,6 @@ private fun Content(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
-        state = toolbarState,
         listState = listState,
         enabled = false,
         toolbar = {

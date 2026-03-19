@@ -72,6 +72,7 @@ import com.furianrt.uikit.components.MovableToolbarState
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SnackBar
+import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 import dev.chrisbanes.haze.HazeDefaults
@@ -101,7 +102,7 @@ internal fun SearchScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    val toolbarState = remember { MovableToolbarState() }
+    val toolbarState = rememberMovableToolbarState()
 
     val filtersCount = uiState.selectedFilters.count(SelectedFilter::isSelected)
     var prevFiltersCount by rememberSaveable { mutableIntStateOf(filtersCount) }
@@ -188,10 +189,10 @@ internal fun SearchScreen(
 @Composable
 private fun ScreenContent(
     uiState: SearchUiState,
+    toolbarState: MovableToolbarState,
     snackBarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
     onEvent: (event: SearchEvent) -> Unit = {},
-    toolbarState: MovableToolbarState = remember { MovableToolbarState() },
 ) {
     val listState = rememberLazyListState()
     val hazeState = rememberHazeState()
@@ -425,6 +426,7 @@ private fun SuccessEmptyQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
+            toolbarState = rememberMovableToolbarState(),
         )
     }
 }
@@ -491,6 +493,7 @@ private fun SuccessFilledQueryPreview() {
                 ),
             ),
             snackBarHostState = SnackbarHostState(),
+            toolbarState = rememberMovableToolbarState(),
         )
     }
 }
@@ -511,6 +514,7 @@ private fun EmptyStatePreview() {
                 state = SearchUiState.State.Empty,
             ),
             snackBarHostState = SnackbarHostState(),
+            toolbarState = rememberMovableToolbarState(),
         )
     }
 }
