@@ -25,7 +25,7 @@ import com.furianrt.uikit.extensions.getSpansStyles
 @Stable
 class NoteTitleState(
     private var fontFamily: UiNoteFontFamily,
-    initialText: AnnotatedString = AnnotatedString(""),
+    private val initialText: AnnotatedString = AnnotatedString(""),
     initialSelection: TextRange = TextRange(initialText.length),
 ) {
     sealed interface SpanType {
@@ -124,11 +124,15 @@ class NoteTitleState(
         get() = textValueState.annotatedString
         set(value) {
             undoRedoManager.clearHistory()
+            textWithSnapshot = value.text
             textValueState = textValueState.copy(annotatedString = value)
         }
 
     val text: String
         get() = textValueState.text
+
+    var textWithSnapshot: String = initialText.text
+        private set
 
     var selection: TextRange
         get() = textValueState.selection
@@ -220,6 +224,7 @@ class NoteTitleState(
         )
 
         recordUndo(oldValue = textValueState, newValue = result)
+        textWithSnapshot = result.text
         textValueState = result
     }
 
@@ -278,6 +283,7 @@ class NoteTitleState(
         }
 
         recordUndo(oldValue = textValueState, newValue = result)
+        textWithSnapshot = result.text
         textValueState = result
     }
 
@@ -300,6 +306,7 @@ class NoteTitleState(
 
     fun undo() {
         val entry = undoRedoManager.undo() ?: return
+        textWithSnapshot = entry.annotatedString.text
         textValueState = textValueState.copy(
             annotatedString = entry.annotatedString.updateBoldFontFamily(fontFamily.bold),
             selection = TextRange(
@@ -311,6 +318,7 @@ class NoteTitleState(
 
     fun redo() {
         val entry = undoRedoManager.redo() ?: return
+        textWithSnapshot = entry.annotatedString.text
         textValueState = textValueState.copy(
             annotatedString = entry.annotatedString.updateBoldFontFamily(fontFamily.bold),
             selection = TextRange(
@@ -343,6 +351,7 @@ class NoteTitleState(
         val updatedValue = handleValueUpdate(oldValue = textValueState, newValue = withMergedSpans)
         val withAdjustedSelection = updatedValue.ignoreBulletListSelection()
         recordUndo(oldValue = textValueState, newValue = withAdjustedSelection)
+        textWithSnapshot = withAdjustedSelection.text
         textValueState = withAdjustedSelection
     }
 
@@ -393,7 +402,7 @@ class NoteTitleState(
                 )
             }
         }
-
+        textWithSnapshot = newAnnotatedString.text
         textValueState = textValueState.copy(
             annotatedString = newAnnotatedString,
             selection = TextRange((textValueState.selection.min - bullet.length).coerceAtLeast(0)),

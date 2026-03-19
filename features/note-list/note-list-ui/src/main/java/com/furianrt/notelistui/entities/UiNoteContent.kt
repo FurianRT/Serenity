@@ -78,7 +78,18 @@ sealed class UiNoteContent(
     }
 }
 
-fun UiNoteContent?.isEmptyTitle() = this is UiNoteContent.Title && state.text.isEmpty()
+fun UiNoteContent?.isEmptyTitle(
+    withSnapshot: Boolean = false,
+): Boolean {
+    if (this !is UiNoteContent.Title) {
+        return false
+    }
+    return if (withSnapshot) {
+        state.textWithSnapshot.isEmpty()
+    } else {
+        state.text.isEmpty()
+    }
+}
 
 val UiNoteContent.MediaBlock.contentHeight: Dp
     get() = when (media.count()) {

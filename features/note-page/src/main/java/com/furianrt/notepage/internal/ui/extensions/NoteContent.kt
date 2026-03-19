@@ -14,7 +14,7 @@ internal fun List<UiNoteContent>.refreshTitleTemplates(
     addTopTemplate: Boolean,
 ): List<UiNoteContent> {
     val result = toMutableList()
-    if (!addTopTemplate && result.firstOrNull().isEmptyTitle()) {
+    if (!addTopTemplate && result.firstOrNull().isEmptyTitle(withSnapshot = true)) {
         result.removeAt(0)
     }
     forEachIndexed { index, content ->
