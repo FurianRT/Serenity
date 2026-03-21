@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,8 +28,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -42,12 +43,15 @@ import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.uikit.anim.rememberOvershootEasing
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import java.time.ZonedDateTime
 
 private const val SELECTED_SCALE = 0.98f
@@ -71,6 +75,7 @@ fun NoteListItem(
     onLongClick: () -> Unit = {},
     onTagClick: ((tag: UiNoteTag.Regular) -> Unit)? = null,
 ) {
+    val itemHazeState = rememberHazeState()
     val overshootEasing = rememberOvershootEasing(tension = 5.0f)
     val scale by animateFloatAsState(
         targetValue = if (isSelected) SELECTED_SCALE else 1f,
@@ -133,7 +138,11 @@ fun NoteListItem(
                     onLongClick = onLongClick,
                 ),
         ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .hazeSource(itemHazeState),
+            ) {
                 content.forEachIndexed { index, item ->
                     when (item) {
                         is UiNoteContent.Title -> Text(
@@ -211,13 +220,29 @@ fun NoteListItem(
                 )
             }
             if (isPinned) {
+                val hasMedia = content.firstOrNull() is UiNoteContent.MediaBlock
                 Icon(
                     modifier = Modifier
-                        .alpha(0.5f)
                         .padding(4.dp)
+                        .clip(CircleShape)
+                        .applyIf(hasMedia) {
+                            Modifier.hazeEffect(
+                                state = itemHazeState,
+                                style = HazeDefaults.style(
+                                    backgroundColor = MaterialTheme.colorScheme.surface,
+                                    tint = HazeTint(Color.Transparent),
+                                    blurRadius = 12.dp,
+                                    noiseFactor = 0f,
+                                )
+                            )
+                        }
                         .align(Alignment.TopEnd),
                     painter = painterResource(R.drawable.ic_list_note_pin),
-                    tint = MaterialTheme.colorScheme.surfaceContainer,
+                    tint = if (hasMedia) {
+                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f)
+                    },
                     contentDescription = null,
                 )
             }
