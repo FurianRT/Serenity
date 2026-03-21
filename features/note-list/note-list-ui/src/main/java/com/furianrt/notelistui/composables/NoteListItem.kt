@@ -6,6 +6,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
@@ -25,12 +27,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.furianrt.mood.api.composables.MoodButton
+import com.furianrt.notelistui.R
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -92,7 +97,7 @@ fun NoteListItem(
         MaterialTheme.colorScheme.background
     }
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
-        Column(
+        Box(
             modifier = modifier
                 .fillMaxWidth()
                 .graphicsLayer {
@@ -128,81 +133,94 @@ fun NoteListItem(
                     onLongClick = onLongClick,
                 ),
         ) {
-            content.forEachIndexed { index, item ->
-                when (item) {
-                    is UiNoteContent.Title -> Text(
-                        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                        text = item.state.annotatedString,
-                        maxLines = MAX_TEXT_LINES,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium.copy(
-                            fontFamily = fontFamily?.regular
-                                ?: MaterialTheme.typography.bodyMedium.fontFamily,
+            Column(modifier = Modifier.fillMaxWidth()) {
+                content.forEachIndexed { index, item ->
+                    when (item) {
+                        is UiNoteContent.Title -> Text(
+                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                            text = item.state.annotatedString,
+                            maxLines = MAX_TEXT_LINES,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.bodyMedium.copy(
+                                fontFamily = fontFamily?.regular
+                                    ?: MaterialTheme.typography.bodyMedium.fontFamily,
 
-                            ),
-                    )
-
-                    is UiNoteContent.MediaBlock -> NoteContentMedia(
-                        modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
-                        block = item,
-                        clickable = false,
-                    )
-
-                    is UiNoteContent.Voice -> NoteContentVoice(
-                        modifier = Modifier.padding(
-                            start = 8.dp,
-                            top = if (index == 0) 4.dp else 12.dp,
-                        ),
-                        voice = item,
-                        isPayable = false,
-                        isPlaying = false,
-                        isRemovable = false,
-                    )
-                }
-            }
-
-            val showMood = content.isEmpty() && moodId != null
-            val showLocation = locationState is LocationState.Success &&
-                    !showMood && content.isEmpty()
-
-            when {
-                showMood -> MoodButton(
-                    modifier = Modifier
-                        .padding(
-                            top = 12.dp,
-                            bottom = if (tags.isEmpty()) 0.dp else 8.dp,
+                                ),
                         )
-                        .size(70.dp)
-                        .align(Alignment.CenterHorizontally),
-                    moodId = moodId,
-                    defaultMoodId = null,
-                )
 
-                showLocation -> LocationCard(
-                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                    state = locationState,
-                    hazeState = hazeState,
-                    clickable = false,
-                    fullAlpha = true,
-                )
+                        is UiNoteContent.MediaBlock -> NoteContentMedia(
+                            modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                            block = item,
+                            clickable = false,
+                        )
 
-                content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
+                        is UiNoteContent.Voice -> NoteContentVoice(
+                            modifier = Modifier.padding(
+                                start = 8.dp,
+                                top = if (index == 0) 4.dp else 12.dp,
+                            ),
+                            voice = item,
+                            isPayable = false,
+                            isPlaying = false,
+                            isRemovable = false,
+                        )
+                    }
+                }
+
+                val showMood = content.isEmpty() && moodId != null
+                val showLocation = locationState is LocationState.Success &&
+                        !showMood && content.isEmpty()
+
+                when {
+                    showMood -> MoodButton(
+                        modifier = Modifier
+                            .padding(
+                                top = 12.dp,
+                                bottom = if (tags.isEmpty()) 0.dp else 8.dp,
+                            )
+                            .size(70.dp)
+                            .align(Alignment.CenterHorizontally),
+                        moodId = moodId,
+                        defaultMoodId = null,
+                    )
+
+                    showLocation -> LocationCard(
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                        state = locationState,
+                        hazeState = hazeState,
+                        clickable = false,
+                        fullAlpha = true,
+                    )
+
+                    content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
+                }
+
+                NoteTags(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(
+                            start = 4.dp,
+                            end = 4.dp,
+                            top = if (tags.isEmpty() || showMood) 0.dp else 16.dp,
+                            bottom = 10.dp,
+                        ),
+                    tags = tags,
+                    date = date,
+                    popupHazeState = null,
+                    onTagClick = onTagClick,
+                )
             }
-
-            NoteTags(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(
-                        start = 4.dp,
-                        end = 4.dp,
-                        top = if (tags.isEmpty() || showMood) 0.dp else 16.dp,
-                        bottom = 10.dp,
-                    ),
-                tags = tags,
-                date = date,
-                popupHazeState = null,
-                onTagClick = onTagClick,
-            )
+            if (isPinned) {
+                Icon(
+                    modifier = Modifier
+                        .alpha(0.5f)
+                        .padding(4.dp)
+                        .align(Alignment.TopEnd),
+                    painter = painterResource(R.drawable.ic_list_note_pin),
+                    tint = MaterialTheme.colorScheme.surfaceContainer,
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

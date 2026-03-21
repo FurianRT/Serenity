@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
 import java.time.LocalTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -74,46 +75,20 @@ internal class NoteViewModel @Inject constructor(
 
     fun onEvent(event: NoteViewEvent) {
         when (event) {
-            is NoteViewEvent.OnPageTitleFocused, is NoteViewEvent.OnLocationClick -> {
-                enableEditMode()
-            }
-
             is NoteViewEvent.OnButtonEditClick -> toggleEditMode()
             is NoteViewEvent.OnContentChanged -> isContentChanged = event.isChanged
             is NoteViewEvent.OnButtonBackClick -> _effect.tryEmit(NoteViewEffect.CloseScreen)
             is NoteViewEvent.OnButtonDateClick -> launch { showDateSelector() }
-
-            is NoteViewEvent.OnDateSelected -> {
-                _state.doWithState<NoteViewUiState.Success> { successState ->
-                    val zonedDateTime = ZonedDateTime.of(
-                        event.date,
-                        LocalTime.now(),
-                        ZoneId.systemDefault(),
-                    )
-                    launch {
-                        notesRepository.updateNoteDate(
-                            noteId = successState.currentNote.id,
-                            date = zonedDateTime,
-                        )
-                    }
-                }
-            }
-
-            is NoteViewEvent.OnPageChange -> {
-                _state.updateState<NoteViewUiState.Success> { currentState ->
-                    savedStateHandle[EXTRA_CURRENT_PAGE] = event.index
-                    currentState.copy(
-                        currentPageIndex = event.index,
-                        date = currentState.notes[event.index].date,
-                    )
-                }
-                sendPageChangeResult(event.index)
-            }
-
+            is NoteViewEvent.OnDateSelected -> updateDate(event.date)
+            is NoteViewEvent.OnPageChange -> updateCurrentPage(event.index)
             is NoteViewEvent.OnDeleteClick -> onDeleteClick(event.noteId)
             is NoteViewEvent.OnConfirmDeleteClick -> launch { deleteNote(event.noteId) }
             is NoteViewEvent.OnPinClick -> launch {
                 toggleNotePinnedState(event.noteId, event.isPinned)
+            }
+
+            is NoteViewEvent.OnPageTitleFocused, is NoteViewEvent.OnLocationClick -> {
+                enableEditMode()
             }
         }
     }
@@ -249,5 +224,32 @@ internal class NoteViewModel @Inject constructor(
     private suspend fun deleteNote(noteId: String) {
         disableEditMode()
         deleteNoteUseCase(noteId)
+    }
+
+    private fun updateDate(date: LocalDate) {
+        _state.doWithState<NoteViewUiState.Success> { successState ->
+            val zonedDateTime = ZonedDateTime.of(
+                date,
+                LocalTime.now(),
+                ZoneId.systemDefault(),
+            )
+            launch {
+                notesRepository.updateNoteDate(
+                    noteId = successState.currentNote.id,
+                    date = zonedDateTime,
+                )
+            }
+        }
+    }
+
+    private fun updateCurrentPage(index: Int) {
+        _state.updateState<NoteViewUiState.Success> { currentState ->
+            savedStateHandle[EXTRA_CURRENT_PAGE] = index
+            currentState.copy(
+                currentPageIndex = index,
+                date = currentState.notes[index].date,
+            )
+        }
+        sendPageChangeResult(index)
     }
 }
