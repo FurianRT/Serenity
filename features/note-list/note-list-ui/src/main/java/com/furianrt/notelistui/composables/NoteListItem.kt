@@ -121,7 +121,7 @@ fun NoteListItem(
                 .then(
                     if (isPinned) {
                         Modifier.border(
-                            width = 0.5.dp,
+                            width = 0.7.dp,
                             color = MaterialTheme.colorScheme.primaryContainer,
                             shape = RoundedCornerShape(8.dp),
                         )

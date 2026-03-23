@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -79,6 +80,7 @@ fun LocationCard(
             )
 
             is LocationState.Empty -> EmptyContent(
+                hazeState = hazeState,
                 onClick = onAddLocationClick,
             )
 
@@ -104,9 +106,7 @@ private fun SuccessContent(
     var lineCount by remember { mutableIntStateOf(2) }
     val textAlpha = if (fullAlpha) 1f else 0.6f
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(4.dp),
+        modifier = modifier.padding(4.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = if (lineCount > 1) Alignment.Top else Alignment.CenterVertically,
     ) {
@@ -137,23 +137,36 @@ private fun SuccessContent(
 
 @Composable
 private fun EmptyContent(
+    hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
-            .alpha(0.5f)
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
-            .padding(start = 4.dp, end = 8.dp, top = 4.dp, bottom = 4.dp),
+            .clickableNoRipple(onClick = onClick)
+            .padding(4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         Icon(
+            modifier = Modifier.alpha(0.5f),
             painter = painterResource(uiR.drawable.ic_location),
             contentDescription = null,
         )
         Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 12.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .alpha(0.5f)
+                .padding(horizontal = 4.dp),
             text = stringResource(R.string.note_add_current_location_title),
             style = MaterialTheme.typography.labelSmall,
         )

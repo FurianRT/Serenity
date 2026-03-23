@@ -40,6 +40,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -70,6 +71,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
@@ -262,6 +264,18 @@ private fun TemplateNoteTagItem(
             modifier = Modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .padding(4.dp)
+                .clip(RoundedCornerShape(16.dp))
+                .applyIf(enabled) {
+                    Modifier.hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                }
                 .dashedRoundedRectBorder(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 )
