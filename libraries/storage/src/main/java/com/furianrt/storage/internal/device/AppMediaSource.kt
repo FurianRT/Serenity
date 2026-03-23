@@ -87,8 +87,7 @@ internal class AppMediaSource @Inject constructor(
             if (file.createNewFile()) {
                 return@withContext file
             } else {
-                errorTracker.trackNonFatalError(IOException("Can't create file"))
-                return@withContext null
+                throw IOException("Can't create file")
             }
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)
