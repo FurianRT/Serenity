@@ -21,7 +21,6 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,7 +43,6 @@ import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
-import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -222,9 +220,11 @@ private fun SuccessScreen(
         initialPage = uiState.initialPageIndex,
         pageCount = { uiState.notes.count() },
     )
-    val pageScreensStates = remember { mutableStateMapOf<Int, PageScreenState>() }
-    val currentPageState = remember(pageScreensStates.size, pagerState.currentPage) {
-        pageScreensStates.getOrDefault(pagerState.currentPage, null)
+    val currentPageState = remember(
+        uiState.pageScreenStatesHolder.states.size,
+        uiState.currentNote?.id,
+    ) {
+        uiState.pageScreenStatesHolder.states.getOrDefault(uiState.currentNote?.id, null)
     }
 
     val toolbarState = rememberMovableToolbarState()
@@ -316,13 +316,15 @@ private fun SuccessScreen(
             state = pagerState,
             key = { uiState.notes[it].id },
         ) { index ->
+            val noteId = uiState.notes[index].id
             val isCurrentPage by remember(index) {
                 derivedStateOf { pagerState.currentPage == index }
             }
-
             NotePageScreen(
-                state = pageScreensStates.getOrPut(index) { rememberPageScreenState() },
-                noteId = uiState.notes[index].id,
+                state = uiState.pageScreenStatesHolder.states.getOrPut(noteId) {
+                    rememberPageScreenState()
+                },
+                noteId = noteId,
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,
@@ -367,6 +369,7 @@ private fun ScreenSuccessPreview() {
                 notes = emptyList(),
                 date = ZonedDateTime.now(),
                 font = LocalFont.current,
+                pageScreenStatesHolder = PageScreenStatesHolder(),
             ),
             snackBarHostState = SnackbarHostState(),
             hazeState = HazeState(),

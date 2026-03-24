@@ -54,6 +54,7 @@ internal class NoteViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val noteThemeProvider: NoteThemeProvider,
     private val appearanceRepository: AppearanceRepository,
+    private val pageScreenStatesHolder: PageScreenStatesHolder,
     private val dispatchers: DispatchersProvider,
 ) : ViewModel() {
 
@@ -125,7 +126,7 @@ internal class NoteViewModel @Inject constructor(
                                     )
                                 }
                             val currentPageIndex = notesItems.indexOfFirstOrNull {
-                                it.id == localState.currentNote.id
+                                it.id == localState.currentNote?.id
                             } ?: min(localState.currentPageIndex, notesItems.lastIndex)
 
                             localState.copy(
@@ -156,6 +157,7 @@ internal class NoteViewModel @Inject constructor(
                                 date = notesItems[initialPageIndex].date,
                                 isInEditMode = false,
                                 font = appearanceRepository.getAppFont().first().toNoteFont(),
+                                pageScreenStatesHolder = pageScreenStatesHolder,
                             )
                         }
                     }
@@ -233,11 +235,13 @@ internal class NoteViewModel @Inject constructor(
                 LocalTime.now(),
                 ZoneId.systemDefault(),
             )
-            launch {
-                notesRepository.updateNoteDate(
-                    noteId = successState.currentNote.id,
-                    date = zonedDateTime,
-                )
+            successState.currentNote?.id?.let { noteId ->
+                launch {
+                    notesRepository.updateNoteDate(
+                        noteId = noteId,
+                        date = zonedDateTime,
+                    )
+                }
             }
         }
     }

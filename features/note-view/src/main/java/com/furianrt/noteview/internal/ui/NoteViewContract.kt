@@ -17,10 +17,11 @@ internal sealed interface NoteViewUiState {
         val notes: List<NoteItem>,
         val date: ZonedDateTime,
         val font: NoteFont,
+        val pageScreenStatesHolder: PageScreenStatesHolder,
     ) : NoteViewUiState {
 
-        val currentNote: NoteItem
-            get() = notes[currentPageIndex]
+        val currentNote: NoteItem?
+            get() = notes.getOrNull(currentPageIndex)
     }
 }
 
