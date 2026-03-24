@@ -2,15 +2,14 @@ package com.furianrt.mood.api.composables
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -24,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -44,12 +45,14 @@ import com.furianrt.mood.internal.entites.Mood
 import com.furianrt.uikit.extensions.clickableUnbounded
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -90,8 +93,11 @@ fun MoodDialog(
     val listState = rememberLazyListState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
+    var topPanelHeight by remember { mutableIntStateOf(0) }
+    var bottomPanelHeight by remember { mutableIntStateOf(0) }
+
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
-        Column(
+        Box(
             modifier = modifier
                 .clip(RoundedCornerShape(16.dp))
                 .hazeEffect(
@@ -102,8 +108,41 @@ fun MoodDialog(
                     )
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
-                .padding(top = 16.dp, bottom = 8.dp),
         ) {
+            if (topPanelHeight > 0 && bottomPanelHeight > 0) {
+                LazyColumn(
+                    modifier = Modifier
+                        .heightIn(max = 530.dp)
+                        .hazeSource(hazeState, zIndex = 1f),
+                    state = listState,
+                    contentPadding = PaddingValues(
+                        top = topPanelHeight.pxToDp() + 24.dp,
+                        bottom = bottomPanelHeight.pxToDp() + 24.dp,
+                    ),
+                ) {
+                    itemsIndexed(items = moodPacks) { index, pack ->
+                        MoodBlock(
+                            modifier = Modifier.padding(horizontal = 32.dp),
+                            moods = pack.moods,
+                            onClick = { mood ->
+                                onMoodSelected(mood)
+                                onDismissRequest()
+                            },
+                        )
+                        if (index != moodPacks.lastIndex) {
+                            HorizontalDivider(
+                                modifier = Modifier.padding(
+                                    top = 24.dp,
+                                    bottom = 24.dp,
+                                    start = 32.dp
+                                ),
+                                thickness = 1.dp,
+                                color = MaterialTheme.colorScheme.tertiary,
+                            )
+                        }
+                    }
+                }
+            }
             Text(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,37 +151,20 @@ fun MoodDialog(
                             drawBottomShadow(color = shadowColor, elevation = 2.dp)
                         }
                     }
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
-                    .align(Alignment.CenterHorizontally),
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 16.dp,
+                        )
+                    )
+                    .onSizeChanged { topPanelHeight = it.height }
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+                    .align(Alignment.TopCenter),
                 text = stringResource(R.string.mood_dialog_title),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
             )
-
-            LazyColumn(
-                modifier = Modifier.heightIn(max = 450.dp),
-                state = listState,
-                contentPadding = PaddingValues(vertical = 24.dp),
-            ) {
-                itemsIndexed(items = moodPacks) { index, pack ->
-                    MoodBlock(
-                        modifier = Modifier.padding(horizontal = 32.dp),
-                        moods = pack.moods,
-                        onClick = { mood ->
-                            onMoodSelected(mood)
-                            onDismissRequest()
-                        },
-                    )
-                    if (index != moodPacks.lastIndex) {
-                        HorizontalDivider(
-                            modifier = Modifier.padding(top = 24.dp, bottom = 24.dp, start = 32.dp),
-                            thickness = 1.dp,
-                            color = MaterialTheme.colorScheme.tertiary,
-                        )
-                    }
-                }
-            }
-
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -151,15 +173,25 @@ fun MoodDialog(
                             drawTopInnerShadow(color = shadowColor, elevation = 2.dp)
                         }
                     }
-                    .padding(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.End,
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 16.dp,
+                        )
+                    )
+                    .onSizeChanged { bottomPanelHeight = it.height }
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .align(Alignment.BottomCenter),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.End),
             ) {
                 TextButton(
                     onClick = {
                         onMoodSelected(null)
                         onDismissRequest()
                     },
-                    shape = RoundedCornerShape(8.dp),
+                    shape = RoundedCornerShape(16.dp),
                 ) {
                     Text(
                         text = stringResource(R.string.mood_dialog_clear),
@@ -167,10 +199,9 @@ fun MoodDialog(
                     )
                 }
                 if (!isExpandedState) {
-                    Spacer(Modifier.width(8.dp))
                     TextButton(
                         onClick = { isExpandedState = true },
-                        shape = RoundedCornerShape(8.dp),
+                        shape = RoundedCornerShape(16.dp),
                     ) {
                         Text(
                             text = stringResource(R.string.mood_dialog_more_emoji),
