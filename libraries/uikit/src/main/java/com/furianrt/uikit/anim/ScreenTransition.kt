@@ -51,5 +51,5 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopEnterTransition(
             durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(350), initialAlpha = 0.2f)
+    )
 }
