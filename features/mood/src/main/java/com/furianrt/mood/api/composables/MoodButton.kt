@@ -69,7 +69,7 @@ fun MoodButton(
             .applyIf(onClick != null) {
                 Modifier.clickable { onClick?.invoke() }
             }
-            .padding(5.dp),
+            .padding(4.dp),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

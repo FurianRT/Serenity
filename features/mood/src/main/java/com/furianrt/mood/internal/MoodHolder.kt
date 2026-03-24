@@ -8,6 +8,41 @@ internal object MoodHolder {
 
     fun getMoodPacks(): List<MoodPack> = listOf(
         MoodPack(
+            icon = R.drawable.mood_pack_4_default,
+            moods = listOf(
+                Mood(
+                    id = "mood_pack_4_terrible",
+                    level = Mood.Level.TERRIBLE,
+                    icon = R.drawable.mood_pack_4_terrible,
+                ),
+                Mood(
+                    id = "mood_pack_4_bad",
+                    level = Mood.Level.BAD,
+                    icon = R.drawable.mood_pack_4_bad,
+                ),
+                Mood(
+                    id = "mood_pack_4_sad",
+                    level = Mood.Level.SAD,
+                    icon = R.drawable.mood_pack_4_sad,
+                ),
+                Mood(
+                    id = "mood_pack_4_normal",
+                    level = Mood.Level.NORMAL,
+                    icon = R.drawable.mood_pack_4_normal,
+                ),
+                Mood(
+                    id = "mood_pack_4_good",
+                    level = Mood.Level.GOOD,
+                    icon = R.drawable.mood_pack_4_good,
+                ),
+                Mood(
+                    id = "mood_pack_4_perfect",
+                    level = Mood.Level.PERFECT,
+                    icon = R.drawable.mood_pack_4_perfect,
+                ),
+            ),
+        ),
+        MoodPack(
             icon = R.drawable.mood_raccoon_default,
             moods = listOf(
                 Mood(
