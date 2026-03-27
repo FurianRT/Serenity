@@ -43,6 +43,41 @@ internal object MoodHolder {
             ),
         ),
         MoodPack(
+            icon = R.drawable.mood_pack_5_default,
+            moods = listOf(
+                Mood(
+                    id = "mood_pack_5_terrible",
+                    level = Mood.Level.TERRIBLE,
+                    icon = R.drawable.mood_pack_5_terrible,
+                ),
+                Mood(
+                    id = "mood_pack_5_bad",
+                    level = Mood.Level.BAD,
+                    icon = R.drawable.mood_pack_5_bad,
+                ),
+                Mood(
+                    id = "mood_pack_5_sad",
+                    level = Mood.Level.SAD,
+                    icon = R.drawable.mood_pack_5_sad,
+                ),
+                Mood(
+                    id = "mood_pack_5_normal",
+                    level = Mood.Level.NORMAL,
+                    icon = R.drawable.mood_pack_5_normal,
+                ),
+                Mood(
+                    id = "mood_pack_5_good",
+                    level = Mood.Level.GOOD,
+                    icon = R.drawable.mood_pack_5_good,
+                ),
+                Mood(
+                    id = "mood_pack_5_perfect",
+                    level = Mood.Level.PERFECT,
+                    icon = R.drawable.mood_pack_5_perfect,
+                ),
+            ),
+        ),
+        MoodPack(
             icon = R.drawable.mood_raccoon_default,
             moods = listOf(
                 Mood(
