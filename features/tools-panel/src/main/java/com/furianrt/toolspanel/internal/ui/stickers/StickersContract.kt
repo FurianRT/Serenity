@@ -1,5 +1,6 @@
 package com.furianrt.toolspanel.internal.ui.stickers
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.compose.runtime.Immutable
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.entities.StickerPack
@@ -7,13 +8,12 @@ import com.furianrt.toolspanel.internal.entities.StickerPack
 @Immutable
 internal data class StickersPanelUiState(
     val packs: List<StickerPack> = emptyList(),
-    val selectedPackIndex: Int = 0,
+    val pagerState: PagerState,
 )
 
 internal sealed interface StickersPanelEvent {
     data object OnCloseClick : StickersPanelEvent
     data class OnTitleStickerPackClick(val index: Int) : StickersPanelEvent
-    data class OnStickersPageChange(val index: Int) : StickersPanelEvent
     data class OnStickerSelected(val sticker: Sticker) : StickersPanelEvent
     data object OnKeyboardClick : StickersPanelEvent
 }

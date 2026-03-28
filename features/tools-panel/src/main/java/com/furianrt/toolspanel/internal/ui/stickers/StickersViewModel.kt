@@ -1,40 +1,25 @@
 package com.furianrt.toolspanel.internal.ui.stickers
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.furianrt.toolspanel.internal.domain.StickersHolder
-import com.furianrt.toolspanel.internal.entities.StickerPack
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 internal class StickersViewModel @Inject constructor(
-    private val stickersHolder: StickersHolder,
+    stickersHolder: StickersHolder,
 ) : ViewModel() {
 
-    private val selectedPageIndex = MutableStateFlow(0)
+    private val packs = stickersHolder.getStickersPacks()
+    private val pagerState = PagerState(pageCount = packs::size)
 
-    val state: StateFlow<StickersPanelUiState> = combine(
-        flow { emit(stickersHolder.getStickersPacks()) },
-        selectedPageIndex,
-    ) { packs, pageIndex ->
-        buildState(
-            packs = packs,
-            pageIndex = pageIndex,
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5_000),
-        initialValue = StickersPanelUiState(),
+    val state: StateFlow<StickersPanelUiState> = MutableStateFlow(
+        StickersPanelUiState(packs, pagerState)
     )
 
     private val _effect = MutableSharedFlow<StickersPanelEffect>(extraBufferCapacity = 5)
@@ -47,9 +32,7 @@ internal class StickersViewModel @Inject constructor(
                 _effect.tryEmit(StickersPanelEffect.SelectSticker(event.sticker))
             }
 
-            is StickersPanelEvent.OnStickersPageChange -> selectedPageIndex.update { event.index }
             is StickersPanelEvent.OnTitleStickerPackClick -> {
-                selectedPageIndex.update { event.index }
                 _effect.tryEmit(StickersPanelEffect.ScrollContentToIndex(event.index))
             }
 
@@ -58,12 +41,4 @@ internal class StickersViewModel @Inject constructor(
             }
         }
     }
-
-    private fun buildState(
-        packs: List<StickerPack>,
-        pageIndex: Int,
-    ) = StickersPanelUiState(
-        packs = packs,
-        selectedPackIndex = pageIndex,
-    )
 }

@@ -6,7 +6,7 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,15 +23,12 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -44,8 +41,8 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -81,6 +78,7 @@ import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.max
 
 private val TITLE_LIST_ITEM_SIZE = 36.dp
@@ -122,26 +120,16 @@ private fun TitleContent(
     modifier: Modifier = Modifier,
     onEvent: (event: StickersPanelEvent) -> Unit = {},
 ) {
+    val pagerState = rememberPagerState(
+        initialPage = uiState.pagerState.currentPage,
+        pageCount = { uiState.packs.size },
+    )
     val showKeyBoardButtonState = remember { showKeyBoardButton }
-    val listState: LazyListState = rememberLazyListState()
-    val itemWidth = LocalDensity.current.run { TITLE_LIST_ITEM_SIZE.toPx().toInt() }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
-    var isFirstComposition by rememberSaveable { mutableStateOf(true) }
-    LaunchedEffect(uiState.selectedPackIndex) {
-        val scrollOffset = (itemWidth - listState.layoutInfo.viewportSize.width) / 2
-        if (isFirstComposition) {
-            isFirstComposition = false
-            listState.scrollToItem(
-                index = uiState.selectedPackIndex,
-                scrollOffset = scrollOffset,
-            )
-        } else {
-            listState.animateScrollToItem(
-                index = uiState.selectedPackIndex,
-                scrollOffset = scrollOffset,
-            )
-        }
+    LaunchedEffect(uiState.pagerState, pagerState) {
+        snapshotFlow { uiState.pagerState.currentPage }
+            .collectLatest { pagerState.animateScrollToPage(uiState.pagerState.currentPage) }
     }
 
     Box(
@@ -156,7 +144,7 @@ private fun TitleContent(
             if (showKeyBoardButtonState) {
                 ButtonKeyboard(
                     modifier = Modifier.drawBehind {
-                        if (listState.canScrollBackward) {
+                        if (pagerState.canScrollBackward) {
                             drawRightShadow(
                                 color = shadowColor,
                                 elevation = 1.dp,
@@ -167,28 +155,25 @@ private fun TitleContent(
                 )
             }
 
-            LazyRow(
+            HorizontalPager(
                 modifier = Modifier.weight(1f),
-                state = listState,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                state = pagerState,
+                pageSpacing = 12.dp,
+                pageSize = PageSize.Fixed(TITLE_LIST_ITEM_SIZE),
+                snapPosition = SnapPosition.Center,
                 contentPadding = PaddingValues(
                     horizontal = if (showKeyBoardButtonState) 4.dp else 12.dp,
                 )
-            ) {
-                items(
-                    count = uiState.packs.count(),
-                    key = { uiState.packs[it].id },
-                ) { index ->
-                    TitleItem(
-                        pack = uiState.packs[index],
-                        isSelected = uiState.selectedPackIndex == index,
-                        onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(index)) },
-                    )
-                }
+            ) { page ->
+                TitleItem(
+                    pack = uiState.packs[page],
+                    isSelected = uiState.pagerState.currentPage == page,
+                    onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(page)) },
+                )
             }
             ButtonClose(
                 modifier = Modifier.drawBehind {
-                    if (listState.canScrollForward) {
+                    if (pagerState.canScrollForward) {
                         drawLeftShadow(color = shadowColor)
                     }
                 },
@@ -258,10 +243,6 @@ internal fun StickersContent(
     var imeHeight by remember { mutableStateOf(cachedImeHeight) }
     val contentHeight = imeHeight - density.run { navigationBarsHeight.toDp() }
 
-    val pagerState = rememberPagerState(
-        pageCount = uiState.packs::count,
-        initialPage = uiState.selectedPackIndex,
-    )
     val contentPageStates = remember { mutableStateMapOf<Int, LazyGridState>() }
 
     LaunchedEffect(Unit) {
@@ -270,21 +251,13 @@ internal fun StickersContent(
             .collect { effect ->
                 when (effect) {
                     is StickersPanelEffect.ClosePanel -> Unit
-                    is StickersPanelEffect.SelectSticker -> {
-                        onStickerSelected(effect.sticker)
-                    }
-
-                    is StickersPanelEffect.ScrollContentToIndex -> {
-                        pagerState.scrollToPage(effect.index)
-                    }
-
                     is StickersPanelEffect.ShowKeyboard -> keyboardController?.show()
+                    is StickersPanelEffect.SelectSticker -> onStickerSelected(effect.sticker)
+                    is StickersPanelEffect.ScrollContentToIndex -> {
+                        uiState.pagerState.animateScrollToPage(effect.index)
+                    }
                 }
             }
-    }
-
-    LaunchedEffect(pagerState.currentPage) {
-        viewModel.onEvent(StickersPanelEvent.OnStickersPageChange(pagerState.currentPage))
     }
 
     LaunchedEffect(imeTarget, imeSource) {
@@ -314,7 +287,6 @@ internal fun StickersContent(
                 modifier = Modifier.height(contentHeight),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
-                pagerState = pagerState,
                 listStateProvider = { contentPageStates.getOrPut(it) { rememberLazyGridState() } },
             )
         }
@@ -326,12 +298,11 @@ private fun Content(
     uiState: StickersPanelUiState,
     modifier: Modifier = Modifier,
     onEvent: (event: StickersPanelEvent) -> Unit = {},
-    pagerState: PagerState = rememberPagerState(pageCount = uiState.packs::count),
     listStateProvider: @Composable (index: Int) -> LazyGridState,
 ) {
     HorizontalPager(
         modifier = modifier,
-        state = pagerState,
+        state = uiState.pagerState,
     ) { index ->
         ContentPage(
             stickers = uiState.packs[index].stickers,
@@ -447,9 +418,13 @@ private fun Modifier.drawSelection(
 @Composable
 @PreviewWithBackground
 private fun PanelPreview() {
+    val packs = StickersHolder().getStickersPacks()
     SerenityTheme {
         TitleContent(
-            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
+            uiState = StickersPanelUiState(
+                packs = packs,
+                pagerState = rememberPagerState(pageCount = { packs.size })
+            ),
             showKeyBoardButton = true,
         )
     }
@@ -459,9 +434,13 @@ private fun PanelPreview() {
 @PreviewWithBackground
 private fun ContentPreview() {
     val listState = rememberLazyGridState()
+    val packs = StickersHolder().getStickersPacks()
     SerenityTheme {
         Content(
-            uiState = StickersPanelUiState(packs = StickersHolder().getStickersPacks()),
+            uiState = StickersPanelUiState(
+                packs = packs,
+                pagerState = rememberPagerState(pageCount = { packs.size })
+            ),
             listStateProvider = { listState },
         )
     }
