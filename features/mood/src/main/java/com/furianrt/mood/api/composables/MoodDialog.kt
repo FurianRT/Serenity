@@ -158,6 +158,7 @@ fun MoodDialog(
                             blurRadius = 16.dp,
                         )
                     )
+                    .background(MaterialTheme.colorScheme.surfaceTint)
                     .onSizeChanged { topPanelHeight = it.height }
                     .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
                     .align(Alignment.TopCenter),
@@ -180,6 +181,7 @@ fun MoodDialog(
                             blurRadius = 16.dp,
                         )
                     )
+                    .background(MaterialTheme.colorScheme.surfaceTint)
                     .onSizeChanged { bottomPanelHeight = it.height }
                     .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
                     .align(Alignment.BottomCenter),
