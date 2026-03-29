@@ -13,7 +13,7 @@ performancePlugin = "2.0.2"
 coreKtx = "1.18.0"
 lifecycle = "2.10.0"
 
-composeBom = "2026.03.00"
+composeBom = "2026.03.01"
 composeActivity = "1.13.0"
 composeNavigation = "2.9.7"
 
@@ -40,9 +40,9 @@ blur = "1.7.2"
 
 zoom = "1.4.0"
 
-exoplayer = "1.9.3"
+exoplayer = "1.10.0"
 
-calendar = "2.10.0"
+calendar = "2.10.1"
 
 dataStore = "1.2.1"
 
@@ -65,7 +65,7 @@ kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.2"
 
-workManager = "2.11.1"
+workManager = "2.11.2"
 
 startupRuntime = "1.2.0"
 
