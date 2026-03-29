@@ -34,6 +34,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -109,7 +110,7 @@ fun MoodDialog(
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
         ) {
-            if (topPanelHeight > 0 && bottomPanelHeight > 0) {
+            if (topPanelHeight > 0 && bottomPanelHeight > 0 || LocalInspectionMode.current) {
                 LazyColumn(
                     modifier = Modifier
                         .heightIn(max = 530.dp)
