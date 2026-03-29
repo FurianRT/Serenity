@@ -18,7 +18,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultEnterTransition(): 
             durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(300))
+    ) + fadeIn(animationSpec = tween(300), initialAlpha = 0.05f)
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): ExitTransition {
