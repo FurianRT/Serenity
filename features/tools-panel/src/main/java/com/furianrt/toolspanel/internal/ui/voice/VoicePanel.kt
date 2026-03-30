@@ -1,12 +1,13 @@
 package com.furianrt.toolspanel.internal.ui.voice
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.spring
@@ -33,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalDensity
@@ -57,6 +59,8 @@ import com.furianrt.uikit.R as uiR
 private const val TAG = "VoicePanel"
 private const val FAB_ANIM_DURATION = 1000
 private const val VOLUME_MULTIPLIER = 2.5f
+private const val PLAY_BUTTON_ROTATION_DURATION = 300
+private const val PLAY_BUTTON_FADE_DURATION = 200
 
 @Composable
 internal fun VoicePanel(
@@ -226,6 +230,10 @@ private fun Timer(
             textMeasurer.measure(text = "88:88:8", style = style, maxLines = 1).size.width.toDp()
         }
     }
+    val rotation by animateIntAsState(
+        targetValue = if (isPaused) 90 else 0,
+        animationSpec = tween(PLAY_BUTTON_ROTATION_DURATION)
+    )
     Row(
         modifier = modifier
             .clickableNoRipple {
@@ -241,14 +249,17 @@ private fun Timer(
             text = timer,
             style = style,
         )
-        AnimatedContent(
+        Crossfade(
             modifier = Modifier
                 .size(22.dp)
-                .alpha(0.5f),
+                .alpha(0.5f)
+                .graphicsLayer { rotationZ = rotation.toFloat() },
             targetState = isPaused,
+            animationSpec = tween(PLAY_BUTTON_FADE_DURATION),
         ) { targetState ->
             if (targetState) {
                 Icon(
+                    modifier = Modifier.rotate(-90f),
                     painter = painterResource(uiR.drawable.ic_play),
                     tint = MaterialTheme.colorScheme.onSurface,
                     contentDescription = null,
