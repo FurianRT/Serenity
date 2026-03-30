@@ -206,7 +206,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_0(
         id = "app_background_picture_0",
         surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
         primaryContainer = TOTAL_BLACK.primaryContainer,
         surfaceTint = TOTAL_BLACK.surfaceTint,
         surfaceDim = TOTAL_BLACK.surfaceDim,
@@ -219,7 +219,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_1(
         id = "app_background_picture_1",
         surface = Colors.Primary.Blue1,
-        inverseSurface = Colors.Primary.Blue1,
+        inverseSurface = Colors.Primary.Blue1.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_1,
@@ -230,7 +230,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_2(
         id = "app_background_picture_2",
         surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
         primaryContainer = TOTAL_BLACK.primaryContainer,
         surfaceTint = TOTAL_BLACK.surfaceTint,
         surfaceDim = TOTAL_BLACK.surfaceDim,
@@ -243,7 +243,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_3(
         id = "app_background_picture_3",
         surface = Colors.Primary.Blue3,
-        inverseSurface = Colors.Primary.Blue3,
+        inverseSurface = Colors.Primary.Blue3.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_3,
@@ -254,7 +254,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_4(
         id = "app_background_picture_4",
         surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
         primaryContainer = TOTAL_BLACK.primaryContainer,
         surfaceTint = TOTAL_BLACK.surfaceTint,
         surfaceDim = TOTAL_BLACK.surfaceDim,
@@ -267,7 +267,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_5(
         id = "app_background_picture_5",
         surface = Colors.Primary.Blue4,
-        inverseSurface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_5,
@@ -291,7 +291,7 @@ enum class UiThemeColor(
         onTertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.25f),
         background = Color.White.copy(alpha = 0.35f),
         secondaryContainer = Color.White.copy(alpha = 0.35f),
-        inverseSurface = Colors.Primary.LightPink,
+        inverseSurface = Colors.Primary.LightPink.copy(alpha = 0.9f),
         onSurfaceVariant = Colors.Accent.LightPink.copy(alpha = 0.1f),
         surface = Colors.Primary.LightPink,
         surfaceContainer = Colors.Accent.LightPink,
@@ -309,7 +309,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_7(
         id = "app_background_picture_7",
         surface = Colors.Primary.Blue4,
-        inverseSurface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_7,
@@ -320,7 +320,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_8(
         id = "app_background_picture_8",
         surface = Colors.Primary.Blue4,
-        inverseSurface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_8,
@@ -331,7 +331,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_9(
         id = "app_background_picture_9",
         surface = EUPHORIA_VIOLET.surface,
-        inverseSurface = EUPHORIA_VIOLET.surface,
+        inverseSurface = EUPHORIA_VIOLET.surface.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Pink4,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_9,
@@ -342,7 +342,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_10(
         id = "app_background_picture_10",
         surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface,
+        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
         primaryContainer = TOTAL_BLACK.primaryContainer,
         surfaceTint = TOTAL_BLACK.surfaceTint,
         surfaceDim = TOTAL_BLACK.surfaceDim,
@@ -355,7 +355,7 @@ enum class UiThemeColor(
     APP_BACKGROUND_PICTURE_11(
         id = "app_background_picture_11",
         surface = Colors.Primary.AvatarBlue,
-        inverseSurface = Colors.Primary.AvatarBlue,
+        inverseSurface = Colors.Primary.AvatarBlue.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.AvatarPurple,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_11,
@@ -379,7 +379,7 @@ enum class UiThemeColor(
         onTertiaryContainer = Colors.Accent.LightGreen.copy(alpha = 0.2f),
         background = Color.White.copy(alpha = 0.3f),
         secondaryContainer = Color.White.copy(alpha = 0.3f),
-        inverseSurface = Colors.Primary.LightGreen,
+        inverseSurface = Colors.Primary.LightGreen.copy(alpha = 0.9f),
         onSurfaceVariant = Colors.Accent.LightGreen.copy(alpha = 0.1f),
         surface = Colors.Primary.LightGreen,
         surfaceContainer = Colors.Accent.LightGreen,
@@ -410,7 +410,7 @@ enum class UiThemeColor(
         onTertiaryContainer = Colors.Accent.LightPink.copy(alpha = 0.25f),
         background = Color.White.copy(alpha = 0.35f),
         secondaryContainer = Color.White.copy(alpha = 0.35f),
-        inverseSurface = Colors.Primary.LightPink,
+        inverseSurface = Colors.Primary.LightPink.copy(alpha = 0.9f),
         onSurfaceVariant = Colors.Accent.LightPink.copy(alpha = 0.1f),
         surface = Colors.Primary.LightPink,
         surfaceContainer = Colors.Accent.LightPink,
