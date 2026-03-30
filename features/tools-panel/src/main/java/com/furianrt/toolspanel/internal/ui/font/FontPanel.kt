@@ -519,7 +519,7 @@ private fun MissingFontMessage(
         )
         Text(
             modifier = Modifier
-                .clip(RoundedCornerShape(16.dp))
+                .clip(RoundedCornerShape(10.dp))
                 .clickable(onClick = onClick)
                 .padding(4.dp),
             text = stringResource(R.string.font_panel_write_to_us_title),

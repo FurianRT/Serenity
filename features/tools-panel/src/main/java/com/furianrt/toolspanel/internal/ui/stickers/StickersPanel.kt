@@ -3,6 +3,8 @@ package com.furianrt.toolspanel.internal.ui.stickers
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
@@ -128,8 +130,13 @@ private fun TitleContent(
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     LaunchedEffect(uiState.pagerState, pagerState) {
-        snapshotFlow { uiState.pagerState.currentPage }
-            .collectLatest { pagerState.animateScrollToPage(uiState.pagerState.currentPage) }
+        snapshotFlow { uiState.pagerState.targetPage }
+            .collectLatest {
+                pagerState.animateScrollToPage(
+                    page = uiState.pagerState.targetPage,
+                    animationSpec = spring(stiffness = Spring.StiffnessMediumLow)
+                )
+            }
     }
 
     Box(
