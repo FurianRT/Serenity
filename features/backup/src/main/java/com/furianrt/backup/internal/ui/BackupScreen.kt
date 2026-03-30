@@ -284,7 +284,6 @@ private fun SuccessContent(
     modifier: Modifier = Modifier,
     onEvent: (event: BackupScreenEvent) -> Unit = {},
 ) {
-    val hazeState = rememberHazeState()
     val density = LocalDensity.current
     val hapticFeedback = LocalHapticFeedback.current
     var backupBlockHeight by remember { mutableIntStateOf(0) }
@@ -322,7 +321,7 @@ private fun SuccessContent(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .hazeSource(hazeState)
+                .hazeSource(backgroundHazeState, zIndex = 1f)
                 .verticalScroll(scrollState)
                 .padding(top = toolbarPadding),
             verticalArrangement = Arrangement.spacedBy(24.dp),
@@ -413,7 +412,7 @@ private fun SuccessContent(
             BottomPanel(
                 modifier = Modifier
                     .hazeEffect(
-                        state = hazeState,
+                        state = backgroundHazeState,
                         style = HazeDefaults.style(
                             backgroundColor = MaterialTheme.colorScheme.surface,
                             tint = HazeTint(Color.Transparent),
