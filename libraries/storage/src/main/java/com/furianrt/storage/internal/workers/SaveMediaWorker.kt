@@ -2,19 +2,17 @@ package com.furianrt.storage.internal.workers
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
-import androidx.work.Constraints
 import androidx.work.CoroutineWorker
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.furianrt.common.ErrorTracker
 import com.furianrt.storage.internal.managers.MediaSaver
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import java.util.concurrent.TimeUnit
 
-private const val WORK_NAME_PERIODIC = "SaveMediaPeriodic"
+private const val WORK_NAME_ONE_TIME = "SaveMediaOneTime"
 
 @HiltWorker
 internal class SaveMediaWorker @AssistedInject constructor(
@@ -25,23 +23,11 @@ internal class SaveMediaWorker @AssistedInject constructor(
 ) : CoroutineWorker(appContext, params) {
 
     companion object {
-        fun enqueuePeriodic(context: Context) {
-            val constraints = Constraints.Builder()
-                .build()
-
-            val workRequest = PeriodicWorkRequest.Builder(
-                workerClass = SaveMediaWorker::class.java,
-                repeatInterval = 1,
-                repeatIntervalTimeUnit = TimeUnit.DAYS,
-            )
-                .setConstraints(constraints)
-                .setInitialDelay(duration = 1, timeUnit = TimeUnit.HOURS)
-                .build()
-
-            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                uniqueWorkName = WORK_NAME_PERIODIC,
-                existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
-                request = workRequest,
+        fun enqueueOneTime(context: Context) {
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                WORK_NAME_ONE_TIME,
+                ExistingWorkPolicy.APPEND,
+                OneTimeWorkRequest.Builder(SaveMediaWorker::class.java).build(),
             )
         }
     }

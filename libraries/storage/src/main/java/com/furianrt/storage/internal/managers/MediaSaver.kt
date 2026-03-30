@@ -14,7 +14,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -55,7 +54,7 @@ internal class MediaSaver @Inject constructor(
     private val videoDao: VideoDao,
     private val appMediaSource: AppMediaSource,
 ) {
-    private val scope = CoroutineScope(dispatchers.default + SupervisorJob())
+    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
     private val canceledEntries = mutableSetOf<QueueEntry>()
     private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = MAX_QUEUE)
     private val mutex = Mutex()
@@ -63,7 +62,6 @@ internal class MediaSaver @Inject constructor(
     init {
         queue
             .onEach(::saveMedia)
-            .flowOn(dispatchers.default)
             .launchIn(scope)
     }
 

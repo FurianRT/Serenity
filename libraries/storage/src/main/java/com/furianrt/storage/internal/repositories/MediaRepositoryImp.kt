@@ -67,7 +67,7 @@ internal class MediaRepositoryImp @Inject constructor(
         }
 
         if (media.isNotEmpty() && updateFile) {
-            mediaSaver.save(noteId, media)
+            SaveMediaWorker.enqueueOneTime(context)
         }
     }
 
@@ -171,10 +171,6 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override suspend fun getAspectRatio(file: File): Float {
         return appMediaSource.getAspectRatio(file)
-    }
-
-    override fun enqueuePeriodicMediaSave() {
-        SaveMediaWorker.enqueuePeriodic(context)
     }
 
     override suspend fun saveAllMedia() {

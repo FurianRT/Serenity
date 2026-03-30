@@ -43,8 +43,6 @@ interface MediaRepository {
     fun getRelativeUri(file: File): Uri
     suspend fun getAspectRatio(file: File): Float
 
-    fun enqueuePeriodicMediaSave()
-
     suspend fun saveAllMedia()
 
     companion object {

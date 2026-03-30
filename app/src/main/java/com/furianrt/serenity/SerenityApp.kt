@@ -77,7 +77,6 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     @OptIn(DelicateCoroutinesApi::class)
     private fun startPeriodicWorks() {
         notesRepository.enqueuePeriodicCleanup()
-        mediaRepository.enqueuePeriodicMediaSave()
         scope.launch { syncManager.tryStartAutoBackup() }
     }
 
