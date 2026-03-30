@@ -3,6 +3,7 @@ package com.furianrt.backup.internal.data.remote.google.token
 import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.domain.usecases.AuthorizeUseCase
 import com.furianrt.backup.internal.domain.entities.AuthResult
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.repositories.ProfileRepository
 import dagger.Lazy
 import kotlinx.coroutines.flow.first
@@ -19,6 +20,7 @@ internal class TokenAuthenticator @Inject constructor(
     private val authorizeUseCase: Lazy<AuthorizeUseCase>,
     private val backupDataStore: BackupDataStore,
     private val profileRepository: ProfileRepository,
+    private val errorTracker: ErrorTracker,
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
@@ -55,6 +57,7 @@ internal class TokenAuthenticator @Inject constructor(
         runBlocking { authorizeUseCase.get().invoke() }
     } catch (e: InterruptedException) {
         e.printStackTrace()
+        errorTracker.trackNonFatalError(e)
         AuthResult.Failure(e)
     }
 
@@ -62,6 +65,7 @@ internal class TokenAuthenticator @Inject constructor(
         try {
             runBlocking { backupDataStore.updateGoogleAccessToken(token) }
         } catch (e: InterruptedException) {
+            errorTracker.trackNonFatalError(e)
             e.printStackTrace()
         }
     }
@@ -74,6 +78,7 @@ internal class TokenAuthenticator @Inject constructor(
                 }
             }
         } catch (e: InterruptedException) {
+            errorTracker.trackNonFatalError(e)
             e.printStackTrace()
         }
     }
