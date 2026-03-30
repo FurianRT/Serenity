@@ -27,8 +27,13 @@ import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import com.furianrt.uikit.R as uiR
 
+internal class ToolbarState {
+    var showDropDownMenu by mutableStateOf(false)
+}
+
 @Composable
 internal fun Toolbar(
+    state: ToolbarState,
     totalImages: Int,
     currentImageIndex: Int,
     hazeState: HazeState,
@@ -38,7 +43,6 @@ internal fun Toolbar(
     onShareClick: () -> Unit = {},
     onSaveMediaClick: () -> Unit = {},
 ) {
-    var showDropDownMenu by remember { mutableStateOf(false) }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -60,15 +64,15 @@ internal fun Toolbar(
         Box {
             ButtonMenu(
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                onClick = { showDropDownMenu = true },
+                onClick = { state.showDropDownMenu = true },
             )
             Menu(
-                expanded = showDropDownMenu,
+                expanded = state.showDropDownMenu,
                 hazeState = hazeState,
                 onDeleteClick = onDeleteClick,
                 onSaveMediaClick = onSaveMediaClick,
                 onShareClick = onShareClick,
-                onDismissRequest = { showDropDownMenu = false },
+                onDismissRequest = { state.showDropDownMenu = false },
             )
         }
     }
@@ -94,6 +98,7 @@ private fun Counter(
 private fun Preview() {
     SerenityTheme {
         Toolbar(
+            state = ToolbarState(),
             totalImages = 50,
             currentImageIndex = 25,
             hazeState = HazeState(),

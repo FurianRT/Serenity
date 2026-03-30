@@ -46,6 +46,7 @@ import com.furianrt.mediaview.R
 import com.furianrt.mediaview.internal.ui.composables.MediaList
 import com.furianrt.mediaview.internal.ui.composables.MediaPager
 import com.furianrt.mediaview.internal.ui.composables.Toolbar
+import com.furianrt.mediaview.internal.ui.composables.ToolbarState
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
 import com.furianrt.uikit.components.SnackBar
@@ -161,6 +162,7 @@ private fun SuccessContent(
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
+    val toolbarState = remember { ToolbarState() }
     val hazeState = rememberHazeState()
     val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
@@ -187,12 +189,19 @@ private fun SuccessContent(
         showControls,
         isThumbDragging,
         isPlaying,
+        toolbarState.showDropDownMenu,
     ) {
         snapshotFlow { pagerState.currentPage }
             .collectLatest { currentPage ->
                 isVideoItem = uiState.media[currentPage] is MediaItem.Video
                 val isScrollInProgress = listState.isScrollInProgress
-                if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging && isPlaying) {
+                if (!isScrollInProgress &&
+                    showControls &&
+                    isVideoItem &&
+                    !isThumbDragging &&
+                    isPlaying &&
+                    !toolbarState.showDropDownMenu
+                ) {
                     delay(UI_HIDE_DELAY)
                     showControls = false
                 }
@@ -243,6 +252,7 @@ private fun SuccessContent(
                 modifier = Modifier
                     .background(SystemBarsConstants.MediaBarsColor)
                     .statusBarsPadding(),
+                state = toolbarState,
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
                 hazeState = hazeState,
