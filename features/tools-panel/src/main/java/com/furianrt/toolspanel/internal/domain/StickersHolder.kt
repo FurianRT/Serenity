@@ -27,6 +27,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         add(getPack11())
         add(getPack9())
         add(getPack10())
+        add(getPack12())
     }
 
     private fun getPack1(): StickerPack {
@@ -408,6 +409,61 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
             id = "pack_11",
             isPremium = false,
             icon = R.drawable.pack_11_sticker_9,
+            stickers = stickers,
+        )
+    }
+
+    private fun getPack12(): StickerPack {
+        val stickers = buildList {
+            add(Sticker(id = "pack_12_sticker_1", icon = R.drawable.pack_12_sticker_1))
+            add(Sticker(id = "pack_12_sticker_2", icon = R.drawable.pack_12_sticker_2))
+            add(Sticker(id = "pack_12_sticker_3", icon = R.drawable.pack_12_sticker_3))
+            add(Sticker(id = "pack_12_sticker_4", icon = R.drawable.pack_12_sticker_4))
+            add(Sticker(id = "pack_12_sticker_5", icon = R.drawable.pack_12_sticker_5))
+            add(Sticker(id = "pack_12_sticker_6", icon = R.drawable.pack_12_sticker_6))
+            add(Sticker(id = "pack_12_sticker_7", icon = R.drawable.pack_12_sticker_7))
+            add(Sticker(id = "pack_12_sticker_8", icon = R.drawable.pack_12_sticker_8))
+            add(Sticker(id = "pack_12_sticker_9", icon = R.drawable.pack_12_sticker_9))
+            add(Sticker(id = "pack_12_sticker_10", icon = R.drawable.pack_12_sticker_10))
+            add(Sticker(id = "pack_12_sticker_11", icon = R.drawable.pack_12_sticker_11))
+            add(Sticker(id = "pack_12_sticker_12", icon = R.drawable.pack_12_sticker_12))
+            add(Sticker(id = "pack_12_sticker_13", icon = R.drawable.pack_12_sticker_13))
+            add(Sticker(id = "pack_12_sticker_14", icon = R.drawable.pack_12_sticker_14))
+            add(Sticker(id = "pack_12_sticker_15", icon = R.drawable.pack_12_sticker_15))
+            add(Sticker(id = "pack_12_sticker_16", icon = R.drawable.pack_12_sticker_16))
+            add(Sticker(id = "pack_12_sticker_17", icon = R.drawable.pack_12_sticker_17))
+            add(Sticker(id = "pack_12_sticker_18", icon = R.drawable.pack_12_sticker_18))
+            add(Sticker(id = "pack_12_sticker_19", icon = R.drawable.pack_12_sticker_19))
+            add(Sticker(id = "pack_12_sticker_20", icon = R.drawable.pack_12_sticker_20))
+            add(Sticker(id = "pack_12_sticker_21", icon = R.drawable.pack_12_sticker_21))
+            add(Sticker(id = "pack_12_sticker_22", icon = R.drawable.pack_12_sticker_22))
+            add(Sticker(id = "pack_12_sticker_23", icon = R.drawable.pack_12_sticker_23))
+            add(Sticker(id = "pack_12_sticker_24", icon = R.drawable.pack_12_sticker_24))
+            add(Sticker(id = "pack_12_sticker_25", icon = R.drawable.pack_12_sticker_25))
+            add(Sticker(id = "pack_12_sticker_26", icon = R.drawable.pack_12_sticker_26))
+            add(Sticker(id = "pack_12_sticker_27", icon = R.drawable.pack_12_sticker_27))
+            add(Sticker(id = "pack_12_sticker_28", icon = R.drawable.pack_12_sticker_28))
+            add(Sticker(id = "pack_12_sticker_29", icon = R.drawable.pack_12_sticker_29))
+            add(Sticker(id = "pack_12_sticker_30", icon = R.drawable.pack_12_sticker_30))
+            add(Sticker(id = "pack_12_sticker_31", icon = R.drawable.pack_12_sticker_31))
+            add(Sticker(id = "pack_12_sticker_32", icon = R.drawable.pack_12_sticker_32))
+            add(Sticker(id = "pack_12_sticker_33", icon = R.drawable.pack_12_sticker_33))
+            add(Sticker(id = "pack_12_sticker_34", icon = R.drawable.pack_12_sticker_34))
+            add(Sticker(id = "pack_12_sticker_35", icon = R.drawable.pack_12_sticker_35))
+            add(Sticker(id = "pack_12_sticker_36", icon = R.drawable.pack_12_sticker_36))
+            add(Sticker(id = "pack_12_sticker_37", icon = R.drawable.pack_12_sticker_37))
+            add(Sticker(id = "pack_12_sticker_38", icon = R.drawable.pack_12_sticker_38))
+            add(Sticker(id = "pack_12_sticker_39", icon = R.drawable.pack_12_sticker_39))
+            add(Sticker(id = "pack_12_sticker_40", icon = R.drawable.pack_12_sticker_40))
+            add(Sticker(id = "pack_12_sticker_41", icon = R.drawable.pack_12_sticker_41))
+            add(Sticker(id = "pack_12_sticker_42", icon = R.drawable.pack_12_sticker_42))
+            add(Sticker(id = "pack_12_sticker_43", icon = R.drawable.pack_12_sticker_43))
+        }
+
+        return StickerPack(
+            id = "pack_12",
+            isPremium = false,
+            icon = R.drawable.pack_12_sticker_6,
             stickers = stickers,
         )
     }
