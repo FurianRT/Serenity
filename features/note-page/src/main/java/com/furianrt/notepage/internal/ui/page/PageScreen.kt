@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBars
@@ -68,7 +67,6 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -435,7 +433,6 @@ private fun SuccessScreen(
     val statusBarHeight = rememberSaveable(state) { view.getStatusBarHeight() }
     val statusBarHeightDp = statusBarHeight.pxToDp()
     val toolbarMargin = statusBarHeightDp + ToolbarConstants.toolbarHeight + 8.dp
-    var listSize by remember { mutableStateOf(IntSize.Zero) }
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues()
         .calculateBottomPadding() + 8.dp
     val listPanelPaddingAnim by animateDpAsState(
@@ -483,9 +480,7 @@ private fun SuccessScreen(
                 .imePadding(),
         ) {
             ContentItems(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onSizeChanged { listSize = it },
+                modifier = Modifier.fillMaxSize(),
                 uiState = uiState,
                 hazeState = hazeState,
                 onEvent = onEvent,
@@ -507,10 +502,9 @@ private fun SuccessScreen(
                     modifier = Modifier
                         .fillMaxWidth()
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
-                        .height(listSize.height.pxToDp()),
+                        .matchParentSize(),
                     stickers = uiState.stickers,
                     emptyTitleHeight = { if (uiState.hasTopTitle) topEmptyTitleHeight else 0f },
-                    containerSize = { listSize },
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
                     onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },

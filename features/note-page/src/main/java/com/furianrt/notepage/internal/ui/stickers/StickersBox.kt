@@ -2,7 +2,7 @@ package com.furianrt.notepage.internal.ui.stickers
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -10,27 +10,27 @@ import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
+import com.furianrt.uikit.extensions.dpToPx
 
 @Composable
 internal fun StickersBox(
     stickers: List<StickerItem>,
     emptyTitleHeight: () -> Float,
-    containerSize: () -> IntSize,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     onStickerChanged: (sticker: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
+    BoxWithConstraints(modifier = modifier) {
         stickers.forEach { sticker ->
             key(sticker.id) {
                 StickerElement(
                     sticker = sticker,
                     emptyTitleHeight = emptyTitleHeight,
-                    containerSize = containerSize,
+                    containerWidth = maxWidth.dpToPx(),
+                    containerHeight = maxHeight.dpToPx(),
                     onStickerClick = onStickerClick,
                     onRemoveStickerClick = onRemoveStickerClick,
                     onStickerChanged = onStickerChanged,
@@ -44,7 +44,8 @@ internal fun StickersBox(
 private fun StickerElement(
     sticker: StickerItem,
     emptyTitleHeight: () -> Float,
-    containerSize: () -> IntSize,
+    containerWidth: Float,
+    containerHeight: Float,
     onStickerChanged: (sticker: StickerItem) -> Unit,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
@@ -57,25 +58,20 @@ private fun StickerElement(
     )
     StickerScreenItem(
         modifier = modifier.offset {
-            val listSize = containerSize()
-            val maxWidthPx = listSize.width
             val stickerSize = StickerItem.DEFAULT_SIZE.toPx()
             IntOffset(
-                x = (maxWidthPx * sticker.state.biasX - stickerSize / 2f).toInt(),
+                x = (containerWidth * sticker.state.biasX - stickerSize / 2f).toInt(),
                 y = (sticker.state.dpOffsetY.toPx() - stickerSize / 2f + addOffset).toInt(),
             )
         },
         item = sticker,
         onRemoveClick = onRemoveStickerClick,
         onDragged = { delta ->
-            val listSize = containerSize()
-            val maxWidthPx = listSize.width
-            val maxHeightPx = listSize.height
-            sticker.state.biasX = if (maxHeightPx == 0) {
+            sticker.state.biasX = if (containerHeight == 0f) {
                 0f
             } else {
-                val stickerOffset = maxWidthPx * sticker.state.biasX + delta.x
-                stickerOffset.coerceIn(0f, maxWidthPx.toFloat()) / maxWidthPx
+                val stickerOffset = containerWidth * sticker.state.biasX + delta.x
+                stickerOffset.coerceIn(0f, containerWidth) / containerWidth
             }
             sticker.state.dpOffsetY = density.run {
                 (sticker.state.dpOffsetY + delta.y.toDp()).coerceAtLeast(0.dp)
