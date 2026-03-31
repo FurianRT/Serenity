@@ -31,6 +31,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.PagerSnapDistance
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
@@ -168,6 +170,10 @@ private fun TitleContent(
                 pageSpacing = 12.dp,
                 pageSize = PageSize.Fixed(TITLE_LIST_ITEM_SIZE),
                 snapPosition = SnapPosition.Center,
+                flingBehavior = PagerDefaults.flingBehavior(
+                    state = pagerState,
+                    pagerSnapDistance = PagerSnapDistance.atMost(5),
+                ),
                 contentPadding = PaddingValues(
                     horizontal = if (showKeyBoardButtonState) 4.dp else 12.dp,
                 )
