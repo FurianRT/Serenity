@@ -408,7 +408,7 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
         return StickerPack(
             id = "pack_11",
             isPremium = false,
-            icon = R.drawable.pack_11_sticker_9,
+            icon = R.drawable.pack_11_sticker_43,
             stickers = stickers,
         )
     }
