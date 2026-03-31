@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Securitate</string>
     <string name="settings_backup_title">Backup și Restaurare</string>
-    <string name="settings_light_theme_title">Luminoasă</string>
-    <string name="settings_dark_theme_title">Întunecată</string>
     <string name="settings_font_title">Font aplicație</string>
     <string name="settings_language_title">Limbă</string>
     <string name="settings_rate_us_title">Evaluează-ne</string>
-    <string name="settings_donate_title">Donează</string>
     <string name="settings_feedback_title">Raportează o problemă</string>
     <string name="settings_terms_and_conditions_title">Termeni și condiții</string>
     <string name="settings_privacy_policy_title">Politica de confidențialitate</string>

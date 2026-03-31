@@ -4,15 +4,11 @@
 
     <string name="bullet_panel_title">Lista con viñetas</string>
 
-    <string name="background_panel_tab_all_title">Todos</string>
-    <string name="background_panel_tab_dark_title">Oscuros</string>
-    <string name="background_panel_tab_light_title">Claros</string>
     <string name="font_panel_missing_font_title">¿Falta alguna fuente?</string>
     <string name="font_panel_write_to_us_title">¡Escríbenos!</string>
 
     <string name="background_panel_tab_solid_title">Color</string>
     <string name="background_panel_tab_pattern_title">Patrón</string>
     <string name="background_panel_tab_picture_title">Imagen</string>
-    <string name="background_panel_background_title">Fondo</string>
     <string name="background_panel_theme_title">Tema</string>
 </resources>

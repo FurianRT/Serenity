@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Lass es gemütlich werden und\nperfekt für dich bereit</string>
 
     <string name="onboarding_theme_page_title">Finde deinen perfekten Look</string>
-    <string name="onboarding_theme_light_title">Hell</string>
-    <string name="onboarding_theme_dark_title">Dunkel</string>
 
     <string name="onboarding_notifications_title">Dürfen wir dir Benachrichtigungen senden?</string>
     <string name="onboarding_notifications_body">Nur für Synchronisationsfortschritte und wichtige Updates — wir stören dich nicht unnötig</string>

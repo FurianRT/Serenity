@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Segurança</string>
     <string name="settings_backup_title">Backup e Restauração</string>
-    <string name="settings_light_theme_title">Claro</string>
-    <string name="settings_dark_theme_title">Escuro</string>
     <string name="settings_font_title">Fonte do App</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_rate_us_title">Avalie-nos</string>
-    <string name="settings_donate_title">Doar</string>
     <string name="settings_feedback_title">Reportar um Problema</string>
     <string name="settings_terms_and_conditions_title">Termos e Condições</string>
     <string name="settings_privacy_policy_title">Política de Privacidade</string>

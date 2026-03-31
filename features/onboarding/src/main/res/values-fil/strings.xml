@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Gawin natin itong komportable at handa\npara lang sa iyo</string>
 
     <string name="onboarding_theme_page_title">Hanapin ang perpektong itsura</string>
-    <string name="onboarding_theme_light_title">Maliwanag</string>
-    <string name="onboarding_theme_dark_title">Madilim</string>
 
     <string name="onboarding_notifications_title">Maaari ba kaming magpadala ng mga notification?</string>
     <string name="onboarding_notifications_body">Para lamang sa sync progress at mahahalagang update — hindi ka namin iistorbohin nang hindi kinakailangan</string>

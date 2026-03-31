@@ -21,14 +21,7 @@ inline fun <reified T> MutableStateFlow<in T>.updateState(function: (T) -> T) {
     }
 }
 
-inline fun <reified R> StateFlow<*>.getState(): R? {
-    val state = value
-    return if (state is R) {
-        state
-    } else {
-        null
-    }
-}
+inline fun <reified R> StateFlow<*>.getState(): R? = value as? R
 
 inline fun <reified R> StateFlow<*>.doWithState(action: (state: R) -> Unit) {
     val state = value

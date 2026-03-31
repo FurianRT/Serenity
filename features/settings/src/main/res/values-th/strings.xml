@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">ความปลอดภัย</string>
     <string name="settings_backup_title">สำรองข้อมูลและกู้คืน</string>
-    <string name="settings_light_theme_title">สว่าง</string>
-    <string name="settings_dark_theme_title">มืด</string>
     <string name="settings_font_title">ฟอนต์แอป</string>
     <string name="settings_language_title">ภาษา</string>
     <string name="settings_rate_us_title">ให้คะแนนเรา</string>
-    <string name="settings_donate_title">บริจาค</string>
     <string name="settings_feedback_title">รายงานปัญหา</string>
     <string name="settings_terms_and_conditions_title">ข้อกำหนด &amp; เงื่อนไข</string>
     <string name="settings_privacy_policy_title">นโยบายความเป็นส่วนตัว</string>

@@ -37,10 +37,6 @@ internal class ThemeViewModel @Inject constructor(
             ),
         )
 
-    fun onEvent(event: ThemeEvent) {
-
-    }
-
     private fun buildState(
         appThemeColorId: String?,
     ): ThemeState {

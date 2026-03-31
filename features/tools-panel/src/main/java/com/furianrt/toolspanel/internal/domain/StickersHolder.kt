@@ -398,7 +398,6 @@ internal class StickersHolder @Inject constructor() : StickerIconProvider {
             add(Sticker(id = "pack_11_sticker_36", icon = R.drawable.pack_11_sticker_36))
             add(Sticker(id = "pack_11_sticker_37", icon = R.drawable.pack_11_sticker_37))
             add(Sticker(id = "pack_11_sticker_38", icon = R.drawable.pack_11_sticker_38))
-            add(Sticker(id = "pack_11_sticker_39", icon = R.drawable.pack_11_sticker_39))
             add(Sticker(id = "pack_11_sticker_40", icon = R.drawable.pack_11_sticker_40))
             add(Sticker(id = "pack_11_sticker_41", icon = R.drawable.pack_11_sticker_41))
             add(Sticker(id = "pack_11_sticker_42", icon = R.drawable.pack_11_sticker_42))

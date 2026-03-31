@@ -10,13 +10,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 fun TextLayoutResult.cursorCoordinates(selection: TextRange): Pair<Float, Float>? {
     val minLine = try {
         getLineForOffset(selection.min)
-    } catch (ex: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
         getLineForOffset(selection.min - 1)
     }
 
     val maxLine = try {
         getLineForOffset(selection.max)
-    } catch (ex: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
         getLineForOffset(selection.max - 1)
     }
 
@@ -99,7 +99,7 @@ private fun <T> List<AnnotatedString.Range<T>>.mapMoving(
         selectionStart > span.end -> {
             span
         }
-        // if the change is on the end of the range and it is adding a new char
+        // if the change is on the end of the range, and it is adding a new char
         selectionStart == span.end && delta > 0 -> {
             span
         }

@@ -330,12 +330,6 @@ private fun SuccessScreen(
             rating = uiState.rating,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
-        /* GeneralButton(
-             modifier = Modifier.padding(top = 16.dp, start = 8.dp, end = 8.dp),
-             title = stringResource(id = R.string.settings_donate_title),
-             iconPainter = painterResource(id = R.drawable.ic_hart),
-             onClick = {},
-         )*/
         GeneralButton(
             modifier = Modifier
                 .padding(top = 16.dp)

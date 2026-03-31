@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Vamos deixá-lo aconchegante e pronto\nespecialmente para você</string>
 
     <string name="onboarding_theme_page_title">Encontre o visual perfeito</string>
-    <string name="onboarding_theme_light_title">Claro</string>
-    <string name="onboarding_theme_dark_title">Escuro</string>
 
     <string name="onboarding_notifications_title">Podemos enviar notificações?</string>
     <string name="onboarding_notifications_body">Apenas para progresso de sincronização e atualizações importantes — nunca vamos incomodar sem necessidade</string>

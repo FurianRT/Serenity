@@ -35,4 +35,6 @@ dependencies {
     implementation(libs.calendar)
 
     implementation(libs.coil)
+
+    implementation(libs.exoplayerUi)
 }

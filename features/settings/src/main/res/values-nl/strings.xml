@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Beveiliging</string>
     <string name="settings_backup_title">Back-up en Herstellen</string>
-    <string name="settings_light_theme_title">Licht</string>
-    <string name="settings_dark_theme_title">Donker</string>
     <string name="settings_font_title">App-lettertype</string>
     <string name="settings_language_title">Taal</string>
     <string name="settings_rate_us_title">Beoordeel ons</string>
-    <string name="settings_donate_title">Doneren</string>
     <string name="settings_feedback_title">Probleem melden</string>
     <string name="settings_terms_and_conditions_title">Algemene voorwaarden</string>
     <string name="settings_privacy_policy_title">Privacybeleid</string>

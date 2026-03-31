@@ -178,9 +178,12 @@ internal class AppMediaSource @Inject constructor(
         image: LocalNote.Content.Image,
         noteId: String,
     ): SavedMediaData? = withContext(dispatchers.io) {
-        val bitmap = context.contentResolver.openInputStream(image.uri)
-            ?.use(BitmapFactory::decodeStream)
+        val inputStream = context.contentResolver.openInputStream(image.uri)
             ?: return@withContext null
+
+        val bitmap = withContext(dispatchers.default) {
+            inputStream.use(BitmapFactory::decodeStream)
+        } ?: return@withContext null
 
         val imageNewName = image.name.replaceFileExtension(".webp")
         val destFile = createMediaFile(
@@ -189,12 +192,14 @@ internal class AppMediaSource @Inject constructor(
             mediaName = imageNewName,
         ) ?: return@withContext null
 
-        destFile.outputStream().use { outputStream ->
-            bitmap.compress(
-                Bitmap.CompressFormat.WEBP_LOSSY,
-                IMAGE_COMPRESS_AMOUNT,
-                outputStream,
-            )
+        withContext(dispatchers.default) {
+            destFile.outputStream().use { outputStream ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.WEBP_LOSSY,
+                    IMAGE_COMPRESS_AMOUNT,
+                    outputStream,
+                )
+            }
         }
 
         try {

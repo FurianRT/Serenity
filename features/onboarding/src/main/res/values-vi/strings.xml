@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Hãy làm cho nó ấm áp và sẵn sàng\nchỉ dành riêng cho bạn</string>
 
     <string name="onboarding_theme_page_title">Tìm phong cách hoàn hảo của bạn</string>
-    <string name="onboarding_theme_light_title">Sáng</string>
-    <string name="onboarding_theme_dark_title">Tối</string>
 
     <string name="onboarding_notifications_title">Chúng tôi có thể gửi thông báo cho bạn không?</string>
     <string name="onboarding_notifications_body">Chỉ để cập nhật tiến trình đồng bộ và thông tin quan trọng — chúng tôi sẽ không làm phiền bạn không cần thiết</string>

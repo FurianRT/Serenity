@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Bezpieczeństwo</string>
     <string name="settings_backup_title">Kopia i przywracanie</string>
-    <string name="settings_light_theme_title">Jasny</string>
-    <string name="settings_dark_theme_title">Ciemny</string>
     <string name="settings_font_title">Czcionka aplikacji</string>
     <string name="settings_language_title">Język</string>
     <string name="settings_rate_us_title">Oceń nas</string>
-    <string name="settings_donate_title">Wpłać darowiznę</string>
     <string name="settings_feedback_title">Zgłoś problem</string>
     <string name="settings_terms_and_conditions_title">Regulamin</string>
     <string name="settings_privacy_policy_title">Polityka prywatności</string>

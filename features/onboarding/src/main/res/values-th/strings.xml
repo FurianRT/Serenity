@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">มาทำให้มันอบอุ่นและพร้อม\nสำหรับคุณโดยเฉพาะ</string>
 
     <string name="onboarding_theme_page_title">ค้นหาสไตล์ที่ใช่ของคุณ</string>
-    <string name="onboarding_theme_light_title">สว่าง</string>
-    <string name="onboarding_theme_dark_title">มืด</string>
 
     <string name="onboarding_notifications_title">เราส่งการแจ้งเตือนได้ไหม?</string>
     <string name="onboarding_notifications_body">เฉพาะความคืบหน้าการซิงค์และอัปเดตสำคัญ — เราจะไม่รบกวนโดยไม่จำเป็น</string>

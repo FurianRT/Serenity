@@ -4,15 +4,11 @@
 
     <string name="bullet_panel_title">マーカー付きリスト</string>
 
-    <string name="background_panel_tab_all_title">すべて</string>
-    <string name="background_panel_tab_dark_title">ダーク</string>
-    <string name="background_panel_tab_light_title">ライト</string>
     <string name="font_panel_missing_font_title">欲しいフォントが見つかりませんか？</string>
     <string name="font_panel_write_to_us_title">私たちに教えてね！</string>
 
     <string name="background_panel_tab_solid_title">色</string>
     <string name="background_panel_tab_pattern_title">パターン</string>
     <string name="background_panel_tab_picture_title">画像</string>
-    <string name="background_panel_background_title">背景</string>
     <string name="background_panel_theme_title">テーマ</string>
 </resources>

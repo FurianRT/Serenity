@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">あなただけのために\n心地よく整えましょう</string>
 
     <string name="onboarding_theme_page_title">理想のデザインを見つけよう</string>
-    <string name="onboarding_theme_light_title">ライト</string>
-    <string name="onboarding_theme_dark_title">ダーク</string>
 
     <string name="onboarding_notifications_title">通知を送ってもいいですか？</string>
     <string name="onboarding_notifications_body">同期の進行状況や重要なお知らせのみ — 不要な通知は送りません</string>

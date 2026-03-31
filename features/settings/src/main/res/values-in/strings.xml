@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Keamanan</string>
     <string name="settings_backup_title">Cadangkan &amp; Pulihkan</string>
-    <string name="settings_light_theme_title">Terang</string>
-    <string name="settings_dark_theme_title">Gelap</string>
     <string name="settings_font_title">Font Aplikasi</string>
     <string name="settings_language_title">Bahasa</string>
     <string name="settings_rate_us_title">Beri Penilaian</string>
-    <string name="settings_donate_title">Donasi</string>
     <string name="settings_feedback_title">Laporkan Masalah</string>
     <string name="settings_terms_and_conditions_title">Syarat &amp; Ketentuan</string>
     <string name="settings_privacy_policy_title">Kebijakan Privasi</string>

@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Зробімо його затишним і готовим\nсаме для вас</string>
 
     <string name="onboarding_theme_page_title">Знайдіть свій ідеальний стиль</string>
-    <string name="onboarding_theme_light_title">Світла</string>
-    <string name="onboarding_theme_dark_title">Темна</string>
 
     <string name="onboarding_notifications_title">Можемо надсилати вам сповіщення?</string>
     <string name="onboarding_notifications_body">Лише про синхронізацію та важливі оновлення — ми не турбуватимемо вас без потреби</string>

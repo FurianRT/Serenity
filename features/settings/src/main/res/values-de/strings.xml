@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">Seguridad</string>
     <string name="settings_backup_title">Respaldo y restauración</string>
-    <string name="settings_light_theme_title">Hell</string>
-    <string name="settings_dark_theme_title">Dunkel</string>
     <string name="settings_font_title">Fuente de la aplicación</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_rate_us_title">Califícanos</string>
-    <string name="settings_donate_title">Donar</string>
     <string name="settings_feedback_title">Reportar un problema</string>
     <string name="settings_terms_and_conditions_title">Términos y condiciones</string>
     <string name="settings_privacy_policy_title">Política de privacidad</string>

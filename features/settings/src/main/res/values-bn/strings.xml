@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">নিরাপত্তা</string>
     <string name="settings_backup_title">ব্যাকআপ এবং পুনরুদ্ধার</string>
-    <string name="settings_light_theme_title">হালকা</string>
-    <string name="settings_dark_theme_title">গাঢ়</string>
     <string name="settings_font_title">অ্যাপ ফন্ট</string>
     <string name="settings_language_title">ভাষা</string>
     <string name="settings_rate_us_title">আমাদের রেট করুন</string>
-    <string name="settings_donate_title">দান করুন</string>
     <string name="settings_feedback_title">সমস্যা রিপোর্ট করুন</string>
     <string name="settings_terms_and_conditions_title">শর্তাবলী</string>
     <string name="settings_privacy_policy_title">গোপনীয়তা নীতি</string>

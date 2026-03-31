@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Onu senin için rahat ve hazır\nhale getirelim</string>
 
     <string name="onboarding_theme_page_title">Mükemmel görünümünü bul</string>
-    <string name="onboarding_theme_light_title">Açık</string>
-    <string name="onboarding_theme_dark_title">Koyu</string>
 
     <string name="onboarding_notifications_title">Bildirim göndermemize izin verir misin?</string>
     <string name="onboarding_notifications_body">Yalnızca senkronizasyon durumu ve önemli güncellemeler için — gereksiz yere rahatsız etmeyiz</string>

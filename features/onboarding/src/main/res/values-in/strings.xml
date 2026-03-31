@@ -6,8 +6,6 @@
     <string name="onboarding_greeting_page_body">Mari buat nyaman dan siap\nkhusus untukmu</string>
 
     <string name="onboarding_theme_page_title">Temukan tampilan yang pas</string>
-    <string name="onboarding_theme_light_title">Terang</string>
-    <string name="onboarding_theme_dark_title">Gelap</string>
 
     <string name="onboarding_notifications_title">Bolehkah kami mengirim notifikasi?</string>
     <string name="onboarding_notifications_body">Hanya untuk progres sinkronisasi dan pembaruan penting — kami tidak akan mengganggumu tanpa alasan</string>

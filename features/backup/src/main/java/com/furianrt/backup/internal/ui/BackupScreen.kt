@@ -498,7 +498,7 @@ private fun PreviewLoading() {
                     lastSyncDate = Content.Success.SyncDate.None,
                     questions = buildPreviewQuestionsList(expandedIndex = null),
                     authState = Content.Success.AuthState.SignedIn(
-                        email = "felmemfmelflmfe",
+                        email = "test@gmail.com",
                         isLoading = true,
                     ),
                     syncProgress = SyncProgress.Idle,

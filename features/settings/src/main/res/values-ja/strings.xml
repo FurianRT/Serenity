@@ -1,12 +1,9 @@
 <resources>
     <string name="settings_security_title">セキュリティ</string>
     <string name="settings_backup_title">バックアップと復元</string>
-    <string name="settings_light_theme_title">ライト</string>
-    <string name="settings_dark_theme_title">ダーク</string>
     <string name="settings_font_title">アプリのフォント</string>
     <string name="settings_language_title">言語</string>
     <string name="settings_rate_us_title">評価する</string>
-    <string name="settings_donate_title">寄付</string>
     <string name="settings_feedback_title">問題を報告する</string>
     <string name="settings_terms_and_conditions_title">利用規約</string>
     <string name="settings_privacy_policy_title">プライバシーポリシー</string>

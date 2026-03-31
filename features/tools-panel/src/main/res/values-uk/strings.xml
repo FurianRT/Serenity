@@ -4,15 +4,11 @@
 
     <string name="bullet_panel_title">Список із маркерами</string>
 
-    <string name="background_panel_tab_all_title">Усі</string>
-    <string name="background_panel_tab_dark_title">Темні</string>
-    <string name="background_panel_tab_light_title">Світлі</string>
     <string name="font_panel_missing_font_title">Не вистачає якогось шрифту?</string>
     <string name="font_panel_write_to_us_title">Напишіть нам!</string>
 
     <string name="background_panel_tab_solid_title">Колір</string>
     <string name="background_panel_tab_pattern_title">Візерунок</string>
     <string name="background_panel_tab_picture_title">Зображення</string>
-    <string name="background_panel_background_title">Фон</string>
     <string name="background_panel_theme_title">Тема</string>
 </resources>

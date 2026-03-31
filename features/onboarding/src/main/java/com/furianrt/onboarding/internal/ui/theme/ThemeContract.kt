@@ -14,5 +14,3 @@ internal data class ThemeState(
         ) : Content
     }
 }
-
-internal sealed interface ThemeEvent
