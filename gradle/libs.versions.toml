@@ -46,7 +46,7 @@ calendar = "2.10.1"
 
 dataStore = "1.2.1"
 
-biometric = "1.4.0-alpha02"
+biometric = "1.4.0-alpha06"
 
 mail = "1.6.8"
 
@@ -129,7 +129,7 @@ calendar = { module = "com.kizitonwose.calendar:compose", version.ref = "calenda
 
 dataStore = { module = "androidx.datastore:datastore-preferences", version.ref = "dataStore" }
 
-biometric = { module = "androidx.biometric:biometric-ktx", version.ref = "biometric" }
+biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 
 mail = { module = "com.sun.mail:android-mail", version.ref = "mail" }
 mailActivaliton = { module = "com.sun.mail:android-activation", version.ref = "mail" }
