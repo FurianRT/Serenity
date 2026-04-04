@@ -30,12 +30,9 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -59,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.mediaselector.api.rememberMediaSelectorState
 import com.furianrt.mediasorting.internal.ui.composables.AddMediaButton
 import com.furianrt.mediasorting.internal.ui.composables.ConfirmCloseDialog
 import com.furianrt.mediasorting.internal.ui.composables.DragAndDropHint
@@ -71,7 +69,6 @@ import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.AppBackground
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
@@ -89,6 +86,7 @@ import kotlinx.coroutines.flow.collectLatest
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.time.ZonedDateTime
+import com.furianrt.uikit.R as uiR
 
 private const val HINT_ITEM_ID = "hint"
 private const val ADD_BUTTON_ITEM_ID = "add_button"
@@ -115,9 +113,7 @@ internal fun MediaSortingScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
-    val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    )
+    val mediaSelectorState = rememberMediaSelectorState()
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),
@@ -153,7 +149,7 @@ internal fun MediaSortingScreen(
                     }
 
                     is MediaSortingEffect.OpenMediaSelector -> {
-                        bottomSheetScaffoldState.bottomSheetState.expand()
+                        mediaSelectorState.expand(onMediaSelected = effect.onMediaSelected)
                     }
 
                     is MediaSortingEffect.ShowPermissionsDeniedDialog -> {
@@ -198,17 +194,15 @@ internal fun MediaSortingScreen(
         modifier = Modifier
             .fillMaxSize()
             .hazeSource(hazeState),
-        state = bottomSheetScaffoldState,
+        state = mediaSelectorState,
         openMediaViewer = { viewModel.onEvent(MediaSortingEvent.OnOpenMediaViewerRequest(it)) },
-        onMediaSelected = { viewModel.onEvent(MediaSortingEvent.OnMediaSelected(it)) },
     ) {
         Content(
             uiState = uiState,
             onEvent = viewModel::onEvent,
         )
         DimSurfaceOverlay(
-            visible = bottomSheetScaffoldState.bottomSheetState.isVisible ||
-                    bottomSheetScaffoldState.bottomSheetState.targetValue == SheetValue.Expanded,
+            visible = mediaSelectorState.isVisible,
         )
         SnackbarHost(
             modifier = Modifier

@@ -28,7 +28,6 @@ internal sealed interface MediaSortingEvent {
     ) : MediaSortingEvent
 
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : MediaSortingEvent
-    data class OnMediaSelected(val result: MediaResult) : MediaSortingEvent
     data object OnMediaPermissionsSelected : MediaSortingEvent
     data object OnCameraPermissionSelected : MediaSortingEvent
     data class OnTakePictureResult(val isSuccess: Boolean) : MediaSortingEvent
@@ -41,7 +40,10 @@ internal sealed interface MediaSortingEffect {
     data object RequestStoragePermissions : MediaSortingEffect
     data object RequestCameraPermission : MediaSortingEffect
     data object ShowPermissionsDeniedDialog : MediaSortingEffect
-    data object OpenMediaSelector : MediaSortingEffect
+    data class OpenMediaSelector(
+        val onMediaSelected: (result: MediaResult) -> Unit,
+    ) : MediaSortingEffect
+
     data class OpenMediaViewer(val route: MediaViewerRoute) : MediaSortingEffect
     data class OpenMediaViewScreen(
         val noteId: String,

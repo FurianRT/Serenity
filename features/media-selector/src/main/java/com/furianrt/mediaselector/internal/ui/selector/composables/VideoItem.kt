@@ -101,7 +101,7 @@ private fun Preview() {
                 name = "",
                 uri = Uri.EMPTY,
                 ratio = 1f,
-                state = SelectionState.Selected(1),
+                state = SelectionState.Counter(1),
                 duration = 10 * 60 * 1000,
                 album = MediaItem.Album(id = "1", name = ""),
             ),

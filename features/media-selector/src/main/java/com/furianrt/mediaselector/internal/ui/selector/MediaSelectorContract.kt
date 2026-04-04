@@ -1,6 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
-import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
@@ -8,7 +8,10 @@ import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 internal sealed class MediaSelectorUiState(
     open val selectedAlbum: MediaAlbumItem?,
 ) {
-    data object Loading : MediaSelectorUiState(selectedAlbum = null)
+    data object Loading : MediaSelectorUiState(
+        selectedAlbum = null,
+    )
+
     data class Empty(
         override val selectedAlbum: MediaAlbumItem?,
         val showPartialAccessMessage: Boolean,
@@ -21,16 +24,21 @@ internal sealed class MediaSelectorUiState(
         val showPartialAccessMessage: Boolean,
     ) : MediaSelectorUiState(selectedAlbum) {
 
-        fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
+        fun setSelectedItems(
+            selectedItems: List<MediaItem>,
+            useCounter: Boolean,
+        ): Success = copy(
             selectedCount = selectedItems.count(),
             items = items.map { item ->
                 val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
                 when {
-                    selectedIndex != -1 -> {
-                        item.changeState(SelectionState.Selected(order = selectedIndex + 1))
+                    selectedIndex != -1 -> if (useCounter) {
+                        item.changeState(SelectionState.Counter(order = selectedIndex + 1))
+                    } else {
+                        item.changeState(SelectionState.Single)
                     }
 
-                    item.state is SelectionState.Selected -> {
+                    item.state is SelectionState.Counter || item.state is SelectionState.Single -> {
                         item.changeState(SelectionState.Default)
                     }
 
@@ -48,7 +56,7 @@ internal sealed interface MediaSelectorEvent {
     data object OnSendClick : MediaSelectorEvent
     data class OnMediaClick(val id: Long) : MediaSelectorEvent
     data object OnCloseScreenRequest : MediaSelectorEvent
-    data object OnExpanded : MediaSelectorEvent
+    data class OnExpanded(val params: MediaSelectorState.Params?) : MediaSelectorEvent
     data object OnScreenResumed : MediaSelectorEvent
     data object OnAlbumsClick : MediaSelectorEvent
     data class OnAlbumSelected(val album: MediaAlbumItem) : MediaSelectorEvent
@@ -60,11 +68,12 @@ internal sealed interface MediaSelectorEffect {
     data object CloseScreen : MediaSelectorEffect
     data class ShowAlbumsList(val albums: List<MediaAlbumItem>) : MediaSelectorEffect
     data object HideAlbumsList : MediaSelectorEffect
-    data class SendMediaResult(val result: MediaResult) : MediaSelectorEffect
     data class OpenMediaViewer(
         val dialogId: Int,
         val requestId: String,
         val mediaId: Long,
         val albumId: String?,
+        val singleChoice: Boolean,
+        val allowVideo: Boolean,
     ) : MediaSelectorEffect
 }

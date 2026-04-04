@@ -97,7 +97,6 @@ internal class MediaSortingViewModel @Inject constructor(
             }
 
             is MediaSortingEvent.OnMediaItemMoved -> changeMediaOrder(event.from, event.to)
-            is MediaSortingEvent.OnMediaSelected -> addMedia(event.result)
             is MediaSortingEvent.OnOpenMediaViewerRequest -> {
                 _effect.tryEmit(MediaSortingEffect.OpenMediaViewer(event.route))
             }
@@ -188,7 +187,9 @@ internal class MediaSortingViewModel @Inject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(MediaSortingEffect.RequestStoragePermissions)
         } else {
-            _effect.tryEmit(MediaSortingEffect.OpenMediaSelector)
+            _effect.tryEmit(
+                MediaSortingEffect.OpenMediaSelector(onMediaSelected = { addMedia(it) })
+            )
         }
     }
 
@@ -196,7 +197,9 @@ internal class MediaSortingViewModel @Inject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(MediaSortingEffect.ShowPermissionsDeniedDialog)
         } else {
-            _effect.tryEmit(MediaSortingEffect.OpenMediaSelector)
+            _effect.tryEmit(
+                MediaSortingEffect.OpenMediaSelector(onMediaSelected = { addMedia(it) })
+            )
         }
     }
 

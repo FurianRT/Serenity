@@ -256,7 +256,7 @@ private fun Preview() {
                         name = "2",
                         uri = Uri.EMPTY,
                         ratio = 1f,
-                        state = SelectionState.Selected(order = 1),
+                        state = SelectionState.Counter(order = 1),
                         album = MediaItem.Album(id = "1", name = ""),
                     ),
                     MediaItem.Image(

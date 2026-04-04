@@ -14,13 +14,18 @@ interface MediaRepository {
         media: List<LocalNote.Content.Media>,
         updateFile: Boolean = true,
     )
+
     suspend fun deleteMedia(noteId: String, media: List<LocalNote.Content.Media>)
     suspend fun deleteMediaFiles(noteId: String)
     fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
     fun getAllMedia(): Flow<List<LocalNote.Content.Media>>
 
-    suspend fun getDeviceMediaList(albumId: String? = null): List<DeviceMedia>
-    suspend fun getDeviceAlbumsList(): List<DeviceAlbum>
+    suspend fun getDeviceMediaList(
+        allowVideo: Boolean,
+        albumId: String? = null,
+    ): List<DeviceMedia>
+
+    suspend fun getDeviceAlbumsList(allowVideo: Boolean): List<DeviceAlbum>
 
     suspend fun saveToGallery(media: LocalMedia): Boolean
 

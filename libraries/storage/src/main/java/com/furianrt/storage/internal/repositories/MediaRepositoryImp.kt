@@ -109,11 +109,12 @@ internal class MediaRepositoryImp @Inject constructor(
     ) { images, videos -> images + videos }
 
     override suspend fun getDeviceMediaList(
+        allowVideo: Boolean,
         albumId: String?,
-    ): List<DeviceMedia> = sharedMediaSource.getMediaList(albumId)
+    ): List<DeviceMedia> = sharedMediaSource.getMediaList(allowVideo, albumId)
 
-    override suspend fun getDeviceAlbumsList(): List<DeviceAlbum> {
-        return sharedMediaSource.getAlbumsList()
+    override suspend fun getDeviceAlbumsList(allowVideo: Boolean): List<DeviceAlbum> {
+        return sharedMediaSource.getAlbumsList(allowVideo)
     }
 
     override suspend fun saveToGallery(media: LocalMedia): Boolean {

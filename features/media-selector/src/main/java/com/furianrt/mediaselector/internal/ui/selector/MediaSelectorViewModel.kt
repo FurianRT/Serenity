@@ -7,6 +7,7 @@ import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.R
+import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
@@ -19,7 +20,6 @@ import com.furianrt.mediaselector.internal.ui.extensions.toThumbnailItem
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.CloseScreen
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.OpenMediaViewer
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.RequestMediaPermissions
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.SendMediaResult
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsDismissed
@@ -63,6 +63,9 @@ internal class MediaSelectorViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private var isDataLoaded = false
+    private var allowVideo = true
+    private var isSingleChoice = false
+    private var onMediaSelected: (result: MediaResult) -> Unit = {}
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -77,7 +80,10 @@ internal class MediaSelectorViewModel @Inject constructor(
         when (dialogId) {
             MEDIA_VIEWER_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(mediaCoordinator.getSelectedMedia())
+                    currentState.setSelectedItems(
+                        selectedItems = mediaCoordinator.getSelectedMedia(),
+                        useCounter = !isSingleChoice,
+                    )
                 }
             }
         }
@@ -86,7 +92,10 @@ internal class MediaSelectorViewModel @Inject constructor(
     fun onEvent(event: MediaSelectorEvent) {
         when (event) {
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
-            is OnMediaPermissionsSelected -> loadMediaItems(selectedAlbum = null)
+            is OnMediaPermissionsSelected -> loadMediaItems(
+                selectedAlbum = null,
+            )
+
             is OnSelectItemClick -> toggleItemSelection(event.item)
             is OnMediaClick -> _effect.tryEmit(
                 OpenMediaViewer(
@@ -96,17 +105,20 @@ internal class MediaSelectorViewModel @Inject constructor(
                     albumId = (_state.value as? MediaSelectorUiState.Success)
                         ?.selectedAlbum?.id
                         ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
+                    allowVideo = allowVideo,
+                    singleChoice = isSingleChoice,
                 )
             )
 
             is OnSendClick -> {
-                _effect.tryEmit(
-                    SendMediaResult(mediaCoordinator.getSelectedMedia().toMediaSelectorResult()),
-                )
+                onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
                 _effect.tryEmit(CloseScreen)
                 mediaCoordinator.unselectAllMedia()
                 _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(emptyList())
+                    currentState.setSelectedItems(
+                        selectedItems = emptyList(),
+                        useCounter = isSingleChoice,
+                    )
                 }
             }
 
@@ -114,28 +126,44 @@ internal class MediaSelectorViewModel @Inject constructor(
                 _effect.tryEmit(CloseScreen)
                 mediaCoordinator.unselectAllMedia()
                 _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(emptyList())
+                    currentState.setSelectedItems(
+                        selectedItems = emptyList(),
+                        useCounter = isSingleChoice,
+                    )
                 }
                 isDataLoaded = false
             }
 
-            is OnExpanded -> if (!isDataLoaded) {
-                loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+            is OnExpanded -> {
+                onMediaSelected = event.params?.onMediaSelected ?: onMediaSelected
+                val allowVideoTemp = event.params?.allowVideo ?: allowVideo
+                val isSingleChoiceTemp = event.params?.singleChoice ?: isSingleChoice
+                if (
+                    !isDataLoaded ||
+                    allowVideo != allowVideoTemp ||
+                    isSingleChoice != isSingleChoiceTemp
+                ) {
+                    allowVideo = allowVideoTemp
+                    isSingleChoice = isSingleChoiceTemp
+                    loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+                }
             }
 
             is OnScreenResumed -> if (isDataLoaded) {
-                loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+                loadMediaItems(
+                    selectedAlbum = _state.value.selectedAlbum,
+                )
             }
 
             is OnAlbumsClick -> launch {
-                val allMedia = mediaRepository.getDeviceMediaList()
+                val allMedia = mediaRepository.getDeviceMediaList(allowVideo)
                 val allMediaAlbum = MediaAlbumItem(
                     id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
                     name = resourcesManager.getString(R.string.media_selector_all_media),
                     thumbnail = allMedia.firstOrNull()?.toThumbnailItem(),
                     mediaCount = allMedia.size,
                 )
-                val albumsItems = mediaRepository.getDeviceAlbumsList()
+                val albumsItems = mediaRepository.getDeviceAlbumsList(allowVideo)
                     .map(DeviceAlbum::toMediaAlbumItem)
                     .toMutableList()
                     .apply { add(0, allMediaAlbum) }
@@ -144,10 +172,15 @@ internal class MediaSelectorViewModel @Inject constructor(
 
             is OnAlbumSelected -> when (val currentState = _state.value) {
                 is MediaSelectorUiState.Success -> if (currentState.selectedAlbum?.id != event.album.id) {
-                    loadMediaItems(selectedAlbum = event.album)
+                    loadMediaItems(
+                        selectedAlbum = event.album,
+                    )
                 }
 
-                is MediaSelectorUiState.Empty -> loadMediaItems(selectedAlbum = event.album)
+                is MediaSelectorUiState.Empty -> loadMediaItems(
+                    selectedAlbum = event.album,
+                )
+
                 is MediaSelectorUiState.Loading -> Unit
             }
 
@@ -155,12 +188,17 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
     }
 
-    private fun loadMediaItems(selectedAlbum: MediaAlbumItem?) {
+    private fun loadMediaItems(
+        selectedAlbum: MediaAlbumItem?,
+    ) {
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
             mediaCoordinator.unselectAllMedia()
             _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                currentState.setSelectedItems(emptyList())
+                currentState.setSelectedItems(
+                    selectedItems = emptyList(),
+                    useCounter = !isSingleChoice,
+                )
             }
             return
         }
@@ -169,6 +207,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 val media = mediaRepository.getDeviceMediaList(
                     albumId = selectedAlbum?.id
                         ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
+                    allowVideo = allowVideo,
                 )
                 when {
                     media.isEmpty() -> MediaSelectorUiState.Empty(
@@ -182,10 +221,16 @@ internal class MediaSelectorViewModel @Inject constructor(
                                 state = { id ->
                                     val selectedIndex = mediaCoordinator.getSelectedMedia()
                                         .indexOfFirst { it.id == id }
-                                    if (selectedIndex != -1) {
-                                        SelectionState.Selected(order = selectedIndex + 1)
-                                    } else {
-                                        SelectionState.Default
+                                    when {
+                                        selectedIndex != -1 && isSingleChoice -> {
+                                            SelectionState.Single
+                                        }
+
+                                        selectedIndex != -1 && !isSingleChoice -> {
+                                            SelectionState.Counter(order = selectedIndex + 1)
+                                        }
+
+                                        else -> SelectionState.Default
                                     }
                                 },
                             ),
@@ -208,12 +253,23 @@ internal class MediaSelectorViewModel @Inject constructor(
     }
 
     private fun toggleItemSelection(item: MediaItem) {
-        when (item.state) {
-            is SelectionState.Default -> mediaCoordinator.selectMedia(item)
-            is SelectionState.Selected -> mediaCoordinator.unselectMedia(item)
+        if (isSingleChoice) {
+            mediaCoordinator.unselectAllMedia()
+            if (item.state is SelectionState.Default) {
+                mediaCoordinator.selectMedia(item)
+            }
+        } else {
+            when (item.state) {
+                is SelectionState.Default -> mediaCoordinator.selectMedia(item)
+                is SelectionState.Counter -> mediaCoordinator.unselectMedia(item)
+                is SelectionState.Single -> mediaCoordinator.unselectMedia(item)
+            }
         }
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
-            currentState.setSelectedItems(mediaCoordinator.getSelectedMedia())
+            currentState.setSelectedItems(
+                selectedItems = mediaCoordinator.getSelectedMedia(),
+                useCounter = !isSingleChoice,
+            )
         }
     }
 }

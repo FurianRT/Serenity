@@ -80,7 +80,6 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnLocationPermissionSele
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaPermissionsSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaRemoveClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMediaSortingClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodSelected
@@ -289,7 +288,6 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnTitleTextChange -> hasContentChanged = hasContentChanged || isInEditMode
-            is OnMediaSelected -> addNewBlock(event.result.toMediaBlock())
             is OnVoiceRecorded -> addNewBlock(event.record.toUiVoice())
             is OnSelectFontClick -> resetStickersEditing()
             is OnFontFamilySelected -> updateFontFamily(event.family)
@@ -595,7 +593,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
-            _effect.tryEmit(OpenMediaSelector)
+            _effect.tryEmit(OpenMediaSelector(onMediaSelected = { addNewBlock(it.toMediaBlock()) }))
         }
     }
 
@@ -715,7 +713,7 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(ShowStoragePermissionsDeniedDialog)
         } else {
-            _effect.tryEmit(OpenMediaSelector)
+            _effect.tryEmit(OpenMediaSelector(onMediaSelected = { addNewBlock(it.toMediaBlock()) }))
         }
     }
 

@@ -71,23 +71,37 @@ internal class MediaViewerViewModel @Inject constructor(
     }
 
     private fun loadMedia() = launch {
-        val media = mediaRepository.getDeviceMediaList(route.albumId)
+        val media = mediaRepository.getDeviceMediaList(route.allowVideo, route.albumId)
         _state.update {
             MediaViewerUiState.Success(
                 media = media.map(DeviceMedia::toMediaItem),
                 initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
-            ).setSelectedItems(mediaCoordinator.getSelectedMedia())
+            ).setSelectedItems(
+                selectedItems = mediaCoordinator.getSelectedMedia(),
+                useCounter = !route.singleChoice,
+            )
         }
     }
 
     private fun toggleItemSelection(item: MediaItem) {
         hasSelectionChanged = true
-        when (item.state) {
-            is SelectionState.Default -> mediaCoordinator.selectMedia(item)
-            is SelectionState.Selected -> mediaCoordinator.unselectMedia(item)
+        if (route.singleChoice) {
+            mediaCoordinator.unselectAllMedia()
+            if (item.state is SelectionState.Default) {
+                mediaCoordinator.selectMedia(item)
+            }
+        } else {
+            when (item.state) {
+                is SelectionState.Default -> mediaCoordinator.selectMedia(item)
+                is SelectionState.Counter -> mediaCoordinator.unselectMedia(item)
+                is SelectionState.Single -> mediaCoordinator.unselectMedia(item)
+            }
         }
         _state.updateState<MediaViewerUiState.Success> { currentState ->
-            currentState.setSelectedItems(mediaCoordinator.getSelectedMedia())
+            currentState.setSelectedItems(
+                selectedItems = mediaCoordinator.getSelectedMedia(),
+                useCounter = !route.singleChoice,
+            )
         }
     }
 }

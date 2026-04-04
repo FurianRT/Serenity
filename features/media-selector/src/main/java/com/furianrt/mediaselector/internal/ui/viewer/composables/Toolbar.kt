@@ -82,7 +82,7 @@ private fun Preview() {
         Toolbar(
             totalImages = 50,
             currentImageIndex = 25,
-            selectionState = SelectionState.Selected(1),
+            selectionState = SelectionState.Counter(1),
         )
     }
 }

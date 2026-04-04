@@ -2,12 +2,7 @@ package com.furianrt.notepage.api
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.SheetState
-import androidx.compose.material3.SheetValue
-import androidx.compose.material3.rememberBottomSheetScaffoldState
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -15,7 +10,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.mediaselector.api.rememberMediaSelectorState
 import com.furianrt.notepage.internal.ui.page.NotePageScreenInternal
 import com.furianrt.uikit.utils.DialogIdentifier
 
@@ -23,12 +20,9 @@ import com.furianrt.uikit.utils.DialogIdentifier
 @Stable
 class PageScreenState(
     val listState: ScrollState,
-    val bottomScaffoldState: BottomSheetScaffoldState,
+    val mediaSelectorState: MediaSelectorState,
     hasContentChanged: Boolean,
 ) {
-    val bottomSheetState: SheetState
-        get() = bottomScaffoldState.bottomSheetState
-
     val hasContentChanged: Boolean
         get() = hasContentChangedState
 
@@ -41,8 +35,7 @@ class PageScreenState(
     private var hasContentChangedState by mutableStateOf(hasContentChanged)
 
     private val isBottomSheetVisible: Boolean
-        get() = bottomSheetState.isVisible ||
-                bottomSheetState.targetValue == SheetValue.Expanded
+        get() = mediaSelectorState.isVisible
 
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed
@@ -51,13 +44,13 @@ class PageScreenState(
     companion object {
         fun saver(
             listState: ScrollState,
-            bottomScaffoldState: BottomSheetScaffoldState,
+            mediaSelectorState: MediaSelectorState,
         ): Saver<PageScreenState, Pair<Boolean, Boolean>> = Saver(
             save = { it.hasContentChanged to it.isVoiceRecordActive },
             restore = {
                 PageScreenState(
                     listState = listState,
-                    bottomScaffoldState = bottomScaffoldState,
+                    mediaSelectorState = mediaSelectorState,
                     hasContentChanged = it.first,
                 ).apply {
                     this.isVoiceRecordActive = it.second
@@ -71,18 +64,16 @@ class PageScreenState(
 @Composable
 fun rememberPageScreenState(
     listState: ScrollState = rememberScrollState(),
-    bottomScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    ),
+    mediaSelectorState: MediaSelectorState = rememberMediaSelectorState(),
 ): PageScreenState = rememberSaveable(
     saver = PageScreenState.saver(
         listState = listState,
-        bottomScaffoldState = bottomScaffoldState,
+        mediaSelectorState = mediaSelectorState,
     ),
 ) {
     PageScreenState(
         listState = listState,
-        bottomScaffoldState = bottomScaffoldState,
+        mediaSelectorState = mediaSelectorState,
         hasContentChanged = false,
     )
 }

@@ -277,9 +277,9 @@ private fun SuccessScreen(
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberScrollState(),
-        enabled = currentPageState?.bottomSheetState?.isVisible == false && !uiState.isInEditMode,
+        enabled = currentPageState?.mediaSelectorState?.isVisible == false && !uiState.isInEditMode,
         dimSurface = currentPageState?.dimSurface ?: cachedDimValue,
-        onDimClick = { scope.launch { currentPageState?.bottomSheetState?.hide() } },
+        onDimClick = { scope.launch { currentPageState?.mediaSelectorState?.collapse() } },
         toolbar = {
             val date = remember(uiState.date) { uiState.date.toDateString() }
             Toolbar(

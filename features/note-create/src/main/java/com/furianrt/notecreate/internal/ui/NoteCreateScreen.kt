@@ -213,10 +213,10 @@ private fun SuccessContent(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.surface),
         state = toolbarState,
-        enabled = !state.bottomSheetState.isVisible && !uiState.isInEditMode,
+        enabled = !state.mediaSelectorState.isVisible && !uiState.isInEditMode,
         listState = state.listState,
         dimSurface = state.dimSurface,
-        onDimClick = { scope.launch { state.bottomSheetState.hide() } },
+        onDimClick = { scope.launch { state.mediaSelectorState.collapse() } },
         toolbar = {
             val date = remember(uiState.note.date) {
                 uiState.note.date.toDateString()

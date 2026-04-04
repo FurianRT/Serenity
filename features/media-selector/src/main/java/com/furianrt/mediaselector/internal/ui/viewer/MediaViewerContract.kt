@@ -8,15 +8,20 @@ internal sealed interface MediaViewerUiState {
         val initialMediaIndex: Int,
         val media: List<MediaItem>,
     ) : MediaViewerUiState {
-        fun setSelectedItems(selectedItems: List<MediaItem>): Success = copy(
+        fun setSelectedItems(
+            selectedItems: List<MediaItem>,
+            useCounter: Boolean,
+        ): Success = copy(
             media = media.map { item ->
                 val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
                 when {
-                    selectedIndex != -1 -> {
-                        item.changeState(SelectionState.Selected(order = selectedIndex + 1))
+                    selectedIndex != -1 -> if (useCounter) {
+                        item.changeState(SelectionState.Counter(order = selectedIndex + 1))
+                    } else {
+                        item.changeState(SelectionState.Single)
                     }
 
-                    item.state is SelectionState.Selected -> {
+                    item.state is SelectionState.Counter || item.state is SelectionState.Single -> {
                         item.changeState(SelectionState.Default)
                     }
 

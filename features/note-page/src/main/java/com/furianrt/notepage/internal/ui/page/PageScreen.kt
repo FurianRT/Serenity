@@ -221,7 +221,7 @@ internal fun NotePageScreenInternal(
                 is PageEffect.ShowStoragePermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {
                     focusManager.clearFocus(force = true)
-                    state.bottomScaffoldState.bottomSheetState.expand()
+                    state.mediaSelectorState.expand(onMediaSelected = effect.onMediaSelected)
                 }
 
                 is PageEffect.OpenMediaViewScreen -> {
@@ -452,15 +452,10 @@ private fun SuccessScreen(
 
     MediaSelectorBottomSheet(
         modifier = modifier.fillMaxSize(),
-        state = state.bottomScaffoldState,
+        state = state.mediaSelectorState,
         openMediaViewer = { route ->
             if (isSelected) {
                 onEvent(PageEvent.OnOpenMediaViewerRequest(route))
-            }
-        },
-        onMediaSelected = { result ->
-            if (isSelected) {
-                onEvent(PageEvent.OnMediaSelected(result))
             }
         },
     ) {

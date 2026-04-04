@@ -62,12 +62,15 @@ internal class SharedMediaSource @Inject constructor(
         }
     }
 
-    suspend fun getMediaList(albumId: String?): List<DeviceMedia> = withContext(dispatchers.io) {
+    suspend fun getMediaList(
+        allowVideo: Boolean,
+        albumId: String?,
+    ): List<DeviceMedia> = withContext(dispatchers.io) {
         val mediaList = mutableListOf<DeviceMedia>()
         val volumes = MediaStore.getExternalVolumeNames(context)
         volumes.forEach { volume ->
             if (isActive) {
-                mediaList.addAll(getMediaFiles(volume))
+                mediaList.addAll(getMediaFiles(volume, allowVideo))
             }
         }
         val filteredList = if (albumId != null) {
@@ -78,8 +81,10 @@ internal class SharedMediaSource @Inject constructor(
         return@withContext filteredList.sortedByDescending(DeviceMedia::date)
     }
 
-    suspend fun getAlbumsList(): List<DeviceAlbum> = withContext(dispatchers.default) {
-        getMediaList(albumId = null)
+    suspend fun getAlbumsList(
+        allowVideo: Boolean,
+    ): List<DeviceAlbum> = withContext(dispatchers.default) {
+        getMediaList(albumId = null, allowVideo = allowVideo)
             .groupBy { it.albumId }
             .mapNotNull { entry ->
                 val firstMedia = entry.value.first()
@@ -100,6 +105,7 @@ internal class SharedMediaSource @Inject constructor(
 
     private suspend fun getMediaFiles(
         volumeName: String,
+        allowVideo: Boolean,
     ): List<DeviceMedia> = withContext(dispatchers.io) {
         val filesList = mutableListOf<DeviceMedia>()
         val collection = MediaStore.Files.getContentUri(volumeName)
@@ -170,20 +176,24 @@ internal class SharedMediaSource @Inject constructor(
                         albumName = bucketName,
                     )
 
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> DeviceMedia.Video(
-                        id = id,
-                        name = cursor.getString(nameColumn),
-                        uri = ContentUris.withAppendedId(collection, id),
-                        duration = cursor.getInt(durationColumn),
-                        date = cursor.getLong(dateColumn),
-                        ratio = if (orientation == 0 || orientation == 180) {
-                            cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn)
-                        } else {
-                            cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
-                        },
-                        albumId = bucketId.takeIf { it != 0L },
-                        albumName = bucketName,
-                    )
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> if (allowVideo) {
+                        DeviceMedia.Video(
+                            id = id,
+                            name = cursor.getString(nameColumn),
+                            uri = ContentUris.withAppendedId(collection, id),
+                            duration = cursor.getInt(durationColumn),
+                            date = cursor.getLong(dateColumn),
+                            ratio = if (orientation == 0 || orientation == 180) {
+                                cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn)
+                            } else {
+                                cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
+                            },
+                            albumId = bucketId.takeIf { it != 0L },
+                            albumName = bucketName,
+                        )
+                    } else {
+                        continue
+                    }
 
                     else -> continue
                 }

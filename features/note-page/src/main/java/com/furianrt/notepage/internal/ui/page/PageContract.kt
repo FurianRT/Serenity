@@ -75,7 +75,6 @@ internal sealed interface PageEvent {
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaRemoveClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
     data class OnMediaSortingClick(val mediaBlockId: String) : PageEvent
-    data class OnMediaSelected(val result: MediaResult) : PageEvent
     data object OnVoiceStarted : PageEvent
     data class OnVoiceRecorded(val record: VoiceRecord) : PageEvent
     data class OnOpenMediaViewerRequest(val route: MediaViewerRoute) : PageEvent
@@ -120,7 +119,7 @@ internal sealed interface PageEffect {
     data object ShowCameraPermissionsDeniedDialog : PageEffect
     data object RequestLocationPermission : PageEffect
     data object ShowLocationPermissionsDeniedDialog : PageEffect
-    data object OpenMediaSelector : PageEffect
+    data class OpenMediaSelector(val onMediaSelected: (result: MediaResult) -> Unit) : PageEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class OpenMediaSortingScreen(
         val noteId: String,

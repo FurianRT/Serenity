@@ -16,6 +16,8 @@ data class MediaViewerRoute(
     val albumId: String?,
     val dialogId: Int,
     val requestId: String,
+    val singleChoice: Boolean,
+    val allowVideo: Boolean,
 )
 
 fun NavController.navigateToMediaViewer(

@@ -159,7 +159,7 @@ private fun Preview() {
                                 uri = Uri.EMPTY,
                                 ratio = 1f,
                                 state = if (index == 4) {
-                                    SelectionState.Selected(1)
+                                    SelectionState.Counter(1)
                                 } else {
                                     SelectionState.Default
                                 },
@@ -175,7 +175,7 @@ private fun Preview() {
                                 uri = Uri.EMPTY,
                                 ratio = 1f,
                                 state = if (index == 9) {
-                                    SelectionState.Selected(2)
+                                    SelectionState.Counter(2)
                                 } else {
                                     SelectionState.Default
                                 },

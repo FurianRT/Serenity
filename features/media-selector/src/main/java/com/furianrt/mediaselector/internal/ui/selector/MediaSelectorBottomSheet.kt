@@ -27,7 +27,6 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
-import androidx.compose.material3.BottomSheetScaffoldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
@@ -56,7 +55,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.R
-import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
@@ -80,13 +79,13 @@ private const val CONTENT_ANIM_DURATION = 300
 private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 
 @OptIn(
-    ExperimentalMaterial3Api::class, ExperimentalPermissionsApi::class,
-    ExperimentalFoundationApi::class
+    ExperimentalMaterial3Api::class,
+    ExperimentalPermissionsApi::class,
+    ExperimentalFoundationApi::class,
 )
 @Composable
 internal fun MediaSelectorBottomSheetInternal(
-    state: BottomSheetScaffoldState,
-    onMediaSelected: (result: MediaResult) -> Unit,
+    state: MediaSelectorState,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.(PaddingValues) -> Unit,
@@ -107,7 +106,6 @@ internal fun MediaSelectorBottomSheetInternal(
     val listState = rememberLazyGridState(
         cacheWindow = LazyLayoutCacheWindow(ahead = 200.dp, behind = 150.dp),
     )
-    val onMediaSelectedState by rememberUpdatedState(onMediaSelected)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
 
     LaunchedEffect(Unit) {
@@ -132,12 +130,10 @@ internal fun MediaSelectorBottomSheetInternal(
                             albumId = effect.albumId,
                             dialogId = effect.dialogId,
                             requestId = effect.requestId,
+                            singleChoice = effect.singleChoice,
+                            allowVideo = effect.allowVideo,
                         ),
                     )
-
-                    is MediaSelectorEffect.SendMediaResult -> {
-                        onMediaSelectedState(effect.result)
-                    }
 
                     is MediaSelectorEffect.ShowAlbumsList -> {
                         albumsDialogState = effect.albums.takeIf { it.isNotEmpty() }
@@ -176,9 +172,9 @@ internal fun MediaSelectorBottomSheetInternal(
         }
     }
 
-    LaunchedEffect(state.bottomSheetState.targetValue) {
+    LaunchedEffect(state.params, state.bottomSheetState.targetValue) {
         if (state.bottomSheetState.targetValue == SheetValue.Expanded) {
-            viewModel.onEvent(MediaSelectorEvent.OnExpanded)
+            viewModel.onEvent(MediaSelectorEvent.OnExpanded(state.params))
         }
     }
 
@@ -199,7 +195,7 @@ internal fun MediaSelectorBottomSheetInternal(
 
     BottomSheetScaffold(
         modifier = modifier,
-        scaffoldState = state,
+        scaffoldState = state.scaffoldState,
         sheetContainerColor = Color.Transparent,
         containerColor = Color.Transparent,
         sheetSwipeEnabled = sheetSwipeEnabled,

@@ -11,7 +11,7 @@ internal sealed class MediaItem(
     open val album: Album?,
 ) {
     val isSelected: Boolean
-        get() = state is SelectionState.Selected
+        get() = state is SelectionState.Counter || state is SelectionState.Single
 
     fun changeState(state: SelectionState): MediaItem = when (this) {
         is Image -> copy(state = state)

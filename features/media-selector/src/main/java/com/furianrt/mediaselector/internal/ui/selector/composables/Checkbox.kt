@@ -13,14 +13,17 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -28,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun CheckBox(
@@ -42,7 +46,7 @@ internal fun CheckBox(
             .clickableNoRipple(onClick = onClick),
     ) {
         AnimatedVisibility(
-            visible = state is SelectionState.Selected,
+            visible = state is SelectionState.Counter || state is SelectionState.Single,
             enter = scaleIn(initialScale = 0.7f) + fadeIn(),
             exit = scaleOut(targetScale = 0.5f) + fadeOut(),
         ) {
@@ -51,30 +55,12 @@ internal fun CheckBox(
                     color = MaterialTheme.colorScheme.primaryContainer,
                     shape = CircleShape,
                 ),
+                contentAlignment = Alignment.Center,
             ) {
-                AnimatedContent(
-                    targetState = (state as? SelectionState.Selected)?.order?.toString().orEmpty(),
-                    transitionSpec = {
-                        slideIntoContainer(
-                            towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                        ).togetherWith(
-                            slideOutOfContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                            )
-                        )
-                    },
-                ) { targetState ->
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            text = targetState,
-                            style = MaterialTheme.typography.bodySmall,
-                            fontWeight = FontWeight.ExtraBold,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
+                when (state) {
+                    is SelectionState.Counter -> Counter(state = state)
+                    is SelectionState.Single -> Single(modifier = Modifier.padding(2.dp))
+                    is SelectionState.Default -> Unit
                 }
             }
         }
@@ -95,12 +81,67 @@ internal fun CheckBox(
 }
 
 @Composable
+private fun Counter(
+    state: SelectionState.Counter,
+    modifier: Modifier = Modifier,
+) {
+    AnimatedContent(
+        modifier = modifier,
+        targetState = state.order,
+        transitionSpec = {
+            slideIntoContainer(
+                towards = AnimatedContentTransitionScope.SlideDirection.Down,
+            ).togetherWith(
+                slideOutOfContainer(
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                )
+            )
+        },
+    ) { targetState ->
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center,
+        ) {
+            Text(
+                text = targetState.toString(),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.ExtraBold,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Single(
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier,
+        painter = painterResource(uiR.drawable.ic_action_done),
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentDescription = null,
+    )
+}
+
+@Composable
 @Preview
-private fun PreviewSelected() {
+private fun PreviewCounter() {
     SerenityTheme {
         CheckBox(
             onClick = {},
-            state = SelectionState.Selected(order = 1),
+            state = SelectionState.Counter(order = 1),
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun PreviewSingle() {
+    SerenityTheme {
+        CheckBox(
+            onClick = {},
+            state = SelectionState.Single,
         )
     }
 }
