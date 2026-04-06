@@ -77,7 +77,6 @@ import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
-import com.furianrt.toolspanel.internal.ui.common.ColorResetItem
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -316,15 +315,6 @@ private fun Content(
                     bottom = 24.dp,
                 ),
             ) {
-                item(key = "default") {
-                    ColorResetItem(
-                        modifier = Modifier.size(40.dp),
-                        onClick = {
-                            onFontColorSelected(null)
-                            onEvent(FontPanelEvent.OnFontColorSelected(null))
-                        },
-                    )
-                }
                 items(
                     count = uiState.fontColors.count(),
                     key = { uiState.fontColors[it] },
