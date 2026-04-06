@@ -2,10 +2,10 @@ package com.furianrt.storage.internal.database.notes.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundIsHidden
@@ -15,8 +15,8 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 internal interface CustomBackgroundDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(background: EntryNoteCustomBackground)
+    @Upsert
+    suspend fun upsert(background: EntryNoteCustomBackground)
 
     @Update(entity = EntryNoteCustomBackground::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteCustomBackgroundUri)

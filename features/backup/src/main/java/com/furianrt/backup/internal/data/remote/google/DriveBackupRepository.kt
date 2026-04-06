@@ -12,6 +12,7 @@ import com.furianrt.backup.internal.data.remote.google.info.UserInfoApiService
 import com.furianrt.backup.internal.data.remote.google.info.primaryEmail
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.entities.RemoteFile
+import com.furianrt.backup.internal.domain.entities.RemoteFile.NotesData
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.backup.internal.extensions.toRemoteFile
@@ -19,6 +20,7 @@ import com.furianrt.backup.internal.workers.AutoBackupWorker
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.AuthorizationResult
 import com.google.android.gms.auth.api.identity.Identity
@@ -179,7 +181,7 @@ internal class DriveBackupRepository @Inject constructor(
     ): Result<Unit> = withContext(dispatchers.io) {
         runCatching {
             val metadataJson = buildJsonObject {
-                put("name", "NotesData")
+                put("name", NotesData.FILE_NAME)
                 put("mimeType", ACCEPT_JSON_VALUE)
                 putJsonArray("parents") { add(APP_FOLDER_NAME) }
             }
@@ -191,7 +193,7 @@ internal class DriveBackupRepository @Inject constructor(
             val jsonString = Json.encodeToString(notes)
             val filePart = MultipartBody.Part.createFormData(
                 name = "file",
-                filename = "NotesData.json",
+                filename = "${NotesData.FILE_NAME}.json",
                 body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
             )
 
@@ -225,6 +227,51 @@ internal class DriveBackupRepository @Inject constructor(
         fileUri = voice.uri,
         mimeType = MIME_TYPE_AUDIO,
     )
+
+    override suspend fun uploadNoteBackground(
+        background: NoteCustomBackground,
+    ): Result<Unit> = uploadFile(
+        name = background.id,
+        fileUri = background.uri,
+        mimeType = MIME_TYPE_IMAGE,
+    )
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override suspend fun getRemoteNoteBackgrounds(
+        fileId: String,
+    ): Result<List<NoteCustomBackground>> = withContext(dispatchers.io) {
+        runCatching {
+            val responseBody = driveApiService.downloadFile(fileId)
+            responseBody.byteStream().buffered().use { input ->
+                Json.decodeFromStream<List<NoteCustomBackground>>(input)
+            }
+        }
+    }
+
+    override suspend fun uploadNoteBackgroundsData(
+        backgrounds: List<NoteCustomBackground>,
+    ): Result<Unit> = withContext(dispatchers.io) {
+        runCatching {
+            val metadataJson = buildJsonObject {
+                put("name", RemoteFile.NoteBackgroundsData.FILE_NAME)
+                put("mimeType", ACCEPT_JSON_VALUE)
+                putJsonArray("parents") { add(APP_FOLDER_NAME) }
+            }
+
+            val metadataRequestBody = metadataJson
+                .toString()
+                .toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+
+            val jsonString = Json.encodeToString(backgrounds)
+            val filePart = MultipartBody.Part.createFormData(
+                name = "file",
+                filename = "${RemoteFile.NoteBackgroundsData.FILE_NAME}.json",
+                body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
+            )
+
+            driveApiService.uploadFile(metadataRequestBody, filePart)
+        }
+    }
 
     override suspend fun loadRemoteLocalToFile(
         remoteFileId: String,

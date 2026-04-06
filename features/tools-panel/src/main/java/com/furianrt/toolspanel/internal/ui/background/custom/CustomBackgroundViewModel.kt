@@ -93,7 +93,7 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
             accentColor = detectedTheme.secondary.toArgb(),
             isLight = isLight,
         )
-        mediaRepository.insertCustomNoteBackground(background)
+        mediaRepository.upsertCustomNoteBackground(background)
         onThemeSelected(background.toUiNoteTheme())
     }
 

@@ -11,8 +11,7 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.furianrt.common.ErrorTracker
-import com.furianrt.domain.usecase.DeleteTemplateNotesUseCase
-import com.furianrt.domain.usecase.DeleteUnusedHiddenNoteBackgroundsUseCase
+import com.furianrt.domain.usecase.DeleteUnusedDataUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
@@ -22,8 +21,7 @@ private const val WORK_NAME_ONE_TIME = "DatabaseCleanupOneTime"
 
 @HiltWorker
 internal class DatabaseCleanupWorker @AssistedInject constructor(
-    private val deleteTemplateNotesUseCase: DeleteTemplateNotesUseCase,
-    private val deleteUnusedHiddenNoteBackgroundsUseCase: DeleteUnusedHiddenNoteBackgroundsUseCase,
+    private val deleteUnusedDataUseCase: DeleteUnusedDataUseCase,
     private val errorTracker: ErrorTracker,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
@@ -64,8 +62,7 @@ internal class DatabaseCleanupWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result = try {
-        deleteTemplateNotesUseCase()
-        deleteUnusedHiddenNoteBackgroundsUseCase()
+        deleteUnusedDataUseCase()
         Result.success()
     } catch (e: Exception) {
         errorTracker.trackNonFatalError(e)

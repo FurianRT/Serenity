@@ -8,8 +8,10 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.usecase.DeleteUnusedDataUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
@@ -23,10 +25,11 @@ internal class BackupDataManager @Inject constructor(
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val deleteUnusedDataUseCase: DeleteUnusedDataUseCase,
     private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
-    val state = progressState.asStateFlow()
+    val state: StateFlow<SyncState> = progressState.asStateFlow()
 
     fun clearFailureState() {
         if (state.value is SyncState.Failure) {
@@ -46,13 +49,9 @@ internal class BackupDataManager @Inject constructor(
 
         progressState.update { SyncState.Starting }
 
-        mediaRepository.saveAllMedia()
+        deleteUnusedDataUseCase()
 
-        val localNotes = notesRepository.getAllNotes().first()
-        if (localNotes.isEmpty()) {
-            progressState.update { SyncState.Idle }
-            return
-        }
+        mediaRepository.saveAllMedia()
 
         val remoteFiles = backupRepository.getContentList()
             .onFailure(errorTracker::trackNonFatalError)
@@ -60,6 +59,18 @@ internal class BackupDataManager @Inject constructor(
 
         if (remoteFiles == null) {
             progressState.update { SyncState.Failure }
+            return
+        }
+
+        if (!uploadNoteBackgrounds(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
+        val localNotes = notesRepository.getAllNotes().first()
+        if (localNotes.isEmpty()) {
+            backupRepository.setLastSyncDate(ZonedDateTime.now())
+            progressState.update { SyncState.Idle }
             return
         }
 
@@ -178,6 +189,30 @@ internal class BackupDataManager @Inject constructor(
                 is LocalNote.Content.Title -> Unit
             }
         }
+        return true
+    }
+
+    private suspend fun uploadNoteBackgrounds(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val localBackgrounds = mediaRepository.getAllCustomNoteBackgrounds().first()
+        localBackgrounds.forEach { background ->
+            if (remoteFiles.none { it.name == background.id }) {
+                backupRepository.uploadNoteBackground(background).onFailure { error ->
+                    errorTracker.trackNonFatalError(error)
+                    return false
+                }
+            }
+        }
+        backupRepository.uploadNoteBackgroundsData(localBackgrounds)
+            .onFailure { error ->
+                errorTracker.trackNonFatalError(error)
+                return false
+            }
+        val oldNotesData = remoteFiles.filterIsInstance<RemoteFile.NoteBackgroundsData>()
+        backupRepository.deleteFiles(oldNotesData)
+            .onFailure(errorTracker::trackNonFatalError)
+
         return true
     }
 }

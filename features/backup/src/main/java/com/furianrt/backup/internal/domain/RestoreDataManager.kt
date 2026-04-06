@@ -5,6 +5,7 @@ import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
@@ -15,9 +16,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.collections.filter
 
 @Singleton
 internal class RestoreDataManager @Inject constructor(
@@ -58,6 +59,11 @@ internal class RestoreDataManager @Inject constructor(
             return
         }
 
+        if (!syncNoteBackgrounds(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
         val notesData = remoteFiles
             .filterIsInstance<RemoteFile.NotesData>()
             .maxByOrNull(RemoteFile.NotesData::createdAt)
@@ -89,8 +95,6 @@ internal class RestoreDataManager @Inject constructor(
         }
 
         saveNotesData(remoteNotes)
-
-        backupRepository.setLastSyncDate(ZonedDateTime.now())
 
         progressState.update { SyncState.Success }
         delay(500)
@@ -194,6 +198,58 @@ internal class RestoreDataManager @Inject constructor(
             .onFailure(errorTracker::trackNonFatalError)
             .map { true }
             .getOrDefault(false)
+    }
+
+    private suspend fun syncNoteBackgrounds(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val backgroundsData = remoteFiles
+            .filterIsInstance<RemoteFile.NoteBackgroundsData>()
+            .maxByOrNull(RemoteFile.NoteBackgroundsData::createdAt) ?: return true
+
+        val remoteBackgrounds = backupRepository.getRemoteNoteBackgrounds(backgroundsData.id)
+            .onFailure(errorTracker::trackNonFatalError)
+            .getOrNull()
+
+        if (remoteBackgrounds == null) {
+            return false
+        }
+
+        val localBackgrounds = mediaRepository.getAllCustomNoteBackgrounds().first()
+
+        val backgroundsToSave = remoteBackgrounds
+            .filter { remote -> localBackgrounds.none { it.id == remote.id } }
+
+        backgroundsToSave.forEach { background ->
+            if (!syncNoteBackgroundFile(remoteFiles, background)) {
+                return false
+            }
+        }
+
+        remoteBackgrounds.forEach { background ->
+            mediaRepository.upsertCustomNoteBackground(background, updateFile = false)
+        }
+
+        return true
+    }
+
+    private suspend fun syncNoteBackgroundFile(
+        remoteFiles: List<RemoteFile>,
+        background: NoteCustomBackground,
+    ): Boolean {
+        val remoteFileId = remoteFiles.find { it.name == background.id }?.id ?: return true
+        val localFile = mediaRepository.createNoteBackgroundDestinationFile(
+            id = background.id,
+            name = background.name,
+        )
+        return if (localFile == null) {
+            false
+        } else {
+            backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
+                .onFailure(errorTracker::trackNonFatalError)
+                .map { true }
+                .getOrDefault(false)
+        }
     }
 
     private suspend fun saveNotesData(remoteNotes: List<LocalNote>) {

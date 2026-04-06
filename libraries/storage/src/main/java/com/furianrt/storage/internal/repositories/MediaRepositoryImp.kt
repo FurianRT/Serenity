@@ -171,6 +171,11 @@ internal class MediaRepositoryImp @Inject constructor(
         return appMediaSource.createMediaFile(noteId, mediaId, mediaName)
     }
 
+    override suspend fun createNoteBackgroundDestinationFile(
+        id: String,
+        name: String,
+    ): File? = appMediaSource.createNoteBackgroundFile(id, name)
+
     override suspend fun deleteFile(file: File) {
         appMediaSource.deleteFile(file)
     }
@@ -196,11 +201,11 @@ internal class MediaRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun insertCustomNoteBackground(
+    override suspend fun upsertCustomNoteBackground(
         background: NoteCustomBackground,
         updateFile: Boolean,
     ) {
-        customBackgroundDao.insert(background.toEntry(isSaved = !updateFile))
+        customBackgroundDao.upsert(background.toEntry(isSaved = !updateFile))
         if (updateFile) {
             SaveMediaWorker.enqueueOneTime(context)
         }

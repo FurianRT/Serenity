@@ -122,6 +122,30 @@ internal class AppMediaSource @Inject constructor(
         }
     }
 
+    suspend fun createNoteBackgroundFile(
+        id: String,
+        name: String,
+    ): File? = withContext(dispatchers.io) {
+        try {
+            val file = File(context.filesDir, "$NOTE_BACKGROUND_FOLDER/$id$name")
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                throw IOException("Can't create file")
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            null
+        }
+    }
+
     suspend fun deleteVoiceFile(
         noteId: String,
         voiceId: String,
@@ -232,30 +256,6 @@ internal class AppMediaSource @Inject constructor(
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)
             false
-        }
-    }
-
-    private suspend fun createNoteBackgroundFile(
-        id: String,
-        name: String,
-    ): File? = withContext(dispatchers.io) {
-        try {
-            val file = File(context.filesDir, "$NOTE_BACKGROUND_FOLDER/$id$name")
-
-            file.parentFile?.mkdirs()
-
-            if (file.exists()) {
-                file.delete()
-            }
-
-            if (file.createNewFile()) {
-                return@withContext file
-            } else {
-                throw IOException("Can't create file")
-            }
-        } catch (e: Exception) {
-            errorTracker.trackNonFatalError(e)
-            null
         }
     }
 

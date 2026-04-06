@@ -25,5 +25,18 @@ internal sealed class RemoteFile(
         override val id: String,
         override val name: String,
         val createdAt: Instant,
-    ) : RemoteFile(id, name)
+    ) : RemoteFile(id, name) {
+        companion object {
+            const val FILE_NAME = "NotesData"
+        }
+    }
+
+    class NoteBackgroundsData(
+        override val id: String,
+        val createdAt: Instant,
+    ) : RemoteFile(id, FILE_NAME) {
+        companion object {
+            const val FILE_NAME = "NoteCustomBackgrounds"
+        }
+    }
 }

@@ -42,6 +42,11 @@ interface MediaRepository {
         mediaName: String,
     ): File?
 
+    suspend fun createNoteBackgroundDestinationFile(
+        id: String,
+        name: String,
+    ): File?
+
     suspend fun deleteFile(file: File)
 
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?
@@ -52,7 +57,7 @@ interface MediaRepository {
 
     suspend fun loadBitmapFromUri(uri: Uri): Bitmap
 
-    suspend fun insertCustomNoteBackground(
+    suspend fun upsertCustomNoteBackground(
         background: NoteCustomBackground,
         updateFile: Boolean = true,
     )

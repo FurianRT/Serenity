@@ -4,6 +4,7 @@ import android.content.Intent
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.google.android.gms.auth.api.identity.AuthorizationResult
 import kotlinx.coroutines.flow.Flow
 import java.io.File
@@ -41,4 +42,8 @@ internal interface BackupRepository {
         remoteFileId: String,
         file: File,
     ): Result<Long>
+
+    suspend fun uploadNoteBackgroundsData(backgrounds: List<NoteCustomBackground>): Result<Unit>
+    suspend fun uploadNoteBackground(background: NoteCustomBackground): Result<Unit>
+    suspend fun getRemoteNoteBackgrounds(fileId: String): Result<List<NoteCustomBackground>>
 }

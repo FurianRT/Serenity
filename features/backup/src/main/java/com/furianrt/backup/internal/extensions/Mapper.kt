@@ -35,11 +35,20 @@ internal fun DriveFilesListResponse.File.toRemoteFile() = when {
         name = name,
     )
 
-    mimeType == "application/json" -> RemoteFile.NotesData(
-        id = id,
-        name = name,
-        createdAt = Instant.parse(createdTime),
-    )
+    mimeType == "application/json" && name == RemoteFile.NoteBackgroundsData.FILE_NAME -> {
+        RemoteFile.NoteBackgroundsData(
+            id = id,
+            createdAt = Instant.parse(createdTime),
+        )
+    }
+
+    mimeType == "application/json" && name == RemoteFile.NotesData.FILE_NAME -> {
+        RemoteFile.NotesData(
+            id = id,
+            name = name,
+            createdAt = Instant.parse(createdTime),
+        )
+    }
 
     else -> null
 }
