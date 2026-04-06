@@ -10,6 +10,7 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
+import com.furianrt.storage.BuildConfig
 import com.furianrt.storage.internal.device.mappers.toAlbumThumbnail
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
@@ -29,6 +30,9 @@ internal class SharedMediaSource @Inject constructor(
     suspend fun saveToGallery(
         media: LocalMedia,
     ): Boolean = withContext(dispatchers.io) {
+        if (media.uri.host != BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            return@withContext false
+        }
         val values = ContentValues().apply {
             put(MediaStore.Files.FileColumns.DISPLAY_NAME, media.name)
             put(MediaStore.Files.FileColumns.MEDIA_TYPE, media.mediaType)

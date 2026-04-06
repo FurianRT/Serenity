@@ -1,7 +1,7 @@
 <resources>
     <string name="backup_auto_backup_title">Авто-бэкап</string>
     <string name="backup_auto_backup_period_title">Период авто-бэкапа</string>
-    <string name="backup_last_sync_time_title">Последняя синхронизация: %s</string>
+    <string name="backup_last_sync_time_title">Последний синк был: %s</string>
     <string name="backup_restore_data_title">Восстановить данные</string>
     <string name="backup_backup_data_title">Создать резервную копию</string>
     <string name="backup_last_sync_time_none_title">Нет</string>

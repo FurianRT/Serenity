@@ -201,6 +201,8 @@ internal class PageViewModel @AssistedInject constructor(
     private var cachePhoto: UiNoteContent.MediaBlock.Image? = null
     private var cachedPhotoFile: File? = null
 
+    private var pendingMediaSelectorParams: MediaSelectorState.Params? = null
+
     private var locationJob: Job? = null
 
     private val visibleTags: Set<String>
@@ -247,7 +249,11 @@ internal class PageViewModel @AssistedInject constructor(
 
             is OnSelectMediaClick -> {
                 resetStickersEditing()
-                tryRequestMediaPermissions()
+                tryRequestMediaPermissions(
+                    params = MediaSelectorState.Params(
+                        onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+                    ),
+                )
             }
 
             is OnTakePictureClick -> {
@@ -256,7 +262,10 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnCameraPermissionSelected -> tryOpenCamera()
-            is OnMediaPermissionsSelected -> tryOpenMediaSelector()
+            is OnMediaPermissionsSelected -> pendingMediaSelectorParams?.let { params ->
+                tryOpenMediaSelector(params)
+            }
+
             is OnLocationPermissionSelected -> tryDetectNoteLocation()
             is OnCameraNotFoundError -> _effect.tryEmit(
                 PageEffect.ShowMessage(
@@ -354,7 +363,10 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnCheckedListChange -> hasContentChanged = true
-            is OnCustomBackgroundSelectRequest -> _effect.tryEmit(OpenMediaSelector(event.params))
+            is OnCustomBackgroundSelectRequest -> {
+                resetStickersEditing()
+                tryRequestMediaPermissions(event.params)
+            }
             is OnRequestTitleFocus -> focusLastFocusedTitle()
         }
     }
@@ -594,14 +606,12 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun tryRequestMediaPermissions() {
+    private fun tryRequestMediaPermissions(params: MediaSelectorState.Params) {
         if (permissionsUtils.mediaAccessDenied()) {
+            pendingMediaSelectorParams = params
             _effect.tryEmit(RequestStoragePermissions)
         } else {
-            val params = MediaSelectorState.Params(
-                onMediaSelected = { addNewBlock(it.toMediaBlock()) },
-            )
-            _effect.tryEmit(OpenMediaSelector(params))
+            openMediaSelector(params)
         }
     }
 
@@ -717,15 +727,16 @@ internal class PageViewModel @AssistedInject constructor(
         cachedPhotoFile?.let { mediaRepository.deleteFile(it) }
     }
 
-    private fun tryOpenMediaSelector() {
+    private fun tryOpenMediaSelector(params: MediaSelectorState.Params) {
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(ShowStoragePermissionsDeniedDialog)
         } else {
-            val params = MediaSelectorState.Params(
-                onMediaSelected = { addNewBlock(it.toMediaBlock()) },
-            )
-            _effect.tryEmit(OpenMediaSelector(params))
+            openMediaSelector(params)
         }
+    }
+
+    private fun openMediaSelector(params: MediaSelectorState.Params) {
+        _effect.tryEmit(OpenMediaSelector(params))
     }
 
     private fun openMediaViewScreen(mediaId: String) {
