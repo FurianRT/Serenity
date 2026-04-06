@@ -43,7 +43,7 @@ internal class NoteThemesHolder @Inject constructor(
             return@withContext solidTheme
         }
 
-        val custom = mediaRepository.getCustomNoteBackgrounds().first().find { it.id == imageId }
+        val custom = mediaRepository.getAllCustomNoteBackgrounds().first().find { it.id == imageId }
         if (custom != null) {
             return@withContext custom.toUiNoteTheme()
         }

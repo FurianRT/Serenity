@@ -143,7 +143,8 @@ internal interface DatabaseModule {
                                 accent_color INTEGER NOT NULL,
                                 is_light INTEGER NOT NULL,
                                 added_date TEXT NOT NULL,
-                                is_saved INTEGER NOT NULL
+                                is_saved INTEGER NOT NULL,
+                                is_hidden INTEGER NOT NULL
                             )
                         """
                     )

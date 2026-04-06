@@ -10,5 +10,6 @@ data class NoteCustomBackground(
     val primaryColor: Int,
     val accentColor: Int,
     val isLight: Boolean,
+    val isHidden: Boolean,
     val addedDate: ZonedDateTime,
 )

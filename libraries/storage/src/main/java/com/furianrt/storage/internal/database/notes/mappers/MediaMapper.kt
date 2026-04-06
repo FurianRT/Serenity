@@ -75,6 +75,7 @@ internal fun NoteCustomBackground.toEntry(isSaved: Boolean) = EntryNoteCustomBac
     primaryColor = primaryColor,
     accentColor = accentColor,
     isLight = isLight,
+    isHidden = isHidden,
 )
 
 internal fun EntryNoteCustomBackground.toDomain() = NoteCustomBackground(
@@ -84,5 +85,6 @@ internal fun EntryNoteCustomBackground.toDomain() = NoteCustomBackground(
     addedDate = addedDate,
     primaryColor = primaryColor,
     accentColor = accentColor,
+    isHidden = isHidden,
     isLight = isLight,
 )

@@ -15,6 +15,7 @@ import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
+import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
@@ -23,6 +24,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
 import com.furianrt.storage.internal.database.notes.entities.PartImageId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundId
+import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundIsHidden
 import com.furianrt.storage.internal.database.notes.entities.PartVideoId
 import com.furianrt.storage.internal.database.notes.entities.PartVoiceId
 import com.furianrt.storage.internal.database.notes.mappers.toDomain
@@ -47,6 +49,7 @@ import java.io.File
 import javax.inject.Inject
 
 internal class MediaRepositoryImp @Inject constructor(
+    private val noteDao: NoteDao,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
@@ -203,16 +206,39 @@ internal class MediaRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun deleteCustomNoteBackground(background: NoteCustomBackground) {
-        mediaSaver.cancel(background)
-        customBackgroundDao.delete(PartNoteCustomBackgroundId(id = background.id))
-        appMediaSource.deleteNoteBackgroundFile(background)
+    override suspend fun deleteCustomNoteBackground(
+        background: NoteCustomBackground,
+        updateHiddenFlag: Boolean,
+    ) {
+        if (noteDao.hasNoteWithBackgroundId(background.id)) {
+            if (updateHiddenFlag) {
+                customBackgroundDao.update(
+                    PartNoteCustomBackgroundIsHidden(
+                        id = background.id,
+                        isHidden = true,
+                    )
+                )
+            }
+        } else {
+            mediaSaver.cancel(background)
+            customBackgroundDao.delete(PartNoteCustomBackgroundId(id = background.id))
+            appMediaSource.deleteNoteBackgroundFile(background)
+        }
     }
 
-    override fun getCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>> {
-        return customBackgroundDao.getAllBackgrounds()
+    override fun getNotHiddenCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>> {
+        return customBackgroundDao.getNotHiddenBackgrounds()
             .deepMap(EntryNoteCustomBackground::toDomain)
             .map { list -> list.sortedByDescending { it.addedDate } }
+    }
+
+    override fun getHiddenCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>> {
+        return customBackgroundDao.getHiddenBackgrounds()
+            .deepMap(EntryNoteCustomBackground::toDomain)
+    }
+
+    override fun getAllCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>> {
+        return customBackgroundDao.getAllBackgrounds().deepMap(EntryNoteCustomBackground::toDomain)
     }
 
     override suspend fun saveAllMedia() {

@@ -57,8 +57,14 @@ interface MediaRepository {
         updateFile: Boolean = true,
     )
 
-    suspend fun deleteCustomNoteBackground(background: NoteCustomBackground)
-    fun getCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>>
+    suspend fun deleteCustomNoteBackground(
+        background: NoteCustomBackground,
+        updateHiddenFlag: Boolean = true,
+    )
+
+    fun getNotHiddenCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>>
+    fun getHiddenCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>>
+    fun getAllCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>>
 
     suspend fun saveAllMedia()
 

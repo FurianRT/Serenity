@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundId
+import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundIsHidden
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundUri
 import kotlinx.coroutines.flow.Flow
 
@@ -19,6 +20,9 @@ internal interface CustomBackgroundDao {
 
     @Update(entity = EntryNoteCustomBackground::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteCustomBackgroundUri)
+
+    @Update(entity = EntryNoteCustomBackground::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteCustomBackgroundIsHidden)
 
     @Delete(entity = EntryNoteCustomBackground::class)
     suspend fun delete(data: PartNoteCustomBackgroundId)
@@ -32,7 +36,30 @@ internal interface CustomBackgroundDao {
     )
     fun getUnsavedBackgrounds(): Flow<List<EntryNoteCustomBackground>>
 
-    @Query("SELECT * FROM ${EntryNoteCustomBackground.TABLE_NAME}")
+    @Query(
+        """
+    SELECT *
+    FROM ${EntryNoteCustomBackground.TABLE_NAME} 
+    WHERE ${EntryNoteCustomBackground.FIELD_IS_HIDDEN} = 0
+    """
+    )
+    fun getNotHiddenBackgrounds(): Flow<List<EntryNoteCustomBackground>>
+
+    @Query(
+        """
+    SELECT *
+    FROM ${EntryNoteCustomBackground.TABLE_NAME} 
+    WHERE ${EntryNoteCustomBackground.FIELD_IS_HIDDEN} = 1
+    """
+    )
+    fun getHiddenBackgrounds(): Flow<List<EntryNoteCustomBackground>>
+
+    @Query(
+        """
+    SELECT *
+    FROM ${EntryNoteCustomBackground.TABLE_NAME}
+    """
+    )
     fun getAllBackgrounds(): Flow<List<EntryNoteCustomBackground>>
 
     @Query(

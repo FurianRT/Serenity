@@ -32,6 +32,9 @@ internal class EntryNoteCustomBackground(
 
     @ColumnInfo(name = FIELD_IS_SAVED)
     val isSaved: Boolean,
+
+    @ColumnInfo(name = FIELD_IS_HIDDEN)
+    val isHidden: Boolean,
 ) {
     companion object {
         const val TABLE_NAME = "NoteCustomBackgrounds"
@@ -43,6 +46,7 @@ internal class EntryNoteCustomBackground(
         const val FIELD_IS_LIGHT = "is_light"
         const val FIELD_ADDED_DATE = "added_date"
         const val FIELD_IS_SAVED = "is_saved"
+        const val FIELD_IS_HIDDEN = "is_hidden"
     }
 }
 
@@ -59,6 +63,15 @@ internal class PartNoteCustomBackgroundUri(
 
     @ColumnInfo(name = EntryNoteCustomBackground.FIELD_IS_SAVED)
     val isSaved: Boolean,
+)
+
+@Entity
+internal class PartNoteCustomBackgroundIsHidden(
+    @ColumnInfo(name = EntryNoteCustomBackground.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNoteCustomBackground.FIELD_IS_HIDDEN)
+    val isHidden: Boolean,
 )
 
 @Entity

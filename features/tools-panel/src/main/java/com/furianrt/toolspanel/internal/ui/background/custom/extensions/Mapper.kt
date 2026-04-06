@@ -45,5 +45,6 @@ internal fun MediaResult.Media.Image.toNoteCustomBackground(
     primaryColor = primaryColor,
     accentColor = accentColor,
     isLight = isLight,
+    isHidden = false,
     addedDate = ZonedDateTime.now(),
 )

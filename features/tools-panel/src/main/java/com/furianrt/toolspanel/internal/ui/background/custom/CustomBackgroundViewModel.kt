@@ -34,7 +34,7 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<CustomBackgroundUiState> = combine(
-        mediaRepository.getCustomNoteBackgrounds(),
+        mediaRepository.getNotHiddenCustomNoteBackgrounds(),
         selectedThemeProvider.selectedThemeState,
         ::buildState,
     ).stateIn(
@@ -68,7 +68,7 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
     private fun onDeleteThemeClick(theme: UiNoteTheme.Image.Picture) {
         launch {
             mediaRepository.deleteCustomNoteBackground(
-                background = mediaRepository.getCustomNoteBackgrounds()
+                background = mediaRepository.getNotHiddenCustomNoteBackgrounds()
                     .first().find { it.id == theme.imageId } ?: return@launch
             )
         }
