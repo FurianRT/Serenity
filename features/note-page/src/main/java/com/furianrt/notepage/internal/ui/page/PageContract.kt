@@ -2,7 +2,7 @@ package com.furianrt.notepage.internal.ui.page
 
 import android.net.Uri
 import com.furianrt.core.findInstance
-import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -101,7 +101,6 @@ internal sealed interface PageEvent {
     data object OnNoPositionError : PageEvent
     data object OnBackgroundsClick : PageEvent
     data class OnNoteThemeSelected(val theme: UiNoteTheme?) : PageEvent
-
     data object OnMoodClick : PageEvent
     data class OnMoodSelected(val moodId: String?) : PageEvent
     data object OnLocationClick : PageEvent
@@ -110,6 +109,8 @@ internal sealed interface PageEvent {
     data object OnCancelLocationClick : PageEvent
     data object OnAutoDetectLocationClickClick : PageEvent
     data object OnCheckedListChange : PageEvent
+    data class OnCustomBackgroundSelectRequest(val params: MediaSelectorState.Params) : PageEvent
+    data object OnRequestTitleFocus : PageEvent
 }
 
 internal sealed interface PageEffect {
@@ -119,7 +120,7 @@ internal sealed interface PageEffect {
     data object ShowCameraPermissionsDeniedDialog : PageEffect
     data object RequestLocationPermission : PageEffect
     data object ShowLocationPermissionsDeniedDialog : PageEffect
-    data class OpenMediaSelector(val onMediaSelected: (result: MediaResult) -> Unit) : PageEffect
+    data class OpenMediaSelector(val params: MediaSelectorState.Params) : PageEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : PageEffect
     data class OpenMediaSortingScreen(
         val noteId: String,

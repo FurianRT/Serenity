@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,9 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Rect
@@ -46,7 +43,6 @@ import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,7 +51,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
@@ -65,11 +60,8 @@ import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelect
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_pattern_background"
 
@@ -140,11 +132,6 @@ private fun SuccessContent(
             verticalAlignment = Alignment.CenterVertically,
             contentPadding = PaddingValues(horizontal = 8.dp),
         ) {
-            item {
-                ClearItem(
-                    onClick = { onEvent(PatternBackgroundEvent.OnClearClick) },
-                )
-            }
             itemsIndexed(
                 items = uiState.images,
             ) { index, image ->
@@ -198,7 +185,8 @@ private fun ImageItem(
     onClick: (image: UiNoteBackgroundImage) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val drawable = ImageBitmap.imageResource(image.resId)
+    val resId = (image.source as UiNoteBackgroundImage.Source.Resource).resId
+    val drawable = ImageBitmap.imageResource(resId)
     val animatedSurface = if (!hasSelectedImage && color != null) {
         animateColorAsState(
             targetValue = color.colorScheme.surface,
@@ -281,35 +269,6 @@ private fun ImageItem(
 }
 
 @Composable
-private fun ClearItem(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxHeight(0.85f)
-            .width(70.dp)
-            .alpha(0.3f)
-            .scale(0.9f)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface,
-                shape = RoundedCornerShape(16.dp),
-            )
-            .clip(RoundedCornerShape(16.dp))
-            .clickableWithScaleAnim(onClick = onClick, maxScale = 1.2f),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            modifier = Modifier.scale(1.2f),
-            painter = painterResource(R.drawable.ic_background_clear),
-            tint = MaterialTheme.colorScheme.onSurface,
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
 private fun ColorItem(
     color: UiNoteBackground,
     isSelected: Boolean,
@@ -344,26 +303,11 @@ private fun ColorItem(
 @Preview(heightDp = 300, showBackground = true, backgroundColor = 0xFF474972)
 @Composable
 private fun Preview() {
-    val themesHolder = NoteThemesHolder(
-        dispatchers = object : DispatchersProvider {
-            override val mainImmediate: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val main: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val io: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val default: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val unconfined: CoroutineDispatcher
-                get() = Dispatchers.Main
-
-        },
-    )
     SerenityTheme {
         SuccessContent(
             uiState = PatternBackgroundUiState.Success(
-                images = themesHolder.getPatternImages(),
-                colors = themesHolder.getSolidThemes().map { it.color },
+                images = NoteThemesHolder.patternImages(),
+                colors = NoteThemesHolder.solidThemes().map { it.color },
                 selectedColorIndex = 1,
                 selectedImageIndex = 0,
                 appTheme = UiThemeColor.fromId(null),

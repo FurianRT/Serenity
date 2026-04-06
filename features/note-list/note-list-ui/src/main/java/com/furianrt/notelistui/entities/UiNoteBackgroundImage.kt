@@ -1,5 +1,6 @@
 package com.furianrt.notelistui.entities
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.layout.ContentScale
@@ -7,9 +8,14 @@ import com.furianrt.notelistui.entities.UiNoteBackgroundImage.ScaleType.*
 
 data class UiNoteBackgroundImage(
     val id: String,
-    @get:DrawableRes val resId: Int,
+    val source: Source,
     val scaleType: ScaleType = REPEAT,
 ) {
+    sealed interface Source {
+        class Resource(@get:DrawableRes val resId: Int) : Source
+        class Storage(val uri: Uri) : Source
+    }
+
     enum class ScaleType {
         REPEAT,
         FILL,

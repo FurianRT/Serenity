@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Hoa văn</string>
     <string name="background_panel_tab_picture_title">Hình ảnh</string>
     <string name="background_panel_theme_title">Chủ đề</string>
+
+    <string name="background_panel_custom_title">Tùy chỉnh</string>
+    <string name="background_panel_select_image_action">Chọn hình ảnh</string>
+    <string name="background_panel_custom_background_title">Làm cho ghi chú của bạn sống động hơn</string>
+    <string name="background_panel_custom_background_hint">Thêm hình nền của riêng bạn</string>
+    <string name="background_panel_remove_background_hint">Nền có thể xóa bằng cách nhấn giữ</string>
 </resources>

@@ -41,11 +41,9 @@ import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -184,7 +182,6 @@ private fun OneMediaHolder(
         )
     } else {
         val interpolator = remember { OvershootInterpolator(5.0f) }
-        val haptic = LocalHapticFeedback.current
         var showDropDownMenu by remember { mutableStateOf(false) }
         val longClickScale by animateFloatAsState(
             targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
@@ -208,10 +205,7 @@ private fun OneMediaHolder(
                 .applyIf(clickable) {
                     Modifier.combinedClickable(
                         onClick = { onClick(media) },
-                        onLongClick = {
-                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-                            showDropDownMenu = true
-                        },
+                        onLongClick = { showDropDownMenu = true },
                     )
                 },
             contentAlignment = Alignment.Center,
@@ -402,7 +396,6 @@ private fun MediaItem(
     offscreenImageCount: Int = 0,
     cacheExtraKey: String? = null,
 ) {
-    val haptic = LocalHapticFeedback.current
     var showDropDownMenu by remember { mutableStateOf(false) }
     val dimColor = MaterialTheme.colorScheme.scrim
     val interpolator = remember { OvershootInterpolator(5.0f) }
@@ -429,10 +422,7 @@ private fun MediaItem(
     }
     val clickModifier = Modifier.combinedClickable(
         onClick = { onClick(media) },
-        onLongClick = {
-            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
-            showDropDownMenu = true
-        },
+        onLongClick = { showDropDownMenu = true },
     )
     Box(
         modifier = modifier.clip(RoundedCornerShape(cornerRadius)),

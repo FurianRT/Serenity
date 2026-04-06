@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">প্যাটার্ন</string>
     <string name="background_panel_tab_picture_title">ছবি</string>
     <string name="background_panel_theme_title">থিম</string>
+
+    <string name="background_panel_custom_title">কাস্টম</string>
+    <string name="background_panel_select_image_action">ছবি নির্বাচন</string>
+    <string name="background_panel_custom_background_title">তোমার নোটকে প্রাণবন্ত করে তোলো</string>
+    <string name="background_panel_custom_background_hint">নিজের ব্যাকগ্রাউন্ড ছবি যোগ করো</string>
+    <string name="background_panel_remove_background_hint">ব্যাকগ্রাউন্ড লং প্রেস করে মুছে ফেলা যেতে পারে</string>
 </resources>

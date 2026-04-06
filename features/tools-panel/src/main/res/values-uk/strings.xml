@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Візерунок</string>
     <string name="background_panel_tab_picture_title">Зображення</string>
     <string name="background_panel_theme_title">Тема</string>
+
+    <string name="background_panel_custom_title">Власні</string>
+    <string name="background_panel_select_image_action">Обрати зображення</string>
+    <string name="background_panel_custom_background_title">Оживи свої нотатки</string>
+    <string name="background_panel_custom_background_hint">Додай своє фонове зображення</string>
+    <string name="background_panel_remove_background_hint">Фон можна видалити довгим натисканням</string>
 </resources>

@@ -1,6 +1,8 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
@@ -62,4 +64,25 @@ internal fun LocalNote.Content.Voice.toEntryVoice(noteId: String) = EntryNoteVoi
     uri = uri,
     duration = duration,
     volume = volume,
+)
+
+internal fun NoteCustomBackground.toEntry(isSaved: Boolean) = EntryNoteCustomBackground(
+    id = id,
+    name = name,
+    uri = uri,
+    addedDate = addedDate,
+    isSaved = isSaved,
+    primaryColor = primaryColor,
+    accentColor = accentColor,
+    isLight = isLight,
+)
+
+internal fun EntryNoteCustomBackground.toDomain() = NoteCustomBackground(
+    id = id,
+    name = name,
+    uri = uri,
+    addedDate = addedDate,
+    primaryColor = primaryColor,
+    accentColor = accentColor,
+    isLight = isLight,
 )

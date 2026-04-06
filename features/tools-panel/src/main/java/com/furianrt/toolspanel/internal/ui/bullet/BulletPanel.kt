@@ -65,6 +65,7 @@ import kotlin.math.max
 @Composable
 internal fun BulletTitleBar(
     showKeyBoardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -80,7 +81,10 @@ internal fun BulletTitleBar(
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collectLatest { effect ->
                 when (effect) {
-                    is BulletPanelEffect.ShowKeyboard -> keyboardController?.show()
+                    is BulletPanelEffect.ShowKeyboard -> {
+                        requestTitleFocus()
+                        keyboardController?.show()
+                    }
                     is BulletPanelEffect.ClosePanel -> onDoneClickState()
                 }
             }

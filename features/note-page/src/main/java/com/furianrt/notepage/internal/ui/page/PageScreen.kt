@@ -77,6 +77,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.furianrt.core.findInstance
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.mood.api.composables.MoodDialog
@@ -86,6 +87,7 @@ import com.furianrt.notelistui.composables.NoteContentVoice
 import com.furianrt.notelistui.composables.NoteTags
 import com.furianrt.notelistui.composables.title.NoteContentTitle
 import com.furianrt.notelistui.entities.LocationState
+import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage.ScaleType
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -221,7 +223,7 @@ internal fun NotePageScreenInternal(
                 is PageEffect.ShowStoragePermissionsDeniedDialog -> showMediaPermissionDialog = true
                 is PageEffect.OpenMediaSelector -> {
                     focusManager.clearFocus(force = true)
-                    state.mediaSelectorState.expand(onMediaSelected = effect.onMediaSelected)
+                    state.mediaSelectorState.expand(effect.params)
                 }
 
                 is PageEffect.OpenMediaViewScreen -> {
@@ -554,6 +556,8 @@ private fun SuccessScreen(
             },
             onBackgroundClick = { onEvent(PageEvent.OnBackgroundsClick) },
             onThemeSelected = { onEvent(PageEvent.OnNoteThemeSelected(it)) },
+            openMediaSelector = { onEvent(PageEvent.OnCustomBackgroundSelectRequest(it)) },
+            requestTitleFocus = { onEvent(PageEvent.OnRequestTitleFocus) },
         )
         DimSurfaceOverlay(
             modifier = Modifier
@@ -580,6 +584,7 @@ private fun NoteBackgroundImage(
     theme: UiNoteTheme?,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val tint = MaterialTheme.colorScheme.onSurface
     Crossfade(
         modifier = modifier.fillMaxSize(),
@@ -600,7 +605,9 @@ private fun NoteBackgroundImage(
             )
 
             is UiNoteTheme.Image.Pattern -> {
-                val bitmap = ImageBitmap.imageResource(targetState.image.resId)
+                val resId =
+                    (targetState.image.source as UiNoteBackgroundImage.Source.Resource).resId
+                val bitmap = ImageBitmap.imageResource(resId)
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -629,7 +636,9 @@ private fun NoteBackgroundImage(
 
             is UiNoteTheme.Image.Picture -> {
                 if (targetState.image.scaleType == ScaleType.REPEAT) {
-                    val bitmap = ImageBitmap.imageResource(targetState.image.resId)
+                    val resId =
+                        (targetState.image.source as UiNoteBackgroundImage.Source.Resource).resId
+                    val bitmap = ImageBitmap.imageResource(resId)
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -647,15 +656,23 @@ private fun NoteBackgroundImage(
                             }
                     )
                 } else {
+                    val request = remember(targetState.image.source) {
+                        ImageRequest.Builder(context)
+                            .data(
+                                when (val source = targetState.image.source) {
+                                    is UiNoteBackgroundImage.Source.Resource -> source.resId
+                                    is UiNoteBackgroundImage.Source.Storage -> source.uri
+                                }
+                            )
+                            .build()
+                    }
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxSize()
                             .applyIf(targetState.image.scaleType == ScaleType.CENTER) {
                                 Modifier.background(targetState.color.colorScheme.surface)
                             },
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(targetState.image.resId)
-                            .build(),
+                        model = request,
                         contentScale = targetState.image.scaleType.toContentScale(),
                         alignment = targetState.image.scaleType.toContentAlignment(),
                         contentDescription = null,
@@ -864,6 +881,8 @@ private fun Panel(
     onStickersClick: () -> Unit,
     onBackgroundClick: () -> Unit,
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
+    openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    requestTitleFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier) {
@@ -903,6 +922,8 @@ private fun Panel(
                     onBulletListClick = onBulletListClick,
                     onBackgroundClick = onBackgroundClick,
                     onThemeSelected = onThemeSelected,
+                    openMediaSelector = openMediaSelector,
+                    requestTitleFocus = requestTitleFocus,
                 )
             }
         )

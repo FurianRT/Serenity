@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">ลวดลาย</string>
     <string name="background_panel_tab_picture_title">รูปภาพ</string>
     <string name="background_panel_theme_title">ธีม</string>
+
+    <string name="background_panel_custom_title">กำหนดเอง</string>
+    <string name="background_panel_select_image_action">เลือกภาพ</string>
+    <string name="background_panel_custom_background_title">ทำให้โน้ตของคุณมีชีวิตชีวา</string>
+    <string name="background_panel_custom_background_hint">เพิ่มรูปภาพพื้นหลังของคุณเอง</string>
+    <string name="background_panel_remove_background_hint">สามารถลบพื้นหลังได้ด้วยการกดค้าง</string>
 </resources>

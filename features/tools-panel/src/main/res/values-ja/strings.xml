@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">パターン</string>
     <string name="background_panel_tab_picture_title">画像</string>
     <string name="background_panel_theme_title">テーマ</string>
+
+    <string name="background_panel_custom_title">カスタム</string>
+    <string name="background_panel_select_image_action">画像を選択</string>
+    <string name="background_panel_custom_background_title">ノートをもっと生き生きさせよう</string>
+    <string name="background_panel_custom_background_hint">自分の背景画像を追加しよう</string>
+    <string name="background_panel_remove_background_hint">背景は長押しで削除できます</string>
 </resources>

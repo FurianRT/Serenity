@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Patroon</string>
     <string name="background_panel_tab_picture_title">Afbeelding</string>
     <string name="background_panel_theme_title">Thema</string>
+
+    <string name="background_panel_custom_title">Eigen</string>
+    <string name="background_panel_select_image_action">Afbeelding selecteren</string>
+    <string name="background_panel_custom_background_title">Breng je notities tot leven</string>
+    <string name="background_panel_custom_background_hint">Voeg je eigen achtergrondafbeelding toe</string>
+    <string name="background_panel_remove_background_hint">Achtergrond kan verwijderd worden door lang ingedrukt te houden</string>
 </resources>

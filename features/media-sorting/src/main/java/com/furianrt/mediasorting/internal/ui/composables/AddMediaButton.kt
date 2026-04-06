@@ -25,7 +25,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.mediasorting.R
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.theme.SerenityTheme
@@ -68,7 +67,7 @@ internal fun AddMediaButton(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_add_media_big),
+            painter = painterResource(uiR.drawable.ic_add_media_big),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.tertiaryContainer,
         )

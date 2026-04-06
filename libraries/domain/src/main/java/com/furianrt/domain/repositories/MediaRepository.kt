@@ -1,10 +1,12 @@
 package com.furianrt.domain.repositories
 
+import android.graphics.Bitmap
 import android.net.Uri
 import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 
@@ -47,6 +49,16 @@ interface MediaRepository {
 
     fun getRelativeUri(file: File): Uri
     suspend fun getAspectRatio(file: File): Float
+
+    suspend fun loadBitmapFromUri(uri: Uri): Bitmap
+
+    suspend fun insertCustomNoteBackground(
+        background: NoteCustomBackground,
+        updateFile: Boolean = true,
+    )
+
+    suspend fun deleteCustomNoteBackground(background: NoteCustomBackground)
+    fun getCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>>
 
     suspend fun saveAllMedia()
 

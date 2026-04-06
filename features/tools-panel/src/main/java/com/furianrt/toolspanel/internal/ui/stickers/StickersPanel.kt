@@ -90,12 +90,14 @@ private val TITLE_LIST_ITEM_SIZE = 36.dp
 @Composable
 internal fun StickersTitleBar(
     showKeyBoardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: StickersViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val onDoneClickState by rememberUpdatedState(onDoneClick)
 
@@ -105,6 +107,10 @@ internal fun StickersTitleBar(
             .collect { effect ->
                 if (effect is StickersPanelEffect.ClosePanel) {
                     onDoneClickState()
+                }
+                if (effect is StickersPanelEffect.ShowKeyboard) {
+                    requestTitleFocus()
+                    keyboardController?.show()
                 }
             }
     }
@@ -246,7 +252,6 @@ internal fun StickersContent(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val density = LocalDensity.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(density)
     val imeSource = WindowInsets.imeAnimationSource.getBottom(density)
@@ -264,7 +269,7 @@ internal fun StickersContent(
             .collect { effect ->
                 when (effect) {
                     is StickersPanelEffect.ClosePanel -> Unit
-                    is StickersPanelEffect.ShowKeyboard -> keyboardController?.show()
+                    is StickersPanelEffect.ShowKeyboard -> Unit
                     is StickersPanelEffect.SelectSticker -> onStickerSelected(effect.sticker)
                     is StickersPanelEffect.ScrollContentToIndex -> {
                         uiState.pagerState.animateScrollToPage(effect.index)

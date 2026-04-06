@@ -13,7 +13,8 @@ import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_TOP
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.FILL
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.REPEAT
 import com.furianrt.uikit.theme.Colors
-import com.furianrt.uikit.theme.defaultColorScheme
+import com.furianrt.uikit.theme.getDefaultDarkColorScheme
+import com.furianrt.uikit.theme.getDefaultLightColorScheme
 
 data class UiThemeImage(
     @get:DrawableRes val resId: Int,
@@ -636,31 +637,68 @@ enum class UiThemeColor(
 }
 
 val UiThemeColor.colorScheme: ColorScheme
-    get() = defaultColorScheme.copy(
-        primary = primary,
-        onPrimary = onPrimary,
-        secondary = secondary,
-        onSecondary = onSecondary,
-        onBackground = onBackground,
-        inverseSurface = inverseSurface,
-        onSurface = onSurface,
-        onSurfaceVariant = onSurfaceVariant,
-        surfaceContainer = surfaceContainer,
-        surfaceContainerLowest = surfaceContainerLowest,
-        onPrimaryContainer = onPrimaryContainer,
-        outlineVariant = outlineVariant,
-        secondaryContainer = secondaryContainer,
-        tertiary = tertiary,
-        onTertiary = onTertiary,
-        tertiaryContainer = tertiaryContainer,
-        onTertiaryContainer = onTertiaryContainer,
-        errorContainer = errorContainer,
-        onErrorContainer = onErrorContainer,
-        scrim = scrim,
-        background = background,
-        surface = surface,
-        primaryContainer = primaryContainer,
-        surfaceTint = surfaceTint,
-        surfaceDim = surfaceDim,
-        surfaceContainerLow = surfaceContainerLow,
-    )
+    get() = if (isLight) {
+        getDefaultLightColorScheme(
+            surface = surface,
+            primaryContainer = primaryContainer,
+        ).copy(
+            primary = primary,
+            onPrimary = onPrimary,
+            secondary = secondary,
+            onSecondary = onSecondary,
+            onBackground = onBackground,
+            inverseSurface = inverseSurface,
+            onSurface = onSurface,
+            onSurfaceVariant = onSurfaceVariant,
+            surfaceContainer = surfaceContainer,
+            surfaceContainerLowest = surfaceContainerLowest,
+            onPrimaryContainer = onPrimaryContainer,
+            outlineVariant = outlineVariant,
+            secondaryContainer = secondaryContainer,
+            tertiary = tertiary,
+            onTertiary = onTertiary,
+            tertiaryContainer = tertiaryContainer,
+            onTertiaryContainer = onTertiaryContainer,
+            errorContainer = errorContainer,
+            onErrorContainer = onErrorContainer,
+            scrim = scrim,
+            background = background,
+            surface = surface,
+            primaryContainer = primaryContainer,
+            surfaceTint = surfaceTint,
+            surfaceDim = surfaceDim,
+            surfaceContainerLow = surfaceContainerLow,
+        )
+    } else {
+        getDefaultDarkColorScheme(
+            surface = surface,
+            primaryContainer = primaryContainer,
+        ).copy(
+            primary = primary,
+            onPrimary = onPrimary,
+            secondary = secondary,
+            onSecondary = onSecondary,
+            onBackground = onBackground,
+            inverseSurface = inverseSurface,
+            onSurface = onSurface,
+            onSurfaceVariant = onSurfaceVariant,
+            surfaceContainer = surfaceContainer,
+            surfaceContainerLowest = surfaceContainerLowest,
+            onPrimaryContainer = onPrimaryContainer,
+            outlineVariant = outlineVariant,
+            secondaryContainer = secondaryContainer,
+            tertiary = tertiary,
+            onTertiary = onTertiary,
+            tertiaryContainer = tertiaryContainer,
+            onTertiaryContainer = onTertiaryContainer,
+            errorContainer = errorContainer,
+            onErrorContainer = onErrorContainer,
+            scrim = scrim,
+            background = background,
+            surface = surface,
+            primaryContainer = primaryContainer,
+            surfaceTint = surfaceTint,
+            surfaceDim = surfaceDim,
+            surfaceContainerLow = surfaceContainerLow,
+        )
+    }

@@ -1,23 +1,32 @@
 package com.furianrt.storage.internal.repositories
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepMap
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.repositories.MediaRepository
+import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
 import com.furianrt.storage.internal.database.notes.entities.PartImageId
+import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartVideoId
 import com.furianrt.storage.internal.database.notes.entities.PartVoiceId
+import com.furianrt.storage.internal.database.notes.mappers.toDomain
+import com.furianrt.storage.internal.database.notes.mappers.toEntry
 import com.furianrt.storage.internal.database.notes.mappers.toEntryImage
 import com.furianrt.storage.internal.database.notes.mappers.toEntryVideo
 import com.furianrt.storage.internal.database.notes.mappers.toEntryVoice
@@ -32,6 +41,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
 import javax.inject.Inject
@@ -40,10 +50,12 @@ internal class MediaRepositoryImp @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val voiceDao: VoiceDao,
+    private val customBackgroundDao: CustomBackgroundDao,
     private val sharedMediaSource: SharedMediaSource,
     private val appMediaSource: AppMediaSource,
     private val mediaSaver: MediaSaver,
     private val transactionsHelper: TransactionsHelper,
+    private val dispatchers: DispatchersProvider,
     @param:ApplicationContext private val context: Context,
 ) : MediaRepository {
 
@@ -76,7 +88,7 @@ internal class MediaRepositoryImp @Inject constructor(
             return
         }
         withContext(NonCancellable) {
-            mediaSaver.cancel(noteId, media)
+            mediaSaver.cancel(media)
             val images = media
                 .filterIsInstance<LocalNote.Content.Image>()
                 .map { PartImageId(it.id) }
@@ -172,6 +184,35 @@ internal class MediaRepositoryImp @Inject constructor(
 
     override suspend fun getAspectRatio(file: File): Float {
         return appMediaSource.getAspectRatio(file)
+    }
+
+    override suspend fun loadBitmapFromUri(uri: Uri): Bitmap = withContext(dispatchers.io) {
+        val source = ImageDecoder.createSource(context.contentResolver, uri)
+        return@withContext ImageDecoder.decodeBitmap(source) { decoder, _, _ ->
+            decoder.setTargetSize(256, 256)
+        }
+    }
+
+    override suspend fun insertCustomNoteBackground(
+        background: NoteCustomBackground,
+        updateFile: Boolean,
+    ) {
+        customBackgroundDao.insert(background.toEntry(isSaved = !updateFile))
+        if (updateFile) {
+            SaveMediaWorker.enqueueOneTime(context)
+        }
+    }
+
+    override suspend fun deleteCustomNoteBackground(background: NoteCustomBackground) {
+        mediaSaver.cancel(background)
+        customBackgroundDao.delete(PartNoteCustomBackgroundId(id = background.id))
+        appMediaSource.deleteNoteBackgroundFile(background)
+    }
+
+    override fun getCustomNoteBackgrounds(): Flow<List<NoteCustomBackground>> {
+        return customBackgroundDao.getAllBackgrounds()
+            .deepMap(EntryNoteCustomBackground::toDomain)
+            .map { list -> list.sortedByDescending { it.addedDate } }
     }
 
     override suspend fun saveAllMedia() {

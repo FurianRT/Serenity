@@ -53,8 +53,16 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnCloseClick
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnContentPageChange
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnKeyboardClick
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnOpenMediaSelectorRequest
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnThemeSelected
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnTitleTabClick
+import com.furianrt.toolspanel.internal.ui.background.custom.CustomBackgroundPanel
 import com.furianrt.toolspanel.internal.ui.background.image.ImageBackgroundContent
 import com.furianrt.toolspanel.internal.ui.background.pattern.PatternBackgroundContent
 import com.furianrt.toolspanel.internal.ui.background.solid.SolidBackgroundContent
@@ -66,6 +74,7 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.extensions.pxToDp
+import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.max
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_background_container"
@@ -75,6 +84,7 @@ internal fun BackgroundTitleBar(
     noteId: String,
     noteTheme: UiNoteTheme?,
     showKeyBoardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -85,15 +95,20 @@ internal fun BackgroundTitleBar(
         )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val onDoneClickState by rememberUpdatedState(onDoneClick)
 
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collect { effect ->
+            .collectLatest { effect ->
                 if (effect is BackgroundContainerEffect.ClosePanel) {
                     onDoneClickState()
+                }
+                if (effect is BackgroundContainerEffect.ShowKeyboard) {
+                    requestTitleFocus()
+                    keyboardController?.show()
                 }
             }
     }
@@ -121,13 +136,28 @@ private fun TitleContent(
     onEvent: (event: BackgroundContainerEvent) -> Unit = {},
 ) {
     val showKeyBoardButtonState = remember { showKeyBoardButton }
-    val listState: LazyListState = rememberLazyListState(
-        initialFirstVisibleItemIndex = uiState.selectedTabIndex,
-    )
+    val listState: LazyListState = rememberLazyListState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     SkipFirstEffect(uiState.selectedTabIndex) {
-        listState.animateScrollToItem(index = uiState.selectedTabIndex)
+        val layoutInfo = listState.layoutInfo
+        val viewportStart = layoutInfo.viewportStartOffset
+        val viewportEnd = layoutInfo.viewportEndOffset
+        val visibleItems = layoutInfo.visibleItemsInfo.filter { item ->
+            val itemStart = item.offset
+            val itemEnd = item.offset + item.size
+
+            val visibleStart = maxOf(itemStart, viewportStart)
+            val visibleEnd = minOf(itemEnd, viewportEnd)
+
+            val visibleSize = (visibleEnd - visibleStart).coerceAtLeast(0)
+            val visiblePercent = visibleSize.toFloat() / item.size
+
+            visiblePercent >= 0.7f
+        }
+        if (visibleItems.none { it.index == uiState.selectedTabIndex }) {
+            listState.animateScrollToItem(index = uiState.selectedTabIndex)
+        }
     }
 
     Box(
@@ -146,10 +176,9 @@ private fun TitleContent(
                             drawRightShadow(color = shadowColor, elevation = 1.dp)
                         }
                     },
-                    onClick = { onEvent(BackgroundContainerEvent.OnKeyboardClick) },
+                    onClick = { onEvent(OnKeyboardClick) },
                 )
             }
-
             Box(
                 modifier = Modifier.weight(1f),
                 contentAlignment = if (showKeyBoardButtonState) {
@@ -162,13 +191,13 @@ private fun TitleContent(
                     state = listState,
                     contentPadding = PaddingValues(
                         horizontal = if (showKeyBoardButtonState) 4.dp else 16.dp,
-                    )
+                    ),
                 ) {
                     itemsIndexed(items = uiState.tabs) { index, tab ->
                         TabItem(
                             tab = tab,
                             isSelected = uiState.selectedTabIndex == index,
-                            onClick = { onEvent(BackgroundContainerEvent.OnTitleTabClick(index)) }
+                            onClick = { onEvent(OnTitleTabClick(index)) }
                         )
                         if (index != uiState.tabs.lastIndex) {
                             VerticalDivider(
@@ -188,7 +217,7 @@ private fun TitleContent(
                         drawLeftShadow(color = shadowColor)
                     }
                 },
-                onClick = { onEvent(BackgroundContainerEvent.OnCloseClick) },
+                onClick = { onEvent(OnCloseClick) },
             )
         }
         HorizontalDivider(
@@ -229,6 +258,10 @@ private fun TabItem(
                 is BackgroundContainerUiState.Success.Tab.Pattern -> {
                     stringResource(R.string.background_panel_tab_pattern_title)
                 }
+
+                is BackgroundContainerUiState.Success.Tab.Custom -> {
+                    stringResource(R.string.background_panel_custom_title)
+                }
             },
             style = MaterialTheme.typography.bodyMedium,
         )
@@ -252,7 +285,9 @@ internal fun BackgroundContent(
     noteId: String,
     noteTheme: UiNoteTheme?,
     visible: Boolean,
+
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
+    openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel =
@@ -264,7 +299,6 @@ internal fun BackgroundContent(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
     val density = LocalDensity.current
-    val keyboardController = LocalSoftwareKeyboardController.current
 
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(density)
     val imeSource = WindowInsets.imeAnimationSource.getBottom(density)
@@ -275,6 +309,7 @@ internal fun BackgroundContent(
     val contentHeight = imeHeight - navigationBarsHeight.pxToDp()
 
     val onThemeSelectedState by rememberUpdatedState(onThemeSelected)
+    val openMediaSelectorState by rememberUpdatedState(openMediaSelector)
 
     LaunchedEffect(imeTarget, imeSource) {
         val imeMaxHeight = max(imeTarget, imeSource)
@@ -302,17 +337,20 @@ internal fun BackgroundContent(
                 .collect { effect ->
                     when (effect) {
                         is BackgroundContainerEffect.ClosePanel -> Unit
-                        is BackgroundContainerEffect.ShowKeyboard -> keyboardController?.show()
-
+                        is BackgroundContainerEffect.ShowKeyboard -> Unit
                         is BackgroundContainerEffect.ScrollToPage -> {
                             pagerState.scrollToPage(effect.index)
+                        }
+
+                        is BackgroundContainerEffect.OpenMediaSelector -> {
+                            openMediaSelectorState(effect.params)
                         }
                     }
                 }
         }
 
         LaunchedEffect(pagerState.currentPage) {
-            viewModel.onEvent(BackgroundContainerEvent.OnContentPageChange(pagerState.currentPage))
+            viewModel.onEvent(OnContentPageChange(pagerState.currentPage))
         }
 
         AnimatedVisibility(
@@ -356,19 +394,26 @@ private fun Content(
             is BackgroundContainerUiState.Success.Tab.Solid -> SolidBackgroundContent(
                 noteId = uiState.noteId,
                 selectedThemeProvider = uiState.selectedThemeProvider,
-                onThemeSelected = { onEvent(BackgroundContainerEvent.OnThemeSelected(it)) },
+                onThemeSelected = { onEvent(OnThemeSelected(it)) },
             )
 
             is BackgroundContainerUiState.Success.Tab.Pattern -> PatternBackgroundContent(
                 noteId = uiState.noteId,
                 selectedThemeProvider = uiState.selectedThemeProvider,
-                onThemeSelected = { onEvent(BackgroundContainerEvent.OnThemeSelected(it)) },
+                onThemeSelected = { onEvent(OnThemeSelected(it)) },
             )
 
             is BackgroundContainerUiState.Success.Tab.Picture -> ImageBackgroundContent(
                 noteId = uiState.noteId,
                 selectedThemeProvider = uiState.selectedThemeProvider,
-                onThemeSelected = { onEvent(BackgroundContainerEvent.OnThemeSelected(it)) },
+                onThemeSelected = { onEvent(OnThemeSelected(it)) },
+            )
+
+            is BackgroundContainerUiState.Success.Tab.Custom -> CustomBackgroundPanel(
+                noteId = uiState.noteId,
+                selectedThemeProvider = uiState.selectedThemeProvider,
+                onThemeSelected = { onEvent(OnThemeSelected(it)) },
+                openMediaSelector = { onEvent(OnOpenMediaSelectorRequest(it)) },
             )
         }
     }

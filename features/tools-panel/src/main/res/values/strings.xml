@@ -12,4 +12,10 @@
     <string name="background_panel_tab_pattern_title">Pattern</string>
     <string name="background_panel_tab_picture_title">Image</string>
     <string name="background_panel_theme_title">Theme</string>
+    <string name="background_panel_custom_title">Custom</string>
+
+    <string name="background_panel_select_image_action">Select image</string>
+    <string name="background_panel_custom_background_title">Bring your notes to life</string>
+    <string name="background_panel_custom_background_hint">Add a custom background image</string>
+    <string name="background_panel_remove_background_hint">You can remove a background with a long press</string>
 </resources>

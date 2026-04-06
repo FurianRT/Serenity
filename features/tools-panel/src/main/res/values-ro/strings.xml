@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Model</string>
     <string name="background_panel_tab_picture_title">Imagine</string>
     <string name="background_panel_theme_title">Temă</string>
+
+    <string name="background_panel_custom_title">Personalizat</string>
+    <string name="background_panel_select_image_action">Selectează o imagine</string>
+    <string name="background_panel_custom_background_title">Dă viață notițelor tale</string>
+    <string name="background_panel_custom_background_hint">Adaugă propria imagine de fundal</string>
+    <string name="background_panel_remove_background_hint">Fundalul poate fi eliminat printr-o apăsare lungă</string>
 </resources>

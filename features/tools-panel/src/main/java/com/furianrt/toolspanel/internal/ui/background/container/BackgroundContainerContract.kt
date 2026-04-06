@@ -1,5 +1,7 @@
 package com.furianrt.toolspanel.internal.ui.background.container
 
+import androidx.compose.foundation.pager.PagerState
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.entities.UiNoteTheme
 
 internal sealed interface BackgroundContainerUiState {
@@ -8,12 +10,14 @@ internal sealed interface BackgroundContainerUiState {
         val tabs: List<Tab>,
         val selectedTabIndex: Int,
         val selectedTheme: UiNoteTheme?,
+        val pagerState: PagerState,
         val selectedThemeProvider: BackgroundSelectedThemeProvider,
     ) : BackgroundContainerUiState {
         sealed interface Tab {
             data object Solid : Tab
             data object Picture : Tab
             data object Pattern : Tab
+            data object Custom : Tab
         }
     }
 
@@ -26,10 +30,14 @@ internal sealed interface BackgroundContainerEvent {
     data class OnTitleTabClick(val index: Int) : BackgroundContainerEvent
     data class OnThemeSelected(val theme: UiNoteTheme?) : BackgroundContainerEvent
     data class OnContentPageChange(val index: Int) : BackgroundContainerEvent
+    data class OnOpenMediaSelectorRequest(
+        val params: MediaSelectorState.Params,
+    ) : BackgroundContainerEvent
 }
 
 internal sealed interface BackgroundContainerEffect {
     data object ClosePanel : BackgroundContainerEffect
     data object ShowKeyboard : BackgroundContainerEffect
     data class ScrollToPage(val index: Int) : BackgroundContainerEffect
+    data class OpenMediaSelector(val params: MediaSelectorState.Params) : BackgroundContainerEffect
 }

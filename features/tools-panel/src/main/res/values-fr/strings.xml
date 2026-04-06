@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Motif</string>
     <string name="background_panel_tab_picture_title">Image</string>
     <string name="background_panel_theme_title">Thème</string>
+
+    <string name="background_panel_custom_title">Personnalisé</string>
+    <string name="background_panel_select_image_action">Sélectionner une image</string>
+    <string name="background_panel_custom_background_title">Donne vie à tes notes</string>
+    <string name="background_panel_custom_background_hint">Ajoute ta propre image de fond</string>
+    <string name="background_panel_remove_background_hint">Le fond peut être supprimé avec un appui long</string>
 </resources>

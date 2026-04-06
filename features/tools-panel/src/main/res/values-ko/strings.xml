@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">패턴</string>
     <string name="background_panel_tab_picture_title">이미지</string>
     <string name="background_panel_theme_title">테마</string>
+
+    <string name="background_panel_custom_title">사용자 설정</string>
+    <string name="background_panel_select_image_action">이미지 선택</string>
+    <string name="background_panel_custom_background_title">노트를 더 생동감 있게 만들어봐</string>
+    <string name="background_panel_custom_background_hint">나만의 배경 이미지를 추가해</string>
+    <string name="background_panel_remove_background_hint">배경은 길게 눌러서 제거할 수 있어</string>
 </resources>

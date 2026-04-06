@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Desen</string>
     <string name="background_panel_tab_picture_title">Görsel</string>
     <string name="background_panel_theme_title">Tema</string>
+
+    <string name="background_panel_custom_title">Özel</string>
+    <string name="background_panel_select_image_action">Görsel seçmek</string>
+    <string name="background_panel_custom_background_title">Notlarını canlandır</string>
+    <string name="background_panel_custom_background_hint">Kendi arka plan görselini ekle</string>
+    <string name="background_panel_remove_background_hint">Arka planı uzun basarak kaldırabilirsin</string>
 </resources>

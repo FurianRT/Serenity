@@ -71,6 +71,9 @@ startupRuntime = "1.2.0"
 
 firebaseBom = "34.11.0"
 
+kolor = "4.1.1"
+palette = "1.0.0"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -157,6 +160,9 @@ firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "fire
 analytics = { module = "com.google.firebase:firebase-analytics" }
 crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
 performance = { module = "com.google.firebase:firebase-perf" }
+
+kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
+palette = { module = "androidx.palette:palette-ktx", version.ref = "palette" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

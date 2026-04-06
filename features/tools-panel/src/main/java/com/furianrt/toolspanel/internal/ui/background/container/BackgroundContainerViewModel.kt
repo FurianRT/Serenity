@@ -1,8 +1,10 @@
 package com.furianrt.toolspanel.internal.ui.background.container
 
+import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.notelistui.entities.UiNoteTheme
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEffect.*
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerUiState.Success.Tab
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -26,10 +28,13 @@ internal class BackgroundContainerViewModel @AssistedInject constructor(
     BackgroundSelectedThemeProvider {
 
     private val tabs = listOf(
+        Tab.Custom,
         Tab.Picture,
         Tab.Pattern,
         Tab.Solid,
     )
+
+    private val pagerState = PagerState(pageCount = tabs::size)
 
     private val selectedTabState = MutableStateFlow(
         when (initialTheme) {
@@ -57,7 +62,7 @@ internal class BackgroundContainerViewModel @AssistedInject constructor(
     fun onEvent(event: BackgroundContainerEvent) {
         when (event) {
             is BackgroundContainerEvent.OnCloseClick -> {
-                _effect.tryEmit(BackgroundContainerEffect.ClosePanel)
+                _effect.tryEmit(ClosePanel)
             }
 
             is BackgroundContainerEvent.OnContentPageChange -> selectedTabState.update {
@@ -65,15 +70,19 @@ internal class BackgroundContainerViewModel @AssistedInject constructor(
             }
 
             is BackgroundContainerEvent.OnKeyboardClick -> {
-                _effect.tryEmit(BackgroundContainerEffect.ShowKeyboard)
+                _effect.tryEmit(ShowKeyboard)
             }
 
             is BackgroundContainerEvent.OnTitleTabClick -> {
-                _effect.tryEmit(BackgroundContainerEffect.ScrollToPage(event.index))
+                _effect.tryEmit(ScrollToPage(event.index))
             }
 
             is BackgroundContainerEvent.OnThemeSelected -> selectedThemeState.update {
                 event.theme
+            }
+
+            is BackgroundContainerEvent.OnOpenMediaSelectorRequest -> {
+                _effect.tryEmit(OpenMediaSelector(event.params))
             }
         }
     }
@@ -86,6 +95,7 @@ internal class BackgroundContainerViewModel @AssistedInject constructor(
         tabs = tabs,
         selectedTabIndex = tabs.indexOf(selectedTab),
         selectedTheme = selectedTheme,
+        pagerState = pagerState,
         selectedThemeProvider = this,
     )
 

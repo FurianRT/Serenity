@@ -55,6 +55,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.rememberMediaSelectorState
 import com.furianrt.mediasorting.internal.ui.composables.AddMediaButton
@@ -148,9 +149,11 @@ internal fun MediaSortingScreen(
                         cameraPermissionState.launchPermissionRequest()
                     }
 
-                    is MediaSortingEffect.OpenMediaSelector -> {
-                        mediaSelectorState.expand(onMediaSelected = effect.onMediaSelected)
-                    }
+                    is MediaSortingEffect.OpenMediaSelector -> mediaSelectorState.expand(
+                        params = MediaSelectorState.Params(
+                            onMediaSelected = effect.onMediaSelected,
+                        ),
+                    )
 
                     is MediaSortingEffect.ShowPermissionsDeniedDialog -> {
                         showMediaPermissionDialog = true

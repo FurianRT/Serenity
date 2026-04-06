@@ -36,16 +36,8 @@ class MediaSelectorState internal constructor(
     val isVisible: Boolean
         get() = bottomSheetState.isVisible || bottomSheetState.targetValue == SheetValue.Expanded
 
-    suspend fun expand(
-        singleChoice: Boolean = false,
-        allowVideo: Boolean = true,
-        onMediaSelected: (result: MediaResult) -> Unit,
-    ) {
-        params = Params(
-            singleChoice = singleChoice,
-            allowVideo = allowVideo,
-            onMediaSelected = onMediaSelected,
-        )
+    suspend fun expand(params: Params) {
+        this.params = params
         scaffoldState.bottomSheetState.expand()
     }
 
@@ -53,10 +45,10 @@ class MediaSelectorState internal constructor(
         scaffoldState.bottomSheetState.hide()
     }
 
-    internal data class Params(
-        val singleChoice: Boolean,
-        val allowVideo: Boolean,
-        val onMediaSelected: (result: MediaResult) -> Unit,
+    data class Params(
+        val singleChoice: Boolean = false,
+        val allowVideo: Boolean = true,
+        val onMediaSelected: suspend (result: MediaResult) -> Unit,
     )
 }
 

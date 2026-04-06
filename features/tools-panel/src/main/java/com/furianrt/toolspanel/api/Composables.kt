@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -103,6 +104,8 @@ fun ActionsPanel(
     onNoPositionError: () -> Unit,
     onBackgroundClick: () -> Unit,
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
+    openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    requestTitleFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -256,16 +259,19 @@ fun ActionsPanel(
 
                     PanelMode.FONT -> FontTitleBar(
                         showKeyBoardButton = titleState != null,
+                        requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isFontPanelVisible = false },
                     )
 
                     PanelMode.STICKERS -> StickersTitleBar(
                         showKeyBoardButton = titleState != null,
+                        requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isStickersPanelVisible = false },
                     )
 
                     PanelMode.BULLET -> BulletTitleBar(
                         showKeyBoardButton = titleState != null,
+                        requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isBulletPanelVisible = false },
                     )
 
@@ -289,6 +295,7 @@ fun ActionsPanel(
                         noteId = noteId,
                         noteTheme = noteTheme,
                         showKeyBoardButton = titleState != null,
+                        requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isBackgroundsPanelVisible = false },
                     )
                 }
@@ -320,6 +327,7 @@ fun ActionsPanel(
                 noteTheme = noteTheme,
                 visible = isBackgroundsPanelVisible,
                 onThemeSelected = onThemeSelected,
+                openMediaSelector = openMediaSelector,
             )
         }
         AnimatedVisibility(

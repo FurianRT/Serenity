@@ -1,124 +1,92 @@
 package com.furianrt.storage.internal.managers
 
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
+import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
+import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundUri
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
+import com.furianrt.storage.internal.database.notes.mappers.toDomain
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
 import com.furianrt.storage.internal.device.AppMediaSource
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private const val MAX_QUEUE = 200
-
-private class QueueEntry(
-    val noteId: String,
-    val media: LocalNote.Content.Media,
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as QueueEntry
-
-        if (noteId != other.noteId) return false
-        if (media.id != other.media.id) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = noteId.hashCode()
-        result = 31 * result + media.id.hashCode()
-        return result
-    }
-}
-
 @Singleton
 internal class MediaSaver @Inject constructor(
-    dispatchers: DispatchersProvider,
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
+    private val customBackgroundDao: CustomBackgroundDao,
     private val appMediaSource: AppMediaSource,
 ) {
-    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
-    private val canceledEntries = mutableSetOf<QueueEntry>()
-    private val queue = MutableSharedFlow<QueueEntry>(extraBufferCapacity = MAX_QUEUE)
+    private val canceledEntries = mutableSetOf<String>()
     private val mutex = Mutex()
 
-    init {
-        queue
-            .onEach(::saveMedia)
-            .launchIn(scope)
-    }
-
     suspend fun saveAll() {
-        videoDao.getUnsavedVideos().first()
-            .map { QueueEntry(noteId = it.noteId, media = it.toNoteContentVideo()) }
-            .forEach { video -> saveMedia(video) }
+        customBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
+            saveNoteBackground(entry.toDomain())
+        }
 
-        imageDao.getUnsavedImages().first()
-            .map { QueueEntry(noteId = it.noteId, media = it.toNoteContentImage()) }
-            .forEach { image -> saveMedia(image) }
-    }
+        videoDao.getUnsavedVideos().first().forEach { entry ->
+            saveMedia(noteId = entry.noteId, media = entry.toNoteContentVideo())
+        }
 
-    fun save(noteId: String, media: List<LocalNote.Content.Media>) {
-        scope.launch {
-            media
-                .sortedBy { it is LocalNote.Content.Video }
-                .forEach { queue.emit(QueueEntry(noteId, it)) }
+        imageDao.getUnsavedImages().first().forEach { entry ->
+            saveMedia(noteId = entry.noteId, media = entry.toNoteContentImage())
         }
     }
 
-    suspend fun cancel(noteId: String, media: LocalNote.Content.Media) {
+    suspend fun cancel(media: LocalNote.Content.Media) {
         if (!isMediaSaved(media)) {
-            addCanceledEntry(QueueEntry(noteId, media))
+            addCanceledEntry(media.id)
         }
     }
 
-    suspend fun cancel(noteId: String, media: List<LocalNote.Content.Media>) {
-        media.forEach { cancel(noteId, it) }
+    suspend fun cancel(media: List<LocalNote.Content.Media>) {
+        media.forEach { cancel(it) }
     }
 
-    private suspend fun saveMedia(entry: QueueEntry) = mutex.withLock {
-        if (isMediaSaved(entry.media)) {
+    suspend fun cancel(background: NoteCustomBackground) {
+        if (!isBackgroundSaved(background.id)) {
+            addCanceledEntry(background.id)
+        }
+    }
+
+    private suspend fun saveMedia(
+        noteId: String,
+        media: LocalNote.Content.Media,
+    ) = mutex.withLock {
+        if (isMediaSaved(media)) {
             return@withLock
         }
-        if (isEntryCanceled(entry)) {
-            removeCanceledEntry(entry)
-            return@withLock
-        }
-
-        val savedMediaData =
-            appMediaSource.saveMediaFile(entry.noteId, entry.media) ?: return@withLock
-
-        if (entry.media.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
-            appMediaSource.deleteFile(entry.media.uri)
-        }
-
-        if (isEntryCanceled(entry)) {
-            removeCanceledEntry(entry)
-            appMediaSource.deleteMediaFile(entry.noteId, entry.media)
+        if (isEntryCanceled(media.id)) {
+            removeCanceledEntry(media.id)
             return@withLock
         }
 
-        when (entry.media) {
+        val savedMediaData = appMediaSource.saveMediaFile(noteId, media) ?: return@withLock
+
+        if (media.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            appMediaSource.deleteFile(media.uri)
+        }
+
+        if (isEntryCanceled(media.id)) {
+            removeCanceledEntry(media.id)
+            appMediaSource.deleteMediaFile(noteId, media)
+            return@withLock
+        }
+
+        when (media) {
             is LocalNote.Content.Image -> imageDao.update(
                 PartImageUri(
-                    id = entry.media.id,
+                    id = media.id,
                     name = savedMediaData.name,
                     uri = savedMediaData.uri,
                     isSaved = true,
@@ -127,7 +95,7 @@ internal class MediaSaver @Inject constructor(
 
             is LocalNote.Content.Video -> videoDao.update(
                 PartVideoUri(
-                    id = entry.media.id,
+                    id = media.id,
                     name = savedMediaData.name,
                     uri = savedMediaData.uri,
                     isSaved = true,
@@ -136,21 +104,56 @@ internal class MediaSaver @Inject constructor(
         }
     }
 
+    private suspend fun saveNoteBackground(
+        background: NoteCustomBackground,
+    ) = mutex.withLock {
+        if (isBackgroundSaved(background.id)) {
+            return@withLock
+        }
+        if (isEntryCanceled(background.id)) {
+            removeCanceledEntry(background.id)
+            return@withLock
+        }
+
+        val savedBackgroundData = appMediaSource.saveNoteBackground(background) ?: return@withLock
+
+        if (background.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            appMediaSource.deleteFile(background.uri)
+        }
+
+        if (isEntryCanceled(background.id)) {
+            removeCanceledEntry(background.id)
+            appMediaSource.deleteNoteBackgroundFile(background)
+            return@withLock
+        }
+
+        customBackgroundDao.update(
+            PartNoteCustomBackgroundUri(
+                id = background.id,
+                name = savedBackgroundData.name,
+                uri = savedBackgroundData.uri,
+                isSaved = true,
+            )
+        )
+    }
+
     private suspend fun isMediaSaved(media: LocalNote.Content.Media): Boolean = when (media) {
         is LocalNote.Content.Image -> imageDao.isSaved(media.id)
         is LocalNote.Content.Video -> videoDao.isSaved(media.id)
     }
 
-    @Synchronized
-    private fun isEntryCanceled(entry: QueueEntry): Boolean = canceledEntries.contains(entry)
+    private suspend fun isBackgroundSaved(id: String): Boolean = customBackgroundDao.isSaved(id)
 
     @Synchronized
-    private fun addCanceledEntry(entry: QueueEntry) {
-        canceledEntries.add(entry)
+    private fun isEntryCanceled(id: String): Boolean = canceledEntries.contains(id)
+
+    @Synchronized
+    private fun addCanceledEntry(id: String) {
+        canceledEntries.add(id)
     }
 
     @Synchronized
-    private fun removeCanceledEntry(entry: QueueEntry) {
-        canceledEntries.remove(entry)
+    private fun removeCanceledEntry(id: String) {
+        canceledEntries.remove(id)
     }
 }

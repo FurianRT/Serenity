@@ -14,38 +14,28 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
-import com.furianrt.core.DispatchersProvider
 import com.furianrt.notelistui.entities.UiNoteTheme
-import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.domain.NoteThemesHolder
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelectedThemeProvider
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_solid_background"
 
@@ -111,11 +101,6 @@ private fun Content(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         contentPadding = PaddingValues(vertical = 12.dp, horizontal = 8.dp),
     ) {
-        item {
-            ClearItem(
-                onClick = { onEvent(SolidBackgroundEvent.OnClearBackgroundClick) },
-            )
-        }
         itemsIndexed(items = uiState.themes) { index, theme ->
             ThemeItem(
                 theme = theme,
@@ -159,54 +144,12 @@ private fun ThemeItem(
 }
 
 @Composable
-private fun ClearItem(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .padding(8.dp)
-            .alpha(0.3f)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface,
-                shape = RoundedCornerShape(16.dp),
-            )
-            .clip(RoundedCornerShape(16.dp))
-            .clickableWithScaleAnim(onClick = onClick, maxScale = 1.2f),
-        contentAlignment = Alignment.Center,
-    ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_background_clear),
-            tint = MaterialTheme.colorScheme.onSurface,
-            contentDescription = null,
-        )
-    }
-}
-
-@Composable
 @PreviewWithBackground
 private fun Preview() {
-    val holder = NoteThemesHolder(
-        dispatchers = object : DispatchersProvider {
-            override val mainImmediate: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val main: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val io: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val default: CoroutineDispatcher
-                get() = Dispatchers.Main
-            override val unconfined: CoroutineDispatcher
-                get() = Dispatchers.Main
-
-        },
-    )
     SerenityTheme {
         Content(
             uiState = SolidBackgroundUiState(
-                themes = holder.getSolidThemes(),
+                themes = NoteThemesHolder.solidThemes(),
                 selectedThemeIndex = 0,
             ),
             onEvent = {},

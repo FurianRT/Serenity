@@ -16,6 +16,7 @@ import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
+import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
@@ -130,6 +131,24 @@ internal interface DatabaseModule {
                     db.execSQL("ALTER TABLE Notes ADD COLUMN background_image_id TEXT")
                 }
             }
+            val MIGRATION_5_6 = object : Migration(5, 6) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        """
+                            CREATE TABLE IF NOT EXISTS NoteCustomBackgrounds (
+                                id TEXT NOT NULL PRIMARY KEY,
+                                name TEXT NOT NULL,
+                                uri TEXT NOT NULL,
+                                primary_color INTEGER NOT NULL,
+                                accent_color INTEGER NOT NULL,
+                                is_light INTEGER NOT NULL,
+                                added_date TEXT NOT NULL,
+                                is_saved INTEGER NOT NULL
+                            )
+                        """
+                    )
+                }
+            }
             return SerenityDatabase
                 .create(
                     context = context,
@@ -138,6 +157,7 @@ internal interface DatabaseModule {
                         MIGRATION_2_3,
                         MIGRATION_3_4,
                         MIGRATION_4_5,
+                        MIGRATION_5_6,
                     ),
                 )
         }
@@ -179,6 +199,12 @@ internal interface DatabaseModule {
         @Provides
         @Singleton
         fun locationDao(database: SerenityDatabase): LocationDao = database.locationDao()
+
+        @Provides
+        @Singleton
+        fun customBackgroundDao(
+            database: SerenityDatabase,
+        ): CustomBackgroundDao = database.customBackgroundDao()
 
         @Provides
         @Singleton

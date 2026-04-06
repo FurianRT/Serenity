@@ -9,6 +9,7 @@ import androidx.core.content.FileProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
@@ -19,6 +20,7 @@ import javax.inject.Singleton
 
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
+private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
 private const val IMAGE_COMPRESS_AMOUNT = 70
 
 internal class SavedMediaData(
@@ -171,6 +173,89 @@ internal class AppMediaSource @Inject constructor(
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)
             false
+        }
+    }
+
+    suspend fun saveNoteBackground(
+        background: NoteCustomBackground,
+    ): SavedMediaData? = withContext(dispatchers.io) {
+        val inputStream = context.contentResolver.openInputStream(background.uri)
+            ?: return@withContext null
+
+        val bitmap = withContext(dispatchers.default) {
+            inputStream.use(BitmapFactory::decodeStream)
+        } ?: return@withContext null
+
+        val backgroundNewName = background.name.replaceFileExtension(".webp")
+        val destFile = createNoteBackgroundFile(
+            id = background.id,
+            name = backgroundNewName,
+        ) ?: return@withContext null
+
+        withContext(dispatchers.default) {
+            destFile.outputStream().use { outputStream ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.WEBP_LOSSY,
+                    IMAGE_COMPRESS_AMOUNT,
+                    outputStream,
+                )
+            }
+        }
+
+        try {
+            getExifInterface(background.uri)?.let { sourceExif ->
+                val destExif = ExifInterface(destFile)
+                destExif.setAttribute(
+                    ExifInterface.TAG_ORIENTATION,
+                    sourceExif.getAttribute(ExifInterface.TAG_ORIENTATION),
+                )
+                destExif.saveAttributes()
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+        }
+
+        return@withContext SavedMediaData(
+            name = backgroundNewName,
+            uri = getRelativeUri(destFile),
+        )
+    }
+
+    suspend fun deleteNoteBackgroundFile(
+        background: NoteCustomBackground,
+    ): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(
+                context.filesDir,
+                "$NOTE_BACKGROUND_FOLDER/${background.id}${background.name}"
+            ).delete()
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            false
+        }
+    }
+
+    private suspend fun createNoteBackgroundFile(
+        id: String,
+        name: String,
+    ): File? = withContext(dispatchers.io) {
+        try {
+            val file = File(context.filesDir, "$NOTE_BACKGROUND_FOLDER/$id$name")
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                throw IOException("Can't create file")
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            null
         }
     }
 

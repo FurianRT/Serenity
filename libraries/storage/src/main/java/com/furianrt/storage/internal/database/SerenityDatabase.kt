@@ -12,6 +12,7 @@ import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
+import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
@@ -21,6 +22,7 @@ import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
+import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteLocation
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
@@ -40,6 +42,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
         EntryNoteSticker::class,
         EntryBackupProfile::class,
         EntryNoteLocation::class,
+        EntryNoteCustomBackground::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -56,10 +59,11 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun stickerDao(): StickerDao
     abstract fun backupProfileDao(): BackupProfileDao
     abstract fun locationDao(): LocationDao
+    abstract fun customBackgroundDao(): CustomBackgroundDao
 
     companion object {
         private const val NAME = "Serenity.db"
-        const val VERSION = 5
+        const val VERSION = 6
 
         fun create(
             context: Context,

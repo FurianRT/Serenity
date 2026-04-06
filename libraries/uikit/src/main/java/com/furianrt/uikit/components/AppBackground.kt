@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
@@ -18,12 +19,16 @@ fun AppBackground(
     modifier: Modifier = Modifier,
 ) {
     if (theme.image != null) {
-        AsyncImage(
-            modifier = modifier.fillMaxSize(),
-            model = ImageRequest.Builder(LocalContext.current)
+        val context = LocalContext.current
+        val request = remember(theme.image.resId) {
+            ImageRequest.Builder(context)
                 .data(theme.image.resId)
                 .memoryCacheKey(theme.image.resId.toString())
-                .build(),
+                .build()
+        }
+        AsyncImage(
+            modifier = modifier.fillMaxSize(),
+            model = request,
             contentScale = theme.image.scaleType.toContentScale(),
             alignment = theme.image.scaleType.toContentAlignment(),
             contentDescription = null,

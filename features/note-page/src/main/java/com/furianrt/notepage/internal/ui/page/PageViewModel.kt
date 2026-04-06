@@ -22,6 +22,7 @@ import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
 import com.furianrt.domain.voice.AudioPlayer
 import com.furianrt.domain.voice.AudioPlayerListener
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -69,6 +70,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelect
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCancelLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCheckedListChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCustomBackgroundSelectRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontColorSelected
@@ -110,6 +112,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnRequestTitleFocus
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -351,6 +354,8 @@ internal class PageViewModel @AssistedInject constructor(
             }
 
             is OnCheckedListChange -> hasContentChanged = true
+            is OnCustomBackgroundSelectRequest -> _effect.tryEmit(OpenMediaSelector(event.params))
+            is OnRequestTitleFocus -> focusLastFocusedTitle()
         }
     }
 
@@ -593,7 +598,10 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(RequestStoragePermissions)
         } else {
-            _effect.tryEmit(OpenMediaSelector(onMediaSelected = { addNewBlock(it.toMediaBlock()) }))
+            val params = MediaSelectorState.Params(
+                onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+            )
+            _effect.tryEmit(OpenMediaSelector(params))
         }
     }
 
@@ -713,7 +721,10 @@ internal class PageViewModel @AssistedInject constructor(
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(ShowStoragePermissionsDeniedDialog)
         } else {
-            _effect.tryEmit(OpenMediaSelector(onMediaSelected = { addNewBlock(it.toMediaBlock()) }))
+            val params = MediaSelectorState.Params(
+                onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+            )
+            _effect.tryEmit(OpenMediaSelector(params))
         }
     }
 
@@ -1092,6 +1103,14 @@ internal class PageViewModel @AssistedInject constructor(
 
                 is PageUiState.Success -> localState
             }
+        }
+    }
+
+    private fun focusLastFocusedTitle() {
+        _state.doWithState<PageUiState.Success> { successState ->
+            val titles = successState.content.filterIsInstance<UiNoteContent.Title>()
+            val lastFocusedTitle = titles.find { it.id == focusedTitleId }
+            (lastFocusedTitle ?: titles.firstOrNull())?.focusRequester?.requestFocus()
         }
     }
 

@@ -37,4 +37,7 @@ dependencies {
     implementation(libs.coil)
 
     implementation(libs.exoplayerUi)
+
+    implementation(libs.kolor)
+    implementation(libs.palette)
 }

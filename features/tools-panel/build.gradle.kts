@@ -16,6 +16,7 @@ dependencies {
     implementation(projects.libraries.domain)
 
     implementation(projects.features.noteList.noteListUi)
+    implementation(projects.features.mediaSelector)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)

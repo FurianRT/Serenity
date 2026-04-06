@@ -65,7 +65,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     private var isDataLoaded = false
     private var allowVideo = true
     private var isSingleChoice = false
-    private var onMediaSelected: (result: MediaResult) -> Unit = {}
+    private var onMediaSelected: suspend (result: MediaResult) -> Unit = {}
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -110,7 +110,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 )
             )
 
-            is OnSendClick -> {
+            is OnSendClick -> launch {
                 onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
                 _effect.tryEmit(CloseScreen)
                 mediaCoordinator.unselectAllMedia()

@@ -96,6 +96,7 @@ private const val MAX_FONT_SIZE = 32f
 @Composable
 internal fun FontTitleBar(
     showKeyBoardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -113,7 +114,10 @@ internal fun FontTitleBar(
                 modifier = Modifier
                     .padding(start = 4.dp)
                     .align(Alignment.CenterStart),
-                onClick = { keyboardController?.show() },
+                onClick = {
+                    requestTitleFocus()
+                    keyboardController?.show()
+                },
             )
         }
         Text(
@@ -536,6 +540,7 @@ private fun PanelPreview() {
         FontTitleBar(
             showKeyBoardButton = true,
             onDoneClick = {},
+            requestTitleFocus = {},
         )
     }
 }

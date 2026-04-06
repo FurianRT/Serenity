@@ -11,4 +11,10 @@
     <string name="background_panel_tab_pattern_title">Узор</string>
     <string name="background_panel_tab_picture_title">Картинка</string>
     <string name="background_panel_theme_title">Тема</string>
+
+    <string name="background_panel_custom_title">Свои</string>
+    <string name="background_panel_select_image_action">Выбрать изображение</string>
+    <string name="background_panel_custom_background_title">Оживи свои заметки</string>
+    <string name="background_panel_custom_background_hint">Добавь своё изображение для фона</string>
+    <string name="background_panel_remove_background_hint">Удалить фон можно долгим нажатием</string>
 </resources>

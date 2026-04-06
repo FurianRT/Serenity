@@ -79,7 +79,7 @@ internal fun UiThemeColor.toNoteTheme(): UiNoteTheme = if (image != null) {
         ),
         image = UiNoteBackgroundImage(
             id = id + APP_THEME_POSTFIX,
-            resId = image!!.resId,
+            source = UiNoteBackgroundImage.Source.Resource(image!!.resId),
             scaleType = image!!.scaleType.toNoteThemeScaleType(),
         ),
     )
