@@ -21,7 +21,8 @@ import javax.inject.Singleton
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
 private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
-private const val IMAGE_COMPRESS_AMOUNT = 70
+private const val IMAGE_COMPRESS_AMOUNT = 50
+private const val BACKGROUND_COMPRESS_AMOUNT = 40
 
 internal class SavedMediaData(
     val name: String,
@@ -220,7 +221,7 @@ internal class AppMediaSource @Inject constructor(
             destFile.outputStream().use { outputStream ->
                 bitmap.compress(
                     Bitmap.CompressFormat.WEBP_LOSSY,
-                    IMAGE_COMPRESS_AMOUNT,
+                    BACKGROUND_COMPRESS_AMOUNT,
                     outputStream,
                 )
             }
