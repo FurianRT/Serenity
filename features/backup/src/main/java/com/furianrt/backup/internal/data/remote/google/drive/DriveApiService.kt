@@ -22,7 +22,7 @@ internal interface DriveApiService {
     suspend fun getFilesList(
         @Query("pageToken") pageToken: String?,
         @Query("spaces") spaces: String = "appDataFolder",
-        @Query("fields") fields: String = "files(id,name,mimeType,createdTime)",
+        @Query("fields") fields: String = "files(id,name,mimeType,createdTime),nextPageToken",
     ): DriveFilesListResponse
 
     @DELETE("$FILES_METHOD/{fileId}")
