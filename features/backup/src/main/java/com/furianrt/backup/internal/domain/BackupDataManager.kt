@@ -5,6 +5,7 @@ import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -97,7 +98,9 @@ internal class BackupDataManager @Inject constructor(
     }
 
     private suspend fun deleteUnusedMediaFiles(remoteFiles: List<RemoteFile>): Boolean {
-        val remoteMediaFiles = remoteFiles.filter { it !is RemoteFile.NotesData }
+        val remoteMediaFiles = remoteFiles.filter {
+            it !is RemoteFile.NotesData && it !is RemoteFile.NoteBackgroundsData
+        }
         val localMediaFilesIds = getLocalFilesIds()
         val remoteFilesToDelete = remoteMediaFiles.filter { !localMediaFilesIds.contains(it.name) }
         return backupRepository.deleteFiles(remoteFilesToDelete)
@@ -109,9 +112,12 @@ internal class BackupDataManager @Inject constructor(
     private suspend fun getLocalFilesIds(): Set<String> {
         val mediaIds = mediaRepository.getAllMedia().first().map(LocalNote.Content.Media::id)
         val voicesIds = mediaRepository.getAllVoices().first().map(LocalNote.Content.Voice::id)
+        val backgroundsIds = mediaRepository.getAllCustomNoteBackgrounds().first()
+            .map(NoteCustomBackground::id)
         return buildSet {
             addAll(mediaIds)
             addAll(voicesIds)
+            addAll(backgroundsIds)
         }
     }
 
