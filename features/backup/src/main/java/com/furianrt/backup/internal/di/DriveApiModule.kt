@@ -2,6 +2,7 @@ package com.furianrt.backup.internal.di
 
 import com.furianrt.backup.BuildConfig
 import com.furianrt.backup.internal.data.remote.google.drive.DriveApiService
+import com.furianrt.backup.internal.data.remote.google.token.ForbiddenLoggingInterceptor
 import com.furianrt.backup.internal.data.remote.google.token.TokenAuthenticator
 import com.furianrt.backup.internal.data.remote.google.token.TokenInterceptor
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -27,9 +28,11 @@ internal object DriveApiModule {
     fun provideDriveOkHttpClient(
         tokenAuthenticator: TokenAuthenticator,
         tokenInterceptor: TokenInterceptor,
+        forbiddenLoggingInterceptor: ForbiddenLoggingInterceptor,
         loggingInterceptor: HttpLoggingInterceptor,
     ): OkHttpClient {
         val builder = OkHttpClient.Builder()
+            .addInterceptor(forbiddenLoggingInterceptor)
             .addInterceptor(tokenInterceptor)
             .authenticator(tokenAuthenticator)
             .connectTimeout(20, TimeUnit.SECONDS)
