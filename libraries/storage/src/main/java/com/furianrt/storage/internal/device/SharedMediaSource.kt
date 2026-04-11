@@ -160,30 +160,40 @@ internal class SharedMediaSource @Inject constructor(
                 }
                 val bucketName = cursor.getString(bucketNameColumn)
                 val item = when (mediaType) {
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> DeviceMedia.Image(
-                        id = id,
-                        name = cursor.getString(nameColumn),
-                        uri = ContentUris.withAppendedId(collection, id),
-                        date = cursor.getLong(dateColumn),
-                        ratio = cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn),
-                        albumId = bucketId.takeIf { it != 0L },
-                        albumName = bucketName,
-                    )
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_IMAGE -> {
+                        val height = cursor.getInt(heightColumn)
+                        val width = cursor.getInt(widthColumn)
+                        val ratio = width.toFloat() / height
+                        DeviceMedia.Image(
+                            id = id,
+                            name = cursor.getString(nameColumn),
+                            uri = ContentUris.withAppendedId(collection, id),
+                            date = cursor.getLong(dateColumn),
+                            ratio = if (ratio <= 0) 1f else ratio,
+                            albumId = bucketId.takeIf { it != 0L },
+                            albumName = bucketName,
+                        )
+                    }
 
-                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> DeviceMedia.Video(
-                        id = id,
-                        name = cursor.getString(nameColumn),
-                        uri = ContentUris.withAppendedId(collection, id),
-                        duration = cursor.getInt(durationColumn),
-                        date = cursor.getLong(dateColumn),
-                        ratio = if (orientation == 0 || orientation == 180) {
-                            cursor.getInt(widthColumn).toFloat() / cursor.getInt(heightColumn)
+                    MediaStore.Files.FileColumns.MEDIA_TYPE_VIDEO -> {
+                        val height = cursor.getInt(heightColumn)
+                        val width = cursor.getInt(widthColumn)
+                        val ratio = if (orientation == 0 || orientation == 180) {
+                            width.toFloat() / height
                         } else {
-                            cursor.getInt(heightColumn).toFloat() / cursor.getInt(widthColumn)
-                        },
-                        albumId = bucketId.takeIf { it != 0L },
-                        albumName = bucketName,
-                    )
+                            height.toFloat() / width
+                        }
+                        DeviceMedia.Video(
+                            id = id,
+                            name = cursor.getString(nameColumn),
+                            uri = ContentUris.withAppendedId(collection, id),
+                            duration = cursor.getInt(durationColumn),
+                            date = cursor.getLong(dateColumn),
+                            ratio = if (ratio <= 0) 1f else ratio,
+                            albumId = bucketId.takeIf { it != 0L },
+                            albumName = bucketName,
+                        )
+                    }
 
                     else -> continue
                 }
