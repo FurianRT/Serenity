@@ -324,6 +324,10 @@ internal class NoteThemesHolder @Inject constructor(
         )
         internal fun patternImages(): List<UiNoteBackgroundImage> = listOf(
             UiNoteBackgroundImage(
+                id = "pattern_4",
+                source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_4),
+            ),
+            UiNoteBackgroundImage(
                 id = "pattern_0",
                 source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_0),
             ),
@@ -338,10 +342,6 @@ internal class NoteThemesHolder @Inject constructor(
             UiNoteBackgroundImage(
                 id = "pattern_3",
                 source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_3),
-            ),
-            UiNoteBackgroundImage(
-                id = "pattern_4",
-                source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_4),
             ),
         )
         internal fun solidThemes(): List<UiNoteTheme.Solid> = darkSolidThemes() + lightSolidThemes()
