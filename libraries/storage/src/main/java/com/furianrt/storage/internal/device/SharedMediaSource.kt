@@ -179,7 +179,7 @@ internal class SharedMediaSource @Inject constructor(
                             name = cursor.getString(nameColumn),
                             uri = ContentUris.withAppendedId(collection, id),
                             date = cursor.getLong(dateColumn),
-                            ratio = if (ratio <= 0) 1f else ratio,
+                            ratio = if (ratio.isNaN() || ratio <= 0) 1f else ratio,
                             albumId = bucketId.takeIf { it != 0L },
                             albumName = bucketName,
                         )
@@ -199,7 +199,7 @@ internal class SharedMediaSource @Inject constructor(
                             uri = ContentUris.withAppendedId(collection, id),
                             duration = cursor.getInt(durationColumn),
                             date = cursor.getLong(dateColumn),
-                            ratio = if (ratio <= 0) 1f else ratio,
+                            ratio = if (ratio.isNaN() || ratio <= 0) 1f else ratio,
                             albumId = bucketId.takeIf { it != 0L },
                             albumName = bucketName,
                         )
