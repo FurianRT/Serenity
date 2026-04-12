@@ -42,8 +42,11 @@ internal class SolidBackgroundViewModel @AssistedInject constructor(
     fun onEvent(event: SolidBackgroundEvent) {
         when (event) {
             is SolidBackgroundEvent.OnThemeSelected -> {
-                val currentThemeId = selectedThemeProvider.selectedThemeState.value?.colorId
-                val theme = event.theme.takeIf { currentThemeId != event.theme.colorId }
+                val currentTheme = selectedThemeProvider.selectedThemeState.value
+                val theme = event.theme.takeIf {
+                    currentTheme !is UiNoteTheme.Solid ||
+                            currentTheme.colorId != event.theme.colorId
+                }
                 _effect.tryEmit(SolidBackgroundEffect.OnThemeSelected(theme))
             }
 
