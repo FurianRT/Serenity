@@ -1,7 +1,6 @@
 package com.furianrt.backup.internal.domain.usecases
 
 import android.content.Intent
-import com.furianrt.backup.internal.domain.entities.AuthResult
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.domain.entities.BackupProfile
