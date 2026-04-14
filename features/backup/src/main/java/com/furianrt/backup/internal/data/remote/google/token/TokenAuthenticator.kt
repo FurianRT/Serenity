@@ -29,7 +29,7 @@ internal class TokenAuthenticator @Inject constructor(
         }
         return when (val authResult = tryAuthorize()) {
             is AuthResult.Failure -> null
-            is AuthResult.Resolution -> {
+            is AuthResult.Resolution, is AuthResult.ScopesError -> {
                 deleteBackupProfile()
                 null
             }

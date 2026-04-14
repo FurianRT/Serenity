@@ -12,7 +12,9 @@ import java.time.ZonedDateTime
 
 internal interface BackupRepository {
     suspend fun authorize(): Result<AuthorizationResult>
+    fun hasRequiredScopes(result: AuthorizationResult): Boolean
     fun getAuthorizationResult(intent: Intent?): AuthorizationResult?
+    suspend fun clearToken(token: String): Result<Unit>
     suspend fun signOut(): Result<Unit>
 
     fun getAccessToken(): Flow<String?>

@@ -1,6 +1,7 @@
 package com.furianrt.backup.internal.domain.usecases
 
 import android.content.Intent
+import com.furianrt.backup.internal.domain.entities.AuthResult
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.domain.entities.BackupProfile
@@ -40,7 +41,13 @@ internal class SignInUseCase @Inject constructor(
     }
 
     suspend operator fun invoke(intent: Intent?): Result<Unit> {
-        val accessToken = backupRepository.getAuthorizationResult(intent)?.accessToken
-        return invoke(accessToken)
+        val result = backupRepository.getAuthorizationResult(intent) ?: return Result.failure(
+            AuthException.InvalidAccessTokenException()
+        )
+        if (!backupRepository.hasRequiredScopes(result)) {
+            result.accessToken?.let { backupRepository.clearToken(it) }
+            return Result.failure(AuthException.AuthScopesException())
+        }
+        return invoke(result.accessToken)
     }
 }

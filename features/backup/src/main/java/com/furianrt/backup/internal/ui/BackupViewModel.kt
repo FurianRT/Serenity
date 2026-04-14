@@ -179,6 +179,7 @@ internal class BackupViewModel @Inject constructor(
                 restoreDataManager.clearFailureState()
                 serviceLauncher.launchRestoreService()
             }
+
             is OnBackupPeriodClick -> {
                 _effect.tryEmit(BackupEffect.ShowBackupPeriodDialog)
             }
@@ -196,6 +197,7 @@ internal class BackupViewModel @Inject constructor(
                 restoreDataManager.clearFailureState()
                 signOut()
             }
+
             is OnBackupResolutionComplete -> launch {
                 signIn(intent = event.intent)
             }
@@ -219,6 +221,7 @@ internal class BackupViewModel @Inject constructor(
     private fun authorize() = launch {
         when (val result = authorizeUseCase()) {
             is AuthResult.Success -> signIn(accessToken = result.accessToken)
+            is AuthResult.ScopesError -> showError(result.error)
             is AuthResult.Failure -> showError(result.error)
             is AuthResult.Resolution -> {
                 _effect.tryEmit(BackupEffect.ShowBackupResolution(result.intentSender))

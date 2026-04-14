@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.credentials.ClearCredentialStateRequest
 import androidx.credentials.CredentialManager
-import androidx.credentials.exceptions.ClearCredentialException
 import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.data.remote.google.drive.DriveApiService
 import com.furianrt.backup.internal.data.remote.google.info.UserInfoApiService
@@ -23,6 +22,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
 import com.google.android.gms.auth.api.identity.AuthorizationResult
+import com.google.android.gms.auth.api.identity.ClearTokenRequest
 import com.google.android.gms.auth.api.identity.Identity
 import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.Scope
@@ -77,14 +77,14 @@ internal class DriveBackupRepository @Inject constructor(
 
     private val authorizationClient by lazy { Identity.getAuthorizationClient(context) }
     private val credentialManager by lazy { CredentialManager.create(context) }
+    private val scopes = listOf(
+        Scope(DriveScopes.DRIVE_APPDATA),
+        Scope(USER_INFO_EMAIL_SCOPE),
+        Scope(USER_PROFILE_SCOPE),
+    )
 
     override suspend fun authorize(): Result<AuthorizationResult> =
         suspendCancellableCoroutine { continuation ->
-            val scopes = listOf(
-                Scope(DriveScopes.DRIVE_APPDATA),
-                Scope(USER_INFO_EMAIL_SCOPE),
-                Scope(USER_PROFILE_SCOPE),
-            )
             val authRequest = AuthorizationRequest.Builder()
                 .setRequestedScopes(scopes)
                 .build()
@@ -98,6 +98,11 @@ internal class DriveBackupRepository @Inject constructor(
                 }
         }
 
+    override fun hasRequiredScopes(result: AuthorizationResult): Boolean {
+        val granted = result.grantedScopes
+        return scopes.all { it.scopeUri in granted }
+    }
+
     override fun getAuthorizationResult(intent: Intent?): AuthorizationResult? = try {
         authorizationClient.getAuthorizationResultFromIntent(intent)
     } catch (e: ApiException) {
@@ -105,11 +110,27 @@ internal class DriveBackupRepository @Inject constructor(
         null
     }
 
+    override suspend fun clearToken(
+        token: String,
+    ): Result<Unit> = suspendCancellableCoroutine { continuation ->
+        val request = ClearTokenRequest.builder()
+            .setToken(token)
+            .build()
+        authorizationClient.clearToken(request)
+            .addOnSuccessListener {
+                continuation.resume(Result.success(Unit)) { _, _, _ -> }
+            }
+            .addOnFailureListener { error ->
+                continuation.resume(Result.failure(error)) { _, _, _ -> }
+            }
+    }
+
     override suspend fun signOut(): Result<Unit> = try {
-        credentialManager.clearCredentialState(ClearCredentialStateRequest())
         AutoBackupWorker.cancelWork(context)
+        credentialManager.clearCredentialState(ClearCredentialStateRequest())
+        getAccessToken().first()?.let { clearToken(it) }
         Result.success(Unit)
-    } catch (e: ClearCredentialException) {
+    } catch (e: Exception) {
         Result.failure(AuthException.ClearCredentialException())
     }
 

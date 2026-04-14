@@ -13,4 +13,5 @@ internal sealed class AuthException(val code: Int): Throwable() {
     class ClearCredentialException : AuthException(805)
     class FetchEmailException : AuthException(806)
     class ResolutionCanceled : AuthException(807)
+    class AuthScopesException : AuthException(808)
 }
