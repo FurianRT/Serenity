@@ -1,6 +1,6 @@
 [versions]
 
-agp = "9.1.0"
+agp = "9.1.1"
 kotlin = "2.3.20"
 
 ksp = "2.3.6"
@@ -34,7 +34,7 @@ lottie = "6.7.1"
 
 coil = "3.4.0"
 
-kotlinxSerializationJson = "1.10.0"
+kotlinxSerializationJson = "1.11.0"
 
 blur = "1.7.2"
 
