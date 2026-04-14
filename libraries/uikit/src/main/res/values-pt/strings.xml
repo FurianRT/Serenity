@@ -20,6 +20,8 @@
     <string name="action_camera">Câmera</string>
     <string name="action_allow">Permitir</string>
     <string name="action_skip">Pular</string>
+    <string name="action_close">Fechar</string>
+    <string name="action_fix">Corrigir</string>
 
     <string name="title_email">Correo electrónico</string>
     <string name="title_theme">Tema</string>

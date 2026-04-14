@@ -20,6 +20,8 @@
     <string name="action_camera">Aparat</string>
     <string name="action_allow">Zezwól</string>
     <string name="action_skip">Pomiń</string>
+    <string name="action_close">Zamknij</string>
+    <string name="action_fix">Napraw</string>
 
     <string name="title_email">E-mail</string>
     <string name="title_theme">Motyw</string>

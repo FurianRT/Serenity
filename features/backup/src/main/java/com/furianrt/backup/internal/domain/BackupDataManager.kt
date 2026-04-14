@@ -1,5 +1,6 @@
 package com.furianrt.backup.internal.domain
 
+import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
@@ -27,6 +28,7 @@ internal class BackupDataManager @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val deleteUnusedDataUseCase: DeleteUnusedDataUseCase,
+    private val backupDataStore: BackupDataStore,
     private val errorTracker: ErrorTracker,
 ) {
     private val progressState: MutableStateFlow<SyncState> = MutableStateFlow(SyncState.Idle)
@@ -47,6 +49,8 @@ internal class BackupDataManager @Inject constructor(
             progressState.update { SyncState.Failure }
             return
         }
+
+        backupDataStore.setAutoBackupFailure(failed = false)
 
         progressState.update { SyncState.Starting }
 

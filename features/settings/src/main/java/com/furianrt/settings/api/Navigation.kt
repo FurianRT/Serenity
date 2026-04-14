@@ -7,7 +7,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.navigation
 import com.furianrt.apptheme.api.appThemeScreen
 import com.furianrt.apptheme.api.navigateToAppTheme
-import com.furianrt.backup.api.backupNavigation
+import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
 import com.furianrt.security.api.changeEmailScreen
 import com.furianrt.security.api.changePinNavigation
@@ -55,8 +55,8 @@ fun NavGraphBuilder.settingsNavigation(
         changeEmailScreen(
             onCloseRequest = navController::navigateUp,
         )
-        backupNavigation(
-            navController = navController,
+        backupScreen(
+            onCloseRequest = navController::navigateUp,
         )
         noteSettingsScreen(
             onCloseRequest = navController::navigateUp,

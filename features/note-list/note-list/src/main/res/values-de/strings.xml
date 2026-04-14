@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Suchen</string>
     <string name="notes_list_empty_list_title">\"Jede Geschichte beginnt mit einem Wort\"</string>
     <string name="notes_list_empty_list_body">Tippe, um deine zu beginnen!</string>
+    <string name="note_list_backup_failure_message">Die automatische Sicherung konnte nicht abgeschlossen werden. Bitte versuche, sie manuell zu starten</string>
 </resources>

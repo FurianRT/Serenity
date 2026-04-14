@@ -27,6 +27,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.furianrt.backup.api.backupScreen
+import com.furianrt.backup.api.navigateToBackup
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.mediaViewerScreen
@@ -176,6 +178,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
                             openSettingsScreen = navController::navigateToSettings,
+                            openBackupScreen = navController::navigateToBackup,
                             openNoteCreateScreen = { identifier ->
                                 navController.navigateToNoteCreate(
                                     route = NoteCreateRoute(
@@ -284,6 +287,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
+                            onCloseRequest = navController::navigateUp
+                        )
+                        backupScreen(
                             onCloseRequest = navController::navigateUp
                         )
                     }

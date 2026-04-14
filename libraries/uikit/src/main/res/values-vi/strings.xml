@@ -20,6 +20,8 @@
     <string name="action_camera">Máy ảnh</string>
     <string name="action_allow">Cho phép</string>
     <string name="action_skip">Bỏ qua</string>
+    <string name="action_close">Đóng</string>
+    <string name="action_fix">Sửa</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Giao diện</string>

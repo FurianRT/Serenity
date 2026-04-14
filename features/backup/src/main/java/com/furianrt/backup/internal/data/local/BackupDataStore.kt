@@ -19,6 +19,7 @@ private val KEY_AUTO_BACKUP = booleanPreferencesKey("auto_backup")
 private val KEY_AUTO_BACKUP_PERIOD = longPreferencesKey("auto_backup_period")
 private val KEY_LAST_SYNC_DATE = stringPreferencesKey("last_sync_date")
 private val KEY_CONFIRM_BACKUP = booleanPreferencesKey("confirm_backup")
+private val KEY_AUTO_BACKUP_FAILURE = booleanPreferencesKey("auto_backup_failure")
 
 @Singleton
 internal class BackupDataStore @Inject constructor(
@@ -65,5 +66,12 @@ internal class BackupDataStore @Inject constructor(
 
     suspend fun setBackupConfirmed(confirmed: Boolean) {
         dataStore.edit { prefs -> prefs[KEY_CONFIRM_BACKUP] = confirmed }
+    }
+
+    fun hasAutoBackupFailure(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_AUTO_BACKUP_FAILURE] ?: false }
+
+    suspend fun setAutoBackupFailure(failed: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_AUTO_BACKUP_FAILURE] = failed }
     }
 }

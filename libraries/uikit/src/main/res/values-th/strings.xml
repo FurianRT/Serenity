@@ -20,6 +20,8 @@
     <string name="action_camera">กล้อง</string>
     <string name="action_allow">อนุญาต</string>
     <string name="action_skip">ข้าม</string>
+    <string name="action_close">ปิด</string>
+    <string name="action_fix">แก้ไข</string>
 
     <string name="title_email">อีเมล</string>
     <string name="title_theme">ธีม</string>

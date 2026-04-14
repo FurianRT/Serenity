@@ -20,6 +20,8 @@
     <string name="action_camera">카메라</string>
     <string name="action_allow">허용</string>
     <string name="action_skip">건너뛰기</string>
+    <string name="action_close">닫기</string>
+    <string name="action_fix">수정</string>
 
     <string name="title_email">이메일</string>
     <string name="title_theme">테마</string>

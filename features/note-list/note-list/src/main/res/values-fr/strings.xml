@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Recherche</string>
     <string name="notes_list_empty_list_title">\"Toute histoire commence par un mot\"</string>
     <string name="notes_list_empty_list_body">Touchez pour commencer la vôtre !</string>
+    <string name="note_list_backup_failure_message">La sauvegarde automatique n’a pas été terminée. Veuillez essayer de la lancer manuellement</string>
 </resources>

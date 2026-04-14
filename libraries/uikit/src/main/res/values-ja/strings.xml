@@ -20,6 +20,8 @@
     <string name="action_camera">カメラ</string>
     <string name="action_allow">許可する</string>
     <string name="action_skip">スキップ</string>
+    <string name="action_close">閉じる</string>
+    <string name="action_fix">修正</string>
 
     <string name="title_email">メール</string>
     <string name="title_theme">テーマ</string>

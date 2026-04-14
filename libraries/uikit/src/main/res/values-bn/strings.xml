@@ -20,6 +20,8 @@
     <string name="action_camera">ক্যামেরা</string>
     <string name="action_allow">অনুমতি দিন</string>
     <string name="action_skip">এড়িয়ে যান</string>
+    <string name="action_close">বন্ধ করুন</string>
+    <string name="action_fix">ঠিক করুন</string>
 
     <string name="title_email">ইমেল</string>
     <string name="title_theme">থিম</string>

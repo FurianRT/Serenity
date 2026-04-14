@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Caută</string>
     <string name="notes_list_empty_list_title">„Fiecare poveste începe cu un cuvânt”</string>
     <string name="notes_list_empty_list_body">Atinge pentru a începe pe a ta!</string>
+    <string name="note_list_backup_failure_message">Backupul automat nu a fost finalizat. Încercați să-l porniți manual</string>
 </resources>

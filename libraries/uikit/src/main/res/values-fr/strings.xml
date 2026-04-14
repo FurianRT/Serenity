@@ -20,6 +20,8 @@
     <string name="action_camera">Appareil photo</string>
     <string name="action_allow">Autoriser</string>
     <string name="action_skip">Ignorer</string>
+    <string name="action_close">Fermer</string>
+    <string name="action_fix">Corriger</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Thème</string>

@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Buscar</string>
     <string name="notes_list_empty_list_title">\"Cada historia comienza con una palabra\"</string>
     <string name="notes_list_empty_list_body">¡Toca para comenzar la tuya!</string>
+    <string name="note_list_backup_failure_message">La copia de seguridad automática no se completó. Intenta iniciarla manualmente</string>
 </resources>

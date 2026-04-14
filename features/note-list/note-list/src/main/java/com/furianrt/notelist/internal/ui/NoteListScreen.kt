@@ -1,11 +1,16 @@
 package com.furianrt.notelist.internal.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,9 +19,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -65,6 +72,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.model.KeyPath
 import com.furianrt.notelist.R
+import com.furianrt.notelist.internal.ui.composables.BackupFailureMessage
 import com.furianrt.notelist.internal.ui.composables.BottomNavigationBar
 import com.furianrt.notelist.internal.ui.composables.Toolbar
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
@@ -102,6 +110,7 @@ internal fun NoteListScreen(
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
     openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openBackupScreen: () -> Unit,
 ) {
     val viewModel: NoteListViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -117,6 +126,7 @@ internal fun NoteListScreen(
     val openNoteCreateScreenState by rememberUpdatedState(openNoteCreateScreen)
     val openNoteSearchScreenState by rememberUpdatedState(openNoteSearchScreen)
     val openSettingsScreenState by rememberUpdatedState(openSettingsScreen)
+    val openBackupScreenState by rememberUpdatedState(openBackupScreen)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -145,6 +155,8 @@ internal fun NoteListScreen(
                             duration = SnackbarDuration.Short,
                         )
                     }
+
+                    is NoteListEffect.OpenBackupScreen -> openBackupScreenState()
                 }
             }
     }
@@ -205,15 +217,31 @@ private fun MainScreenContent(
         enabled = !uiState.content.enableSelection,
         contentHazeState = hazeState,
         toolbar = {
-            Toolbar(
-                notesCount = successState?.notes?.count() ?: 0,
-                selectedNotesCount = successState?.selectedNotesCount ?: 0,
-                hazeState = hazeState,
-                onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
-                onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
-                onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
-                onCloseSelectionClick = { onEvent(NoteListEvent.OnCloseSelectionClick) },
-            )
+            Column(modifier = Modifier.statusBarsPadding()) {
+                AnimatedVisibility(
+                    visible = uiState.hasAutoBackupFailure,
+                    enter = expandVertically(expandFrom = Alignment.Top) + fadeIn(),
+                    exit = shrinkVertically(shrinkTowards = Alignment.Top) + fadeOut(),
+                ) {
+                    BackupFailureMessage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                        hazeState = hazeState,
+                        onFixClick = { onEvent(NoteListEvent.OnFixBackupErrorClick) },
+                        onCloseClick = { onEvent(NoteListEvent.OnCloseBackupErrorClick) },
+                    )
+                }
+                Toolbar(
+                    notesCount = successState?.notes?.count() ?: 0,
+                    selectedNotesCount = successState?.selectedNotesCount ?: 0,
+                    hazeState = hazeState,
+                    onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
+                    onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
+                    onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
+                    onCloseSelectionClick = { onEvent(NoteListEvent.OnCloseSelectionClick) },
+                )
+            }
         },
     ) { topPadding ->
         AppBackground(
@@ -456,6 +484,7 @@ private fun SuccessPreview() {
         MainScreenContent(
             uiState = NoteListUiState(
                 theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = false),
                     scrollToPosition = null,
@@ -476,6 +505,7 @@ private fun EmptyPreview() {
         MainScreenContent(
             uiState = NoteListUiState(
                 theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Empty,
             ),
             snackBarHostState = SnackbarHostState(),
@@ -491,6 +521,7 @@ private fun SuccessWithSelectedPreview() {
         MainScreenContent(
             uiState = NoteListUiState(
                 theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = true),
                     scrollToPosition = null,

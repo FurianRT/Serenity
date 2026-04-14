@@ -20,6 +20,8 @@
     <string name="action_camera">Kamera</string>
     <string name="action_allow">Izinkan</string>
     <string name="action_skip">Lewati</string>
+    <string name="action_close">Tutup</string>
+    <string name="action_fix">Perbaiki</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Tema</string>

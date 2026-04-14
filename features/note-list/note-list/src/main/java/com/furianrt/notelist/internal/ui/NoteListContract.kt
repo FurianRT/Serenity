@@ -8,6 +8,7 @@ import com.furianrt.uikit.utils.DialogIdentifier
 
 internal data class NoteListUiState(
     val theme: UiThemeColor,
+    val hasAutoBackupFailure: Boolean,
     val content: Content,
 ) {
     sealed interface Content {
@@ -42,12 +43,15 @@ internal sealed interface NoteListEvent {
     data object OnDeleteSelectedNotesClick : NoteListEvent
     data object OnConfirmDeleteSelectedNotesClick : NoteListEvent
     data object OnCloseSelectionClick : NoteListEvent
+    data object OnCloseBackupErrorClick : NoteListEvent
+    data object OnFixBackupErrorClick : NoteListEvent
 }
 
 internal sealed interface NoteListEffect {
     data object ScrollToTop : NoteListEffect
     data object OpenSettingsScreen : NoteListEffect
     data object OpenNoteSearchScreen : NoteListEffect
+    data object OpenBackupScreen : NoteListEffect
     data class OpenNoteCreateScreen(val identifier: DialogIdentifier) : NoteListEffect
     data class OpenNoteViewScreen(
         val noteId: String,

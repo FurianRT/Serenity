@@ -5,6 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.combine
 import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -56,31 +58,16 @@ internal class NoteListViewModel @Inject constructor(
         appearanceRepository.getAppFont(),
         appearanceRepository.getAppThemeColorId(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
-    ) { notes, noteId, selectedNotes, appFont, appThemeColorId, compactHomeScreen ->
-        NoteListUiState(
-            theme = UiThemeColor.fromId(appThemeColorId),
-            content = if (notes.isEmpty()) {
-                NoteListUiState.Content.Empty
-            } else {
-                NoteListUiState.Content.Success(
-                    notes = notes.toMainScreenNotes(
-                        selectedNotes = selectedNotes,
-                        appFontFamily = appFont,
-                        withMedia = !compactHomeScreen,
-                    ),
-                    scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
-                    selectedNotesCount = selectedNotes.count(),
-                    font = appFont.toNoteFont(),
-                )
-            },
-        )
-    }.flowOn(
+        syncManager.hasAutoBackupFailure(),
+        ::buildState,
+    ).flowOn(
         context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = NoteListUiState(
             theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            hasAutoBackupFailure = false,
             content = NoteListUiState.Content.Loading,
         ),
     )
@@ -116,6 +103,8 @@ internal class NoteListViewModel @Inject constructor(
             }
 
             is NoteListEvent.OnCloseSelectionClick -> clearSelectedNotes()
+            is NoteListEvent.OnCloseBackupErrorClick -> onCloseBackupErrorClick()
+            is NoteListEvent.OnFixBackupErrorClick -> onFixBackupErrorClick()
         }
     }
 
@@ -137,6 +126,14 @@ internal class NoteListViewModel @Inject constructor(
                 scrollToNoteState.update { null }
             }
         }
+    }
+
+    private fun onCloseBackupErrorClick() {
+        launch { syncManager.hideAutoBackupFailure() }
+    }
+
+    private fun onFixBackupErrorClick() {
+        _effect.tryEmit(NoteListEffect.OpenBackupScreen)
     }
 
     private fun addOrRemoveSelectedNote(noteId: String) {
@@ -215,4 +212,31 @@ internal class NoteListViewModel @Inject constructor(
             )
         )
     }
+
+    private fun buildState(
+        notes: List<LocalNote>,
+        noteId: String?,
+        selectedNotes: Set<String>,
+        appFont: NoteFontFamily,
+        appThemeColorId: String?,
+        compactHomeScreen: Boolean,
+        hasAutoBackupFailure: Boolean,
+    ) = NoteListUiState(
+        theme = UiThemeColor.fromId(appThemeColorId),
+        hasAutoBackupFailure = hasAutoBackupFailure,
+        content = if (notes.isEmpty()) {
+            NoteListUiState.Content.Empty
+        } else {
+            NoteListUiState.Content.Success(
+                notes = notes.toMainScreenNotes(
+                    selectedNotes = selectedNotes,
+                    appFontFamily = appFont,
+                    withMedia = !compactHomeScreen,
+                ),
+                scrollToPosition = notes.indexOfFirstOrNull { it.id == noteId },
+                selectedNotesCount = selectedNotes.count(),
+                font = appFont.toNoteFont(),
+            )
+        },
+    )
 }

@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Zoeken</string>
     <string name="notes_list_empty_list_title">"Elk verhaal begint met een woord"</string>
     <string name="notes_list_empty_list_body">Tik om je eigen verhaal te beginnen!</string>
+    <string name="note_list_backup_failure_message">De automatische back-up is niet voltooid. Probeer deze handmatig te starten</string>
 </resources>

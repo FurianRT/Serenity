@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">অনুসন্ধান</string>
     <string name="notes_list_empty_list_title">\"প্রতিটি গল্প একটি শব্দ দিয়ে শুরু হয়\"</string>
     <string name="notes_list_empty_list_body">আপনার গল্প শুরু করতে ট্যাপ করুন!</string>
+    <string name="note_list_backup_failure_message">স্বয়ংক্রিয় ব্যাকআপ সম্পূর্ণ হয়নি। অনুগ্রহ করে এটি ম্যানুয়ালি শুরু করার চেষ্টা করুন</string>
 </resources>

@@ -20,6 +20,8 @@
     <string name="action_camera">Камера</string>
     <string name="action_allow">Дозволити</string>
     <string name="action_skip">Пропустити</string>
+    <string name="action_close">Закрити</string>
+    <string name="action_fix">Виправити</string>
 
     <string name="title_email">Електронна пошта</string>
     <string name="title_theme">Тема</string>

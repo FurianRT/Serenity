@@ -25,6 +25,7 @@ fun NavGraphBuilder.noteListScreen(
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
     openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openBackupScreen: () -> Unit,
     hasSearchScreenRoute: (destination: NavDestination) -> Boolean,
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
 ) {
@@ -62,6 +63,7 @@ fun NavGraphBuilder.noteListScreen(
             openNoteCreateScreen = openNoteCreateScreen,
             openNoteSearchScreen = openNoteSearchScreen,
             openSettingsScreen = openSettingsScreen,
+            openBackupScreen = openBackupScreen,
         )
     }
 }

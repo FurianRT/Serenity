@@ -9,6 +9,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
+import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.common.ErrorTracker
 import dagger.assisted.Assisted
@@ -20,6 +21,7 @@ private const val WORK_NAME = "AutoBackup"
 @HiltWorker
 internal class AutoBackupWorker @AssistedInject constructor(
     private val backupDataManager: BackupDataManager,
+    private val backupDataStore: BackupDataStore,
     private val errorTracker: ErrorTracker,
     @Assisted appContext: Context,
     @Assisted params: WorkerParameters,
@@ -85,8 +87,10 @@ internal class AutoBackupWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result = try {
         backupDataManager.startBackup()
+        backupDataStore.setAutoBackupFailure(failed = false)
         Result.success()
     } catch (e: Exception) {
+        backupDataStore.setAutoBackupFailure(failed = true)
         errorTracker.trackNonFatalError(e)
         Result.retry()
     }

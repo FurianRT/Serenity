@@ -1,6 +1,7 @@
 package com.furianrt.backup.internal.data
 
 import android.content.Context
+import com.furianrt.backup.internal.data.local.BackupDataStore
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
 import com.furianrt.backup.internal.domain.entities.SyncState
@@ -9,6 +10,7 @@ import com.furianrt.backup.internal.workers.AutoBackupWorker
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.ProfileRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ internal class SyncManagerImp @Inject constructor(
     private val backupRepository: BackupRepository,
     private val backupDataManager: BackupDataManager,
     private val restoreDataManager: RestoreDataManager,
+    private val backupDataStore: BackupDataStore,
 ) : SyncManager {
 
     override suspend fun tryStartAutoBackup() {
@@ -41,4 +44,10 @@ internal class SyncManagerImp @Inject constructor(
     override fun isRestoreInProgress(): Boolean =
         restoreDataManager.state.value is SyncState.Starting ||
                 restoreDataManager.state.value is SyncState.Progress
+
+    override fun hasAutoBackupFailure(): Flow<Boolean> = backupDataStore.hasAutoBackupFailure()
+
+    override suspend fun hideAutoBackupFailure() {
+        backupDataStore.setAutoBackupFailure(failed = false)
+    }
 }

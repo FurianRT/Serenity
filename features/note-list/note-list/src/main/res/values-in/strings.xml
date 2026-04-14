@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Cari</string>
     <string name="notes_list_empty_list_title">\"Setiap cerita dimulai dengan sebuah kata\"</string>
     <string name="notes_list_empty_list_body">Ketuk untuk mulai menulis ceritamu!</string>
+    <string name="note_list_backup_failure_message">Pencadangan otomatis tidak berhasil diselesaikan. Silakan coba memulainya secara manual</string>
 </resources>

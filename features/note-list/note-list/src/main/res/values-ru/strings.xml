@@ -2,4 +2,5 @@
     <string name="notes_list_search_bar_title">Поиск</string>
     <string name="notes_list_empty_list_title">\"Каждая история начинается со слова\"</string>
     <string name="notes_list_empty_list_body">Нажмите, чтобы начать свою!</string>
+    <string name="note_list_backup_failure_message">Бэкап не удалось завершить. Попробуйте запустить его вручную</string>
 </resources>

@@ -20,6 +20,8 @@
     <string name="action_camera">Cameră</string>
     <string name="action_allow">Permite</string>
     <string name="action_skip">Sari peste</string>
+    <string name="action_close">Închide</string>
+    <string name="action_fix">Remediază</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Temă</string>
