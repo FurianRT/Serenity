@@ -44,7 +44,6 @@ internal class SignInUseCase @Inject constructor(
             AuthException.InvalidAccessTokenException()
         )
         if (!backupRepository.hasRequiredScopes(result)) {
-            signOutUseCase(email = null, accessToken = result.accessToken)
             return Result.failure(AuthException.AuthScopesException())
         }
         return invoke(result.accessToken)

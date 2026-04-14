@@ -190,7 +190,7 @@ internal class BackupViewModel @Inject constructor(
 
             is OnButtonBackClick -> _effect.tryEmit(BackupEffect.CloseScreen)
             is OnQuestionClick -> toggleQuestionExpandedState(event.question)
-            is OnSignInClick -> authorize()
+            is OnSignInClick -> launch { authorize() }
             is OnSignOutClick -> onSignOutClick()
             is OnSignOutConfirmClick -> {
                 backupDataManager.clearFailureState()
@@ -218,7 +218,7 @@ internal class BackupViewModel @Inject constructor(
         }
     }
 
-    private fun authorize() = launch {
+    private suspend fun authorize() {
         when (val result = authorizeUseCase()) {
             is AuthResult.Success -> signIn(accessToken = result.accessToken)
             is AuthResult.ScopesError -> showError(result.error)
@@ -248,13 +248,20 @@ internal class BackupViewModel @Inject constructor(
         intent: Intent? = null,
     ) {
         isAuthInProgressState.update { true }
-        val result = if (intent != null) {
+        if (intent != null) {
             signInUseCase(intent)
         } else {
             signInUseCase(accessToken)
+        }.onFailure { error ->
+            if (error is AuthException.AuthScopesException) {
+                authorize()
+            } else {
+                showError(error)
+            }
+            isAuthInProgressState.update { false }
+        }.onSuccess {
+            isAuthInProgressState.update { false }
         }
-        result.onFailure(::showError)
-        isAuthInProgressState.update { false }
     }
 
     private fun signOut() {
