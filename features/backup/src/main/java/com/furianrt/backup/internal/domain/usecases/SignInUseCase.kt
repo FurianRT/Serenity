@@ -30,7 +30,7 @@ internal class SignInUseCase @Inject constructor(
             .getOrNull()
 
         if (email == null) {
-            signOutUseCase(email = null)
+            signOutUseCase(email = null, accessToken = accessToken)
             return Result.failure(AuthException.FetchEmailException())
         }
 
@@ -44,7 +44,7 @@ internal class SignInUseCase @Inject constructor(
             AuthException.InvalidAccessTokenException()
         )
         if (!backupRepository.hasRequiredScopes(result)) {
-            result.accessToken?.let { backupRepository.clearToken(it) }
+            signOutUseCase(email = null, accessToken = result.accessToken)
             return Result.failure(AuthException.AuthScopesException())
         }
         return invoke(result.accessToken)

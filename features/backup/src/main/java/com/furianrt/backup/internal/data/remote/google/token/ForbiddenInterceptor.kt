@@ -32,7 +32,7 @@ internal class ForbiddenInterceptor @Inject constructor(
             try {
                 runBlocking {
                     val email = profileRepository.getBackupProfile().first()?.email
-                    signOutUseCase.get().invoke(email)
+                    signOutUseCase.get().invoke(email = email, accessToken = null)
                 }
             } catch (e: InterruptedException) {
                 errorTracker.trackNonFatalError(e)

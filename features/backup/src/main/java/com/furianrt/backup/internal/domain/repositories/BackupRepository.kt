@@ -15,7 +15,7 @@ internal interface BackupRepository {
     fun hasRequiredScopes(result: AuthorizationResult): Boolean
     fun getAuthorizationResult(intent: Intent?): AuthorizationResult?
     suspend fun clearToken(token: String): Result<Unit>
-    suspend fun signOut(): Result<Unit>
+    suspend fun signOut(accessToken: String? = null): Result<Unit>
 
     fun getAccessToken(): Flow<String?>
     suspend fun updateAccessToken(token: String)

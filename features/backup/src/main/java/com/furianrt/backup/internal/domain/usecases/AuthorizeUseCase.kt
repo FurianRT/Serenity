@@ -7,6 +7,7 @@ import javax.inject.Inject
 
 internal class AuthorizeUseCase @Inject constructor(
     private val backupRepository: BackupRepository,
+    private val signOutUseCase: SignOutUseCase,
 ) {
     suspend operator fun invoke(): AuthResult {
         val authResult = backupRepository.authorize().getOrElse {
@@ -26,7 +27,7 @@ internal class AuthorizeUseCase @Inject constructor(
         }
 
         if (accessToken != null && !backupRepository.hasRequiredScopes(authResult)) {
-            backupRepository.clearToken(accessToken)
+            signOutUseCase(email = null, accessToken = accessToken)
             return AuthResult.ScopesError(AuthException.AuthScopesException())
         }
 

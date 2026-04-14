@@ -262,7 +262,10 @@ internal class BackupViewModel @Inject constructor(
         if (content is Content.Success && content.authState is Content.Success.AuthState.SignedIn) {
             isAuthInProgressState.update { true }
             launch {
-                signOutUseCase(content.authState.email).onFailure(::showError)
+                signOutUseCase(
+                    email = content.authState.email,
+                    accessToken = null,
+                ).onFailure(::showError)
                 isAuthInProgressState.update { false }
             }
         }

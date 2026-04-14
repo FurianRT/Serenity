@@ -8,7 +8,10 @@ internal class SignOutUseCase @Inject constructor(
     private val backupRepository: BackupRepository,
     private val profileRepository: ProfileRepository,
 ) {
-    suspend operator fun invoke(email: String?): Result<Unit> = backupRepository.signOut()
+    suspend operator fun invoke(
+        accessToken: String?,
+        email: String?,
+    ): Result<Unit> = backupRepository.signOut(accessToken)
         .onSuccess {
             email?.let { profileRepository.deleteBackupProfile(email) }
         }

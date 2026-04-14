@@ -125,10 +125,10 @@ internal class DriveBackupRepository @Inject constructor(
             }
     }
 
-    override suspend fun signOut(): Result<Unit> = try {
+    override suspend fun signOut(accessToken: String?): Result<Unit> = try {
         AutoBackupWorker.cancelWork(context)
         credentialManager.clearCredentialState(ClearCredentialStateRequest())
-        getAccessToken().first()?.let { clearToken(it) }
+        (accessToken ?: getAccessToken().first())?.let { clearToken(it) }
         Result.success(Unit)
     } catch (e: Exception) {
         Result.failure(AuthException.ClearCredentialException())
