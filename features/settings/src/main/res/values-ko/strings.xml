@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">홈 화면에서 노트를 텍스트만 있는 간단한 목록으로 표시</string>
     <string name="settings_note_keep_prev_background_title">이전 배경 유지</string>
     <string name="settings_note_keep_prev_background_hint">새 노트에 마지막으로 사용한 배경을 자동으로 적용합니다</string>
+    <string name="settings_note_keep_prev_text_align_title">이전 텍스트 정렬 사용</string>
+    <string name="settings_note_keep_prev_text_align_hint">새 노트에 마지막으로 사용한 정렬을 자동으로 적용합니다</string>
+    <string name="settings_note_keep_prev_line_height_title">이전 줄 높이 사용</string>
+    <string name="settings_note_keep_prev_line_height_hint">새 노트에 마지막으로 사용한 줄 높이를 자동으로 적용합니다</string>
 </resources>

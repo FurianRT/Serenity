@@ -122,6 +122,24 @@ private fun SuccessContent(
             },
         )
         SwitchWithLabel(
+            title = stringResource(R.string.settings_note_keep_prev_text_align_title),
+            hint = stringResource(R.string.settings_note_keep_prev_text_align_hint),
+            isChecked = uiState.isKeepPrevTextAlignEnabled,
+            hazeState = hazeState,
+            onCheckedChange = { isChecked ->
+                onEvent(NoteSettingsEvent.OnKeepNoteTextAlignChanged(isChecked))
+            },
+        )
+        SwitchWithLabel(
+            title = stringResource(R.string.settings_note_keep_prev_line_height_title),
+            hint = stringResource(R.string.settings_note_keep_prev_line_height_hint),
+            isChecked = uiState.isKeepPrevLineHeightEnabled,
+            hazeState = hazeState,
+            onCheckedChange = { isChecked ->
+                onEvent(NoteSettingsEvent.OnKeepNoteLineHeightChanged(isChecked))
+            },
+        )
+        SwitchWithLabel(
             title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
             hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
             isChecked = uiState.isMinimalisticHomeScreenEnabled,
@@ -151,6 +169,8 @@ private fun Preview() {
                     isAutoDetectLocationEnabled = true,
                     isMinimalisticHomeScreenEnabled = false,
                     isKeepPrevBackgroundEnabled = true,
+                    isKeepPrevLineHeightEnabled = true,
+                    isKeepPrevTextAlignEnabled = true,
                 ),
             ),
             onEvent = {},

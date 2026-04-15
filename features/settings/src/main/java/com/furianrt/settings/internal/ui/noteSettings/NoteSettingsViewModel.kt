@@ -2,6 +2,7 @@ package com.furianrt.settings.internal.ui.noteSettings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.combine
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
@@ -11,7 +12,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
@@ -24,6 +24,8 @@ internal class NoteSettingsViewModel @Inject constructor(
         appearanceRepository.isAutoDetectLocationEnabled(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
         appearanceRepository.isKeepPrevBackgroundEnabled(),
+        appearanceRepository.isKeepPrevLineHeightEnabled(),
+        appearanceRepository.isKeepPrevTextAlignEnabled(),
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
     ).stateIn(
@@ -55,6 +57,14 @@ internal class NoteSettingsViewModel @Inject constructor(
             is NoteSettingsEvent.OnKeepNotePrevBackgroundChanged -> launch {
                 appearanceRepository.setKeepPrevBackgroundEnabled(event.isEnabled)
             }
+
+            is NoteSettingsEvent.OnKeepNoteLineHeightChanged -> launch {
+                appearanceRepository.setKeepPrevLineHeightEnabled(event.isEnabled)
+            }
+
+            is NoteSettingsEvent.OnKeepNoteTextAlignChanged -> launch {
+                appearanceRepository.setKeepPrevTextAlignEnabled(event.isEnabled)
+            }
         }
     }
 
@@ -62,6 +72,8 @@ internal class NoteSettingsViewModel @Inject constructor(
         isAutoDetectLocationEnabled: Boolean,
         isMinimalisticHomeScreenEnabled: Boolean,
         isKeepPrevBackgroundEnabled: Boolean,
+        isKeepPrevLineHeightEnabled: Boolean,
+        isKeepPrevTextAlignEnabled: Boolean,
         appThemeColorId: String?,
     ): NoteSettingsState = NoteSettingsState(
         theme = UiThemeColor.fromId(appThemeColorId),
@@ -69,6 +81,8 @@ internal class NoteSettingsViewModel @Inject constructor(
             isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
             isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,
             isKeepPrevBackgroundEnabled = isKeepPrevBackgroundEnabled,
+            isKeepPrevLineHeightEnabled = isKeepPrevLineHeightEnabled,
+            isKeepPrevTextAlignEnabled = isKeepPrevTextAlignEnabled,
         ),
     )
 }

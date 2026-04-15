@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">ホーム画面でノートをテキストのみのシンプルなリストとして表示</string>
     <string name="settings_note_keep_prev_background_title">前回の背景を保持</string>
     <string name="settings_note_keep_prev_background_hint">新しいノートに前回使用した背景を自動的に適用します</string>
+    <string name="settings_note_keep_prev_text_align_title">前回のテキスト配置を使用</string>
+    <string name="settings_note_keep_prev_text_align_hint">新しいノートに前回使用した配置を自動的に適用します</string>
+    <string name="settings_note_keep_prev_line_height_title">前回の行間を使用</string>
+    <string name="settings_note_keep_prev_line_height_hint">新しいノートに前回使用した行間を自動的に適用します</string>
 </resources>

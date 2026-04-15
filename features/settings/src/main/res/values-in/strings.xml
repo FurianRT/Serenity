@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Tampilkan catatan sebagai daftar sederhana tanpa media di layar utama</string>
     <string name="settings_note_keep_prev_background_title">Simpan Latar Belakang Sebelumnya</string>
     <string name="settings_note_keep_prev_background_hint">Secara otomatis gunakan latar belakang terakhir pada catatan baru</string>
+    <string name="settings_note_keep_prev_text_align_title">Gunakan Perataan Teks Sebelumnya</string>
+    <string name="settings_note_keep_prev_text_align_hint">Terapkan otomatis perataan terakhir ke catatan baru</string>
+    <string name="settings_note_keep_prev_line_height_title">Gunakan Tinggi Baris Sebelumnya</string>
+    <string name="settings_note_keep_prev_line_height_hint">Terapkan otomatis tinggi baris terakhir ke catatan baru</string>
 </resources>

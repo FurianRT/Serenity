@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Afișează notițele ca o listă simplă doar text pe ecranul principal</string>
     <string name="settings_note_keep_prev_background_title">Păstrează fundalul anterior</string>
     <string name="settings_note_keep_prev_background_hint">Aplică automat ultimul fundal utilizat la notele noi</string>
+    <string name="settings_note_keep_prev_text_align_title">Folosește alinierea textului anterioară</string>
+    <string name="settings_note_keep_prev_text_align_hint">Aplică automat ultima aliniere folosită la notele noi</string>
+    <string name="settings_note_keep_prev_line_height_title">Folosește înălțimea liniei anterioare</string>
+    <string name="settings_note_keep_prev_line_height_hint">Aplică automat ultima înălțime a liniei la notele noi</string>
 </resources>

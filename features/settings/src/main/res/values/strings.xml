@@ -20,6 +20,10 @@
     <string name="settings_note_detect_location_hint">Automatically detect your current location when creating a note</string>
     <string name="settings_note_minimalistic_home_screen_title">Home Screen Minimal Mode</string>
     <string name="settings_note_minimalistic_home_screen_hint">Show notes as a simple text-only list on the home screen</string>
-    <string name="settings_note_keep_prev_background_title">Keep Previous Background</string>
+    <string name="settings_note_keep_prev_background_title">Use Previous Background</string>
     <string name="settings_note_keep_prev_background_hint">Automatically apply the last used background to new notes</string>
+    <string name="settings_note_keep_prev_text_align_title">Use Previous Text Alignment</string>
+    <string name="settings_note_keep_prev_text_align_hint">Automatically apply the last used text alignment to new notes</string>
+    <string name="settings_note_keep_prev_line_height_title">Use Previous Line Height</string>
+    <string name="settings_note_keep_prev_line_height_hint">Automatically apply the last used line height to new notes</string>
 </resources>

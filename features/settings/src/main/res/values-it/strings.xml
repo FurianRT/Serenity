@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Mostra le note come un semplice elenco di solo testo nella schermata Home</string>
     <string name="settings_note_keep_prev_background_title">Mantieni sfondo precedente</string>
     <string name="settings_note_keep_prev_background_hint">Applica automaticamente l’ultimo sfondo utilizzato alle nuove note</string>
+    <string name="settings_note_keep_prev_text_align_title">Usa l’allineamento del testo precedente</string>
+    <string name="settings_note_keep_prev_text_align_hint">Applica automaticamente l’ultimo allineamento usato alle nuove note</string>
+    <string name="settings_note_keep_prev_line_height_title">Usa l’altezza della riga precedente</string>
+    <string name="settings_note_keep_prev_line_height_hint">Applica automaticamente l’ultima altezza della riga alle nuove note</string>
 </resources>

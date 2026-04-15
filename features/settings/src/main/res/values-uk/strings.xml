@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Показувати нотатки на головному екрані як простий список без медіа</string>
     <string name="settings_note_keep_prev_background_title">Зберігати попередній фон</string>
     <string name="settings_note_keep_prev_background_hint">Автоматично застосовувати останній використаний фон до нових нотаток</string>
+    <string name="settings_note_keep_prev_text_align_title">Використовувати попереднє вирівнювання тексту</string>
+    <string name="settings_note_keep_prev_text_align_hint">Автоматично застосовувати останнє використане вирівнювання до нових нотаток</string>
+    <string name="settings_note_keep_prev_line_height_title">Використовувати попередню висоту рядка</string>
+    <string name="settings_note_keep_prev_line_height_hint">Автоматично застосовувати останню висоту рядка до нових нотаток</string>
 </resources>

@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Ipakita ang mga note bilang simpleng listahang text-only sa home screen</string>
     <string name="settings_note_keep_prev_background_title">Panatilihin ang Nakaraang Background</string>
     <string name="settings_note_keep_prev_background_hint">Awtomatikong gamitin ang huling ginamit na background sa mga bagong tala</string>
+    <string name="settings_note_keep_prev_text_align_title">Gamitin ang Nakaraang Ayos ng Teksto</string>
+    <string name="settings_note_keep_prev_text_align_hint">Awtomatikong ilapat ang huling ginamit na ayos sa mga bagong tala</string>
+    <string name="settings_note_keep_prev_line_height_title">Gamitin ang Nakaraang Taas ng Linya</string>
+    <string name="settings_note_keep_prev_line_height_hint">Awtomatikong ilapat ang huling ginamit na taas ng linya sa mga bagong tala</string>
 </resources>

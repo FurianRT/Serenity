@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Toon notities op het startscherm als een eenvoudige lijst met alleen tekst</string>
     <string name="settings_note_keep_prev_background_title">Vorige achtergrond behouden</string>
     <string name="settings_note_keep_prev_background_hint">Pas automatisch de laatst gebruikte achtergrond toe op nieuwe notities</string>
+    <string name="settings_note_keep_prev_text_align_title">Vorige tekstuitlijning gebruiken</string>
+    <string name="settings_note_keep_prev_text_align_hint">Pas automatisch de laatst gebruikte uitlijning toe op nieuwe notities</string>
+    <string name="settings_note_keep_prev_line_height_title">Vorige regelhoogte gebruiken</string>
+    <string name="settings_note_keep_prev_line_height_hint">Pas automatisch de laatst gebruikte regelhoogte toe op nieuwe notities</string>
 </resources>

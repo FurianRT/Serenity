@@ -19,4 +19,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">แสดงบันทึกเป็นรายการแบบตัวอักษรง่าย ๆ บนหน้าจอหลัก</string>
     <string name="settings_note_keep_prev_background_title">เก็บพื้นหลังเดิมไว้</string>
     <string name="settings_note_keep_prev_background_hint">ใช้พื้นหลังล่าสุดโดยอัตโนมัติกับบันทึกใหม่</string>
+    <string name="settings_note_keep_prev_text_align_title">ใช้การจัดแนวข้อความก่อนหน้า</string>
+    <string name="settings_note_keep_prev_text_align_hint">ใช้การจัดแนวล่าสุดกับโน้ตใหม่โดยอัตโนมัติ</string>
+    <string name="settings_note_keep_prev_line_height_title">ใช้ความสูงบรรทัดก่อนหน้า</string>
+    <string name="settings_note_keep_prev_line_height_hint">ใช้ความสูงบรรทัดล่าสุดกับโน้ตใหม่โดยอัตโนมัติ</string>
 </resources>

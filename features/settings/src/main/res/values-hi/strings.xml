@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">होम स्क्रीन पर नोट्स को केवल टेक्स्ट वाली सरल सूची के रूप में दिखाएँ</string>
     <string name="settings_note_keep_prev_background_title">पिछली पृष्ठभूमि बनाए रखें</string>
     <string name="settings_note_keep_prev_background_hint">नई नोट्स में अंतिम उपयोग की गई पृष्ठभूमि स्वचालित रूप से लागू करें</string>
+    <string name="settings_note_keep_prev_text_align_title">पिछला टेक्स्ट संरेखण उपयोग करें</string>
+    <string name="settings_note_keep_prev_text_align_hint">नई नोट्स में अंतिम उपयोग किया गया संरेखण स्वतः लागू करें</string>
+    <string name="settings_note_keep_prev_line_height_title">पिछली लाइन ऊँचाई उपयोग करें</string>
+    <string name="settings_note_keep_prev_line_height_hint">नई नोट्स में अंतिम उपयोग की गई लाइन ऊँचाई स्वतः लागू करें</string>
 </resources>

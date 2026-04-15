@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Hiển thị ghi chú dưới dạng danh sách chỉ có văn bản trên màn hình chính</string>
     <string name="settings_note_keep_prev_background_title">Giữ nền trước đó</string>
     <string name="settings_note_keep_prev_background_hint">Tự động áp dụng nền đã sử dụng gần nhất cho ghi chú mới</string>
+    <string name="settings_note_keep_prev_text_align_title">Sử dụng căn chỉnh văn bản trước đó</string>
+    <string name="settings_note_keep_prev_text_align_hint">Tự động áp dụng căn chỉnh đã dùng gần nhất cho ghi chú mới</string>
+    <string name="settings_note_keep_prev_line_height_title">Sử dụng chiều cao dòng trước đó</string>
+    <string name="settings_note_keep_prev_line_height_hint">Tự động áp dụng chiều cao dòng đã dùng gần nhất cho ghi chú mới</string>
 </resources>

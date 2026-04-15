@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Ana ekranda notları basit bir metin listesi olarak göster</string>
     <string name="settings_note_keep_prev_background_title">Önceki Arka Planı Koru</string>
     <string name="settings_note_keep_prev_background_hint">Yeni notlara son kullanılan arka planı otomatik olarak uygula</string>
+    <string name="settings_note_keep_prev_text_align_title">Önceki Metin Hizalamasını Kullan</string>
+    <string name="settings_note_keep_prev_text_align_hint">Son kullanılan hizalamayı yeni notlara otomatik olarak uygula</string>
+    <string name="settings_note_keep_prev_line_height_title">Önceki Satır Yüksekliğini Kullan</string>
+    <string name="settings_note_keep_prev_line_height_hint">Son kullanılan satır yüksekliğini yeni notlara otomatik olarak uygula</string>
 </resources>

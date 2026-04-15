@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">হোম স্ক্রিনে নোটগুলোকে শুধুমাত্র টেক্সট সহ সাধারণ তালিকা হিসেবে দেখান</string>
     <string name="settings_note_keep_prev_background_title">পূর্বের ব্যাকগ্রাউন্ড রাখুন</string>
     <string name="settings_note_keep_prev_background_hint">নতুন নোটে সর্বশেষ ব্যবহৃত ব্যাকগ্রাউন্ড স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
+    <string name="settings_note_keep_prev_text_align_title">আগের টেক্সট অ্যালাইনমেন্ট ব্যবহার করুন</string>
+    <string name="settings_note_keep_prev_text_align_hint">নতুন নোটে সর্বশেষ ব্যবহৃত অ্যালাইনমেন্ট স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
+    <string name="settings_note_keep_prev_line_height_title">আগের লাইন উচ্চতা ব্যবহার করুন</string>
+    <string name="settings_note_keep_prev_line_height_hint">নতুন নোটে সর্বশেষ ব্যবহৃত লাইন উচ্চতা স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
 </resources>

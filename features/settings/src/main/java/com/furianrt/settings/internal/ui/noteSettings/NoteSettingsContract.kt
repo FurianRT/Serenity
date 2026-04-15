@@ -12,6 +12,8 @@ internal data class NoteSettingsState(
             val isAutoDetectLocationEnabled: Boolean,
             val isMinimalisticHomeScreenEnabled: Boolean,
             val isKeepPrevBackgroundEnabled: Boolean,
+            val isKeepPrevLineHeightEnabled: Boolean,
+            val isKeepPrevTextAlignEnabled: Boolean,
         ) : Content
     }
 }
@@ -25,4 +27,6 @@ internal sealed interface NoteSettingsEvent {
     data class OnEnableAutoDetectLocationChanged(val isEnabled: Boolean) : NoteSettingsEvent
     data class OnEnableMinimalisticHomeScreenChanged(val isEnabled: Boolean) : NoteSettingsEvent
     data class OnKeepNotePrevBackgroundChanged(val isEnabled: Boolean) : NoteSettingsEvent
+    data class OnKeepNoteTextAlignChanged(val isEnabled: Boolean) : NoteSettingsEvent
+    data class OnKeepNoteLineHeightChanged(val isEnabled: Boolean) : NoteSettingsEvent
 }

@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Mostrar as notas como uma lista simples apenas com texto na tela inicial</string>
     <string name="settings_note_keep_prev_background_title">Manter plano de fundo anterior</string>
     <string name="settings_note_keep_prev_background_hint">Aplicar automaticamente o último plano de fundo usado às novas notas</string>
+    <string name="settings_note_keep_prev_text_align_title">Usar alinhamento de texto anterior</string>
+    <string name="settings_note_keep_prev_text_align_hint">Aplicar automaticamente o último alinhamento usado às novas notas</string>
+    <string name="settings_note_keep_prev_line_height_title">Usar altura de linha anterior</string>
+    <string name="settings_note_keep_prev_line_height_hint">Aplicar automaticamente a última altura de linha às novas notas</string>
 </resources>

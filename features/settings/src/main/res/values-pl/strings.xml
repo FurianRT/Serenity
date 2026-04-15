@@ -17,4 +17,8 @@
     <string name="settings_note_minimalistic_home_screen_hint">Wyświetlaj notatki na ekranie głównym jako prostą listę zawierającą tylko текст</string>
     <string name="settings_note_keep_prev_background_title">Zachowaj poprzednie tło</string>
     <string name="settings_note_keep_prev_background_hint">Automatycznie stosuj ostatnio użyte tło do nowych notatek</string>
+    <string name="settings_note_keep_prev_text_align_title">Użyj poprzedniego wyrównania tekstu</string>
+    <string name="settings_note_keep_prev_text_align_hint">Automatycznie zastosuj ostatnio użyte wyrównanie do nowych notatek</string>
+    <string name="settings_note_keep_prev_line_height_title">Użyj poprzedniej wysokości linii</string>
+    <string name="settings_note_keep_prev_line_height_hint">Automatycznie zastosuj ostatnią wysokość linii do nowych notatek</string>
 </resources>
