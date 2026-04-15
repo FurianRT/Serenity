@@ -3,10 +3,12 @@ package com.furianrt.search.internal.ui.extensions
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
+import com.furianrt.notelistui.extensions.toTextAlign
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.search.internal.ui.entities.SearchListItem
 import com.furianrt.search.internal.ui.entities.SelectedFilter
@@ -34,6 +36,9 @@ internal fun LocalNote.toNoteItem(
         tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
         fontFamily = fontFamily?.toUiNoteFontFamily(),
+        fontSize = fontSize,
+        textAlignment = (textAlignment ?: NoteTextAlignment.START).toTextAlign(),
+        lineHeightMultiplier = lineHeightMultiplier ?: 1f,
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,
         content = content.getShortUiContent(

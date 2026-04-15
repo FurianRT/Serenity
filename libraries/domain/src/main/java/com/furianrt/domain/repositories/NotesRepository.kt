@@ -3,6 +3,7 @@ package com.furianrt.domain.repositories
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
 import kotlinx.coroutines.flow.Flow
 import java.time.LocalDate
@@ -28,6 +29,16 @@ interface NotesRepository {
         color: NoteFontColor?,
         family: NoteFontFamily?,
         size: Int,
+    )
+
+    suspend fun updateNoteTextAlign(
+        noteId: String,
+        textAlignment: NoteTextAlignment?,
+    )
+
+    suspend fun updateNoteLineHeight(
+        noteId: String,
+        multiplier: Float?,
     )
 
     suspend fun setTemplate(noteId: String, isTemplate: Boolean)

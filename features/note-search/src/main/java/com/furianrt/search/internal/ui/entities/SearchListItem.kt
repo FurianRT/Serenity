@@ -1,6 +1,7 @@
 package com.furianrt.search.internal.ui.entities
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.style.TextAlign
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -40,6 +41,9 @@ internal sealed class SearchListItem(
         val tags: List<UiNoteTag>,
         val isSelected: Boolean,
         val fontFamily: UiNoteFontFamily?,
+        val fontSize: Int,
+        val textAlignment: TextAlign,
+        val lineHeightMultiplier: Float,
         val moodId: String?,
         val locationState: LocationState,
         val content: List<UiNoteContent>,

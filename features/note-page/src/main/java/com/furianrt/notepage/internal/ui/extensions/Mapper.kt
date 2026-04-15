@@ -4,6 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.ui.unit.dp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
@@ -34,12 +35,12 @@ internal fun LocalNote.toNoteItem(
     id = id,
     tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
     stickers = stickers.mapNotNull { it.toStickerItem(stickerIconProvider(it.typeId)) },
-    content = content.map { item ->
-        item.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily())
-    },
+    content = content.map { it.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily()) },
     fontColor = fontColor?.toUiNoteFontColor(),
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
+    lineHeightMultiplier = lineHeightMultiplier ?: 1f,
+    textAlignment = textAlignment ?: NoteTextAlignment.START,
     theme = theme,
     moodId = moodId,
     location = location,

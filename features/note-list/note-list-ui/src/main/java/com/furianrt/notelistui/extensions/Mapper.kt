@@ -6,12 +6,14 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.util.fastForEach
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteLocation
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.NoteTextSpan
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.composables.title.NoteTitleState.SpanType
@@ -189,6 +191,12 @@ fun List<LocalNote.Content>.getShortUiContent(
             .map(LocalNote.Content.Voice::toUiVoice)
         addAll(voices)
     }
+}
+
+fun NoteTextAlignment.toTextAlign() = when (this) {
+    NoteTextAlignment.START -> TextAlign.Start
+    NoteTextAlignment.CENTER -> TextAlign.Center
+    NoteTextAlignment.END -> TextAlign.End
 }
 
 fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {

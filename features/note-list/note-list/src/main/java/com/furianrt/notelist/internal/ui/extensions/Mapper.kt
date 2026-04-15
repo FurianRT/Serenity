@@ -2,11 +2,13 @@ package com.furianrt.notelist.internal.ui.extensions
 
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.extensions.getShortUiContent
 import com.furianrt.notelistui.extensions.toLocationState
 import com.furianrt.notelistui.extensions.toRegularUiNoteTag
+import com.furianrt.notelistui.extensions.toTextAlign
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.uikit.extensions.toDateString
 import java.time.LocalDate
@@ -39,6 +41,9 @@ internal fun LocalNote.toMainScreenNote(
         },
         tags = tags.take(3).map { it.toRegularUiNoteTag(isRemovable = false) },
         fontFamily = fontFamily?.toUiNoteFontFamily(),
+        textAlignment = (textAlignment ?: NoteTextAlignment.START).toTextAlign(),
+        lineHeightMultiplier = lineHeightMultiplier ?: 1f,
+        fontSize = fontSize,
         isPinned = isPinned,
         moodId = moodId,
         locationState = location?.toLocationState() ?: LocationState.Empty,

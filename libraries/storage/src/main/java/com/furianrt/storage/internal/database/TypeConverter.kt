@@ -8,6 +8,7 @@ import com.furianrt.domain.entities.NoteTextSpan
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import androidx.core.net.toUri
+import com.furianrt.storage.internal.database.notes.entities.EntryNote
 
 internal class TypeConverter {
 
@@ -46,4 +47,12 @@ internal class TypeConverter {
 
     @TypeConverter
     fun noteTextSpansToString(spans: List<NoteTextSpan>): String = Json.encodeToString(spans)
+
+    @TypeConverter
+    fun textAlignmentToInt(alignment: EntryNote.TextAlignment?): Int? = alignment?.value
+
+    @TypeConverter
+    fun intToTextAlignment(value: Int?): EntryNote.TextAlignment? {
+        return EntryNote.TextAlignment.fromValue(value)
+    }
 }

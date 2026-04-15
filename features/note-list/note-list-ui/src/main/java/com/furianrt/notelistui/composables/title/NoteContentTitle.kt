@@ -37,6 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -58,13 +59,15 @@ import kotlinx.coroutines.flow.debounce
 @Composable
 fun NoteContentTitle(
     title: UiNoteContent.Title,
+    textAlign: TextAlign,
+    lineHeightMultiplier: Float,
     modifier: Modifier = Modifier,
     hint: String? = null,
     color: Color? = null,
     fontFamily: FontFamily? = null,
     fontSize: TextUnit = MaterialTheme.typography.bodyMedium.fontSize,
     isInEditMode: Boolean = false,
-    onTitleFocusChange: (id: String, focused: Boolean) -> Unit = {_, _ -> },
+    onTitleFocusChange: (id: String, focused: Boolean) -> Unit = { _, _ -> },
     onTitleTextChange: (id: String) -> Unit = {},
     onCheckedListChange: () -> Unit = {},
 ) {
@@ -144,7 +147,9 @@ fun NoteContentTitle(
         color = color ?: MaterialTheme.colorScheme.onSurface,
         fontFamily = fontFamily ?: textStyle.fontFamily,
         fontSize = fontSize,
-        lineHeight = textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value),
+        textAlign = textAlign,
+        lineHeight = (textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value)) *
+                lineHeightMultiplier,
     )
 
     BasicTextField(
@@ -213,6 +218,8 @@ private fun NoteContentTitlePreview() {
                 ),
             ),
             hint = "Text",
+            textAlign = TextAlign.Start,
+            lineHeightMultiplier = 1f,
         )
     }
 }

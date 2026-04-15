@@ -6,6 +6,7 @@ import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
@@ -18,10 +19,13 @@ import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
 import com.furianrt.storage.internal.database.notes.entities.PartNoteId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsTemplate
+import com.furianrt.storage.internal.database.notes.entities.PartNoteLineHeightMultiplier
 import com.furianrt.storage.internal.database.notes.entities.PartNoteMoodId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
+import com.furianrt.storage.internal.database.notes.entities.PartNoteTextAlignment
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNote
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteText
+import com.furianrt.storage.internal.database.notes.mappers.toEntryTextAlignment
 import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import com.furianrt.storage.internal.database.notes.mappers.toSimpleNote
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
@@ -106,6 +110,30 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
     }
 
+    override suspend fun updateNoteTextAlign(
+        noteId: String,
+        textAlignment: NoteTextAlignment?,
+    ) {
+        noteDao.update(
+            PartNoteTextAlignment(
+                id = noteId,
+                textAlignment = textAlignment?.toEntryTextAlignment(),
+            )
+        )
+    }
+
+    override suspend fun updateNoteLineHeight(
+        noteId: String,
+        multiplier: Float?,
+    ) {
+        noteDao.update(
+            PartNoteLineHeightMultiplier(
+                id = noteId,
+                lineHeightMultiplier = multiplier,
+            )
+        )
+    }
+
     override suspend fun setTemplate(noteId: String, isTemplate: Boolean) {
         noteDao.update(PartNoteIsTemplate(noteId, isTemplate = isTemplate))
     }
@@ -153,6 +181,18 @@ internal class NotesRepositoryImp @Inject constructor(
                 font = appearanceDataStore.getDefaultNoteFont().first(),
                 fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
                 fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
+                textAlignment = if (appearanceDataStore.isKeepPrevTextAlignEnabled().first()) {
+                    appearanceDataStore.getDefaultNoteTextAlign().first()
+                } else {
+                    null
+                },
+                lineHeightMultiplier = if (
+                    appearanceDataStore.isKeepPrevLineHeightEnabled().first()
+                ) {
+                    appearanceDataStore.getDefaultNoteLineHeight().first()
+                } else {
+                    null
+                },
                 backgroundId = if (appearanceDataStore.isKeepPrevBackgroundEnabled().first()) {
                     appearanceDataStore.getDefaultNoteBackgroundColorId().first()
                 } else {

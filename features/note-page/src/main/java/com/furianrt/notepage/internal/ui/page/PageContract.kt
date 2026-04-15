@@ -2,6 +2,7 @@ package com.furianrt.notepage.internal.ui.page
 
 import android.net.Uri
 import com.furianrt.core.findInstance
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.entities.LocationState
@@ -26,6 +27,8 @@ internal sealed interface PageUiState {
         val fontFamily: UiNoteFontFamily?,
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
+        val textAlignment: NoteTextAlignment,
+        val lineHeightMultiplier: Float,
         val noteTheme: UiNoteTheme,
         val moodId: String?,
         val defaultMoodId: String?,
@@ -111,6 +114,9 @@ internal sealed interface PageEvent {
     data object OnCheckedListChange : PageEvent
     data class OnCustomBackgroundSelectRequest(val params: MediaSelectorState.Params) : PageEvent
     data object OnRequestTitleFocus : PageEvent
+    data object OnDecreaseLineHeightClick : PageEvent
+    data object OnIncreaseLineHeightClick : PageEvent
+    data class OnChangeTextAlightClickClick(val alignment: NoteTextAlignment) : PageEvent
 }
 
 internal sealed interface PageEffect {

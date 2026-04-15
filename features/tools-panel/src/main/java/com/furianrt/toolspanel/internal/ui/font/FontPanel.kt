@@ -12,6 +12,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,15 +38,20 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,11 +62,15 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -71,9 +81,11 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
@@ -91,6 +103,7 @@ internal var cachedImeHeight = 320.dp
 private const val FONT_CONTENT_TAG = "font_content"
 private const val MIN_FONT_SIZE = 8f
 private const val MAX_FONT_SIZE = 32f
+private val thumpSize = 14.dp
 
 @Composable
 internal fun FontTitleBar(
@@ -150,10 +163,14 @@ internal fun FontContent(
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
     fontSize: Int,
+    textAlignment: NoteTextAlignment,
     visible: Boolean,
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
+    onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
+    onIncreaseLineSpacingClick: () -> Unit,
+    onDecreaseLineSpacingClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<FontViewModel, FontViewModel.Factory>(
@@ -163,6 +180,7 @@ internal fun FontContent(
                 initialFontColor = fontColor,
                 initialFontFamily = fontFamily,
                 initialFontSize = fontSize,
+                initialTextAlignment = textAlignment,
             )
         },
     )
@@ -193,6 +211,10 @@ internal fun FontContent(
                             .makeText(context, emailErrorMessage, Toast.LENGTH_SHORT).apply {
                                 show()
                             }
+                    }
+
+                    is FontPanelEffect.SendAlignmentChangeAction -> {
+                        onTextAlignmentSelected(effect.alignment)
                     }
                 }
             }
@@ -251,6 +273,8 @@ internal fun FontContent(
                 onFontFamilySelected = onFontFamilySelected,
                 onFontColorSelected = onFontColorSelected,
                 onFontSizeSelected = onFontSizeSelected,
+                onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
+                onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
                 listState = listState,
                 colorsListState = colorsListState,
             )
@@ -264,6 +288,8 @@ private fun Content(
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
+    onIncreaseLineSpacingClick: () -> Unit,
+    onDecreaseLineSpacingClick: () -> Unit,
     onEvent: (event: FontPanelEvent) -> Unit,
     listState: LazyGridState,
     colorsListState: LazyListState,
@@ -290,22 +316,21 @@ private fun Content(
         columns = GridCells.Fixed(spanCount),
         contentPadding = PaddingValues(bottom = 16.dp),
     ) {
-        item(
-            span = { GridItemSpan(spanCount) }
-        ) {
-            SizeSelector(
-                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
-                size = uiState.selectedFontSize,
-                onSizeSelected = { size ->
+        item(span = { GridItemSpan(spanCount) }) {
+            FontFormatBlock(
+                textAlignment = uiState.textAlignment,
+                fontSize = uiState.selectedFontSize,
+                onFontSizeSelected = { size ->
                     onFontSizeSelected(size)
                     onEvent(FontPanelEvent.OnFontSizeSelected(size))
                 },
+                onTextAlignmentClick = { onEvent(FontPanelEvent.OnTextAlignmentClick) },
+                onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
+                onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
             )
         }
 
-        item(
-            span = { GridItemSpan(spanCount) }
-        ) {
+        item(span = { GridItemSpan(spanCount) }) {
             LazyRow(
                 state = colorsListState,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -379,59 +404,112 @@ private fun Content(
     }
 }
 
+@Composable
+private fun FontFormatBlock(
+    textAlignment: NoteTextAlignment,
+    fontSize: Int,
+    onFontSizeSelected: (size: Int) -> Unit,
+    onIncreaseLineSpacingClick: () -> Unit,
+    onDecreaseLineSpacingClick: () -> Unit,
+    onTextAlignmentClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 20.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        SizeSelector(
+            modifier = Modifier.weight(1f),
+            fontSize = fontSize,
+            onSizeSelected = onFontSizeSelected,
+        )
+        TextFormatButton(
+            modifier = Modifier.padding(top = 8.dp),
+            icon = when (textAlignment) {
+                NoteTextAlignment.START -> painterResource(R.drawable.ic_text_align_start)
+                NoteTextAlignment.CENTER -> painterResource(R.drawable.ic_text_align_center)
+                NoteTextAlignment.END -> painterResource(R.drawable.ic_text_align_end)
+            },
+            onClick = onTextAlignmentClick,
+        )
+        TextFormatButton(
+            modifier = Modifier.padding(top = 8.dp),
+            icon = painterResource(R.drawable.ic_decrease_line_spacing),
+            onClick = { onDecreaseLineSpacingClick() },
+        )
+        TextFormatButton(
+            modifier = Modifier.padding(top = 8.dp),
+            icon = painterResource(R.drawable.ic_increase_line_spacing),
+            onClick = { onIncreaseLineSpacingClick() },
+        )
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SizeSelector(
-    size: Int,
+    fontSize: Int,
     onSizeSelected: (size: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    var thumbPosition by remember { mutableIntStateOf(0) }
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            text = stringResource(R.string.font_panel_size_selector_title),
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        Slider(
             modifier = Modifier
-                .padding(top = 4.dp)
-                .weight(1f),
-            value = size.toFloat(),
-            onValueChange = { value ->
-                val newValue = value.toInt()
-                if (size != newValue) {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
-                    onSizeSelected(newValue)
-                }
-            },
-            valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
-            steps = MAX_FONT_SIZE.toInt() - MIN_FONT_SIZE.toInt() + 1,
-            track = { state ->
-                SliderTrack(
-                    progress = (state.value - state.valueRange.start) /
-                            (state.valueRange.endInclusive - state.valueRange.start),
+                .graphicsLayer { translationX = thumbPosition - size.width / 2f }
+                .background(
+                    color = MaterialTheme.colorScheme.tertiary,
+                    shape = RoundedCornerShape(6.dp),
                 )
-            },
-            thumb = { SliderThumb() },
+                .padding(2.dp),
+            text = fontSize.toString(),
+            style = MaterialTheme.typography.bodySmall,
         )
-        Text(
-            text = size.toString(),
-            style = MaterialTheme.typography.bodyMedium,
-        )
+        CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 0.dp) {
+            Slider(
+                modifier = Modifier.systemGestureExclusion(),
+                value = fontSize.toFloat(),
+                onValueChange = { value ->
+                    val newValue = value.toInt()
+                    if (fontSize != newValue) {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
+                        onSizeSelected(newValue)
+                    }
+                },
+                valueRange = MIN_FONT_SIZE..MAX_FONT_SIZE,
+                steps = MAX_FONT_SIZE.toInt() - MIN_FONT_SIZE.toInt() + 1,
+                track = { state ->
+                    SliderTrack(
+                        progress = (state.value - state.valueRange.start) /
+                                (state.valueRange.endInclusive - state.valueRange.start),
+                    )
+                },
+                thumb = {
+                    SliderThumb(
+                        modifier = Modifier.onLayoutRectChanged(
+                            debounceMillis = 0L,
+                            callback = { thumbPosition = it.positionInRoot.x },
+                        ),
+                    )
+                },
+            )
+        }
     }
 }
 
 @Composable
 private fun SliderTrack(
     progress: Float,
+    modifier: Modifier = Modifier,
 ) {
     val trackColor = MaterialTheme.colorScheme.surfaceContainer
     Box(
-        modifier = Modifier
+        modifier = modifier
             .padding(bottom = 2.dp)
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
@@ -446,12 +524,32 @@ private fun SliderTrack(
 }
 
 @Composable
-private fun SliderThumb() {
+private fun SliderThumb(
+    modifier: Modifier = Modifier,
+) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
-            .size(14.dp)
+            .size(thumpSize)
             .background(MaterialTheme.colorScheme.surfaceContainer)
+    )
+}
+
+@Composable
+private fun TextFormatButton(
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.tertiary)
+            .clickable(onClick = onClick)
+            .padding(4.dp),
+        painter = icon,
+        tint = MaterialTheme.colorScheme.onSurface,
+        contentDescription = null,
     )
 }
 
@@ -528,6 +626,7 @@ private fun MissingFontMessage(
 private fun PanelPreview() {
     SerenityTheme {
         FontTitleBar(
+            modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
             showKeyBoardButton = true,
             onDoneClick = {},
             requestTitleFocus = {},
@@ -547,11 +646,14 @@ private fun ContentPreview() {
                 fontFamilies = listOf(UiNoteFontFamily.NotoSans),
                 fontColors = UiNoteFontColor.entries,
                 defaultFontFamily = UiNoteFontFamily.NotoSans,
+                textAlignment = NoteTextAlignment.START,
             ),
             onEvent = {},
             onFontFamilySelected = {},
             onFontColorSelected = {},
             onFontSizeSelected = {},
+            onDecreaseLineSpacingClick = {},
+            onIncreaseLineSpacingClick = {},
             listState = rememberLazyGridState(),
             colorsListState = rememberLazyListState(),
         )

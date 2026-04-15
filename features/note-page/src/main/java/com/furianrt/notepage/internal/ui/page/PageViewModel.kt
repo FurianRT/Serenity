@@ -11,6 +11,7 @@ import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.MediaSortingResult
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
@@ -153,6 +154,8 @@ private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val MEDIA_SORTING_DIALOG_ID = 2
 private const val TITLE_FOCUS_DELAY = 150L
 private const val MAX_STICKERS_COUNT = 50
+private const val MIN_LINE_HEIGHT_MULTIPLIER = 0.5f
+private const val MAX_LINE_HEIGHT_MULTIPLIER = 1.5f
 
 @OptIn(DelicateCoroutinesApi::class)
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
@@ -367,7 +370,13 @@ internal class PageViewModel @AssistedInject constructor(
                 resetStickersEditing()
                 tryRequestMediaPermissions(event.params)
             }
+
             is OnRequestTitleFocus -> focusLastFocusedTitle()
+            is PageEvent.OnDecreaseLineHeightClick -> onDecreaseLineHeightClick()
+            is PageEvent.OnIncreaseLineHeightClick -> onIncreaseLineHeightClick()
+            is PageEvent.OnChangeTextAlightClickClick -> {
+                onChangeTextAlightClickClick(event.alignment)
+            }
         }
     }
 
@@ -381,6 +390,38 @@ internal class PageViewModel @AssistedInject constructor(
             MEDIA_SORTING_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 onMediaSortingResult(result.data as MediaSortingResult)
             }
+        }
+    }
+
+    private fun onChangeTextAlightClickClick(alignment: NoteTextAlignment) {
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(textAlignment = alignment)
+        }
+    }
+
+    private fun onDecreaseLineHeightClick() {
+        _state.updateState<PageUiState.Success> { successState ->
+            val multiplier = if (successState.lineHeightMultiplier > MIN_LINE_HEIGHT_MULTIPLIER) {
+                successState.lineHeightMultiplier - 0.1f
+            } else {
+                successState.lineHeightMultiplier
+            }
+            successState.copy(
+                lineHeightMultiplier = multiplier,
+            )
+        }
+    }
+
+    private fun onIncreaseLineHeightClick() {
+        _state.updateState<PageUiState.Success> { successState ->
+            val multiplier = if (successState.lineHeightMultiplier < MAX_LINE_HEIGHT_MULTIPLIER) {
+                successState.lineHeightMultiplier + 0.1f
+            } else {
+                successState.lineHeightMultiplier
+            }
+            successState.copy(
+                lineHeightMultiplier = multiplier,
+            )
         }
     }
 
@@ -1099,6 +1140,8 @@ internal class PageViewModel @AssistedInject constructor(
                         fontFamily = note.fontFamily,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
+                        textAlignment = note.textAlignment,
+                        lineHeightMultiplier = note.lineHeightMultiplier,
                         noteTheme = note.theme ?: UiThemeColor.fromId(
                             appearanceRepository.getAppThemeColorId().first(),
                         ).toNoteTheme(),
@@ -1152,6 +1195,8 @@ internal class PageViewModel @AssistedInject constructor(
                 fontFamily = fontFamily,
                 fontColor = fontColor,
                 fontSize = fontSize,
+                textAlignment = state.textAlignment,
+                lineHeightMultiplier = state.lineHeightMultiplier,
                 backgroundId = state.noteTheme.takeUnless { it.isAppTheme }?.colorId,
                 backgroundImageId = state.noteTheme.takeUnless { it.isAppTheme }?.imageId,
                 moodId = state.moodId,
@@ -1170,6 +1215,8 @@ internal class PageViewModel @AssistedInject constructor(
         appearanceRepository.setDefaultNoteFontSize(state.fontSize)
         appearanceRepository.setDefaultNoteBackgroundColorId(state.noteTheme.colorId)
         appearanceRepository.setDefaultNoteBackgroundImageId(state.noteTheme.imageId)
+        appearanceRepository.setDefaultNoteTextAlign(state.textAlignment)
+        appearanceRepository.setDefaultNoteLineHeight(state.lineHeightMultiplier)
     }
 
     private fun updateFontFamily(family: UiNoteFontFamily?) {

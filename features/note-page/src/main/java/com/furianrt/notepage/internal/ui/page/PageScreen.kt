@@ -76,6 +76,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.furianrt.core.findInstance
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
@@ -97,6 +98,7 @@ import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notelistui.entities.toContentAlignment
 import com.furianrt.notelistui.entities.toContentScale
+import com.furianrt.notelistui.extensions.toTextAlign
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
@@ -537,6 +539,9 @@ private fun SuccessScreen(
             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
             onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
+            onTextAlignmentSelected = { onEvent(PageEvent.OnChangeTextAlightClickClick(it)) },
+            onDecreaseLineSpacingClick = { onEvent(PageEvent.OnDecreaseLineHeightClick) },
+            onIncreaseLineSpacingClick = { onEvent(PageEvent.OnIncreaseLineHeightClick) },
             onBulletListClick = { onEvent(PageEvent.OnSelectBulletListClick) },
             onStickersClick = { onEvent(PageEvent.OnSelectStickersClick) },
             onStickerSelected = { selectedSticker ->
@@ -732,6 +737,8 @@ private fun ContentItems(
                             color = uiState.fontColor?.value,
                             fontFamily = uiState.fontFamily?.regular,
                             fontSize = uiState.fontSize.sp,
+                            textAlign = uiState.textAlignment.toTextAlign(),
+                            lineHeightMultiplier = uiState.lineHeightMultiplier,
                             hint = if (index == 0) {
                                 stringResource(R.string.note_title_hint_text)
                             } else {
@@ -875,6 +882,9 @@ private fun Panel(
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
+    onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
+    onIncreaseLineSpacingClick: () -> Unit,
+    onDecreaseLineSpacingClick: () -> Unit,
     onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
     onBulletListClick: () -> Unit,
@@ -902,6 +912,7 @@ private fun Panel(
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
                     fontSize = uiState.fontSize,
+                    textAlignment = uiState.textAlignment,
                     noteTheme = uiState.noteTheme,
                     background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
@@ -917,6 +928,9 @@ private fun Panel(
                     onFontColorSelected = onFontColorSelected,
                     onFontSizeSelected = onFontSizeSelected,
                     onFontStyleClick = onFontStyleClick,
+                    onTextAlignmentSelected = onTextAlignmentSelected,
+                    onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
+                    onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
                     onStickersClick = onStickersClick,
                     onStickerSelected = onStickerSelected,
                     onBulletListClick = onBulletListClick,

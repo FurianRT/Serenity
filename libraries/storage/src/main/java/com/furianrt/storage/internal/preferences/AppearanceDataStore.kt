@@ -4,10 +4,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
+import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -29,10 +31,14 @@ private val KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID =
     stringPreferencesKey("default_note_background_color_id")
 private val KEY_DEFAULT_NOTE_BACKGROUND_IMAGE_ID =
     stringPreferencesKey("default_note_background_image_id")
+private val KEY_DEFAULT_NOTE_TEXT_ALIGN = intPreferencesKey("default_note_text_align")
+private val KEY_DEFAULT_NOTE_LINE_HEIGHT = floatPreferencesKey("default_note_line_height")
 private val KEY_AUTO_DETECT_LOCATION = booleanPreferencesKey("auto_detect_location")
 private val KEY_AUTO_DETECT_LOCATION_ASKED = booleanPreferencesKey("auto_detect_location_asked")
 private val KEY_MINIMALISTIC_HOME_SCREEN = booleanPreferencesKey("minimalistic_home_screen")
 private val KEY_PREV_NOTE_BACKGROUND = booleanPreferencesKey("prev_note_background")
+private val KEY_PREV_NOTE_TEXT_ALIGNMENT = booleanPreferencesKey("prev_note_text_alignment")
+private val KEY_PREV_NOTE_LINE_HEIGHT = booleanPreferencesKey("prev_note_line_height")
 
 @Singleton
 internal class AppearanceDataStore @Inject constructor(
@@ -155,4 +161,34 @@ internal class AppearanceDataStore @Inject constructor(
     suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean) {
         dataStore.edit { prefs -> prefs[KEY_PREV_NOTE_BACKGROUND] = enabled }
     }
+
+    fun isKeepPrevTextAlignEnabled(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_PREV_NOTE_TEXT_ALIGNMENT] ?: true }
+
+    suspend fun setKeepPrevTextAlignEnabled(enabled: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_PREV_NOTE_TEXT_ALIGNMENT] = enabled }
+    }
+
+    fun isKeepPrevLineHeightEnabled(): Flow<Boolean> = dataStore.data
+        .map { prefs -> prefs[KEY_PREV_NOTE_LINE_HEIGHT] ?: true }
+
+    suspend fun setKeepPrevLineHeightEnabled(enabled: Boolean) {
+        dataStore.edit { prefs -> prefs[KEY_PREV_NOTE_LINE_HEIGHT] = enabled }
+    }
+
+    suspend fun setDefaultNoteTextAlign(textAlignment: EntryNote.TextAlignment) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_TEXT_ALIGN] = textAlignment.value }
+    }
+
+    fun getDefaultNoteTextAlign(): Flow<EntryNote.TextAlignment> = dataStore.data.map { prefs ->
+        EntryNote.TextAlignment.fromValue(prefs[KEY_DEFAULT_NOTE_TEXT_ALIGN])
+            ?: EntryNote.TextAlignment.START
+    }
+
+    suspend fun setDefaultNoteLineHeight(multiplier: Float) {
+        dataStore.edit { prefs -> prefs[KEY_DEFAULT_NOTE_LINE_HEIGHT] = multiplier }
+    }
+
+    fun getDefaultNoteLineHeight(): Flow<Float> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_LINE_HEIGHT] ?: 1f }
 }

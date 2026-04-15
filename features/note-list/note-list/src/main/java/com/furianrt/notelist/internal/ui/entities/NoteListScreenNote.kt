@@ -1,6 +1,7 @@
 package com.furianrt.notelist.internal.ui.entities
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.text.style.TextAlign
 import com.furianrt.notelistui.entities.LocationState
 import com.furianrt.notelistui.entities.UiNoteContent
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -12,6 +13,9 @@ internal data class NoteListScreenNote(
     val date: Date,
     val tags: List<UiNoteTag>,
     val fontFamily: UiNoteFontFamily?,
+    val textAlignment: TextAlign,
+    val lineHeightMultiplier: Float,
+    val fontSize: Int,
     val moodId: String?,
     val locationState: LocationState,
     val isPinned: Boolean,

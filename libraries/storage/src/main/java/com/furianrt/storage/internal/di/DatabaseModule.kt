@@ -150,6 +150,12 @@ internal interface DatabaseModule {
                     )
                 }
             }
+            val MIGRATION_6_7 = object : Migration(6, 7) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL("ALTER TABLE Notes ADD COLUMN text_alignment INTEGER")
+                    db.execSQL("ALTER TABLE Notes ADD COLUMN line_height_multiplier REAL")
+                }
+            }
             return SerenityDatabase
                 .create(
                     context = context,
@@ -159,6 +165,7 @@ internal interface DatabaseModule {
                         MIGRATION_3_4,
                         MIGRATION_4_5,
                         MIGRATION_5_6,
+                        MIGRATION_6_7,
                     ),
                 )
         }

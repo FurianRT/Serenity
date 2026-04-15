@@ -33,8 +33,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.furianrt.mood.api.composables.MoodButton
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.composables.title.NoteTitleState
@@ -64,6 +67,9 @@ fun NoteListItem(
     content: List<UiNoteContent>,
     tags: List<UiNoteTag>,
     fontFamily: UiNoteFontFamily?,
+    fontSize: TextUnit,
+    textAlign: TextAlign,
+    lineHeightMultiplier: Float,
     date: String,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
@@ -146,15 +152,21 @@ fun NoteListItem(
                 content.forEachIndexed { index, item ->
                     when (item) {
                         is UiNoteContent.Title -> Text(
-                            modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp, end = 8.dp, top = 8.dp),
                             text = item.state.annotatedString,
                             maxLines = MAX_TEXT_LINES,
+                            fontSize = fontSize,
+                            textAlign = textAlign,
                             overflow = TextOverflow.Ellipsis,
                             style = MaterialTheme.typography.bodyMedium.copy(
                                 fontFamily = fontFamily?.regular
                                     ?: MaterialTheme.typography.bodyMedium.fontFamily,
+                                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
+                                        * lineHeightMultiplier
 
-                                ),
+                            ),
                         )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
@@ -265,6 +277,9 @@ private fun NoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
+            textAlign = TextAlign.Start,
+            fontSize = 12.sp,
+            lineHeightMultiplier = 1f,
             content = generatePreviewContent(),
             hazeState = HazeState(),
         )
@@ -286,6 +301,9 @@ private fun PinnedNoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Start,
+            lineHeightMultiplier = 1f,
             isPinned = true,
             content = generatePreviewContent(),
             hazeState = HazeState(),
@@ -308,6 +326,9 @@ private fun SelectedNoteItemPreview() {
                 ),
             ),
             fontFamily = UiNoteFontFamily.NotoSans,
+            fontSize = 12.sp,
+            textAlign = TextAlign.Start,
+            lineHeightMultiplier = 1f,
             isPinned = true,
             isSelected = true,
             content = generatePreviewContent(),

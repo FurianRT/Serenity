@@ -29,6 +29,12 @@ internal class EntryNote(
     @ColumnInfo(name = FIELD_FONT_SIZE)
     val fontSize: Int,
 
+    @ColumnInfo(name = FIELD_TEXT_ALIGNMENT)
+    val textAlignment: TextAlignment?,
+
+    @ColumnInfo(name = FIELD_LINE_HEIGHT_MULTIPLIER)
+    val lineHeightMultiplier: Float?,
+
     @ColumnInfo(name = FIELD_BACKGROUND_ID)
     val backgroundId: String?,
 
@@ -47,6 +53,21 @@ internal class EntryNote(
     @ColumnInfo(name = FIELD_IS_TEMPLATE)
     val isTemplate: Boolean
 ) {
+    enum class TextAlignment(val value: Int) {
+        START(-1),
+        CENTER(0),
+        END(1);
+
+        companion object {
+            fun fromValue(value: Int?): TextAlignment? = when (value) {
+                START.value -> START
+                CENTER.value -> CENTER
+                END.value -> END
+                else -> null
+            }
+        }
+    }
+
     companion object {
         const val TABLE_NAME = "Notes"
         const val FIELD_ID = "id"
@@ -55,6 +76,8 @@ internal class EntryNote(
         const val FIELD_FONT = "font"
         const val FIELD_FONT_COLOR = "font_color"
         const val FIELD_FONT_SIZE = "font_size"
+        const val FIELD_TEXT_ALIGNMENT = "text_alignment"
+        const val FIELD_LINE_HEIGHT_MULTIPLIER = "line_height_multiplier"
         const val FIELD_BACKGROUND_ID = "background_id"
         const val FIELD_BACKGROUND_IMAGE_ID = "background_image_id"
         const val FIELD_MOOD_ID = "mood_id"
@@ -143,4 +166,22 @@ internal class PartNoteMoodId(
 
     @ColumnInfo(name = EntryNote.FIELD_MOOD_ID)
     val moodId: String?,
+)
+
+@Entity
+internal class PartNoteTextAlignment(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_TEXT_ALIGNMENT)
+    val textAlignment: EntryNote.TextAlignment?,
+)
+
+@Entity
+internal class PartNoteLineHeightMultiplier(
+    @ColumnInfo(name = EntryNote.FIELD_ID)
+    val id: String,
+
+    @ColumnInfo(name = EntryNote.FIELD_LINE_HEIGHT_MULTIPLIER)
+    val lineHeightMultiplier: Float?,
 )

@@ -5,6 +5,7 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteLocation
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -29,6 +30,8 @@ class UpdateNoteContentUseCase @Inject constructor(
         fontFamily: NoteFontFamily?,
         fontColor: NoteFontColor?,
         fontSize: Int,
+        textAlignment: NoteTextAlignment?,
+        lineHeightMultiplier: Float?,
         backgroundId: String?,
         backgroundImageId: String?,
         moodId: String?,
@@ -83,6 +86,9 @@ class UpdateNoteContentUseCase @Inject constructor(
 
             notesRepository.updateNoteText(noteId, content)
             notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
+
+            notesRepository.updateNoteTextAlign(noteId, textAlignment)
+            notesRepository.updateNoteLineHeight(noteId, lineHeightMultiplier)
 
             notesRepository.updateNoteBackgroundId(
                 noteId = noteId,

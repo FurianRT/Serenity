@@ -2,6 +2,7 @@ package com.furianrt.domain.repositories
 
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteTextAlignment
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
@@ -19,14 +20,11 @@ interface AppearanceRepository {
     fun getDefaultNoteFontColor(): Flow<NoteFontColor?>
     suspend fun setDefaultNoteFontColor(color: NoteFontColor?)
 
-    fun getDefaultNoteFontSize(): Flow<Int>
     suspend fun setDefaultNoteFontSize(size: Int)
 
     fun getDefaultNoteMoodId(): Flow<String?>
     suspend fun setDefaultNoteMoodId(moodId: String)
 
-    fun getDefaultNoteBackgroundColorId(): Flow<String?>
-    fun getDefaultNoteBackgroundImageId(): Flow<String?>
     suspend fun setDefaultNoteBackgroundColorId(colorId: String?)
     suspend fun setDefaultNoteBackgroundImageId(imageId: String?)
 
@@ -40,4 +38,14 @@ interface AppearanceRepository {
 
     fun isKeepPrevBackgroundEnabled(): Flow<Boolean>
     suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean)
+
+    fun isKeepPrevTextAlignEnabled(): Flow<Boolean>
+    suspend fun setKeepPrevTextAlignEnabled(enabled: Boolean)
+
+    fun isKeepPrevLineHeightEnabled(): Flow<Boolean>
+    suspend fun setKeepPrevLineHeightEnabled(enabled: Boolean)
+
+    suspend fun setDefaultNoteTextAlign(textAlignment: NoteTextAlignment)
+
+    suspend fun setDefaultNoteLineHeight(multiplier: Float)
 }

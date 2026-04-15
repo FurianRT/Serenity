@@ -35,6 +35,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -86,6 +87,7 @@ fun ActionsPanel(
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
     fontSize: Int,
+    textAlignment: NoteTextAlignment,
     noteTheme: UiNoteTheme?,
     background: Color,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
@@ -97,9 +99,12 @@ fun ActionsPanel(
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
-    onStickerSelected: (sticker: Sticker) -> Unit,
     onFontStyleClick: () -> Unit,
+    onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
+    onIncreaseLineSpacingClick: () -> Unit,
+    onDecreaseLineSpacingClick: () -> Unit,
     onStickersClick: () -> Unit,
+    onStickerSelected: (sticker: Sticker) -> Unit,
     onBulletListClick: () -> Unit,
     onNoPositionError: () -> Unit,
     onBackgroundClick: () -> Unit,
@@ -306,10 +311,14 @@ fun ActionsPanel(
                 fontColor = fontColor,
                 fontFamily = fontFamily,
                 fontSize = fontSize,
+                textAlignment = textAlignment,
                 visible = isFontPanelVisible,
                 onFontFamilySelected = onFontFamilySelected,
                 onFontColorSelected = onFontColorSelected,
                 onFontSizeSelected = onFontSizeSelected,
+                onTextAlignmentSelected = onTextAlignmentSelected,
+                onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
+                onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
             )
 
             StickersContent(

@@ -2,7 +2,9 @@ package com.furianrt.storage.internal.repositories
 
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.storage.internal.database.notes.mappers.toEntryTextAlignment
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -43,8 +45,6 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.setDefaultNoteFontColor(color)
     }
 
-    override fun getDefaultNoteFontSize(): Flow<Int> = appearanceDataStore.getDefaultNoteFontSize()
-
     override suspend fun setDefaultNoteFontSize(size: Int) {
         appearanceDataStore.setDefaultNoteFontSize(size)
     }
@@ -57,16 +57,8 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.setDefaultNoteMoodId(moodId)
     }
 
-    override fun getDefaultNoteBackgroundColorId(): Flow<String?> {
-        return appearanceDataStore.getDefaultNoteBackgroundColorId()
-    }
-
     override suspend fun setDefaultNoteBackgroundColorId(colorId: String?) {
         appearanceDataStore.setDefaultNoteBackgroundColorId(colorId)
-    }
-
-    override fun getDefaultNoteBackgroundImageId(): Flow<String?> {
-        return appearanceDataStore.getDefaultNoteBackgroundImageId()
     }
 
     override suspend fun setDefaultNoteBackgroundImageId(imageId: String?) {
@@ -103,5 +95,29 @@ internal class AppearanceRepositoryImp @Inject constructor(
 
     override suspend fun setKeepPrevBackgroundEnabled(enabled: Boolean) {
         appearanceDataStore.setKeepPrevBackgroundEnabled(enabled)
+    }
+
+    override fun isKeepPrevTextAlignEnabled(): Flow<Boolean> {
+        return appearanceDataStore.isKeepPrevTextAlignEnabled()
+    }
+
+    override suspend fun setKeepPrevTextAlignEnabled(enabled: Boolean) {
+        appearanceDataStore.setKeepPrevTextAlignEnabled(enabled)
+    }
+
+    override fun isKeepPrevLineHeightEnabled(): Flow<Boolean> {
+        return appearanceDataStore.isKeepPrevLineHeightEnabled()
+    }
+
+    override suspend fun setKeepPrevLineHeightEnabled(enabled: Boolean) {
+        appearanceDataStore.setKeepPrevLineHeightEnabled(enabled)
+    }
+
+    override suspend fun setDefaultNoteLineHeight(multiplier: Float) {
+        appearanceDataStore.setDefaultNoteLineHeight(multiplier)
+    }
+
+    override suspend fun setDefaultNoteTextAlign(textAlignment: NoteTextAlignment) {
+        appearanceDataStore.setDefaultNoteTextAlign(textAlignment.toEntryTextAlignment())
     }
 }

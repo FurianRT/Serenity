@@ -1,6 +1,7 @@
 package com.furianrt.toolspanel.internal.ui.font
 
 import androidx.compose.runtime.Immutable
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 
@@ -12,12 +13,14 @@ internal data class FontPanelUiState(
     val selectedFontFamily: UiNoteFontFamily?,
     val selectedFontSize: Int,
     val defaultFontFamily: UiNoteFontFamily?,
+    val textAlignment: NoteTextAlignment,
 )
 
 internal sealed interface FontPanelEvent {
     data class OnFontColorSelected(val color: UiNoteFontColor?) : FontPanelEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily?) : FontPanelEvent
     data class OnFontSizeSelected(val size: Int) : FontPanelEvent
+    data object OnTextAlignmentClick : FontPanelEvent
     data object OnFontSendFeedbackClick : FontPanelEvent
 }
 
@@ -26,4 +29,6 @@ internal sealed interface FontPanelEffect {
         val supportEmail: String,
         val text: String,
     ) : FontPanelEffect
+
+    data class SendAlignmentChangeAction(val alignment: NoteTextAlignment) : FontPanelEffect
 }

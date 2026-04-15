@@ -7,6 +7,8 @@ class SimpleNote(
     val font: NoteFontFamily?,
     val fontColor: NoteFontColor?,
     val fontSize: Int,
+    val textAlignment: NoteTextAlignment?,
+    val lineHeightMultiplier: Float?,
     val backgroundId: String?,
     val backgroundImageId: String?,
     val moodId: String?,

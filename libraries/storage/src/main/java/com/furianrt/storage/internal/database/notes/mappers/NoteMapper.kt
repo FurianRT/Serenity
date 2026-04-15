@@ -1,6 +1,7 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
@@ -29,6 +30,8 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     font = font,
     fontColor = fontColor,
     fontSize = fontSize,
+    textAlignment = textAlignment?.toEntryTextAlignment(),
+    lineHeightMultiplier = lineHeightMultiplier,
     backgroundId = backgroundId,
     backgroundImageId = backgroundImageId,
     moodId = moodId,
@@ -45,6 +48,8 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     fontFamily = note.font,
     fontColor = note.fontColor,
     fontSize = note.fontSize,
+    textAlignment = note.textAlignment?.toNoteTextAlignment(),
+    lineHeightMultiplier = note.lineHeightMultiplier,
     backgroundId = note.backgroundId,
     backgroundImageId = note.backgroundImageId,
     moodId = note.moodId,
@@ -87,6 +92,8 @@ internal fun EntryNote.toSimpleNote() = SimpleNote(
     font = font,
     fontColor = fontColor,
     fontSize = fontSize,
+    textAlignment = textAlignment?.toNoteTextAlignment(),
+    lineHeightMultiplier = lineHeightMultiplier,
     backgroundId = backgroundId,
     backgroundImageId = backgroundImageId,
     moodId = moodId,
@@ -177,4 +184,16 @@ private fun getFirstTagType(text: String): FirstTagType {
         .minByOrNull(TypeIndex::index)?.type
 
     return firstType ?: FirstTagType.NONE
+}
+
+internal fun NoteTextAlignment.toEntryTextAlignment() = when (this) {
+    NoteTextAlignment.START -> EntryNote.TextAlignment.START
+    NoteTextAlignment.CENTER -> EntryNote.TextAlignment.CENTER
+    NoteTextAlignment.END -> EntryNote.TextAlignment.END
+}
+
+internal fun EntryNote.TextAlignment.toNoteTextAlignment() = when (this) {
+    EntryNote.TextAlignment.START -> NoteTextAlignment.START
+    EntryNote.TextAlignment.CENTER -> NoteTextAlignment.CENTER
+    EntryNote.TextAlignment.END -> NoteTextAlignment.END
 }

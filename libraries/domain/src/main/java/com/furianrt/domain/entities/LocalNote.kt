@@ -19,6 +19,8 @@ data class LocalNote(
     val fontFamily: NoteFontFamily?,
     val fontColor: NoteFontColor?,
     val fontSize: Int,
+    val textAlignment: NoteTextAlignment? = null,
+    val lineHeightMultiplier: Float? = null,
     val backgroundId: String? = null,
     val backgroundImageId: String? = null,
     val moodId: String? = null,

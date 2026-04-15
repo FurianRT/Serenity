@@ -44,9 +44,11 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -352,6 +354,9 @@ private fun SuccessContent(
                     },
                     isSelected = item.isSelected,
                     fontFamily = item.fontFamily,
+                    fontSize = item.fontSize.sp,
+                    textAlign = item.textAlignment,
+                    lineHeightMultiplier = item.lineHeightMultiplier,
                     moodId = item.moodId,
                     locationState = item.locationState,
                     hazeState = hazeState,
@@ -448,6 +453,9 @@ private fun SuccessFilledQueryPreview() {
                         ),
                         isSelected = false,
                         fontFamily = null,
+                        fontSize = 12,
+                        textAlignment = TextAlign.Start,
+                        lineHeightMultiplier = 1f,
                         moodId = null,
                         locationState = LocationState.Empty,
                         content = listOf(

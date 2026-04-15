@@ -11,6 +11,7 @@ import androidx.room.Upsert
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.PartNoteLineHeightMultiplier
 import com.furianrt.storage.internal.database.notes.entities.PartNoteBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
@@ -19,6 +20,7 @@ import com.furianrt.storage.internal.database.notes.entities.PartNoteIsPinned
 import com.furianrt.storage.internal.database.notes.entities.PartNoteIsTemplate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteMoodId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteText
+import com.furianrt.storage.internal.database.notes.entities.PartNoteTextAlignment
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -52,6 +54,12 @@ internal interface NoteDao {
 
     @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
     suspend fun update(data: PartNoteMoodId)
+
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteTextAlignment)
+
+    @Update(entity = EntryNote::class, onConflict = OnConflictStrategy.IGNORE)
+    suspend fun update(data: PartNoteLineHeightMultiplier)
 
     @Delete(entity = EntryNote::class)
     suspend fun delete(data: PartNoteId)
