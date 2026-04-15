@@ -394,12 +394,14 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onChangeTextAlightClickClick(alignment: NoteTextAlignment) {
+        hasContentChanged = true
         _state.updateState<PageUiState.Success> { successState ->
             successState.copy(textAlignment = alignment)
         }
     }
 
     private fun onDecreaseLineHeightClick() {
+        hasContentChanged = true
         _state.updateState<PageUiState.Success> { successState ->
             val multiplier = if (successState.lineHeightMultiplier > MIN_LINE_HEIGHT_MULTIPLIER) {
                 successState.lineHeightMultiplier - 0.1f
@@ -413,6 +415,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun onIncreaseLineHeightClick() {
+        hasContentChanged = true
         _state.updateState<PageUiState.Success> { successState ->
             val multiplier = if (successState.lineHeightMultiplier < MAX_LINE_HEIGHT_MULTIPLIER) {
                 successState.lineHeightMultiplier + 0.1f

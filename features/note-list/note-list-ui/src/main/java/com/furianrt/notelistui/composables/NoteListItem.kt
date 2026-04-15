@@ -151,23 +151,24 @@ fun NoteListItem(
             ) {
                 content.forEachIndexed { index, item ->
                     when (item) {
-                        is UiNoteContent.Title -> Text(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                            text = item.state.annotatedString,
-                            maxLines = MAX_TEXT_LINES,
-                            fontSize = fontSize,
-                            textAlign = textAlign,
-                            overflow = TextOverflow.Ellipsis,
-                            style = MaterialTheme.typography.bodyMedium.copy(
-                                fontFamily = fontFamily?.regular
-                                    ?: MaterialTheme.typography.bodyMedium.fontFamily,
-                                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight
-                                        * lineHeightMultiplier
-
-                            ),
-                        )
+                        is UiNoteContent.Title -> {
+                            val style = MaterialTheme.typography.bodyMedium
+                            Text(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                                text = item.state.annotatedString,
+                                maxLines = MAX_TEXT_LINES,
+                                fontSize = fontSize,
+                                textAlign = textAlign,
+                                overflow = TextOverflow.Ellipsis,
+                                fontFamily = fontFamily?.regular ?: style.fontFamily,
+                                lineHeight = (style.lineHeight *
+                                        (fontSize.value / style.fontSize.value)) *
+                                        lineHeightMultiplier,
+                                style = style,
+                            )
+                        }
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
                             modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
