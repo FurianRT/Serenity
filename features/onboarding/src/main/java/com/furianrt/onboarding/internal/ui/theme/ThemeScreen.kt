@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +38,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @Composable
@@ -83,6 +85,7 @@ private fun Content(
     pagerState: PagerState,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     Column(
         modifier = modifier.padding(top = 40.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -122,6 +125,7 @@ private fun Content(
                     scaleY = scale
                 },
                 color = uiState.themes[page % uiState.themes.count()],
+                onClick = { scope.launch { pagerState.animateScrollToPage(page) } },
             )
         }
     }

@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
@@ -41,6 +42,7 @@ import com.furianrt.uikit.R as uiR
 @Composable
 internal fun ThemePreviewPage(
     color: UiThemeColor,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hazeState = rememberHazeState()
@@ -60,7 +62,8 @@ internal fun ThemePreviewPage(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
                     shape = RoundedCornerShape(16.dp),
-                ),
+                )
+                .clickableNoRipple(onClick = onClick),
         ) {
             AppBackground(
                 modifier = Modifier.hazeSource(hazeState),
@@ -258,5 +261,6 @@ private fun Preview() {
     ThemePreviewPage(
         modifier = Modifier.width(200.dp),
         color = UiThemeColor.DISTANT_CASTLE_GREEN,
+        onClick = {},
     )
 }
