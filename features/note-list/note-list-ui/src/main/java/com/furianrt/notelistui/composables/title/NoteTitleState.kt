@@ -533,10 +533,7 @@ class NoteTitleState(
 
         return oldValue.copy(
             annotatedString = newAnnotatedString,
-            selection = TextRange(
-                (oldValue.selection.min - bullet.length)
-                    .coerceAtLeast(0)
-            ),
+            selection = TextRange((oldValue.selection.min - bullet.length).coerceAtLeast(0)),
         )
     }
 
@@ -565,10 +562,13 @@ class NoteTitleState(
 
         val startPart = newValue.annotatedString.substring(
             startIndex = 0,
-            endIndex = endIndex.coerceAtMost(newValue.text.length),
+            endIndex = endIndex.coerceAtMost(annotatedString.length),
         )
 
         val bulletIndex = startPart.lastIndexOf(bullet)
+        if (bulletIndex == -1) {
+            return newValue
+        }
 
         val newAnnotatedString = buildAnnotatedString {
             append(newValue.annotatedString.subSequence(startIndex = 0, endIndex = bulletIndex))
