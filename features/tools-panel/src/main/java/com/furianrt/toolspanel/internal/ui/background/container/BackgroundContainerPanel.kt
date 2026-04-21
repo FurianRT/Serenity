@@ -339,7 +339,7 @@ internal fun BackgroundContent(
                         is BackgroundContainerEffect.ClosePanel -> Unit
                         is BackgroundContainerEffect.ShowKeyboard -> Unit
                         is BackgroundContainerEffect.ScrollToPage -> {
-                            pagerState.scrollToPage(effect.index)
+                            pagerState.animateScrollToPage(effect.index)
                         }
 
                         is BackgroundContainerEffect.OpenMediaSelector -> {
