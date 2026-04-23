@@ -43,7 +43,7 @@ fun MoodButton(
     val iconRes = remember(selectedMood, defaultMoodId) {
         if (selectedMood == null) {
             val pack = moodPacks.find { pack -> pack.moods.any { it.id == defaultMoodId } }
-            pack?.icon ?: R.drawable.mood_raccoon_default
+            pack?.icon ?: R.drawable.mood_pack_5_normal
         } else {
             selectedMood.icon
         }

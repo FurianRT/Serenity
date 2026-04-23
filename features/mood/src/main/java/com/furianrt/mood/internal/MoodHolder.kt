@@ -7,8 +7,8 @@ import com.furianrt.mood.internal.entites.MoodPack
 internal object MoodHolder {
 
     fun getMoodPacks(): List<MoodPack> = listOf(
-        pack4(),
         pack5(),
+        pack4(),
         raccoonPack(),
         rabbitPack(),
         catPack(),
