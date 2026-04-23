@@ -549,7 +549,10 @@ private fun SuccessScreen(
                     PageEvent.OnStickerSelected(
                         sticker = StickerItem.build(
                             typeId = selectedSticker.id,
-                            icon = selectedSticker.icon,
+                            icon = when (val icon = selectedSticker.icon) {
+                                is Sticker.Icon.Res -> StickerItem.Icon.Res(icon.res)
+                                is Sticker.Icon.Uri -> StickerItem.Icon.Uri(icon.uri)
+                            },
                             scrollOffset = state.listState.value,
                             viewPortHeight = state.listState.viewportSize,
                             toolsPanelHeight = toolsPanelHeight.pxToDp(density),

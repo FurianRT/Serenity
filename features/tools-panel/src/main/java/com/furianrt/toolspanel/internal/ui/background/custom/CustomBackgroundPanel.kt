@@ -62,7 +62,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -271,7 +270,7 @@ private fun ListContent(
                 )
             }
             item(key = ADD_BUTTON_ITEM_KEY) {
-                AbbBackgroundItem(
+                AddBackgroundItem(
                     modifier = Modifier.animateItem(),
                     onClick = { onEvent(CustomBackgroundEvent.OnSelectImageClick) },
                 )
@@ -385,7 +384,7 @@ private fun ThemeItem(
 }
 
 @Composable
-private fun AbbBackgroundItem(
+private fun AddBackgroundItem(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -413,7 +412,7 @@ private fun AbbBackgroundItem(
 }
 
 @Composable
-private fun HintItem(
+fun HintItem(
     modifier: Modifier = Modifier,
 ) {
     Text(
@@ -433,7 +432,7 @@ private fun LoadingContent(
     Box(modifier = modifier.fillMaxSize())
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
 private fun EmptyPreview() {
     SerenityTheme {

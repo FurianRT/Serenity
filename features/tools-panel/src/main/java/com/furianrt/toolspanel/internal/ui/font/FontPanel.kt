@@ -107,13 +107,11 @@ private val thumpSize = 14.dp
 
 @Composable
 internal fun FontTitleBar(
-    showKeyBoardButton: Boolean,
     requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val showKeyBoardButtonState = remember { showKeyBoardButton }
 
     Box(
         modifier = modifier
@@ -121,17 +119,15 @@ internal fun FontTitleBar(
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
-        if (showKeyBoardButtonState) {
-            ButtonKeyboard(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .align(Alignment.CenterStart),
-                onClick = {
-                    requestTitleFocus()
-                    keyboardController?.show()
-                },
-            )
-        }
+        ButtonKeyboard(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .align(Alignment.CenterStart),
+            onClick = {
+                requestTitleFocus()
+                keyboardController?.show()
+            },
+        )
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.font_panel_title),
@@ -627,7 +623,6 @@ private fun PanelPreview() {
     SerenityTheme {
         FontTitleBar(
             modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
-            showKeyBoardButton = true,
             onDoneClick = {},
             requestTitleFocus = {},
         )

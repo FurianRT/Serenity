@@ -1,6 +1,6 @@
 package com.furianrt.domain.entities
 
-class LocalTag(
+data class LocalTag(
     val title: String,
     val noteIds: Set<String>,
 )

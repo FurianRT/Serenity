@@ -52,7 +52,7 @@ internal fun PopUpMenu(
         containerColor = Color.Transparent,
         offset = DpOffset(x = 8.dp, y = -(8).dp),
         shape = RoundedCornerShape(8.dp),
-        shadowElevation = 8.dp,
+        shadowElevation = 2.dp,
         expanded = expanded,
         onDismissRequest = onDismissRequest,
     ) {

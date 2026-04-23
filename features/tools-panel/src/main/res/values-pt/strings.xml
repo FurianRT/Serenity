@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Dá vida às tuas notas</string>
     <string name="background_panel_custom_background_hint">Adiciona a tua própria imagem de fundo</string>
     <string name="background_panel_remove_background_hint">O fundo pode ser removido pressionando longamente</string>
+
+    <string name="stickers_panel_custom_stickers_title">Seus adesivos aqui</string>
+    <string name="stickers_panel_custom_stickers_hint">Envie os seus e use nas notas</string>
+    <string name="stickers_panel_remove_sticker_hint">Você pode remover um adesivo com um toque longo</string>
 </resources>

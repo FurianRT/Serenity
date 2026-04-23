@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Dale vida a tus notas</string>
     <string name="background_panel_custom_background_hint">Añade tu propia imagen de fondo</string>
     <string name="background_panel_remove_background_hint">El fondo se puede quitar con una pulsación larga</string>
+
+    <string name="stickers_panel_custom_stickers_title">Tus pegatinas aquí</string>
+    <string name="stickers_panel_custom_stickers_hint">Sube las tuyas y úsalas en las notas</string>
+    <string name="stickers_panel_remove_sticker_hint">Puedes eliminar una pegatina con una pulsación larga</string>
 </resources>

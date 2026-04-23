@@ -49,7 +49,6 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
     fun onEvent(event: CustomBackgroundEvent) {
         when (event) {
             is CustomBackgroundEvent.OnSelectImageClick -> onSelectImageClick()
-            is CustomBackgroundEvent.OnClearBackgroundClick -> onClearBackgroundClick()
             is CustomBackgroundEvent.OnThemeSelected -> onThemeSelected(event.theme)
             is CustomBackgroundEvent.OnDeleteThemeClick -> onDeleteThemeClick(event.theme)
         }
@@ -59,10 +58,6 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
         val currentThemeId = selectedThemeProvider.selectedThemeState.value?.imageId
         val theme = theme.takeIf { currentThemeId != theme.imageId }
         _effect.tryEmit(CustomBackgroundEffect.OnThemeSelected(theme))
-    }
-
-    private fun onClearBackgroundClick() {
-        _effect.tryEmit(CustomBackgroundEffect.OnThemeSelected(null))
     }
 
     private fun onDeleteThemeClick(theme: UiNoteTheme.Image.Picture) {

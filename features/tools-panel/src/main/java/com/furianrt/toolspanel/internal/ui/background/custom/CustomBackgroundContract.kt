@@ -16,7 +16,6 @@ internal sealed interface CustomBackgroundEvent {
     data object OnSelectImageClick : CustomBackgroundEvent
     data class OnThemeSelected(val theme: UiNoteTheme.Image.Picture) : CustomBackgroundEvent
     data class OnDeleteThemeClick(val theme: UiNoteTheme.Image.Picture) : CustomBackgroundEvent
-    data object OnClearBackgroundClick : CustomBackgroundEvent
 }
 
 internal sealed interface CustomBackgroundEffect {

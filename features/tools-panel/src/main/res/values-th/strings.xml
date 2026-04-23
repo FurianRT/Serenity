@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">ทำให้โน้ตของคุณมีชีวิตชีวา</string>
     <string name="background_panel_custom_background_hint">เพิ่มรูปภาพพื้นหลังของคุณเอง</string>
     <string name="background_panel_remove_background_hint">สามารถลบพื้นหลังได้ด้วยการกดค้าง</string>
+
+    <string name="stickers_panel_custom_stickers_title">สติกเกอร์ของคุณที่นี่</string>
+    <string name="stickers_panel_custom_stickers_hint">อัปโหลดของคุณเองและใช้ในบันทึก</string>
+    <string name="stickers_panel_remove_sticker_hint">คุณสามารถลบสติกเกอร์ได้ด้วยการกดค้าง</string>
 </resources>

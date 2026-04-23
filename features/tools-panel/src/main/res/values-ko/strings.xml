@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">노트를 더 생동감 있게 만들어봐</string>
     <string name="background_panel_custom_background_hint">나만의 배경 이미지를 추가해</string>
     <string name="background_panel_remove_background_hint">배경은 길게 눌러서 제거할 수 있어</string>
+
+    <string name="stickers_panel_custom_stickers_title">여기에 스티커</string>
+    <string name="stickers_panel_custom_stickers_hint">나만의 스티커를 업로드해 노트에 사용하세요</string>
+    <string name="stickers_panel_remove_sticker_hint">스티커를 길게 눌러 삭제할 수 있습니다</string>
 </resources>

@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.ui.extensions
 
-import androidx.annotation.DrawableRes
 import androidx.compose.ui.unit.dp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
@@ -19,6 +18,7 @@ import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
+import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.colorScheme
@@ -27,9 +27,9 @@ import java.util.UUID
 
 private const val APP_THEME_POSTFIX = "app_theme"
 
-internal fun LocalNote.toNoteItem(
+internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
-    stickerIconProvider: (typeId: String) -> Int?,
+    stickerIconProvider: suspend (typeId: String) -> Sticker.Icon?,
     theme: UiNoteTheme?,
 ) = NoteItem(
     id = id,
@@ -105,14 +105,17 @@ private fun UiThemeImage.ScaleType.toNoteThemeScaleType() = when (this) {
 }
 
 private fun LocalNote.Sticker.toStickerItem(
-    @DrawableRes icon: Int?,
+    icon: Sticker.Icon?,
 ): StickerItem? = if (icon == null) {
     null
 } else {
     StickerItem(
         id = id,
         typeId = typeId,
-        icon = icon,
+        icon = when (icon) {
+            is Sticker.Icon.Res -> StickerItem.Icon.Res(icon.res)
+            is Sticker.Icon.Uri -> StickerItem.Icon.Uri(icon.uri)
+        },
         state = StickerState(
             initialScale = scale,
             initialRotation = rotation,

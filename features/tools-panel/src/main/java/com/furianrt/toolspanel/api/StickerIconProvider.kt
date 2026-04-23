@@ -1,5 +1,7 @@
 package com.furianrt.toolspanel.api
 
+import com.furianrt.toolspanel.api.entities.Sticker
+
 interface StickerIconProvider {
-    fun getIcon(stickerId: String): Int?
+    suspend fun getIcon(stickerId: String): Sticker.Icon?
 }

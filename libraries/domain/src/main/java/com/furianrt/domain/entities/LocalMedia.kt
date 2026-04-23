@@ -2,7 +2,7 @@ package com.furianrt.domain.entities
 
 import android.net.Uri
 
-class LocalMedia(
+data class LocalMedia(
     val uri: Uri,
     val name: String,
     val type: Type,

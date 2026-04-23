@@ -10,6 +10,7 @@ import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.DeleteUnusedDataUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,7 @@ internal class BackupDataManager @Inject constructor(
     private val notesRepository: NotesRepository,
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
+    private val stickersRepository: StickersRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val deleteUnusedDataUseCase: DeleteUnusedDataUseCase,
     private val backupDataStore: BackupDataStore,
@@ -72,6 +74,11 @@ internal class BackupDataManager @Inject constructor(
             return
         }
 
+        if (!uploadCustomStickers(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
         val localNotes = notesRepository.getAllNotes().first()
         if (localNotes.isEmpty()) {
             backupRepository.setLastSyncDate(ZonedDateTime.now())
@@ -103,7 +110,9 @@ internal class BackupDataManager @Inject constructor(
 
     private suspend fun deleteUnusedMediaFiles(remoteFiles: List<RemoteFile>): Boolean {
         val remoteMediaFiles = remoteFiles.filter {
-            it !is RemoteFile.NotesData && it !is RemoteFile.NoteBackgroundsData
+            it !is RemoteFile.NotesData &&
+                    it !is RemoteFile.NoteBackgroundsData &&
+                    it !is RemoteFile.CustomStickersData
         }
         val localMediaFilesIds = getLocalFilesIds()
         val remoteFilesToDelete = remoteMediaFiles.filter { !localMediaFilesIds.contains(it.name) }
@@ -219,8 +228,32 @@ internal class BackupDataManager @Inject constructor(
                 errorTracker.trackNonFatalError(error)
                 return false
             }
-        val oldNotesData = remoteFiles.filterIsInstance<RemoteFile.NoteBackgroundsData>()
-        backupRepository.deleteFiles(oldNotesData)
+        val oldBackgroundsData = remoteFiles.filterIsInstance<RemoteFile.NoteBackgroundsData>()
+        backupRepository.deleteFiles(oldBackgroundsData)
+            .onFailure(errorTracker::trackNonFatalError)
+
+        return true
+    }
+
+    private suspend fun uploadCustomStickers(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val localStickers = stickersRepository.getAllCustomStickers().first()
+        localStickers.forEach { sticker ->
+            if (remoteFiles.none { it.name == sticker.id }) {
+                backupRepository.uploadCustomSticker(sticker).onFailure { error ->
+                    errorTracker.trackNonFatalError(error)
+                    return false
+                }
+            }
+        }
+        backupRepository.uploadCustomStickersData(localStickers)
+            .onFailure { error ->
+                errorTracker.trackNonFatalError(error)
+                return false
+            }
+        val oldStickersData = remoteFiles.filterIsInstance<RemoteFile.CustomStickersData>()
+        backupRepository.deleteFiles(oldStickersData)
             .onFailure(errorTracker::trackNonFatalError)
 
         return true

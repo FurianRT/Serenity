@@ -18,4 +18,8 @@
     <string name="background_panel_custom_background_title">Bring your notes to life</string>
     <string name="background_panel_custom_background_hint">Add a custom background image</string>
     <string name="background_panel_remove_background_hint">You can remove a background with a long press</string>
+
+    <string name="stickers_panel_custom_stickers_title">Your stickers here</string>
+    <string name="stickers_panel_custom_stickers_hint">Upload your own and use them in notes</string>
+    <string name="stickers_panel_remove_sticker_hint">You can remove a sticker with a long press</string>
 </resources>

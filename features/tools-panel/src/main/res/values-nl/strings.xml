@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Breng je notities tot leven</string>
     <string name="background_panel_custom_background_hint">Voeg je eigen achtergrondafbeelding toe</string>
     <string name="background_panel_remove_background_hint">Achtergrond kan verwijderd worden door lang ingedrukt te houden</string>
+
+    <string name="stickers_panel_custom_stickers_title">Jouw stickers hier</string>
+    <string name="stickers_panel_custom_stickers_hint">Upload je eigen en gebruik ze in notities</string>
+    <string name="stickers_panel_remove_sticker_hint">Je kunt een sticker verwijderen door lang te drukken</string>
 </resources>

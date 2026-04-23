@@ -8,6 +8,7 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
@@ -21,8 +22,10 @@ import javax.inject.Singleton
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
 private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
+private const val STICKERS_FOLDER = "stickers"
 private const val IMAGE_COMPRESS_AMOUNT = 50
 private const val BACKGROUND_COMPRESS_AMOUNT = 40
+private const val STICKER_COMPRESS_AMOUNT = 10
 
 internal class SavedMediaData(
     val name: String,
@@ -77,75 +80,22 @@ internal class AppMediaSource @Inject constructor(
         noteId: String,
         mediaId: String,
         mediaName: String,
-    ): File? = withContext(dispatchers.io) {
-        try {
-            val file = File(context.filesDir, "$noteId/$MEDIA_FOLDER/$mediaId$mediaName")
-
-            file.parentFile?.mkdirs()
-
-            if (file.exists()) {
-                file.delete()
-            }
-
-            if (file.createNewFile()) {
-                return@withContext file
-            } else {
-                throw IOException("Can't create file")
-            }
-        } catch (e: Exception) {
-            errorTracker.trackNonFatalError(e)
-            null
-        }
-    }
+    ): File? = createFile(folder = "$noteId/$MEDIA_FOLDER/$mediaId$mediaName")
 
     suspend fun createVoiceFile(
         noteId: String,
         voiceId: String,
-    ): File? = withContext(dispatchers.io) {
-        try {
-            val file = File(context.filesDir, "$noteId/$VOICE_FOLDER/$voiceId")
-
-            file.parentFile?.mkdirs()
-
-            if (file.exists()) {
-                file.delete()
-            }
-
-            if (file.createNewFile()) {
-                return@withContext file
-            } else {
-                errorTracker.trackNonFatalError(IOException("Can't create file"))
-                return@withContext null
-            }
-        } catch (e: Exception) {
-            errorTracker.trackNonFatalError(e)
-            null
-        }
-    }
+    ): File? = createFile(folder = "$noteId/$VOICE_FOLDER/$voiceId")
 
     suspend fun createNoteBackgroundFile(
         id: String,
         name: String,
-    ): File? = withContext(dispatchers.io) {
-        try {
-            val file = File(context.filesDir, "$NOTE_BACKGROUND_FOLDER/$id$name")
+    ): File? = createFile(folder = "$NOTE_BACKGROUND_FOLDER/$id$name")
 
-            file.parentFile?.mkdirs()
-
-            if (file.exists()) {
-                file.delete()
-            }
-
-            if (file.createNewFile()) {
-                return@withContext file
-            } else {
-                throw IOException("Can't create file")
-            }
-        } catch (e: Exception) {
-            errorTracker.trackNonFatalError(e)
-            null
-        }
-    }
+    suspend fun createCustomStickerFile(
+        id: String,
+        name: String,
+    ): File? = createFile(folder = "$STICKERS_FOLDER/$id$name")
 
     suspend fun deleteVoiceFile(
         noteId: String,
@@ -257,6 +207,88 @@ internal class AppMediaSource @Inject constructor(
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)
             false
+        }
+    }
+
+    suspend fun saveSticker(
+        sticker: CustomSticker,
+    ): SavedMediaData? = withContext(dispatchers.io) {
+        val inputStream = context.contentResolver.openInputStream(sticker.uri)
+            ?: return@withContext null
+
+        val bitmap = withContext(dispatchers.default) {
+            inputStream.use(BitmapFactory::decodeStream)
+        } ?: return@withContext null
+
+        val stickerNewName = sticker.name.replaceFileExtension(".webp")
+        val destFile = createCustomStickerFile(
+            id = sticker.id,
+            name = stickerNewName,
+        ) ?: return@withContext null
+
+        withContext(dispatchers.default) {
+            destFile.outputStream().use { outputStream ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.WEBP_LOSSY,
+                    STICKER_COMPRESS_AMOUNT,
+                    outputStream,
+                )
+            }
+        }
+
+        try {
+            getExifInterface(sticker.uri)?.let { sourceExif ->
+                val destExif = ExifInterface(destFile)
+                destExif.setAttribute(
+                    ExifInterface.TAG_ORIENTATION,
+                    sourceExif.getAttribute(ExifInterface.TAG_ORIENTATION),
+                )
+                destExif.saveAttributes()
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+        }
+
+        return@withContext SavedMediaData(
+            name = stickerNewName,
+            uri = getRelativeUri(destFile),
+        )
+    }
+
+    suspend fun deleteStickerFile(
+        sticker: CustomSticker,
+    ): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(
+                context.filesDir,
+                "$STICKERS_FOLDER/${sticker.id}${sticker.name}"
+            ).delete()
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            false
+        }
+    }
+
+    private suspend fun createFile(
+        folder: String,
+    ): File? = withContext(dispatchers.io) {
+        try {
+            val file = File(context.filesDir, folder)
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                throw IOException("Can't create file")
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            null
         }
     }
 

@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.ui.stickers
 
-import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -45,6 +44,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.request.CachePolicy
 import coil3.request.ImageRequest
 import coil3.size.Precision
 import com.furianrt.notepage.R
@@ -151,10 +151,10 @@ internal fun StickerScreenItem(
                             interval = 8.dp,
                         )
                     }
+                    .padding(2.dp)
                     .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
-                icon = item.icon,
-                isFlipped = item.state.isFlipped,
-                onClick = { onClick(item) },
+                item = item,
+                onClick = onClick,
             )
 
             if (item.state.isEditing) {
@@ -271,24 +271,24 @@ private fun calculateRotationAngle(center: Offset, start: Offset, current: Offse
 
 @Composable
 private fun Sticker(
-    @DrawableRes icon: Int,
-    isFlipped: Boolean,
-    onClick: () -> Unit,
+    item: StickerItem,
+    onClick: (item: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val request = remember(icon) {
+    val request = remember(item.iconData) {
         ImageRequest.Builder(context)
             .precision(Precision.EXACT)
-            .data(icon)
+            .diskCachePolicy(CachePolicy.DISABLED)
+            .data(item.iconData)
             .build()
     }
-    val scaleXAnim by animateFloatAsState(targetValue = if (isFlipped) -1f else 1f)
+    val scaleXAnim by animateFloatAsState(targetValue = if (item.state.isFlipped) -1f else 1f)
     AsyncImage(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
             .graphicsLayer { scaleX = scaleXAnim }
-            .clickableNoRipple(onClick),
+            .clickableNoRipple { onClick(item) },
         model = request,
         contentDescription = null,
     )
@@ -350,7 +350,7 @@ private fun Preview() {
             item = StickerItem(
                 id = "",
                 typeId = "",
-                icon = uiR.drawable.ic_folder,
+                icon = StickerItem.Icon.Res(uiR.drawable.ic_folder),
                 state = StickerState(initialIsEditing = true),
             )
         )

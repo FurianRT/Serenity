@@ -1100,7 +1100,7 @@ internal class PageViewModel @AssistedInject constructor(
                 .map { note ->
                     note?.toNoteItem(
                         appFont = note.fontFamily ?: appearanceRepository.getAppFont().first(),
-                        stickerIconProvider = stickerIconProvider::getIcon,
+                        stickerIconProvider = { stickerIconProvider.getIcon(it) },
                         theme = noteThemeProvider.findTheme(
                             colorId = note.backgroundId,
                             imageId = note.backgroundImageId,

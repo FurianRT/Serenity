@@ -1,14 +1,18 @@
 package com.furianrt.storage.internal.managers
 
+import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
+import com.furianrt.storage.internal.database.notes.entities.PartCustomStickerUri
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundUri
 import com.furianrt.storage.internal.database.notes.entities.PartVideoUri
+import com.furianrt.storage.internal.database.notes.mappers.toCustomSticker
 import com.furianrt.storage.internal.database.notes.mappers.toDomain
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
@@ -24,6 +28,7 @@ internal class MediaSaver @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val customBackgroundDao: CustomBackgroundDao,
+    private val customStickerDao: CustomStickerDao,
     private val appMediaSource: AppMediaSource,
 ) {
     private val canceledEntries = mutableSetOf<String>()
@@ -32,6 +37,10 @@ internal class MediaSaver @Inject constructor(
     suspend fun saveAll() {
         customBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
             saveNoteBackground(entry.toDomain())
+        }
+
+        customStickerDao.getUnsavedStickers().first().forEach { entry ->
+            saveSticker(entry.toCustomSticker())
         }
 
         videoDao.getUnsavedVideos().first().forEach { entry ->
@@ -56,6 +65,12 @@ internal class MediaSaver @Inject constructor(
     suspend fun cancel(background: NoteCustomBackground) {
         if (!isBackgroundSaved(background.id)) {
             addCanceledEntry(background.id)
+        }
+    }
+
+    suspend fun cancel(sticker: CustomSticker) {
+        if (!isStickerSaved(sticker.id)) {
+            addCanceledEntry(sticker.id)
         }
     }
 
@@ -137,12 +152,47 @@ internal class MediaSaver @Inject constructor(
         )
     }
 
+    private suspend fun saveSticker(
+        sticker: CustomSticker,
+    ) = mutex.withLock {
+        if (isStickerSaved(sticker.id)) {
+            return@withLock
+        }
+        if (isEntryCanceled(sticker.id)) {
+            removeCanceledEntry(sticker.id)
+            return@withLock
+        }
+
+        val savedStickerData = appMediaSource.saveSticker(sticker) ?: return@withLock
+
+        if (sticker.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            appMediaSource.deleteFile(sticker.uri)
+        }
+
+        if (isEntryCanceled(sticker.id)) {
+            removeCanceledEntry(sticker.id)
+            appMediaSource.deleteStickerFile(sticker)
+            return@withLock
+        }
+
+        customStickerDao.update(
+            PartCustomStickerUri(
+                id = sticker.id,
+                name = savedStickerData.name,
+                uri = savedStickerData.uri,
+                isSaved = true,
+            )
+        )
+    }
+
     private suspend fun isMediaSaved(media: LocalNote.Content.Media): Boolean = when (media) {
         is LocalNote.Content.Image -> imageDao.isSaved(media.id)
         is LocalNote.Content.Video -> videoDao.isSaved(media.id)
     }
 
     private suspend fun isBackgroundSaved(id: String): Boolean = customBackgroundDao.isSaved(id)
+
+    private suspend fun isStickerSaved(id: String): Boolean = customStickerDao.isSaved(id)
 
     @Synchronized
     private fun isEntryCanceled(id: String): Boolean = canceledEntries.contains(id)

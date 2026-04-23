@@ -1,4 +1,4 @@
-package com.furianrt.toolspanel.internal.ui.stickers
+package com.furianrt.toolspanel.internal.ui.stickers.container
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -7,14 +7,12 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,10 +23,6 @@ import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyGridState
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.PagerDefaults
@@ -39,9 +33,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -70,31 +62,40 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import coil3.compose.AsyncImage
+import com.furianrt.domain.repositories.StickersRepository
+import com.furianrt.mediaselector.api.MediaSelectorState
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
-import com.furianrt.toolspanel.internal.entities.StickerPack
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
+import com.furianrt.toolspanel.internal.ui.stickers.custom.CustomStickersPanel
+import com.furianrt.toolspanel.internal.ui.stickers.extensions.toContainerPack
+import com.furianrt.toolspanel.internal.ui.stickers.regular.RegularStickersPanel
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.extensions.drawRightShadow
-import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
 import kotlin.math.max
 
+private const val NOTE_STICKERS_TAG = "note_panel_stickers_container"
 private val TITLE_LIST_ITEM_SIZE = 36.dp
 
 @Composable
 internal fun StickersTitleBar(
-    showKeyBoardButton: Boolean,
+    noteId: String,
     requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: StickersViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<StickersContainerViewModel, StickersContainerViewModel.Factory>(
+        key = NOTE_STICKERS_TAG + noteId,
+        creationCallback = { it.create(noteId = noteId) },
+    )
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -105,10 +106,10 @@ internal fun StickersTitleBar(
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->
-                if (effect is StickersPanelEffect.ClosePanel) {
+                if (effect is StickersContainerEffect.ClosePanel) {
                     onDoneClickState()
                 }
-                if (effect is StickersPanelEffect.ShowKeyboard) {
+                if (effect is StickersContainerEffect.ShowKeyboard) {
                     requestTitleFocus()
                     keyboardController?.show()
                 }
@@ -118,23 +119,20 @@ internal fun StickersTitleBar(
     TitleContent(
         modifier = modifier,
         uiState = uiState,
-        showKeyBoardButton = showKeyBoardButton,
         onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
 private fun TitleContent(
-    uiState: StickersPanelUiState,
-    showKeyBoardButton: Boolean,
+    uiState: StickersContainerUiState,
     modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit = {},
+    onEvent: (event: StickersContainerEvent) -> Unit,
 ) {
     val pagerState = rememberPagerState(
         initialPage = uiState.pagerState.currentPage,
         pageCount = { uiState.packs.size },
     )
-    val showKeyBoardButtonState = remember { showKeyBoardButton }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     LaunchedEffect(uiState.pagerState, pagerState) {
@@ -156,19 +154,17 @@ private fun TitleContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (showKeyBoardButtonState) {
-                ButtonKeyboard(
-                    modifier = Modifier.drawBehind {
-                        if (pagerState.canScrollBackward) {
-                            drawRightShadow(
-                                color = shadowColor,
-                                elevation = 1.dp,
-                            )
-                        }
-                    },
-                    onClick = { onEvent(StickersPanelEvent.OnKeyboardClick) },
-                )
-            }
+            ButtonKeyboard(
+                modifier = Modifier.drawBehind {
+                    if (pagerState.canScrollBackward) {
+                        drawRightShadow(
+                            color = shadowColor,
+                            elevation = 1.dp,
+                        )
+                    }
+                },
+                onClick = { onEvent(StickersContainerEvent.OnKeyboardClick) },
+            )
 
             HorizontalPager(
                 modifier = Modifier.weight(1f),
@@ -181,13 +177,13 @@ private fun TitleContent(
                     pagerSnapDistance = PagerSnapDistance.atMost(5),
                 ),
                 contentPadding = PaddingValues(
-                    horizontal = if (showKeyBoardButtonState) 4.dp else 12.dp,
+                    horizontal = 4.dp,
                 )
             ) { page ->
                 TitleItem(
                     pack = uiState.packs[page],
                     isSelected = uiState.pagerState.currentPage == page,
-                    onClick = { onEvent(StickersPanelEvent.OnTitleStickerPackClick(page)) },
+                    onClick = { onEvent(StickersContainerEvent.OnTitleStickerPackClick(page)) },
                 )
             }
             ButtonClose(
@@ -196,7 +192,7 @@ private fun TitleContent(
                         drawLeftShadow(color = shadowColor)
                     }
                 },
-                onClick = { onEvent(StickersPanelEvent.OnCloseClick) },
+                onClick = { onEvent(StickersContainerEvent.OnCloseClick) },
             )
         }
         HorizontalDivider(
@@ -211,9 +207,9 @@ private fun TitleContent(
 
 @Composable
 private fun TitleItem(
-    pack: StickerPack,
+    pack: StickersContainerUiState.Pack,
     isSelected: Boolean,
-    onClick: (pack: StickerPack) -> Unit,
+    onClick: (pack: StickersContainerUiState.Pack) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val underlineColor = MaterialTheme.colorScheme.primaryContainer
@@ -243,13 +239,21 @@ private fun TitleItem(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun StickersContent(
+    noteId: String,
     visible: Boolean,
     onStickerSelected: (sticker: Sticker) -> Unit,
+    openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val viewModel: StickersViewModel = hiltViewModel()
+    val viewModel = hiltViewModel<StickersContainerViewModel, StickersContainerViewModel.Factory>(
+        key = NOTE_STICKERS_TAG + noteId,
+        creationCallback = { it.create(noteId = noteId) },
+    )
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    val onStickerSelectedState by rememberUpdatedState(onStickerSelected)
+    val openMediaSelectorState by rememberUpdatedState(openMediaSelector)
 
     val density = LocalDensity.current
 
@@ -261,18 +265,23 @@ internal fun StickersContent(
     var imeHeight by remember { mutableStateOf(cachedImeHeight) }
     val contentHeight = imeHeight - density.run { navigationBarsHeight.toDp() }
 
-    val contentPageStates = remember { mutableStateMapOf<Int, LazyGridState>() }
-
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
             .collect { effect ->
                 when (effect) {
-                    is StickersPanelEffect.ClosePanel -> Unit
-                    is StickersPanelEffect.ShowKeyboard -> Unit
-                    is StickersPanelEffect.SelectSticker -> onStickerSelected(effect.sticker)
-                    is StickersPanelEffect.ScrollContentToIndex -> {
+                    is StickersContainerEffect.ClosePanel -> Unit
+                    is StickersContainerEffect.ShowKeyboard -> Unit
+                    is StickersContainerEffect.ScrollContentToIndex -> {
                         uiState.pagerState.animateScrollToPage(effect.index)
+                    }
+
+                    is StickersContainerEffect.SelectSticker -> {
+                        onStickerSelectedState(effect.sticker)
+                    }
+
+                    is StickersContainerEffect.OpenMediaSelector -> {
+                        openMediaSelectorState(effect.params)
                     }
                 }
             }
@@ -305,7 +314,6 @@ internal fun StickersContent(
                 modifier = Modifier.height(contentHeight),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
-                listStateProvider = { contentPageStates.getOrPut(it) { rememberLazyGridState() } },
             )
         }
     }
@@ -313,79 +321,29 @@ internal fun StickersContent(
 
 @Composable
 private fun Content(
-    uiState: StickersPanelUiState,
+    uiState: StickersContainerUiState,
+    onEvent: (event: StickersContainerEvent) -> Unit,
     modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit = {},
-    listStateProvider: @Composable (index: Int) -> LazyGridState,
 ) {
     HorizontalPager(
         modifier = modifier,
         state = uiState.pagerState,
     ) { index ->
-        ContentPage(
-            stickers = uiState.packs[index].stickers,
-            onEvent = onEvent,
-            listState = listStateProvider(index)
-        )
-    }
-}
+        when (val pack = uiState.packs[index]) {
+            is StickersContainerUiState.Pack.Regular -> RegularStickersPanel(
+                noteId = uiState.noteId,
+                packId = pack.id,
+                onStickerSelected = { onEvent(StickersContainerEvent.OnStickerSelected(it)) },
+            )
 
-@Composable
-private fun ContentPage(
-    stickers: List<Sticker>,
-    modifier: Modifier = Modifier,
-    onEvent: (event: StickersPanelEvent) -> Unit,
-    listState: LazyGridState,
-) {
-    val showShadow by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
-        }
-    }
-    val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    LazyVerticalGrid(
-        modifier = modifier
-            .fillMaxWidth()
-            .clickableNoRipple {}
-            .drawBehind {
-                if (showShadow) {
-                    drawTopInnerShadow(color = shadowColor)
-                }
-            },
-        state = listState,
-        columns = GridCells.Fixed(4),
-        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 4.dp),
-    ) {
-        items(
-            count = stickers.count(),
-            key = { stickers[it].id },
-        ) { index ->
-            ContentItem(
-                sticker = stickers[index],
-                onClick = { onEvent(StickersPanelEvent.OnStickerSelected(it)) },
+            is StickersContainerUiState.Pack.Custom -> CustomStickersPanel(
+                noteId = uiState.noteId,
+                onStickerSelected = { onEvent(StickersContainerEvent.OnStickerSelected(it)) },
+                openMediaSelector = {
+                    onEvent(StickersContainerEvent.OnOpenMediaSelectorRequest(it))
+                },
             )
         }
-    }
-}
-
-@Composable
-private fun ContentItem(
-    sticker: Sticker,
-    onClick: (sticker: Sticker) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable { onClick(sticker) }
-            .padding(horizontal = 2.dp, vertical = 8.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        AsyncImage(
-            model = sticker.icon,
-            contentDescription = null,
-        )
     }
 }
 
@@ -432,34 +390,29 @@ private fun Modifier.drawSelection(
     },
 )
 
-
 @Composable
 @PreviewWithBackground
 private fun PanelPreview() {
-    val packs = StickersHolder().getStickersPacks()
+    val packs = StickersHolder(StickersRepository.mock()).getStickersPacks()
     SerenityTheme {
         TitleContent(
-            uiState = StickersPanelUiState(
-                packs = packs,
-                pagerState = rememberPagerState(pageCount = { packs.size })
+            modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
+            uiState = StickersContainerUiState(
+                noteId = "",
+                packs = buildList {
+                    add(
+                        StickersContainerUiState.Pack.Custom(
+                            icon = uiR.drawable.ic_add,
+                        )
+                    )
+                    addAll(packs.map { it.toContainerPack() })
+                },
+                pagerState = rememberPagerState(
+                    pageCount = { packs.size },
+                    initialPage = 1,
+                )
             ),
-            showKeyBoardButton = true,
-        )
-    }
-}
-
-@Composable
-@PreviewWithBackground
-private fun ContentPreview() {
-    val listState = rememberLazyGridState()
-    val packs = StickersHolder().getStickersPacks()
-    SerenityTheme {
-        Content(
-            uiState = StickersPanelUiState(
-                packs = packs,
-                pagerState = rememberPagerState(pageCount = { packs.size })
-            ),
-            listStateProvider = { listState },
+            onEvent = {},
         )
     }
 }

@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Làm cho ghi chú của bạn sống động hơn</string>
     <string name="background_panel_custom_background_hint">Thêm hình nền của riêng bạn</string>
     <string name="background_panel_remove_background_hint">Nền có thể xóa bằng cách nhấn giữ</string>
+
+    <string name="stickers_panel_custom_stickers_title">Sticker của bạn ở đây</string>
+    <string name="stickers_panel_custom_stickers_hint">Tải lên của bạn và sử dụng trong ghi chú</string>
+    <string name="stickers_panel_remove_sticker_hint">Bạn có thể xóa sticker bằng cách nhấn giữ</string>
 </resources>

@@ -2,7 +2,7 @@ package com.furianrt.domain.entities
 
 import android.net.Uri
 
-class DeviceAlbum(
+data class DeviceAlbum(
     val id: Long,
     val name: String,
     val thumbnail: Thumbnail,
@@ -12,14 +12,14 @@ class DeviceAlbum(
         open val id: Long,
         open val uri: Uri,
     ) {
-        class Image(
-            id: Long,
-            uri: Uri,
+        data class Image(
+            override val id: Long,
+            override val uri: Uri,
         ) : Thumbnail(id, uri)
 
-        class Video(
-            id: Long,
-            uri: Uri,
+        data class Video(
+            override val id: Long,
+            override val uri: Uri,
             val duration: Int,
         ) : Thumbnail(id, uri)
     }

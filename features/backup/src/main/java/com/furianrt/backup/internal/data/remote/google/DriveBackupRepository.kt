@@ -18,6 +18,7 @@ import com.furianrt.backup.internal.extensions.toRemoteFile
 import com.furianrt.backup.internal.workers.AutoBackupWorker
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.google.android.gms.auth.api.identity.AuthorizationRequest
@@ -287,6 +288,51 @@ internal class DriveBackupRepository @Inject constructor(
             val filePart = MultipartBody.Part.createFormData(
                 name = "file",
                 filename = "${RemoteFile.NoteBackgroundsData.FILE_NAME}.json",
+                body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
+            )
+
+            driveApiService.uploadFile(metadataRequestBody, filePart)
+        }
+    }
+
+    override suspend fun uploadCustomSticker(
+        sticker: CustomSticker,
+    ): Result<Unit> = uploadFile(
+        name = sticker.id,
+        fileUri = sticker.uri,
+        mimeType = MIME_TYPE_IMAGE,
+    )
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override suspend fun getRemoteCustomStickers(
+        fileId: String,
+    ): Result<List<CustomSticker>> = withContext(dispatchers.io) {
+        runCatching {
+            val responseBody = driveApiService.downloadFile(fileId)
+            responseBody.byteStream().buffered().use { input ->
+                Json.decodeFromStream<List<CustomSticker>>(input)
+            }
+        }
+    }
+
+    override suspend fun uploadCustomStickersData(
+        stickers: List<CustomSticker>,
+    ): Result<Unit>  = withContext(dispatchers.io) {
+        runCatching {
+            val metadataJson = buildJsonObject {
+                put("name", RemoteFile.CustomStickersData.FILE_NAME)
+                put("mimeType", ACCEPT_JSON_VALUE)
+                putJsonArray("parents") { add(APP_FOLDER_NAME) }
+            }
+
+            val metadataRequestBody = metadataJson
+                .toString()
+                .toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+
+            val jsonString = Json.encodeToString(stickers)
+            val filePart = MultipartBody.Part.createFormData(
+                name = "file",
+                filename = "${RemoteFile.CustomStickersData.FILE_NAME}.json",
                 body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
             )
 

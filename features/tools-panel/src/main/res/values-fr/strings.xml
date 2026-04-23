@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Donne vie à tes notes</string>
     <string name="background_panel_custom_background_hint">Ajoute ta propre image de fond</string>
     <string name="background_panel_remove_background_hint">Le fond peut être supprimé avec un appui long</string>
+
+    <string name="stickers_panel_custom_stickers_title">Vos autocollants ici</string>
+    <string name="stickers_panel_custom_stickers_hint">Importez les vôtres et utilisez-les dans les notes</string>
+    <string name="stickers_panel_remove_sticker_hint">Vous pouvez supprimer un autocollant par un appui long</string>
 </resources>

@@ -64,7 +64,6 @@ import kotlin.math.max
 
 @Composable
 internal fun BulletTitleBar(
-    showKeyBoardButton: Boolean,
     requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -92,32 +91,27 @@ internal fun BulletTitleBar(
 
     TitleContent(
         modifier = modifier,
-        showKeyBoardButton = showKeyBoardButton,
         onEvent = viewModel::onEvent,
     )
 }
 
 @Composable
 private fun TitleContent(
-    showKeyBoardButton: Boolean,
     onEvent: (event: BulletPanelEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val showKeyBoardButtonState = remember { showKeyBoardButton }
     Box(
         modifier = modifier
             .fillMaxSize()
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
-        if (showKeyBoardButtonState) {
-            ButtonKeyboard(
-                modifier = Modifier
-                    .padding(start = 4.dp)
-                    .align(Alignment.CenterStart),
-                onClick = { onEvent(BulletPanelEvent.OnKeyboardClick) },
-            )
-        }
+        ButtonKeyboard(
+            modifier = Modifier
+                .padding(start = 4.dp)
+                .align(Alignment.CenterStart),
+            onClick = { onEvent(BulletPanelEvent.OnKeyboardClick) },
+        )
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.bullet_panel_title),
@@ -263,7 +257,6 @@ private fun Content(
 private fun PanelPreview() {
     SerenityTheme {
         TitleContent(
-            showKeyBoardButton = true,
             onEvent = {},
         )
     }

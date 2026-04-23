@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Buhayin ang iyong mga tala</string>
     <string name="background_panel_custom_background_hint">Magdagdag ng sarili mong background image</string>
     <string name="background_panel_remove_background_hint">Maaaring alisin ang background sa pamamagitan ng long press</string>
+
+    <string name="stickers_panel_custom_stickers_title">Iyong mga sticker dito</string>
+    <string name="stickers_panel_custom_stickers_hint">Mag-upload ng sarili at gamitin sa mga note</string>
+    <string name="stickers_panel_remove_sticker_hint">Maaaring alisin ang sticker sa pamamagitan ng long press</string>
 </resources>

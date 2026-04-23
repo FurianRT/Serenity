@@ -14,10 +14,21 @@ import kotlin.random.Random
 internal data class StickerItem(
     val id: String,
     val typeId: String,
-    @param:DrawableRes val icon: Int,
+    val icon: Icon,
     val animate: Boolean = false,
     val state: StickerState = StickerState(),
 ) {
+    val iconData: Any
+        get() = when (icon) {
+            is Icon.Res -> icon.res
+            is Icon.Uri -> icon.uri
+        }
+
+    sealed interface Icon {
+        data class Res(@param:DrawableRes val res: Int) : Icon
+        data class Uri(val uri: android.net.Uri) : Icon
+    }
+
     companion object {
         private const val X_OFFSET_PERCENT = 0.1
         private val Y_OFFSET_DP = 20.dp
@@ -29,7 +40,7 @@ internal data class StickerItem(
 
         fun build(
             typeId: String,
-            @DrawableRes icon: Int,
+            icon: Icon,
             scrollOffset: Int,
             viewPortHeight: Int,
             toolsPanelHeight: Dp,

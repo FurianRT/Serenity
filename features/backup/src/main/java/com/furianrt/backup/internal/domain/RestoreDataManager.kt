@@ -4,12 +4,14 @@ import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
+import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,6 +27,7 @@ internal class RestoreDataManager @Inject constructor(
     private val notesRepository: NotesRepository,
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
+    private val stickersRepository: StickersRepository,
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val errorTracker: ErrorTracker,
@@ -60,6 +63,11 @@ internal class RestoreDataManager @Inject constructor(
         }
 
         if (!syncNoteBackgrounds(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
+        if (!syncCustomStickers(remoteFiles)) {
             progressState.update { SyncState.Failure }
             return
         }
@@ -233,6 +241,36 @@ internal class RestoreDataManager @Inject constructor(
         return true
     }
 
+    private suspend fun syncCustomStickers(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val stickersData = remoteFiles
+            .filterIsInstance<RemoteFile.CustomStickersData>()
+            .maxByOrNull(RemoteFile.CustomStickersData::createdAt) ?: return true
+
+        val remoteStickers = backupRepository.getRemoteCustomStickers(stickersData.id)
+            .onFailure(errorTracker::trackNonFatalError)
+            .getOrNull()
+
+        if (remoteStickers == null) {
+            return false
+        }
+
+        val localStickers = stickersRepository.getAllCustomStickers().first()
+
+        val stickersToSave = remoteStickers
+            .filter { remote -> localStickers.none { it.id == remote.id } }
+
+        stickersToSave.forEach { sticker ->
+            if (!syncCustomStickerFile(remoteFiles, sticker)) {
+                return false
+            }
+        }
+        stickersRepository.upsertCustomStickers(remoteStickers, updateFile = false)
+
+        return true
+    }
+
     private suspend fun syncNoteBackgroundFile(
         remoteFiles: List<RemoteFile>,
         background: NoteCustomBackground,
@@ -241,6 +279,25 @@ internal class RestoreDataManager @Inject constructor(
         val localFile = mediaRepository.createNoteBackgroundDestinationFile(
             id = background.id,
             name = background.name,
+        )
+        return if (localFile == null) {
+            false
+        } else {
+            backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
+                .onFailure(errorTracker::trackNonFatalError)
+                .map { true }
+                .getOrDefault(false)
+        }
+    }
+
+    private suspend fun syncCustomStickerFile(
+        remoteFiles: List<RemoteFile>,
+        sticker: CustomSticker,
+    ): Boolean {
+        val remoteFileId = remoteFiles.find { it.name == sticker.id }?.id ?: return true
+        val localFile = mediaRepository.createCustomStickerDestinationFile(
+            id = sticker.id,
+            name = sticker.name,
         )
         return if (localFile == null) {
             false

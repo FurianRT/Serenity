@@ -31,4 +31,15 @@ internal interface StickerDao {
 """
     )
     fun getStickers(noteId: String): Flow<List<EntryNoteSticker>>
+
+    @Query(
+        """
+    SELECT EXISTS(
+        SELECT *
+        FROM ${EntryNoteSticker.TABLE_NAME}
+        WHERE ${EntryNoteSticker.FIELD_TYPE_ID} = :typeId
+    )
+    """
+    )
+    suspend fun hasStickerWithTypeId(typeId: String): Boolean
 }

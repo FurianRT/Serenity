@@ -4,5 +4,16 @@ import androidx.annotation.DrawableRes
 
 data class Sticker(
     val id: String,
-    @param:DrawableRes val icon: Int,
-)
+    val icon: Icon,
+) {
+    val iconData: Any
+        get() = when (icon) {
+            is Icon.Res -> icon.res
+            is Icon.Uri -> icon.uri
+        }
+
+    sealed interface Icon {
+        data class Res(@param:DrawableRes val res: Int) : Icon
+        data class Uri(val uri: android.net.Uri) : Icon
+    }
+}

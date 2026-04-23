@@ -54,8 +54,8 @@ import com.furianrt.toolspanel.internal.ui.font.FontContent
 import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
 import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
 import com.furianrt.toolspanel.internal.ui.selected.SelectedPanel
-import com.furianrt.toolspanel.internal.ui.stickers.StickersContent
-import com.furianrt.toolspanel.internal.ui.stickers.StickersTitleBar
+import com.furianrt.toolspanel.internal.ui.stickers.container.StickersContent
+import com.furianrt.toolspanel.internal.ui.stickers.container.StickersTitleBar
 import com.furianrt.toolspanel.internal.ui.voice.VoiceButtonDone
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.uikit.extensions.applyIf
@@ -263,19 +263,17 @@ fun ActionsPanel(
                     )
 
                     PanelMode.FONT -> FontTitleBar(
-                        showKeyBoardButton = titleState != null,
                         requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isFontPanelVisible = false },
                     )
 
                     PanelMode.STICKERS -> StickersTitleBar(
-                        showKeyBoardButton = titleState != null,
+                        noteId = noteId,
                         requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isStickersPanelVisible = false },
                     )
 
                     PanelMode.BULLET -> BulletTitleBar(
-                        showKeyBoardButton = titleState != null,
                         requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isBulletPanelVisible = false },
                     )
@@ -299,7 +297,6 @@ fun ActionsPanel(
                     PanelMode.BACKGROUNDS -> BackgroundTitleBar(
                         noteId = noteId,
                         noteTheme = noteTheme,
-                        showKeyBoardButton = titleState != null,
                         requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isBackgroundsPanelVisible = false },
                     )
@@ -322,8 +319,10 @@ fun ActionsPanel(
             )
 
             StickersContent(
+                noteId = noteId,
                 visible = isStickersPanelVisible,
                 onStickerSelected = onStickerSelected,
+                openMediaSelector = openMediaSelector,
             )
 
             BulletContent(

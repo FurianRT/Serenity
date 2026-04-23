@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Оживи свои заметки</string>
     <string name="background_panel_custom_background_hint">Добавь своё изображение для фона</string>
     <string name="background_panel_remove_background_hint">Удалить фон можно долгим нажатием</string>
+
+    <string name="stickers_panel_custom_stickers_title">Ваши стикеры здесь</string>
+    <string name="stickers_panel_custom_stickers_hint">Загрузите свои и используйте их в заметках</string>
+    <string name="stickers_panel_remove_sticker_hint">Удалить стикер можно долгим нажатием</string>
 </resources>

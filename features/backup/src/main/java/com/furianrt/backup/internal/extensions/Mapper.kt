@@ -35,6 +35,13 @@ internal fun DriveFilesListResponse.File.toRemoteFile() = when {
         name = name,
     )
 
+    mimeType == "application/json" && name == RemoteFile.CustomStickersData.FILE_NAME -> {
+        RemoteFile.CustomStickersData(
+            id = id,
+            createdAt = Instant.parse(createdTime),
+        )
+    }
+
     mimeType == "application/json" && name == RemoteFile.NoteBackgroundsData.FILE_NAME -> {
         RemoteFile.NoteBackgroundsData(
             id = id,

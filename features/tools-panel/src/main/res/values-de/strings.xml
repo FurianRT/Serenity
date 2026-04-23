@@ -17,4 +17,8 @@
     <string name="background_panel_custom_background_title">Erwecke deine Notizen zum Leben</string>
     <string name="background_panel_custom_background_hint">Füge dein eigenes Hintergrundbild hinzu</string>
     <string name="background_panel_remove_background_hint">Den Hintergrund kannst du durch langes Drücken entfernen</string>
+
+    <string name="stickers_panel_custom_stickers_title">Deine Sticker hier</string>
+    <string name="stickers_panel_custom_stickers_hint">Lade deine eigenen hoch und nutze sie in Notizen</string>
+    <string name="stickers_panel_remove_sticker_hint">Du kannst einen Sticker durch langes Drücken entfernen</string>
 </resources>

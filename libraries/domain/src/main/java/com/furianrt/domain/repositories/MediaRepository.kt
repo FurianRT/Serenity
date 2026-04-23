@@ -47,6 +47,11 @@ interface MediaRepository {
         name: String,
     ): File?
 
+    suspend fun createCustomStickerDestinationFile(
+        id: String,
+        name: String,
+    ): File?
+
     suspend fun deleteFile(file: File)
 
     suspend fun createVoiceDestinationFile(noteId: String, voiceId: String): File?

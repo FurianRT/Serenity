@@ -17,6 +17,7 @@ import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
@@ -85,7 +86,7 @@ internal interface DatabaseModule {
 
     @Binds
     @Singleton
-    fun AppInfoRepository(imp: AppInfoRepositoryImp): AppInfoRepository
+    fun appInfoRepository(imp: AppInfoRepositoryImp): AppInfoRepository
 
     companion object {
         @Suppress("LocalVariableName")
@@ -156,6 +157,23 @@ internal interface DatabaseModule {
                     db.execSQL("ALTER TABLE Notes ADD COLUMN line_height_multiplier REAL")
                 }
             }
+            val MIGRATION_7_8 = object : Migration(7, 8) {
+                override fun migrate(db: SupportSQLiteDatabase) {
+                    db.execSQL(
+                        """
+                            CREATE TABLE IF NOT EXISTS CustomStickers (
+                                id TEXT NOT NULL PRIMARY KEY,
+                                name TEXT NOT NULL,
+                                uri TEXT NOT NULL,
+                                ratio REAL NOT NULL,
+                                added_date TEXT NOT NULL,
+                                is_saved INTEGER NOT NULL,
+                                is_hidden INTEGER NOT NULL
+                            )
+                        """
+                    )
+                }
+            }
             return SerenityDatabase
                 .create(
                     context = context,
@@ -166,6 +184,7 @@ internal interface DatabaseModule {
                         MIGRATION_4_5,
                         MIGRATION_5_6,
                         MIGRATION_6_7,
+                        MIGRATION_7_8,
                     ),
                 )
         }
@@ -197,6 +216,12 @@ internal interface DatabaseModule {
         @Provides
         @Singleton
         fun stickerDao(database: SerenityDatabase): StickerDao = database.stickerDao()
+
+        @Provides
+        @Singleton
+        fun customStickerDao(database: SerenityDatabase): CustomStickerDao {
+            return database.customStickerDao()
+        }
 
         @Provides
         @Singleton

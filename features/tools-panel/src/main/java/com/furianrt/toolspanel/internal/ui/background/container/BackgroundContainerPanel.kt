@@ -83,7 +83,6 @@ private const val NOTE_BACKGROUND_TAG = "note_panel_background_container"
 internal fun BackgroundTitleBar(
     noteId: String,
     noteTheme: UiNoteTheme?,
-    showKeyBoardButton: Boolean,
     requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -116,7 +115,6 @@ internal fun BackgroundTitleBar(
         is BackgroundContainerUiState.Success -> TitleContent(
             modifier = modifier,
             uiState = uiState,
-            showKeyBoardButton = showKeyBoardButton,
             onEvent = viewModel::onEvent,
         )
 
@@ -131,11 +129,9 @@ internal fun BackgroundTitleBar(
 @Composable
 private fun TitleContent(
     uiState: BackgroundContainerUiState.Success,
-    showKeyBoardButton: Boolean,
     modifier: Modifier = Modifier,
     onEvent: (event: BackgroundContainerEvent) -> Unit = {},
 ) {
-    val showKeyBoardButtonState = remember { showKeyBoardButton }
     val listState: LazyListState = rememberLazyListState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
@@ -169,28 +165,22 @@ private fun TitleContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            if (showKeyBoardButtonState) {
-                ButtonKeyboard(
-                    modifier = Modifier.drawBehind {
-                        if (listState.canScrollBackward) {
-                            drawRightShadow(color = shadowColor, elevation = 1.dp)
-                        }
-                    },
-                    onClick = { onEvent(OnKeyboardClick) },
-                )
-            }
+            ButtonKeyboard(
+                modifier = Modifier.drawBehind {
+                    if (listState.canScrollBackward) {
+                        drawRightShadow(color = shadowColor, elevation = 1.dp)
+                    }
+                },
+                onClick = { onEvent(OnKeyboardClick) },
+            )
             Box(
                 modifier = Modifier.weight(1f),
-                contentAlignment = if (showKeyBoardButtonState) {
-                    Alignment.Center
-                } else {
-                    Alignment.CenterStart
-                },
+                contentAlignment = Alignment.Center,
             ) {
                 LazyRow(
                     state = listState,
                     contentPadding = PaddingValues(
-                        horizontal = if (showKeyBoardButtonState) 4.dp else 16.dp,
+                        horizontal = 4.dp,
                     ),
                 ) {
                     itemsIndexed(items = uiState.tabs) { index, tab ->
@@ -285,7 +275,6 @@ internal fun BackgroundContent(
     noteId: String,
     noteTheme: UiNoteTheme?,
     visible: Boolean,
-
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
     modifier: Modifier = Modifier,

@@ -46,8 +46,7 @@ internal fun ImageItem(
     val request = remember(item.id) {
         ImageRequest.Builder(context)
             .size(Constants.REQUESTED_IMAGE_SIZE)
-            .diskCachePolicy(CachePolicy.ENABLED)
-            .diskCacheKey(item.id.toString())
+            .diskCachePolicy(CachePolicy.DISABLED)
             .memoryCachePolicy(CachePolicy.ENABLED)
             .memoryCacheKey(item.id.toString())
             .data(item.uri)

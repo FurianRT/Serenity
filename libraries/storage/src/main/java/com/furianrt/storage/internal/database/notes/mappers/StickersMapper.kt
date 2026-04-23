@@ -1,6 +1,8 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
+import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.storage.internal.database.notes.entities.EntryCustomSticker
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
 import com.furianrt.storage.internal.database.notes.entities.PartStickerId
 import com.furianrt.storage.internal.database.notes.entities.PartStickerTransformations
@@ -40,4 +42,23 @@ internal fun LocalNote.Sticker.toEntryTransformationsPart() = PartStickerTransfo
 
 internal fun LocalNote.Sticker.toEntryIdPart() = PartStickerId(
     id = id,
+)
+
+internal fun EntryCustomSticker.toCustomSticker() = CustomSticker(
+    id = id,
+    name = name,
+    uri = uri,
+    ratio = ratio,
+    addedDate = addedDate,
+    isHidden = isHidden,
+)
+
+internal fun CustomSticker.toEntryCustomSticker(isSaved: Boolean) = EntryCustomSticker(
+    id = id,
+    name = name,
+    uri = uri,
+    ratio = ratio,
+    addedDate = addedDate,
+    isSaved = isSaved,
+    isHidden = isHidden,
 )
