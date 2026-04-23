@@ -50,6 +50,7 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.clipPath
@@ -64,6 +65,7 @@ import androidx.lifecycle.flowWithLifecycle
 import coil3.compose.AsyncImage
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.mediaselector.api.MediaSelectorState
+import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
@@ -73,7 +75,7 @@ import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.toolspanel.internal.ui.stickers.custom.CustomStickersPanel
 import com.furianrt.toolspanel.internal.ui.stickers.extensions.toContainerPack
 import com.furianrt.toolspanel.internal.ui.stickers.regular.RegularStickersPanel
-import com.furianrt.uikit.R as uiR
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.extensions.drawRightShadow
@@ -217,9 +219,18 @@ private fun TitleItem(
         AsyncImage(
             modifier = Modifier
                 .fillMaxSize()
-                .clickableNoRipple { onClick(pack) },
+                .clickableNoRipple { onClick(pack) }
+                .align(Alignment.CenterEnd)
+                .applyIf(pack is StickersContainerUiState.Pack.Custom) {
+                    Modifier.padding(vertical = 4.dp)
+                },
             model = pack.icon,
             contentDescription = null,
+            colorFilter = if (pack is StickersContainerUiState.Pack.Custom) {
+                ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+            } else {
+                null
+            }
         )
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.BottomCenter),
@@ -402,7 +413,7 @@ private fun PanelPreview() {
                 packs = buildList {
                     add(
                         StickersContainerUiState.Pack.Custom(
-                            icon = uiR.drawable.ic_add,
+                            icon = R.drawable.ic_custom_sticker,
                         )
                     )
                     addAll(packs.map { it.toContainerPack() })

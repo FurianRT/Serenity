@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.stickers.container
 
 import androidx.compose.foundation.pager.PagerState
 import androidx.lifecycle.ViewModel
+import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.ui.stickers.extensions.toContainerPack
 import dagger.assisted.Assisted
@@ -12,7 +13,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import com.furianrt.uikit.R as uiR
 
 @HiltViewModel(assistedFactory = StickersContainerViewModel.Factory::class)
 internal class StickersContainerViewModel @AssistedInject constructor(
@@ -32,7 +32,7 @@ internal class StickersContainerViewModel @AssistedInject constructor(
             packs = buildList {
                 add(
                     StickersContainerUiState.Pack.Custom(
-                        icon = uiR.drawable.ic_add,
+                        icon = R.drawable.ic_custom_sticker,
                     )
                 )
                 addAll(packs.map { it.toContainerPack() })
