@@ -56,6 +56,7 @@ import androidx.compose.ui.geometry.RoundRect
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.clipPath
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -310,7 +311,8 @@ private fun ThemeItem(
             easing = if (showDropDown) overshootEasing else FastOutSlowInEasing,
         ),
     )
-    var placeholder: Painter? by remember { mutableStateOf(null) }
+    val placeholderColor = MaterialTheme.colorScheme.background
+    var placeholder: Painter by remember { mutableStateOf(ColorPainter(placeholderColor)) }
     val request = remember(theme.image.source) {
         ImageRequest.Builder(context)
             .data(
@@ -333,14 +335,18 @@ private fun ThemeItem(
                     scaleY = scale
                 }
                 .then(
-                    if (isSelected) {
-                        Modifier.border(
+                    when {
+                        isSelected -> Modifier.border(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.surfaceContainer,
                             shape = RoundedCornerShape(16.dp),
                         )
-                    } else {
-                        Modifier.shadow(2.dp, RoundedCornerShape(16.dp))
+
+                        placeholder !is ColorPainter -> {
+                            Modifier.shadow(2.dp, RoundedCornerShape(16.dp))
+                        }
+
+                        else -> Modifier
                     }
                 )
                 .drawWithCache {

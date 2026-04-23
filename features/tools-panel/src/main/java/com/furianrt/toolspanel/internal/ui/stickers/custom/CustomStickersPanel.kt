@@ -44,6 +44,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -330,7 +331,8 @@ private fun StickerItem(
         ),
     )
 
-    var placeholder: Painter? by remember { mutableStateOf(null) }
+    val placeholderColor = MaterialTheme.colorScheme.background
+    var placeholder: Painter by remember { mutableStateOf(ColorPainter(placeholderColor)) }
     val request = remember(sticker.iconData) {
         ImageRequest.Builder(context)
             .data(sticker.iconData)
