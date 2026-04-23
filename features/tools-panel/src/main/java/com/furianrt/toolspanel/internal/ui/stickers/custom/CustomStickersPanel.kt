@@ -352,8 +352,6 @@ private fun StickerItem(
                 }
                 .wrapContentSize()
                 .combinedClickable(
-                    interactionSource = null,
-                    indication = null,
                     onClick = { onClick(sticker) },
                     onLongClick = { showDropDown = true },
                 ),
