@@ -25,7 +25,7 @@ private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
 private const val STICKERS_FOLDER = "stickers"
 private const val IMAGE_COMPRESS_AMOUNT = 50
 private const val BACKGROUND_COMPRESS_AMOUNT = 40
-private const val STICKER_COMPRESS_AMOUNT = 10
+private const val STICKER_COMPRESS_AMOUNT = 30
 
 internal class SavedMediaData(
     val name: String,

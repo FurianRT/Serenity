@@ -250,8 +250,7 @@ fun MovableToolbarScaffold(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .graphicsLayer { translationY = toolbarOffset }
-                .onSizeChanged { toolbarHeight = it.height.toFloat() }
-                .clickableNoRipple {},
+                .onSizeChanged { toolbarHeight = it.height.toFloat() },
         ) {
             AnimatedVisibility(
                 modifier = Modifier.matchParentSize(),
