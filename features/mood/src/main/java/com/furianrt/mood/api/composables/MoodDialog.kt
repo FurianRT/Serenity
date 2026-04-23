@@ -94,8 +94,8 @@ fun MoodDialog(
     val listState = rememberLazyListState()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
-    var topPanelHeight by remember { mutableIntStateOf(0) }
-    var bottomPanelHeight by remember { mutableIntStateOf(0) }
+    var topPanelHeight by remember { mutableIntStateOf(-1) }
+    var bottomPanelHeight by remember { mutableIntStateOf(-1) }
 
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Box(
@@ -110,10 +110,10 @@ fun MoodDialog(
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
         ) {
-            if (topPanelHeight > 0 && bottomPanelHeight > 0 || LocalInspectionMode.current) {
+            if (topPanelHeight >= 0 && bottomPanelHeight >= 0 || LocalInspectionMode.current) {
                 LazyColumn(
                     modifier = Modifier
-                        .heightIn(max = 530.dp)
+                        .heightIn(max = 540.dp)
                         .hazeSource(hazeState, zIndex = 1f),
                     state = listState,
                     contentPadding = PaddingValues(
@@ -184,25 +184,29 @@ fun MoodDialog(
                     )
                     .background(MaterialTheme.colorScheme.surfaceTint)
                     .onSizeChanged { bottomPanelHeight = it.height }
-                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp)
+                    .padding(start = 16.dp, end = 16.dp)
                     .align(Alignment.BottomCenter),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp, alignment = Alignment.End),
             ) {
-                TextButton(
-                    onClick = {
-                        onMoodSelected(null)
-                        onDismissRequest()
-                    },
-                    shape = RoundedCornerShape(16.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.mood_dialog_clear),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
+                if (moodId != null) {
+                    TextButton(
+                        modifier = Modifier.padding(bottom = 8.dp),
+                        onClick = {
+                            onMoodSelected(null)
+                            onDismissRequest()
+                        },
+                        shape = RoundedCornerShape(16.dp),
+                    ) {
+                        Text(
+                            text = stringResource(R.string.mood_dialog_clear),
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    }
                 }
                 if (!isExpandedState) {
                     TextButton(
+                        modifier = Modifier.padding(bottom = 8.dp),
                         onClick = { isExpandedState = true },
                         shape = RoundedCornerShape(16.dp),
                     ) {
@@ -276,7 +280,7 @@ private fun MoodSell(
 private fun CollapsedPreview() {
     SerenityTheme {
         MoodDialog(
-            moodId = null,
+            moodId = "",
             defaultMoodId = null,
             isExpanded = false,
             hazeState = HazeState(),
@@ -291,7 +295,7 @@ private fun CollapsedPreview() {
 private fun ExpandedPreview() {
     SerenityTheme {
         MoodDialog(
-            moodId = null,
+            moodId = "",
             defaultMoodId = null,
             isExpanded = true,
             hazeState = HazeState(),

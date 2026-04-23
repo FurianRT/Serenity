@@ -537,11 +537,15 @@ private fun TextFormatButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
     Icon(
         modifier = modifier
             .clip(RoundedCornerShape(8.dp))
             .background(MaterialTheme.colorScheme.tertiary)
-            .clickable(onClick = onClick)
+            .clickable {
+                hapticFeedback.performHapticFeedback(HapticFeedbackType.VirtualKey)
+                onClick()
+            }
             .padding(4.dp),
         painter = icon,
         tint = MaterialTheme.colorScheme.onSurface,
