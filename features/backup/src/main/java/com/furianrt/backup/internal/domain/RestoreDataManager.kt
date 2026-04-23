@@ -232,9 +232,6 @@ internal class RestoreDataManager @Inject constructor(
             if (!syncNoteBackgroundFile(remoteFiles, background)) {
                 return false
             }
-        }
-
-        remoteBackgrounds.forEach { background ->
             mediaRepository.upsertCustomNoteBackground(background, updateFile = false)
         }
 
@@ -265,8 +262,8 @@ internal class RestoreDataManager @Inject constructor(
             if (!syncCustomStickerFile(remoteFiles, sticker)) {
                 return false
             }
+            stickersRepository.upsertCustomStickers(listOf(sticker), updateFile = false)
         }
-        stickersRepository.upsertCustomStickers(remoteStickers, updateFile = false)
 
         return true
     }

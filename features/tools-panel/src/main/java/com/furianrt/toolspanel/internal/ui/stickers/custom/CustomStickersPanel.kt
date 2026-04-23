@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -320,7 +319,6 @@ private fun StickerItem(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val focusManager = LocalFocusManager.current
     var showDropDown by remember { mutableStateOf(false) }
     val overshootEasing = rememberOvershootEasing(tension = 4.0f)
     val scale by animateFloatAsState(
@@ -357,10 +355,7 @@ private fun StickerItem(
                     interactionSource = null,
                     indication = null,
                     onClick = { onClick(sticker) },
-                    onLongClick = {
-                        focusManager.clearFocus()
-                        showDropDown = true
-                    },
+                    onLongClick = { showDropDown = true },
                 ),
             model = request,
             placeholder = placeholder,

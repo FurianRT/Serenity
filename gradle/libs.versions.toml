@@ -1,7 +1,7 @@
 [versions]
 
 agp = "9.1.1"
-kotlin = "2.3.20"
+kotlin = "2.3.21"
 
 ksp = "2.3.6"
 
@@ -13,15 +13,15 @@ performancePlugin = "2.0.2"
 coreKtx = "1.18.0"
 lifecycle = "2.10.0"
 
-composeBom = "2026.03.01"
+composeBom = "2026.04.01"
 composeActivity = "1.13.0"
-composeNavigation = "2.9.7"
+composeNavigation = "2.9.8"
 
 accompanist = "0.37.3"
 
 splashScreen = "1.2.0"
 
-reorderableLists = "3.0.0"
+reorderableLists = "3.1.0"
 
 coroutines = "1.10.2"
 
@@ -46,7 +46,7 @@ calendar = "2.10.1"
 
 dataStore = "1.2.1"
 
-biometric = "1.4.0-alpha06"
+biometric = "1.4.0-alpha07"
 
 mail = "1.6.8"
 
