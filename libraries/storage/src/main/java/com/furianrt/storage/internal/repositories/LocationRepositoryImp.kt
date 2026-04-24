@@ -55,14 +55,15 @@ internal class LocationRepositoryImp @Inject constructor(
 
     @SuppressLint("MissingPermission")
     private suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { cont ->
-        val priority = if (permissionsUtils.hasFineLocationPermission()) {
+        val hasFineLocationPermission = permissionsUtils.hasFineLocationPermission()
+        val priority = if (hasFineLocationPermission) {
             Priority.PRIORITY_HIGH_ACCURACY
         } else {
             Priority.PRIORITY_BALANCED_POWER_ACCURACY
         }
         val request = LocationRequest.Builder(priority, 1_000)
             .setMaxUpdates(1)
-            .setWaitForAccurateLocation(false)
+            .setWaitForAccurateLocation(hasFineLocationPermission)
             .build()
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
