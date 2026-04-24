@@ -1,5 +1,6 @@
 package com.furianrt.permissions.utils
 
+import android.Manifest.permission.ACCESS_COARSE_LOCATION
 import android.Manifest.permission.CAMERA
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
@@ -60,7 +61,10 @@ class PermissionsUtils @Inject constructor(
 
     fun hasCameraPermission(): Boolean = CAMERA.isGranted()
 
-    fun hasLocationPermission(): Boolean = ACCESS_FINE_LOCATION.isGranted()
+    fun hasLocationPermission(): Boolean = hasFineLocationPermission() ||
+            ACCESS_COARSE_LOCATION.isGranted()
+
+    fun hasFineLocationPermission(): Boolean = ACCESS_FINE_LOCATION.isGranted()
 
     fun hasNotificationsPermission(): Boolean = POST_NOTIFICATIONS.isGranted()
 

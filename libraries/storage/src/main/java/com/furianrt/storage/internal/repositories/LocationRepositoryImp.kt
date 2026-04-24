@@ -7,6 +7,7 @@ import android.location.Location
 import android.os.Looper
 import com.furianrt.domain.entities.NoteLocation
 import com.furianrt.domain.repositories.LocationRepository
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteLocation
 import com.google.android.gms.location.LocationCallback
@@ -25,6 +26,7 @@ private const val DETECTION_TIMEOUT = 15_000L
 
 internal class LocationRepositoryImp @Inject constructor(
     @param:ApplicationContext private val appContext: Context,
+    private val permissionsUtils: PermissionsUtils,
     private val locationDao: LocationDao,
 ) : LocationRepository {
 
@@ -53,8 +55,14 @@ internal class LocationRepositoryImp @Inject constructor(
 
     @SuppressLint("MissingPermission")
     private suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { cont ->
-        val request = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 0)
+        val priority = if (permissionsUtils.hasFineLocationPermission()) {
+            Priority.PRIORITY_HIGH_ACCURACY
+        } else {
+            Priority.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+        val request = LocationRequest.Builder(priority, 1_000)
             .setMaxUpdates(1)
+            .setWaitForAccurateLocation(false)
             .build()
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {

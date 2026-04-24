@@ -13,6 +13,7 @@ dependencies {
     implementation(projects.libraries.core)
     implementation(projects.libraries.domain)
     implementation(projects.libraries.common)
+    implementation(projects.libraries.permissions)
 
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
