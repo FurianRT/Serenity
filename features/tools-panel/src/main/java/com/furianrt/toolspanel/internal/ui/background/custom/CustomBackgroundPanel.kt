@@ -60,6 +60,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -300,6 +301,7 @@ private fun ThemeItem(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     var showDropDown by remember { mutableStateOf(false) }
     val overshootEasing = rememberOvershootEasing(tension = 4.0f)
     val scale by animateFloatAsState(
@@ -372,7 +374,10 @@ private fun ThemeItem(
                     interactionSource = null,
                     indication = null,
                     onClick = { onClick(theme) },
-                    onLongClick = { showDropDown = true },
+                    onLongClick = {
+                        focusManager.clearFocus()
+                        showDropDown = true
+                    },
                 ),
             model = request,
             placeholder = placeholder,

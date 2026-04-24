@@ -16,6 +16,7 @@ internal fun StickerPack.toContainerPack() = StickersContainerUiState.Pack.Regul
 internal fun CustomSticker.toSticker() = Sticker(
     id = id,
     icon = Sticker.Icon.Uri(uri),
+    ratio = ratio,
 )
 
 internal fun MediaResult.Media.Image.toCustomSticker() = CustomSticker(

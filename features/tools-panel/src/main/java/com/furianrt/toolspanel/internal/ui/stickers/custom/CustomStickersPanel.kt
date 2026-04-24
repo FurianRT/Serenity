@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -35,6 +36,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
@@ -47,6 +49,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -251,6 +254,14 @@ private fun ListContent(
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
+    var prevItemCount by remember { mutableIntStateOf(uiState.stickers.size) }
+    LaunchedEffect(listState, uiState.stickers.size) {
+        if (prevItemCount < uiState.stickers.size) {
+            listState.animateScrollToItem(0)
+        }
+        prevItemCount = uiState.stickers.size
+    }
+
     LazyVerticalStaggeredGrid(
         modifier = modifier
             .fillMaxSize()
@@ -319,6 +330,7 @@ private fun StickerItem(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     var showDropDown by remember { mutableStateOf(false) }
     val overshootEasing = rememberOvershootEasing(tension = 4.0f)
     val scale by animateFloatAsState(
@@ -340,8 +352,7 @@ private fun StickerItem(
     }
 
     Box(
-        modifier = modifier
-            .wrapContentSize(),
+        modifier = modifier.wrapContentSize(),
         contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
@@ -350,10 +361,24 @@ private fun StickerItem(
                     scaleX = scale
                     scaleY = scale
                 }
-                .wrapContentSize()
+                .then(
+                    if (sticker.ratio != null) {
+                        Modifier.aspectRatio(
+                            sticker.ratio.coerceIn(
+                                minimumValue = 0.5f,
+                                maximumValue = 1.5f,
+                            )
+                        )
+                    } else {
+                        Modifier
+                    },
+                )
                 .combinedClickable(
                     onClick = { onClick(sticker) },
-                    onLongClick = { showDropDown = true },
+                    onLongClick = {
+                        focusManager.clearFocus()
+                        showDropDown = true
+                    },
                 ),
             model = request,
             placeholder = placeholder,

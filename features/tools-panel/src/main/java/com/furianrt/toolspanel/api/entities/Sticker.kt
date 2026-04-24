@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 data class Sticker(
     val id: String,
     val icon: Icon,
+    val ratio: Float? = null,
 ) {
     val iconData: Any
         get() = when (icon) {
