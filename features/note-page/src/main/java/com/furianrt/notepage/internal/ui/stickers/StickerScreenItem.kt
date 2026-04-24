@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -284,12 +285,15 @@ private fun Sticker(
             .build()
     }
     val scaleXAnim by animateFloatAsState(targetValue = if (item.state.isFlipped) -1f else 1f)
+    val placeholderColor = MaterialTheme.colorScheme.background
+    val colorPlaceholder = remember { ColorPainter(placeholderColor) }
     AsyncImage(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
             .graphicsLayer { scaleX = scaleXAnim }
             .clickableNoRipple { onClick(item) },
         model = request,
+        error = colorPlaceholder,
         contentDescription = null,
     )
 }

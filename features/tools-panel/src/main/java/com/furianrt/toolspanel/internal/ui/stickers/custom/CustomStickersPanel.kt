@@ -342,7 +342,8 @@ private fun StickerItem(
     )
 
     val placeholderColor = MaterialTheme.colorScheme.background
-    var placeholder: Painter by remember { mutableStateOf(ColorPainter(placeholderColor)) }
+    val colorPlaceholder = remember { ColorPainter(placeholderColor) }
+    var placeholder: Painter by remember { mutableStateOf(colorPlaceholder) }
     val request = remember(sticker.iconData) {
         ImageRequest.Builder(context)
             .data(sticker.iconData)
@@ -380,6 +381,7 @@ private fun StickerItem(
                         showDropDown = true
                     },
                 ),
+            error = colorPlaceholder,
             model = request,
             placeholder = placeholder,
             onSuccess = { placeholder = it.painter },
