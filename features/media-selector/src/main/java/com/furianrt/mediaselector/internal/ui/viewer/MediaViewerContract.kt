@@ -7,11 +7,13 @@ internal sealed interface MediaViewerUiState {
     data class Success(
         val initialMediaIndex: Int,
         val media: List<MediaItem>,
+        val selectedCount: Int,
     ) : MediaViewerUiState {
         fun setSelectedItems(
             selectedItems: List<MediaItem>,
             useCounter: Boolean,
         ): Success = copy(
+            selectedCount = selectedItems.count(),
             media = media.map { item ->
                 val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
                 when {
@@ -37,6 +39,8 @@ internal sealed interface MediaViewerUiState {
 internal sealed interface MediaViewerEvent {
     data object OnButtonBackClick : MediaViewerEvent
     data class OnMediaSelectionToggle(val media: MediaItem) : MediaViewerEvent
+    data object OnButtonSendClick : MediaViewerEvent
+    data class OnPageChange(val page: Int) : MediaViewerEvent
 }
 
 internal sealed interface MediaViewerEffect {

@@ -12,6 +12,8 @@ internal class SelectedMediaCoordinator @Inject constructor() : Closeable {
 
     fun getSelectedMedia(): List<MediaItem> = selectedMedia
 
+    fun hasSelectedMedia(): Boolean = selectedMedia.isNotEmpty()
+
     fun selectMedia(media: MediaItem) {
         selectedMedia.add(media)
     }

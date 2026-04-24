@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -93,6 +94,13 @@ internal fun MediaSelectorBottomSheetInternal(
     val viewModel = hiltViewModel<MediaSelectorViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+
+    DisposableEffect(Unit) {
+        lifecycle.addObserver(viewModel)
+        onDispose {
+            lifecycle.removeObserver(viewModel)
+        }
+    }
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),

@@ -1,11 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector.composables
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -13,19 +9,14 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -39,16 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastCoerceAtLeast
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
-import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
@@ -73,33 +60,6 @@ internal fun BottomPanel(
     onAlbumSelected: (album: MediaAlbumItem) -> Unit = {},
     onAlbumsDismissed: () -> Unit = {},
 ) {
-    val counterScale = remember { Animatable(1f) }
-    val hasSelected = selectedCount > 0
-    val fabShadowAnim by animateDpAsState(
-        targetValue = if (hasSelected) 6.dp else 0.dp,
-        animationSpec = if (hasSelected) {
-            tween(
-                delayMillis = ACTION_FAB_ANIM_DURATION + 10,
-                durationMillis = ACTION_FAB_ANIM_DURATION,
-                easing = LinearEasing,
-            )
-        } else {
-            tween(
-                durationMillis = ACTION_FAB_ANIM_DURATION,
-                easing = LinearEasing,
-            )
-        },
-    )
-    LaunchedEffect(selectedCount.fastCoerceAtLeast(1)) {
-        counterScale.animateTo(
-            targetValue = 0.92f,
-            animationSpec = tween(durationMillis = 30, easing = LinearEasing),
-        )
-        counterScale.animateTo(
-            targetValue = 1f,
-            animationSpec = tween(durationMillis = 70, easing = LinearEasing),
-        )
-    }
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter,
@@ -140,7 +100,7 @@ internal fun BottomPanel(
                 .wrapContentSize()
                 .navigationBarsPadding()
                 .align(Alignment.BottomEnd),
-            visible = hasSelected,
+            visible = selectedCount > 0,
             enter = fadeIn(animationSpec = tween(ACTION_FAB_ANIM_DURATION)) + scaleIn(
                 initialScale = 0.5f,
                 animationSpec = tween(ACTION_FAB_ANIM_DURATION),
@@ -150,74 +110,12 @@ internal fun BottomPanel(
                 targetScale = 0.5f,
             )
         ) {
-            Box(
+            ButtonSend(
                 modifier = Modifier.padding(end = 12.dp, bottom = 12.dp),
-                contentAlignment = Alignment.BottomEnd,
-            ) {
-                ActionButton(
-                    modifier = Modifier.size(64.dp),
-                    icon = painterResource(uiR.drawable.ic_send),
-                    elevation = fabShadowAnim,
-                    onClick = onSendClick,
-                )
-                Box(
-                    modifier = Modifier
-                        .offset(x = 4.dp, y = 4.dp)
-                        .graphicsLayer {
-                            scaleX = counterScale.value
-                            scaleY = counterScale.value
-                        }
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .hazeEffect(
-                            state = hazeState,
-                            style = HazeDefaults.style(
-                                backgroundColor = MaterialTheme.colorScheme.surface,
-                                tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                                blurRadius = 12.dp,
-                            )
-                        )
-                        .background(MaterialTheme.colorScheme.outlineVariant),
-                )
-                Box(
-                    modifier = Modifier
-                        .offset(x = 2.dp, y = 2.dp)
-                        .graphicsLayer {
-                            scaleX = counterScale.value
-                            scaleY = counterScale.value
-                        }
-                        .size(24.dp)
-                        .background(
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = CircleShape,
-                        ),
-                ) {
-                    AnimatedContent(
-                        targetState = selectedCount.fastCoerceAtLeast(1),
-                        transitionSpec = {
-                            slideIntoContainer(
-                                towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                            ).togetherWith(
-                                slideOutOfContainer(
-                                    towards = AnimatedContentTransitionScope.SlideDirection.Down,
-                                )
-                            )
-                        },
-                    ) { targetState ->
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center,
-                        ) {
-                            Text(
-                                text = targetState.toString(),
-                                style = MaterialTheme.typography.bodySmall,
-                                fontWeight = FontWeight.ExtraBold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                            )
-                        }
-                    }
-                }
-            }
+                selectedCount = selectedCount,
+                hazeState = hazeState,
+                onClick = onSendClick,
+            )
         }
     }
 }

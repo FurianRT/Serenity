@@ -3,6 +3,7 @@ package com.furianrt.mediaselector.internal.ui.viewer
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
+import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
@@ -41,6 +42,7 @@ internal class MediaViewerViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     private var hasSelectionChanged = false
+    private var currentPage = 0
 
     init {
         loadMedia()
@@ -53,7 +55,7 @@ internal class MediaViewerViewModel @Inject constructor(
                     requestId = route.requestId,
                     dialogId = route.dialogId,
                 ),
-                code = DialogResult.Ok(data = Unit),
+                code = DialogResult.Cancel,
             )
         }
     }
@@ -67,18 +69,40 @@ internal class MediaViewerViewModel @Inject constructor(
             is MediaViewerEvent.OnMediaSelectionToggle -> {
                 toggleItemSelection(event.media)
             }
+
+            is MediaViewerEvent.OnButtonSendClick -> onButtonSendClick()
+            is MediaViewerEvent.OnPageChange -> currentPage = event.page
         }
     }
 
     private fun loadMedia() = launch {
         val media = mediaRepository.getDeviceMediaList(route.allowVideo, route.albumId)
+        val selectedMedia = mediaCoordinator.getSelectedMedia()
         _state.update {
             MediaViewerUiState.Success(
                 media = media.map(DeviceMedia::toMediaItem),
+                selectedCount = selectedMedia.size,
                 initialMediaIndex = media.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
             ).setSelectedItems(
-                selectedItems = mediaCoordinator.getSelectedMedia(),
+                selectedItems = selectedMedia,
                 useCounter = !route.singleChoice,
+            )
+        }
+    }
+
+    private fun onButtonSendClick() {
+        _state.doWithState<MediaViewerUiState.Success> { successState ->
+            if (!mediaCoordinator.hasSelectedMedia()) {
+                mediaCoordinator.selectMedia(successState.media[currentPage])
+            }
+            hasSelectionChanged = false
+            _effect.tryEmit(MediaViewerEffect.CloseScreen)
+            dialogResultCoordinator.onDialogResult(
+                dialogIdentifier = DialogIdentifier(
+                    requestId = route.requestId,
+                    dialogId = route.dialogId,
+                ),
+                code = DialogResult.Ok(Unit),
             )
         }
     }

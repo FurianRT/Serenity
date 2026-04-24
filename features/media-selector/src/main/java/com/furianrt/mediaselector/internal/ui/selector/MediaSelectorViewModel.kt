@@ -1,5 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceAlbum
@@ -54,7 +56,9 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val permissionsUtils: PermissionsUtils,
     private val mediaCoordinator: SelectedMediaCoordinator,
     private val resourcesManager: ResourcesManager,
-) : ViewModel(), DialogResultListener {
+) : ViewModel(),
+    DialogResultListener,
+    DefaultLifecycleObserver {
 
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
     val state = _state.asStateFlow()
@@ -66,9 +70,17 @@ internal class MediaSelectorViewModel @Inject constructor(
     private var allowVideo = true
     private var isSingleChoice = false
     private var onMediaSelected: suspend (result: MediaResult) -> Unit = {}
+    private var sendResultOnStart = false
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
+    }
+
+    override fun onResume(owner: LifecycleOwner) {
+        if (sendResultOnStart) {
+            sendResultOnStart = false
+            launch { onSendClick() }
+        }
     }
 
     override fun onCleared() {
@@ -78,12 +90,15 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
         when (dialogId) {
-            MEDIA_VIEWER_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
-                _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(
-                        selectedItems = mediaCoordinator.getSelectedMedia(),
-                        useCounter = !isSingleChoice,
-                    )
+            MEDIA_VIEWER_DIALOG_ID -> when (result) {
+                is DialogResult.Ok<*> -> sendResultOnStart = true
+                is DialogResult.Cancel -> {
+                    _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                        currentState.setSelectedItems(
+                            selectedItems = mediaCoordinator.getSelectedMedia(),
+                            useCounter = !isSingleChoice,
+                        )
+                    }
                 }
             }
         }
@@ -110,18 +125,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 )
             )
 
-            is OnSendClick -> launch {
-                onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
-                _effect.tryEmit(CloseScreen)
-                mediaCoordinator.unselectAllMedia()
-                _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(
-                        selectedItems = emptyList(),
-                        useCounter = isSingleChoice,
-                    )
-                }
-            }
-
+            is OnSendClick -> launch { onSendClick() }
             is OnCloseScreenRequest -> {
                 _effect.tryEmit(CloseScreen)
                 mediaCoordinator.unselectAllMedia()
@@ -185,6 +189,18 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnAlbumsDismissed -> _effect.tryEmit(MediaSelectorEffect.HideAlbumsList)
+        }
+    }
+
+    private suspend fun onSendClick() {
+        onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
+        _effect.tryEmit(CloseScreen)
+        mediaCoordinator.unselectAllMedia()
+        _state.updateState<MediaSelectorUiState.Success> { currentState ->
+            currentState.setSelectedItems(
+                selectedItems = emptyList(),
+                useCounter = isSingleChoice,
+            )
         }
     }
 

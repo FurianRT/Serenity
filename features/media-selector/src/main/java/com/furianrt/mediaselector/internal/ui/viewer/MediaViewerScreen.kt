@@ -7,7 +7,9 @@ import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.rememberPagerState
@@ -22,7 +24,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -40,7 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import com.furianrt.mediaselector.internal.ui.viewer.composables.MediaList
+import com.furianrt.mediaselector.internal.ui.selector.composables.ButtonSend
 import com.furianrt.mediaselector.internal.ui.viewer.composables.MediaPager
 import com.furianrt.mediaselector.internal.ui.viewer.composables.Toolbar
 import com.furianrt.uikit.components.ControlsAnimatedVisibility
@@ -48,9 +50,10 @@ import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 private const val UI_HIDE_DELAY = 3000L
 
@@ -115,12 +118,12 @@ private fun SuccessContent(
     onEvent: (event: MediaViewerEvent) -> Unit = {},
 ) {
     val configuration = LocalConfiguration.current
+    val hazeState = rememberHazeState()
 
     val pagerState = rememberPagerState(
         initialPage = uiState.initialMediaIndex,
         pageCount = { uiState.media.count() },
     )
-    val scope = rememberCoroutineScope()
     val activity = LocalActivity.current
     var showControls by rememberSaveable { mutableStateOf(true) }
     val listState = rememberLazyListState()
@@ -138,6 +141,11 @@ private fun SuccessContent(
         onDispose {
             activity?.window?.showSystemUi()
         }
+    }
+
+    LaunchedEffect(pagerState) {
+        snapshotFlow { pagerState.currentPage }
+            .collect { onEvent(MediaViewerEvent.OnPageChange(it)) }
     }
 
     LaunchedEffect(
@@ -164,7 +172,10 @@ private fun SuccessContent(
         contentAlignment = Alignment.Center,
     ) {
         MediaPager(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .hazeSource(hazeState)
+                .background(Color.Black),
             media = uiState.media,
             state = pagerState,
             showControls = showControls,
@@ -215,21 +226,21 @@ private fun SuccessContent(
         }
         ControlsAnimatedVisibility(
             modifier = Modifier
+                .fillMaxWidth()
                 .graphicsLayer { alpha = controlsAlpha }
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomEnd),
             visible = showControls &&
                     (!isVideoItem ||
                             configuration.orientation == Configuration.ORIENTATION_PORTRAIT),
         ) {
-            MediaList(
+            ButtonSend(
                 modifier = Modifier
-                    .background(SystemBarsConstants.MediaBarsColor)
+                    .padding(end = 12.dp, bottom = 12.dp)
                     .navigationBarsPadding(),
-                media = uiState.media,
-                state = listState,
-                initialMediaIndex = uiState.initialMediaIndex,
-                currentItem = pagerState.currentPage,
-                onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
+                selectedCount = uiState.selectedCount,
+                hazeState = hazeState,
+                hazeColor = Color.Transparent,
+                onClick = { onEvent(MediaViewerEvent.OnButtonSendClick) },
             )
         }
     }
@@ -242,6 +253,7 @@ private fun Preview() {
         SuccessContent(
             uiState = MediaViewerUiState.Success(
                 initialMediaIndex = 1,
+                selectedCount = 2,
                 media = listOf(
                     MediaItem.Image(
                         id = 1L,
