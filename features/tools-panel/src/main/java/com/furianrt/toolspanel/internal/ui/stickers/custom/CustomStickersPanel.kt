@@ -275,7 +275,7 @@ private fun ListContent(
         columns = StaggeredGridCells.Adaptive(72.dp),
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(8.dp),
+        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
     ) {
         items(
             count = uiState.stickers.size,

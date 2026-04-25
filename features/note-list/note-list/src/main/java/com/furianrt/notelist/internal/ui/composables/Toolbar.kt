@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -51,6 +52,7 @@ internal fun Toolbar(
         modifier = modifier
             .height(ToolbarConstants.bigToolbarHeight)
             .fillMaxWidth()
+            .clickableNoRipple {}
             .systemGestureExclusion(),
         targetState = selectedNotesCount > 0,
     ) { targetState ->

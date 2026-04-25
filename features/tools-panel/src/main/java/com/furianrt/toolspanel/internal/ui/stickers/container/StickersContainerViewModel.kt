@@ -20,7 +20,14 @@ internal class StickersContainerViewModel @AssistedInject constructor(
     @Assisted private val noteId: String,
 ) : ViewModel() {
 
-    private val packs = stickersHolder.getStickersPacks()
+    private val packs = buildList {
+        add(
+            StickersContainerUiState.Pack.Custom(
+                icon = R.drawable.ic_custom_sticker,
+            )
+        )
+        addAll(stickersHolder.getStickersPacks().map { it.toContainerPack() })
+    }
     private val pagerState = PagerState(
         pageCount = packs::size,
         currentPage = 1,
@@ -29,14 +36,7 @@ internal class StickersContainerViewModel @AssistedInject constructor(
     val state: StateFlow<StickersContainerUiState> = MutableStateFlow(
         StickersContainerUiState(
             noteId = noteId,
-            packs = buildList {
-                add(
-                    StickersContainerUiState.Pack.Custom(
-                        icon = R.drawable.ic_custom_sticker,
-                    )
-                )
-                addAll(packs.map { it.toContainerPack() })
-            },
+            packs = packs,
             pagerState = pagerState,
         )
     )

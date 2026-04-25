@@ -100,6 +100,7 @@ internal fun Toolbar(
     val test = if (selectedNotesCount > 0) emptyList() else selectedFilters
     Crossfade(
         modifier = modifier
+            .clickableNoRipple {}
             .statusBarsPadding()
             .fillMaxWidth()
             .animateContentSize()
