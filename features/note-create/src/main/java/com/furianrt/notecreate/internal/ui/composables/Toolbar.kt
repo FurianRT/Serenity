@@ -1,5 +1,9 @@
 package com.furianrt.notecreate.internal.ui.composables
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -56,6 +60,7 @@ internal fun Toolbar(
         )
         DateLabel(
             date = date,
+            showBackground = isInEditMode,
             onClick = onDateClick,
         )
         Row(
@@ -87,12 +92,22 @@ internal fun Toolbar(
 @Composable
 private fun DateLabel(
     date: String,
+    showBackground: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val alphaAnim by animateFloatAsState(
+        targetValue = if (showBackground) 1f else 0f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+    )
     Text(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
+            .background(
+                MaterialTheme.colorScheme.background.copy(
+                    alpha = MaterialTheme.colorScheme.background.alpha * alphaAnim,
+                )
+            )
             .clickable(onClick = onClick)
             .padding(vertical = 6.dp, horizontal = 12.dp),
         text = date,
