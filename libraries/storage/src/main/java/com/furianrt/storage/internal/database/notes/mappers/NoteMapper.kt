@@ -40,7 +40,9 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     isTemplate = false,
 )
 
-internal fun LinkedNote.toLocalNote() = LocalNote(
+internal fun LinkedNote.toLocalNote(
+    onFailure: (text: String) -> Unit,
+) = LocalNote(
     id = note.id,
     date = note.date,
     tags = tags.map(EntryNoteTag::toNoteContentTag),
@@ -55,7 +57,7 @@ internal fun LinkedNote.toLocalNote() = LocalNote(
     moodId = note.moodId,
     isPinned = note.isPinned,
     location = location?.toNoteLocation(),
-    content = getLocalNoteContent(note.text),
+    content = getLocalNoteContent(note.text, onFailure),
 )
 
 internal fun List<LocalNote.Content>.toEntryNoteText(): String {
@@ -101,32 +103,41 @@ internal fun EntryNote.toSimpleNote() = SimpleNote(
     isPinned = isPinned,
 )
 
-private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content> {
+private fun LinkedNote.getLocalNoteContent(
+    text: String,
+    onFailure: (text: String) -> Unit,
+): List<LocalNote.Content> {
     val (startIndex, content) = when (getFirstTagType(text)) {
         FirstTagType.TITLE -> {
-            (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(text)
+            (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(text, onFailure)
         }
 
         FirstTagType.MEDIA -> {
-            (text.indexOf(MEDIA_END_TAG) + MEDIA_END_TAG.length) to extractMedia(text)
+            (text.indexOf(MEDIA_END_TAG) + MEDIA_END_TAG.length) to extractMedia(text, onFailure)
         }
 
         FirstTagType.VOICE -> {
-            (text.indexOf(VOICE_END_TAG) + VOICE_END_TAG.length) to extractVoice(text)
+            (text.indexOf(VOICE_END_TAG) + VOICE_END_TAG.length) to extractVoice(text, onFailure)
         }
 
         FirstTagType.NONE -> return emptyList()
     }
     return if (content == null) {
-        getLocalNoteContent(text.substring(startIndex, text.length))
+        getLocalNoteContent(text.substring(startIndex, text.length), onFailure)
     } else {
-        listOf(content) + getLocalNoteContent(text.substring(startIndex, text.length))
+        listOf(content) + getLocalNoteContent(text.substring(startIndex, text.length), onFailure)
     }
 }
 
-private fun LinkedNote.extractTitle(text: String): LocalNote.Content.Title {
+private fun LinkedNote.extractTitle(
+    text: String,
+    onFailure: (text: String) -> Unit,
+): LocalNote.Content.Title {
     val indexOfTag = text.indexOf(TITLE_START_TAG)
     val indexOfClosingTag = text.indexOf(TITLE_END_TAG)
+    if (indexOfTag == -1 || indexOfClosingTag == -1) {
+        onFailure(text)
+    }
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
     val title = text.substring(
         startIndex = indexOfTag + TITLE_START_TAG.length + id.length + 2,
@@ -139,9 +150,15 @@ private fun LinkedNote.extractTitle(text: String): LocalNote.Content.Title {
     )
 }
 
-private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock? {
+private fun LinkedNote.extractMedia(
+    text: String,
+    onFailure: (text: String) -> Unit,
+): LocalNote.Content.MediaBlock? {
     val indexOfTag = text.indexOf(MEDIA_START_TAG)
     val indexOfClosingTag = text.indexOf(MEDIA_END_TAG)
+    if (indexOfTag == -1 || indexOfClosingTag == -1) {
+        onFailure(text)
+    }
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
     val mediaIds = text
         .substring(indexOfTag + MEDIA_START_TAG.length + id.length + 2, indexOfClosingTag)
@@ -163,9 +180,15 @@ private fun LinkedNote.extractMedia(text: String): LocalNote.Content.MediaBlock?
     }
 }
 
-private fun LinkedNote.extractVoice(text: String): LocalNote.Content.Voice? {
+private fun LinkedNote.extractVoice(
+    text: String,
+    onFailure: (text: String) -> Unit,
+): LocalNote.Content.Voice? {
     val indexOfTag = text.indexOf(VOICE_START_TAG)
     val indexOfClosingTag = text.indexOf(VOICE_END_TAG)
+    if (indexOfTag == -1 || indexOfClosingTag == -1) {
+        onFailure(text)
+    }
     val id = text.substring(indexOfTag + VOICE_START_TAG.length, indexOfClosingTag)
     return voices.find { it.id == id }?.toNoteContentVoice()
 }
