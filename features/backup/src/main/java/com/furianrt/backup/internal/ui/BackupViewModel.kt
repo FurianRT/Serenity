@@ -38,6 +38,7 @@ import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,6 +68,7 @@ internal class BackupViewModel @Inject constructor(
     private val authorizeUseCase: AuthorizeUseCase,
     private val resourcesManager: ResourcesManager,
     private val serviceLauncher: ServiceLauncher,
+    private val notesRepository: NotesRepository,
     private val errorTracker: ErrorTracker,
 ) : ViewModel() {
 
@@ -155,29 +157,16 @@ internal class BackupViewModel @Inject constructor(
 
     fun onEvent(event: BackupScreenEvent) {
         when (event) {
-            is OnAutoBackupCheckChange -> launch {
-                backupRepository.setAutoBackupEnabled(event.isChecked)
-            }
-
-            is OnButtonBackupClick -> launch {
-                if (backupRepository.isBackupConfirmed().first()) {
-                    backupDataManager.clearFailureState()
-                    restoreDataManager.clearFailureState()
-                    serviceLauncher.launchBackupService()
-                } else {
-                    _effect.tryEmit(BackupEffect.ShowConfirmBackupDialog)
-                }
-            }
-
-            is OnConfirmBackupClick -> launch {
-                backupRepository.setBackupConfirmed(confirmed = true)
-                serviceLauncher.launchBackupService()
-            }
-
+            is OnButtonBackupClick -> launch { onButtonBackupClick() }
+            is OnConfirmBackupClick -> launch { onConfirmBackupClick() }
             is OnButtonRestoreClick -> {
                 backupDataManager.clearFailureState()
                 restoreDataManager.clearFailureState()
                 serviceLauncher.launchRestoreService()
+            }
+
+            is OnAutoBackupCheckChange -> launch {
+                backupRepository.setAutoBackupEnabled(event.isChecked)
             }
 
             is OnBackupPeriodClick -> {
@@ -204,6 +193,32 @@ internal class BackupViewModel @Inject constructor(
 
             is OnBackupResolutionFailure -> showError(event.error)
         }
+    }
+
+    private suspend fun onButtonBackupClick() {
+        when {
+            !notesRepository.hasNotes().first() -> {
+                val message = resourcesManager.getString(R.string.backup_empty_notes_message)
+                _effect.tryEmit(BackupEffect.ShowErrorToast(message))
+            }
+
+            !backupRepository.isBackupConfirmed().first() -> {
+                _effect.tryEmit(BackupEffect.ShowConfirmBackupDialog)
+            }
+
+            else -> startBackup()
+        }
+    }
+
+    private suspend fun onConfirmBackupClick() {
+        backupRepository.setBackupConfirmed(confirmed = true)
+        startBackup()
+    }
+
+    private fun startBackup() {
+        backupDataManager.clearFailureState()
+        restoreDataManager.clearFailureState()
+        serviceLauncher.launchBackupService()
     }
 
     private fun toggleQuestionExpandedState(question: Question) {

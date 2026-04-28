@@ -51,4 +51,5 @@
 
     <string name="backup_sing_in_resolution_canceled_error">Connexion interrompue</string>
     <string name="backup_success_message">Réussi</string>
+    <string name="backup_empty_notes_message">La liste des notes est vide</string>
 </resources>

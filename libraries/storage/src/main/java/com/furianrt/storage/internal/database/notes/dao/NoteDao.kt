@@ -105,4 +105,7 @@ internal interface NoteDao {
 
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_BACKGROUND_IMAGE_ID} = :backgroundImageId)")
     suspend fun hasNoteWithBackgroundId(backgroundImageId: String): Boolean
+
+    @Query("SELECT EXISTS(SELECT 1 FROM ${EntryNote.TABLE_NAME})")
+    fun hasNotes(): Flow<Boolean>
 }

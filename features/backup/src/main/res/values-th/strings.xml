@@ -59,4 +59,5 @@
 
     <string name="backup_sing_in_resolution_canceled_error">การเข้าสู่ระบบถูกยกเลิก</string>
     <string name="backup_success_message">สำเร็จ</string>
+    <string name="backup_empty_notes_message">รายการบันทึกว่างเปล่า</string>
 </resources>

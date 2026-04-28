@@ -52,4 +52,5 @@
 
     <string name="backup_sing_in_resolution_canceled_error">Giriş işlemi kesildi</string>
     <string name="backup_success_message">Başarılı</string>
+    <string name="backup_empty_notes_message">Not listesi boş</string>
 </resources>

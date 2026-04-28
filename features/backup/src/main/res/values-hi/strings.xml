@@ -52,4 +52,5 @@
 
     <string name="backup_sing_in_resolution_canceled_error">साइन इन बाधित हो गया</string>
     <string name="backup_success_message">सफल रहा</string>
+    <string name="backup_empty_notes_message">नोट्स सूची खाली है</string>
 </resources>

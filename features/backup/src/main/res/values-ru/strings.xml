@@ -59,4 +59,5 @@
 
     <string name="backup_sing_in_resolution_canceled_error">Вход был прерван</string>
     <string name="backup_success_message">Успешно</string>
+    <string name="backup_empty_notes_message">Список заметок пуст</string>
 </resources>

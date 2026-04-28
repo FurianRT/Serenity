@@ -230,6 +230,8 @@ internal class NotesRepositoryImp @Inject constructor(
     override fun getAllTemplates(): Flow<List<SimpleNote>> = noteDao.getAllTemplates()
         .deepMap(EntryNote::toSimpleNote)
 
+    override fun hasNotes(): Flow<Boolean> = noteDao.hasNotes()
+
     override fun getUniqueNotesDates(): Flow<Set<LocalDate>> =
         noteDao.getAllSimpleNotes()
             .deepMap { it.date.toLocalDate() }
