@@ -22,6 +22,7 @@ data class NoteCustomBackground(
     @Serializable(with = UriSerializer::class)
     @SerialName("uri")
     val uri: Uri,
+
     @SerialName("primary_color")
     val primaryColor: Int,
 

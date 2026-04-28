@@ -16,6 +16,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import java.io.IOException
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,7 +35,10 @@ internal class SharedMediaSource @Inject constructor(
             return@withContext false
         }
         val values = ContentValues().apply {
-            put(MediaStore.Files.FileColumns.DISPLAY_NAME, media.name)
+            put(
+                MediaStore.Files.FileColumns.DISPLAY_NAME,
+                UUID.randomUUID().toString() + media.name,
+            )
             put(MediaStore.Files.FileColumns.MEDIA_TYPE, media.mediaType)
             put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
             put(MediaStore.Files.FileColumns.IS_PENDING, 1)

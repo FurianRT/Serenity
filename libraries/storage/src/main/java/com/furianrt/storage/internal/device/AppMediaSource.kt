@@ -161,10 +161,10 @@ internal class AppMediaSource @Inject constructor(
             inputStream.use(BitmapFactory::decodeStream)
         } ?: return@withContext null
 
-        val backgroundNewName = background.name.replaceFileExtension(".webp")
+        val extension = ".webp"
         val destFile = createNoteBackgroundFile(
             id = background.id,
-            name = backgroundNewName,
+            name = extension,
         ) ?: return@withContext null
 
         withContext(dispatchers.default) {
@@ -191,7 +191,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = backgroundNewName,
+            name = extension,
             uri = getRelativeUri(destFile),
         )
     }
@@ -220,10 +220,10 @@ internal class AppMediaSource @Inject constructor(
             inputStream.use(BitmapFactory::decodeStream)
         } ?: return@withContext null
 
-        val stickerNewName = sticker.name.replaceFileExtension(".webp")
+        val extension = ".webp"
         val destFile = createCustomStickerFile(
             id = sticker.id,
-            name = stickerNewName,
+            name = extension,
         ) ?: return@withContext null
 
         withContext(dispatchers.default) {
@@ -250,7 +250,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = stickerNewName,
+            name = extension,
             uri = getRelativeUri(destFile),
         )
     }
@@ -303,11 +303,11 @@ internal class AppMediaSource @Inject constructor(
             inputStream.use(BitmapFactory::decodeStream)
         } ?: return@withContext null
 
-        val imageNewName = image.name.replaceFileExtension(".webp")
+        val extension = ".webp"
         val destFile = createMediaFile(
             noteId = noteId,
             mediaId = image.id,
-            mediaName = imageNewName,
+            mediaName = extension,
         ) ?: return@withContext null
 
         withContext(dispatchers.default) {
@@ -334,7 +334,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = imageNewName,
+            name = extension,
             uri = getRelativeUri(destFile),
         )
     }
@@ -368,15 +368,5 @@ internal class AppMediaSource @Inject constructor(
     } catch (e: Exception) {
         errorTracker.trackNonFatalError(e)
         null
-    }
-
-    private fun String.replaceFileExtension(newExtension: String): String {
-        val lastDotIndex = lastIndexOf('.')
-        val withoutExtension = if (lastDotIndex != -1) {
-            substring(0, lastDotIndex)
-        } else {
-            this
-        }
-        return withoutExtension + newExtension
     }
 }
