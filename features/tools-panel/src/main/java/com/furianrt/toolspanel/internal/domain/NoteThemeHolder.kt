@@ -299,12 +299,12 @@ internal class NoteThemesHolder @Inject constructor(
             ),
             UiNoteTheme.Image.Picture(
                 color = UiNoteBackground(
-                    id = "picture_color_18",
+                    id = "picture_image_22",
                     isLight = true,
                     colorScheme = UiThemeColor.APP_BACKGROUND_PICTURE_18.colorScheme,
                 ),
                 image = UiNoteBackgroundImage(
-                    id = "picture_image_18",
+                    id = "picture_image_22",
                     source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_picture_18),
                     scaleType = UiNoteBackgroundImage.ScaleType.FILL,
                 )
