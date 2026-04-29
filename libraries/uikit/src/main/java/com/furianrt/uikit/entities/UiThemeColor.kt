@@ -586,6 +586,37 @@ enum class UiThemeColor(
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
+    ),
+
+    APP_BACKGROUND_PICTURE_18(
+        id = "app_background_picture_18",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.LightGrey.copy(alpha = 0.15f),
+        outlineVariant = Colors.Accent.LightGrey.copy(alpha = 0.15f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.LightGrey.copy(alpha = 0.2f),
+        onTertiaryContainer = Colors.Accent.LightGrey.copy(alpha = 0.25f),
+        background = Color.White.copy(alpha = 0.35f),
+        secondaryContainer = Color.White.copy(alpha = 0.35f),
+        inverseSurface = Colors.Primary.LightRed.copy(alpha = 0.9f),
+        onSurfaceVariant = Colors.Accent.LightGrey.copy(alpha = 0.1f),
+        surface = Colors.Primary.LightRed,
+        surfaceContainer = Colors.Accent.LightGrey,
+        primaryContainer = Colors.Accent.LightGrey,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_6,
+            scaleType = CROP_ALIGN_BOTTOM,
+        ),
     );
 
     companion object {
