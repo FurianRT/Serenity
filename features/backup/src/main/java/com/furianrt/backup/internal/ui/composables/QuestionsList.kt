@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -68,17 +69,18 @@ private fun QuestionItem(
                 .alpha(alpha),
             text = "${index + 1}. ${question.title}",
             style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.ExtraBold,
         )
         AnimatedVisibility(
-            modifier = Modifier.alpha(alpha),
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .alpha(alpha),
             visible = question.isExpanded,
             enter = fadeIn(),
             exit = ExitTransition.None,
         ) {
             Text(
                 text = question.answer,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }

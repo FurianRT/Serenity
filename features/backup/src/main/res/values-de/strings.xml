@@ -1,5 +1,6 @@
 <resources>
     <string name="backup_auto_backup_title">Automatisches Backup</string>
+    <string name="backup_auto_backup_hint">Notizen automatisch sichern</string>
     <string name="backup_auto_backup_period_title">Backup-Intervall</string>
     <string name="backup_last_sync_time_title">Letzte Synchronisierung: %s</string>
     <string name="backup_restore_data_title">Daten wiederherstellen</string>

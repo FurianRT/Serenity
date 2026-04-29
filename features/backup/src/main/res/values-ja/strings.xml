@@ -1,5 +1,6 @@
 <resources>
     <string name="backup_auto_backup_title">自動バックアップ</string>
+    <string name="backup_auto_backup_hint">ノートを自動的にバックアップ</string>
     <string name="backup_auto_backup_period_title">自動バックアップ間隔</string>
     <string name="backup_last_sync_time_title">最終同期: %s</string>
     <string name="backup_restore_data_title">データを復元</string>

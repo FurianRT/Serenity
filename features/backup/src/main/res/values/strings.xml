@@ -1,6 +1,7 @@
 <resources>
     <string name="backup_google_drive_title" translatable="false">Google Drive</string>
     <string name="backup_auto_backup_title">Auto Backup</string>
+    <string name="backup_auto_backup_hint">Automatically back up your notes</string>
     <string name="backup_auto_backup_period_title">Auto Backup Period</string>
     <string name="backup_last_sync_time_title">Last sync: %s</string>
     <string name="backup_restore_data_title">Restore Data</string>

@@ -23,7 +23,7 @@ fun RegularButton(
         modifier = modifier.applyIf(!enabled) { Modifier.alpha(0.5f) },
         onClick = onClick,
         enabled = enabled,
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(24.dp),
         colors = ButtonDefaults.buttonColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,

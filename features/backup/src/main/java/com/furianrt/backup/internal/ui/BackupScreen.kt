@@ -353,6 +353,7 @@ private fun SuccessContent(
                 SwitchWithLabel(
                     modifier = Modifier.padding(horizontal = 12.dp),
                     title = stringResource(R.string.backup_auto_backup_title),
+                    hint = stringResource(R.string.backup_auto_backup_hint),
                     isChecked = uiState.isAutoBackupEnabled,
                     onCheckedChange = { isChecked ->
                         onEvent(BackupScreenEvent.OnAutoBackupCheckChange(isChecked))
@@ -368,11 +369,11 @@ private fun SuccessContent(
                     isEnabled = uiState.isSignedIn && uiState.isAutoBackupEnabled,
                     onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
                 )
-                Spacer(Modifier.height(10.dp))
+                Spacer(Modifier.height(32.dp))
                 RestoreButton(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 12.dp)
+                        .padding(horizontal = 24.dp)
                         .shakable(restoreShakeState),
                     isEnabled = uiState.isSignedIn && !uiState.isSyncInProgress,
                     onClick = {
@@ -382,7 +383,7 @@ private fun SuccessContent(
                     },
                 )
                 if (uiState.questions.isNotEmpty()) {
-                    Spacer(Modifier.height(16.dp))
+                    Spacer(Modifier.height(24.dp))
                     HorizontalDivider(
                         modifier = Modifier.padding(start = 24.dp),
                         thickness = 1.dp,

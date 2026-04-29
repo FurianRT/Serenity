@@ -1,6 +1,7 @@
 package com.furianrt.backup.internal.ui.composables
 
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -28,11 +29,16 @@ internal fun RestoreButton(
     val alpha by animateFloatAsState(targetValue = if (isEnabled) 1f else 0.5f)
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(8.dp))
+            .alpha(alpha)
+            .clip(RoundedCornerShape(24.dp))
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.primaryContainer,
+                shape = RoundedCornerShape(24.dp),
+            )
             .clickable(enabled = isEnabled, onClick = onClick)
-            .padding(horizontal = 12.dp, vertical = 20.dp)
-            .alpha(alpha),
-        contentAlignment = Alignment.CenterStart,
+            .padding(horizontal = 8.dp, vertical = 14.dp),
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             text = stringResource(R.string.backup_restore_data_title),

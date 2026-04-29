@@ -43,7 +43,7 @@ internal fun BackupPeriod(
         Text(
             modifier = Modifier.alpha(0.5f),
             text = getBackupPeriodTitle(period),
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelSmall,
         )
     }
 }

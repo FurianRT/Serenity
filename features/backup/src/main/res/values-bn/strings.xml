@@ -1,5 +1,6 @@
 <resources>
     <string name="backup_auto_backup_title">অটো ব্যাকআপ</string>
+    <string name="backup_auto_backup_hint">আপনার নোটগুলো স্বয়ংক্রিয়ভাবে ব্যাকআপ করুন</string>
     <string name="backup_auto_backup_period_title">অটো ব্যাকআপের সময়কাল</string>
     <string name="backup_last_sync_time_title">শেষ সিঙ্ক: %s</string>
     <string name="backup_restore_data_title">ডেটা পুনরুদ্ধার</string>
