@@ -1,8 +1,6 @@
 package com.furianrt.storage.internal.di
 
 import android.content.Context
-import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.domain.repositories.AppInfoRepository
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -89,105 +87,11 @@ internal interface DatabaseModule {
     fun appInfoRepository(imp: AppInfoRepositoryImp): AppInfoRepository
 
     companion object {
-        @Suppress("LocalVariableName")
         @Provides
         @Singleton
         fun provideDatabase(
             @ApplicationContext context: Context,
-        ): SerenityDatabase {
-            val MIGRATION_1_2 = object : Migration(1, 2) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE Notes ADD COLUMN background_id TEXT")
-                }
-            }
-            val MIGRATION_2_3 = object : Migration(2, 3) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE Notes ADD COLUMN mood_id TEXT")
-                }
-            }
-            val MIGRATION_3_4 = object : Migration(3, 4) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL(
-                        """
-                            CREATE TABLE IF NOT EXISTS NoteLocations (
-                                id TEXT NOT NULL PRIMARY KEY,
-                                note_id TEXT NOT NULL,
-                                title TEXT NOT NULL,
-                                latitude REAL NOT NULL,
-                                longitude REAL NOT NULL,
-                                FOREIGN KEY(note_id) 
-                                    REFERENCES Notes(id) 
-                                    ON DELETE CASCADE
-                            )
-                        """
-                    )
-                    db.execSQL(
-                        "CREATE INDEX IF NOT EXISTS index_NoteLocations_note_id ON " +
-                                "NoteLocations(note_id)"
-                    )
-                }
-            }
-            val MIGRATION_4_5 = object : Migration(4, 5) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE Notes ADD COLUMN background_image_id TEXT")
-                }
-            }
-            val MIGRATION_5_6 = object : Migration(5, 6) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL(
-                        """
-                            CREATE TABLE IF NOT EXISTS NoteCustomBackgrounds (
-                                id TEXT NOT NULL PRIMARY KEY,
-                                name TEXT NOT NULL,
-                                uri TEXT NOT NULL,
-                                primary_color INTEGER NOT NULL,
-                                accent_color INTEGER NOT NULL,
-                                is_light INTEGER NOT NULL,
-                                added_date TEXT NOT NULL,
-                                is_saved INTEGER NOT NULL,
-                                is_hidden INTEGER NOT NULL
-                            )
-                        """
-                    )
-                }
-            }
-            val MIGRATION_6_7 = object : Migration(6, 7) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL("ALTER TABLE Notes ADD COLUMN text_alignment INTEGER")
-                    db.execSQL("ALTER TABLE Notes ADD COLUMN line_height_multiplier REAL")
-                }
-            }
-            val MIGRATION_7_8 = object : Migration(7, 8) {
-                override fun migrate(db: SupportSQLiteDatabase) {
-                    db.execSQL(
-                        """
-                            CREATE TABLE IF NOT EXISTS CustomStickers (
-                                id TEXT NOT NULL PRIMARY KEY,
-                                name TEXT NOT NULL,
-                                uri TEXT NOT NULL,
-                                ratio REAL NOT NULL,
-                                added_date TEXT NOT NULL,
-                                is_saved INTEGER NOT NULL,
-                                is_hidden INTEGER NOT NULL
-                            )
-                        """
-                    )
-                }
-            }
-            return SerenityDatabase
-                .create(
-                    context = context,
-                    migrations = arrayOf(
-                        MIGRATION_1_2,
-                        MIGRATION_2_3,
-                        MIGRATION_3_4,
-                        MIGRATION_4_5,
-                        MIGRATION_5_6,
-                        MIGRATION_6_7,
-                        MIGRATION_7_8,
-                    ),
-                )
-        }
+        ): SerenityDatabase = SerenityDatabase.create(context)
 
         @Provides
         @Singleton
@@ -219,9 +123,9 @@ internal interface DatabaseModule {
 
         @Provides
         @Singleton
-        fun customStickerDao(database: SerenityDatabase): CustomStickerDao {
-            return database.customStickerDao()
-        }
+        fun customStickerDao(
+            database: SerenityDatabase,
+        ): CustomStickerDao = database.customStickerDao()
 
         @Provides
         @Singleton
