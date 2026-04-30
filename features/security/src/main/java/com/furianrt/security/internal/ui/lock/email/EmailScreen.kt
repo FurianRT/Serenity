@@ -51,6 +51,7 @@ import com.furianrt.uikit.anim.shakable
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.theme.SerenityTheme
+import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -73,12 +74,13 @@ internal fun EmailScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
     LaunchedEffect(Unit) {
-        viewModel.effect.collect { effect ->
+        viewModel.effect.collectLatest { effect ->
             when (effect) {
                 is EmailEffect.CloseScreen -> {
                     focusManager.clearFocus()
                     onCloseRequestState()
                 }
+
                 is EmailEffect.ShowEmailFormatError -> {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                     emailShakeState.shake(animationDuration = 25)
