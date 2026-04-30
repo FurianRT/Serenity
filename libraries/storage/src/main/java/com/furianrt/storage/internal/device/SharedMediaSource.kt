@@ -48,7 +48,7 @@ internal class SharedMediaSource @Inject constructor(
             resolver.insert(
                 MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL),
                 values,
-            )
+            ) ?: throw IOException()
         } catch (e: Throwable) {
             errorTracker.trackNonFatalError(e)
             null
@@ -70,7 +70,6 @@ internal class SharedMediaSource @Inject constructor(
                 false
             }
         } else {
-            errorTracker.trackNonFatalError(IOException())
             false
         }
     }
