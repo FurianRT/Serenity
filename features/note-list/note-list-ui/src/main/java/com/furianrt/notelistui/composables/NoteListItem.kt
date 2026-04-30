@@ -105,7 +105,9 @@ fun NoteListItem(
     val backgroundColor = if (isSelected) {
         MaterialTheme.colorScheme.onSurfaceVariant
     } else {
-        MaterialTheme.colorScheme.background
+        MaterialTheme.colorScheme.background.copy(
+            alpha = MaterialTheme.colorScheme.background.alpha * 0.3f,
+        )
     }
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         Box(
@@ -121,7 +123,7 @@ fun NoteListItem(
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.surface,
                         blurRadius = 12.dp,
-                        tint = HazeTint(backgroundColor.copy(alpha = backgroundColor.alpha * 0.3f)),
+                        tint = HazeTint(backgroundColor),
                     )
                 )
                 .then(
