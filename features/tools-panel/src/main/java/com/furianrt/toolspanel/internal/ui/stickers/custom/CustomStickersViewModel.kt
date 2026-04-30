@@ -60,7 +60,7 @@ internal class CustomStickersViewModel @Inject constructor(
         val customSticker = stickersRepository.getNotHiddenCustomStickers().first()
             .find { it.id == sticker.id }
         if (customSticker != null) {
-            stickersRepository.deleteCustomSticker(customSticker)
+            stickersRepository.hideCustomSticker(customSticker)
         }
     }
 

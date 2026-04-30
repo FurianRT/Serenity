@@ -16,11 +16,8 @@ interface StickersRepository {
         updateFile: Boolean = true,
     )
 
-    suspend fun deleteCustomSticker(
-        sticker: CustomSticker,
-        updateHiddenFlag: Boolean = true,
-    )
-
+    suspend fun deleteCustomSticker(sticker: CustomSticker)
+    suspend fun hideCustomSticker(sticker: CustomSticker)
     fun getNotHiddenCustomStickers(): Flow<List<CustomSticker>>
     fun getHiddenCustomStickers(): Flow<List<CustomSticker>>
     fun getAllCustomStickers(): Flow<List<CustomSticker>>
@@ -32,11 +29,8 @@ interface StickersRepository {
                 flowOf(emptyList())
 
             override fun getHiddenCustomStickers(): Flow<List<CustomSticker>> = flowOf(emptyList())
-            override suspend fun deleteCustomSticker(
-                sticker: CustomSticker,
-                updateHiddenFlag: Boolean,
-            ) = Unit
-
+            override suspend fun hideCustomSticker(sticker: CustomSticker) = Unit
+            override suspend fun deleteCustomSticker(sticker: CustomSticker) = Unit
             override suspend fun delete(stickers: List<LocalNote.Sticker>) = Unit
             override fun getStickers(noteId: String): Flow<List<LocalNote.Sticker>> =
                 flowOf(emptyList())

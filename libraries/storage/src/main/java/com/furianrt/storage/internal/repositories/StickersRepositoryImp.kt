@@ -59,20 +59,12 @@ internal class StickersRepositoryImp @Inject constructor(
         }
     }
 
-    override suspend fun deleteCustomSticker(
-        sticker: CustomSticker,
-        updateHiddenFlag: Boolean,
-    ) {
-        if (stickerDao.hasStickerWithTypeId(sticker.id)) {
-            if (updateHiddenFlag) {
-                customStickerDao.update(
-                    PartCustomStickerIsHidden(
-                        id = sticker.id,
-                        isHidden = true,
-                    )
-                )
-            }
-        } else {
+    override suspend fun hideCustomSticker(sticker: CustomSticker) {
+        customStickerDao.update(PartCustomStickerIsHidden(id = sticker.id, isHidden = true))
+    }
+
+    override suspend fun deleteCustomSticker(sticker: CustomSticker) {
+        if (!stickerDao.hasStickerWithTypeId(sticker.id)) {
             mediaSaver.cancel(sticker)
             customStickerDao.delete(PartCustomStickerId(id = sticker.id))
             appMediaSource.deleteStickerFile(sticker)

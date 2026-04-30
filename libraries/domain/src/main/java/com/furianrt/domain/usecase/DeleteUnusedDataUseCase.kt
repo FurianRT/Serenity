@@ -34,7 +34,7 @@ class DeleteUnusedDataUseCase @Inject constructor(
 
     private suspend fun deleteUnusedHiddenCustomStickers() {
         stickersRepository.getHiddenCustomStickers().first().forEach { sticker ->
-            stickersRepository.deleteCustomSticker(sticker, updateHiddenFlag = false)
+            stickersRepository.deleteCustomSticker(sticker)
         }
     }
 }
