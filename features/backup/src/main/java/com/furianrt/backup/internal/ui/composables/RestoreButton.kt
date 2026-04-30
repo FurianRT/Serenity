@@ -30,11 +30,11 @@ internal fun RestoreButton(
     Box(
         modifier = modifier
             .alpha(alpha)
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(32.dp))
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(24.dp),
+                shape = RoundedCornerShape(32.dp),
             )
             .clickable(enabled = isEnabled, onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 14.dp),

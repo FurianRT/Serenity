@@ -37,7 +37,7 @@ internal fun SyncButton(
         Button(
             modifier = modifier
                 .alpha(alpha)
-                .clip(RoundedCornerShape(24.dp))
+                .clip(RoundedCornerShape(32.dp))
                 .drawWithContent {
                     drawContent()
                     if (progress != null) {
@@ -50,7 +50,7 @@ internal fun SyncButton(
                 .animateContentSize(),
             onClick = onClick,
             enabled = isEnabled,
-            shape = RoundedCornerShape(24.dp),
+            shape = RoundedCornerShape(32.dp),
             colors = ButtonDefaults.buttonColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.primaryContainer,

@@ -119,9 +119,9 @@ fun NoteListItem(
                 .hazeEffect(
                     state = hazeState,
                     style = HazeDefaults.style(
-                        backgroundColor = backgroundColor,
+                        backgroundColor = MaterialTheme.colorScheme.surface,
                         blurRadius = 12.dp,
-                        tint = HazeTint(backgroundColor.copy(alpha = 0.1f)),
+                        tint = HazeTint(backgroundColor.copy(alpha = backgroundColor.alpha * 0.3f)),
                     )
                 )
                 .then(
