@@ -10,7 +10,6 @@ import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.DeviceAlbum
 import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
-import com.furianrt.storage.BuildConfig
 import com.furianrt.storage.internal.device.mappers.toAlbumThumbnail
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.isActive
@@ -31,23 +30,29 @@ internal class SharedMediaSource @Inject constructor(
     suspend fun saveToGallery(
         media: LocalMedia,
     ): Boolean = withContext(dispatchers.io) {
-        if (media.uri.host != BuildConfig.FILE_PROVIDER_AUTHORITY) {
-            return@withContext false
-        }
         val values = ContentValues().apply {
             put(
                 MediaStore.Files.FileColumns.DISPLAY_NAME,
-                UUID.randomUUID().toString() + media.name,
+                if (media.name.length > 10) {
+                    media.name
+                } else {
+                    UUID.randomUUID().toString() + media.name
+                },
             )
             put(MediaStore.Files.FileColumns.MEDIA_TYPE, media.mediaType)
             put(MediaStore.Files.FileColumns.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
             put(MediaStore.Files.FileColumns.IS_PENDING, 1)
         }
         val resolver = context.contentResolver
-        val uri = resolver.insert(
-            MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL),
-            values,
-        )
+        val uri = try {
+            resolver.insert(
+                MediaStore.Files.getContentUri(MediaStore.VOLUME_EXTERNAL),
+                values,
+            )
+        } catch (e: Throwable) {
+            errorTracker.trackNonFatalError(e)
+            null
+        }
         return@withContext if (uri != null) {
             try {
                 resolver.openInputStream(media.uri)?.use { inputStream ->

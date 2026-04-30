@@ -298,6 +298,7 @@ private fun SuccessContent(
                     title = data.visuals.message,
                     icon = painterResource(R.drawable.ic_download),
                     color = Colors.Common.DarkGray.copy(alpha = 0.9f),
+                    contentColor = Color.White,
                 )
             },
         )

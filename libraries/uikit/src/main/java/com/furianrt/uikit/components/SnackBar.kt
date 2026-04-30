@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
-import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 
 @Composable
@@ -28,6 +27,7 @@ fun SnackBar(
     modifier: Modifier = Modifier,
     color: Color? = null,
     tonalColor: Color? = null,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     icon: Painter? = null,
 ) {
     Surface(
@@ -38,7 +38,13 @@ fun SnackBar(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .applyIf(tonalColor != null) { Modifier.background(tonalColor!!) }
+                .then(
+                    if (tonalColor != null) {
+                        Modifier.background(tonalColor)
+                    } else {
+                        Modifier
+                    }
+                )
                 .padding(16.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -46,14 +52,14 @@ fun SnackBar(
             if (icon != null) {
                 Icon(
                     painter = icon,
-                    tint = MaterialTheme.colorScheme.onSurface,
+                    tint = contentColor,
                     contentDescription = title,
                 )
             }
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface
+                color = contentColor,
             )
         }
     }
