@@ -21,6 +21,7 @@ import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 internal fun SearchBar(
@@ -60,7 +61,7 @@ internal fun SearchBar(
 private fun SearchBarPreview() {
     SerenityTheme {
         SearchBar(
-            hazeState = HazeState(),
+            hazeState = rememberHazeState(),
             onClick = {},
         )
     }

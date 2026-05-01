@@ -193,6 +193,8 @@ private fun SuccessContent(
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
 
+    val date = remember(uiState.note.date) { uiState.note.date.toDateString() }
+
     BackHandler(
         enabled = uiState.isInEditMode && !isGestureNavigationEnabled(),
         onBack = { onEvent(NoteCreateEvent.OnButtonBackClick) },
@@ -218,9 +220,6 @@ private fun SuccessContent(
         dimSurface = state.dimSurface,
         onDimClick = { scope.launch { state.mediaSelectorState.collapse() } },
         toolbar = {
-            val date = remember(uiState.note.date) {
-                uiState.note.date.toDateString()
-            }
             Toolbar(
                 modifier = Modifier.padding(top = statusBarHeight.dp),
                 isInEditMode = uiState.isInEditMode,

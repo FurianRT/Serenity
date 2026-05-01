@@ -309,13 +309,13 @@ private fun SuccessContent(
     onEvent: (event: NoteListEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
+    val toolbarHeight = ToolbarConstants.bigToolbarHeight.dpToPx()
 
     LaunchedEffect(uiState.scrollToPosition) {
         if (uiState.scrollToPosition != null) {
             screenState.scrollToPosition(
                 position = uiState.scrollToPosition,
-                toolbarHeight = density.run { ToolbarConstants.bigToolbarHeight.toPx().toInt() },
+                toolbarHeight = toolbarHeight.toInt(),
             )
             onEvent(NoteListEvent.OnScrolledToItem)
         }
@@ -332,7 +332,10 @@ private fun SuccessContent(
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        items(count = uiState.notes.count(), key = { uiState.notes[it].id }) { index ->
+        items(
+            count = uiState.notes.count(),
+            key = { uiState.notes[it].id },
+        ) { index ->
             val note = uiState.notes[index]
             NoteListItem(
                 modifier = Modifier

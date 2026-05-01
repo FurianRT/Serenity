@@ -63,6 +63,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -228,21 +229,18 @@ private fun SuccessScreen(
     }
 
     val toolbarState = rememberMovableToolbarState()
-    var skipToolbarExpand by remember { mutableStateOf(true) }
-
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
 
     LaunchedEffect(Unit) {
         snapshotFlow { pagerState.currentPage }
-            .collectLatest { currentPage ->
-                onEvent(NoteViewEvent.OnPageChange(currentPage))
-                if (!skipToolbarExpand) {
-                    toolbarState.expand()
-                } else {
-                    skipToolbarExpand = false
-                }
-            }
+            .collectLatest { onEvent(NoteViewEvent.OnPageChange(it)) }
+    }
+
+    LaunchedEffect(Unit) {
+        snapshotFlow { pagerState.currentPage }
+            .drop(1)
+            .collectLatest { toolbarState.expand() }
     }
 
     LaunchedEffect(uiState.currentPageIndex) {

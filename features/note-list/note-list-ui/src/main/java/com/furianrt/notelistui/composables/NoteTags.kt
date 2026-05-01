@@ -176,13 +176,23 @@ private fun TemplateNoteTagItem(
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
+    val textMeasurer = rememberTextMeasurer()
 
     var hasFocus by remember { mutableStateOf(false) }
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
+    val hasText by remember { derivedStateOf { tag.textState.text.isNotBlank() } }
+    var tagsSuggests by remember { mutableStateOf(emptyList<String>()) }
+    var showTagSuggests by remember { mutableStateOf(false) }
 
     val focusMargin = with(LocalDensity.current) { 108.dp.toPx().toInt() }
     val keyboardOffset by rememberKeyboardOffsetState()
     val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
+
+    val hintStyle = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic)
+    val hintText = stringResource(R.string.note_content_add_tag_hint)
+    val hintWidth = rememberSaveable {
+        textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
+    }
 
     val onTextEnteredState by rememberUpdatedState(onTextEntered)
     val onTextClearedState by rememberUpdatedState(onTextCleared)
@@ -201,7 +211,6 @@ private fun TemplateNoteTagItem(
                 }
             }
     }
-
     LaunchedEffect(hasFocus) {
         snapshotFlow { tag.textState.selection }
             .collect { selection ->
@@ -215,15 +224,9 @@ private fun TemplateNoteTagItem(
                 }
             }
     }
-
-    val hasText by remember { derivedStateOf { tag.textState.text.isNotBlank() } }
     LaunchedEffect(hasText) {
         if (hasText) onTextEnteredState() else onTextClearedState()
     }
-
-    var tagsSuggests by remember { mutableStateOf(emptyList<String>()) }
-    var showTagSuggests by remember { mutableStateOf(false) }
-
     if (tag.suggestsProvider != null) {
         LaunchedEffect(tag.suggestsProvider) {
             snapshotFlow { tag.textState.text }
@@ -243,14 +246,6 @@ private fun TemplateNoteTagItem(
                 }
         }
     }
-
-    val textMeasurer = rememberTextMeasurer()
-    val hintStyle = MaterialTheme.typography.labelSmall.copy(fontStyle = FontStyle.Italic)
-    val hintText = stringResource(R.string.note_content_add_tag_hint)
-    val hintWidth = rememberSaveable {
-        textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
-    }
-
     ExposedDropdownMenuBox(
         modifier = modifier,
         expanded = showTagSuggests,
@@ -363,13 +358,10 @@ private fun NoteDateItem(
     topPadding: Dp,
     modifier: Modifier = Modifier,
 ) {
-    val density = LocalDensity.current
     val textMeasurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelSmall
-    val dateWidth = remember(text) {
-        density.run {
-            textMeasurer.measure(text = text, style = style, maxLines = 1).size.width.toDp()
-        }
+    val textResult = remember(text, style) {
+        textMeasurer.measure(text = text, style = style, maxLines = 1)
     }
     Box(
         modifier = modifier,
@@ -378,7 +370,7 @@ private fun NoteDateItem(
         Text(
             modifier = Modifier
                 .padding(start = 8.dp, end = 8.dp, bottom = 4.dp, top = topPadding)
-                .widthIn(min = dateWidth)
+                .widthIn(min = textResult.size.width.pxToDp())
                 .alpha(0.6f),
             text = text,
             textAlign = TextAlign.End,

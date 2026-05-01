@@ -38,7 +38,6 @@ import com.furianrt.notelist.R
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
 import com.furianrt.uikit.R as uiR
 
@@ -107,7 +106,6 @@ private fun ButtonScrollToTop(
                     state = hazeState,
                     style = HazeDefaults.style(
                         backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                        tint = HazeTint(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
                         noiseFactor = 0f,
                         blurRadius = 12.dp,
                     )
@@ -157,7 +155,6 @@ private fun ButtonCreateNote(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    tint = HazeTint(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.7f)),
                     noiseFactor = 0f,
                     blurRadius = 12.dp,
                 )

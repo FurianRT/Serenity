@@ -109,6 +109,10 @@ fun NoteListItem(
             alpha = MaterialTheme.colorScheme.background.alpha * 0.3f,
         )
     }
+    val showMood = content.isEmpty() && moodId != null
+    val hasLocation = locationState is LocationState.Success
+    val showLocation = hasLocation && !showMood && content.isEmpty()
+
     CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
         Box(
             modifier = modifier
@@ -153,24 +157,16 @@ fun NoteListItem(
             ) {
                 content.forEachIndexed { index, item ->
                     when (item) {
-                        is UiNoteContent.Title -> {
-                            val style = MaterialTheme.typography.bodyMedium
-                            Text(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                                text = item.state.annotatedString,
-                                maxLines = MAX_TEXT_LINES,
-                                fontSize = fontSize,
-                                textAlign = textAlign,
-                                overflow = TextOverflow.Ellipsis,
-                                fontFamily = fontFamily?.regular ?: style.fontFamily,
-                                lineHeight = (style.lineHeight *
-                                        (fontSize.value / style.fontSize.value)) *
-                                        lineHeightMultiplier,
-                                style = style,
-                            )
-                        }
+                        is UiNoteContent.Title -> Title(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                            item = item,
+                            fontFamily = fontFamily,
+                            fontSize = fontSize,
+                            textAlign = textAlign,
+                            lineHeightMultiplier = lineHeightMultiplier,
+                        )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
                             modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
@@ -190,11 +186,6 @@ fun NoteListItem(
                         )
                     }
                 }
-
-                val showMood = content.isEmpty() && moodId != null
-                val showLocation = locationState is LocationState.Success &&
-                        !showMood && content.isEmpty()
-
                 when {
                     showMood -> MoodButton(
                         modifier = Modifier
@@ -235,34 +226,70 @@ fun NoteListItem(
                 )
             }
             if (isPinned) {
-                val hasMedia = content.firstOrNull() is UiNoteContent.MediaBlock
-                Icon(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .applyIf(hasMedia) {
-                            Modifier.hazeEffect(
-                                state = itemHazeState,
-                                style = HazeDefaults.style(
-                                    backgroundColor = MaterialTheme.colorScheme.surface,
-                                    tint = HazeTint(Color.Transparent),
-                                    blurRadius = 12.dp,
-                                    noiseFactor = 0f,
-                                )
-                            )
-                        }
-                        .align(Alignment.TopEnd),
-                    painter = painterResource(R.drawable.ic_list_note_pin),
-                    tint = if (hasMedia) {
-                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
-                    } else {
-                        MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f)
-                    },
-                    contentDescription = null,
+                PinIcon(
+                    modifier = Modifier.align(Alignment.TopEnd),
+                    hasMedia = content.firstOrNull() is UiNoteContent.MediaBlock,
+                    hazeState = itemHazeState,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun Title(
+    item: UiNoteContent.Title,
+    fontFamily: UiNoteFontFamily?,
+    fontSize: TextUnit,
+    textAlign: TextAlign,
+    lineHeightMultiplier: Float,
+    modifier: Modifier = Modifier,
+) {
+    val style = MaterialTheme.typography.bodyMedium
+    Text(
+        modifier = modifier,
+        text = item.state.annotatedString,
+        maxLines = MAX_TEXT_LINES,
+        fontSize = fontSize,
+        textAlign = textAlign,
+        overflow = TextOverflow.Ellipsis,
+        fontFamily = fontFamily?.regular ?: style.fontFamily,
+        lineHeight = (style.lineHeight *
+                (fontSize.value / style.fontSize.value)) *
+                lineHeightMultiplier,
+        style = style,
+    )
+}
+
+@Composable
+private fun PinIcon(
+    hasMedia: Boolean,
+    hazeState: HazeState,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier
+            .padding(4.dp)
+            .clip(CircleShape)
+            .applyIf(hasMedia) {
+                Modifier.hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        tint = HazeTint(Color.Transparent),
+                        blurRadius = 12.dp,
+                        noiseFactor = 0f,
+                    )
+                )
+            },
+        painter = painterResource(R.drawable.ic_list_note_pin),
+        tint = if (hasMedia) {
+            MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.5f)
+        } else {
+            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.5f)
+        },
+        contentDescription = null,
+    )
 }
 
 @PreviewWithBackground

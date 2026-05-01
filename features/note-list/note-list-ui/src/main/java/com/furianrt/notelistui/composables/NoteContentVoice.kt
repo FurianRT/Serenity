@@ -329,15 +329,14 @@ private fun Track(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {
+    val totalColumns = volume.size
+    val fullColumns = (totalColumns * progress).toInt()
+    val partialProgress = totalColumns * progress - fullColumns
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(1.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val totalColumns = volume.size
-        val fullColumns = (totalColumns * progress).toInt()
-        val partialProgress = totalColumns * progress - fullColumns
-
         volume.forEachIndexed { index, value ->
             val adjustedHeight = (value * VOLUME_MULTIPLIER).coerceAtMost(1f)
             val color = when {

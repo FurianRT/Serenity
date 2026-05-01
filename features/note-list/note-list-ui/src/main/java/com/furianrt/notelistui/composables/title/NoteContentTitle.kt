@@ -51,6 +51,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.drop
 
 @OptIn(
     FlowPreview::class,
@@ -71,9 +72,27 @@ fun NoteContentTitle(
     onTitleTextChange: (id: String) -> Unit = {},
     onCheckedListChange: () -> Unit = {},
 ) {
+    val focusManager = LocalFocusManager.current
+
     val readOnly = !isInEditMode && title.isEmptyTitle()
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
     var hasFocus by remember { mutableStateOf(false) }
+
+    val isTextEmpty by remember { derivedStateOf { title.state.textValue.text.isEmpty() } }
+    val textStyle = if (isTextEmpty) {
+        MaterialTheme.typography.labelMedium
+    } else {
+        MaterialTheme.typography.bodyMedium
+    }
+
+    val adjustedStyle = textStyle.copy(
+        color = color ?: MaterialTheme.colorScheme.onSurface,
+        fontFamily = fontFamily ?: textStyle.fontFamily,
+        fontSize = fontSize,
+        textAlign = textAlign,
+        lineHeight = (textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value)) *
+                lineHeightMultiplier,
+    )
 
     val onTitleTextChangeState by rememberUpdatedState(onTitleTextChange)
     val onCheckedListChangeState by rememberUpdatedState(onCheckedListChange)
@@ -117,41 +136,16 @@ fun NoteContentTitle(
                 }
         }
     }
-
-    val focusManager = LocalFocusManager.current
     LaunchedEffect(isInEditMode) {
         if (!isInEditMode) {
             focusManager.clearFocus()
         }
     }
-
-    var titleText by remember { mutableStateOf(title.state.annotatedString) }
     LaunchedEffect(Unit) {
         snapshotFlow { title.state.annotatedString }
-            .collect { annotatedString ->
-                if (titleText != annotatedString) {
-                    onTitleTextChangeState(title.id)
-                    titleText = annotatedString
-                }
-            }
+            .drop(1)
+            .collect { onTitleTextChangeState(title.id) }
     }
-
-    val isTextEmpty by remember { derivedStateOf { title.state.textValue.text.isEmpty() } }
-    val textStyle = if (isTextEmpty) {
-        MaterialTheme.typography.labelMedium
-    } else {
-        MaterialTheme.typography.bodyMedium
-    }
-
-    val adjustedStyle = textStyle.copy(
-        color = color ?: MaterialTheme.colorScheme.onSurface,
-        fontFamily = fontFamily ?: textStyle.fontFamily,
-        fontSize = fontSize,
-        textAlign = textAlign,
-        lineHeight = (textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value)) *
-                lineHeightMultiplier,
-    )
-
     BasicTextField(
         modifier = modifier
             .bringIntoViewRequester(title.bringIntoViewRequester)
@@ -174,7 +168,7 @@ fun NoteContentTitle(
         ),
         decorationBox = { innerTextField ->
             AnimatedVisibility(
-                visible = hint != null && title.state.annotatedString.isEmpty() && !readOnly,
+                visible = hint != null && isTextEmpty && !readOnly,
                 enter = fadeIn(tween(200)),
                 exit = ExitTransition.None,
             ) {

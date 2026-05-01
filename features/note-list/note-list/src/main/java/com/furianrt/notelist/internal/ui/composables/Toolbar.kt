@@ -22,6 +22,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -84,49 +85,24 @@ private fun SelectedContent(
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 4.dp)
-            .padding(start = 4.dp),
+            .padding(start = 8.dp, end = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Box(
-            modifier = modifier
-                .minimumInteractiveComponentSize()
-                .clickableWithScaleAnim(
-                    maxScale = 1.1f,
-                    indication = ripple(bounded = false, radius = 20.dp),
-                    onClick = onCloseSelectionClick,
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_exit),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
+        ButtonWithScale(
+            icon = painterResource(uiR.drawable.ic_exit),
+            onClick = onCloseSelectionClick,
+        )
         Text(
             modifier = Modifier.weight(1f),
             text = "$selectedNotesCount/$notesCount",
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
-        Box(
-            modifier = modifier
-                .minimumInteractiveComponentSize()
-                .clickableWithScaleAnim(
-                    maxScale = 1.1f,
-                    indication = ripple(bounded = false, radius = 20.dp),
-                    onClick = onDeleteClick,
-                ),
-            contentAlignment = Alignment.Center,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_delete),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.primary,
-            )
-        }
+        ButtonWithScale(
+            icon = painterResource(uiR.drawable.ic_delete),
+            onClick = onDeleteClick,
+        )
     }
 }
 
@@ -142,15 +118,38 @@ private fun UnselectedContent(
             .fillMaxSize()
             .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SearchBar(
-            modifier = Modifier
-                .padding(end = 16.dp)
-                .weight(1f),
+            modifier = Modifier.weight(1f),
             hazeState = hazeState,
             onClick = onSearchClick,
         )
         SettingsButton(onClick = onSettingsClick)
+    }
+}
+
+@Composable
+private fun ButtonWithScale(
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .minimumInteractiveComponentSize()
+            .clickableWithScaleAnim(
+                maxScale = 1.1f,
+                indication = ripple(bounded = false, radius = 20.dp),
+                onClick = onClick,
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+        )
     }
 }
 
