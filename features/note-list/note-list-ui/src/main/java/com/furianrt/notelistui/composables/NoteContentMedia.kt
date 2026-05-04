@@ -100,6 +100,7 @@ fun NoteContentMedia(
         },
     ) { targetState ->
         when (targetState.media.count()) {
+            0 -> Unit
             1 -> OneMediaHolder(
                 modifier = Modifier.height(targetState.contentHeight),
                 media = targetState.media[0],
