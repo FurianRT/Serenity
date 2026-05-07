@@ -7,6 +7,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.reminders.internal.domain.DeleteReminderUseCase
 import com.furianrt.reminders.internal.domain.GetAllRemindersUseCase
+import com.furianrt.reminders.internal.schedulers.ReminderScheduler
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
 import com.furianrt.reminders.internal.ui.list.extensions.toReminderItem
 import com.furianrt.uikit.entities.UiThemeColor
@@ -30,6 +31,7 @@ internal class RemindersListViewModel @Inject constructor(
     getAllRemindersUseCase: GetAllRemindersUseCase,
     appearanceRepository: AppearanceRepository,
     private val deleteReminderUseCase: DeleteReminderUseCase,
+    private val reminderScheduler: ReminderScheduler,
     private val permissionsUtils: PermissionsUtils,
 ) : ViewModel() {
 
@@ -68,7 +70,11 @@ internal class RemindersListViewModel @Inject constructor(
     }
 
     private fun onAddReminderClick() {
-        _effect.tryEmit(RemindersListEffect.RequestNotificationsPermission)
+        if (reminderScheduler.canScheduleExactAlarms()) {
+            _effect.tryEmit(RemindersListEffect.RequestNotificationsPermission)
+        } else {
+            _effect.tryEmit(RemindersListEffect.OpenAlarmsSettingsScreen)
+        }
     }
 
     private fun onCloseScreenClick() {

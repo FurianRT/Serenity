@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.permissions.extensions.openAlarmsSettingsScreen
 import com.furianrt.permissions.extensions.openNotificationsSettingsScreen
 import com.furianrt.permissions.ui.NotificationsPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -127,6 +128,10 @@ internal fun RemindersListScreen(
 
                     is RemindersListEffect.ShowNotificationsPermissionsDeniedDialog -> {
                         showNotificationsPermissionDialog = true
+                    }
+
+                    is RemindersListEffect.OpenAlarmsSettingsScreen -> {
+                        context.openAlarmsSettingsScreen()
                     }
                 }
             }

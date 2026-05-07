@@ -31,4 +31,5 @@ internal sealed interface RemindersListEffect {
     data class OpenReminderDetailsScreen(val reminderId: String?) : RemindersListEffect
     data object RequestNotificationsPermission : RemindersListEffect
     data object ShowNotificationsPermissionsDeniedDialog : RemindersListEffect
+    data object OpenAlarmsSettingsScreen : RemindersListEffect
 }
