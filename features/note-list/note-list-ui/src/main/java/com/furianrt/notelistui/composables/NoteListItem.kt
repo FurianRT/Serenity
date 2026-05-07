@@ -250,7 +250,7 @@ private fun Title(
         modifier = modifier,
         text = item.state.annotatedString,
         maxLines = MAX_TEXT_LINES,
-        fontSize = fontSize,
+        fontSize = fontSize * (fontFamily?.sizeMultiplier ?: 1f),
         textAlign = textAlign,
         overflow = TextOverflow.Ellipsis,
         fontFamily = fontFamily?.regular ?: style.fontFamily,

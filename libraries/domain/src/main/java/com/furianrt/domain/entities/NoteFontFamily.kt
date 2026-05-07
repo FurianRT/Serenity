@@ -9,6 +9,7 @@ enum class NoteFontFamily {
     PIXELIFY_SANS,
     ADVENT_PRO,
     CORMORANT_UNICASE,
+    CORMORANT_GARAMOND,
     MONSERRAT_ALTERNATES,
     TEKTUR,
     DOTO,

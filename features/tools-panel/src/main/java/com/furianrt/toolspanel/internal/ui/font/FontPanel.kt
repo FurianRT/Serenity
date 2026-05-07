@@ -580,6 +580,7 @@ private fun FontItem(
             style = MaterialTheme.typography.bodyMedium.copy(
                 fontFamily = family.regular,
                 lineHeight = 20.sp,
+                fontSize = 15.sp * family.sizeMultiplier,
             ),
             textAlign = TextAlign.Center,
             overflow = TextOverflow.Ellipsis,

@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.sp
 internal fun getTypography(font: NoteFont) = Typography(
     labelSmall = TextStyle(
         fontFamily = font.light,
-        fontSize = 13.sp,
+        fontSize = 13.sp * font.sizeMultiplier,
         lineHeight = 22.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -19,7 +19,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     labelMedium = TextStyle(
         fontFamily = font.regular,
-        fontSize = 14.sp,
+        fontSize = 14.sp * font.sizeMultiplier,
         lineHeight = 26.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -30,7 +30,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     labelLarge = TextStyle(
         fontFamily = font.regular,
-        fontSize = 17.sp,
+        fontSize = 17.sp * font.sizeMultiplier,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -41,7 +41,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     bodySmall = TextStyle(
         fontFamily = font.regular,
-        fontSize = 13.sp,
+        fontSize = 13.sp * font.sizeMultiplier,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -52,7 +52,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     bodyMedium = TextStyle(
         fontFamily = font.regular,
-        fontSize = 15.sp,
+        fontSize = 15.sp * font.sizeMultiplier,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -63,7 +63,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     bodyLarge = TextStyle(
         fontFamily = font.regular,
-        fontSize = 17.sp,
+        fontSize = 17.sp * font.sizeMultiplier,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -74,7 +74,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     titleSmall = TextStyle(
         fontFamily = font.regular,
-        fontSize = 15.sp,
+        fontSize = 15.sp * font.sizeMultiplier,
         lineHeight = 28.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -85,7 +85,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     titleMedium = TextStyle(
         fontFamily = font.regular,
-        fontSize = 17.sp,
+        fontSize = 17.sp * font.sizeMultiplier,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(
@@ -96,7 +96,7 @@ internal fun getTypography(font: NoteFont) = Typography(
     ),
     titleLarge = TextStyle(
         fontFamily = font.regular,
-        fontSize = 19.sp,
+        fontSize = 19.sp * font.sizeMultiplier,
         lineHeight = 29.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(

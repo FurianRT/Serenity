@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.uikit.components.RadioButtonWithText
@@ -51,39 +52,64 @@ internal fun AppFontDialog(
         onStopOrDispose {}
     }
 
-    BasicAlertDialog(onDismissRequest = onDismissRequest) {
-        Column(
-            modifier = modifier
-                .fillMaxWidth()
-                .heightIn(max = 564.dp)
-                .clip(RoundedCornerShape(16.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 20.dp,
-                    )
+    BasicAlertDialog(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest
+    ) {
+        Content(
+            fonts = fonts,
+            selectedFont = selectedFont,
+            hazeState = hazeState,
+            onFontSelected = onFontSelected,
+            onDismissRequest = onDismissRequest,
+        )
+    }
+}
+
+@Composable
+private fun Content(
+    fonts: List<UiNoteFontFamily>,
+    selectedFont: UiNoteFontFamily,
+    hazeState: HazeState,
+    onFontSelected: (font: UiNoteFontFamily) -> Unit,
+    onDismissRequest: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val scope = rememberCoroutineScope()
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 564.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    blurRadius = 20.dp,
                 )
-                .background(MaterialTheme.colorScheme.surfaceTint)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
-        ) {
-            fonts.forEach { font ->
-                RadioButtonWithText(
-                    modifier = Modifier.fillMaxWidth(),
-                    title = font.name,
-                    fontFamily = font.regular,
-                    isSelected = font == selectedFont,
-                    onClick = {
-                        onFontSelected(font)
-                        scope.launch {
-                            delay(150)
-                            onDismissRequest()
-                        }
-                    },
-                )
-            }
+            )
+            .background(MaterialTheme.colorScheme.surfaceTint)
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        fonts.forEach { font ->
+            RadioButtonWithText(
+                modifier = Modifier.fillMaxWidth(),
+                title = font.name,
+                fontFamily = font.regular,
+                textStyle = MaterialTheme.typography.titleMedium.copy(
+                    fontSize = 17.sp * font.sizeMultiplier,
+                ),
+                isSelected = font == selectedFont,
+                onClick = {
+                    onFontSelected(font)
+                    scope.launch {
+                        delay(150)
+                        onDismissRequest()
+                    }
+                },
+            )
         }
     }
 }
@@ -92,12 +118,12 @@ internal fun AppFontDialog(
 @Preview
 private fun Preview() {
     SerenityTheme {
-        AppFontDialog(
+        Content(
             fonts = listOf(
                 UiNoteFontFamily.NotoSans,
                 UiNoteFontFamily.Doto,
                 UiNoteFontFamily.Tektur,
-                UiNoteFontFamily.PlayWriteModern
+                UiNoteFontFamily.CormorantGaramond
             ),
             selectedFont = UiNoteFontFamily.Doto,
             hazeState = HazeState(),

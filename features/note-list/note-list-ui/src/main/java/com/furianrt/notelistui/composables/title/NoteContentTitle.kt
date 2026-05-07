@@ -61,6 +61,7 @@ import kotlinx.coroutines.flow.drop
 fun NoteContentTitle(
     title: UiNoteContent.Title,
     textAlign: TextAlign,
+    fontSizeMultiplier: Float,
     lineHeightMultiplier: Float,
     modifier: Modifier = Modifier,
     hint: String? = null,
@@ -88,7 +89,7 @@ fun NoteContentTitle(
     val adjustedStyle = textStyle.copy(
         color = color ?: MaterialTheme.colorScheme.onSurface,
         fontFamily = fontFamily ?: textStyle.fontFamily,
-        fontSize = fontSize,
+        fontSize = fontSize * fontSizeMultiplier,
         textAlign = textAlign,
         lineHeight = (textStyle.lineHeight * (fontSize.value / textStyle.fontSize.value)) *
                 lineHeightMultiplier,
@@ -214,6 +215,7 @@ private fun NoteContentTitlePreview() {
             hint = "Text",
             textAlign = TextAlign.Start,
             lineHeightMultiplier = 1f,
+            fontSizeMultiplier = 1f,
         )
     }
 }

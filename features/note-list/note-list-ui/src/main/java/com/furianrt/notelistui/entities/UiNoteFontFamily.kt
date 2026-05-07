@@ -10,6 +10,7 @@ sealed class UiNoteFontFamily(
     val light: FontFamily,
     val regular: FontFamily,
     val bold: FontFamily,
+    val sizeMultiplier: Float = 1f,
 ) {
     @Immutable
     data object NotoSans : UiNoteFontFamily(
@@ -129,6 +130,7 @@ sealed class UiNoteFontFamily(
         light = NoteFont.Parisienne.light,
         regular = NoteFont.Parisienne.regular,
         bold = NoteFont.Parisienne.bold,
+        sizeMultiplier = 1.25f,
     )
 
     @Immutable
@@ -137,5 +139,14 @@ sealed class UiNoteFontFamily(
         light = NoteFont.SpaceMono.light,
         regular = NoteFont.SpaceMono.regular,
         bold = NoteFont.SpaceMono.bold,
+    )
+
+    @Immutable
+    data object CormorantGaramond : UiNoteFontFamily(
+        name = "Cormorant Garamond",
+        light = NoteFont.CormorantGaramond.light,
+        regular = NoteFont.CormorantGaramond.regular,
+        bold = NoteFont.CormorantGaramond.bold,
+        sizeMultiplier = 1.25f,
     )
 }

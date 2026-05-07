@@ -8,6 +8,7 @@ sealed class NoteFont(
     val light: FontFamily,
     val regular: FontFamily,
     val bold: FontFamily,
+    val sizeMultiplier: Float = 1f,
 ) {
     data object NotoSans : NoteFont(
         light = FontFamily(Font(R.font.noto_sans_light)),
@@ -97,11 +98,19 @@ sealed class NoteFont(
         light = FontFamily(Font(R.font.parisienne_regular)),
         regular = FontFamily(Font(R.font.parisienne_regular)),
         bold = FontFamily(Font(R.font.parisienne_regular)),
+        sizeMultiplier = 1.25f,
     )
 
     data object SpaceMono : NoteFont(
         light = FontFamily(Font(R.font.space_mono_regular)),
         regular = FontFamily(Font(R.font.space_mono_regular)),
         bold = FontFamily(Font(R.font.space_mono_bold)),
+    )
+
+    data object CormorantGaramond : NoteFont(
+        light = FontFamily(Font(R.font.cormorant_garamond_light)),
+        regular = FontFamily(Font(R.font.cormorant_garamond_regular)),
+        bold = FontFamily(Font(R.font.cormorant_garamond_bold)),
+        sizeMultiplier = 1.25f,
     )
 }
