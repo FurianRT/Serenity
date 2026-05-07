@@ -79,7 +79,7 @@ internal fun ContainerScreen(
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
-    val cameraPermissionState = rememberPermissionState(
+    val notificationsPermissionState = rememberPermissionState(
         permission = PermissionsUtils.getNotificationsPermission(),
         onPermissionResult = {
             viewModel.onEvent(ContainerEvent.OnNotificationsPermissionSelected)
@@ -95,7 +95,7 @@ internal fun ContainerScreen(
                 when (effect) {
                     is ContainerEffect.CloseScreen -> onCloseRequestState()
                     is ContainerEffect.RequestNotificationsPermission -> {
-                        cameraPermissionState.launchPermissionRequest()
+                        notificationsPermissionState.launchPermissionRequest()
                     }
 
                     is ContainerEffect.ShowNotificationsPermissionsDeniedDialog -> {

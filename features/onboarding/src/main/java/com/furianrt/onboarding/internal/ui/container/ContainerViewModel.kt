@@ -156,7 +156,6 @@ internal class ContainerViewModel @Inject constructor(
         }
     }
 
-
     private fun buildState(
         selectedPage: OnboardingPage,
         appThemeColorId: String?,

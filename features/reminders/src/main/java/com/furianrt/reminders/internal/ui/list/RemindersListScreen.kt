@@ -31,10 +31,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -46,6 +50,9 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.permissions.extensions.openNotificationsSettingsScreen
+import com.furianrt.permissions.ui.NotificationsPermissionDialog
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.reminders.R
 import com.furianrt.reminders.internal.ui.entities.DayItem
 import com.furianrt.reminders.internal.ui.list.composables.ReminderListItem
@@ -59,6 +66,8 @@ import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.rememberPermissionState
 import com.kizitonwose.calendar.core.daysOfWeek
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -68,6 +77,7 @@ import kotlinx.coroutines.flow.collectLatest
 private const val TROUBLESHOOTING_KEY = "troubleshooting"
 private const val ADD_REMINDER_BUTTON__KEY = "add_reminder_button"
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 internal fun RemindersListScreen(
     openReminderDetailsScreen: (reminderId: String?) -> Unit,
@@ -79,12 +89,23 @@ internal fun RemindersListScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openReminderDetailsScreenState by rememberUpdatedState(openReminderDetailsScreen)
     val openTroubleShootingScreenState by rememberUpdatedState(openTroubleShootingScreen)
 
+    val notificationsPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getNotificationsPermission(),
+        onPermissionResult = {
+            viewModel.onEvent(RemindersListEvent.OnNotificationsPermissionSelected)
+        },
+    )
+
+    var showNotificationsPermissionDialog by remember { mutableStateOf(false) }
+
     val listState = rememberLazyListState()
+    val hazeState = rememberHazeState()
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -99,15 +120,31 @@ internal fun RemindersListScreen(
                     is RemindersListEffect.OpenTroubleShootingScreen -> {
                         openTroubleShootingScreenState()
                     }
+
+                    is RemindersListEffect.RequestNotificationsPermission -> {
+                        notificationsPermissionState.launchPermissionRequest()
+                    }
+
+                    is RemindersListEffect.ShowNotificationsPermissionsDeniedDialog -> {
+                        showNotificationsPermissionDialog = true
+                    }
                 }
             }
     }
     Content(
-        modifier = modifier,
+        modifier = modifier.hazeSource(hazeState),
         uiState = uiState,
         listState = listState,
         onEvent = viewModel::onEvent,
     )
+
+    if (showNotificationsPermissionDialog) {
+        NotificationsPermissionDialog(
+            hazeState = hazeState,
+            onSettingsClick = context::openNotificationsSettingsScreen,
+            onDismissRequest = { showNotificationsPermissionDialog = false },
+        )
+    }
 }
 
 @Composable

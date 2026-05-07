@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.reminders.internal.domain.DeleteReminderUseCase
 import com.furianrt.reminders.internal.domain.GetAllRemindersUseCase
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
@@ -29,6 +30,7 @@ internal class RemindersListViewModel @Inject constructor(
     getAllRemindersUseCase: GetAllRemindersUseCase,
     appearanceRepository: AppearanceRepository,
     private val deleteReminderUseCase: DeleteReminderUseCase,
+    private val permissionsUtils: PermissionsUtils,
 ) : ViewModel() {
 
     private val allDaysOfWeek = daysOfWeek()
@@ -59,11 +61,14 @@ internal class RemindersListViewModel @Inject constructor(
             is RemindersListEvent.OnTroubleShootingClick -> onTroubleShootingClick()
             is RemindersListEvent.OnReminderClick -> onReminderClick(event.reminder)
             is RemindersListEvent.OnDeleteReminderClick -> onDeleteReminderClick(event.reminder)
+            is RemindersListEvent.OnNotificationsPermissionSelected -> {
+                checkNotificationsPermission()
+            }
         }
     }
 
     private fun onAddReminderClick() {
-        _effect.tryEmit(RemindersListEffect.OpenReminderDetailsScreen(reminderId = null))
+        _effect.tryEmit(RemindersListEffect.RequestNotificationsPermission)
     }
 
     private fun onCloseScreenClick() {
@@ -80,6 +85,14 @@ internal class RemindersListViewModel @Inject constructor(
 
     private fun onDeleteReminderClick(reminder: ReminderItem) {
         launch { deleteReminderUseCase(reminder.id) }
+    }
+
+    private fun checkNotificationsPermission() {
+        if (permissionsUtils.hasNotificationsPermission()) {
+            _effect.tryEmit(RemindersListEffect.OpenReminderDetailsScreen(reminderId = null))
+        } else {
+            _effect.tryEmit(RemindersListEffect.ShowNotificationsPermissionsDeniedDialog)
+        }
     }
 
     private fun buildState(
