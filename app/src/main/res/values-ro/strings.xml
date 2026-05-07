@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Canal de mementouri</string>
+    <string name="reminders_channel_description">Afișează mementouri</string>
+
+    <string name="notifications_channel_name">Canal de backup</string>
+    <string name="notifications_channel_description">Afișează progresul backupului</string>
+</resources>

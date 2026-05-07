@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.features.backup)
     implementation(projects.features.noteList.noteListUi)
     implementation(projects.features.appTheme)
+    implementation(projects.features.reminders)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

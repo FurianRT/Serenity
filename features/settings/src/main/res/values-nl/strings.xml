@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Beveiliging</string>
     <string name="settings_backup_title">Back-up en Herstellen</string>
+    <string name="settings_reminders_title">Herinneringen</string>
     <string name="settings_font_title">App-lettertype</string>
     <string name="settings_language_title">Taal</string>
     <string name="settings_rate_us_title">Beoordeel ons</string>

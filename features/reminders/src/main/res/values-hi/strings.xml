@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">रिमाइंडर</string>
+    <string name="reminders_screen_description">एक रिमाइंडर बनाएं ताकि आप लिखने लायक कोई भी पल न चूकें</string>
+    <string name="reminders_default_reminder_notification_title">आपका दिन कैसा था?</string>
+    <string name="reminders_default_reminder_notification_body">नोट लिखने के लिए टैप करें</string>
+    <string name="reminders_troubleshooting_title">रिमाइंडर काम नहीं कर रहे?</string>
+    <string name="reminders_troubleshooting_body">समाधान देखने के लिए टैप करें</string>
+    <string name="reminders_add_reminder_button_title">रिमाइंडर जोड़ें</string>
+
+    <string name="reminders_details_screen_title">समय</string>
+    <string name="reminders_days_of_week_title">सप्ताह के दिन</string>
+    <string name="reminders_notification_text_hint">नोटिफिकेशन टेक्स्ट दर्ज करें</string>
+
+    <string name="reminders_troubleshooting_screen_title">समस्या निवारण</string>
+    <string name="reminders_troubleshooting_notification_permission_title">नोटिफिकेशन सक्षम करें</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">ऐप को नोटिफिकेशन भेजने की अनुमति चाहिए</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">अलार्म और रिमाइंडर अनुमति</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">समय पर नोटिफिकेशन पाने के लिए यह अनुमति सक्षम करें</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">बैटरी ऑप्टिमाइजेशन</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">बैटरी ऑप्टिमाइजेशन ऐप की कार्यक्षमता को सीमित कर सकता है और नोटिफिकेशन में देरी या उन्हें बंद कर सकता है</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">पावर सेविंग मोड</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">पावर सेविंग मोड ऐप की कार्यक्षमता को सीमित कर सकता है और नोटिफिकेशन में देरी या उन्हें बंद कर सकता है</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">डू नॉट डिस्टर्ब मोड</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">डू नॉट डिस्टर्ब मोड नोटिफिकेशन को म्यूट कर सकता है। सामान्य रूप से नोटिफिकेशन पाने के लिए इसे बंद करें</string>
+    <string name="reminders_troubleshooting_reboot_device_title">डिवाइस रीस्टार्ट करें</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">यदि ऊपर दिए गए सभी चरण पूरे हो गए हैं और समस्या बनी रहती है, तो अपने डिवाइस को रीस्टार्ट करें और Serenity को फिर से खोलें</string>
+    <string name="reminders_troubleshooting_open_settings_title">सेटिंग्स खोलें</string>
+</resources>

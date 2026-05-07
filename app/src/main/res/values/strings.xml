@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name" translatable="false">Serenity</string>
+
+    <string name="reminders_channel_name">Reminder channel</string>
+    <string name="reminders_channel_description">Shows reminders</string>
+
+    <string name="notifications_channel_name">Backup channel</string>
+    <string name="notifications_channel_description">Shows backup progress</string>
 </resources>

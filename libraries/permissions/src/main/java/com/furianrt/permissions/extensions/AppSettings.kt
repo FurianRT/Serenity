@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.Settings
+import androidx.core.net.toUri
 
 fun Context.openAppSettingsScreen() = startActivity(
     Intent(
@@ -17,6 +18,26 @@ fun Context.openAppSettingsScreen() = startActivity(
 fun Context.openNotificationsSettingsScreen() = startActivity(
     Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
         putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+)
+
+fun Context.openAlarmsSettingsScreen() = startActivity(
+    Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM).apply {
+        data = ("package:$packageName").toUri()
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+)
+
+fun Context.openBatteryOptimizationScreen() = startActivity(
+    Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
+        data = ("package:$packageName").toUri()
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+    }
+)
+
+fun Context.openPowerSavingScreen() = startActivity(
+    Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS).apply {
         flags = Intent.FLAG_ACTIVITY_NEW_TASK
     }
 )

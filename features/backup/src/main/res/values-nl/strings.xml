@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Wat gebeurt er als ik mijn Google-account verander?</string>
     <string name="backup_popular_question_8_answer">Als u overstapt naar een ander Google-account, zijn uw notities van het vorige account niet beschikbaar. Om ze te openen, moet u terugschakelen naar het oorspronkelijke Google-account</string>
 
-    <string name="backup_notifications_channel_name">Back-upkanaal</string>
-    <string name="backup_notifications_channel_description">Toont voortgang van back-ups</string>
     <string name="backup_notification_initial_description">Uw notities worden geüpload. Dit kan even duren</string>
     <string name="restore_notification_initial_description">Uw notities worden gedownload. Dit kan even duren</string>
 

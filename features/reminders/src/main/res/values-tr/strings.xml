@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Hatırlatıcılar</string>
+    <string name="reminders_screen_description">Yazmaya değer hiçbir anı kaçırmamak için bir hatırlatıcı oluşturun</string>
+    <string name="reminders_default_reminder_notification_title">Günün nasıl geçti?</string>
+    <string name="reminders_default_reminder_notification_body">Not yazmak için dokunun</string>
+    <string name="reminders_troubleshooting_title">Hatırlatıcılar çalışmıyor mu?</string>
+    <string name="reminders_troubleshooting_body">Nasıl düzelteceğinizi görmek için dokunun</string>
+    <string name="reminders_add_reminder_button_title">Hatırlatıcı Ekle</string>
+
+    <string name="reminders_details_screen_title">Saat</string>
+    <string name="reminders_days_of_week_title">Haftanın günleri</string>
+    <string name="reminders_notification_text_hint">Bildirim metni girin</string>
+
+    <string name="reminders_troubleshooting_screen_title">Sorun Giderme</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Bildirimleri Etkinleştir</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Uygulamanın bildirim gönderebilmesi için izin gerekiyor</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Alarmlar ve Hatırlatıcılar İzni</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Bildirimleri zamanında almak için bu izni etkinleştirin</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Pil Optimizasyonu</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Pil optimizasyonu uygulama işlevlerini kısıtlayabilir ve bildirimleri geciktirebilir veya durdurabilir</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Güç Tasarrufu Modu</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Güç tasarrufu modu uygulama işlevlerini kısıtlayabilir ve bildirimleri geciktirebilir veya durdurabilir</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Rahatsız Etmeyin Modu</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Rahatsız Etmeyin modu bildirimleri sessize alabilir. Bildirimleri normal almak için kapatın</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Cihazı Yeniden Başlat</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Yukarıdaki tüm adımlar yapılmasına rağmen sorun devam ediyorsa, cihazınızı yeniden başlatıp Serenity\'yi tekrar açmayı deneyin</string>
+    <string name="reminders_troubleshooting_open_settings_title">Ayarlara git</string>
+</resources>

@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">রিমাইন্ডার</string>
+    <string name="reminders_screen_description">লেখার মতো গুরুত্বপূর্ণ মুহূর্ত যেন মিস না হয়, তার জন্য একটি রিমাইন্ডার তৈরি করুন</string>
+    <string name="reminders_default_reminder_notification_title">আপনার দিন কেমন গেল?</string>
+    <string name="reminders_default_reminder_notification_body">নোট লিখতে ট্যাপ করুন</string>
+    <string name="reminders_troubleshooting_title">রিমাইন্ডার কাজ করছে না?</string>
+    <string name="reminders_troubleshooting_body">কীভাবে ঠিক করবেন দেখতে ট্যাপ করুন</string>
+    <string name="reminders_add_reminder_button_title">রিমাইন্ডার যোগ করুন</string>
+
+    <string name="reminders_details_screen_title">সময়</string>
+    <string name="reminders_days_of_week_title">সপ্তাহের দিনসমূহ</string>
+    <string name="reminders_notification_text_hint">নোটিফিকেশনের লেখা লিখুন</string>
+
+    <string name="reminders_troubleshooting_screen_title">সমস্যা সমাধান</string>
+    <string name="reminders_troubleshooting_notification_permission_title">নোটিফিকেশন চালু করুন</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">নোটিফিকেশন পাঠাতে অ্যাপটির অনুমতি প্রয়োজন</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">অ্যালার্ম ও রিমাইন্ডার অনুমতি</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">সময়মতো নোটিফিকেশন পেতে এই অনুমতি চালু করুন</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">ব্যাটারি অপ্টিমাইজেশন</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">ব্যাটারি অপ্টিমাইজেশন অ্যাপের কার্যকারিতা সীমিত করতে পারে এবং নোটিফিকেশন দেরি করাতে বা বন্ধ করতে পারে</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">পাওয়ার সেভিং মোড</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">পাওয়ার সেভিং মোড অ্যাপের কার্যকারিতা সীমিত করতে পারে এবং নোটিফিকেশন দেরি করাতে বা বন্ধ করতে পারে</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">ডু নট ডিস্টার্ব মোড</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">ডু নট ডিস্টার্ব মোড নোটিফিকেশন নিঃশব্দ করতে পারে। স্বাভাবিকভাবে নোটিফিকেশন পেতে এটি বন্ধ করুন</string>
+    <string name="reminders_troubleshooting_reboot_device_title">ডিভাইস পুনরায় চালু করুন</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">উপরের সব ধাপ সম্পন্ন করার পরও যদি সমস্যা থাকে, তাহলে ডিভাইস পুনরায় চালু করে Serenity আবার খুলুন</string>
+    <string name="reminders_troubleshooting_open_settings_title">সেটিংসে যান</string>
+</resources>

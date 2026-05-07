@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Напоминания</string>
+    <string name="reminders_screen_description">Создайте напоминание, чтобы не упустить момент, о котором стоит написать</string>
+    <string name="reminders_default_reminder_notification_title">Как прошёл ваш день?</string>
+    <string name="reminders_default_reminder_notification_body">Нажмите, чтобы написать заметку</string>
+    <string name="reminders_troubleshooting_title">Напоминания не работают?</string>
+    <string name="reminders_troubleshooting_body">Нажмите, чтобы узнать, как исправить</string>
+    <string name="reminders_add_reminder_button_title">Добавить напоминание</string>
+
+    <string name="reminders_details_screen_title">Время</string>
+    <string name="reminders_days_of_week_title">Дни недели</string>
+    <string name="reminders_notification_text_hint">Введите текст уведомления</string>
+
+    <string name="reminders_troubleshooting_screen_title">Устранение неполадок</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Включите уведомления</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Приложению требуется разрешение на отправку уведомлений</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Разрешение на будильники и напоминания</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Включите это разрешение, чтобы получать уведомления вовремя</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Оптимизация батареи</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Оптимизация батареи может ограничивать работу приложения и задерживать или отключать уведомления</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Режим энергосбережения</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Режим энергосбережения может ограничивать работу приложения и задерживать или отключать уведомления</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Режим «Не беспокоить»</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Режим «Не беспокоить» может отключать звук уведомлений. Выключите его, чтобы получать уведомления нормально</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Перезагрузите устройство</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Если все шаги выше выполнены, но проблема остаётся, попробуйте перезагрузить устройство и снова открыть Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Перейти в настройки</string>
+</resources>

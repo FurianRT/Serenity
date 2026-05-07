@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">আমি যদি Google অ্যাকাউন্ট পরিবর্তন করি তবে কি হবে?</string>
     <string name="backup_popular_question_8_answer">আপনি যদি অন্য Google অ্যাকাউন্ট ব্যবহার করেন, আগের অ্যাকাউন্টের নোটগুলো আর পাওয়া যাবে না। এগুলো দেখতে হলে আপনাকে সেই পুরোনো অ্যাকাউন্টে ফিরে যেতে হবে</string>
 
-    <string name="backup_notifications_channel_name">ব্যাকআপ চ্যানেল</string>
-    <string name="backup_notifications_channel_description">ব্যাকআপের অগ্রগতি দেখায়</string>
     <string name="backup_notification_initial_description">আপনার নোট আপলোড হচ্ছে। একটু সময় লাগতে পারে</string>
     <string name="restore_notification_initial_description">আপনার নোট ডাউনলোড হচ্ছে। একটু সময় লাগতে পারে</string>
 

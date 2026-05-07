@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Канал напоминаний</string>
+    <string name="reminders_channel_description">Показывает напоминания</string>
+
+    <string name="notifications_channel_name">Канал резервного копирования</string>
+    <string name="notifications_channel_description">Показывает процесс резервного копирования</string>
+</resources>

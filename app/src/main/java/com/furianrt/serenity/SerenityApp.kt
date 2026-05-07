@@ -1,6 +1,8 @@
 package com.furianrt.serenity
 
 import android.app.Application
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.os.StrictMode
 import android.util.Log
 import androidx.compose.runtime.Composer
@@ -11,6 +13,7 @@ import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
+import com.furianrt.common.NotificationChannels
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
@@ -44,6 +47,9 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     lateinit var syncManager: SyncManager
 
     @Inject
+    lateinit var notificationManager: NotificationManager
+
+    @Inject
     lateinit var dispatchers: DispatchersProvider
 
     private val scope by lazy(LazyThreadSafetyMode.NONE) {
@@ -56,6 +62,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
+        createNotificationsChannels()
         SingletonImageLoader.setSafe(this)
         startPeriodicWorks()
         updateLaunchCount()
@@ -105,5 +112,30 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
 
     private fun updateLaunchCount() {
         scope.launch { incrementLaunchCountUseCase() }
+    }
+
+    private fun createNotificationsChannels() {
+        val remindersChannel = NotificationChannel(
+            NotificationChannels.REMINDERS_CHANNEL_ID,
+            getString(R.string.reminders_channel_name),
+            NotificationManager.IMPORTANCE_HIGH,
+        ).apply {
+            description = getString(R.string.reminders_channel_description)
+        }
+
+        val notificationsChannel = NotificationChannel(
+            NotificationChannels.DATA_SYNC_CHANNEL_ID,
+            getString(R.string.notifications_channel_name),
+            NotificationManager.IMPORTANCE_LOW,
+        ).apply {
+            description = getString(R.string.notifications_channel_description)
+        }
+
+        notificationManager.createNotificationChannels(
+            listOf(
+                remindersChannel,
+                notificationsChannel,
+            ),
+        )
     }
 }

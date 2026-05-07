@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Güvenlik</string>
     <string name="settings_backup_title">Yedekleme ve Geri Yükleme</string>
+    <string name="settings_reminders_title">Hatırlatıcılar</string>
     <string name="settings_font_title">Uygulama Yazı Tipi</string>
     <string name="settings_language_title">Dil</string>
     <string name="settings_rate_us_title">Bizi Değerlendir</string>

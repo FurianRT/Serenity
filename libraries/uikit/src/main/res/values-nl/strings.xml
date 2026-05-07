@@ -22,6 +22,7 @@
     <string name="action_skip">Overslaan</string>
     <string name="action_close">Sluiten</string>
     <string name="action_fix">Herstellen</string>
+    <string name="action_disable">Uitschakelen</string>
 
     <string name="title_email">E-mail</string>
     <string name="title_theme">Thema</string>

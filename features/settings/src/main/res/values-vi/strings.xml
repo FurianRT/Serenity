@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Bảo mật</string>
     <string name="settings_backup_title">Sao lưu và Khôi phục</string>
+    <string name="settings_reminders_title">Lời nhắc</string>
     <string name="settings_font_title">Phông chữ ứng dụng</string>
     <string name="settings_language_title">Ngôn ngữ</string>
     <string name="settings_rate_us_title">Đánh giá chúng tôi</string>

@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">अगर मैं Google अकाउंट बदल दूँ तो क्या होगा?</string>
     <string name="backup_popular_question_8_answer">अगर आप अकाउंट बदलते हैं, तो पुराने अकाउंट वाले नोट्स दिखेंगे नहीं। उन्हें देखने के लिए आपको उसी पुराने Google अकाउंट से साइन इन करना होगा</string>
 
-    <string name="backup_notifications_channel_name">बैकअप चैनल</string>
-    <string name="backup_notifications_channel_description">बैकअप प्रगति दिखाता है</string>
     <string name="backup_notification_initial_description">आपके नोट्स अपलोड हो रहे हैं। इसमें कुछ समय लग सकता है</string>
     <string name="restore_notification_initial_description">आपके नोट्स डाउनलोड हो रहे हैं। इसमें कुछ समय लग सकता है</string>
 

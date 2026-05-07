@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Pengingat</string>
+    <string name="reminders_screen_description">Buat pengingat agar Anda tidak melewatkan momen yang layak ditulis</string>
+    <string name="reminders_default_reminder_notification_title">Bagaimana harimu?</string>
+    <string name="reminders_default_reminder_notification_body">Ketuk untuk menulis catatan</string>
+    <string name="reminders_troubleshooting_title">Pengingat tidak berfungsi?</string>
+    <string name="reminders_troubleshooting_body">Ketuk untuk melihat cara memperbaikinya</string>
+    <string name="reminders_add_reminder_button_title">Tambah Pengingat</string>
+
+    <string name="reminders_details_screen_title">Waktu</string>
+    <string name="reminders_days_of_week_title">Hari dalam seminggu</string>
+    <string name="reminders_notification_text_hint">Masukkan teks notifikasi</string>
+
+    <string name="reminders_troubleshooting_screen_title">Pemecahan Masalah</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Aktifkan Notifikasi</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Aplikasi memerlukan izin untuk mengirim notifikasi</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Izin Alarm &amp; Pengingat</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Aktifkan izin ini untuk menerima notifikasi tepat waktu</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Optimisasi Baterai</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Optimisasi baterai dapat membatasi fungsi aplikasi dan menunda atau menghentikan notifikasi</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Mode Hemat Daya</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Mode hemat daya dapat membatasi fungsi aplikasi dan menunda atau menghentikan notifikasi</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Mode Jangan Ganggu</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Mode jangan ganggu dapat membisukan notifikasi. Nonaktifkan untuk menerima notifikasi secara normal</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Mulai Ulang Perangkat</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Jika semua langkah di atas sudah dilakukan tetapi masalah masih berlanjut, coba mulai ulang perangkat Anda dan buka kembali Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Buka pengaturan</string>
+</resources>

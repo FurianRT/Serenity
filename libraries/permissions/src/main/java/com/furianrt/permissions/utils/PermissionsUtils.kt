@@ -1,20 +1,22 @@
 package com.furianrt.permissions.utils
 
 import android.Manifest.permission.ACCESS_COARSE_LOCATION
+import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.Manifest.permission.CAMERA
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.Manifest.permission.READ_MEDIA_VIDEO
 import android.Manifest.permission.READ_MEDIA_VISUAL_USER_SELECTED
 import android.Manifest.permission.RECORD_AUDIO
-import android.Manifest.permission.ACCESS_FINE_LOCATION
-import android.Manifest.permission.POST_NOTIFICATIONS
 import android.content.Context
 import android.os.Build
+import android.os.PowerManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.PermissionChecker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 private enum class MediaPermissionStatus {
     FULL_ACCESS,
@@ -67,6 +69,11 @@ class PermissionsUtils @Inject constructor(
     fun hasFineLocationPermission(): Boolean = ACCESS_FINE_LOCATION.isGranted()
 
     fun hasNotificationsPermission(): Boolean = POST_NOTIFICATIONS.isGranted()
+
+    fun isBatteryOptimizationEnabled(): Boolean {
+        val pm = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        return !pm.isIgnoringBatteryOptimizations(context.packageName)
+    }
 
     private fun getMediaPermissionStatus(): MediaPermissionStatus {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {

@@ -32,6 +32,8 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
+import com.furianrt.storage.internal.database.reminders.dao.RemindersDao
+import com.furianrt.storage.internal.database.reminders.entities.EntryReminder
 
 @Database(
     entities = [
@@ -46,6 +48,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
         EntryNoteLocation::class,
         EntryNoteCustomBackground::class,
         EntryCustomSticker::class,
+        EntryReminder::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -64,10 +67,11 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun locationDao(): LocationDao
     abstract fun customBackgroundDao(): CustomBackgroundDao
     abstract fun customStickerDao(): CustomStickerDao
+    abstract fun remindersDao(): RemindersDao
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 8
+        private const val VERSION = 9
 
         fun create(
             context: Context,
@@ -89,6 +93,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_5_6,
                 MIGRATION_6_7,
                 MIGRATION_7_8,
+                MIGRATION_8_9,
             )
             .build()
     }
@@ -120,7 +125,7 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
                     REFERENCES Notes(id) 
                     ON DELETE CASCADE
             )
-            """
+            """.trimIndent()
         )
         db.execSQL(
             "CREATE INDEX IF NOT EXISTS index_NoteLocations_note_id ON NoteLocations(note_id)"
@@ -147,7 +152,7 @@ private val MIGRATION_5_6 = object : Migration(5, 6) {
                 is_saved INTEGER NOT NULL,
                 is_hidden INTEGER NOT NULL
             )
-            """
+            """.trimIndent()
         )
     }
 }
@@ -170,7 +175,22 @@ private val MIGRATION_7_8 = object : Migration(7, 8) {
                 is_saved INTEGER NOT NULL,
                 is_hidden INTEGER NOT NULL
             )
+            """.trimIndent()
+        )
+    }
+}
+
+private val MIGRATION_8_9 = object : Migration(8, 9) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
             """
+            CREATE TABLE IF NOT EXISTS Reminders (
+                id TEXT NOT NULL PRIMARY KEY,
+                title TEXT,
+                time TEXT NOT NULL,
+                days_of_week TEXT NOT NULL
+            )
+            """.trimIndent()
         )
     }
 }

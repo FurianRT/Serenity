@@ -10,6 +10,7 @@ import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.ProfileRepository
+import com.furianrt.domain.repositories.RemindersRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
@@ -24,6 +25,7 @@ import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
+import com.furianrt.storage.internal.database.reminders.dao.RemindersDao
 import com.furianrt.storage.internal.repositories.AppInfoRepositoryImp
 import com.furianrt.storage.internal.repositories.AppearanceRepositoryImp
 import com.furianrt.storage.internal.repositories.DeviceInfoRepositoryImp
@@ -32,6 +34,7 @@ import com.furianrt.storage.internal.repositories.LocationRepositoryImp
 import com.furianrt.storage.internal.repositories.MediaRepositoryImp
 import com.furianrt.storage.internal.repositories.NotesRepositoryImp
 import com.furianrt.storage.internal.repositories.ProfileRepositoryImp
+import com.furianrt.storage.internal.repositories.RemindersRepositoryImp
 import com.furianrt.storage.internal.repositories.StickersRepositoryImp
 import com.furianrt.storage.internal.repositories.TagsRepositoryImp
 import dagger.Binds
@@ -85,6 +88,10 @@ internal interface DatabaseModule {
     @Binds
     @Singleton
     fun appInfoRepository(imp: AppInfoRepositoryImp): AppInfoRepository
+
+    @Binds
+    @Singleton
+    fun remindersRepository(imp: RemindersRepositoryImp): RemindersRepository
 
     companion object {
         @Provides
@@ -142,6 +149,10 @@ internal interface DatabaseModule {
         fun customBackgroundDao(
             database: SerenityDatabase,
         ): CustomBackgroundDao = database.customBackgroundDao()
+
+        @Provides
+        @Singleton
+        fun remindersDao(database: SerenityDatabase): RemindersDao = database.remindersDao()
 
         @Provides
         @Singleton

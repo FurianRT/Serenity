@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Apa yang terjadi jika saya mengganti akun Google?</string>
     <string name="backup_popular_question_8_answer">Jika Anda beralih ke akun Google lain, catatan dari akun sebelumnya tidak akan tersedia. Untuk mengaksesnya, Anda harus kembali ke akun Google asli.</string>
 
-    <string name="backup_notifications_channel_name">Saluran Cadangan</string>
-    <string name="backup_notifications_channel_description">Menampilkan progres cadangan</string>
     <string name="backup_notification_initial_description">Catatan Anda sedang diunggah. Mohon tunggu sebentar.</string>
     <string name="restore_notification_initial_description">Catatan Anda sedang diunduh. Mohon tunggu sebentar.</string>
 

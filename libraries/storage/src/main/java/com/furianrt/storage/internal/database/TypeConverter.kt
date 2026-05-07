@@ -9,6 +9,8 @@ import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import androidx.core.net.toUri
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 internal class TypeConverter {
 
@@ -52,7 +54,23 @@ internal class TypeConverter {
     fun textAlignmentToInt(alignment: EntryNote.TextAlignment?): Int? = alignment?.value
 
     @TypeConverter
-    fun intToTextAlignment(value: Int?): EntryNote.TextAlignment? {
-        return EntryNote.TextAlignment.fromValue(value)
+    fun intToTextAlignment(
+        value: Int?,
+    ): EntryNote.TextAlignment? = EntryNote.TextAlignment.fromValue(value)
+
+    @TypeConverter
+    fun daysOfWeekToString(days: Set<DayOfWeek>): String = days.joinToString(",") { it.name }
+
+    @TypeConverter
+    fun stringToDayOfWeek(value: String): Set<DayOfWeek> = if (value.isBlank()) {
+        emptySet()
+    } else {
+        value.split(",").map { DayOfWeek.valueOf(it) }.toSet()
     }
+
+    @TypeConverter
+    fun localTimeToString(time: LocalTime): String = time.toString()
+
+    @TypeConverter
+    fun stringToLocalTime(value: String): LocalTime = LocalTime.parse(value)
 }

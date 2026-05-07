@@ -43,8 +43,6 @@
     <string name="backup_popular_question_8_title">จะเกิดอะไรขึ้นถ้าฉันเปลี่ยนบัญชี Google</string>
     <string name="backup_popular_question_8_answer">หากคุณเปลี่ยนไปใช้บัญชี Google อื่น โน้ตจากบัญชีเดิมจะไม่สามารถเข้าถึงได้ คุณต้องกลับไปใช้บัญชีเดิมเพื่อดูโน้ตเหล่านั้น</string>
 
-    <string name="backup_notifications_channel_name">ช่องทางสำรองข้อมูล</string>
-    <string name="backup_notifications_channel_description">แสดงความคืบหน้าการสำรองข้อมูล</string>
     <string name="backup_notification_initial_description">กำลังอัปโหลดโน้ตของคุณ โปรดรอสักครู่</string>
     <string name="restore_notification_initial_description">กำลังดาวน์โหลดโน้ตของคุณ โปรดรอสักครู่</string>
 

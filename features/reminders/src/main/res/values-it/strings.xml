@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Promemoria</string>
+    <string name="reminders_screen_description">Crea un promemoria per non perdere mai un momento che vale la pena scrivere</string>
+    <string name="reminders_default_reminder_notification_title">Com\'è andata la tua giornata?</string>
+    <string name="reminders_default_reminder_notification_body">Tocca per scrivere una nota</string>
+    <string name="reminders_troubleshooting_title">I promemoria non funzionano?</string>
+    <string name="reminders_troubleshooting_body">Tocca per vedere come risolvere il problema</string>
+    <string name="reminders_add_reminder_button_title">Aggiungi promemoria</string>
+
+    <string name="reminders_details_screen_title">Ora</string>
+    <string name="reminders_days_of_week_title">Giorni della settimana</string>
+    <string name="reminders_notification_text_hint">Inserisci il testo della notifica</string>
+
+    <string name="reminders_troubleshooting_screen_title">Risoluzione dei problemi</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Abilita notifiche</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">L\'app necessita dell\'autorizzazione per inviare notifiche</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Autorizzazione per allarmi e promemoria</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Abilita questa autorizzazione per ricevere notifiche puntuali</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Ottimizzazione batteria</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">L\'ottimizzazione della batteria può limitare le funzionalità dell\'app e ritardare o interrompere le notifiche</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Modalità risparmio energetico</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">La modalità risparmio energetico può limitare le funzionalità dell\'app e ritardare o interrompere le notifiche</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Modalità Non disturbare</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">La modalità Non disturbare può silenziare le notifiche. Disattivala per riceverle normalmente</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Riavvia dispositivo</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Se tutti i passaggi precedenti sono stati eseguiti ma il problema persiste, prova a riavviare il dispositivo e riaprire Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Vai alle impostazioni</string>
+</resources>

@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Hatırlatıcı kanalı</string>
+    <string name="reminders_channel_description">Hatırlatıcıları gösterir</string>
+
+    <string name="notifications_channel_name">Yedekleme kanalı</string>
+    <string name="notifications_channel_description">Yedekleme ilerlemesini gösterir</string>
+</resources>

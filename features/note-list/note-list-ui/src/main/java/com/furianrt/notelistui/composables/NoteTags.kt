@@ -194,6 +194,10 @@ private fun TemplateNoteTagItem(
         textMeasurer.measure(text = hintText, style = hintStyle, maxLines = 1).size.width
     }
 
+    val isTextEmpty by remember(tag.textState) {
+        derivedStateOf { tag.textState.text.isEmpty() }
+    }
+
     val onTextEnteredState by rememberUpdatedState(onTextEntered)
     val onTextClearedState by rememberUpdatedState(onTextCleared)
 
@@ -300,7 +304,7 @@ private fun TemplateNoteTagItem(
             ),
             onKeyboardAction = { focusManager.clearFocus() },
             decorator = { innerTextField ->
-                if (tag.textState.text.isEmpty()) {
+                if (isTextEmpty) {
                     Text(
                         modifier = Modifier.alpha(0.5f),
                         text = hintText,

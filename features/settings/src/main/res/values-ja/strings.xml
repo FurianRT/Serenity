@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">セキュリティ</string>
     <string name="settings_backup_title">バックアップと復元</string>
+    <string name="settings_reminders_title">リマインダー</string>
     <string name="settings_font_title">アプリのフォント</string>
     <string name="settings_language_title">言語</string>
     <string name="settings_rate_us_title">評価する</string>

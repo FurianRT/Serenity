@@ -78,6 +78,10 @@ internal class SettingsViewModel @Inject constructor(
                 _effect.tryEmit(SettingsEffect.OpenBackupScreen)
             }
 
+            is SettingsEvent.OnButtonRemindersClick -> {
+                _effect.tryEmit(SettingsEffect.OpenRemindersScreen)
+            }
+
             is SettingsEvent.OnButtonFeedbackClick -> sendFeedback()
             is SettingsEvent.OnButtonReportIssueClick -> sendIssueFeedback()
             is SettingsEvent.OnRatingSelected -> launch {

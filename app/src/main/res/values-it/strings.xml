@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Canale promemoria</string>
+    <string name="reminders_channel_description">Mostra i promemoria</string>
+
+    <string name="notifications_channel_name">Canale backup</string>
+    <string name="notifications_channel_description">Mostra il progresso del backup</string>
+</resources>

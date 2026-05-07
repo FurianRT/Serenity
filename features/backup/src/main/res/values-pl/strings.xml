@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Co się stanie, jeśli zmienię konto Google</string>
     <string name="backup_popular_question_8_answer">Jeśli przełączysz się na inne konto Google, notatki z poprzedniego konta nie będą dostępne. Aby je odzyskać, musisz wrócić na pierwotne konto Google</string>
 
-    <string name="backup_notifications_channel_name">Kanał kopii zapasowej</string>
-    <string name="backup_notifications_channel_description">Pokazuje postęp tworzenia kopii</string>
     <string name="backup_notification_initial_description">Twoje notatki są wysyłane. To może chwilę potrwać</string>
     <string name="restore_notification_initial_description">Twoje notatki są pobierane. To może chwilę potrwać</string>
 

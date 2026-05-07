@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Segurança</string>
     <string name="settings_backup_title">Backup e Restauração</string>
+    <string name="settings_reminders_title">Lembretes</string>
     <string name="settings_font_title">Fonte do App</string>
     <string name="settings_language_title">Idioma</string>
     <string name="settings_rate_us_title">Avalie-nos</string>

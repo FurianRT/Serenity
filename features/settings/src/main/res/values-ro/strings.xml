@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Securitate</string>
     <string name="settings_backup_title">Backup și Restaurare</string>
+    <string name="settings_reminders_title">Mementouri</string>
     <string name="settings_font_title">Font aplicație</string>
     <string name="settings_language_title">Limbă</string>
     <string name="settings_rate_us_title">Evaluează-ne</string>

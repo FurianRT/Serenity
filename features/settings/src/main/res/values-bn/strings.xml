@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">নিরাপত্তা</string>
     <string name="settings_backup_title">ব্যাকআপ এবং পুনরুদ্ধার</string>
+    <string name="settings_reminders_title">রিমাইন্ডার</string>
     <string name="settings_font_title">অ্যাপ ফন্ট</string>
     <string name="settings_language_title">ভাষা</string>
     <string name="settings_rate_us_title">আমাদের রেট করুন</string>

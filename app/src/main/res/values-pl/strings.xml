@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Kanał przypomnień</string>
+    <string name="reminders_channel_description">Wyświetla przypomnienia</string>
+
+    <string name="notifications_channel_name">Kanał kopii zapasowej</string>
+    <string name="notifications_channel_description">Wyświetla postęp kopii zapasowej</string>
+</resources>

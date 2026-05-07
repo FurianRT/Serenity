@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Rappels</string>
+    <string name="reminders_screen_description">Créez un rappel pour ne jamais manquer un moment qui mérite d’être écrit</string>
+    <string name="reminders_default_reminder_notification_title">Comment s’est passée votre journée ?</string>
+    <string name="reminders_default_reminder_notification_body">Appuyez pour écrire une note</string>
+    <string name="reminders_troubleshooting_title">Les rappels ne fonctionnent pas ?</string>
+    <string name="reminders_troubleshooting_body">Appuyez pour voir comment résoudre le problème</string>
+    <string name="reminders_add_reminder_button_title">Ajouter un rappel</string>
+
+    <string name="reminders_details_screen_title">Heure</string>
+    <string name="reminders_days_of_week_title">Jours de la semaine</string>
+    <string name="reminders_notification_text_hint">Entrez le texte de la notification</string>
+
+    <string name="reminders_troubleshooting_screen_title">Dépannage</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Activer les notifications</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">L’application a besoin d’une autorisation pour envoyer des notifications</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Autorisation des alarmes et rappels</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Activez cette autorisation pour recevoir les notifications à temps</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Optimisation de la batterie</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">L’optimisation de la batterie peut limiter les fonctionnalités de l’application et retarder ou arrêter les notifications</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Mode économie d’énergie</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Le mode économie d’énergie peut limiter les fonctionnalités de l’application et retarder ou arrêter les notifications</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Mode Ne pas déranger</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Le mode Ne pas déranger peut rendre les notifications silencieuses. Désactivez-le pour recevoir les notifications normalement</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Redémarrer l’appareil</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Si toutes les étapes ci-dessus ont été effectuées et que le problème persiste, essayez de redémarrer votre appareil puis de rouvrir Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Aller aux paramètres</string>
+</resources>

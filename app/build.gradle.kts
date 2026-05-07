@@ -24,9 +24,13 @@ dependencies {
     implementation(projects.features.noteList.noteListUi)
     implementation(projects.features.security)
     implementation(projects.features.noteSearch)
+    implementation(projects.features.notePage)
     implementation(projects.features.backup)
     implementation(projects.features.onboarding)
     implementation(projects.features.appTheme)
+    implementation(projects.features.mood)
+    implementation(projects.features.toolsPanel)
+    implementation(projects.features.reminders)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

@@ -1,8 +1,6 @@
 package com.furianrt.backup.internal.services
 
 import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
@@ -10,10 +8,10 @@ import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.furianrt.backup.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
+import com.furianrt.common.NotificationChannels
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.AndroidEntryPoint
@@ -23,6 +21,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
+import com.furianrt.uikit.R as uiR
 
 @AndroidEntryPoint
 internal class NotesSyncService : Service(), CoroutineScope {
@@ -30,16 +29,11 @@ internal class NotesSyncService : Service(), CoroutineScope {
     companion object {
         private const val FOREGROUND_ID = 1
         private const val PENDING_INTENT_REQUEST_CODE = 1
-        private const val CHANNEL_ID = "backup_channel"
-
-        internal const val EXTRA_IS_BACKUP = "is_backup"
+        const val EXTRA_IS_BACKUP = "is_backup"
     }
 
     @Inject
     lateinit var dispatchers: DispatchersProvider
-
-    @Inject
-    lateinit var notificationManager: NotificationManager
 
     @Inject
     lateinit var rootActivityIntentProvider: RootActivityIntentProvider
@@ -57,11 +51,6 @@ internal class NotesSyncService : Service(), CoroutineScope {
         get() = dispatchers.io + SupervisorJob()
 
     private var isServiceRunning = false
-
-    override fun onCreate() {
-        super.onCreate()
-        createNotificationChannel()
-    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!isServiceRunning && intent != null) {
@@ -95,20 +84,9 @@ internal class NotesSyncService : Service(), CoroutineScope {
         close()
     }
 
-    private fun createNotificationChannel() {
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            getString(R.string.backup_notifications_channel_name),
-            NotificationManager.IMPORTANCE_LOW,
-        ).apply {
-            description = getString(R.string.backup_notifications_channel_description)
-        }
-        notificationManager.createNotificationChannel(channel)
-    }
-
     private fun createInitialNotification(
         isBackup: Boolean,
-    ): Notification = NotificationCompat.Builder(this, CHANNEL_ID)
+    ): Notification = NotificationCompat.Builder(this, NotificationChannels.DATA_SYNC_CHANNEL_ID)
         .apply {
             if (isBackup) {
                 setContentTitle(getString(uiR.string.backup_in_progress))

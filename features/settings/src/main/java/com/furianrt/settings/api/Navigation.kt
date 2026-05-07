@@ -9,6 +9,8 @@ import com.furianrt.apptheme.api.appThemeScreen
 import com.furianrt.apptheme.api.navigateToAppTheme
 import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
+import com.furianrt.reminders.api.navigateToReminders
+import com.furianrt.reminders.api.remindersNavigation
 import com.furianrt.security.api.changeEmailScreen
 import com.furianrt.security.api.changePinNavigation
 import com.furianrt.security.api.navigateToChangeEmail
@@ -40,6 +42,7 @@ fun NavGraphBuilder.settingsNavigation(
             openBackupScreen = navController::navigateToBackup,
             openNoteSettingsScreen = navController::navigateToNoteSettings,
             openAppThemeScreen = navController::navigateToAppTheme,
+            openRemindersScreen = navController::navigateToReminders,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -62,7 +65,10 @@ fun NavGraphBuilder.settingsNavigation(
             onCloseRequest = navController::navigateUp,
         )
         appThemeScreen(
-            onCloseRequest = navController::navigateUp
+            onCloseRequest = navController::navigateUp,
+        )
+        remindersNavigation(
+            navController = navController,
         )
     }
 }

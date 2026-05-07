@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -182,6 +183,9 @@ private fun EmailInput(
     showError: Boolean,
     modifier: Modifier = Modifier,
 ) {
+    val isTextEmpty by remember(state) {
+        derivedStateOf { state.text.isEmpty() }
+    }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -205,7 +209,7 @@ private fun EmailInput(
                     showKeyboardOnFocus = true,
                 ),
                 decorator = { innerTextField ->
-                    if (state.text.isEmpty()) {
+                    if (isTextEmpty) {
                         Text(
                             modifier = Modifier.alpha(0.5f),
                             text = hint,

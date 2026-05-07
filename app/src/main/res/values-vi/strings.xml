@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Kênh lời nhắc</string>
+    <string name="reminders_channel_description">Hiển thị lời nhắc</string>
+
+    <string name="notifications_channel_name">Kênh sao lưu</string>
+    <string name="notifications_channel_description">Hiển thị tiến trình sao lưu</string>
+</resources>

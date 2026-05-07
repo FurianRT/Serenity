@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Erinnerungen</string>
+    <string name="reminders_screen_description">Erstelle eine Erinnerung, damit du keinen Moment verpasst, über den es sich zu schreiben lohnt</string>
+    <string name="reminders_default_reminder_notification_title">Wie war dein Tag?</string>
+    <string name="reminders_default_reminder_notification_body">Tippe, um eine Notiz zu schreiben</string>
+    <string name="reminders_troubleshooting_title">Funktionieren Erinnerungen nicht?</string>
+    <string name="reminders_troubleshooting_body">Tippe, um zu sehen, wie du das beheben kannst</string>
+    <string name="reminders_add_reminder_button_title">Erinnerung hinzufügen</string>
+
+    <string name="reminders_details_screen_title">Zeit</string>
+    <string name="reminders_days_of_week_title">Wochentage</string>
+    <string name="reminders_notification_text_hint">Benachrichtigungstext eingeben</string>
+
+    <string name="reminders_troubleshooting_screen_title">Fehlerbehebung</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Benachrichtigungen aktivieren</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Die App benötigt die Berechtigung, Benachrichtigungen zu senden</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Berechtigung für Alarme &amp; Erinnerungen</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Aktiviere diese Berechtigung, um Benachrichtigungen rechtzeitig zu erhalten</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Akkuoptimierung</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Die Akkuoptimierung kann die Funktionalität der App einschränken und Benachrichtigungen verzögern oder stoppen</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Energiesparmodus</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Der Energiesparmodus kann die Funktionalität der App einschränken und Benachrichtigungen verzögern oder stoppen</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Nicht stören-Modus</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Der Nicht stören-Modus kann Benachrichtigungen stummschalten. Deaktiviere ihn, um Benachrichtigungen normal zu erhalten</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Gerät neu starten</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Wenn alle oben genannten Schritte durchgeführt wurden und das Problem weiterhin besteht, starte dein Gerät neu und öffne Serenity erneut</string>
+    <string name="reminders_troubleshooting_open_settings_title">Zu den Einstellungen</string>
+</resources>

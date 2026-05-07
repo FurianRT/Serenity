@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Ano ang mangyayari kung papalitan ko ang aking Google account?</string>
     <string name="backup_popular_question_8_answer">Kung magpalit ka ng Google account, hindi maa-access ang mga tala mula sa naunang account. Kailangan mong bumalik sa orihinal na Google account para ma-access ang mga ito.</string>
 
-    <string name="backup_notifications_channel_name">Backup channel</string>
-    <string name="backup_notifications_channel_description">Ipinapakita ang progreso ng backup</string>
     <string name="backup_notification_initial_description">Ina-upload ang iyong mga tala. Maaaring tumagal ng sandali.</string>
     <string name="restore_notification_initial_description">Dinada-download ang iyong mga tala. Maaaring tumagal ng sandali.</string>
 

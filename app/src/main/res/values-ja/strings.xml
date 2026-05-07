@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">リマインダーチャンネル</string>
+    <string name="reminders_channel_description">リマインダーを表示します</string>
+
+    <string name="notifications_channel_name">バックアップチャンネル</string>
+    <string name="notifications_channel_description">バックアップの進行状況を表示します</string>
+</resources>

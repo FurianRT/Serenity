@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Herinneringenkanaal</string>
+    <string name="reminders_channel_description">Toont herinneringen</string>
+
+    <string name="notifications_channel_name">Back-upkanaal</string>
+    <string name="notifications_channel_description">Toont voortgang van back-up</string>
+</resources>

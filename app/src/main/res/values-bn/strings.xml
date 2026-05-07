@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">রিমাইন্ডার চ্যানেল</string>
+    <string name="reminders_channel_description">রিমাইন্ডার দেখায়</string>
+
+    <string name="notifications_channel_name">ব্যাকআপ চ্যানেল</string>
+    <string name="notifications_channel_description">ব্যাকআপের অগ্রগতি দেখায়</string>
+</resources>

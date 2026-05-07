@@ -35,8 +35,6 @@
     <string name="backup_popular_question_8_title">Google 계정을 변경하면 어떻게 되나요?</string>
     <string name="backup_popular_question_8_answer">다른 Google 계정으로 전환하면 이전 계정의 메모에 접근할 수 없습니다. 원래 계정으로 다시 전환해야 합니다.</string>
 
-    <string name="backup_notifications_channel_name">백업 채널</string>
-    <string name="backup_notifications_channel_description">백업 진행 상황 표시</string>
     <string name="backup_notification_initial_description">메모를 업로드 중입니다. 잠시만 기다려주세요.</string>
     <string name="restore_notification_initial_description">메모를 다운로드 중입니다. 잠시만 기다려주세요.</string>
 

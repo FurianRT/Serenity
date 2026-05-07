@@ -35,8 +35,6 @@
     <string name="backup_popular_question_8_title">Que se passe-t-il si je change de compte Google ?</string>
     <string name="backup_popular_question_8_answer">Si vous changez de compte Google, vos notes du compte précédent ne seront plus accessibles. Pour y accéder, vous devez revenir au compte Google original.</string>
 
-    <string name="backup_notifications_channel_name">Canal de sauvegarde</string>
-    <string name="backup_notifications_channel_description">Affiche la progression de la sauvegarde</string>
     <string name="backup_notification_initial_description">Vos notes sont en cours de téléchargement. Cela peut prendre un moment.</string>
     <string name="restore_notification_initial_description">Vos notes sont en cours de restauration. Cela peut prendre un moment.</string>
 

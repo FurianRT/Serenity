@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Herinneringen</string>
+    <string name="reminders_screen_description">Maak een herinnering zodat je nooit een moment mist dat het waard is om op te schrijven</string>
+    <string name="reminders_default_reminder_notification_title">Hoe was je dag?</string>
+    <string name="reminders_default_reminder_notification_body">Tik om een notitie te schrijven</string>
+    <string name="reminders_troubleshooting_title">Werken herinneringen niet?</string>
+    <string name="reminders_troubleshooting_body">Tik om te zien hoe je dit kunt oplossen</string>
+    <string name="reminders_add_reminder_button_title">Herinnering toevoegen</string>
+
+    <string name="reminders_details_screen_title">Tijd</string>
+    <string name="reminders_days_of_week_title">Dagen van de week</string>
+    <string name="reminders_notification_text_hint">Voer meldingstekst in</string>
+
+    <string name="reminders_troubleshooting_screen_title">Probleemoplossing</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Meldingen inschakelen</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">De app heeft toestemming nodig om meldingen te verzenden</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Toestemming voor alarmen en herinneringen</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Schakel deze toestemming in om meldingen op tijd te ontvangen</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Batterijoptimalisatie</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Batterijoptimalisatie kan de functionaliteit van de app beperken en meldingen vertragen of stoppen</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Energiebesparingsmodus</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">De energiebesparingsmodus kan de functionaliteit van de app beperken en meldingen vertragen of stoppen</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Niet storen-modus</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">De Niet storen-modus kan meldingen dempen. Schakel deze uit om meldingen normaal te ontvangen</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Apparaat opnieuw opstarten</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Als alle bovenstaande stappen zijn uitgevoerd en het probleem blijft bestaan, probeer dan je apparaat opnieuw op te starten en Serenity opnieuw te openen</string>
+    <string name="reminders_troubleshooting_open_settings_title">Ga naar instellingen</string>
+</resources>

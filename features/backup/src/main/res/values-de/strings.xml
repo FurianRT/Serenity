@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Was passiert, wenn ich mein Google-Konto ändere?</string>
     <string name="backup_popular_question_8_answer">Notizen sind nur über das ursprüngliche Google-Konto verfügbar. Wechsel zurück, um darauf zuzugreifen</string>
 
-    <string name="backup_notifications_channel_name">Backup-Kanal</string>
-    <string name="backup_notifications_channel_description">Zeigt Backup-Fortschritt</string>
     <string name="backup_notification_initial_description">Deine Notizen werden hochgeladen. Bitte einen Moment Geduld</string>
     <string name="restore_notification_initial_description">Deine Notizen werden heruntergeladen. Bitte einen Moment Geduld</string>
 

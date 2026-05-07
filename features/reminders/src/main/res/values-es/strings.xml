@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Recordatorios</string>
+    <string name="reminders_screen_description">Crea un recordatorio para no perder ningún momento que valga la pena escribir</string>
+    <string name="reminders_default_reminder_notification_title">¿Cómo estuvo tu día?</string>
+    <string name="reminders_default_reminder_notification_body">Toca para escribir una nota</string>
+    <string name="reminders_troubleshooting_title">¿Los recordatorios no funcionan?</string>
+    <string name="reminders_troubleshooting_body">Toca para ver cómo solucionarlo</string>
+    <string name="reminders_add_reminder_button_title">Agregar recordatorio</string>
+
+    <string name="reminders_details_screen_title">Hora</string>
+    <string name="reminders_days_of_week_title">Días de la semana</string>
+    <string name="reminders_notification_text_hint">Introduce el texto de la notificación</string>
+
+    <string name="reminders_troubleshooting_screen_title">Solución de problemas</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Activar notificaciones</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">La aplicación necesita permiso para enviar notificaciones</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Permiso de alarmas y recordatorios</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Activa este permiso para recibir notificaciones a tiempo</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Optimización de batería</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">La optimización de batería puede restringir la funcionalidad de la aplicación y retrasar o detener las notificaciones</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Modo de ahorro de energía</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">El modo de ahorro de energía puede restringir la funcionalidad de la aplicación y retrasar o detener las notificaciones</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Modo No molestar</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">El modo No molestar puede silenciar las notificaciones. Desactívalo para recibirlas normalmente</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Reiniciar dispositivo</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Si todos los pasos anteriores están hechos y el problema continúa, intenta reiniciar tu dispositivo y volver a abrir Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Ir a ajustes</string>
+</resources>

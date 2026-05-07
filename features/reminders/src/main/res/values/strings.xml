@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Reminders</string>
+    <string name="reminders_screen_description">Create a reminder so you never miss a moment worth writing about</string>
+    <string name="reminders_default_reminder_notification_title">How was your day?</string>
+    <string name="reminders_default_reminder_notification_body">Tap to write a note</string>
+    <string name="reminders_troubleshooting_title">Reminders not working?</string>
+    <string name="reminders_troubleshooting_body">Tap to see how to fix it</string>
+    <string name="reminders_add_reminder_button_title">Add Reminder</string>
+
+    <string name="reminders_details_screen_title">Time</string>
+    <string name="reminders_days_of_week_title">Days of week</string>
+    <string name="reminders_notification_text_hint">Enter notification text</string>
+
+    <string name="reminders_troubleshooting_screen_title">Troubleshooting</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Enable Notifications</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">The app needs permission to send notifications</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Alarms &amp; Reminders Permission</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Enable this permission to receive notifications on time</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Battery Optimization</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Battery optimization may restrict app functionality and delay or stop notifications</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Power Saving Mode</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Power saving mode may restrict app functionality and delay or stop notifications</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Do Not Disturb Mode</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Do not disturb mode may silence notifications. Turn it off to receive them normally</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Reboot Device</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">If all the above steps are done and the issue still persists, try restarting your device and reopening Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Go to settings</string>
+</resources>

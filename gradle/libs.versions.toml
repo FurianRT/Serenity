@@ -74,6 +74,9 @@ firebaseBom = "34.12.0"
 kolor = "4.1.1"
 palette = "1.0.0"
 
+timePicker = "1.3.0"
+kotlinDatetime = "0.7.1"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -163,6 +166,9 @@ performance = { module = "com.google.firebase:firebase-perf" }
 
 kolor = { module = "com.materialkolor:material-kolor", version.ref = "kolor" }
 palette = { module = "androidx.palette:palette-ktx", version.ref = "palette" }
+
+timePicker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "timePicker" }
+kotlinDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinDatetime" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

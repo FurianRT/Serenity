@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Kanal pengingat</string>
+    <string name="reminders_channel_description">Menampilkan pengingat</string>
+
+    <string name="notifications_channel_name">Kanal cadangan</string>
+    <string name="notifications_channel_description">Menampilkan progres cadangan</string>
+</resources>

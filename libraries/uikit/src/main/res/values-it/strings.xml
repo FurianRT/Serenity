@@ -22,6 +22,7 @@
     <string name="action_skip">Salta</string>
     <string name="action_close">Chiudi</string>
     <string name="action_fix">Correggi</string>
+    <string name="action_disable">Disattiva</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Tema</string>

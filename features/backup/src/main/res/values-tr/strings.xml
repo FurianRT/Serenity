@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Google hesabımı değiştirirsem ne olur?</string>
     <string name="backup_popular_question_8_answer">Farklı bir Google hesabına geçerseniz, önceki hesaba ait notlarınıza erişemezsiniz. Onlara erişmek için orijinal Google hesabına geri dönmeniz gerekir.</string>
 
-    <string name="backup_notifications_channel_name">Yedekleme kanalı</string>
-    <string name="backup_notifications_channel_description">Yedekleme ilerlemesini gösterir</string>
     <string name="backup_notification_initial_description">Notlarınız yükleniyor. Biraz zaman alabilir.</string>
     <string name="restore_notification_initial_description">Notlarınız indiriliyor. Biraz zaman alabilir.</string>
 

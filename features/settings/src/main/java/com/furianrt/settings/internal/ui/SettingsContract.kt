@@ -23,6 +23,7 @@ internal sealed interface SettingsEvent {
     data object OnButtonBackClick : SettingsEvent
     data object OnButtonSecurityClick : SettingsEvent
     data object OnButtonBackupClick : SettingsEvent
+    data object OnButtonRemindersClick : SettingsEvent
     data object OnButtonFontClick : SettingsEvent
     data class OnFontSelected(val font: UiNoteFontFamily) : SettingsEvent
     data object OnButtonFeedbackClick : SettingsEvent
@@ -40,6 +41,7 @@ internal sealed interface SettingsEffect {
     data object CloseScreen : SettingsEffect
     data object OpenSecurityScreen : SettingsEffect
     data object OpenBackupScreen : SettingsEffect
+    data object OpenRemindersScreen : SettingsEffect
     data object OpenAppThemeScreen : SettingsEffect
     data class SendFeedbackEmail(
         val supportEmail: String,

@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Mementouri</string>
+    <string name="reminders_screen_description">Creează un memento pentru a nu rata niciun moment care merită scris</string>
+    <string name="reminders_default_reminder_notification_title">Cum a fost ziua ta?</string>
+    <string name="reminders_default_reminder_notification_body">Atinge pentru a scrie o notiță</string>
+    <string name="reminders_troubleshooting_title">Mementourile nu funcționează?</string>
+    <string name="reminders_troubleshooting_body">Atinge pentru a vedea cum se poate rezolva</string>
+    <string name="reminders_add_reminder_button_title">Adaugă memento</string>
+
+    <string name="reminders_details_screen_title">Ora</string>
+    <string name="reminders_days_of_week_title">Zilele săptămânii</string>
+    <string name="reminders_notification_text_hint">Introdu textul notificării</string>
+
+    <string name="reminders_troubleshooting_screen_title">Depanare</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Activează notificările</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Aplicația are nevoie de permisiune pentru a trimite notificări</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Permisiune pentru alarme și mementouri</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Activează această permisiune pentru a primi notificări la timp</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Optimizarea bateriei</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Optimizarea bateriei poate restricționa funcționalitatea aplicației și poate întârzia sau opri notificările</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Mod economisire energie</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Modul de economisire a energiei poate restricționa funcționalitatea aplicației și poate întârzia sau opri notificările</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Modul Nu deranja</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Modul Nu deranja poate dezactiva sunetul notificărilor. Dezactivează-l pentru a primi notificări normal</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Repornește dispozitivul</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Dacă toți pașii de mai sus au fost efectuați și problema persistă, încearcă să repornești dispozitivul și să redeschizi Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Mergi la setări</string>
+</resources>

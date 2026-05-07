@@ -285,7 +285,7 @@ private fun SearchBar(
     onClearClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val showCloseButton by remember { derivedStateOf { state.text.isNotEmpty() } }
+    val showCloseButton by remember(state) { derivedStateOf { state.text.isNotEmpty() } }
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -318,7 +318,7 @@ private fun SearchBar(
                 showKeyboardOnFocus = true,
             ),
             decorator = { innerTextField ->
-                if (state.text.isEmpty()) {
+                if (!showCloseButton) {
                     Text(
                         modifier = Modifier.alpha(0.5f),
                         text = stringResource(R.string.notes_search_bar_title),

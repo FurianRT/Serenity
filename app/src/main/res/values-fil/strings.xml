@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Channel ng paalala</string>
+    <string name="reminders_channel_description">Nagpapakita ng mga paalala</string>
+
+    <string name="notifications_channel_name">Channel ng backup</string>
+    <string name="notifications_channel_description">Nagpapakita ng progreso ng backup</string>
+</resources>

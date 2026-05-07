@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">การแจ้งเตือน</string>
+    <string name="reminders_screen_description">สร้างการแจ้งเตือนเพื่อไม่ให้พลาดช่วงเวลาที่ควรค่าแก่การเขียน</string>
+    <string name="reminders_default_reminder_notification_title">วันนี้เป็นอย่างไรบ้าง?</string>
+    <string name="reminders_default_reminder_notification_body">แตะเพื่อเขียนบันทึก</string>
+    <string name="reminders_troubleshooting_title">การแจ้งเตือนไม่ทำงาน?</string>
+    <string name="reminders_troubleshooting_body">แตะเพื่อดูวิธีแก้ไข</string>
+    <string name="reminders_add_reminder_button_title">เพิ่มการแจ้งเตือน</string>
+
+    <string name="reminders_details_screen_title">เวลา</string>
+    <string name="reminders_days_of_week_title">วันในสัปดาห์</string>
+    <string name="reminders_notification_text_hint">ป้อนข้อความแจ้งเตือน</string>
+
+    <string name="reminders_troubleshooting_screen_title">การแก้ไขปัญหา</string>
+    <string name="reminders_troubleshooting_notification_permission_title">เปิดใช้งานการแจ้งเตือน</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">แอปต้องการสิทธิ์ในการส่งการแจ้งเตือน</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">สิทธิ์การปลุกและการแจ้งเตือน</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">เปิดใช้งานสิทธิ์นี้เพื่อรับการแจ้งเตือนตรงเวลา</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">การเพิ่มประสิทธิภาพแบตเตอรี่</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">การเพิ่มประสิทธิภาพแบตเตอรี่อาจจำกัดการทำงานของแอปและทำให้การแจ้งเตือนล่าช้าหรือหยุดทำงาน</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">โหมดประหยัดพลังงาน</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">โหมดประหยัดพลังงานอาจจำกัดการทำงานของแอปและทำให้การแจ้งเตือนล่าช้าหรือหยุดทำงาน</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">โหมดห้ามรบกวน</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">โหมดห้ามรบกวนอาจปิดเสียงการแจ้งเตือน ปิดโหมดนี้เพื่อรับการแจ้งเตือนตามปกติ</string>
+    <string name="reminders_troubleshooting_reboot_device_title">รีสตาร์ทอุปกรณ์</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">หากทำตามขั้นตอนข้างต้นทั้งหมดแล้วแต่ปัญหายังคงอยู่ ให้ลองรีสตาร์ทอุปกรณ์และเปิด Serenity อีกครั้ง</string>
+    <string name="reminders_troubleshooting_open_settings_title">ไปที่การตั้งค่า</string>
+</resources>

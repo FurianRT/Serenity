@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Ce se întâmplă dacă îmi schimb contul Google</string>
     <string name="backup_popular_question_8_answer">Dacă treci la un alt cont Google, notițele din contul anterior nu vor fi disponibile. Pentru a le accesa, trebuie să revii la contul Google inițial</string>
 
-    <string name="backup_notifications_channel_name">Canal backup</string>
-    <string name="backup_notifications_channel_description">Arată progresul backup-ului</string>
     <string name="backup_notification_initial_description">Notițele tale sunt încărcate. Acest lucru poate dura puțin</string>
     <string name="restore_notification_initial_description">Notițele tale sunt descărcate. Acest lucru poate dura puțin</string>
 

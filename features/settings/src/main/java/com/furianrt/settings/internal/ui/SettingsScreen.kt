@@ -98,6 +98,7 @@ internal fun SettingsScreen(
     openBackupScreen: () -> Unit,
     openNoteSettingsScreen: () -> Unit,
     openAppThemeScreen: () -> Unit,
+    openRemindersScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -113,6 +114,7 @@ internal fun SettingsScreen(
     val openSecurityScreenState by rememberUpdatedState(openSecurityScreen)
     val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
     val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
+    val openRemindersScreenState by rememberUpdatedState(openRemindersScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -130,6 +132,7 @@ internal fun SettingsScreen(
                     is SettingsEffect.CloseScreen -> onCloseRequestState()
                     is SettingsEffect.OpenSecurityScreen -> openSecurityScreenState()
                     is SettingsEffect.OpenBackupScreen -> openBackupScreenState()
+                    is SettingsEffect.OpenRemindersScreen -> openRemindersScreenState()
                     is SettingsEffect.OpenAppThemeScreen -> openAppThemeScreenState()
                     is SettingsEffect.SendFeedbackEmail -> IntentCreator.emailIntent(
                         email = effect.supportEmail,
@@ -295,6 +298,13 @@ private fun SuccessScreen(
             iconPainter = painterResource(R.drawable.ic_cloud),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
+        )
+        GeneralButton(
+            modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(R.string.settings_reminders_title),
+            iconPainter = painterResource(R.drawable.ic_reminders),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
         )
         GeneralButton(
             modifier = Modifier.padding(horizontal = 8.dp),

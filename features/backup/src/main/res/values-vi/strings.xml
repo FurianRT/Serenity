@@ -35,8 +35,6 @@
     <string name="backup_popular_question_8_title">Nếu tôi đổi tài khoản Google thì sao?</string>
     <string name="backup_popular_question_8_answer">Nếu chuyển sang tài khoản Google khác, ghi chú của tài khoản trước sẽ không hiển thị. Để truy cập, bạn phải đăng nhập lại tài khoản Google cũ.</string>
 
-    <string name="backup_notifications_channel_name">Kênh sao lưu</string>
-    <string name="backup_notifications_channel_description">Hiển thị tiến trình sao lưu</string>
     <string name="backup_notification_initial_description">Đang tải ghi chú lên. Quá trình có thể mất chút thời gian</string>
     <string name="restore_notification_initial_description">Đang tải ghi chú xuống. Quá trình có thể mất chút thời gian</string>
 

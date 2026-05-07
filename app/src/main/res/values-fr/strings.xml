@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">Canal des rappels</string>
+    <string name="reminders_channel_description">Affiche les rappels</string>
+
+    <string name="notifications_channel_name">Canal de sauvegarde</string>
+    <string name="notifications_channel_description">Affiche la progression de la sauvegarde</string>
+</resources>

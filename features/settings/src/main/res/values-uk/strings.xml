@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">Безпека</string>
     <string name="settings_backup_title">Збереження та відновлення</string>
+    <string name="settings_reminders_title">Нагадування</string>
     <string name="settings_font_title">Шрифт додатку</string>
     <string name="settings_language_title">Мова</string>
     <string name="settings_rate_us_title">Оцініть нас</string>

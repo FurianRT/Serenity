@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Cosa succede se cambio account Google?</string>
     <string name="backup_popular_question_8_answer">Se cambi account Google, le note del precedente account non saranno disponibili. Per accedervi devi tornare all’account Google originale</string>
 
-    <string name="backup_notifications_channel_name">Canale di backup</string>
-    <string name="backup_notifications_channel_description">Mostra il progresso del backup</string>
     <string name="backup_notification_initial_description">Le tue note stanno venendo caricate. Potrebbe richiedere qualche momento</string>
     <string name="restore_notification_initial_description">Le tue note stanno venendo scaricate. Potrebbe richiedere qualche momento</string>
 

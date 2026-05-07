@@ -1,6 +1,7 @@
 <resources>
     <string name="settings_security_title">ความปลอดภัย</string>
     <string name="settings_backup_title">สำรองข้อมูลและกู้คืน</string>
+    <string name="settings_reminders_title">การแจ้งเตือน</string>
     <string name="settings_font_title">ฟอนต์แอป</string>
     <string name="settings_language_title">ภาษา</string>
     <string name="settings_rate_us_title">ให้คะแนนเรา</string>

@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Przypomnienia</string>
+    <string name="reminders_screen_description">Utwórz przypomnienie, aby nie przegapić chwili wartej zapisania</string>
+    <string name="reminders_default_reminder_notification_title">Jak minął Twój dzień?</string>
+    <string name="reminders_default_reminder_notification_body">Dotknij, aby napisać notatkę</string>
+    <string name="reminders_troubleshooting_title">Przypomnienia nie działają?</string>
+    <string name="reminders_troubleshooting_body">Dotknij, aby zobaczyć, jak to naprawić</string>
+    <string name="reminders_add_reminder_button_title">Dodaj przypomnienie</string>
+
+    <string name="reminders_details_screen_title">Godzina</string>
+    <string name="reminders_days_of_week_title">Dni tygodnia</string>
+    <string name="reminders_notification_text_hint">Wpisz tekst powiadomienia</string>
+
+    <string name="reminders_troubleshooting_screen_title">Rozwiązywanie problemów</string>
+    <string name="reminders_troubleshooting_notification_permission_title">Włącz powiadomienia</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Aplikacja potrzebuje pozwolenia na wysyłanie powiadomień</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Uprawnienie do alarmów i przypomnień</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">Włącz to uprawnienie, aby otrzymywać powiadomienia na czas</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Optymalizacja baterii</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Optymalizacja baterii może ograniczać działanie aplikacji i opóźniać lub zatrzymywać powiadomienia</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Tryb oszczędzania energii</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Tryb oszczędzania energii może ograniczać działanie aplikacji i opóźniać lub zatrzymywać powiadomienia</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Tryb Nie przeszkadzać</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Tryb Nie przeszkadzać może wyciszać powiadomienia. Wyłącz go, aby otrzymywać powiadomienia normalnie</string>
+    <string name="reminders_troubleshooting_reboot_device_title">Uruchom ponownie urządzenie</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Jeśli wszystkie powyższe kroki zostały wykonane, a problem nadal występuje, spróbuj ponownie uruchomić urządzenie i otworzyć Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Przejdź do ustawień</string>
+</resources>

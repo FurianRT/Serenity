@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">リマインダー</string>
+    <string name="reminders_screen_description">書き留めたい大切な瞬間を逃さないように、リマインダーを作成しましょう</string>
+    <string name="reminders_default_reminder_notification_title">今日はどんな一日でしたか？</string>
+    <string name="reminders_default_reminder_notification_body">タップしてメモを書く</string>
+    <string name="reminders_troubleshooting_title">リマインダーが動作しませんか？</string>
+    <string name="reminders_troubleshooting_body">解決方法を見るにはタップしてください</string>
+    <string name="reminders_add_reminder_button_title">リマインダーを追加</string>
+
+    <string name="reminders_details_screen_title">時間</string>
+    <string name="reminders_days_of_week_title">曜日</string>
+    <string name="reminders_notification_text_hint">通知テキストを入力</string>
+
+    <string name="reminders_troubleshooting_screen_title">トラブルシューティング</string>
+    <string name="reminders_troubleshooting_notification_permission_title">通知を有効にする</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">アプリが通知を送信するには権限が必要です</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">アラームとリマインダーの権限</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">通知を時間通りに受け取るには、この権限を有効にしてください</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">バッテリー最適化</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">バッテリー最適化により、アプリの機能が制限され、通知が遅延または停止する場合があります</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">省電力モード</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">省電力モードにより、アプリの機能が制限され、通知が遅延または停止する場合があります</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">おやすみモード</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">おやすみモードにより通知がミュートされる場合があります。通常どおり通知を受け取るにはオフにしてください</string>
+    <string name="reminders_troubleshooting_reboot_device_title">デバイスを再起動</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">上記の手順をすべて試しても問題が解決しない場合は、デバイスを再起動して Serenity を再度開いてください</string>
+    <string name="reminders_troubleshooting_open_settings_title">設定を開く</string>
+</resources>

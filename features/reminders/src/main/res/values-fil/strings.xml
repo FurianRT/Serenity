@@ -1,0 +1,28 @@
+<resources>
+    <string name="reminders_screen_title">Mga Paalala</string>
+    <string name="reminders_screen_description">Gumawa ng paalala para hindi mo mamiss ang anumang sandaling sulit isulat</string>
+    <string name="reminders_default_reminder_notification_title">Kumusta ang araw mo?</string>
+    <string name="reminders_default_reminder_notification_body">I-tap para magsulat ng tala</string>
+    <string name="reminders_troubleshooting_title">Hindi gumagana ang mga paalala?</string>
+    <string name="reminders_troubleshooting_body">I-tap para makita kung paano ayusin</string>
+    <string name="reminders_add_reminder_button_title">Magdagdag ng Paalala</string>
+
+    <string name="reminders_details_screen_title">Oras</string>
+    <string name="reminders_days_of_week_title">Mga araw ng linggo</string>
+    <string name="reminders_notification_text_hint">Ilagay ang teksto ng notification</string>
+
+    <string name="reminders_troubleshooting_screen_title">Pag-troubleshoot</string>
+    <string name="reminders_troubleshooting_notification_permission_title">I-enable ang Notifications</string>
+    <string name="reminders_troubleshooting_notification_permission_hint">Kailangan ng app ng pahintulot para magpadala ng notifications</string>
+    <string name="reminders_troubleshooting_alarms_permission_title">Pahintulot sa Alarm at Mga Paalala</string>
+    <string name="reminders_troubleshooting_alarms_permission_hint">I-enable ang pahintulot na ito para makatanggap ng notifications sa tamang oras</string>
+    <string name="reminders_troubleshooting_battery_optimization_title">Battery Optimization</string>
+    <string name="reminders_troubleshooting_battery_optimization_hint">Maaaring limitahan ng battery optimization ang functionality ng app at maantala o mapahinto ang notifications</string>
+    <string name="reminders_troubleshooting_power_saving_mode_title">Power Saving Mode</string>
+    <string name="reminders_troubleshooting_power_saving_mode_hint">Maaaring limitahan ng power saving mode ang functionality ng app at maantala o mapahinto ang notifications</string>
+    <string name="reminders_troubleshooting_do_not_disturb_title">Do Not Disturb Mode</string>
+    <string name="reminders_troubleshooting_do_not_disturb_hint">Maaaring i-silent ng Do Not Disturb mode ang notifications. I-off ito para makatanggap ng notifications nang normal</string>
+    <string name="reminders_troubleshooting_reboot_device_title">I-restart ang Device</string>
+    <string name="reminders_troubleshooting_reboot_device_hint">Kung nagawa na ang lahat ng hakbang sa itaas at nagpapatuloy pa rin ang problema, subukang i-restart ang iyong device at buksan muli ang Serenity</string>
+    <string name="reminders_troubleshooting_open_settings_title">Pumunta sa settings</string>
+</resources>

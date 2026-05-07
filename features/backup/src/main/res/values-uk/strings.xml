@@ -36,8 +36,6 @@
     <string name="backup_popular_question_8_title">Що станеться, якщо я зміню Google акаунт?</string>
     <string name="backup_popular_question_8_answer">Якщо ви переключитесь на інший Google акаунт, нотатки з попереднього акаунта не будуть доступні. Щоб отримати доступ, потрібно повернутися до оригінального акаунта Google.</string>
 
-    <string name="backup_notifications_channel_name">Канал резервного копіювання</string>
-    <string name="backup_notifications_channel_description">Показує прогрес резервного копіювання</string>
     <string name="backup_notification_initial_description">Ваші нотатки завантажуються. Це може зайняти деякий час.</string>
     <string name="restore_notification_initial_description">Ваші нотатки завантажуються. Це може зайняти деякий час.</string>
 

@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.mediaselector.R
+import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
@@ -35,7 +36,7 @@ internal fun PermissionsMessage(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_warning),
+            painter = painterResource(uiR.drawable.ic_warning),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
@@ -46,7 +47,7 @@ internal fun PermissionsMessage(
             style = MaterialTheme.typography.labelMedium,
         )
         Icon(
-            painter = painterResource(R.drawable.ic_forward),
+            painter = painterResource(uiR.drawable.ic_forward),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )

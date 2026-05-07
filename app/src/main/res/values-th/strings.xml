@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">ช่องการแจ้งเตือน</string>
+    <string name="reminders_channel_description">แสดงการแจ้งเตือน</string>
+
+    <string name="notifications_channel_name">ช่องสำรองข้อมูล</string>
+    <string name="notifications_channel_description">แสดงความคืบหน้าการสำรองข้อมูล</string>
+</resources>

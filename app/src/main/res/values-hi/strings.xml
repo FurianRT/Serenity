@@ -1,0 +1,7 @@
+<resources>
+    <string name="reminders_channel_name">रिमाइंडर चैनल</string>
+    <string name="reminders_channel_description">रिमाइंडर दिखाता है</string>
+
+    <string name="notifications_channel_name">बैकअप चैनल</string>
+    <string name="notifications_channel_description">बैकअप प्रगति दिखाता है</string>
+</resources>
