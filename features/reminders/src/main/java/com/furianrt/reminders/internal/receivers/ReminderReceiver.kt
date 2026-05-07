@@ -71,7 +71,7 @@ internal class ReminderReceiver : BroadcastReceiver() {
                 context,
                 NotificationChannels.REMINDERS_CHANNEL_ID,
             )
-                .setSmallIcon(uiR.mipmap.ic_launcher_foreground)
+                .setSmallIcon(uiR.drawable.notification_small_logo)
                 .setContentTitle(title)
                 .setContentText(text)
                 .setAutoCancel(true)
