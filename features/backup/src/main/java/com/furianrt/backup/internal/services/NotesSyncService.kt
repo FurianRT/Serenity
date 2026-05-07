@@ -8,10 +8,10 @@ import android.content.pm.ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.furianrt.backup.R
-import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.backup.internal.domain.BackupDataManager
 import com.furianrt.backup.internal.domain.RestoreDataManager
 import com.furianrt.common.NotificationChannels
+import com.furianrt.common.RootActivityIntentProvider
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.MediaRepository
 import dagger.hilt.android.AndroidEntryPoint

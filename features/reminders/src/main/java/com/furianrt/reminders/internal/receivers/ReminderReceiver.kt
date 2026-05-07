@@ -1,12 +1,14 @@
 package com.furianrt.reminders.internal.receivers
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.furianrt.common.NotificationChannels
+import com.furianrt.common.RootActivityIntentProvider
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.RemindersRepository
@@ -38,6 +40,9 @@ internal class ReminderReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var permissionsUtils: PermissionsUtils
+
+    @Inject
+    lateinit var rootActivityIntentProvider: RootActivityIntentProvider
 
     private val scope by lazy { CoroutineScope(dispatchers.io + SupervisorJob()) }
 
@@ -71,6 +76,7 @@ internal class ReminderReceiver : BroadcastReceiver() {
                 context,
                 NotificationChannels.REMINDERS_CHANNEL_ID,
             )
+                .setContentIntent(createNotificationIntent(context))
                 .setSmallIcon(uiR.drawable.notification_small_logo)
                 .setContentTitle(title)
                 .setContentText(text)
@@ -81,4 +87,11 @@ internal class ReminderReceiver : BroadcastReceiver() {
                 .notify(reminder.id.hashCode(), notification)
         }
     }
+
+    private fun createNotificationIntent(context: Context) = PendingIntent.getActivity(
+        context,
+        0,
+        rootActivityIntentProvider.provide(),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
 }

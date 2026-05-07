@@ -3,9 +3,9 @@ package com.furianrt.serenity.di
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import com.furianrt.backup.api.RootActivityIntentProvider
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.common.ErrorTracker
+import com.furianrt.common.RootActivityIntentProvider
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.serenity.BuildConfig
 import com.furianrt.serenity.MainActivity
