@@ -1,6 +1,7 @@
 package com.furianrt.uikit.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.extensions.applyIf
 
@@ -24,6 +26,7 @@ fun RegularButton(
     modifier: Modifier = Modifier,
     icon: Painter? = null,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
 ) {
     Button(
         modifier = modifier.applyIf(!enabled) { Modifier.alpha(0.5f) },
@@ -38,7 +41,7 @@ fun RegularButton(
         ),
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            modifier = Modifier.padding(contentPadding),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -52,6 +55,7 @@ fun RegularButton(
             Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
+                textAlign = TextAlign.Center,
             )
         }
     }

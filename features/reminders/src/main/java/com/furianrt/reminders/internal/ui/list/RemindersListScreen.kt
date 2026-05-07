@@ -254,6 +254,7 @@ private fun SuccessContent(
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 20.dp)
                     .animateItem(),
+                contentPadding = PaddingValues(vertical = 6.dp),
                 text = stringResource(R.string.reminders_add_reminder_button_title),
                 icon = painterResource(uiR.drawable.ic_add),
                 onClick = { onEvent(RemindersListEvent.OnAddReminderClick) },
@@ -297,6 +298,7 @@ private fun EmptyContent(
         Spacer(Modifier.height(40.dp))
         RegularButton(
             modifier = Modifier.fillMaxWidth(),
+            contentPadding = PaddingValues(vertical = 6.dp),
             text = stringResource(R.string.reminders_add_reminder_button_title),
             icon = painterResource(uiR.drawable.ic_add),
             onClick = { onEvent(RemindersListEvent.OnAddReminderClick) }
