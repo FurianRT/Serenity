@@ -45,7 +45,16 @@ fun SwitchWithLabel(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .clickable(enabled = enabled, onClick = { onCheckedChange(!isChecked) })
+            .clickable(
+                enabled = enabled,
+                onClick = {
+                    val feedbackType = if (isChecked) ToggleOff else ToggleOn
+                    if (withHaptic) {
+                        hapticFeedback.performHapticFeedback(feedbackType)
+                    }
+                    onCheckedChange(!isChecked)
+                },
+            )
             .padding(start = 8.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = if (hint == null) {
