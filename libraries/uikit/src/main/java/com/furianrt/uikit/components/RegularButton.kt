@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.uikit.extensions.applyIf
@@ -25,6 +26,7 @@ fun RegularButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    textStyle: TextStyle = MaterialTheme.typography.titleMedium,
     icon: Painter? = null,
     enabled: Boolean = true,
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 6.dp),
@@ -55,12 +57,12 @@ fun RegularButton(
             }
             BasicText(
                 text = text,
-                style = MaterialTheme.typography.titleMedium,
+                style = textStyle,
                 maxLines = 1,
                 color = MaterialTheme.colorScheme::onPrimaryContainer,
                 autoSize = TextAutoSize.StepBased(
                     minFontSize = 14.sp,
-                    maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    maxFontSize = textStyle.fontSize,
                 ),
             )
         }

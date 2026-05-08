@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -180,6 +181,8 @@ private fun SuccessContent(
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
                 text = stringResource(uiR.string.action_save),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+                textStyle = MaterialTheme.typography.titleLarge,
                 onClick = { onEvent(RemindersDetailsEvent.OnSaveClick) },
             )
         }

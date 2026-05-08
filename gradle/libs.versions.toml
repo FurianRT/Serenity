@@ -69,7 +69,7 @@ workManager = "2.11.2"
 
 startupRuntime = "1.2.0"
 
-firebaseBom = "34.12.0"
+firebaseBom = "34.13.0"
 
 kolor = "4.1.1"
 palette = "1.0.0"
