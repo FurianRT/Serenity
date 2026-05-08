@@ -343,10 +343,16 @@ internal class AppMediaSource @Inject constructor(
         video: LocalNote.Content.Video,
         noteId: String,
     ): SavedMediaData? = withContext(dispatchers.io) {
+        val extension = video.name
+            .substringAfterLast(delimiter = ".", missingDelimiterValue = "")
+            .takeIf { it.isNotEmpty() }
+            ?.let { ".$it" }
+            .orEmpty()
+
         val destFile = createMediaFile(
             noteId = noteId,
             mediaId = video.id,
-            mediaName = video.name,
+            mediaName = extension,
         ) ?: return@withContext null
 
         context.contentResolver.openInputStream(video.uri)?.use { inputStream ->
@@ -356,7 +362,7 @@ internal class AppMediaSource @Inject constructor(
         }
 
         return@withContext SavedMediaData(
-            name = video.name,
+            name = extension,
             uri = getRelativeUri(destFile),
         )
     }
