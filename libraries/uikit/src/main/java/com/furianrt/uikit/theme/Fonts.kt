@@ -113,4 +113,10 @@ sealed class NoteFont(
         bold = FontFamily(Font(R.font.cormorant_garamond_bold)),
         sizeMultiplier = 1.25f,
     )
+
+    data object RobotoCondensed : NoteFont(
+        light = FontFamily(Font(R.font.roboto_condensed_light)),
+        regular = FontFamily(Font(R.font.roboto_condensed_regular)),
+        bold = FontFamily(Font(R.font.roboto_condensed_bold)),
+    )
 }

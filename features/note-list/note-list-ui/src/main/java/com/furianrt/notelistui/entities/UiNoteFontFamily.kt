@@ -149,4 +149,13 @@ sealed class UiNoteFontFamily(
         bold = NoteFont.CormorantGaramond.bold,
         sizeMultiplier = 1.25f,
     )
+
+    @Immutable
+    data object RobotoCondensed : UiNoteFontFamily(
+        name = "Roboto Condensed",
+        light = NoteFont.RobotoCondensed.light,
+        regular = NoteFont.RobotoCondensed.regular,
+        bold = NoteFont.RobotoCondensed.bold,
+        sizeMultiplier = 1.25f,
+    )
 }
