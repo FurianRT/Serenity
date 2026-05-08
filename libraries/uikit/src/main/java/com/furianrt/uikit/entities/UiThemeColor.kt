@@ -577,7 +577,7 @@ enum class UiThemeColor(
         onTertiaryContainer = Colors.Accent.LightBlue2.copy(alpha = 0.2f),
         background = Colors.Common.LightGray.copy(alpha = 0.3f),
         secondaryContainer = Colors.Common.LightGray.copy(alpha = 0.3f),
-        inverseSurface = Colors.Common.LightGray.copy(alpha = 0.2f),
+        inverseSurface = Colors.Common.LightGray.copy(alpha = 0.3f),
         onSurfaceVariant = Colors.Accent.LightBlue2.copy(alpha = 0.2f),
         surface = Colors.Primary.LightWhite,
         surfaceContainer = Colors.Accent.LightBlue2,
