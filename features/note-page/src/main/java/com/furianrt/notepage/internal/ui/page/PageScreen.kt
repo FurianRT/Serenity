@@ -739,7 +739,8 @@ private fun ContentItems(
                             title = item,
                             color = uiState.fontColor?.value,
                             fontFamily = uiState.fontFamily?.regular,
-                            fontSizeMultiplier = uiState.fontFamily?.sizeMultiplier ?: 1f,
+                            fontSizeMultiplier = (uiState.fontFamily ?: uiState.appFontFamily)
+                                .sizeMultiplier,
                             fontSize = uiState.fontSize.sp,
                             textAlign = uiState.textAlignment.toTextAlign(),
                             lineHeightMultiplier = uiState.lineHeightMultiplier,

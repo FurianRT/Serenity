@@ -35,7 +35,7 @@ internal fun LocalNote.toNoteItem(
         },
         tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
         isSelected = isSelected,
-        fontFamily = fontFamily?.toUiNoteFontFamily(),
+        fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
         fontSize = fontSize,
         textAlignment = (textAlignment ?: NoteTextAlignment.START).toTextAlign(),
         lineHeightMultiplier = lineHeightMultiplier ?: 1f,

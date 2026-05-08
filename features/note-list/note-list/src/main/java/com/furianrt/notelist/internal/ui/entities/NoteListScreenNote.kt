@@ -12,7 +12,7 @@ internal data class NoteListScreenNote(
     val id: String,
     val date: Date,
     val tags: List<UiNoteTag>,
-    val fontFamily: UiNoteFontFamily?,
+    val fontFamily: UiNoteFontFamily,
     val textAlignment: TextAlign,
     val lineHeightMultiplier: Float,
     val fontSize: Int,

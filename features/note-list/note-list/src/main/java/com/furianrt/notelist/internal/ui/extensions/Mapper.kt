@@ -40,7 +40,7 @@ internal fun LocalNote.toMainScreenNote(
             else -> NoteListScreenNote.Date.Other(date.toDateString())
         },
         tags = tags.take(3).map { it.toRegularUiNoteTag(isRemovable = false) },
-        fontFamily = fontFamily?.toUiNoteFontFamily(),
+        fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
         textAlignment = (textAlignment ?: NoteTextAlignment.START).toTextAlign(),
         lineHeightMultiplier = lineHeightMultiplier ?: 1f,
         fontSize = fontSize,

@@ -66,7 +66,7 @@ private const val MAX_TEXT_LINES = 4
 fun NoteListItem(
     content: List<UiNoteContent>,
     tags: List<UiNoteTag>,
-    fontFamily: UiNoteFontFamily?,
+    fontFamily: UiNoteFontFamily,
     fontSize: TextUnit,
     textAlign: TextAlign,
     lineHeightMultiplier: Float,
@@ -239,7 +239,7 @@ fun NoteListItem(
 @Composable
 private fun Title(
     item: UiNoteContent.Title,
-    fontFamily: UiNoteFontFamily?,
+    fontFamily: UiNoteFontFamily,
     fontSize: TextUnit,
     textAlign: TextAlign,
     lineHeightMultiplier: Float,
@@ -250,10 +250,10 @@ private fun Title(
         modifier = modifier,
         text = item.state.annotatedString,
         maxLines = MAX_TEXT_LINES,
-        fontSize = fontSize * (fontFamily?.sizeMultiplier ?: 1f),
+        fontSize = fontSize * fontFamily.sizeMultiplier,
         textAlign = textAlign,
         overflow = TextOverflow.Ellipsis,
-        fontFamily = fontFamily?.regular ?: style.fontFamily,
+        fontFamily = fontFamily.regular,
         lineHeight = (style.lineHeight *
                 (fontSize.value / style.fontSize.value)) *
                 lineHeightMultiplier,

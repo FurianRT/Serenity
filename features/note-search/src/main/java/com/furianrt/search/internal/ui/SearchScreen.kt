@@ -452,7 +452,7 @@ private fun SuccessFilledQueryPreview() {
                             UiNoteTag.Regular(title = "Android", isRemovable = false),
                         ),
                         isSelected = false,
-                        fontFamily = null,
+                        fontFamily = UiNoteFontFamily.NotoSans,
                         fontSize = 12,
                         textAlignment = TextAlign.Start,
                         lineHeightMultiplier = 1f,

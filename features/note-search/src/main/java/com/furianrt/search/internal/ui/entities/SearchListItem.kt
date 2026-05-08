@@ -40,7 +40,7 @@ internal sealed class SearchListItem(
         val date: Date,
         val tags: List<UiNoteTag>,
         val isSelected: Boolean,
-        val fontFamily: UiNoteFontFamily?,
+        val fontFamily: UiNoteFontFamily,
         val fontSize: Int,
         val textAlignment: TextAlign,
         val lineHeightMultiplier: Float,

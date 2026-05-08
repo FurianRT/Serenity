@@ -1122,11 +1122,11 @@ internal class PageViewModel @AssistedInject constructor(
         _state.update { localState ->
             when (localState) {
                 is PageUiState.Empty, PageUiState.Loading -> {
+                    val appFont = appearanceRepository.getAppFont().first().toUiNoteFontFamily()
                     PageUiState.Success(
                         noteId = note.id,
                         content = note.content.refreshTitleTemplates(
-                            fontFamily = note.fontFamily ?: appearanceRepository.getAppFont()
-                                .first().toUiNoteFontFamily(),
+                            fontFamily = note.fontFamily ?: appFont,
                             addTopTemplate = isInEditMode
                         ),
                         tags = with(note.tags) {
@@ -1141,6 +1141,7 @@ internal class PageViewModel @AssistedInject constructor(
                         stickers = note.stickers,
                         playingVoiceId = null,
                         fontFamily = note.fontFamily,
+                        appFontFamily = appFont,
                         fontColor = note.fontColor,
                         fontSize = note.fontSize,
                         textAlignment = note.textAlignment,

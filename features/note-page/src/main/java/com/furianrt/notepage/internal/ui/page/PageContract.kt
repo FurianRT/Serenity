@@ -25,6 +25,7 @@ internal sealed interface PageUiState {
         val stickers: List<StickerItem>,
         val playingVoiceId: String?,
         val fontFamily: UiNoteFontFamily?,
+        val appFontFamily: UiNoteFontFamily,
         val fontColor: UiNoteFontColor?,
         val fontSize: Int,
         val textAlignment: NoteTextAlignment,
