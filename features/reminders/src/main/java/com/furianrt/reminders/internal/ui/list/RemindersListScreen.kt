@@ -3,6 +3,8 @@ package com.furianrt.reminders.internal.ui.list
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -180,13 +182,20 @@ private fun Content(
         )
         AnimatedContent(
             targetState = uiState.content,
+            contentKey = { it::class.java },
             transitionSpec = {
                 if (initialState is RemindersListUiState.Content.Loading) {
                     EnterTransition.None.togetherWith(ExitTransition.None)
                 } else {
-                    fadeIn().togetherWith(fadeOut())
+                    fadeIn(
+                        animationSpec = spring(stiffness = Spring.StiffnessLow),
+                    ).togetherWith(
+                        fadeOut(
+                            animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                        ),
+                    )
                 }
-            }
+            },
         ) { targetState ->
             when (targetState) {
                 is RemindersListUiState.Content.Loading -> LoadingContent(
