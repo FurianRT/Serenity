@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Mementouri</string>
     <string name="reminders_screen_description">Creează un memento pentru a nu rata niciun moment care merită scris</string>
-    <string name="reminders_default_reminder_notification_title">Cum a fost ziua ta?</string>
-    <string name="reminders_default_reminder_notification_body">Atinge pentru a scrie o notiță</string>
+    <string name="reminders_default_reminder_notification_title">Versiunea ta din viitor îți va mulțumi</string>
+    <string name="reminders_default_reminder_notification_body">Apasă pentru a-ți deschide jurnalul</string>
     <string name="reminders_troubleshooting_title">Mementourile nu funcționează?</string>
     <string name="reminders_troubleshooting_body">Atinge pentru a vedea cum se poate rezolva</string>
     <string name="reminders_add_reminder_button_title">Adaugă memento</string>

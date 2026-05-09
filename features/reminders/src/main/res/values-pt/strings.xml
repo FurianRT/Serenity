@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Lembretes</string>
     <string name="reminders_screen_description">Crie um lembrete para nunca perder um momento que valha a pena escrever</string>
-    <string name="reminders_default_reminder_notification_title">Como foi o seu dia?</string>
-    <string name="reminders_default_reminder_notification_body">Toque para escrever uma nota</string>
+    <string name="reminders_default_reminder_notification_title">Seu eu do futuro vai agradecer</string>
+    <string name="reminders_default_reminder_notification_body">Toque para abrir seu diário</string>
     <string name="reminders_troubleshooting_title">Os lembretes não estão funcionando?</string>
     <string name="reminders_troubleshooting_body">Toque para ver como corrigir</string>
     <string name="reminders_add_reminder_button_title">Adicionar lembrete</string>

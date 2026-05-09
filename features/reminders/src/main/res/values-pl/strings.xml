@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Przypomnienia</string>
     <string name="reminders_screen_description">Utwórz przypomnienie, aby nie przegapić chwili wartej zapisania</string>
-    <string name="reminders_default_reminder_notification_title">Jak minął Twój dzień?</string>
-    <string name="reminders_default_reminder_notification_body">Dotknij, aby napisać notatkę</string>
+    <string name="reminders_default_reminder_notification_title">Twoje przyszłe ja ci podziękuje</string>
+    <string name="reminders_default_reminder_notification_body">Dotknij, aby otworzyć dziennik</string>
     <string name="reminders_troubleshooting_title">Przypomnienia nie działają?</string>
     <string name="reminders_troubleshooting_body">Dotknij, aby zobaczyć, jak to naprawić</string>
     <string name="reminders_add_reminder_button_title">Dodaj przypomnienie</string>

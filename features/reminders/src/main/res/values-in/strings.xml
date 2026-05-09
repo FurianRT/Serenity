@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Pengingat</string>
     <string name="reminders_screen_description">Buat pengingat agar Anda tidak melewatkan momen yang layak ditulis</string>
-    <string name="reminders_default_reminder_notification_title">Bagaimana harimu?</string>
-    <string name="reminders_default_reminder_notification_body">Ketuk untuk menulis catatan</string>
+    <string name="reminders_default_reminder_notification_title">Dirimu di masa depan akan berterima kasih</string>
+    <string name="reminders_default_reminder_notification_body">Ketuk untuk membuka jurnalmu</string>
     <string name="reminders_troubleshooting_title">Pengingat tidak berfungsi?</string>
     <string name="reminders_troubleshooting_body">Ketuk untuk melihat cara memperbaikinya</string>
     <string name="reminders_add_reminder_button_title">Tambah Pengingat</string>

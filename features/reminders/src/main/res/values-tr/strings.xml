@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Hatırlatıcılar</string>
     <string name="reminders_screen_description">Yazmaya değer hiçbir anı kaçırmamak için bir hatırlatıcı oluşturun</string>
-    <string name="reminders_default_reminder_notification_title">Günün nasıl geçti?</string>
-    <string name="reminders_default_reminder_notification_body">Not yazmak için dokunun</string>
+    <string name="reminders_default_reminder_notification_title">Gelecekteki sen sana teşekkür edecek</string>
+    <string name="reminders_default_reminder_notification_body">Günlüğünü açmak için dokun</string>
     <string name="reminders_troubleshooting_title">Hatırlatıcılar çalışmıyor mu?</string>
     <string name="reminders_troubleshooting_body">Nasıl düzelteceğinizi görmek için dokunun</string>
     <string name="reminders_add_reminder_button_title">Hatırlatıcı Ekle</string>

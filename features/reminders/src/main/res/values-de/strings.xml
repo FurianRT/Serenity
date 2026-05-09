@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Erinnerungen</string>
     <string name="reminders_screen_description">Erstelle eine Erinnerung, damit du keinen Moment verpasst, über den es sich zu schreiben lohnt</string>
-    <string name="reminders_default_reminder_notification_title">Wie war dein Tag?</string>
-    <string name="reminders_default_reminder_notification_body">Tippe, um eine Notiz zu schreiben</string>
+    <string name="reminders_default_reminder_notification_title">Dein zukünftiges Ich wird dir danken</string>
+    <string name="reminders_default_reminder_notification_body">Tippe, um dein Tagebuch zu öffnen</string>
     <string name="reminders_troubleshooting_title">Funktionieren Erinnerungen nicht?</string>
     <string name="reminders_troubleshooting_body">Tippe, um zu sehen, wie du das beheben kannst</string>
     <string name="reminders_add_reminder_button_title">Erinnerung hinzufügen</string>

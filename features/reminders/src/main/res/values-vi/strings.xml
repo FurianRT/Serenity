@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Lời nhắc</string>
     <string name="reminders_screen_description">Tạo lời nhắc để bạn không bỏ lỡ khoảnh khắc đáng để viết lại</string>
-    <string name="reminders_default_reminder_notification_title">Ngày của bạn thế nào?</string>
-    <string name="reminders_default_reminder_notification_body">Nhấn để viết ghi chú</string>
+    <string name="reminders_default_reminder_notification_title">Bản thân bạn trong tương lai sẽ cảm ơn bạn</string>
+    <string name="reminders_default_reminder_notification_body">Nhấn để mở nhật ký của bạn</string>
     <string name="reminders_troubleshooting_title">Lời nhắc không hoạt động?</string>
     <string name="reminders_troubleshooting_body">Nhấn để xem cách khắc phục</string>
     <string name="reminders_add_reminder_button_title">Thêm lời nhắc</string>

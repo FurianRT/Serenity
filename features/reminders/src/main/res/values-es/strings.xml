@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Recordatorios</string>
     <string name="reminders_screen_description">Crea un recordatorio para no perder ningún momento que valga la pena escribir</string>
-    <string name="reminders_default_reminder_notification_title">¿Cómo estuvo tu día?</string>
-    <string name="reminders_default_reminder_notification_body">Toca para escribir una nota</string>
+    <string name="reminders_default_reminder_notification_title">Tu yo del futuro te lo agradecerá</string>
+    <string name="reminders_default_reminder_notification_body">Toca para abrir tu diario</string>
     <string name="reminders_troubleshooting_title">¿Los recordatorios no funcionan?</string>
     <string name="reminders_troubleshooting_body">Toca para ver cómo solucionarlo</string>
     <string name="reminders_add_reminder_button_title">Agregar recordatorio</string>

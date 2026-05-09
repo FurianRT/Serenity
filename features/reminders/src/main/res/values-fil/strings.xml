@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Mga Paalala</string>
     <string name="reminders_screen_description">Gumawa ng paalala para hindi mo mamiss ang anumang sandaling sulit isulat</string>
-    <string name="reminders_default_reminder_notification_title">Kumusta ang araw mo?</string>
-    <string name="reminders_default_reminder_notification_body">I-tap para magsulat ng tala</string>
+    <string name="reminders_default_reminder_notification_title">Magpapasalamat sa’yo ang future self mo</string>
+    <string name="reminders_default_reminder_notification_body">I-tap para buksan ang iyong journal</string>
     <string name="reminders_troubleshooting_title">Hindi gumagana ang mga paalala?</string>
     <string name="reminders_troubleshooting_body">I-tap para makita kung paano ayusin</string>
     <string name="reminders_add_reminder_button_title">Magdagdag ng Paalala</string>

@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">রিমাইন্ডার</string>
     <string name="reminders_screen_description">লেখার মতো গুরুত্বপূর্ণ মুহূর্ত যেন মিস না হয়, তার জন্য একটি রিমাইন্ডার তৈরি করুন</string>
-    <string name="reminders_default_reminder_notification_title">আপনার দিন কেমন গেল?</string>
-    <string name="reminders_default_reminder_notification_body">নোট লিখতে ট্যাপ করুন</string>
+    <string name="reminders_default_reminder_notification_title">ভবিষ্যতের আপনি আপনাকে ধন্যবাদ জানাবে</string>
+    <string name="reminders_default_reminder_notification_body">আপনার জার্নাল খুলতে ট্যাপ করুন</string>
     <string name="reminders_troubleshooting_title">রিমাইন্ডার কাজ করছে না?</string>
     <string name="reminders_troubleshooting_body">কীভাবে ঠিক করবেন দেখতে ট্যাপ করুন</string>
     <string name="reminders_add_reminder_button_title">রিমাইন্ডার যোগ করুন</string>

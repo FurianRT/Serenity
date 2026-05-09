@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Herinneringen</string>
     <string name="reminders_screen_description">Maak een herinnering zodat je nooit een moment mist dat het waard is om op te schrijven</string>
-    <string name="reminders_default_reminder_notification_title">Hoe was je dag?</string>
-    <string name="reminders_default_reminder_notification_body">Tik om een notitie te schrijven</string>
+    <string name="reminders_default_reminder_notification_title">Je toekomstige zelf zal je dankbaar zijn</string>
+    <string name="reminders_default_reminder_notification_body">Tik om je dagboek te openen</string>
     <string name="reminders_troubleshooting_title">Werken herinneringen niet?</string>
     <string name="reminders_troubleshooting_body">Tik om te zien hoe je dit kunt oplossen</string>
     <string name="reminders_add_reminder_button_title">Herinnering toevoegen</string>

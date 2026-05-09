@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">リマインダー</string>
     <string name="reminders_screen_description">書き留めたい大切な瞬間を逃さないように、リマインダーを作成しましょう</string>
-    <string name="reminders_default_reminder_notification_title">今日はどんな一日でしたか？</string>
-    <string name="reminders_default_reminder_notification_body">タップしてメモを書く</string>
+    <string name="reminders_default_reminder_notification_title">未来のあなたがきっと感謝します</string>
+    <string name="reminders_default_reminder_notification_body">タップして日記を開く</string>
     <string name="reminders_troubleshooting_title">リマインダーが動作しませんか？</string>
     <string name="reminders_troubleshooting_body">解決方法を見るにはタップしてください</string>
     <string name="reminders_add_reminder_button_title">リマインダーを追加</string>

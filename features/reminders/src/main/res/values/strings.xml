@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Reminders</string>
     <string name="reminders_screen_description">Create a reminder so you never miss a moment worth writing about</string>
-    <string name="reminders_default_reminder_notification_title">How was your day?</string>
-    <string name="reminders_default_reminder_notification_body">Tap to write a note</string>
+    <string name="reminders_default_reminder_notification_title">Your future self will thank you</string>
+    <string name="reminders_default_reminder_notification_body">Tap to open your journal</string>
     <string name="reminders_troubleshooting_title">Reminders not working?</string>
     <string name="reminders_troubleshooting_body">Tap to see how to fix it</string>
     <string name="reminders_add_reminder_button_title">Add Reminder</string>

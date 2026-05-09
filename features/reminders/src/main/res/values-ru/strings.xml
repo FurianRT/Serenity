@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Напоминания</string>
     <string name="reminders_screen_description">Создайте напоминание, чтобы не упустить момент, о котором стоит написать</string>
-    <string name="reminders_default_reminder_notification_title">Как прошёл ваш день?</string>
-    <string name="reminders_default_reminder_notification_body">Нажмите, чтобы написать заметку</string>
+    <string name="reminders_default_reminder_notification_title">Ваше будущее «я» скажет вам спасибо</string>
+    <string name="reminders_default_reminder_notification_body">Нажмите, чтобы открыть дневник</string>
     <string name="reminders_troubleshooting_title">Напоминания не работают?</string>
     <string name="reminders_troubleshooting_body">Нажмите, чтобы узнать, как исправить</string>
     <string name="reminders_add_reminder_button_title">Добавить напоминание</string>

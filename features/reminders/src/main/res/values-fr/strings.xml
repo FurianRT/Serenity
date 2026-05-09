@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">Rappels</string>
     <string name="reminders_screen_description">Créez un rappel pour ne jamais manquer un moment qui mérite d’être écrit</string>
-    <string name="reminders_default_reminder_notification_title">Comment s’est passée votre journée ?</string>
-    <string name="reminders_default_reminder_notification_body">Appuyez pour écrire une note</string>
+    <string name="reminders_default_reminder_notification_title">Votre futur vous vous remerciera</string>
+    <string name="reminders_default_reminder_notification_body">Appuyez pour ouvrir votre journal</string>
     <string name="reminders_troubleshooting_title">Les rappels ne fonctionnent pas ?</string>
     <string name="reminders_troubleshooting_body">Appuyez pour voir comment résoudre le problème</string>
     <string name="reminders_add_reminder_button_title">Ajouter un rappel</string>

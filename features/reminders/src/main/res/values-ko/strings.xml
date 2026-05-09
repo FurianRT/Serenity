@@ -1,8 +1,8 @@
 <resources>
     <string name="reminders_screen_title">알림</string>
     <string name="reminders_screen_description">기록하고 싶은 소중한 순간을 놓치지 않도록 알림을 만들어보세요</string>
-    <string name="reminders_default_reminder_notification_title">오늘 하루는 어땠나요?</string>
-    <string name="reminders_default_reminder_notification_body">탭하여 메모 작성하기</string>
+    <string name="reminders_default_reminder_notification_title">미래의 당신이 고마워할 거예요</string>
+    <string name="reminders_default_reminder_notification_body">탭하여 일기를 열기</string>
     <string name="reminders_troubleshooting_title">알림이 작동하지 않나요?</string>
     <string name="reminders_troubleshooting_body">해결 방법을 보려면 탭하세요</string>
     <string name="reminders_add_reminder_button_title">알림 추가</string>
