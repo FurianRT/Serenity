@@ -33,9 +33,9 @@ internal class DatabaseCleanupWorker @AssistedInject constructor(
                 .setInitialDelay(duration = 5, timeUnit = TimeUnit.SECONDS)
                 .build()
             WorkManager.getInstance(context).enqueueUniqueWork(
-                WORK_NAME_ONE_TIME,
-                ExistingWorkPolicy.KEEP,
-                workRequest,
+                uniqueWorkName = WORK_NAME_ONE_TIME,
+                existingWorkPolicy = ExistingWorkPolicy.KEEP,
+                request = workRequest,
             )
         }
 
@@ -46,11 +46,11 @@ internal class DatabaseCleanupWorker @AssistedInject constructor(
 
             val workRequest = PeriodicWorkRequest.Builder(
                 workerClass = DatabaseCleanupWorker::class.java,
-                repeatInterval = 2,
+                repeatInterval = 1,
                 repeatIntervalTimeUnit = TimeUnit.DAYS,
             )
                 .setConstraints(constraints)
-                .setInitialDelay(duration = 2, timeUnit = TimeUnit.DAYS)
+                .setInitialDelay(duration = 1, timeUnit = TimeUnit.DAYS)
                 .build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
