@@ -2,6 +2,7 @@ package com.furianrt.reminders.internal.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -30,6 +32,7 @@ import kotlin.collections.map
 internal class RemindersListViewModel @Inject constructor(
     getAllRemindersUseCase: GetAllRemindersUseCase,
     appearanceRepository: AppearanceRepository,
+    dispatchers: DispatchersProvider,
     private val deleteReminderUseCase: DeleteReminderUseCase,
     private val reminderScheduler: ReminderScheduler,
     private val permissionsUtils: PermissionsUtils,
@@ -44,6 +47,8 @@ internal class RemindersListViewModel @Inject constructor(
         getAllRemindersUseCase(),
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

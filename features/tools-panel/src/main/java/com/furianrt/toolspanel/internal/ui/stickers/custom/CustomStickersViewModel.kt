@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.stickers.custom
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.mediaselector.api.MediaResult
@@ -16,17 +17,20 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 internal class CustomStickersViewModel @Inject constructor(
+    dispatchers: DispatchersProvider,
     private val stickersRepository: StickersRepository,
 ) : ViewModel() {
 
     val state: StateFlow<CustomStickersUiState> = stickersRepository.getNotHiddenCustomStickers()
-        .map { buildState(it) }
+        .map(::buildState)
+        .flowOn(dispatchers.default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

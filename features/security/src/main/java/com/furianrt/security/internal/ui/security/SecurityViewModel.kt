@@ -2,6 +2,7 @@ package com.furianrt.security.internal.ui.security
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.security.internal.ui.security.SecurityEvent.*
@@ -14,11 +15,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
 internal class SecurityViewModel @Inject constructor(
+    dispatchers: DispatchersProvider,
     private val securityRepository: SecurityRepository,
     appearanceRepository: AppearanceRepository,
 ) : ViewModel() {
@@ -30,6 +33,8 @@ internal class SecurityViewModel @Inject constructor(
         securityRepository.isFingerprintEnabled(),
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

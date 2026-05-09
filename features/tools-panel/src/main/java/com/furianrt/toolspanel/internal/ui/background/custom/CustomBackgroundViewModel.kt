@@ -3,6 +3,7 @@ package com.furianrt.toolspanel.internal.ui.background.custom
 import androidx.compose.ui.graphics.toArgb
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.repositories.MediaRepository
@@ -25,10 +26,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = CustomBackgroundViewModel.Factory::class)
 internal class CustomBackgroundViewModel @AssistedInject constructor(
+    dispatchers: DispatchersProvider,
     private val mediaRepository: MediaRepository,
     @Assisted private val selectedThemeProvider: BackgroundSelectedThemeProvider,
 ) : ViewModel() {
@@ -37,6 +40,8 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
         mediaRepository.getNotHiddenCustomNoteBackgrounds(),
         selectedThemeProvider.selectedThemeState,
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.background.pattern
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.notelistui.entities.UiNoteBackground
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -29,6 +31,7 @@ import kotlinx.coroutines.flow.update
 internal class PatternBackgroundViewModel @AssistedInject constructor(
     noteThemeProvider: NoteThemeProvider,
     appearanceRepository: AppearanceRepository,
+    dispatchers: DispatchersProvider,
     @Assisted private val selectedThemeProvider: BackgroundSelectedThemeProvider,
 ) : ViewModel() {
 
@@ -46,6 +49,8 @@ internal class PatternBackgroundViewModel @AssistedInject constructor(
         },
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

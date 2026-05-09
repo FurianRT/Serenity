@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.background.solid
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.api.NoteThemeProvider
@@ -15,12 +16,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @HiltViewModel(assistedFactory = SolidBackgroundViewModel.Factory::class)
 internal class SolidBackgroundViewModel @AssistedInject constructor(
     noteThemeProvider: NoteThemeProvider,
+    dispatchers: DispatchersProvider,
     @Assisted private val selectedThemeProvider: BackgroundSelectedThemeProvider,
 ) : ViewModel() {
 
@@ -28,6 +31,7 @@ internal class SolidBackgroundViewModel @AssistedInject constructor(
 
     val state: StateFlow<SolidBackgroundUiState> = selectedThemeProvider.selectedThemeState
         .map(::buildState)
+        .flowOn(dispatchers.default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),

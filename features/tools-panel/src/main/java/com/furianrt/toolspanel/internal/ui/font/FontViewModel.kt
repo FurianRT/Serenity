@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.internal.ui.font
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -26,11 +27,13 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = FontViewModel.Factory::class)
 internal class FontViewModel @AssistedInject constructor(
+    dispatchers: DispatchersProvider,
     private val appearanceRepository: AppearanceRepository,
     private val resourcesManager: ResourcesManager,
     private val deviceInfoRepository: DeviceInfoRepository,
@@ -52,6 +55,8 @@ internal class FontViewModel @AssistedInject constructor(
         selectedTextAlignment,
         appearanceRepository.getAppFont(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

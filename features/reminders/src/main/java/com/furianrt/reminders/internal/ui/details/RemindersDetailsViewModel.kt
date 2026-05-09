@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.reminders.internal.domain.CreateReminderUseCase
@@ -21,6 +22,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.take
@@ -34,6 +36,7 @@ internal class RemindersDetailsViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     appearanceRepository: AppearanceRepository,
     getReminderUseCase: GetReminderUseCase,
+    dispatchers: DispatchersProvider,
     private val createReminderUseCase: CreateReminderUseCase,
     private val updateReminderUseCase: UpdateReminderUseCase,
 ) : ViewModel() {
@@ -62,6 +65,8 @@ internal class RemindersDetailsViewModel @Inject constructor(
         notificationTextState,
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),

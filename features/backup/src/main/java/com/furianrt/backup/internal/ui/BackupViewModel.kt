@@ -36,6 +36,7 @@ import com.furianrt.backup.internal.ui.BackupUiState.Content
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -49,6 +50,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.ZonedDateTime
@@ -60,6 +62,7 @@ internal class BackupViewModel @Inject constructor(
     getPopularQuestionsUseCase: GetPopularQuestionsUseCase,
     getBackupProfileUseCase: GetBackupProfileUseCase,
     appearanceRepository: AppearanceRepository,
+    dispatchers: DispatchersProvider,
     private val restoreDataManager: RestoreDataManager,
     private val backupDataManager: BackupDataManager,
     private val backupRepository: BackupRepository,
@@ -143,6 +146,8 @@ internal class BackupViewModel @Inject constructor(
         syncProgressState,
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
+    ).flowOn(
+        context = dispatchers.default,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
