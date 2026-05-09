@@ -117,7 +117,7 @@ private fun Content(
         toolbar = {
             DefaultToolbar(
                 modifier = Modifier.statusBarsPadding(),
-                title = stringResource(R.string.reminders_screen_title),
+                title = stringResource(R.string.reminders_details_screen_title),
                 onBackClick = { onEvent(RemindersDetailsEvent.OnCloseScreenClick) },
             )
         },

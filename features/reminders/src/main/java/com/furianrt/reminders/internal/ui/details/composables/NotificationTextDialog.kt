@@ -1,7 +1,11 @@
 package com.furianrt.reminders.internal.ui.details.composables
 
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -35,6 +39,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.reminders.R
@@ -115,47 +120,56 @@ private fun Content(
                 )
             )
             .background(MaterialTheme.colorScheme.surfaceTint)
-            .padding(top = 32.dp, bottom = 16.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        BasicTextField(
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .padding(start = 16.dp, end = 16.dp)
-                .focusRequester(focusRequester),
-            state = textState,
-            textStyle = MaterialTheme.typography.bodyMedium.copy(
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-            lineLimits = TextFieldLineLimits.SingleLine,
-            cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Text,
-                imeAction = ImeAction.Done,
-                capitalization = KeyboardCapitalization.Sentences,
-                showKeyboardOnFocus = true,
-            ),
-            inputTransformation = InputTransformation {
-                if (asCharSequence().length > MAX_TEXT_LENGTH) {
-                    revertAllChanges()
-                }
-            },
-            decorator = { innerTextField ->
-                if (isTextEmpty) {
-                    Text(
-                        modifier = Modifier.alpha(0.5f),
-                        text = stringResource(R.string.reminders_notification_text_hint),
-                        style = MaterialTheme.typography.bodyMedium,
+                .heightIn(min = 40.dp),
+            contentAlignment = Alignment.Center,
+        ) {
+            BasicTextField(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateContentSize(
+                        animationSpec = spring(
+                            stiffness = 3500f,
+                            visibilityThreshold = IntSize.VisibilityThreshold,
+                        ),
                     )
-                }
-                innerTextField()
-            },
-        )
+                    .focusRequester(focusRequester),
+                state = textState,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
+                    color = MaterialTheme.colorScheme.onSurface,
+                ),
+                lineLimits = TextFieldLineLimits.MultiLine(),
+                cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
+                    capitalization = KeyboardCapitalization.Sentences,
+                    showKeyboardOnFocus = true,
+                ),
+                inputTransformation = InputTransformation {
+                    if (asCharSequence().length > MAX_TEXT_LENGTH) {
+                        revertAllChanges()
+                    }
+                },
+                decorator = { innerTextField ->
+                    if (isTextEmpty) {
+                        Text(
+                            modifier = Modifier.alpha(0.5f),
+                            text = stringResource(R.string.reminders_notification_text_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    innerTextField()
+                },
+            )
+        }
         Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
-                .align(Alignment.End),
+            modifier = Modifier.align(Alignment.End),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
