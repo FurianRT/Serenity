@@ -23,7 +23,7 @@ internal class BootReceiver : BroadcastReceiver() {
     @Inject
     lateinit var dispatchers: DispatchersProvider
 
-    private val scope by lazy { CoroutineScope(dispatchers.io + SupervisorJob()) }
+    private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
 
     override fun onReceive(
         context: Context,

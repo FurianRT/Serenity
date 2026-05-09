@@ -44,7 +44,7 @@ internal class ReminderReceiver : BroadcastReceiver() {
     @Inject
     lateinit var rootActivityIntentProvider: RootActivityIntentProvider
 
-    private val scope by lazy { CoroutineScope(dispatchers.io + SupervisorJob()) }
+    private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
 
     override fun onReceive(context: Context, intent: Intent) {
         val pendingResult = goAsync()
