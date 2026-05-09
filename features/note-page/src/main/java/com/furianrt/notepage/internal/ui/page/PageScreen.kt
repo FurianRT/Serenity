@@ -786,8 +786,8 @@ private fun ContentItems(
                             isPlaying = item.id == uiState.playingVoiceId,
                             isRemovable = uiState.isInEditMode,
                             onRemoveClick = { voice ->
-                                onEvent(PageEvent.OnVoiceRemoveClick(voice))
                                 hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
+                                onEvent(PageEvent.OnVoiceRemoveClick(voice))
                             },
                             onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
                             onProgressSelected = { voice, value ->
