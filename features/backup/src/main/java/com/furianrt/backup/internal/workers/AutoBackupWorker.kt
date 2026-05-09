@@ -86,12 +86,12 @@ internal class AutoBackupWorker @AssistedInject constructor(
     }
 
     override suspend fun doWork(): Result = try {
-        backupDataManager.startBackup()
         backupDataStore.setAutoBackupFailure(failed = false)
+        backupDataManager.startBackup()
         Result.success()
     } catch (e: Exception) {
         backupDataStore.setAutoBackupFailure(failed = true)
         errorTracker.trackNonFatalError(e)
-        Result.retry()
+        Result.success()
     }
 }

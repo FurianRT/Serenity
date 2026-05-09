@@ -66,6 +66,6 @@ internal class DatabaseCleanupWorker @AssistedInject constructor(
         Result.success()
     } catch (e: Exception) {
         errorTracker.trackNonFatalError(e)
-        Result.retry()
+        Result.success()
     }
 }
