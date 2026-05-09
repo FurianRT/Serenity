@@ -2,19 +2,19 @@ package com.furianrt.storage.internal.repositories
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
 import android.location.Location
-import android.os.Looper
 import com.furianrt.domain.entities.NoteLocation
 import com.furianrt.domain.repositories.LocationRepository
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
 import com.furianrt.storage.internal.database.notes.mappers.toEntryNoteLocation
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.CurrentLocationRequest
+import com.google.android.gms.location.Granularity
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import com.google.android.gms.tasks.CancellationTokenSource
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -55,34 +55,59 @@ internal class LocationRepositoryImp @Inject constructor(
 
     @SuppressLint("MissingPermission")
     private suspend fun getCurrentLocation(): Location? = suspendCancellableCoroutine { cont ->
-        val hasFineLocationPermission = permissionsUtils.hasFineLocationPermission()
-        val priority = if (hasFineLocationPermission) {
-            Priority.PRIORITY_HIGH_ACCURACY
-        } else {
-            Priority.PRIORITY_BALANCED_POWER_ACCURACY
-        }
-        val request = LocationRequest.Builder(priority, 1_000)
-            .setMaxUpdates(1)
-            .setWaitForAccurateLocation(hasFineLocationPermission)
+        val cancellationTokenSource = CancellationTokenSource()
+        val request = CurrentLocationRequest.Builder()
+            .setPriority(
+                if (permissionsUtils.hasFineLocationPermission()) {
+                    Priority.PRIORITY_HIGH_ACCURACY
+                } else {
+                    Priority.PRIORITY_BALANCED_POWER_ACCURACY
+                }
+            )
+            .setGranularity(Granularity.GRANULARITY_PERMISSION_LEVEL)
+            .setDurationMillis(DETECTION_TIMEOUT)
+            .setMaxUpdateAgeMillis(0)
             .build()
-        val callback = object : LocationCallback() {
-            override fun onLocationResult(result: LocationResult) {
-                locationClient.removeLocationUpdates(this)
-                val location = result.locations.firstOrNull()
-                cont.resumeWith(Result.success(location))
+
+        locationClient.getCurrentLocation(request, cancellationTokenSource.token)
+            .addOnSuccessListener { location ->
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(location))
+                }
             }
+            .addOnFailureListener { error ->
+                if (cont.isActive) {
+                    cont.resumeWith(Result.failure(error))
+                }
+            }
+        cont.invokeOnCancellation {
+            cancellationTokenSource.cancel()
         }
-        locationClient.requestLocationUpdates(request, callback, Looper.getMainLooper())
-        cont.invokeOnCancellation { locationClient.removeLocationUpdates(callback) }
     }
 
     private suspend fun getAddressFromLocation(
         location: Location,
     ): String? = suspendCancellableCoroutine { cont ->
-        val geocoder = Geocoder(appContext, Locale.getDefault())
-        geocoder.getFromLocation(location.latitude, location.longitude, 1) { addresses ->
-            val address = addresses.firstOrNull()?.getAddressLine(0)
-            cont.resumeWith(Result.success(address))
+        val listener = object : Geocoder.GeocodeListener {
+            override fun onGeocode(addresses: List<Address?>) {
+                val address = addresses.firstOrNull()?.getAddressLine(0)
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(address))
+                }
+            }
+
+            override fun onError(errorMessage: String?) {
+                if (cont.isActive) {
+                    cont.resumeWith(Result.success(null))
+                }
+            }
         }
+        Geocoder(appContext, Locale.getDefault())
+            .getFromLocation(
+                /* latitude = */ location.latitude,
+                /* longitude = */ location.longitude,
+                /* maxResults = */ 1,
+                /* listener = */ listener,
+            )
     }
 }
