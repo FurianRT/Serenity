@@ -765,8 +765,8 @@ private fun ContentItems(
                             clickable = true,
                             onClick = { onEvent(PageEvent.OnMediaClick(it)) },
                             onRemoveClick = { media ->
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                                 onEvent(PageEvent.OnMediaRemoveClick(media))
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                             },
                             onSortingClick = { onEvent(PageEvent.OnMediaSortingClick(item.id)) },
                         )
@@ -787,7 +787,7 @@ private fun ContentItems(
                             isRemovable = uiState.isInEditMode,
                             onRemoveClick = { voice ->
                                 onEvent(PageEvent.OnVoiceRemoveClick(voice))
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                             },
                             onPlayClick = { onEvent(PageEvent.OnVoicePlayClick(it)) },
                             onProgressSelected = { voice, value ->
@@ -820,8 +820,8 @@ private fun ContentItems(
                             showStub = true,
                             popupHazeState = hazeState,
                             onTagRemoveClick = { tag ->
+                                hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                                 onEvent(PageEvent.OnTagRemoveClick(tag))
-                                hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                             },
                             onDoneEditing = { onEvent(PageEvent.OnTagDoneEditing(it)) },
                             onTextEntered = { onEvent(PageEvent.OnTagTextEntered) },
@@ -858,9 +858,18 @@ private fun ContentItems(
                         state = uiState.locationState,
                         isRemovable = uiState.isInEditMode,
                         hazeState = hazeState,
-                        onAddLocationClick = { onEvent(PageEvent.OnAddLocationClick) },
-                        onRemoveLocationClick = { onEvent(PageEvent.OnRemoveLocationClick) },
-                        onCancelClick = { onEvent(PageEvent.OnCancelLocationClick) },
+                        onAddLocationClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            onEvent(PageEvent.OnAddLocationClick)
+                        },
+                        onRemoveLocationClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            onEvent(PageEvent.OnRemoveLocationClick)
+                        },
+                        onCancelClick = {
+                            hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            onEvent(PageEvent.OnCancelLocationClick)
+                        },
                         onLocationClick = {
                             onEvent(PageEvent.OnLocationClick)
                             onLocationClick()

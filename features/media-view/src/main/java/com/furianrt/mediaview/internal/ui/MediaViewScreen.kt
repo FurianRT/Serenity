@@ -258,8 +258,8 @@ private fun SuccessContent(
                 hazeState = hazeState,
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
                 onDeleteClick = {
-                    onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
+                    onEvent(MediaViewEvent.OnButtonDeleteClick(pagerState.currentPage))
                 },
                 onSaveMediaClick = {
                     onEvent(MediaViewEvent.OnButtonSaveToGalleryClick(pagerState.currentPage))
