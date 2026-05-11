@@ -1,4 +1,4 @@
-package com.furianrt.domain.voice
+package com.furianrt.toolspanel.internal.ui.voice
 
 import android.content.Context
 import android.media.MediaRecorder
@@ -14,7 +14,7 @@ private const val MAX_VOLUME = 32767f
 private const val SAMPLING_RATE = 44100
 private const val ENCODING_BIT_RATE = 128000
 
-class AudioRecorder @Inject constructor(
+internal class AudioRecorder @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val errorTracker: ErrorTracker,
     private val dispatchers: DispatchersProvider,

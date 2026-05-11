@@ -14,6 +14,7 @@ dependencies {
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.permissions)
     implementation(projects.libraries.domain)
+    implementation(projects.libraries.common)
 
     implementation(projects.features.noteList.noteListUi)
     implementation(projects.features.mediaSelector)

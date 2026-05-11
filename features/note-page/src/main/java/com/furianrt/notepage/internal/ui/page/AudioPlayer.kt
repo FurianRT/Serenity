@@ -1,4 +1,4 @@
-package com.furianrt.domain.voice
+package com.furianrt.notepage.internal.ui.page
 
 import android.content.Context
 import android.media.MediaPlayer
@@ -14,16 +14,16 @@ import javax.inject.Inject
 
 private const val PROGRESS_LOOP_STEP = 50L
 
-interface AudioPlayerListener {
+internal interface AudioPlayerListener {
     fun onAudioProgressChange(progress: Float)
     fun onAudioPlayComplete()
 }
 
-class AudioPlayer @Inject constructor(
+internal class AudioPlayer @Inject constructor(
     @param:ApplicationContext private val context: Context,
     dispatchers: DispatchersProvider,
 ) {
-    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
+    private val scope = CoroutineScope(dispatchers.main + SupervisorJob())
 
     private var player: MediaPlayer? = null
     private var progressListener: AudioPlayerListener? = null

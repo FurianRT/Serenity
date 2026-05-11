@@ -21,8 +21,6 @@ import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
-import com.furianrt.domain.voice.AudioPlayer
-import com.furianrt.domain.voice.AudioPlayerListener
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.LocationState
@@ -91,6 +89,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoteThemeSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnRequestTitleFocus
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnScreenStopped
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectBulletListClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnSelectFontClick
@@ -113,7 +112,6 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceProgressSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRecorded
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoiceStarted
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnRequestTitleFocus
 import com.furianrt.notepage.internal.ui.page.entities.NoteItem
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
