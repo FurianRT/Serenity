@@ -1,9 +1,5 @@
 package com.furianrt.reminders.api
 
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -16,7 +12,6 @@ import com.furianrt.reminders.internal.ui.help.navigateToReminderHelp
 import com.furianrt.reminders.internal.ui.help.reminderHelpScreen
 import com.furianrt.reminders.internal.ui.list.RemindersListRoute
 import com.furianrt.reminders.internal.ui.list.remindersListScreen
-import com.furianrt.uikit.anim.defaultPopEnterTransition
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -32,17 +27,6 @@ fun NavGraphBuilder.remindersNavigation(
 ) {
     navigation<RemindersRoute>(
         startDestination = RemindersListRoute,
-        popEnterTransition = { defaultPopEnterTransition() },
-        enterTransition = {
-            slideIntoContainer(
-                towards = AnimatedContentTransitionScope.SlideDirection.Left,
-                initialOffset = { (it * 0.3f).toInt() },
-                animationSpec = tween(
-                    durationMillis = 350,
-                    easing = FastOutSlowInEasing,
-                ),
-            ) + fadeIn(animationSpec = tween(200), initialAlpha = 0.05f)
-        },
     ) {
         remindersListScreen(
             openReminderDetailsScreen = { reminderId ->

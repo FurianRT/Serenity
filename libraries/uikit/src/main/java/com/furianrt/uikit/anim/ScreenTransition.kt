@@ -13,12 +13,12 @@ import androidx.navigation.NavBackStackEntry
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultEnterTransition(): EnterTransition {
     return slideIntoContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Left,
-        initialOffset = { (it * 0.4f).toInt() },
+        initialOffset = { (it * 0.3f).toInt() },
         animationSpec = tween(
             durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(300), initialAlpha = 0.05f)
+    ) + fadeIn(animationSpec = tween(200), initialAlpha = 0.05f)
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): ExitTransition {
