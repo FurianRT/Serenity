@@ -18,6 +18,8 @@ import java.util.concurrent.TimeUnit
 
 private const val WORK_NAME = "AutoBackup"
 
+private class AutoBackupFailed : Exception()
+
 @HiltWorker
 internal class AutoBackupWorker @AssistedInject constructor(
     private val backupDataManager: BackupDataManager,
@@ -85,13 +87,12 @@ internal class AutoBackupWorker @AssistedInject constructor(
         }
     }
 
-    override suspend fun doWork(): Result = try {
-        backupDataStore.setAutoBackupFailure(failed = false)
-        backupDataManager.startBackup()
-        Result.success()
-    } catch (e: Exception) {
-        backupDataStore.setAutoBackupFailure(failed = true)
-        errorTracker.trackNonFatalError(e)
-        Result.success()
+    override suspend fun doWork(): Result {
+        val isBackupSuccessful = backupDataManager.startBackup()
+        if (!isBackupSuccessful) {
+            backupDataStore.setAutoBackupFailure(failed = true)
+            errorTracker.trackNonFatalError(AutoBackupFailed())
+        }
+        return Result.success()
     }
 }
