@@ -6,13 +6,13 @@
     <group>
         <path
             android:pathData="M1.6,16H30.4"
-            android:strokeWidth="3"
+            android:strokeWidth="2"
             android:strokeColor="#ffffff"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />
         <path
             android:pathData="M16,30.402V1.602"
-            android:strokeWidth="3"
+            android:strokeWidth="2"
             android:strokeColor="#ffffff"
             android:strokeLineCap="round"
             android:strokeLineJoin="round" />

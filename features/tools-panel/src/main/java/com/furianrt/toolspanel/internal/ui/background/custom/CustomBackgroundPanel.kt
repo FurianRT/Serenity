@@ -258,6 +258,12 @@ private fun ListContent(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
         ) {
+            item(key = ADD_BUTTON_ITEM_KEY) {
+                AddBackgroundItem(
+                    modifier = Modifier.animateItem(),
+                    onClick = { onEvent(CustomBackgroundEvent.OnSelectImageClick) },
+                )
+            }
             itemsIndexed(
                 items = state.themes,
                 key = { _, item -> item.image.id },
@@ -269,12 +275,6 @@ private fun ListContent(
                     isSelected = index == state.selectedThemeIndex,
                     onClick = { onEvent(CustomBackgroundEvent.OnThemeSelected(it)) },
                     onDeleteClick = { onEvent(CustomBackgroundEvent.OnDeleteThemeClick(it)) },
-                )
-            }
-            item(key = ADD_BUTTON_ITEM_KEY) {
-                AddBackgroundItem(
-                    modifier = Modifier.animateItem(),
-                    onClick = { onEvent(CustomBackgroundEvent.OnSelectImageClick) },
                 )
             }
             item(
