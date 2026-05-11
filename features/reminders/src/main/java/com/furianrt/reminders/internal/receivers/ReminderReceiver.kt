@@ -47,12 +47,14 @@ internal class ReminderReceiver : BroadcastReceiver() {
     private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
 
     override fun onReceive(context: Context, intent: Intent) {
+        val id = intent.getStringExtra(EXTRA_REMINDER_ID) ?: return
         val pendingResult = goAsync()
         scope.launch {
             try {
-                val id = intent.getStringExtra(EXTRA_REMINDER_ID) ?: return@launch
                 val reminder = remindersRepository.getReminder(id) ?: return@launch
-                showNotification(context, reminder)
+                if (permissionsUtils.hasNotificationsPermission()) {
+                    showNotification(context, reminder)
+                }
                 reminderScheduler.schedule(reminder)
             } finally {
                 pendingResult.finish()
@@ -65,27 +67,25 @@ internal class ReminderReceiver : BroadcastReceiver() {
         context: Context,
         reminder: Reminder,
     ) {
-        if (permissionsUtils.hasNotificationsPermission()) {
-            val title = reminder.title ?: context.getString(
-                R.string.reminders_default_reminder_notification_title,
-            )
-            val text = context.getString(
-                R.string.reminders_default_reminder_notification_body,
-            )
-            val notification = NotificationCompat.Builder(
-                context,
-                NotificationChannels.REMINDERS_CHANNEL_ID,
-            )
-                .setContentIntent(createNotificationIntent(context))
-                .setSmallIcon(uiR.drawable.notification_small_logo)
-                .setContentTitle(title)
-                .setContentText(text)
-                .setAutoCancel(true)
-                .build()
+        val title = reminder.title ?: context.getString(
+            R.string.reminders_default_reminder_notification_title,
+        )
+        val text = context.getString(
+            R.string.reminders_default_reminder_notification_body,
+        )
+        val notification = NotificationCompat.Builder(
+            context,
+            NotificationChannels.REMINDERS_CHANNEL_ID,
+        )
+            .setContentIntent(createNotificationIntent(context))
+            .setSmallIcon(uiR.drawable.notification_small_logo)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setAutoCancel(true)
+            .build()
 
-            NotificationManagerCompat.from(context)
-                .notify(reminder.id.hashCode(), notification)
-        }
+        NotificationManagerCompat.from(context)
+            .notify(reminder.id.hashCode(), notification)
     }
 
     private fun createNotificationIntent(context: Context) = PendingIntent.getActivity(

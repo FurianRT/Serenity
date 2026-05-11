@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.reminders.internal.ui.entities.DayItem
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
+import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -48,7 +49,9 @@ internal fun ReminderListItem(
     onDeleteClick: (item: ReminderItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val hasSelectedDays = remember(item.daysOfWeek) { item.daysOfWeek.any(DayItem::isSelected) }
+    val showSelectedDays = remember(item.daysOfWeek) {
+        item.daysOfWeek.count(DayItem::isSelected) in 2..<7
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -88,7 +91,7 @@ internal fun ReminderListItem(
                 text = item.time,
             )
             Spacer(Modifier.width(8.dp))
-            if (hasSelectedDays) {
+            if (showSelectedDays) {
                 Days(
                     days = item.daysOfWeek,
                 )
@@ -134,6 +137,7 @@ private fun Days(
     modifier: Modifier = Modifier,
 ) {
     val locale = LocalLocale.current.platformLocale
+    val isLightTheme = LocalIsLightTheme.current
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -141,7 +145,13 @@ private fun Days(
     ) {
         days.forEach { dayItem ->
             Text(
-                modifier = Modifier.alpha(if (dayItem.isSelected) 1f else 0.5f),
+                modifier = Modifier.alpha(
+                    if (dayItem.isSelected) {
+                        1f
+                    } else {
+                        if (isLightTheme) 0.15f else 0.5f
+                    }
+                ),
                 text = dayItem.day.getDisplayName(TextStyle.NARROW, locale),
                 style = MaterialTheme.typography.bodySmall.copy(
                     fontSize = MaterialTheme.typography.bodySmall.fontSize * 0.8f,

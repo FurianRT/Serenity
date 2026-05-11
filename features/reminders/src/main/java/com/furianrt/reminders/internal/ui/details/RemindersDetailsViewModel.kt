@@ -45,7 +45,17 @@ internal class RemindersDetailsViewModel @Inject constructor(
 
     private val allDaysOfWeek = daysOfWeek()
 
-    private val selectedDaysState = MutableStateFlow(emptySet<DayOfWeek>())
+    private val selectedDaysState = MutableStateFlow(
+        setOf(
+            DayOfWeek.MONDAY,
+            DayOfWeek.TUESDAY,
+            DayOfWeek.WEDNESDAY,
+            DayOfWeek.THURSDAY,
+            DayOfWeek.FRIDAY,
+            DayOfWeek.SATURDAY,
+            DayOfWeek.SUNDAY,
+        ),
+    )
     private val notificationTextState = MutableStateFlow("")
     private var selectedTime = LocalTime.now()
 
@@ -54,7 +64,7 @@ internal class RemindersDetailsViewModel @Inject constructor(
     private val reminderFlow: Flow<Reminder?> = getReminderUseCase(route.reminderId)
         .take(1)
         .onEach { reminder ->
-            selectedDaysState.update { reminder?.daysOfWeek.orEmpty() }
+            reminder?.daysOfWeek?.let { daysOfWeek -> selectedDaysState.update { daysOfWeek } }
             notificationTextState.update { reminder?.title.orEmpty() }
             selectedTime = reminder?.time ?: selectedTime
         }

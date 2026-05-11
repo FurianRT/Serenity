@@ -39,11 +39,13 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -60,13 +62,13 @@ import com.furianrt.reminders.R
 import com.furianrt.reminders.internal.ui.entities.DayItem
 import com.furianrt.reminders.internal.ui.list.composables.ReminderListItem
 import com.furianrt.reminders.internal.ui.list.composables.TroubleshootingBlock
-import com.furianrt.uikit.R as uiR
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -76,6 +78,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import com.furianrt.uikit.R as uiR
 
 private const val TROUBLESHOOTING_KEY = "troubleshooting"
 private const val ADD_REMINDER_BUTTON__KEY = "add_reminder_button"
@@ -286,6 +289,7 @@ private fun EmptyContent(
     modifier: Modifier = Modifier,
     onEvent: (event: RemindersListEvent) -> Unit,
 ) {
+    val isLightTheme = LocalIsLightTheme.current
     Column(
         modifier = modifier
             .padding(start = 24.dp, end = 24.dp, top = 40.dp, bottom = 24.dp)
@@ -293,15 +297,18 @@ private fun EmptyContent(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Icon(
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier
+                .size(80.dp)
+                .alpha(if (isLightTheme) 0.5f else 1f),
             painter = painterResource(R.drawable.reminer_screen_logo),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
-        Spacer(Modifier.height(32.dp))
+        Spacer(Modifier.height(40.dp))
         Text(
             text = stringResource(R.string.reminders_screen_description),
             style = MaterialTheme.typography.bodyMedium,
+            fontWeight = if (isLightTheme) FontWeight.SemiBold else null,
             textAlign = TextAlign.Center,
         )
         Spacer(Modifier.height(40.dp))

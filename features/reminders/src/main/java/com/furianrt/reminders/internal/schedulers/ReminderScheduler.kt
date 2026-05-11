@@ -67,7 +67,7 @@ internal class ReminderScheduler @Inject constructor(
 
         for (i in 0..7) {
             val date = today.plusDays(i.toLong())
-            if (reminder.daysOfWeek.isEmpty() || date.dayOfWeek in reminder.daysOfWeek) {
+            if (date.dayOfWeek in reminder.daysOfWeek) {
                 val candidate = ZonedDateTime.of(date, reminder.time, now.zone)
                 if (candidate.isAfter(now)) {
                     return candidate

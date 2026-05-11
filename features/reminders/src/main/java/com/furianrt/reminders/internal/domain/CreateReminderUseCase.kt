@@ -21,7 +21,17 @@ internal class CreateReminderUseCase @Inject constructor(
             id = UUID.randomUUID().toString(),
             title = title?.trim()?.takeIf { it.isNotBlank() },
             time = time,
-            daysOfWeek = daysOfWeek,
+            daysOfWeek = daysOfWeek.ifEmpty {
+                setOf(
+                    DayOfWeek.MONDAY,
+                    DayOfWeek.TUESDAY,
+                    DayOfWeek.WEDNESDAY,
+                    DayOfWeek.THURSDAY,
+                    DayOfWeek.FRIDAY,
+                    DayOfWeek.SATURDAY,
+                    DayOfWeek.SUNDAY,
+                )
+            },
         )
         remindersRepository.insertReminder(reminder)
         reminderScheduler.schedule(reminder)
