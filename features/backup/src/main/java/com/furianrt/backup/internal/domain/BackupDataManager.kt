@@ -42,14 +42,14 @@ internal class BackupDataManager @Inject constructor(
         }
     }
 
-    suspend fun startBackup() {
+    suspend fun startBackup(): Boolean {
         if (state.value is SyncState.Progress || state.value is SyncState.Starting) {
-            return
+            return true
         }
 
         if (!deviceInfoRepository.hasNetworkConnection()) {
             progressState.update { SyncState.Failure }
-            return
+            return true
         }
 
         backupDataStore.setAutoBackupFailure(failed = false)
@@ -66,39 +66,39 @@ internal class BackupDataManager @Inject constructor(
 
         if (remoteFiles == null) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         if (!uploadNoteBackgrounds(remoteFiles)) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         if (!uploadCustomStickers(remoteFiles)) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         val localNotes = notesRepository.getAllNotes().first()
         if (localNotes.isEmpty()) {
             backupRepository.setLastSyncDate(ZonedDateTime.now())
             progressState.update { SyncState.Idle }
-            return
+            return true
         }
 
         if (!uploadNotesMediaFiles(remoteFiles)) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         if (!uploadNotesData(remoteFiles)) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         if (!deleteUnusedMediaFiles(remoteFiles)) {
             progressState.update { SyncState.Failure }
-            return
+            return false
         }
 
         backupRepository.setLastSyncDate(ZonedDateTime.now())
@@ -106,6 +106,8 @@ internal class BackupDataManager @Inject constructor(
         progressState.update { SyncState.Success }
         delay(500)
         progressState.update { SyncState.Idle }
+
+        return true
     }
 
     private suspend fun deleteUnusedMediaFiles(remoteFiles: List<RemoteFile>): Boolean {
