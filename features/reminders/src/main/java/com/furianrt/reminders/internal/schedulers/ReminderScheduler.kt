@@ -15,7 +15,9 @@ import javax.inject.Singleton
 internal class ReminderScheduler @Inject constructor(
     @param:ApplicationContext private val applicationContext: Context,
 ) {
-    private val alarmManager = applicationContext.getSystemService(AlarmManager::class.java)
+    private val alarmManager by lazy {
+        applicationContext.getSystemService(AlarmManager::class.java)
+    }
 
     fun schedule(reminder: Reminder) {
         cancel(reminder)

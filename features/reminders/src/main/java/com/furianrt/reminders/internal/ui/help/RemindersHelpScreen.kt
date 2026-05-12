@@ -131,7 +131,7 @@ private fun Content(
             HelpOption(
                 title = stringResource(R.string.reminders_troubleshooting_battery_optimization_title),
                 hint = stringResource(R.string.reminders_troubleshooting_battery_optimization_hint),
-                warningTint = MaterialTheme.colorScheme.errorContainer,
+                warningTint = MaterialTheme.colorScheme.onSurface,
                 actionText = stringResource(uiR.string.action_disable),
                 hasWarning = uiState.isBatteryOptimizationEnabled,
                 onActionClick = { onEvent(RemindersHelpEvent.OnBatteryOptimizationClick) },

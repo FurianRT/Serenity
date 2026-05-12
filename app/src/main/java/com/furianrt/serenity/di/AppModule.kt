@@ -1,6 +1,5 @@
 package com.furianrt.serenity.di
 
-import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.furianrt.common.BuildInfoProvider
@@ -35,13 +34,6 @@ internal object AppModule {
         override val io: CoroutineDispatcher = Dispatchers.IO
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
-    }
-
-    @Singleton
-    @Provides
-    fun provideNotificationManager(@ApplicationContext context: Context): NotificationManager {
-        BuildConfig.VERSION_NAME
-        return context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     }
 
     @Singleton

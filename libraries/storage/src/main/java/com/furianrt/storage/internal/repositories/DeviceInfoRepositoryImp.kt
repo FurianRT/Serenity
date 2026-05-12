@@ -23,8 +23,8 @@ internal class DeviceInfoRepositoryImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
 ) : DeviceInfoRepository {
 
-    private val powerSaveModeState = MutableStateFlow(detectPowerSaveMode(context))
-    private val dndState = MutableStateFlow(detectDndStatus(context))
+    private val powerSaveModeState by lazy { MutableStateFlow(detectPowerSaveMode(context)) }
+    private val dndState by lazy { MutableStateFlow(detectDndStatus(context)) }
 
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(

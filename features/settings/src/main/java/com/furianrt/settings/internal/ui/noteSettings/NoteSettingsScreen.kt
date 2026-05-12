@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -24,6 +25,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.settings.R
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
@@ -65,30 +67,37 @@ private fun Content(
     modifier: Modifier = Modifier,
 ) {
     val hazeState = rememberHazeState()
-    Box(
+    val scrollState = rememberScrollState()
+    MovableToolbarScaffold(
         modifier = modifier,
-    ) {
-        AppBackground(
-            modifier = Modifier.hazeSource(hazeState),
-            theme = uiState.theme,
-        )
-        Column {
+        listState = scrollState,
+        enabled = false,
+        toolbar = {
             DefaultToolbar(
                 modifier = Modifier.systemBarsPadding(),
                 title = stringResource(R.string.settings_note_content_title),
                 onBackClick = { onEvent(NoteSettingsEvent.OnButtonBackClick) },
             )
-            when (uiState.content) {
-                is NoteSettingsState.Content.Success -> SuccessContent(
-                    uiState = uiState.content,
-                    onEvent = onEvent,
-                    hazeState = hazeState,
-                )
-
-                is NoteSettingsState.Content.Loading -> LoadingContent()
-            }
         }
+    ) { topPadding ->
+        AppBackground(
+            modifier = Modifier.hazeSource(hazeState),
+            theme = uiState.theme,
+        )
+        when (uiState.content) {
+            is NoteSettingsState.Content.Success -> SuccessContent(
+                modifier = Modifier
+                    .verticalScroll(scrollState)
+                    .padding(top = topPadding),
+                uiState = uiState.content,
+                onEvent = onEvent,
+                hazeState = hazeState,
+            )
 
+            is NoteSettingsState.Content.Loading -> LoadingContent(
+                modifier = Modifier.padding(top = topPadding),
+            )
+        }
     }
 }
 
@@ -102,8 +111,8 @@ private fun SuccessContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(8.dp),
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 24.dp)
+            .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         SwitchWithLabel(

@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @HiltAndroidApp
@@ -47,9 +48,6 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     lateinit var syncManager: SyncManager
 
     @Inject
-    lateinit var notificationManager: NotificationManager
-
-    @Inject
     lateinit var dispatchers: DispatchersProvider
 
     private val scope by lazy(LazyThreadSafetyMode.NONE) {
@@ -62,9 +60,11 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
         if (BuildConfig.DEBUG) {
             initStrictMode()
         }
-        createNotificationsChannels()
+        scope.launch {
+            createNotificationsChannels()
+            startPeriodicWorks()
+        }
         SingletonImageLoader.setSafe(this)
-        startPeriodicWorks()
         updateLaunchCount()
     }
 
@@ -75,16 +75,14 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
         .setMinimumLoggingLevel(Log.INFO)
         .build()
 
-    override fun newImageLoader(context: PlatformContext): ImageLoader {
-        return ImageLoader.Builder(this)
-            .diskCachePolicy(CachePolicy.DISABLED)
-            .build()
-    }
+    override fun newImageLoader(context: PlatformContext): ImageLoader = ImageLoader.Builder(this)
+        .diskCachePolicy(CachePolicy.DISABLED)
+        .build()
 
     @OptIn(DelicateCoroutinesApi::class)
-    private fun startPeriodicWorks() {
+    private suspend fun startPeriodicWorks() = withContext(dispatchers.io) {
         notesRepository.enqueuePeriodicCleanup()
-        scope.launch { syncManager.tryStartAutoBackup() }
+        syncManager.tryStartAutoBackup()
     }
 
     private fun initStrictMode() {
@@ -114,7 +112,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
         scope.launch { incrementLaunchCountUseCase() }
     }
 
-    private fun createNotificationsChannels() {
+    private suspend fun createNotificationsChannels() = withContext(dispatchers.io) {
         val remindersChannel = NotificationChannel(
             NotificationChannels.REMINDERS_CHANNEL_ID,
             getString(R.string.reminders_channel_name),
@@ -131,7 +129,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
             description = getString(R.string.notifications_channel_description)
         }
 
-        notificationManager.createNotificationChannels(
+        (getSystemService(NOTIFICATION_SERVICE) as NotificationManager).createNotificationChannels(
             listOf(
                 remindersChannel,
                 notificationsChannel,
