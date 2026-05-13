@@ -44,7 +44,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -351,6 +353,7 @@ private fun SelectedFiltersList(
     onRemoveFilterClick: (filter: SelectedFilter) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val haptic = LocalHapticFeedback.current
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp),
@@ -381,11 +384,17 @@ private fun SelectedFiltersList(
                         blurRadius = 8.dp,
                     ),
                     hazeStyleExtraColor = true,
-                    onRemoveClick = { onRemoveFilterClick(filter) },
+                    onRemoveClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                        onRemoveFilterClick(filter)
+                    },
                     onClick = if (filter.isSelected) {
                         null
                     } else {
-                        { onUnselectedTagClick(filter) }
+                        {
+                            haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                            onUnselectedTagClick(filter)
+                        }
                     },
                 )
 
@@ -407,7 +416,10 @@ private fun SelectedFiltersList(
                     ),
                     hazeStyleExtraColor = true,
                     onClick = { onDateFilterClick(filter) },
-                    onRemoveClick = { onRemoveFilterClick(filter) },
+                    onRemoveClick = {
+                        haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                        onRemoveFilterClick(filter)
+                    },
                 )
             }
         }

@@ -8,6 +8,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.unit.dp
 import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.components.TagItem
@@ -22,6 +24,7 @@ internal fun AllTagsList(
     modifier: Modifier = Modifier,
     onTagClick: (tag: TagsList.Tag) -> Unit = {},
 ) {
+    val haptic = LocalHapticFeedback.current
     FlowRow(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -32,7 +35,10 @@ internal fun AllTagsList(
                 title = tag.title,
                 isRemovable = false,
                 hazeState = hazeState,
-                onClick = { onTagClick(tag) },
+                onClick = {
+                    haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
+                    onTagClick(tag)
+                },
                 icon = {
                     Text(
                         modifier = Modifier.alpha(0.5f),
