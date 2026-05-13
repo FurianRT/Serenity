@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +31,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtLeast
 import com.furianrt.uikit.components.ActionButton
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeDefaults
@@ -51,7 +51,7 @@ internal fun ButtonSend(
 ) {
     val counterScale = remember { Animatable(1f) }
 
-    LaunchedEffect(selectedCount.fastCoerceAtLeast(1)) {
+    SkipFirstEffect(selectedCount.fastCoerceAtLeast(1)) {
         counterScale.animateTo(
             targetValue = 0.92f,
             animationSpec = tween(durationMillis = 30, easing = LinearEasing),
