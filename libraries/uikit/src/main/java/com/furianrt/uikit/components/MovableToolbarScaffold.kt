@@ -223,11 +223,7 @@ fun MovableToolbarScaffold(
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
-            modifier = if (contentHazeState == null) {
-                Modifier.hazeSource(hazeState)
-            } else {
-                Modifier
-            },
+            modifier = Modifier.hazeSource(hazeState),
             content = { content(toolbarHeight.pxToDp()) },
         )
         Box(
