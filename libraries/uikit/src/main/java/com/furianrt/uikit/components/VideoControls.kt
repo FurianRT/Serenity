@@ -11,6 +11,7 @@ import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -79,6 +80,7 @@ fun VideoSlider(
     duration: Int,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
+    contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp),
     onProgressChange: (Float) -> Unit = {},
     onProgressChangeFinished: () -> Unit = {},
 ) {
@@ -87,7 +89,7 @@ fun VideoSlider(
             .fillMaxWidth()
             .draggable(state = rememberDraggableState {}, orientation = Orientation.Horizontal)
             .systemGestureExclusion()
-            .padding(horizontal = 12.dp),
+            .padding(contentPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Slider(
@@ -102,7 +104,7 @@ fun VideoSlider(
             thumb = { SliderThumb() },
         )
         SliderTime(
-            modifier = Modifier.padding(bottom = 5.dp),
+            modifier = Modifier.padding(bottom = 3.dp),
             current = (duration * progress).toInt(),
             total = duration,
         )

@@ -235,7 +235,7 @@ private fun SuccessContent(
         ) {
             ButtonSend(
                 modifier = Modifier
-                    .padding(end = 12.dp, bottom = 12.dp)
+                    .padding(end = 8.dp, bottom = 12.dp)
                     .navigationBarsPadding(),
                 selectedCount = uiState.selectedCount,
                 hazeState = hazeState,

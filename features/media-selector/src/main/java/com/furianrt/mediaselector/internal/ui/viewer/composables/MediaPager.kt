@@ -14,6 +14,7 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.interaction.DragInteraction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -400,9 +401,7 @@ internal fun VideoPage(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .applyIf(configuration.orientation == ORIENTATION_PORTRAIT) {
-                        Modifier
-                            .navigationBarsPadding()
-                            .padding(bottom = 80.dp)
+                        Modifier.navigationBarsPadding()
                     }
                     .graphicsLayer {
                         alpha = (offsetToClose - dragOffset) / offsetToClose
@@ -419,7 +418,7 @@ internal fun VideoPage(
                                     .padding(bottom = 8.dp)
                             } else {
                                 Modifier
-                                    .padding(horizontal = 8.dp)
+                                    .padding(start = 6.dp, end = 76.dp, bottom = 18.dp)
                                     .background(
                                         color = SystemBarsConstants.MediaBarsColor,
                                         shape = RoundedCornerShape(24.dp),
@@ -429,6 +428,11 @@ internal fun VideoPage(
                     progress = currentPosition.toFloat() / item.duration,
                     duration = item.duration,
                     interactionSource = sliderInteractionSource,
+                    contentPadding = if (configuration.orientation == ORIENTATION_LANDSCAPE) {
+                        PaddingValues(horizontal = 12.dp)
+                    } else {
+                        PaddingValues(start = 8.dp, end = 12.dp)
+                    },
                     onProgressChange = { progress ->
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.SegmentFrequentTick)
                         currentPosition = (item.duration * progress).toLong()
