@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -401,7 +402,7 @@ internal fun VideoPage(
                     .applyIf(configuration.orientation == ORIENTATION_PORTRAIT) {
                         Modifier
                             .navigationBarsPadding()
-                            .padding(bottom = 90.dp)
+                            .padding(bottom = 80.dp)
                     }
                     .graphicsLayer {
                         alpha = (offsetToClose - dragOffset) / offsetToClose
@@ -410,12 +411,21 @@ internal fun VideoPage(
             ) {
                 VideoSlider(
                     modifier = Modifier
-                        .background(SystemBarsConstants.MediaBarsColor)
-                        .applyIf(configuration.orientation == ORIENTATION_LANDSCAPE) {
-                            Modifier
-                                .navigationBarsPadding()
-                                .padding(bottom = 8.dp)
-                        },
+                        .then(
+                            if (configuration.orientation == ORIENTATION_LANDSCAPE) {
+                                Modifier
+                                    .background(SystemBarsConstants.MediaBarsColor)
+                                    .navigationBarsPadding()
+                                    .padding(bottom = 8.dp)
+                            } else {
+                                Modifier
+                                    .padding(horizontal = 8.dp)
+                                    .background(
+                                        color = SystemBarsConstants.MediaBarsColor,
+                                        shape = RoundedCornerShape(24.dp),
+                                    )
+                            }
+                        ),
                     progress = currentPosition.toFloat() / item.duration,
                     duration = item.duration,
                     interactionSource = sliderInteractionSource,
