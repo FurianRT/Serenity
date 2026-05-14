@@ -75,7 +75,7 @@ kolor = "4.1.1"
 palette = "1.0.0"
 
 timePicker = "1.3.0"
-kotlinDatetime = "0.7.1"
+kotlinDatetime = "0.8.0"
 
 [libraries]
 
