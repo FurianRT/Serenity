@@ -340,6 +340,10 @@ internal class NoteThemesHolder @Inject constructor(
                 source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_4),
             ),
             UiNoteBackgroundImage(
+                id = "pattern_5",
+                source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_5),
+            ),
+            UiNoteBackgroundImage(
                 id = "pattern_0",
                 source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_pattern_0),
             ),
