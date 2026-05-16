@@ -11,6 +11,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextDecoration
 import com.furianrt.core.indexOfFirstOrNull
@@ -637,7 +638,7 @@ private fun AnnotatedString.hasSpans(
     .any { it.item.toSpanType() == spanType }
 
 private fun AnnotatedString.updateBoldFontFamily(
-    fontFamily: FontFamily,
+    fontFamily: FontFamily?,
 ): AnnotatedString = flatMapAnnotations { span ->
     val spanStyle = span.item
 
@@ -653,7 +654,10 @@ private fun AnnotatedString.updateBoldFontFamily(
 
     return@flatMapAnnotations listOf(
         Range(
-            item = spanStyle.copy(fontFamily = fontFamily),
+            item = spanStyle.copy(
+                fontFamily = fontFamily,
+                fontWeight = if (fontFamily == null) FontWeight.Black else null,
+            ),
             start = span.start,
             end = span.end,
         )

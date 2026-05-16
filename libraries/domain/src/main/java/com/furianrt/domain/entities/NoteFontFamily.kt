@@ -13,6 +13,7 @@ enum class NoteFontFamily {
     CORMORANT_GARAMOND,
     MONSERRAT_ALTERNATES,
     TEKTUR,
+    DEATH_NOTE,
     DOTO,
     PLAY_WRITE_MODERN,
     TILLANA,

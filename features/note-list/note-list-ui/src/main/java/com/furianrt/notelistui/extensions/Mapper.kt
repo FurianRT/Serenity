@@ -6,6 +6,7 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.util.fastForEach
@@ -218,6 +219,7 @@ fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
     NoteFontFamily.SPACE_MONO -> UiNoteFontFamily.SpaceMono
     NoteFontFamily.CORMORANT_GARAMOND -> UiNoteFontFamily.CormorantGaramond
     NoteFontFamily.ROBOTO_CONDENSED -> UiNoteFontFamily.RobotoCondensed
+    NoteFontFamily.DEATH_NOTE -> UiNoteFontFamily.DeathNote
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
@@ -239,6 +241,7 @@ fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
     UiNoteFontFamily.SpaceMono -> NoteFontFamily.SPACE_MONO
     UiNoteFontFamily.CormorantGaramond -> NoteFontFamily.CORMORANT_GARAMOND
     UiNoteFontFamily.RobotoCondensed -> NoteFontFamily.ROBOTO_CONDENSED
+    UiNoteFontFamily.DeathNote -> NoteFontFamily.DEATH_NOTE
 }
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
@@ -284,7 +287,7 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
 }
 
 fun SpanStyle.toSpanType(): SpanType? = when {
-    fontFamily != null -> SpanType.Bold
+    fontFamily != null || fontWeight != null -> SpanType.Bold
     fontStyle == FontStyle.Italic -> SpanType.Italic
     textDecoration == TextDecoration.Underline -> SpanType.Underline
     textDecoration == TextDecoration.LineThrough -> SpanType.Strikethrough
@@ -294,7 +297,11 @@ fun SpanStyle.toSpanType(): SpanType? = when {
 }
 
 fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) {
-    is SpanType.Bold -> SpanStyle(fontFamily = fontFamily.bold)
+    is SpanType.Bold -> if (fontFamily.bold != null) {
+        SpanStyle(fontFamily = fontFamily.bold)
+    } else {
+        SpanStyle(fontWeight = FontWeight.Black)
+    }
     is SpanType.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
     is SpanType.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
     is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
@@ -321,12 +328,13 @@ fun NoteFontFamily.toNoteFont() = when (this) {
     NoteFontFamily.SPACE_MONO -> NoteFont.SpaceMono
     NoteFontFamily.CORMORANT_GARAMOND -> NoteFont.CormorantGaramond
     NoteFontFamily.ROBOTO_CONDENSED -> NoteFont.RobotoCondensed
+    NoteFontFamily.DEATH_NOTE -> NoteFont.DeathNote
 }
 
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
     titleId: String,
 ): NoteTextSpan? = when {
-    item.fontFamily != null -> NoteTextSpan.Bold(
+    item.fontFamily != null || item.fontWeight != null -> NoteTextSpan.Bold(
         titleId = titleId,
         start = start,
         end = end,

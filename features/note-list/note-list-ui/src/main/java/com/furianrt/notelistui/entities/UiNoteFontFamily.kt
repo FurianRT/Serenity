@@ -7,9 +7,9 @@ import com.furianrt.uikit.theme.NoteFont
 @Immutable
 sealed class UiNoteFontFamily(
     val name: String,
-    val light: FontFamily,
+    val light: FontFamily?,
     val regular: FontFamily,
-    val bold: FontFamily,
+    val bold: FontFamily?,
     val sizeMultiplier: Float = 1f,
 ) {
     @Immutable
@@ -157,5 +157,13 @@ sealed class UiNoteFontFamily(
         regular = NoteFont.RobotoCondensed.regular,
         bold = NoteFont.RobotoCondensed.bold,
         sizeMultiplier = 1.25f,
+    )
+
+    @Immutable
+    data object DeathNote : UiNoteFontFamily(
+        name = "Death Note",
+        light = NoteFont.DeathNote.light,
+        regular = NoteFont.DeathNote.regular,
+        bold = NoteFont.DeathNote.bold,
     )
 }

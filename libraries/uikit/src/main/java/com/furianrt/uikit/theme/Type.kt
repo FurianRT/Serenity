@@ -2,13 +2,15 @@ package com.furianrt.uikit.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.sp
 
 internal fun getTypography(font: NoteFont) = Typography(
     labelSmall = TextStyle(
-        fontFamily = font.light,
+        fontFamily = font.light ?: font.regular,
         fontSize = 13.sp * font.sizeMultiplier,
+        fontWeight = if (font.light == null) FontWeight.ExtraLight else null,
         lineHeight = 22.sp,
         letterSpacing = 0.8.sp,
         lineHeightStyle = LineHeightStyle(

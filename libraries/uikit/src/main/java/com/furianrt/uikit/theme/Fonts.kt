@@ -5,9 +5,9 @@ import androidx.compose.ui.text.font.FontFamily
 import com.furianrt.uikit.R
 
 sealed class NoteFont(
-    val light: FontFamily,
     val regular: FontFamily,
-    val bold: FontFamily,
+    val light: FontFamily? = null,
+    val bold: FontFamily? = null,
     val sizeMultiplier: Float = 1f,
 ) {
     data object NotoSans : NoteFont(
@@ -118,5 +118,9 @@ sealed class NoteFont(
         light = FontFamily(Font(R.font.roboto_condensed_light)),
         regular = FontFamily(Font(R.font.roboto_condensed_regular)),
         bold = FontFamily(Font(R.font.roboto_condensed_bold)),
+    )
+
+    data object DeathNote : NoteFont(
+        regular = FontFamily(Font(R.font.death_note_regular)),
     )
 }
