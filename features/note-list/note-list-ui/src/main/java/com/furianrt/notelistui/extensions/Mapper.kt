@@ -9,6 +9,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.util.fastForEach
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontColor
@@ -40,7 +41,12 @@ fun UiNoteContent.MediaBlock.toLocalMediaBlock() = LocalNote.Content.MediaBlock(
 fun UiNoteContent.Title.toLocalNoteTitle() = LocalNote.Content.Title(
     id = id,
     text = state.annotatedString.text,
-    spans = state.annotatedString.spanStyles.mapNotNull { it.toNoteTextSpan(titleId = id) },
+    spans = state.annotatedString.spanStyles.mapNotNull { span ->
+        span.toNoteTextSpan(
+            titleId = id,
+            fontSize = state.getFontSize(),
+        )
+    },
 )
 
 fun UiNoteContent.Voice.toLocalNoteVoice() = LocalNote.Content.Voice(
@@ -82,8 +88,11 @@ fun UiNoteTag.Template.toRegular(isRemovable: Boolean) = UiNoteTag.Regular(
     isRemovable = isRemovable,
 )
 
-fun LocalNote.Content.toUiNoteContent(fontFamily: UiNoteFontFamily) = when (this) {
-    is LocalNote.Content.Title -> toUiNoteTitle(fontFamily)
+fun LocalNote.Content.toUiNoteContent(
+    fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
+) = when (this) {
+    is LocalNote.Content.Title -> toUiNoteTitle(fontFamily, fontSize)
     is LocalNote.Content.MediaBlock -> toUiMediaBlock()
     is LocalNote.Content.Voice -> toUiVoice()
 }
@@ -102,11 +111,15 @@ fun LocalNote.Content.Voice.toUiVoice() = UiNoteContent.Voice(
 )
 
 
-fun LocalNote.Content.Title.toUiNoteTitle(fontFamily: UiNoteFontFamily) = UiNoteContent.Title(
+fun LocalNote.Content.Title.toUiNoteTitle(
+    fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
+) = UiNoteContent.Title(
     id = id,
     state = NoteTitleState(
-        initialText = getAnnotatedString(fontFamily),
+        initialText = getAnnotatedString(fontFamily, fontSize),
         fontFamily = fontFamily,
+        fontSize = fontSize,
     ),
 )
 
@@ -156,6 +169,7 @@ fun NoteLocation.toLocationState() = LocationState.Success(
 
 fun List<LocalNote.Content>.getShortUiContent(
     fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
     withMedia: Boolean,
 ): List<UiNoteContent> = buildList {
     val mediaBlock = this@getShortUiContent.firstOrNull { it is LocalNote.Content.MediaBlock }
@@ -178,9 +192,10 @@ fun List<LocalNote.Content>.getShortUiContent(
                 state = NoteTitleState(
                     initialText = this@getShortUiContent
                         .filterIsInstance<LocalNote.Content.Title>()
-                        .map { it.getAnnotatedString(fontFamily, withColorStyle = false) }
+                        .map { it.getAnnotatedString(fontFamily, fontSize, withColorStyle = false) }
                         .join(separator = "\n"),
                     fontFamily = fontFamily,
+                    fontSize = fontSize,
                 ),
             ),
         )
@@ -286,7 +301,10 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.RED_DARK -> NoteFontColor.RED_DARK
 }
 
-fun SpanStyle.toSpanType(): SpanType? = when {
+fun SpanStyle.toSpanType(
+    fontSize: TextUnit,
+): SpanType? = when {
+    this.fontSize != TextUnit.Unspecified -> SpanType.FontSize(this.fontSize.value / fontSize.value)
     fontFamily != null || fontWeight != null -> SpanType.Bold
     fontStyle == FontStyle.Italic -> SpanType.Italic
     textDecoration == TextDecoration.Underline -> SpanType.Underline
@@ -296,15 +314,20 @@ fun SpanStyle.toSpanType(): SpanType? = when {
     else -> null
 }
 
-fun SpanType.toSpanStyle(fontFamily: UiNoteFontFamily): SpanStyle = when (this) {
+fun SpanType.toSpanStyle(
+    fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
+): SpanStyle = when (this) {
     is SpanType.Bold -> if (fontFamily.bold != null) {
         SpanStyle(fontFamily = fontFamily.bold)
     } else {
         SpanStyle(fontWeight = FontWeight.Black)
     }
+
     is SpanType.Italic -> SpanStyle(fontStyle = FontStyle.Italic)
     is SpanType.Underline -> SpanStyle(textDecoration = TextDecoration.Underline)
     is SpanType.Strikethrough -> SpanStyle(textDecoration = TextDecoration.LineThrough)
+    is SpanType.FontSize -> SpanStyle(fontSize = fontSize * multiplier)
     is SpanType.FontColor -> SpanStyle(color = color)
     is SpanType.FillColor -> SpanStyle(background = color)
 }
@@ -333,11 +356,19 @@ fun NoteFontFamily.toNoteFont() = when (this) {
 
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
     titleId: String,
+    fontSize: TextUnit,
 ): NoteTextSpan? = when {
     item.fontFamily != null || item.fontWeight != null -> NoteTextSpan.Bold(
         titleId = titleId,
         start = start,
         end = end,
+    )
+
+    item.fontSize != TextUnit.Unspecified -> NoteTextSpan.FontSize(
+        titleId = titleId,
+        start = start,
+        end = end,
+        multiplier = item.fontSize.value / fontSize.value,
     )
 
     item.fontStyle == FontStyle.Italic -> NoteTextSpan.Italic(
@@ -377,38 +408,45 @@ private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
 
 private fun LocalNote.Content.Title.getAnnotatedString(
     fontFamily: UiNoteFontFamily,
+    fontSize: TextUnit,
     withColorStyle: Boolean = true,
 ) = buildAnnotatedString {
     append(text)
     spans.fastForEach { span ->
         when (span) {
             is NoteTextSpan.Bold -> addStyle(
-                style = SpanType.Bold.toSpanStyle(fontFamily),
+                style = SpanType.Bold.toSpanStyle(fontFamily, fontSize),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Italic -> addStyle(
-                style = SpanType.Italic.toSpanStyle(fontFamily),
+                style = SpanType.Italic.toSpanStyle(fontFamily, fontSize),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Underline -> addStyle(
-                style = SpanType.Underline.toSpanStyle(fontFamily),
+                style = SpanType.Underline.toSpanStyle(fontFamily, fontSize),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.Strikethrough -> addStyle(
-                style = SpanType.Strikethrough.toSpanStyle(fontFamily),
+                style = SpanType.Strikethrough.toSpanStyle(fontFamily, fontSize),
+                start = span.start,
+                end = span.end,
+            )
+
+            is NoteTextSpan.FontSize -> addStyle(
+                style = SpanType.FontSize(span.multiplier).toSpanStyle(fontFamily, fontSize),
                 start = span.start,
                 end = span.end,
             )
 
             is NoteTextSpan.FontColor -> if (withColorStyle) {
                 addStyle(
-                    style = SpanType.FontColor(Color(span.color)).toSpanStyle(fontFamily),
+                    style = SpanType.FontColor(Color(span.color)).toSpanStyle(fontFamily, fontSize),
                     start = span.start,
                     end = span.end,
                 )
@@ -416,7 +454,7 @@ private fun LocalNote.Content.Title.getAnnotatedString(
 
             is NoteTextSpan.FillColor -> if (withColorStyle) {
                 addStyle(
-                    style = SpanType.FillColor(Color(span.color)).toSpanStyle(fontFamily),
+                    style = SpanType.FillColor(Color(span.color)).toSpanStyle(fontFamily, fontSize),
                     start = span.start,
                     end = span.end,
                 )

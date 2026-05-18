@@ -1,5 +1,6 @@
 package com.furianrt.search.internal.ui.extensions
 
+import androidx.compose.ui.unit.sp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.entities.NoteFontFamily
@@ -43,6 +44,7 @@ internal fun LocalNote.toNoteItem(
         locationState = location?.toLocationState() ?: LocationState.Empty,
         content = content.getShortUiContent(
             fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
+            fontSize = fontSize.sp,
             withMedia = withMedia,
         ),
     )

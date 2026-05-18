@@ -463,6 +463,7 @@ private fun SuccessFilledQueryPreview() {
                                 id = "1",
                                 state = NoteTitleState(
                                     fontFamily = UiNoteFontFamily.NotoSans,
+                                    fontSize = 16.sp,
                                     initialText = AnnotatedString(
                                         text = "Kotlin is a modern programming language with a " +
                                                 "lot more syntactic sugar compared to Java, and as such " +

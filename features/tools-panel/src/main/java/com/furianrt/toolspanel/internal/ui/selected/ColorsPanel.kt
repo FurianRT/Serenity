@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -17,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.entities.UiNoteFontColor
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
@@ -59,7 +61,7 @@ internal fun ColorsPanel(
                     drawLeftShadow(color = shadowColor)
                 }
             },
-            painter = painterResource(uiR.drawable.ic_exit),
+            painter = painterResource(uiR.drawable.ic_action_done),
             onClick = onCloseClick,
         )
     }
@@ -70,6 +72,7 @@ internal fun ColorsPanel(
 private fun Preview() {
     SerenityTheme {
         ColorsPanel(
+            modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
             colors = UiNoteFontColor.entries.map { it.value },
             selectedColor = UiNoteFontColor.BLUE_DARK.value,
         )

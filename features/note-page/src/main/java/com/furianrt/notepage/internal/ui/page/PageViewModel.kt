@@ -3,6 +3,7 @@ package com.furianrt.notepage.internal.ui.page
 import android.net.Uri
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
@@ -447,6 +448,7 @@ internal class PageViewModel @AssistedInject constructor(
                 successState.copy(
                     content = newContent.refreshTitleTemplates(
                         fontFamily = fontFamily,
+                        fontSize = successState.fontSize,
                         addTopTemplate = successState.isInEditMode,
                     ),
                 ).also {
@@ -490,12 +492,14 @@ internal class PageViewModel @AssistedInject constructor(
                     ?: appearanceRepository.getAppFont().first().toUiNoteFontFamily()
                 val newContent = buildContentWithNewBlock(
                     fontFamily = fontFamily,
+                    fontSize = currentState.fontSize,
                     content = currentState.content,
                     newBlock = newBlock,
                 )
                 currentState.copy(
                     content = newContent.refreshTitleTemplates(
                         fontFamily = fontFamily,
+                        fontSize = currentState.fontSize,
                         addTopTemplate = currentState.isInEditMode,
                     ),
                 )
@@ -524,6 +528,7 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun buildContentWithNewBlock(
         fontFamily: UiNoteFontFamily,
+        fontSize: Int,
         content: List<UiNoteContent>,
         newBlock: UiNoteContent,
     ): List<UiNoteContent> {
@@ -555,6 +560,7 @@ internal class PageViewModel @AssistedInject constructor(
                     id = UUID.randomUUID().toString(),
                     state = NoteTitleState(
                         fontFamily = fontFamily,
+                        fontSize = fontSize.sp,
                         initialText = titleFirstPartText,
                     )
                 )
@@ -585,6 +591,7 @@ internal class PageViewModel @AssistedInject constructor(
                             firstPartText
                         },
                         fontFamily = fontFamily,
+                        fontSize = fontSize.sp,
                     )
                 )
                 val titleSecondPart = focusedTitle.also { title ->
@@ -873,6 +880,7 @@ internal class PageViewModel @AssistedInject constructor(
                 currentState.copy(
                     content = newContent.refreshTitleTemplates(
                         fontFamily = fontFamily,
+                        fontSize = currentState.fontSize,
                         addTopTemplate = currentState.isInEditMode,
                     )
                 ).also {
@@ -1060,6 +1068,7 @@ internal class PageViewModel @AssistedInject constructor(
                 val newState = currentState.copy(
                     content = currentState.content.refreshTitleTemplates(
                         fontFamily = fontFamily,
+                        fontSize = currentState.fontSize,
                         addTopTemplate = isEnabled
                     ),
                     tags = with(currentState.tags) {
@@ -1125,6 +1134,7 @@ internal class PageViewModel @AssistedInject constructor(
                         noteId = note.id,
                         content = note.content.refreshTitleTemplates(
                             fontFamily = note.fontFamily ?: appFont,
+                            fontSize = note.fontSize,
                             addTopTemplate = isInEditMode
                         ),
                         tags = with(note.tags) {
@@ -1244,7 +1254,14 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun updateFontSize(size: Int) {
         hasContentChanged = true
-        _state.updateState<PageUiState.Success> { it.copy(fontSize = size) }
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.content.forEach { content ->
+                if (content is UiNoteContent.Title) {
+                    content.state.updateFontSize(size.sp)
+                }
+            }
+            successState.copy(fontSize = size)
+        }
     }
 
     private fun updateNoteTheme(theme: UiNoteTheme?) {

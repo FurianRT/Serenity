@@ -1,5 +1,6 @@
 package com.furianrt.notelist.internal.ui.extensions
 
+import androidx.compose.ui.unit.sp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -50,6 +51,7 @@ internal fun LocalNote.toMainScreenNote(
         isSelected = isSelected,
         content = content.getShortUiContent(
             fontFamily = (fontFamily ?: appFontFamily).toUiNoteFontFamily(),
+            fontSize = fontSize.sp,
             withMedia = withMedia,
         ),
     )

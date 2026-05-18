@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
 import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -121,6 +122,7 @@ private fun RegularPanelPreview() {
         RegularPanel(
             titleState = NoteTitleState(
                 fontFamily = UiNoteFontFamily.NotoSans,
+                fontSize = 16.sp,
             ),
         )
     }

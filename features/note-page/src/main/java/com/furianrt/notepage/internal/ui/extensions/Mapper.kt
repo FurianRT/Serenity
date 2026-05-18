@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.extensions
 
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -35,7 +36,12 @@ internal suspend fun LocalNote.toNoteItem(
     id = id,
     tags = tags.map(LocalNote.Tag::toRegularUiNoteTag),
     stickers = stickers.mapNotNull { it.toStickerItem(stickerIconProvider(it.typeId)) },
-    content = content.map { it.toUiNoteContent((fontFamily ?: appFont).toUiNoteFontFamily()) },
+    content = content.map { item ->
+        item.toUiNoteContent(
+            fontFamily = (fontFamily ?: appFont).toUiNoteFontFamily(),
+            fontSize = fontSize.sp,
+        )
+    },
     fontColor = fontColor?.toUiNoteFontColor(),
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,

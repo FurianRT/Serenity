@@ -8,6 +8,7 @@ import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,18 +20,23 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.sp
 import com.furianrt.core.orFalse
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.notelistui.entities.UiNoteFontBackgroundColor
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
 private enum class PanelState {
-    DEFAULT, FONT_COLOR, FILL_COLOR,
+    DEFAULT,
+    FONT_COLOR,
+    FILL_COLOR,
+    FONT_SIZE,
 }
 
 @Composable
@@ -52,6 +58,7 @@ internal fun SelectedPanel(
                 titleState = titleState,
                 onFontColorsClick = { panelState = PanelState.FONT_COLOR },
                 onFillColorsClick = { panelState = PanelState.FILL_COLOR },
+                onFontSizeClick = { panelState = PanelState.FONT_SIZE },
             )
 
             PanelState.FONT_COLOR -> FontColorsStateContent(
@@ -60,6 +67,11 @@ internal fun SelectedPanel(
             )
 
             PanelState.FILL_COLOR -> FillColorsStateContent(
+                titleState = titleState,
+                onCloseClick = { panelState = PanelState.DEFAULT },
+            )
+
+            PanelState.FONT_SIZE -> SizeSelectorStateContent(
                 titleState = titleState,
                 onCloseClick = { panelState = PanelState.DEFAULT },
             )
@@ -73,6 +85,7 @@ private fun SelectedStateContent(
     titleState: NoteTitleState?,
     onFontColorsClick: () -> Unit,
     onFillColorsClick: () -> Unit,
+    onFontSizeClick: () -> Unit,
 ) {
     val hasBoldStyles = remember(titleState?.annotatedString, titleState?.selection) {
         titleState?.hasSpan(
@@ -100,6 +113,13 @@ private fun SelectedStateContent(
             start = titleState.selection.min,
             end = titleState.selection.max,
             spanType = NoteTitleState.SpanType.Strikethrough
+        ).orFalse()
+    }
+    val hasFontSizeStyles = remember(titleState?.annotatedString, titleState?.selection) {
+        titleState?.hasSpan(
+            start = titleState.selection.min,
+            end = titleState.selection.max,
+            spanType = NoteTitleState.SpanType.FontSize(),
         ).orFalse()
     }
     val hasFontColorStyles = remember(titleState?.annotatedString, titleState?.selection) {
@@ -229,6 +249,29 @@ private fun SelectedStateContent(
         }
         IconButton(
             onClick = {
+                if (hasFontSizeStyles) {
+                    titleState?.removeSpan(
+                        start = titleState.selection.min,
+                        end = titleState.selection.max,
+                        spanType = NoteTitleState.SpanType.FontSize(),
+                    )
+                } else {
+                    onFontSizeClick()
+                }
+            },
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.ic_panel_font_size),
+                contentDescription = null,
+                tint = if (hasFontSizeStyles) {
+                    MaterialTheme.colorScheme.primaryContainer
+                } else {
+                    MaterialTheme.colorScheme.onSurface
+                },
+            )
+        }
+        IconButton(
+            onClick = {
                 if (hasFontColorStyles) {
                     titleState?.removeSpan(
                         start = titleState.selection.min,
@@ -278,9 +321,9 @@ private fun SelectedStateContent(
 
 @Composable
 private fun FontColorsStateContent(
-    modifier: Modifier = Modifier,
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = remember { UiNoteFontColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
@@ -320,9 +363,9 @@ private fun FontColorsStateContent(
 
 @Composable
 private fun FillColorsStateContent(
-    modifier: Modifier = Modifier,
     titleState: NoteTitleState?,
     onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     val colors = remember { UiNoteFontBackgroundColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
@@ -360,13 +403,42 @@ private fun FillColorsStateContent(
     )
 }
 
+@Composable
+fun SizeSelectorStateContent(
+    titleState: NoteTitleState?,
+    onCloseClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    SizeSliderPanel(
+        modifier = modifier,
+        onCloseClick = onCloseClick,
+        onValueChange = { value ->
+            if (value == 1f) {
+                titleState?.removeSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FontSize(),
+                )
+            } else {
+                titleState?.addSpan(
+                    start = titleState.selection.min,
+                    end = titleState.selection.max,
+                    spanType = NoteTitleState.SpanType.FontSize(multiplier = value),
+                )
+            }
+        }
+    )
+}
+
 @PreviewWithBackground
 @Composable
 private fun SelectedPanelPreview() {
     SerenityTheme {
         SelectedPanel(
+            modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
             titleState = NoteTitleState(
                 fontFamily = UiNoteFontFamily.NotoSans,
+                fontSize = 16.sp,
             ),
         )
     }

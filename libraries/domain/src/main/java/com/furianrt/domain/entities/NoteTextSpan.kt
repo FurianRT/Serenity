@@ -1,7 +1,9 @@
 package com.furianrt.domain.entities
 
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonIgnoreUnknownKeys
 
 @Serializable
 sealed class NoteTextSpan(
@@ -51,6 +53,21 @@ sealed class NoteTextSpan(
         override val start: Int,
         @SerialName("strikethrough_end")
         override val end: Int,
+    ) : NoteTextSpan(titleId, start, end)
+
+    @OptIn(ExperimentalSerializationApi::class)
+    @Serializable
+    @JsonIgnoreUnknownKeys
+    @SerialName("FontSize")
+    data class FontSize(
+        @SerialName("font_size_id")
+        override val titleId: String,
+        @SerialName("font_size_start")
+        override val start: Int = 0,
+        @SerialName("font_size_end")
+        override val end: Int = start + 1,
+        @SerialName("font_size_multiplier")
+        val multiplier: Float = 1f,
     ) : NoteTextSpan(titleId, start, end)
 
     @Serializable
