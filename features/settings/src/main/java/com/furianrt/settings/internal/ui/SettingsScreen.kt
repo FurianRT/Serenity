@@ -281,83 +281,73 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(top = topPadding + 8.dp)
+            .padding(start = 8.dp, end = 8.dp, top = topPadding + 8.dp)
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_security_title),
             iconPainter = painterResource(R.drawable.ic_lock),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_backup_title),
             iconPainter = painterResource(R.drawable.ic_cloud),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_reminders_title),
             iconPainter = painterResource(R.drawable.ic_reminders),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(uiR.string.title_theme),
-            iconPainter = painterResource(R.drawable.ic_theme),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
-        )
-        GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
-            title = stringResource(R.string.settings_font_title),
-            iconPainter = painterResource(R.drawable.ic_settings_font),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
-        )
-        GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_note_content_title),
             iconPainter = painterResource(R.drawable.ic_note_content),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
+            title = stringResource(uiR.string.title_theme),
+            iconPainter = painterResource(R.drawable.ic_theme),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
+        )
+        GeneralButton(
+            title = stringResource(R.string.settings_font_title),
+            hint = uiState.font.name,
+            iconPainter = painterResource(R.drawable.ic_settings_font),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
+        )
+        GeneralButton(
             title = stringResource(R.string.settings_language_title),
+            hint = uiState.locale.text,
             iconPainter = painterResource(R.drawable.ic_language),
             hazeState = hazeState,
-            hint = uiState.locale.text,
             onClick = { onEvent(SettingsEvent.OnLocaleClick) },
         )
         Rating(
-            modifier = Modifier.padding(horizontal = 8.dp),
             rating = uiState.rating,
+            hazeState = hazeState,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
         )
         GeneralButton(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .padding(horizontal = 8.dp),
+            modifier = Modifier.padding(top = 16.dp),
             title = stringResource(R.string.settings_feedback_title),
             iconPainter = painterResource(R.drawable.ic_mail),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(R.string.settings_terms_and_conditions_title),
             iconPainter = painterResource(uiR.drawable.ic_text_snippet),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
         )
         GeneralButton(
-            modifier = Modifier.padding(horizontal = 8.dp),
             title = stringResource(id = R.string.settings_privacy_policy_title),
             iconPainter = painterResource(uiR.drawable.ic_text_snippet),
             hazeState = hazeState,
@@ -376,17 +366,31 @@ private fun SuccessScreen(
 private fun Rating(
     @IntRange(0, 5) rating: Int,
     onSelected: (rating: Int) -> Unit,
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        modifier = modifier.padding(8.dp),
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Text(
+            modifier = Modifier
+                .clip(RoundedCornerShape(6.dp))
+                .hazeEffect(
+                    state = hazeState,
+                    style = HazeDefaults.style(
+                        backgroundColor = MaterialTheme.colorScheme.surface,
+                        blurRadius = 16.dp,
+                        noiseFactor = 0f,
+                        tint = HazeTint(Color.Transparent),
+                    ),
+                )
+                .padding(horizontal = 4.dp),
             text = stringResource(id = R.string.settings_rate_us_title),
             style = MaterialTheme.typography.bodyMedium,
         )
         Row(
+            modifier = Modifier.padding(horizontal = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -488,6 +492,7 @@ private fun ScreenContentPreview() {
                     rating = 4,
                     appVersion = "1.0",
                     locale = AppLocale.ENGLISH,
+                    font = UiNoteFontFamily.NotoSans,
                 ),
             ),
         )

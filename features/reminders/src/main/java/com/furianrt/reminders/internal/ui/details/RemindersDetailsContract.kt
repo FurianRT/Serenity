@@ -22,6 +22,7 @@ internal sealed interface RemindersDetailsEvent {
     data class OnDayClick(val day: DayItem) : RemindersDetailsEvent
     data object OnSaveClick : RemindersDetailsEvent
     data object OnEnterNotificationTextClick : RemindersDetailsEvent
+    data object OnClearNotificationTextClick : RemindersDetailsEvent
     data class OnNotificationTextEntered(val text: String) : RemindersDetailsEvent
     data class OnTimeSelected(val time: LocalTime) : RemindersDetailsEvent
     data object OnCloseScreenClick : RemindersDetailsEvent

@@ -52,6 +52,7 @@ internal class SettingsViewModel @Inject constructor(
         settingsRepository.getAppRating(),
         localeRepository.getSelectedLocale(),
         appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppFont(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -174,12 +175,14 @@ internal class SettingsViewModel @Inject constructor(
         rating: Int,
         locale: AppLocale,
         appThemeColorId: String?,
+        font: NoteFontFamily,
     ): SettingsUiState = SettingsUiState(
         theme = UiThemeColor.fromId(appThemeColorId),
         content = SettingsUiState.Content.Success(
             rating = rating,
             appVersion = buildInfoProvider.getAppVersionName(),
             locale = locale,
+            font = font.toUiNoteFontFamily(),
         ),
     )
 }

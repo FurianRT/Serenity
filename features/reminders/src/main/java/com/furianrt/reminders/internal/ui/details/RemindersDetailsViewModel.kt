@@ -95,6 +95,7 @@ internal class RemindersDetailsViewModel @Inject constructor(
             is RemindersDetailsEvent.OnSaveClick -> onSaveClick()
             is RemindersDetailsEvent.OnCloseScreenClick -> onCloseScreenClick()
             is RemindersDetailsEvent.OnEnterNotificationTextClick -> onEnterNotificationTextClick()
+            is RemindersDetailsEvent.OnClearNotificationTextClick -> onClearNotificationTextClick()
             is RemindersDetailsEvent.OnTimeSelected -> onTimeSelected(event.time)
             is RemindersDetailsEvent.OnNotificationTextEntered -> {
                 onNotificationTextEntered(event.text)
@@ -146,8 +147,12 @@ internal class RemindersDetailsViewModel @Inject constructor(
         }
     }
 
+    private fun onClearNotificationTextClick() {
+        notificationTextState.update { "" }
+    }
+
     private fun onNotificationTextEntered(text: String) {
-        notificationTextState.update { text.ifBlank { "" }.trim() }
+        notificationTextState.update { text.trim() }
     }
 
     private fun onTimeSelected(time: LocalTime) {

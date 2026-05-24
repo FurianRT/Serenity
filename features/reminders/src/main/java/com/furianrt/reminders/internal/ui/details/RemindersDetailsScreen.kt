@@ -174,6 +174,7 @@ private fun SuccessContent(
             NotificationTextBlock(
                 text = uiState.notificationText,
                 onClick = { onEvent(RemindersDetailsEvent.OnEnterNotificationTextClick) },
+                onClearClick = { onEvent(RemindersDetailsEvent.OnClearNotificationTextClick) },
             )
             Spacer(Modifier.weight(1f))
             RegularButton(
