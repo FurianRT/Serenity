@@ -70,6 +70,7 @@ object Colors {
         val Pink2 = Color(0xFFD89BAD)
         val Pink3 = Color(0xFFA65768)
         val Pink4 = Color(0xFFC467E5)
+        val Pink5 = Color(0xFFC51DB7)
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
         val FireflyYellow = Color(0xFFADAE62)

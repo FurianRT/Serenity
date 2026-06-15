@@ -204,6 +204,14 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.Pink2,
     ),
 
+    WALLY_BLACK(
+        id = "dark_24",
+        surface = Colors.Primary.TotalBlack,
+        primaryContainer = Colors.Accent.Pink5,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
+    ),
+
     APP_BACKGROUND_PICTURE_0(
         id = "app_background_picture_0",
         surface = TOTAL_BLACK.surface,
