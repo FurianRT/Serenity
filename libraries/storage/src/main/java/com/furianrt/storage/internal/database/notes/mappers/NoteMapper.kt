@@ -1,5 +1,6 @@
 package com.furianrt.storage.internal.database.notes.mappers
 
+import android.util.Base64
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
@@ -11,6 +12,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 
 private const val TITLE_START_TAG = "{text}"
+private const val TITLE_ENCODED_START_TAG = "{text-encoded}"
 private const val TITLE_END_TAG = "{/text}"
 
 private const val MEDIA_START_TAG = "{media}"
@@ -20,7 +22,7 @@ private const val VOICE_START_TAG = "{voice}"
 private const val VOICE_END_TAG = "{/voice}"
 
 private enum class FirstTagType {
-    TITLE, MEDIA, VOICE, NONE
+    TITLE, TITLE_ENCODED, MEDIA, VOICE, NONE
 }
 
 internal fun SimpleNote.toEntryNote() = EntryNote(
@@ -65,9 +67,13 @@ internal fun List<LocalNote.Content>.toEntryNoteText(): String {
     filterNot { it is LocalNote.Content.Title && it.text.isEmpty() }.forEach { content ->
         when (content) {
             is LocalNote.Content.Title -> {
-                builder.append(TITLE_START_TAG)
+                builder.append(TITLE_ENCODED_START_TAG)
                 builder.append("[${content.id}]")
-                builder.append(content.text)
+                val encodedText = Base64.encodeToString(
+                    content.text.toByteArray(Charsets.UTF_8),
+                    Base64.NO_WRAP,
+                )
+                builder.append(encodedText)
                 builder.append(TITLE_END_TAG)
             }
 
@@ -109,7 +115,19 @@ private fun LinkedNote.getLocalNoteContent(
 ): List<LocalNote.Content> {
     val (startIndex, content) = when (getFirstTagType(text)) {
         FirstTagType.TITLE -> {
-            (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(text, onFailure)
+            (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(
+                text = text,
+                isEncoded = false,
+                onFailure = onFailure,
+            )
+        }
+
+        FirstTagType.TITLE_ENCODED -> {
+            (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(
+                text = text,
+                isEncoded = true,
+                onFailure = onFailure,
+            )
         }
 
         FirstTagType.MEDIA -> {
@@ -131,21 +149,32 @@ private fun LinkedNote.getLocalNoteContent(
 
 private fun LinkedNote.extractTitle(
     text: String,
+    isEncoded: Boolean,
     onFailure: (text: String) -> Unit,
 ): LocalNote.Content.Title {
-    val indexOfTag = text.indexOf(TITLE_START_TAG)
+    val startTag = if (isEncoded) TITLE_ENCODED_START_TAG else TITLE_START_TAG
+    val indexOfTag = text.indexOf(startTag)
     val indexOfClosingTag = text.indexOf(TITLE_END_TAG)
     if (indexOfTag == -1 || indexOfClosingTag == -1) {
         onFailure(text)
     }
     val id = text.substring(text.indexOf("[") + 1, text.indexOf("]"))
     val title = text.substring(
-        startIndex = indexOfTag + TITLE_START_TAG.length + id.length + 2,
+        startIndex = indexOfTag + startTag.length + id.length + 2,
         endIndex = indexOfClosingTag,
     )
+
+    val decodedTitle = if (isEncoded) {
+        String(
+            Base64.decode(title, Base64.DEFAULT),
+            Charsets.UTF_8,
+        )
+    } else {
+        title
+    }
     return LocalNote.Content.Title(
         id = id,
-        text = title,
+        text = decodedTitle,
         spans = note.textSpans.filter { it.titleId == id },
     )
 }
@@ -197,6 +226,7 @@ private fun getFirstTagType(text: String): FirstTagType {
     class TypeIndex(val type: FirstTagType, val index: Int)
 
     val typesList = listOf(
+        TypeIndex(FirstTagType.TITLE_ENCODED, text.indexOf(TITLE_ENCODED_START_TAG)),
         TypeIndex(FirstTagType.TITLE, text.indexOf(TITLE_START_TAG)),
         TypeIndex(FirstTagType.MEDIA, text.indexOf(MEDIA_START_TAG)),
         TypeIndex(FirstTagType.VOICE, text.indexOf(VOICE_START_TAG)),
