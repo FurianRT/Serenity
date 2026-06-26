@@ -212,6 +212,12 @@ enum class UiThemeColor(
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
     ),
 
+    PINK_HOUSE(
+        id = "dark_25",
+        surface = Colors.Primary.Pink2,
+        primaryContainer = Colors.Accent.Pink5,
+    ),
+
     APP_BACKGROUND_PICTURE_0(
         id = "app_background_picture_0",
         surface = TOTAL_BLACK.surface,

@@ -71,7 +71,7 @@ internal fun List<LocalNote.Content>.toEntryNoteText(): String {
                 builder.append("[${content.id}]")
                 val encodedText = Base64.encodeToString(
                     content.text.toByteArray(Charsets.UTF_8),
-                    Base64.NO_WRAP,
+                    Base64.NO_WRAP or Base64.URL_SAFE,
                 )
                 builder.append(encodedText)
                 builder.append(TITLE_END_TAG)
@@ -166,7 +166,7 @@ private fun LinkedNote.extractTitle(
 
     val decodedTitle = if (isEncoded) {
         String(
-            Base64.decode(title, Base64.DEFAULT),
+            Base64.decode(title, Base64.DEFAULT or Base64.URL_SAFE),
             Charsets.UTF_8,
         )
     } else {

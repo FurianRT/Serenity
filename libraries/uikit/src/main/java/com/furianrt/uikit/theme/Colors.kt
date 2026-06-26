@@ -23,6 +23,7 @@ object Colors {
         val Unicorn2012PinkDark = Color(0xFFB26C86)
 
         val Pink = Color(0xFFCD4B81)
+        val Pink2 = Color(0xFF441345)
 
         val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
