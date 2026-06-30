@@ -1154,7 +1154,8 @@ internal class PageViewModel @AssistedInject constructor(
                         fontSize = note.fontSize,
                         textAlignment = note.textAlignment,
                         lineHeightMultiplier = note.lineHeightMultiplier,
-                        noteTheme = note.theme ?: UiThemeColor.fromId(
+                        noteTheme = note.theme,
+                        appTheme = UiThemeColor.fromId(
                             appearanceRepository.getAppThemeColorId().first(),
                         ).toNoteTheme(),
                         moodId = note.moodId,
@@ -1209,8 +1210,8 @@ internal class PageViewModel @AssistedInject constructor(
                 fontSize = fontSize,
                 textAlignment = state.textAlignment,
                 lineHeightMultiplier = state.lineHeightMultiplier,
-                backgroundId = state.noteTheme.takeUnless { it.isAppTheme }?.colorId,
-                backgroundImageId = state.noteTheme.takeUnless { it.isAppTheme }?.imageId,
+                backgroundId = state.noteTheme.takeIf { it?.isAppTheme == false }?.colorId,
+                backgroundImageId = state.noteTheme.takeIf { it?.isAppTheme == false }?.imageId,
                 moodId = state.moodId,
                 noteLocation = state.locationState.toNoteLocation(),
             )
@@ -1225,8 +1226,8 @@ internal class PageViewModel @AssistedInject constructor(
         appearanceRepository.setDefaultNoteFont(state.fontFamily?.toNoteFontFamily())
         appearanceRepository.setDefaultNoteFontColor(state.fontColor?.toNoteFontColor())
         appearanceRepository.setDefaultNoteFontSize(state.fontSize)
-        appearanceRepository.setDefaultNoteBackgroundColorId(state.noteTheme.colorId)
-        appearanceRepository.setDefaultNoteBackgroundImageId(state.noteTheme.imageId)
+        appearanceRepository.setDefaultNoteBackgroundColorId(state.noteTheme?.colorId)
+        appearanceRepository.setDefaultNoteBackgroundImageId(state.noteTheme?.imageId)
         appearanceRepository.setDefaultNoteTextAlign(state.textAlignment)
         appearanceRepository.setDefaultNoteLineHeight(state.lineHeightMultiplier)
     }

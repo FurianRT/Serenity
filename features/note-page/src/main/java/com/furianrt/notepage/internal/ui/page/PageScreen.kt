@@ -376,9 +376,14 @@ private fun PageScreenContent(
 ) {
     when (uiState) {
         is PageUiState.Success -> {
+            val appColor = when (val appTheme = uiState.appTheme) {
+                is UiNoteTheme.Solid -> appTheme.color
+                is UiNoteTheme.Image -> appTheme.color
+            }
             val selectedBackground = when (val noteTheme = uiState.noteTheme) {
                 is UiNoteTheme.Solid -> noteTheme.color
-                is UiNoteTheme.Image -> noteTheme.color
+                is UiNoteTheme.Image -> noteTheme.color ?: appColor
+                null -> appColor
             }
             SerenityTheme(
                 colorScheme = selectedBackground?.colorScheme ?: LocalColorScheme.current,
