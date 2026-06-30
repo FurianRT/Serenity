@@ -147,11 +147,12 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.time.ZonedDateTime
 import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
 
 private const val MEDIA_VIEW_DIALOG_ID = 1
 private const val MEDIA_SORTING_DIALOG_ID = 2
-private const val TITLE_FOCUS_DELAY = 150L
+private val TITLE_FOCUS_DELAY = 150.milliseconds
 private const val MAX_STICKERS_COUNT = 50
 private const val MIN_LINE_HEIGHT_MULTIPLIER = 0.5f
 private const val MAX_LINE_HEIGHT_MULTIPLIER = 1.5f
