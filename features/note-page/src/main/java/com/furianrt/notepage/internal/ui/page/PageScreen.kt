@@ -470,7 +470,7 @@ private fun SuccessScreen(
     ) {
         NoteBackgroundImage(
             modifier = Modifier.hazeSource(hazeState, 0f),
-            theme = uiState.noteTheme,
+            theme = uiState.noteTheme ?: uiState.appTheme,
         )
         Box(
             modifier = Modifier
