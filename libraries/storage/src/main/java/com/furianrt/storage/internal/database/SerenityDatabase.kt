@@ -1,13 +1,14 @@
 package com.furianrt.storage.internal.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
-import androidx.room.migration.Migration
-import androidx.room.withTransaction
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.room3.ColumnTypeConverters
+import androidx.room3.Database
+import androidx.room3.Room
+import androidx.room3.RoomDatabase
+import androidx.room3.migration.Migration
+import androidx.room3.withWriteTransaction
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.furianrt.domain.TransactionsHelper
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
@@ -53,7 +54,7 @@ import com.furianrt.storage.internal.database.reminders.entities.EntryReminder
     version = VERSION,
     exportSchema = false,
 )
-@TypeConverters(TypeConverter::class)
+@ColumnTypeConverters(TypeConverter::class)
 internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     abstract fun noteDao(): NoteDao
@@ -75,13 +76,13 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
         fun create(
             context: Context,
-            callback: (db: SupportSQLiteDatabase) -> Unit = {},
+            callback: (connection: SQLiteConnection) -> Unit = {},
         ) = Room.databaseBuilder(context, SerenityDatabase::class.java, NAME)
             .addCallback(
                 object : Callback() {
-                    override fun onCreate(db: SupportSQLiteDatabase) {
-                        super.onCreate(db)
-                        callback(db)
+                    override suspend fun onCreate(connection: SQLiteConnection) {
+                        super.onCreate(connection)
+                        callback(connection)
                     }
                 },
             )
@@ -98,22 +99,24 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
             .build()
     }
 
-    override suspend fun startTransaction(block: suspend () -> Unit) = withTransaction(block)
+    override suspend fun startTransaction(block: suspend () -> Unit) = withWriteTransaction {
+        block()
+    }
 }
 
 private val MIGRATION_1_2 = object : Migration(1, 2) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE Notes ADD COLUMN background_id TEXT")
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN background_id TEXT")
     }
 }
 private val MIGRATION_2_3 = object : Migration(2, 3) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE Notes ADD COLUMN mood_id TEXT")
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN mood_id TEXT")
     }
 }
 private val MIGRATION_3_4 = object : Migration(3, 4) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
             """
             CREATE TABLE IF NOT EXISTS NoteLocations (
                 id TEXT NOT NULL PRIMARY KEY,
@@ -127,19 +130,19 @@ private val MIGRATION_3_4 = object : Migration(3, 4) {
             )
             """.trimIndent()
         )
-        db.execSQL(
+        connection.execSQL(
             "CREATE INDEX IF NOT EXISTS index_NoteLocations_note_id ON NoteLocations(note_id)"
         )
     }
 }
 private val MIGRATION_4_5 = object : Migration(4, 5) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE Notes ADD COLUMN background_image_id TEXT")
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN background_image_id TEXT")
     }
 }
 private val MIGRATION_5_6 = object : Migration(5, 6) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
             """
             CREATE TABLE IF NOT EXISTS NoteCustomBackgrounds (
                 id TEXT NOT NULL PRIMARY KEY,
@@ -157,14 +160,14 @@ private val MIGRATION_5_6 = object : Migration(5, 6) {
     }
 }
 private val MIGRATION_6_7 = object : Migration(6, 7) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("ALTER TABLE Notes ADD COLUMN text_alignment INTEGER")
-        db.execSQL("ALTER TABLE Notes ADD COLUMN line_height_multiplier REAL")
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN text_alignment INTEGER")
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN line_height_multiplier REAL")
     }
 }
 private val MIGRATION_7_8 = object : Migration(7, 8) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
             """
             CREATE TABLE IF NOT EXISTS CustomStickers (
                 id TEXT NOT NULL PRIMARY KEY,
@@ -181,8 +184,8 @@ private val MIGRATION_7_8 = object : Migration(7, 8) {
 }
 
 private val MIGRATION_8_9 = object : Migration(8, 9) {
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL(
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
             """
             CREATE TABLE IF NOT EXISTS Reminders (
                 id TEXT NOT NULL PRIMARY KEY,

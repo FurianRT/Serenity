@@ -1,9 +1,9 @@
 package com.furianrt.storage.internal.database.notes.dao
 
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
+import androidx.room3.Dao
+import androidx.room3.Delete
+import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 
 @Dao

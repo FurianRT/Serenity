@@ -1,8 +1,8 @@
 package com.furianrt.storage.internal.database.notes.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
+import androidx.room3.ColumnInfo
+import androidx.room3.Entity
+import androidx.room3.ForeignKey
 
 @Entity(
     tableName = EntryNoteToTag.TABLE_NAME,

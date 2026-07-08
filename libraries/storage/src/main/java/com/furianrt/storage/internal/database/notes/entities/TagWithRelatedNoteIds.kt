@@ -1,7 +1,7 @@
 package com.furianrt.storage.internal.database.notes.entities
 
-import androidx.room.Embedded
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Relation
 
 internal class TagWithRelatedNoteIds(
     @Embedded
@@ -9,8 +9,8 @@ internal class TagWithRelatedNoteIds(
 
     @Relation(
         entity = EntryNoteToTag::class,
-        entityColumn = EntryNoteToTag.FIELD_TAG_TITLE,
-        parentColumn = EntryNoteTag.FIELD_TITLE,
+        entityColumns = [EntryNoteToTag.FIELD_TAG_TITLE],
+        parentColumns = [EntryNoteTag.FIELD_TITLE],
     )
     val notesIds: List<EntryNoteToTag>,
 )

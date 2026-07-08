@@ -1,8 +1,8 @@
 package com.furianrt.storage.internal.database.notes.entities
 
-import androidx.room.Embedded
-import androidx.room.Junction
-import androidx.room.Relation
+import androidx.room3.Embedded
+import androidx.room3.Junction
+import androidx.room3.Relation
 
 internal class LinkedNote(
     @Embedded
@@ -10,48 +10,48 @@ internal class LinkedNote(
 
     @Relation(
         entity = EntryNoteImage::class,
-        entityColumn = EntryNoteImage.FIELD_NOTE_ID,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteImage.FIELD_NOTE_ID],
+        parentColumns = [EntryNote.FIELD_ID],
     )
     val images: List<EntryNoteImage>,
 
     @Relation(
         entity = EntryNoteVideo::class,
-        entityColumn = EntryNoteImage.FIELD_NOTE_ID,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteImage.FIELD_NOTE_ID],
+        parentColumns = [EntryNote.FIELD_ID],
     )
     val videos: List<EntryNoteVideo>,
 
     @Relation(
         entity = EntryNoteVoice::class,
-        entityColumn = EntryNoteVoice.FIELD_NOTE_ID,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteVoice.FIELD_NOTE_ID],
+        parentColumns = [EntryNote.FIELD_ID],
     )
     val voices: List<EntryNoteVoice>,
 
     @Relation(
         entity = EntryNoteTag::class,
-        entityColumn = EntryNoteTag.FIELD_TITLE,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteTag.FIELD_TITLE],
+        parentColumns = [EntryNote.FIELD_ID],
         associateBy = Junction(
             value = EntryNoteToTag::class,
-            entityColumn = EntryNoteToTag.FIELD_TAG_TITLE,
-            parentColumn = EntryNoteToTag.FIELD_NOTE_ID,
+            entityColumns = [EntryNoteToTag.FIELD_TAG_TITLE],
+            parentColumns = [EntryNoteToTag.FIELD_NOTE_ID],
         ),
     )
     val tags: List<EntryNoteTag>,
 
     @Relation(
         entity = EntryNoteSticker::class,
-        entityColumn = EntryNoteSticker.FIELD_NOTE_ID,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteSticker.FIELD_NOTE_ID],
+        parentColumns = [EntryNote.FIELD_ID],
     )
     val stickers: List<EntryNoteSticker>,
 
     @Relation(
         entity = EntryNoteLocation::class,
-        entityColumn = EntryNoteLocation.FIELD_NOTE_ID,
-        parentColumn = EntryNote.FIELD_ID,
+        entityColumns = [EntryNoteLocation.FIELD_NOTE_ID],
+        parentColumns = [EntryNote.FIELD_ID],
     )
     val location: EntryNoteLocation?,
 )

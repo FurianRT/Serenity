@@ -9,4 +9,5 @@ plugins {
     alias(libs.plugins.gms) apply false
     alias(libs.plugins.crashlyticsPlugin) apply false
     alias(libs.plugins.performancePlugin) apply false
+    alias(libs.plugins.room) apply false
 }

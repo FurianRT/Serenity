@@ -13,7 +13,7 @@ performancePlugin = "2.0.2"
 coreKtx = "1.19.0"
 lifecycle = "2.11.0"
 
-composeBom = "2026.06.00"
+composeBom = "2026.06.01"
 composeActivity = "1.13.0"
 composeNavigation = "2.9.8"
 
@@ -25,10 +25,10 @@ reorderableLists = "3.1.0"
 
 coroutines = "1.11.0"
 
-room = "2.8.4"
+room = "3.0.0"
 
-hilt = "2.60"
-hiltX = "1.3.0"
+hilt = "2.60.1"
+hiltX = "1.4.0"
 
 lottie = "6.7.1"
 
@@ -38,7 +38,7 @@ kotlinxSerializationJson = "1.11.0"
 
 blur = "1.7.2"
 
-zoom = "1.4.0"
+zoom = "1.5.0"
 
 exoplayer = "1.10.1"
 
@@ -74,7 +74,7 @@ firebaseBom = "34.15.0"
 kolor = "4.1.1"
 palette = "1.0.0"
 
-timePicker = "1.3.2"
+timePicker = "1.3.3"
 kotlinDatetime = "0.8.0"
 
 [libraries]
@@ -106,10 +106,8 @@ coroutinesAndroid = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android
 
 kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 
-
-room = { module = "androidx.room:room-ktx", version.ref = "room" }
-roomRuntime = { module = "androidx.room:room-runtime", version.ref = "room" }
-roomCompiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+roomRuntime = { module = "androidx.room3:room3-runtime", version.ref = "room" }
+roomCompiler = { module = "androidx.room3:room3-compiler", version.ref = "room" }
 
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
 hiltNavigation = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltX" }
@@ -185,3 +183,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 crashlyticsPlugin = { id = "com.google.firebase.crashlytics", version.ref = "crashlyticsPlugin" }
 performancePlugin = { id = "com.google.firebase.firebase-perf", version.ref = "performancePlugin" }
+room = { id = "androidx.room3", version.ref = "room" }
