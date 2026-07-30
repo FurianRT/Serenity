@@ -64,7 +64,7 @@ internal class SharedMediaSource @Inject constructor(
                 values.put(MediaStore.Images.Media.IS_PENDING, 0)
                 resolver.update(uri, values, null, null)
                 true
-            } catch (e: IOException) {
+            } catch (e: Exception) {
                 errorTracker.trackNonFatalError(e)
                 resolver.delete(uri, null, null)
                 false
