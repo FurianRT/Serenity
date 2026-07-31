@@ -23,6 +23,7 @@
     <string name="action_close">Închide</string>
     <string name="action_fix">Remediază</string>
     <string name="action_disable">Dezactivează</string>
+    <string name="action_export_pdf">Exportă în PDF</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Temă</string>

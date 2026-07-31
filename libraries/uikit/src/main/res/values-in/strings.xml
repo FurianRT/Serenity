@@ -23,6 +23,7 @@
     <string name="action_close">Tutup</string>
     <string name="action_fix">Perbaiki</string>
     <string name="action_disable">Nonaktifkan</string>
+    <string name="action_export_pdf">Ekspor ke PDF</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Tema</string>

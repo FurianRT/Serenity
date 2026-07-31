@@ -40,11 +40,12 @@ internal fun Toolbar(
     isPinned: Boolean,
     dropDownHazeState: HazeState,
     modifier: Modifier = Modifier,
+    showActionButtons: Boolean = true,
     onEditClick: () -> Unit = {},
     onBackButtonClick: () -> Unit = {},
     onDateClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
-    onShareClick: () -> Unit = {},
+    onExportPdfClick: () -> Unit = {},
     onPinClick: () -> Unit = {},
 ) {
     var showDropDownMenu by remember { mutableStateOf(false) }
@@ -62,33 +63,35 @@ internal fun Toolbar(
                 onClick = onDateClick,
             )
         }
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            ButtonBack(
-                modifier = Modifier.padding(start = 4.dp),
-                onClick = onBackButtonClick,
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            ButtonEditAndDone(
-                edit = isInEditMode,
-                onClick = onEditClick,
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Box {
-                ButtonMenu(onClick = { showDropDownMenu = true })
-                Menu(
-                    expanded = showDropDownMenu,
-                    isPinned = isPinned,
-                    hazeState = dropDownHazeState,
-                    onDeleteClick = onDeleteClick,
-                    onShareClick = onShareClick,
-                    onPinClick = onPinClick,
-                    onDismissRequest = { showDropDownMenu = false },
+        if (showActionButtons) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                ButtonBack(
+                    modifier = Modifier.padding(start = 4.dp),
+                    onClick = onBackButtonClick,
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                ButtonEditAndDone(
+                    edit = isInEditMode,
+                    onClick = onEditClick,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Box {
+                    ButtonMenu(onClick = { showDropDownMenu = true })
+                    Menu(
+                        expanded = showDropDownMenu,
+                        isPinned = isPinned,
+                        hazeState = dropDownHazeState,
+                        onDeleteClick = onDeleteClick,
+                        onExportPdfClick = onExportPdfClick,
+                        onPinClick = onPinClick,
+                        onDismissRequest = { showDropDownMenu = false },
+                    )
+                }
+                Spacer(modifier = Modifier.width(4.dp))
             }
-            Spacer(modifier = Modifier.width(4.dp))
         }
     }
 }

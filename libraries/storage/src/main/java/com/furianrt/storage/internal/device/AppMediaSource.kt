@@ -3,6 +3,7 @@ package com.furianrt.storage.internal.device
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfDocument
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.core.content.FileProvider
@@ -15,6 +16,7 @@ import com.furianrt.storage.BuildConfig
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -23,6 +25,7 @@ private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
 private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
 private const val STICKERS_FOLDER = "stickers"
+private const val EXPORT_FOLDER = "export"
 private const val IMAGE_COMPRESS_AMOUNT = 50
 private const val BACKGROUND_COMPRESS_AMOUNT = 40
 private const val STICKER_COMPRESS_AMOUNT = 30
@@ -269,11 +272,92 @@ internal class AppMediaSource @Inject constructor(
         }
     }
 
+    suspend fun createTempPdfFile(
+        title: String,
+        bitmaps: List<Bitmap>,
+    ): Uri? = withContext(dispatchers.io) {
+        File(context.cacheDir, EXPORT_FOLDER).deleteRecursively()
+        createCacheFile(folder = "$EXPORT_FOLDER/$title.pdf")?.let { file ->
+            bitmaps.toPdf(file)
+            getRelativeUri(file)
+        }
+    }
+
+    suspend fun clearCache() = withContext(dispatchers.io) {
+        context.cacheDir.deleteRecursively()
+    }
+
+    private suspend fun List<Bitmap>.toPdf(
+        outputFile: File,
+    ) = withContext(dispatchers.io) {
+        if (isEmpty()) return@withContext
+
+        val document = PdfDocument()
+        try {
+            forEachIndexed { index, bitmap ->
+                if (bitmap.isRecycled) return@forEachIndexed
+
+                val pageInfo = PdfDocument.PageInfo.Builder(
+                    bitmap.width,
+                    bitmap.height,
+                    index + 1,
+                ).create()
+
+                val page = document.startPage(pageInfo)
+
+                val softwareBitmap = if (bitmap.config == Bitmap.Config.HARDWARE) {
+                    bitmap.copy(Bitmap.Config.ARGB_8888, false)
+                } else {
+                    bitmap
+                }
+
+                try {
+                    page.canvas.drawBitmap(softwareBitmap, 0f, 0f, null)
+                } finally {
+                    document.finishPage(page)
+                    if (softwareBitmap != bitmap) {
+                        softwareBitmap.recycle()
+                    }
+                }
+            }
+
+            FileOutputStream(outputFile).buffered().use(document::writeTo)
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+        } finally {
+            document.close()
+        }
+    }
+
+
     private suspend fun createFile(
         folder: String,
     ): File? = withContext(dispatchers.io) {
         try {
             val file = File(context.filesDir, folder)
+
+            file.parentFile?.mkdirs()
+
+            if (file.exists()) {
+                file.delete()
+            }
+
+            if (file.createNewFile()) {
+                return@withContext file
+            } else {
+                throw IOException("Can't create file")
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            null
+        }
+    }
+
+    private suspend fun createCacheFile(
+        folder: String,
+    ): File? = withContext(dispatchers.io) {
+        try {
+            val file = File(context.cacheDir, folder)
 
             file.parentFile?.mkdirs()
 

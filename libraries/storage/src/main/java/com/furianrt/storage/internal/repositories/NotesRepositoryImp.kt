@@ -29,6 +29,7 @@ import com.furianrt.storage.internal.database.notes.mappers.toEntryTextAlignment
 import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import com.furianrt.storage.internal.database.notes.mappers.toSimpleNote
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
+import com.furianrt.storage.internal.workers.CacheCleanupWorker
 import com.furianrt.storage.internal.workers.DatabaseCleanupWorker
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -256,5 +257,9 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun enqueuePeriodicCleanup() {
         DatabaseCleanupWorker.enqueuePeriodic(context)
+    }
+
+    override fun enqueuePeriodicCacheCleanup() {
+        CacheCleanupWorker.enqueuePeriodic(context)
     }
 }

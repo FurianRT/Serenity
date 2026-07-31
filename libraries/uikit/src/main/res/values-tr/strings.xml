@@ -23,6 +23,7 @@
     <string name="action_close">Kapat</string>
     <string name="action_fix">Düzelt</string>
     <string name="action_disable">Devre dışı bırak</string>
+    <string name="action_export_pdf">PDF olarak dışa aktar</string>
 
     <string name="title_email">E-posta</string>
     <string name="title_theme">Tema</string>

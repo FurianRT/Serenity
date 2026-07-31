@@ -1,0 +1,57 @@
+package com.furianrt.storage.internal.workers
+
+import android.content.Context
+import androidx.hilt.work.HiltWorker
+import androidx.work.Constraints
+import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
+import androidx.work.WorkerParameters
+import com.furianrt.common.ErrorTracker
+import com.furianrt.domain.repositories.MediaRepository
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
+import java.util.concurrent.TimeUnit
+
+private const val WORK_NAME_PERIODIC = "CacheCleanupPeriodic"
+
+@HiltWorker
+internal class CacheCleanupWorker @AssistedInject constructor(
+    private val mediaRepository: MediaRepository,
+    private val errorTracker: ErrorTracker,
+    @Assisted appContext: Context,
+    @Assisted params: WorkerParameters,
+) : CoroutineWorker(appContext, params) {
+
+    companion object {
+        fun enqueuePeriodic(context: Context) {
+            val constraints = Constraints.Builder()
+                .setRequiresDeviceIdle(true)
+                .build()
+
+            val workRequest = PeriodicWorkRequest.Builder(
+                workerClass = CacheCleanupWorker::class.java,
+                repeatInterval = 1,
+                repeatIntervalTimeUnit = TimeUnit.DAYS,
+            )
+                .setConstraints(constraints)
+                .setInitialDelay(duration = 1, timeUnit = TimeUnit.DAYS)
+                .build()
+
+            WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+                uniqueWorkName = WORK_NAME_PERIODIC,
+                existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
+                request = workRequest,
+            )
+        }
+    }
+
+    override suspend fun doWork(): Result = try {
+        mediaRepository.clearCache()
+        Result.success()
+    } catch (e: Exception) {
+        errorTracker.trackNonFatalError(e)
+        Result.success()
+    }
+}

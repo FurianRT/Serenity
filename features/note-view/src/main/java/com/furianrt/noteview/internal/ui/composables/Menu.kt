@@ -29,7 +29,7 @@ internal fun Menu(
     isPinned: Boolean,
     hazeState: HazeState,
     onDeleteClick: () -> Unit = {},
-    onShareClick: () -> Unit = {},
+    onExportPdfClick: () -> Unit = {},
     onPinClick: () -> Unit = {},
     onDismissRequest: () -> Unit = {},
 ) {
@@ -77,14 +77,14 @@ internal fun Menu(
                 onDismissRequest()
             },
         )
-       /* MenuItem(
-            icon = painterResource(uiR.drawable.ic_share),
-            text = stringResource(uiR.string.action_share),
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_export_file),
+            text = stringResource(uiR.string.action_export_pdf),
             onClick = {
-                onShareClick()
+                onExportPdfClick()
                 onDismissRequest()
             },
-        )*/
+        )
         MenuItem(
             icon = painterResource(uiR.drawable.ic_delete),
             text = stringResource(uiR.string.action_delete),

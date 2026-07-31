@@ -82,6 +82,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     @OptIn(DelicateCoroutinesApi::class)
     private suspend fun startPeriodicWorks() = withContext(dispatchers.io) {
         notesRepository.enqueuePeriodicCleanup()
+        notesRepository.enqueuePeriodicCacheCleanup()
         syncManager.tryStartAutoBackup()
     }
 

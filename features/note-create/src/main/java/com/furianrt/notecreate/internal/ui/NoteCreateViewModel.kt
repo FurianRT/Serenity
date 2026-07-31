@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
 import com.furianrt.notelistui.extensions.toNoteFont
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
@@ -46,6 +48,7 @@ internal class NoteCreateViewModel @Inject constructor(
     dispatchers: DispatchersProvider,
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
+    private val mediaRepository: MediaRepository,
     private val noteThemeProvider: NoteThemeProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
@@ -122,6 +125,7 @@ internal class NoteCreateViewModel @Inject constructor(
 
             is NoteCreateEvent.OnConfirmDeleteClick -> launch { deleteNote() }
             is NoteCreateEvent.OnPinClick -> launch { toggleNotePinnedState() }
+            is NoteCreateEvent.OnExportPdfClick -> onExportPdfClick()
         }
     }
 
@@ -133,6 +137,24 @@ internal class NoteCreateViewModel @Inject constructor(
                     date = ZonedDateTime.of(date, LocalTime.now(), ZoneId.systemDefault()),
                 )
             }
+        }
+    }
+
+    private fun onExportPdfClick() {
+        disableEditMode()
+        (state.value as? NoteCreateUiState.Success)?.let  { successState ->
+            val effect = NoteCreateEffect.CaptureNoteScreenContent(
+                onCaptured = { bitmaps ->
+                    val uri = mediaRepository.createTempPdfFile(
+                        title = successState.note.date.toDateString(),
+                        bitmaps = bitmaps,
+                    )
+                    if (uri != null) {
+                        _effect.tryEmit(NoteCreateEffect.SharePdfFile(uri))
+                    }
+                },
+            )
+            _effect.tryEmit(effect)
         }
     }
 
@@ -163,6 +185,10 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private fun enableEditMode() {
         isInEditModeState.update { true }
+    }
+
+    private fun disableEditMode() {
+        isInEditModeState.update { false }
     }
 
     private suspend fun toggleNotePinnedState() {

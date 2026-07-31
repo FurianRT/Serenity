@@ -78,6 +78,13 @@ interface MediaRepository {
 
     suspend fun saveAllMedia()
 
+    suspend fun createTempPdfFile(
+        title: String,
+        bitmaps: List<Bitmap>,
+    ): Uri?
+
+    suspend fun clearCache()
+
     companion object {
         const val CAMERA_PICTURE_NAME = "camera_photo.jpg"
     }

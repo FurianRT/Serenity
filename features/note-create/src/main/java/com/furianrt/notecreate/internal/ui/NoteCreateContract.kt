@@ -1,5 +1,7 @@
 package com.furianrt.notecreate.internal.ui
 
+import android.graphics.Bitmap
+import android.net.Uri
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.uikit.theme.NoteFont
 import java.time.LocalDate
@@ -25,6 +27,7 @@ internal sealed interface NoteCreateEvent {
     data object OnPinClick : NoteCreateEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteCreateEvent
     data class OnDateSelected(val date: LocalDate) : NoteCreateEvent
+    data object OnExportPdfClick : NoteCreateEvent
 }
 
 internal sealed interface NoteCreateEffect {
@@ -35,4 +38,9 @@ internal sealed interface NoteCreateEffect {
     ) : NoteCreateEffect
 
     data object ShowDeleteConfirmationDialog : NoteCreateEffect
+    data class CaptureNoteScreenContent(
+        val onCaptured: suspend (pages: List<Bitmap>) -> Unit,
+    ) : NoteCreateEffect
+
+    data class SharePdfFile(val uri: Uri) : NoteCreateEffect
 }

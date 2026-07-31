@@ -254,4 +254,13 @@ internal class MediaRepositoryImp @Inject constructor(
     override suspend fun saveAllMedia() {
         mediaSaver.saveAll()
     }
+
+    override suspend fun createTempPdfFile(
+        title: String,
+        bitmaps: List<Bitmap>,
+    ): Uri? = appMediaSource.createTempPdfFile(title, bitmaps)
+
+    override suspend fun clearCache() {
+        appMediaSource.clearCache()
+    }
 }

@@ -1,6 +1,10 @@
 package com.furianrt.notecreate.internal.ui
 
+import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -10,18 +14,29 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.rememberGraphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -37,8 +52,11 @@ import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.MovableToolbarState
+import com.furianrt.uikit.components.PendingView
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
+import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalFont
@@ -47,15 +65,19 @@ import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
 import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZonedDateTime
+import kotlin.time.Duration.Companion.milliseconds
+import com.furianrt.uikit.R as uiR
 
 @Immutable
 private data class CalendarState(
@@ -74,13 +96,22 @@ internal fun NoteCreateScreen(
     val viewModel: NoteCreateViewModel = hiltViewModel()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     val pageScreenState = rememberPageScreenState()
     var calendarDialogState: CalendarState? by remember { mutableStateOf(null) }
     val hazeState = rememberHazeState()
     val focusManager = LocalFocusManager.current
+    val snackBarHostState = remember { SnackbarHostState() }
+    val toolbarState = rememberMovableToolbarState()
+
+    val generalErrorMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+
+    val graphicsLayer = rememberGraphicsLayer()
+    var exportRedrawTrigger by remember { mutableIntStateOf(0) }
+    var isPdfExportInProgress by remember { mutableStateOf(false) }
 
     var showDeleteConfirmationDialog by remember { mutableStateOf(false) }
 
@@ -104,6 +135,56 @@ internal fun NoteCreateScreen(
                     is NoteCreateEffect.ShowDeleteConfirmationDialog -> {
                         showDeleteConfirmationDialog = true
                     }
+
+                    is NoteCreateEffect.CaptureNoteScreenContent -> {
+                        isPdfExportInProgress = true
+                        val bitmaps = mutableListOf<Bitmap>()
+                        val scrollState = pageScreenState.listState
+                        val pageSize = scrollState.viewportSize
+                        val totalScroll = scrollState.maxValue
+                        var currentScroll = 0
+                        toolbarState.showBlur = false
+                        delay(500.milliseconds)
+                        while (currentScroll < totalScroll && bitmaps.size < 40) {
+                            if (currentScroll > 0) {
+                                toolbarState.isHidden = true
+                            }
+                            scrollState.scrollTo(currentScroll)
+                            exportRedrawTrigger++
+                            delay(50.milliseconds)
+                            bitmaps.add(graphicsLayer.toImageBitmap().asAndroidBitmap())
+                            currentScroll += pageSize
+                        }
+                        scrollState.scrollTo(currentScroll)
+                        exportRedrawTrigger++
+                        delay(50.milliseconds)
+                        val lastBitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                        val cropped = Bitmap.createBitmap(
+                            lastBitmap,
+                            0,
+                            currentScroll - totalScroll,
+                            lastBitmap.width,
+                            lastBitmap.height - currentScroll + totalScroll
+                        )
+                        bitmaps.add(cropped)
+                        toolbarState.isHidden = false
+                        toolbarState.showBlur = true
+                        scrollState.scrollTo(0)
+                        effect.onCaptured(bitmaps)
+                        isPdfExportInProgress = false
+                    }
+                    is NoteCreateEffect.SharePdfFile -> IntentCreator.pdfShareIntent(effect.uri)
+                        .onSuccess { intent ->
+                            context.startActivity(intent)
+                        }
+                        .onFailure { error ->
+                            error.printStackTrace()
+                            snackBarHostState.currentSnackbarData?.dismiss()
+                            snackBarHostState.showSnackbar(
+                                message = generalErrorMessage,
+                                duration = SnackbarDuration.Short,
+                            )
+                        }
                 }
             }
     }
@@ -128,10 +209,22 @@ internal fun NoteCreateScreen(
     ) {
         when (val state = uiState) {
             is NoteCreateUiState.Success -> SuccessContent(
-                modifier = Modifier.hazeSource(hazeState),
+                modifier = Modifier
+                    .hazeSource(hazeState)
+                    .drawWithContent {
+                        if (isPdfExportInProgress && exportRedrawTrigger >= 0) {
+                            graphicsLayer.record {
+                                this@drawWithContent.drawContent()
+                            }
+                        }
+                        drawContent()
+                    },
                 state = pageScreenState,
                 uiState = state,
                 hazeState = hazeState,
+                toolbarState = toolbarState,
+                snackBarHostState = snackBarHostState,
+                showToolbarActions = !isPdfExportInProgress,
                 onEvent = viewModel::onEvent,
                 notePage = {
                     NotePageScreen(
@@ -173,6 +266,16 @@ internal fun NoteCreateScreen(
                 onDismissRequest = { showDeleteConfirmationDialog = false },
             )
         }
+
+        AnimatedVisibility(
+            visible = isPdfExportInProgress,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            PendingView(
+                modifier = Modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
@@ -181,14 +284,16 @@ internal fun NoteCreateScreen(
 private fun SuccessContent(
     state: PageScreenState,
     uiState: NoteCreateUiState.Success,
+    snackBarHostState: SnackbarHostState,
+    toolbarState: MovableToolbarState,
     hazeState: HazeState,
+    showToolbarActions: Boolean,
     onEvent: (event: NoteCreateEvent) -> Unit,
     notePage: @Composable () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
-    val toolbarState = rememberMovableToolbarState()
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
@@ -226,6 +331,7 @@ private fun SuccessContent(
                 isPinned = uiState.note.isPinned,
                 date = date,
                 dropDownHazeState = hazeState,
+                showActionButtons = showToolbarActions,
                 onEditClick = { onEvent(NoteCreateEvent.OnButtonEditClick) },
                 onBackButtonClick = {
                     focusManager.clearFocus()
@@ -234,9 +340,23 @@ private fun SuccessContent(
                 onDateClick = { onEvent(NoteCreateEvent.OnButtonDateClick) },
                 onDeleteClick = { onEvent(NoteCreateEvent.OnButtonDeleteClick) },
                 onPinClick = { onEvent(NoteCreateEvent.OnPinClick) },
+                onExportPdfClick = { onEvent(NoteCreateEvent.OnExportPdfClick) },
             )
         },
-        content = { notePage() },
+        content = {
+            notePage()
+            SnackbarHost(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                hostState = snackBarHostState,
+                snackbar = { data ->
+                    SnackBar(
+                        title = data.visuals.message,
+                        icon = painterResource(uiR.drawable.ic_error),
+                        tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    )
+                },
+            )
+        },
     )
 }
 
@@ -269,6 +389,9 @@ private fun Preview() {
                 font = LocalFont.current,
             ),
             hazeState = HazeState(),
+            toolbarState = rememberMovableToolbarState(),
+            snackBarHostState = SnackbarHostState(),
+            showToolbarActions = true,
             onEvent = {},
             notePage = { Box(Modifier.fillMaxSize()) },
         )

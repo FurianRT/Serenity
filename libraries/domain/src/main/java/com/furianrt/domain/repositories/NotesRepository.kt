@@ -60,4 +60,5 @@ interface NotesRepository {
 
     fun enqueueOneTimeCleanup()
     fun enqueuePeriodicCleanup()
+    fun enqueuePeriodicCacheCleanup()
 }

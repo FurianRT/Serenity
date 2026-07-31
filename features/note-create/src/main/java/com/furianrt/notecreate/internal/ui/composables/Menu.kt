@@ -23,6 +23,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @Composable
 internal fun Menu(
@@ -30,6 +31,7 @@ internal fun Menu(
     isPinned: Boolean,
     dropDownHazeState: HazeState,
     onPinClick: () -> Unit,
+    onExportPdfClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
@@ -75,9 +77,17 @@ internal fun Menu(
             onClick = {
                 onDismissRequest()
                 scope.launch {
-                    delay(150)
+                    delay(150.milliseconds)
                     onPinClick()
                 }
+            },
+        )
+        MenuItem(
+            icon = painterResource(uiR.drawable.ic_export_file),
+            text = stringResource(uiR.string.action_export_pdf),
+            onClick = {
+                onExportPdfClick()
+                onDismissRequest()
             },
         )
         MenuItem(
@@ -100,6 +110,7 @@ private fun Preview() {
             isPinned = false,
             dropDownHazeState = HazeState(),
             onDismissRequest = {},
+            onExportPdfClick = {},
             onDeleteClick = {},
             onPinClick = {},
         )

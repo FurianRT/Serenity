@@ -77,6 +77,10 @@ class MovableToolbarState {
 
     private var onExpandRequest: (duration: Int) -> Unit = {}
 
+    var isHidden by mutableStateOf(false)
+
+    var showBlur by mutableStateOf(true)
+
     fun setExpandRequestListener(callback: (duration: Int) -> Unit) {
         onExpandRequest = callback
     }
@@ -230,54 +234,56 @@ fun MovableToolbarScaffold(
             },
             content = { content(toolbarHeight.pxToDp()) },
         )
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .fillMaxWidth()
-                .fadingBottomEdge()
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(Color.Transparent),
-                        blurRadius = 4.dp,
-                    )
-                )
-                .padding(12.dp)
-                .windowInsetsTopHeight(WindowInsets.statusBars),
-        )
-        Box(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .graphicsLayer { translationY = toolbarOffset }
-                .onSizeChanged { toolbarHeight = it.height.toFloat() },
-        ) {
-            AnimatedVisibility(
-                modifier = Modifier.matchParentSize(),
-                visible = showBlur,
-                enter = fadeIn(tween(durationMillis = 200, easing = LinearEasing)),
-                exit = fadeOut(tween(durationMillis = 200, easing = LinearEasing)),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .hazeEffect(
-                            state = hazeState,
-                            style = HazeDefaults.style(
-                                backgroundColor = MaterialTheme.colorScheme.surface,
-                                tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = blurAlpha)),
-                                noiseFactor = 0f,
-                                blurRadius = blurRadius,
-                            )
+        if (!state.isHidden) {
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .fillMaxWidth()
+                    .fadingBottomEdge()
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            tint = HazeTint(Color.Transparent),
+                            blurRadius = 4.dp,
                         )
-                        .drawBehind {
-                            if (showShadow) {
-                                drawBottomShadow(color = shadowColor)
+                    )
+                    .padding(12.dp)
+                    .windowInsetsTopHeight(WindowInsets.statusBars),
+            )
+            Box(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .graphicsLayer { translationY = toolbarOffset }
+                    .onSizeChanged { toolbarHeight = it.height.toFloat() },
+            ) {
+                AnimatedVisibility(
+                    modifier = Modifier.matchParentSize(),
+                    visible = showBlur && state.showBlur,
+                    enter = fadeIn(tween(durationMillis = 200, easing = LinearEasing)),
+                    exit = fadeOut(tween(durationMillis = 200, easing = LinearEasing)),
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .hazeEffect(
+                                state = hazeState,
+                                style = HazeDefaults.style(
+                                    backgroundColor = MaterialTheme.colorScheme.surface,
+                                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = blurAlpha)),
+                                    noiseFactor = 0f,
+                                    blurRadius = blurRadius,
+                                )
+                            )
+                            .drawBehind {
+                                if (showShadow) {
+                                    drawBottomShadow(color = shadowColor)
+                                }
                             }
-                        }
-                )
+                    )
+                }
+                toolbar()
             }
-            toolbar()
         }
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.TopCenter),

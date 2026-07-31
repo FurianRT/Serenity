@@ -42,8 +42,10 @@ internal fun Toolbar(
     onBackButtonClick: () -> Unit,
     onDateClick: () -> Unit,
     onDeleteClick: () -> Unit,
+    onExportPdfClick: () -> Unit,
     onPinClick: () -> Unit,
     modifier: Modifier = Modifier,
+    showActionButtons: Boolean = true,
 ) {
     var showDropDownMenu by remember { mutableStateOf(false) }
     Box(
@@ -54,36 +56,41 @@ internal fun Toolbar(
             .systemGestureExclusion(),
         contentAlignment = Alignment.Center,
     ) {
-        ButtonBack(
-            modifier = Modifier.align(Alignment.CenterStart),
-            onClick = onBackButtonClick,
-        )
+        if (showActionButtons) {
+            ButtonBack(
+                modifier = Modifier.align(Alignment.CenterStart),
+                onClick = onBackButtonClick,
+            )
+        }
         DateLabel(
             date = date,
             showBackground = isInEditMode,
             onClick = onDateClick,
         )
-        Row(
-            modifier = Modifier.align(Alignment.CenterEnd),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            ButtonEditAndDone(
-                edit = isInEditMode,
-                onClick = onEditClick,
-            )
-            Box {
-                ButtonMenu(
-                    onClick = { showDropDownMenu = true },
+        if (showActionButtons) {
+            Row(
+                modifier = Modifier.align(Alignment.CenterEnd),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                ButtonEditAndDone(
+                    edit = isInEditMode,
+                    onClick = onEditClick,
                 )
-                Menu(
-                    expanded = showDropDownMenu,
-                    isPinned = isPinned,
-                    dropDownHazeState = dropDownHazeState,
-                    onDeleteClick = onDeleteClick,
-                    onPinClick = onPinClick,
-                    onDismissRequest = { showDropDownMenu = false },
-                )
+                Box {
+                    ButtonMenu(
+                        onClick = { showDropDownMenu = true },
+                    )
+                    Menu(
+                        expanded = showDropDownMenu,
+                        isPinned = isPinned,
+                        dropDownHazeState = dropDownHazeState,
+                        onDeleteClick = onDeleteClick,
+                        onExportPdfClick = onExportPdfClick,
+                        onPinClick = onPinClick,
+                        onDismissRequest = { showDropDownMenu = false },
+                    )
+                }
             }
         }
     }
@@ -128,6 +135,7 @@ private fun ToolbarPreview() {
             onBackButtonClick = {},
             onDateClick = {},
             onDeleteClick = {},
+            onExportPdfClick = {},
             onPinClick = {},
         )
     }
@@ -146,6 +154,7 @@ private fun ToolbarPreviewEditMode() {
             onBackButtonClick = {},
             onDateClick = {},
             onDeleteClick = {},
+            onExportPdfClick = {},
             onPinClick = {},
         )
     }

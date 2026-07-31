@@ -1,6 +1,9 @@
 package com.furianrt.noteview.internal.ui
 
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.runtime.Immutable
+import com.furianrt.notepage.api.PageScreenState
 import com.furianrt.noteview.internal.ui.entites.NoteItem
 import com.furianrt.uikit.theme.NoteFont
 import java.time.LocalDate
@@ -37,6 +40,7 @@ internal sealed interface NoteViewEvent {
     data class OnPinClick(val noteId: String, val isPinned: Boolean) : NoteViewEvent
     data class OnContentChanged(val isChanged: Boolean) : NoteViewEvent
     data class OnDateSelected(val date: LocalDate) : NoteViewEvent
+    data class OnExportPdfClick(val noteId: String) : NoteViewEvent
 }
 
 internal sealed interface NoteViewEffect {
@@ -48,4 +52,10 @@ internal sealed interface NoteViewEffect {
 
     data class ShowDeleteConfirmationDialog(val noteId: String) : NoteViewEffect
     data class ShowSyncProgressMessage(val message: String) : NoteViewEffect
+    data class CaptureNoteScreenContent(
+        val pageState: PageScreenState,
+        val onCaptured: suspend (pages: List<Bitmap>) -> Unit,
+    ) : NoteViewEffect
+
+    data class SharePdfFile(val uri: Uri) : NoteViewEffect
 }

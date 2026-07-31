@@ -36,4 +36,13 @@ object IntentCreator {
         }
         Intent.createChooser(intent, null)
     }
+
+    fun pdfShareIntent(uri: Uri): Result<Intent> = runCatching {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/pdf"
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+            putExtra(Intent.EXTRA_STREAM, uri)
+        }
+        Intent.createChooser(intent, null)
+    }
 }

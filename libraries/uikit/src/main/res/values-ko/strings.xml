@@ -23,6 +23,7 @@
     <string name="action_close">닫기</string>
     <string name="action_fix">수정</string>
     <string name="action_disable">사용 안 함</string>
+    <string name="action_export_pdf">PDF로 내보내기</string>
 
     <string name="title_email">이메일</string>
     <string name="title_theme">테마</string>

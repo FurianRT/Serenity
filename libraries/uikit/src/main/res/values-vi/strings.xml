@@ -23,6 +23,7 @@
     <string name="action_close">Đóng</string>
     <string name="action_fix">Sửa</string>
     <string name="action_disable">Tắt</string>
+    <string name="action_export_pdf">Xuất sang PDF</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Giao diện</string>

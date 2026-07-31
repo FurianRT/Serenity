@@ -23,6 +23,7 @@
     <string name="action_close">बंद करें</string>
     <string name="action_fix">ठीक करें</string>
     <string name="action_disable">बंद करें</string>
+    <string name="action_export_pdf">PDF निर्यात करें</string>
 
     <string name="title_email">ईमेल</string>
     <string name="title_theme">थीम</string>

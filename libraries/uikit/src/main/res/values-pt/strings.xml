@@ -23,6 +23,7 @@
     <string name="action_close">Fechar</string>
     <string name="action_fix">Corrigir</string>
     <string name="action_disable">Desativar</string>
+    <string name="action_export_pdf">Exportar para PDF</string>
 
     <string name="title_email">Correo electrónico</string>
     <string name="title_theme">Tema</string>

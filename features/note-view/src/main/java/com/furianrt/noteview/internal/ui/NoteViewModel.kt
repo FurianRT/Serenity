@@ -10,6 +10,7 @@ import com.furianrt.core.updateState
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
@@ -19,6 +20,7 @@ import com.furianrt.noteview.api.SearchDataType
 import com.furianrt.noteview.internal.ui.extensions.toNoteItem
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
@@ -47,6 +49,7 @@ private const val EXTRA_CURRENT_PAGE = "current_page"
 internal class NoteViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
+    private val mediaRepository: MediaRepository,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val deleteNoteUseCase: DeleteNoteUseCase,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
@@ -91,6 +94,8 @@ internal class NoteViewModel @Inject constructor(
             is NoteViewEvent.OnPageTitleFocused, is NoteViewEvent.OnLocationClick -> {
                 enableEditMode()
             }
+
+            is NoteViewEvent.OnExportPdfClick -> onExportPdfClick(event.noteId)
         }
     }
 
@@ -201,6 +206,25 @@ internal class NoteViewModel @Inject constructor(
 
     private suspend fun toggleNotePinnedState(noteId: String, isPinned: Boolean) {
         notesRepository.updateNoteIsPinned(noteId, !isPinned)
+    }
+
+    private fun onExportPdfClick(noteId: String) {
+        disableEditMode()
+        _state.doWithState<NoteViewUiState.Success> { successState ->
+            val effect = NoteViewEffect.CaptureNoteScreenContent(
+                pageState = pageScreenStatesHolder.states[noteId]!!,
+                onCaptured = { bitmaps ->
+                    val uri = mediaRepository.createTempPdfFile(
+                        title = successState.date.toDateString(),
+                        bitmaps = bitmaps,
+                    )
+                    if (uri != null) {
+                        _effect.tryEmit(NoteViewEffect.SharePdfFile(uri))
+                    }
+                },
+            )
+            _effect.tryEmit(effect)
+        }
     }
 
     private fun onDeleteClick(noteId: String) {

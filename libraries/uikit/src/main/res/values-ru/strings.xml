@@ -24,6 +24,7 @@
     <string name="action_close">Закрыть</string>
     <string name="action_fix">Исправить</string>
     <string name="action_disable">Отключить</string>
+    <string name="action_export_pdf">Экспорт в PDF</string>
 
     <string name="title_email">Электронная почта</string>
     <string name="title_theme">Тема</string>
