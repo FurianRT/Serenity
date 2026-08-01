@@ -40,4 +40,6 @@ dependencies {
 
     implementation(libs.kolor)
     implementation(libs.palette)
+
+    implementation(libs.lottie)
 }

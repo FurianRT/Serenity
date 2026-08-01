@@ -36,7 +36,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.graphics.rememberGraphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
@@ -55,9 +57,9 @@ import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
+import com.furianrt.uikit.components.FileExportProgress
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MovableToolbarState
-import com.furianrt.uikit.components.PendingView
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SingleChoiceCalendar
 import com.furianrt.uikit.components.SnackBar
@@ -113,6 +115,7 @@ internal fun NoteViewScreen(
     val graphicsLayer = rememberGraphicsLayer()
     var exportRedrawTrigger by remember { mutableIntStateOf(0) }
     var isPdfExportInProgress by remember { mutableStateOf(false) }
+    var exportStubBitmap: BitmapPainter? by remember { mutableStateOf(null) }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
@@ -146,16 +149,19 @@ internal fun NoteViewScreen(
                     }
 
                     is NoteViewEffect.CaptureNoteScreenContent -> {
-                        isPdfExportInProgress = true
                         val bitmaps = mutableListOf<Bitmap>()
                         val scrollState = effect.pageState.listState
                         val pageSize = scrollState.viewportSize
                         val totalScroll = scrollState.maxValue
-                        var currentScroll = 0
+                        val defaultScroll = scrollState.value
+                        var currentScroll = 6
+                        isPdfExportInProgress = true
+                        delay(100.milliseconds)
+                        exportStubBitmap = BitmapPainter(graphicsLayer.toImageBitmap())
                         toolbarState.showBlur = false
                         delay(500.milliseconds)
-                        while (currentScroll < totalScroll && bitmaps.size < 40) {
-                            if (currentScroll > 0) {
+                        while (currentScroll < totalScroll && bitmaps.size < 50) {
+                            if (currentScroll > 6) {
                                 toolbarState.isHidden = true
                             }
                             scrollState.scrollTo(currentScroll)
@@ -168,19 +174,22 @@ internal fun NoteViewScreen(
                         exportRedrawTrigger++
                         delay(50.milliseconds)
                         val lastBitmap = graphicsLayer.toImageBitmap().asAndroidBitmap()
+                        val y = (currentScroll - totalScroll).coerceAtLeast(0)
                         val cropped = Bitmap.createBitmap(
                             lastBitmap,
                             0,
-                            currentScroll - totalScroll,
+                            y,
                             lastBitmap.width,
-                            lastBitmap.height - currentScroll + totalScroll
+                            lastBitmap.height - y,
                         )
                         bitmaps.add(cropped)
                         toolbarState.isHidden = false
                         toolbarState.showBlur = true
-                        scrollState.scrollTo(0)
+                        scrollState.scrollTo(defaultScroll)
+                        toolbarState.expand()
                         effect.onCaptured(bitmaps)
                         isPdfExportInProgress = false
+                        exportStubBitmap = null
                     }
 
                     is NoteViewEffect.SharePdfFile -> IntentCreator.pdfShareIntent(effect.uri)
@@ -230,7 +239,7 @@ internal fun NoteViewScreen(
                 },
             uiState = uiState,
             hazeState = hazeState,
-            showToolbarActions = !isPdfExportInProgress,
+            showToolbarActions = exportStubBitmap == null,
             snackBarHostState = snackBarHostState,
             toolbarState = toolbarState,
             onEvent = viewModel::onEvent,
@@ -260,8 +269,8 @@ internal fun NoteViewScreen(
             enter = fadeIn(),
             exit = fadeOut(),
         ) {
-            PendingView(
-                modifier = Modifier.fillMaxSize(),
+            FileExportProgress(
+                modifier = Modifier.then(exportStubBitmap?.let { Modifier.paint(it) } ?: Modifier)
             )
         }
     }
