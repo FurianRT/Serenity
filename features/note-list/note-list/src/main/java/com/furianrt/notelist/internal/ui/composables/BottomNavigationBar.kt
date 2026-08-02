@@ -26,6 +26,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,20 +61,21 @@ internal fun BottomNavigationBar(
     )
 
     val navBarsHeight = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val bottomPadding = remember(contentPadding) { contentPadding.calculateBottomPadding() }
 
     Row(
         modifier = modifier
             .navigationBarsPadding()
             .padding(contentPadding)
             .graphicsLayer {
-                val bottomPadding = contentPadding.calculateBottomPadding().toPx()
-                translationY = (size.height + bottomPadding + navBarsHeight.toPx()) * verticalBias
+                translationY =
+                    (size.height + bottomPadding.toPx() + navBarsHeight.toPx()) * verticalBias
             },
-        verticalAlignment = Alignment.Bottom,
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         ButtonScrollToTop(
-            modifier = Modifier.padding(bottom = 4.dp),
+            modifier = Modifier.padding(top = 4.dp),
             hazeState = hazeState,
             isVisible = needToShowScrollUpButton,
             onClick = onScrollToTopClick,
@@ -148,7 +150,7 @@ private fun ButtonCreateNote(
                 scaleX = scale
                 scaleY = scale
             }
-            .size(56.dp)
+            .size(60.dp)
             .shadow(elevation = 6.dp, shape = CircleShape)
             .clip(CircleShape)
             .hazeEffect(
