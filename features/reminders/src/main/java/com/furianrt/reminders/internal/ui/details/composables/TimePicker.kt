@@ -2,6 +2,7 @@ package com.furianrt.reminders.internal.ui.details.composables
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -9,7 +10,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.uikit.theme.SerenityTheme
@@ -35,12 +35,11 @@ internal fun TimePicker(
         contentAlignment = Alignment.Center,
     ) {
         WheelTimePicker(
+            modifier = Modifier.size(
+                width = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) 190.dp else 280.dp,
+                height = 200.dp,
+            ),
             startTime = startTime.toKotlinLocalTime(),
-            size = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) {
-                DpSize(190.dp, 200.dp)
-            } else {
-                DpSize(280.dp, 200.dp)
-            },
             textStyle = MaterialTheme.typography.titleLarge.copy(
                 fontSize = 38.sp,
                 fontWeight = FontWeight.SemiBold,
