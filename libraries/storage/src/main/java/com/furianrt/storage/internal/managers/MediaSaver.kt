@@ -90,6 +90,7 @@ internal class MediaSaver @Inject constructor(
 
         if (media.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
             appMediaSource.deleteFile(media.uri)
+            appMediaSource.deleteTempMediaFile(media.uri.toString().split("/").last())
         }
 
         if (isEntryCanceled(media.id)) {
@@ -134,6 +135,7 @@ internal class MediaSaver @Inject constructor(
 
         if (background.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
             appMediaSource.deleteFile(background.uri)
+            appMediaSource.deleteTempMediaFile(background.uri.toString().split("/").last())
         }
 
         if (isEntryCanceled(background.id)) {
@@ -167,6 +169,7 @@ internal class MediaSaver @Inject constructor(
 
         if (sticker.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
             appMediaSource.deleteFile(sticker.uri)
+            appMediaSource.deleteTempMediaFile(sticker.uri.toString().split("/").last())
         }
 
         if (isEntryCanceled(sticker.id)) {

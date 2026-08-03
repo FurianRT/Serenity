@@ -92,7 +92,6 @@ fun ActionsPanel(
     background: Color,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
-    onTakePictureClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
@@ -282,10 +281,6 @@ fun ActionsPanel(
                         onSelectMediaClick = {
                             isAttachmentsPanelVisible = false
                             onSelectMediaClick()
-                        },
-                        onTakePictureClick = {
-                            isAttachmentsPanelVisible = false
-                            onTakePictureClick()
                         },
                         onRecordVoiceClick = {
                             isAttachmentsPanelVisible = false

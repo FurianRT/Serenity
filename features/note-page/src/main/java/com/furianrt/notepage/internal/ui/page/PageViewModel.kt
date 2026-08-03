@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.ui.page
 
-import android.net.Uri
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.unit.sp
@@ -13,12 +12,10 @@ import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.entities.NoteTextAlignment
-import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.LocationRepository
-import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.usecase.UpdateNoteContentUseCase
@@ -55,18 +52,13 @@ import com.furianrt.notepage.internal.ui.extensions.toNoteItem
 import com.furianrt.notepage.internal.ui.extensions.toNoteTheme
 import com.furianrt.notepage.internal.ui.extensions.toUiVoice
 import com.furianrt.notepage.internal.ui.page.PageEffect.OpenMediaSelector
-import com.furianrt.notepage.internal.ui.page.PageEffect.RequestCameraPermission
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestLocationPermission
 import com.furianrt.notepage.internal.ui.page.PageEffect.RequestStoragePermissions
-import com.furianrt.notepage.internal.ui.page.PageEffect.ShowCameraPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowLocationPermissionsDeniedDialog
 import com.furianrt.notepage.internal.ui.page.PageEffect.ShowStoragePermissionsDeniedDialog
-import com.furianrt.notepage.internal.ui.page.PageEffect.TakePicture
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnAddLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnAutoDetectLocationClickClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnBackgroundsClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraNotFoundError
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnCameraPermissionSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCancelLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCheckedListChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
@@ -104,8 +96,6 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagFocusChanged
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagRemoveClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextCleared
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTagTextEntered
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnTakePictureClick
-import com.furianrt.notepage.internal.ui.page.PageEvent.OnTakePictureResult
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleFocusChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnTitleTextChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnVoicePlayClick
@@ -144,8 +134,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.File
-import java.time.ZonedDateTime
 import java.util.UUID
 import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
@@ -172,9 +160,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val noteThemeProvider: NoteThemeProvider,
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
-    private val mediaRepository: MediaRepository,
     private val locationRepository: LocationRepository,
-    private val lockAuthorizer: LockAuthorizer,
     private val dispatchers: DispatchersProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
@@ -200,9 +186,6 @@ internal class PageViewModel @AssistedInject constructor(
 
     private var focusFirstTitle = isNoteCreationMode
     private var autoDetectLocation = isNoteCreationMode
-
-    private var cachePhoto: UiNoteContent.MediaBlock.Image? = null
-    private var cachedPhotoFile: File? = null
 
     private var pendingMediaSelectorParams: MediaSelectorState.Params? = null
 
@@ -259,24 +242,11 @@ internal class PageViewModel @AssistedInject constructor(
                 )
             }
 
-            is OnTakePictureClick -> {
-                resetStickersEditing()
-                tryRequestCameraPermissions()
-            }
-
-            is OnCameraPermissionSelected -> tryOpenCamera()
             is OnMediaPermissionsSelected -> pendingMediaSelectorParams?.let { params ->
                 tryOpenMediaSelector(params)
             }
 
             is OnLocationPermissionSelected -> tryDetectNoteLocation()
-            is OnCameraNotFoundError -> _effect.tryEmit(
-                PageEffect.ShowMessage(
-                    message = resourcesManager.getString(uiR.string.error_camera_not_found),
-                )
-            )
-
-            is OnTakePictureResult -> onTakePictureResult(event.isSuccess)
             is OnTitleFocusChange -> {
                 if (event.focused) {
                     resetStickersEditing()
@@ -665,27 +635,11 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun tryRequestCameraPermissions() {
-        if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
-        } else {
-            _effect.tryEmit(RequestCameraPermission)
-        }
-    }
-
     private fun tryRequestLocationPermissions() {
         if (permissionsUtils.hasLocationPermission()) {
             locationJob = launch { detectNoteLocation() }
         } else {
             _effect.tryEmit(RequestLocationPermission)
-        }
-    }
-
-    private fun tryOpenCamera() {
-        if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
-        } else {
-            _effect.tryEmit(ShowCameraPermissionsDeniedDialog)
         }
     }
 
@@ -712,69 +666,6 @@ internal class PageViewModel @AssistedInject constructor(
         _state.updateState<PageUiState.Success> { currentState ->
             currentState.copy(locationState = LocationState.Empty)
         }
-    }
-
-    private suspend fun takePicture() {
-        val uri = createPhotoFile()
-        if (uri != null) {
-            lockAuthorizer.skipNextLock()
-            _effect.tryEmit(TakePicture(uri))
-        } else {
-            _effect.tryEmit(
-                PageEffect.ShowMessage(resourcesManager.getString(uiR.string.general_error)),
-            )
-        }
-    }
-
-    private fun onTakePictureResult(isSuccess: Boolean) = launch {
-        lockAuthorizer.cancelSkipNextLock()
-        val image = cachePhoto
-        val file = cachedPhotoFile
-        if (isSuccess && image != null && file != null) {
-            addNewBlock(
-                newBlock = UiNoteContent.MediaBlock(
-                    id = UUID.randomUUID().toString(),
-                    media = listOf(
-                        image.copy(
-                            ratio = mediaRepository.getAspectRatio(file),
-                            addedDate = ZonedDateTime.now(),
-                        )
-                    ),
-                )
-            )
-        } else {
-            deletePhotoFile()
-        }
-        cachePhoto = null
-        cachedPhotoFile = null
-    }
-
-    private suspend fun createPhotoFile(): Uri? {
-        val mediaId = UUID.randomUUID().toString()
-        val file = mediaRepository.createMediaDestinationFile(
-            noteId = noteId,
-            mediaId = mediaId,
-            mediaName = MediaRepository.CAMERA_PICTURE_NAME,
-        )
-        return if (file != null) {
-            val uri = mediaRepository.getRelativeUri(file)
-            val image = UiNoteContent.MediaBlock.Image(
-                id = mediaId,
-                name = MediaRepository.CAMERA_PICTURE_NAME,
-                uri = uri,
-                ratio = 1f,
-                addedDate = ZonedDateTime.now(),
-            )
-            cachePhoto = image
-            cachedPhotoFile = file
-            uri
-        } else {
-            null
-        }
-    }
-
-    private suspend fun deletePhotoFile() {
-        cachedPhotoFile?.let { mediaRepository.deleteFile(it) }
     }
 
     private fun tryOpenMediaSelector(params: MediaSelectorState.Params) {

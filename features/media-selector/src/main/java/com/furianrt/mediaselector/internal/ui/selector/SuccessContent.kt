@@ -30,6 +30,7 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
 import com.furianrt.mediaselector.internal.ui.selector.composables.BottomPanel
+import com.furianrt.mediaselector.internal.ui.selector.composables.CameraItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.ImageItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
@@ -40,8 +41,12 @@ import com.furianrt.uikit.utils.rememberUserInputScrollConnection
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val BOTTOM_PANEL_SHOW_DELAY = 500L
+
+private const val PERMISSION_MESSAGE_KEY = "permission_message"
+private const val CAMERA_ITEM_KEY = "camera_item"
 
 @Composable
 internal fun SuccessContent(
@@ -63,7 +68,7 @@ internal fun SuccessContent(
             UserScrollState.SCROLLING_DOWN -> showBottomPanel = false
             UserScrollState.SCROLLING_UP -> showBottomPanel = true
             UserScrollState.IDLE -> {
-                delay(BOTTOM_PANEL_SHOW_DELAY)
+                delay(BOTTOM_PANEL_SHOW_DELAY.milliseconds)
                 showBottomPanel = true
             }
         }
@@ -89,9 +94,21 @@ internal fun SuccessContent(
             ),
         ) {
             if (uiState.showPartialAccessMessage) {
-                item(span = { GridItemSpan(listSpanCount) }) {
+                item(
+                    key = PERMISSION_MESSAGE_KEY,
+                    span = { GridItemSpan(listSpanCount) }) {
                     PermissionsMessage(onClick = { onEvent(OnPartialAccessMessageClick) })
                 }
+            }
+
+            item(key = CAMERA_ITEM_KEY) {
+                CameraItem(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(topStart = 8.dp)
+                    ),
+                    state = uiState.cameraState,
+                    onClick = { onEvent(MediaSelectorEvent.OnCameraItemClick) },
+                )
             }
 
             items(
@@ -103,7 +120,6 @@ internal fun SuccessContent(
                     is MediaItem.Image -> ImageItem(
                         modifier = Modifier.clip(
                             RoundedCornerShape(
-                                topStart = if (index == 0) 8.dp else 0.dp,
                                 topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
                             )
                         ),
@@ -115,7 +131,6 @@ internal fun SuccessContent(
                     is MediaItem.Video -> VideoItem(
                         modifier = Modifier.clip(
                             RoundedCornerShape(
-                                topStart = if (index == 0) 8.dp else 0.dp,
                                 topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
                             )
                         ),
@@ -197,6 +212,7 @@ private fun Preview() {
                     mediaCount = 10,
                 ),
                 showPartialAccessMessage = true,
+                cameraState = SelectionState.Counter(3),
             ),
         )
     }

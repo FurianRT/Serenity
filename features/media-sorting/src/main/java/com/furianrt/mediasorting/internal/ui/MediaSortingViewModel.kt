@@ -1,16 +1,12 @@
 package com.furianrt.mediasorting.internal.ui
 
-import android.net.Uri
 import androidx.compose.foundation.lazy.grid.LazyGridItemInfo
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.navigation.toRoute
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.MediaSortingResult
-import com.furianrt.domain.managers.LockAuthorizer
-import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediasorting.api.MediaSortingRoute
@@ -21,7 +17,6 @@ import com.furianrt.mediasorting.internal.extensions.toMediaItems
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -35,9 +30,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
-import java.io.File
-import java.time.ZonedDateTime
-import java.util.UUID
 import javax.inject.Inject
 
 private const val MEDIA_VIEW_DIALOG_ID = 0
@@ -49,9 +41,6 @@ internal class MediaSortingViewModel @Inject constructor(
     private val permissionsUtils: PermissionsUtils,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val notesRepository: NotesRepository,
-    private val resourcesManager: ResourcesManager,
-    private val lockAuthorizer: LockAuthorizer,
-    private val mediaRepository: MediaRepository,
     private val appearanceRepository: AppearanceRepository,
 ) : ViewModel(), DialogResultListener {
 
@@ -62,9 +51,6 @@ internal class MediaSortingViewModel @Inject constructor(
 
     private val _effect = MutableSharedFlow<MediaSortingEffect>(extraBufferCapacity = 10)
     val effect = _effect.asSharedFlow()
-
-    private var cachePhoto: MediaItem.Image? = null
-    private var cachedPhotoFile: File? = null
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = route.noteId, listener = this)
@@ -80,7 +66,6 @@ internal class MediaSortingViewModel @Inject constructor(
     fun onEvent(event: MediaSortingEvent) {
         when (event) {
             is MediaSortingEvent.OnAddMediaClick -> tryRequestMediaPermissions()
-            is MediaSortingEvent.OnTakePhotoClick -> tryRequestCameraPermissions()
             is MediaSortingEvent.OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is MediaSortingEvent.OnButtonBackClick -> checkCloseScreen()
             is MediaSortingEvent.OnButtonDoneClick -> {
@@ -102,14 +87,6 @@ internal class MediaSortingViewModel @Inject constructor(
             }
 
             is MediaSortingEvent.OnRemoveMediaClick -> removeMedia(setOf(event.media.id))
-            is MediaSortingEvent.OnCameraNotFoundError -> _effect.tryEmit(
-                MediaSortingEffect.ShowMessage(
-                    message = resourcesManager.getString(uiR.string.error_camera_not_found),
-                )
-            )
-
-            is MediaSortingEvent.OnCameraPermissionSelected -> tryOpenCamera()
-            is MediaSortingEvent.OnTakePictureResult -> onTakePictureResult(event.isSuccess)
         }
     }
 
@@ -226,82 +203,6 @@ internal class MediaSortingViewModel @Inject constructor(
                 ),
             ),
         )
-    }
-
-    private fun tryRequestCameraPermissions() {
-        if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
-        } else {
-            _effect.tryEmit(MediaSortingEffect.RequestCameraPermission)
-        }
-    }
-
-    private fun onTakePictureResult(isSuccess: Boolean) = launch {
-        lockAuthorizer.cancelSkipNextLock()
-        val image = cachePhoto
-        val file = cachedPhotoFile
-        if (isSuccess && image != null && file != null) {
-            addMedia(
-                media = listOf(
-                    image.copy(
-                        ratio = mediaRepository.getAspectRatio(file),
-                        addedDate = ZonedDateTime.now(),
-                    )
-                )
-            )
-        } else {
-            deletePhotoFile()
-        }
-        cachePhoto = null
-        cachedPhotoFile = null
-    }
-
-    private fun tryOpenCamera() {
-        if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
-        } else {
-            _effect.tryEmit(MediaSortingEffect.ShowCameraPermissionsDeniedDialog)
-        }
-    }
-
-    private suspend fun takePicture() {
-        val uri = createPhotoFile()
-        if (uri != null) {
-            lockAuthorizer.skipNextLock()
-            _effect.tryEmit(MediaSortingEffect.TakePicture(uri))
-        } else {
-            _effect.tryEmit(
-                MediaSortingEffect.ShowMessage(resourcesManager.getString(uiR.string.general_error)),
-            )
-        }
-    }
-
-    private suspend fun createPhotoFile(): Uri? {
-        val mediaId = UUID.randomUUID().toString()
-        val file = mediaRepository.createMediaDestinationFile(
-            noteId = route.noteId,
-            mediaId = mediaId,
-            mediaName = MediaRepository.CAMERA_PICTURE_NAME,
-        )
-        return if (file != null) {
-            val uri = mediaRepository.getRelativeUri(file)
-            val image = MediaItem.Image(
-                id = mediaId,
-                name = MediaRepository.CAMERA_PICTURE_NAME,
-                uri = uri,
-                ratio = 1f,
-                addedDate = ZonedDateTime.now(),
-            )
-            cachePhoto = image
-            cachedPhotoFile = file
-            uri
-        } else {
-            null
-        }
-    }
-
-    private suspend fun deletePhotoFile() {
-        cachedPhotoFile?.let { mediaRepository.deleteFile(it) }
     }
 
     private fun buildInitialState() = MediaSortingUiState(

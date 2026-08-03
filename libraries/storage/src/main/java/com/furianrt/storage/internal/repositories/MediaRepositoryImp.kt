@@ -260,6 +260,14 @@ internal class MediaRepositoryImp @Inject constructor(
         bitmaps: List<Bitmap>,
     ): Uri? = appMediaSource.createTempPdfFile(title, bitmaps)
 
+    override suspend fun createTempMediaFile(
+        name: String,
+    ): File? = appMediaSource.createTempMediaFile(name)
+
+    override suspend fun deleteTempMediaFile(name: String) {
+        appMediaSource.deleteTempMediaFile(name)
+    }
+
     override suspend fun clearCache() {
         appMediaSource.clearCache()
     }

@@ -22,7 +22,6 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 internal fun AttachmentsPanel(
     modifier: Modifier = Modifier,
     onSelectMediaClick: () -> Unit = {},
-    onTakePictureClick: () -> Unit = {},
     onRecordVoiceClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
@@ -41,15 +40,6 @@ internal fun AttachmentsPanel(
         ) {
             IconButton(
                 onClick = onSelectMediaClick,
-            ) {
-                Icon(
-                    painter = painterResource(uiR.drawable.ic_gallery),
-                    contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-            IconButton(
-                onClick = onTakePictureClick,
             ) {
                 Icon(
                     painter = painterResource(uiR.drawable.ic_camera),

@@ -1,11 +1,8 @@
 package com.furianrt.mediasorting.internal.ui
 
-import android.content.ActivityNotFoundException
 import android.net.Uri
 import android.view.animation.OvershootInterpolator
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -18,6 +15,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -66,7 +64,6 @@ import com.furianrt.mediasorting.internal.ui.composables.Toolbar
 import com.furianrt.mediasorting.internal.ui.composables.VideoItem
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
-import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.AppBackground
@@ -79,7 +76,6 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
-import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -121,19 +117,8 @@ internal fun MediaSortingScreen(
         onPermissionsResult = { viewModel.onEvent(MediaSortingEvent.OnMediaPermissionsSelected) },
     )
 
-    val cameraPermissionState = rememberPermissionState(
-        permission = PermissionsUtils.getCameraPermission(),
-        onPermissionResult = { viewModel.onEvent(MediaSortingEvent.OnCameraPermissionSelected) },
-    )
-
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { viewModel.onEvent(MediaSortingEvent.OnTakePictureResult(it)) },
-    )
-
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
     var showConfirmCloseDialog by remember { mutableStateOf(false) }
-    var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -143,10 +128,6 @@ internal fun MediaSortingScreen(
                     is MediaSortingEffect.CloseScreen -> onCloseRequestState()
                     is MediaSortingEffect.RequestStoragePermissions -> {
                         storagePermissionsState.launchMultiplePermissionRequest()
-                    }
-
-                    is MediaSortingEffect.RequestCameraPermission -> {
-                        cameraPermissionState.launchPermissionRequest()
                     }
 
                     is MediaSortingEffect.OpenMediaSelector -> mediaSelectorState.expand(
@@ -171,17 +152,6 @@ internal fun MediaSortingScreen(
                     )
 
                     is MediaSortingEffect.OpenMediaViewer -> openMediaViewerState(effect.route)
-
-                    is MediaSortingEffect.TakePicture -> try {
-                        cameraLauncher.launch(effect.uri)
-                    } catch (e: ActivityNotFoundException) {
-                        viewModel.onEvent(MediaSortingEvent.OnCameraNotFoundError(e))
-                    }
-
-                    is MediaSortingEffect.ShowCameraPermissionsDeniedDialog -> {
-                        showCameraPermissionDialog = true
-                    }
-
                     is MediaSortingEffect.ShowMessage -> {
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
@@ -241,14 +211,6 @@ internal fun MediaSortingScreen(
             onSaveClick = { viewModel.onEvent(MediaSortingEvent.OnButtonDoneClick) },
             onDiscardClick = { viewModel.onEvent(MediaSortingEvent.OnConfirmCloseClick) },
             onDismissRequest = { showConfirmCloseDialog = false },
-        )
-    }
-
-    if (showCameraPermissionDialog) {
-        CameraPermissionDialog(
-            hazeState = hazeState,
-            onDismissRequest = { showCameraPermissionDialog = false },
-            onSettingsClick = context::openAppSettingsScreen,
         )
     }
 }
@@ -388,21 +350,33 @@ private fun ContentList(
             key = ADD_BUTTON_ITEM_ID,
             span = { GridItemSpan(1) },
         ) {
-            AddMediaButton(
-                hazeState = hazeState,
-                onGalleryClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
-                onCameraClick = { onEvent(MediaSortingEvent.OnTakePhotoClick) },
-            )
+            ReorderableItem(
+                state = reorderableLazyColumnState,
+                key = ADD_BUTTON_ITEM_ID,
+                enabled = false,
+            ) {
+                AddMediaButton(
+                    hazeState = hazeState,
+                    onClick = { onEvent(MediaSortingEvent.OnAddMediaClick) },
+                )
+            }
         }
 
         item(
             key = HINT_ITEM_ID,
             span = { GridItemSpan(listSpanCount) },
         ) {
-            DragAndDropHint(
+            ReorderableItem(
                 modifier = Modifier.padding(top = 8.dp),
-                hazeState = hazeState,
-            )
+                state = reorderableLazyColumnState,
+                key = HINT_ITEM_ID,
+                enabled = false,
+            ) {
+                DragAndDropHint(
+                    modifier = Modifier.fillMaxWidth(),
+                    hazeState = hazeState,
+                )
+            }
         }
     }
 }

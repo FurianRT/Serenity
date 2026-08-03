@@ -83,6 +83,10 @@ interface MediaRepository {
         bitmaps: List<Bitmap>,
     ): Uri?
 
+    suspend fun createTempMediaFile(name: String): File?
+
+    suspend fun deleteTempMediaFile(name: String)
+
     suspend fun clearCache()
 
     companion object {

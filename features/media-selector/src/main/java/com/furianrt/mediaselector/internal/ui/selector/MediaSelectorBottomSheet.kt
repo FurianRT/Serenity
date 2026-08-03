@@ -1,7 +1,11 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
+import android.content.ActivityNotFoundException
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
@@ -47,6 +51,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -60,6 +65,8 @@ import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
+import com.furianrt.permissions.extensions.openAppSettingsScreen
+import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.components.SkipFirstEffect
@@ -69,6 +76,7 @@ import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
+import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -94,6 +102,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val viewModel = hiltViewModel<MediaSelectorViewModel>()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val context = LocalContext.current
 
     DisposableEffect(Unit) {
         lifecycle.addObserver(viewModel)
@@ -107,9 +116,20 @@ internal fun MediaSelectorBottomSheetInternal(
         onPermissionsResult = { viewModel.onEvent(MediaSelectorEvent.OnMediaPermissionsSelected) },
     )
 
+    val cameraPermissionState = rememberPermissionState(
+        permission = PermissionsUtils.getCameraPermission(),
+        onPermissionResult = { viewModel.onEvent(MediaSelectorEvent.OnCameraPermissionSelected) },
+    )
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicture(),
+        onResult = { viewModel.onEvent(MediaSelectorEvent.OnTakePictureResult(it)) },
+    )
+
     var showConfirmDialog by remember { mutableStateOf(false) }
     var albumsDialogState: List<MediaAlbumItem>? by remember { mutableStateOf(null) }
     var skipConfirmation by remember { mutableStateOf(false) }
+    var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     val listState = rememberLazyGridState(
         cacheWindow = LazyLayoutCacheWindow(ahead = 200.dp, behind = 150.dp),
@@ -148,6 +168,23 @@ internal fun MediaSelectorBottomSheetInternal(
                     }
 
                     is MediaSelectorEffect.HideAlbumsList -> albumsDialogState = null
+                    is MediaSelectorEffect.TakePicture -> try {
+                        cameraLauncher.launch(effect.uri)
+                    } catch (e: ActivityNotFoundException) {
+                        viewModel.onEvent(MediaSelectorEvent.OnCameraNotFoundError(e))
+                    }
+
+                    is MediaSelectorEffect.RequestCameraPermission -> {
+                        cameraPermissionState.launchPermissionRequest()
+                    }
+
+                    is MediaSelectorEffect.ShowCameraPermissionsDeniedDialog -> {
+                        showCameraPermissionDialog = true
+                    }
+
+                    is MediaSelectorEffect.ShowMessage -> {
+                        Toast.makeText(context, effect.text, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
     }
@@ -246,6 +283,14 @@ internal fun MediaSelectorBottomSheetInternal(
         )
     }
 
+    if (showCameraPermissionDialog) {
+        CameraPermissionDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showCameraPermissionDialog = false },
+            onSettingsClick = context::openAppSettingsScreen,
+        )
+    }
+
     PredictiveBackHandler(
         enabled = isBottomSheetVisible && isGestureNavigationEnabled(),
         onBack = { progress ->
@@ -304,17 +349,9 @@ private fun SheetContent(
                         .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
                 },
                 contentKey = { it::class.simpleName },
-                label = "StateAnim",
             ) { targetState ->
                 when (targetState) {
                     is MediaSelectorUiState.Loading -> LoadingContent()
-
-                    is MediaSelectorUiState.Empty -> EmptyContent(
-                        uiState = targetState,
-                        onEvent = onEvent,
-                        albumsDialogState = albumsDialogState,
-                    )
-
                     is MediaSelectorUiState.Success -> SuccessContent(
                         uiState = targetState,
                         onEvent = onEvent,

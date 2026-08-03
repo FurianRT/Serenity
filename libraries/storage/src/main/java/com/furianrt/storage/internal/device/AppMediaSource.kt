@@ -26,6 +26,7 @@ private const val VOICE_FOLDER = "voice"
 private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
 private const val STICKERS_FOLDER = "stickers"
 private const val EXPORT_FOLDER = "export"
+private const val TEMP_MEDIA_FOLDER = "temp_media"
 private const val IMAGE_COMPRESS_AMOUNT = 50
 private const val BACKGROUND_COMPRESS_AMOUNT = 40
 private const val STICKER_COMPRESS_AMOUNT = 30
@@ -281,6 +282,18 @@ internal class AppMediaSource @Inject constructor(
             bitmaps.toPdf(file)
             getRelativeUri(file)
         }
+    }
+
+    suspend fun createTempMediaFile(
+        name: String,
+    ): File? = withContext(dispatchers.io) {
+        createCacheFile(folder = "$TEMP_MEDIA_FOLDER/$name")
+    }
+
+    suspend fun deleteTempMediaFile(
+        name: String,
+    ) = withContext(dispatchers.io) {
+        File(context.cacheDir, "$TEMP_MEDIA_FOLDER/$name").deleteRecursively()
     }
 
     suspend fun clearCache() = withContext(dispatchers.io) {

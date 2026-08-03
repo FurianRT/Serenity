@@ -1,6 +1,5 @@
 package com.furianrt.notepage.internal.ui.page
 
-import android.net.Uri
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorState
@@ -69,12 +68,8 @@ internal sealed interface PageEvent {
     data object OnTagTextCleared : PageEvent
     data object OnTagFocusChanged : PageEvent
     data object OnSelectMediaClick : PageEvent
-    data object OnTakePictureClick : PageEvent
     data object OnMediaPermissionsSelected : PageEvent
-    data object OnCameraPermissionSelected : PageEvent
     data object OnLocationPermissionSelected : PageEvent
-    data class OnTakePictureResult(val isSuccess: Boolean) : PageEvent
-    data class OnCameraNotFoundError(val error: Throwable) : PageEvent
     data class OnTitleFocusChange(val id: String, val focused: Boolean) : PageEvent
     data object OnFocusedTitleSelectionChange : PageEvent
     data class OnMediaClick(val media: UiNoteContent.MediaBlock.Media) : PageEvent
@@ -124,8 +119,6 @@ internal sealed interface PageEvent {
 internal sealed interface PageEffect {
     data object RequestStoragePermissions : PageEffect
     data object ShowStoragePermissionsDeniedDialog : PageEffect
-    data object RequestCameraPermission : PageEffect
-    data object ShowCameraPermissionsDeniedDialog : PageEffect
     data object RequestLocationPermission : PageEffect
     data object ShowLocationPermissionsDeniedDialog : PageEffect
     data class OpenMediaSelector(val params: MediaSelectorState.Params) : PageEffect
@@ -147,7 +140,6 @@ internal sealed interface PageEffect {
     data object HideKeyboard : PageEffect
     data class ShowMessage(val message: String) : PageEffect
     data class ShowToast(val message: String) : PageEffect
-    data class TakePicture(val uri: Uri) : PageEffect
     data class ShowMoodDialog(
         val moodId: String?,
         val defaultMoodId: String?,

@@ -1,9 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
-import android.content.ActivityNotFoundException
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Spring
@@ -105,7 +102,6 @@ import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
-import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.ui.LocationPermissionDialog
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -179,23 +175,12 @@ internal fun NotePageScreenInternal(
         onPermissionsResult = { viewModel.onEvent(PageEvent.OnMediaPermissionsSelected) },
     )
 
-    val cameraPermissionState = rememberPermissionState(
-        permission = PermissionsUtils.getCameraPermission(),
-        onPermissionResult = { viewModel.onEvent(PageEvent.OnCameraPermissionSelected) },
-    )
-
     val locationPermissionState = rememberPermissionState(
         permission = PermissionsUtils.getLocationPermission(),
         onPermissionResult = { viewModel.onEvent(PageEvent.OnLocationPermissionSelected) },
     )
 
-    val cameraLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.TakePicture(),
-        onResult = { viewModel.onEvent(PageEvent.OnTakePictureResult(it)) },
-    )
-
     var showMediaPermissionDialog by remember { mutableStateOf(false) }
-    var showCameraPermissionDialog by remember { mutableStateOf(false) }
     var showLocationPermissionDialog by remember { mutableStateOf(false) }
     var showDetectLocationDialog by remember { mutableStateOf(false) }
 
@@ -239,24 +224,12 @@ internal fun NotePageScreenInternal(
                     storagePermissionsState.launchMultiplePermissionRequest()
                 }
 
-                is PageEffect.RequestCameraPermission -> {
-                    cameraPermissionState.launchPermissionRequest()
-                }
-
                 is PageEffect.RequestLocationPermission -> {
                     locationPermissionState.launchPermissionRequest()
                 }
 
-                is PageEffect.ShowCameraPermissionsDeniedDialog -> showCameraPermissionDialog = true
-
                 is PageEffect.ShowLocationPermissionsDeniedDialog -> {
                     showLocationPermissionDialog = true
-                }
-
-                is PageEffect.TakePicture -> try {
-                    cameraLauncher.launch(effect.uri)
-                } catch (e: ActivityNotFoundException) {
-                    viewModel.onEvent(PageEvent.OnCameraNotFoundError(e))
                 }
 
                 is PageEffect.BringContentToView -> {
@@ -323,14 +296,6 @@ internal fun NotePageScreenInternal(
         MediaPermissionDialog(
             hazeState = hazeState,
             onDismissRequest = { showMediaPermissionDialog = false },
-            onSettingsClick = context::openAppSettingsScreen,
-        )
-    }
-
-    if (showCameraPermissionDialog) {
-        CameraPermissionDialog(
-            hazeState = hazeState,
-            onDismissRequest = { showCameraPermissionDialog = false },
             onSettingsClick = context::openAppSettingsScreen,
         )
     }
@@ -530,7 +495,6 @@ private fun SuccessScreen(
             onNoPositionError = { onEvent(PageEvent.OnNoPositionError) },
             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
             onSelectMediaClick = { onEvent(PageEvent.OnSelectMediaClick) },
-            onTakePictureClick = { onEvent(PageEvent.OnTakePictureClick) },
             onVoiceRecordStart = {
                 onEvent(PageEvent.OnVoiceStarted)
                 state.isVoiceRecordActive = true
@@ -894,7 +858,6 @@ private fun Panel(
     onNoPositionError: () -> Unit,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
-    onTakePictureClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
     onRecordComplete: (record: VoiceRecord) -> Unit,
     onVoiceRecordCancel: () -> Unit,
@@ -939,7 +902,6 @@ private fun Panel(
                     onNoPositionError = onNoPositionError,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,
-                    onTakePictureClick = onTakePictureClick,
                     onVoiceRecordStart = onVoiceRecordStart,
                     onRecordComplete = onRecordComplete,
                     onVoiceRecordCancel = onVoiceRecordCancel,

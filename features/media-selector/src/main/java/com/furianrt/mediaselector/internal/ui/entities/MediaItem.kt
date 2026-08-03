@@ -9,6 +9,7 @@ internal sealed class MediaItem(
     open val ratio: Float,
     open val state: SelectionState,
     open val album: Album?,
+    open val isCameraItem: Boolean,
 ) {
     val isSelected: Boolean
         get() = state is SelectionState.Counter || state is SelectionState.Single
@@ -30,7 +31,8 @@ internal sealed class MediaItem(
         override val ratio: Float,
         override val state: SelectionState,
         override val album: Album?,
-    ) : MediaItem(id, name, uri, ratio, state, album)
+        override val isCameraItem: Boolean = false,
+    ) : MediaItem(id, name, uri, ratio, state, album, isCameraItem)
 
     data class Video(
         override val id: Long,
@@ -39,6 +41,7 @@ internal sealed class MediaItem(
         override val ratio: Float,
         override val state: SelectionState,
         override val album: Album?,
+        override val isCameraItem: Boolean = false,
         val duration: Int,
-    ) : MediaItem(id, name, uri, ratio, state, album)
+    ) : MediaItem(id, name, uri, ratio, state, album, isCameraItem)
 }
