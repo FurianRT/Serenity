@@ -103,6 +103,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     DisposableEffect(Unit) {
         lifecycle.addObserver(viewModel)
@@ -207,13 +208,11 @@ internal fun MediaSelectorBottomSheetInternal(
         }
         when {
             !isBottomSheetVisible && selectedCount > 0 && !skipConfirmation -> {
-                state.bottomSheetState.expand()
                 showConfirmDialog = true
+                scope.launch { state.bottomSheetState.expand() }
             }
 
-            !isBottomSheetVisible -> {
-                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-            }
+            !isBottomSheetVisible -> viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
         }
     }
 
@@ -236,7 +235,6 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
-    val scope = rememberCoroutineScope()
 
     BottomSheetScaffold(
         modifier = modifier,

@@ -100,7 +100,6 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     override fun onCleared() {
         dialogResultCoordinator.removeDialogResultListener(requestId = TAG, listener = this)
-        mediaCoordinator.close()
     }
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {

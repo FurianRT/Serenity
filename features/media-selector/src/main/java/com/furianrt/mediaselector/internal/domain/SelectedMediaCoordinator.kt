@@ -1,12 +1,11 @@
 package com.furianrt.mediaselector.internal.domain
 
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
-import java.io.Closeable
+import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-internal class SelectedMediaCoordinator @Inject constructor() : Closeable {
+@ViewModelScoped
+internal class SelectedMediaCoordinator @Inject constructor() {
 
     private val selectedMedia = mutableListOf<MediaItem>()
 
@@ -23,10 +22,6 @@ internal class SelectedMediaCoordinator @Inject constructor() : Closeable {
     }
 
     fun unselectAllMedia() {
-        selectedMedia.clear()
-    }
-
-    override fun close() {
         selectedMedia.clear()
     }
 }
