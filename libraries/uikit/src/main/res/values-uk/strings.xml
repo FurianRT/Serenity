@@ -24,6 +24,8 @@
     <string name="action_fix">Виправити</string>
     <string name="action_disable">Вимкнути</string>
     <string name="action_export_pdf">Експорт у PDF</string>
+    <string name="action_photo">Фото</string>
+    <string name="action_video">Відео</string>
 
     <string name="title_email">Електронна пошта</string>
     <string name="title_theme">Тема</string>

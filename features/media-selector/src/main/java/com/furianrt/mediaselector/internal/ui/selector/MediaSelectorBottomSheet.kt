@@ -122,9 +122,14 @@ internal fun MediaSelectorBottomSheetInternal(
         onPermissionResult = { viewModel.onEvent(MediaSelectorEvent.OnCameraPermissionSelected) },
     )
 
-    val cameraLauncher = rememberLauncherForActivityResult(
+    val photoLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.TakePicture(),
         onResult = { viewModel.onEvent(MediaSelectorEvent.OnTakePictureResult(it)) },
+    )
+
+    val videoLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.CaptureVideo(),
+        onResult = { viewModel.onEvent(MediaSelectorEvent.OnTakeVideoResult(it)) },
     )
 
     var showConfirmDialog by remember { mutableStateOf(false) }
@@ -169,10 +174,20 @@ internal fun MediaSelectorBottomSheetInternal(
                     }
 
                     is MediaSelectorEffect.HideAlbumsList -> albumsDialogState = null
-                    is MediaSelectorEffect.TakePicture -> try {
-                        cameraLauncher.launch(effect.uri)
-                    } catch (e: ActivityNotFoundException) {
-                        viewModel.onEvent(MediaSelectorEvent.OnCameraNotFoundError(e))
+                    is MediaSelectorEffect.TakePicture -> scope.launch {
+                        try {
+                            photoLauncher.launch(effect.uri)
+                        } catch (e: ActivityNotFoundException) {
+                            viewModel.onEvent(MediaSelectorEvent.OnCameraNotFoundError(e))
+                        }
+                    }
+
+                    is MediaSelectorEffect.TakeVideo -> scope.launch {
+                        try {
+                            videoLauncher.launch(effect.uri)
+                        } catch (e: ActivityNotFoundException) {
+                            viewModel.onEvent(MediaSelectorEvent.OnCameraNotFoundError(e))
+                        }
                     }
 
                     is MediaSelectorEffect.RequestCameraPermission -> {

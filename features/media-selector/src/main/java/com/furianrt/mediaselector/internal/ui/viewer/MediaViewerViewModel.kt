@@ -7,9 +7,9 @@ import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.DeviceMedia
-import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
+import com.furianrt.mediaselector.internal.domain.usecase.GetPhotosAndVideosUseCase
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
@@ -28,7 +28,7 @@ import javax.inject.Inject
 @HiltViewModel
 internal class MediaViewerViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val mediaRepository: MediaRepository,
+    private val getPhotosAndVideosUseCase: GetPhotosAndVideosUseCase,
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaCoordinator: SelectedMediaCoordinator,
 ) : ViewModel() {
@@ -76,7 +76,7 @@ internal class MediaViewerViewModel @Inject constructor(
     }
 
     private fun loadMedia() = launch {
-        val media = mediaRepository.getDeviceMediaList(route.allowVideo, route.albumId)
+        val media = getPhotosAndVideosUseCase(route.allowVideo, route.albumId)
         val selectedMedia = mediaCoordinator.getSelectedMedia()
         _state.update {
             MediaViewerUiState.Success(

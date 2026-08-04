@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import android.graphics.BitmapFactory
+import android.media.MediaMetadataRetriever
 import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
 import androidx.lifecycle.DefaultLifecycleObserver
@@ -15,9 +16,12 @@ import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
+import com.furianrt.mediaselector.internal.domain.TempMediaHolder
+import com.furianrt.mediaselector.internal.domain.usecase.GetPhotosAndVideosUseCase
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import com.furianrt.mediaselector.internal.ui.extensions.toDeviceMedia
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItem
 import com.furianrt.mediaselector.internal.ui.extensions.toMediaItems
@@ -29,9 +33,10 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.Reque
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsDismissed
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraItemClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraPhotoItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraNotFoundError
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraPermissionSelected
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraVideoItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCloseScreenRequest
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpanded
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
@@ -41,6 +46,7 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnScre
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSelectItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSendClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnTakePictureResult
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnTakeVideoResult
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
@@ -60,10 +66,17 @@ import javax.inject.Inject
 private const val TAG = "MediaSelectorViewModel"
 private const val MEDIA_VIEWER_DIALOG_ID = 1
 
+data class VideoMetadata(
+    val aspectRatio: Float,
+    val duration: Int,
+)
+
 @HiltViewModel
 internal class MediaSelectorViewModel @Inject constructor(
     private val dialogResultCoordinator: DialogResultCoordinator,
     private val mediaRepository: MediaRepository,
+    private val tempMediaHolder: TempMediaHolder,
+    private val getPhotosAndVideosUseCase: GetPhotosAndVideosUseCase,
     private val permissionsUtils: PermissionsUtils,
     private val mediaCoordinator: SelectedMediaCoordinator,
     private val resourcesManager: ResourcesManager,
@@ -84,8 +97,8 @@ internal class MediaSelectorViewModel @Inject constructor(
     private var onMediaSelected: suspend (result: MediaResult) -> Unit = {}
     private var sendResultOnStart = false
 
-    private var cachePhoto: MediaItem.Image? = null
-    private var cachedPhotoFile: File? = null
+    private var cachedCameraItem: MediaItem? = null
+    private var cachedCameraFile: File? = null
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
@@ -143,6 +156,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnCloseScreenRequest -> {
                 _effect.tryEmit(CloseScreen)
                 mediaCoordinator.unselectAllMedia()
+                tempMediaHolder.clear()
                 _state.updateState<MediaSelectorUiState.Success> { currentState ->
                     currentState.setSelectedItems(
                         selectedItems = emptyList(),
@@ -174,7 +188,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnAlbumsClick -> launch {
-                val allMedia = mediaRepository.getDeviceMediaList(allowVideo)
+                val allMedia = getPhotosAndVideosUseCase(allowVideo)
                 val allMediaAlbum = MediaAlbumItem(
                     id = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
                     name = resourcesManager.getString(R.string.media_selector_all_media),
@@ -200,9 +214,11 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnAlbumsDismissed -> _effect.tryEmit(MediaSelectorEffect.HideAlbumsList)
-            is OnCameraItemClick -> onCameraItemClick()
+            is OnCameraPhotoItemClick -> tryRequestCameraPermissions(forVideo = false)
+            is OnCameraVideoItemClick -> tryRequestCameraPermissions(forVideo = true)
             is OnCameraPermissionSelected -> tryOpenCamera()
             is OnTakePictureResult -> onTakePictureResult(event.isSuccess)
+            is OnTakeVideoResult -> onTakePictureResult(event.isSuccess)
             is OnCameraNotFoundError -> _effect.tryEmit(
                 MediaSelectorEffect.ShowMessage(
                     text = resourcesManager.getString(uiR.string.error_camera_not_found),
@@ -215,6 +231,7 @@ internal class MediaSelectorViewModel @Inject constructor(
         onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
         _effect.tryEmit(CloseScreen)
         mediaCoordinator.unselectAllMedia()
+        tempMediaHolder.clear()
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
             currentState.setSelectedItems(
                 selectedItems = emptyList(),
@@ -239,7 +256,7 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
         launch {
             _state.update { currentState ->
-                val media = mediaRepository.getDeviceMediaList(
+                val media = getPhotosAndVideosUseCase(
                     albumId = selectedAlbum?.id
                         ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
                     allowVideo = allowVideo,
@@ -247,7 +264,6 @@ internal class MediaSelectorViewModel @Inject constructor(
                 when {
                     currentState is MediaSelectorUiState.Success -> {
                         val selectedMedia = mediaCoordinator.getSelectedMedia()
-                        val cameraItemIndex = selectedMedia.indexOfFirst { it.isCameraItem }
                         currentState.copy(
                             items = media.toMediaItems(
                                 state = { id ->
@@ -265,13 +281,9 @@ internal class MediaSelectorViewModel @Inject constructor(
                                     }
                                 },
                             ),
-                            cameraState = when {
-                                cameraItemIndex == -1 -> SelectionState.Default
-                                isSingleChoice -> SelectionState.Single
-                                else -> SelectionState.Counter(cameraItemIndex + 1)
-                            },
                             selectedAlbum = selectedAlbum,
                             selectedCount = selectedMedia.count(),
+                            allowVideo = allowVideo,
                             showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                         )
                     }
@@ -281,7 +293,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                         selectedCount = 0,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                         selectedAlbum = selectedAlbum,
-                        cameraState = SelectionState.Default,
+                        allowVideo = allowVideo,
                     )
                 }
             }
@@ -302,10 +314,6 @@ internal class MediaSelectorViewModel @Inject constructor(
                 is SelectionState.Single -> mediaCoordinator.unselectMedia(item)
             }
         }
-        updateSelectedItems()
-    }
-
-    private fun updateSelectedItems() {
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
             currentState.setSelectedItems(
                 selectedItems = mediaCoordinator.getSelectedMedia(),
@@ -314,19 +322,15 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
     }
 
-    private fun onCameraItemClick() {
-        val cameraItem = mediaCoordinator.getSelectedMedia().find { it.isCameraItem }
-        if (cameraItem != null) {
-            mediaCoordinator.unselectMedia(cameraItem)
-            updateSelectedItems()
-        } else {
-            tryRequestCameraPermissions()
-        }
-    }
-
-    private fun tryRequestCameraPermissions() {
+    private fun tryRequestCameraPermissions(forVideo: Boolean) {
         if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
+            launch {
+                if (forVideo) {
+                    takeVideo()
+                } else {
+                    takePicture()
+                }
+            }
         } else {
             _effect.tryEmit(MediaSelectorEffect.RequestCameraPermission)
         }
@@ -354,8 +358,22 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
     }
 
+    private suspend fun takeVideo() {
+        val uri = createVideoFile()
+        if (uri != null) {
+            lockAuthorizer.skipNextLock()
+            _effect.tryEmit(MediaSelectorEffect.TakeVideo(uri))
+        } else {
+            _effect.tryEmit(
+                MediaSelectorEffect.ShowMessage(
+                    resourcesManager.getString(uiR.string.general_error)
+                ),
+            )
+        }
+    }
+
     private suspend fun createPhotoFile(): Uri? {
-        val mediaId = UUID.randomUUID().leastSignificantBits
+        val mediaId = UUID.randomUUID().leastSignificantBits and Long.MAX_VALUE
         val file = mediaRepository.createTempMediaFile(
             name = "$mediaId${MediaRepository.CAMERA_PICTURE_NAME}",
         )
@@ -370,8 +388,33 @@ internal class MediaSelectorViewModel @Inject constructor(
                 state = SelectionState.Default,
                 isCameraItem = true,
             )
-            cachePhoto = image
-            cachedPhotoFile = file
+            cachedCameraItem = image
+            cachedCameraFile = file
+            uri
+        } else {
+            null
+        }
+    }
+
+    private suspend fun createVideoFile(): Uri? {
+        val mediaId = UUID.randomUUID().leastSignificantBits and Long.MAX_VALUE
+        val file = mediaRepository.createTempMediaFile(
+            name = "$mediaId${MediaRepository.CAMERA_VIDEO_NAME}",
+        )
+        return if (file != null) {
+            val uri = mediaRepository.getRelativeUri(file)
+            val video = MediaItem.Video(
+                id = mediaId,
+                name = MediaRepository.CAMERA_PICTURE_NAME,
+                uri = uri,
+                ratio = 1f,
+                album = null,
+                state = SelectionState.Default,
+                isCameraItem = true,
+                duration = 0,
+            )
+            cachedCameraItem = video
+            cachedCameraFile = file
             uri
         } else {
             null
@@ -380,27 +423,50 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     private fun onTakePictureResult(isSuccess: Boolean) = launch {
         lockAuthorizer.cancelSkipNextLock()
-        val image = cachePhoto
-        val file = cachedPhotoFile
-        if (isSuccess && image != null && file != null) {
-            val imageWithRatio = image.copy(ratio = file.getImageRatio())
-            cachePhoto = imageWithRatio
-            toggleItemSelection(imageWithRatio)
+        val item = cachedCameraItem
+        val file = cachedCameraFile
+        if (isSuccess && item != null && file != null) {
+            val newItem = when (item) {
+                is MediaItem.Image -> item.copy(
+                    state = SelectionState.Counter(mediaCoordinator.selectedCount() + 1),
+                    ratio = file.getPhotoRatio(),
+                )
+
+                is MediaItem.Video -> {
+                    val metadata = file.readVideoMetadata()
+                    item.copy(
+                        state = SelectionState.Counter(mediaCoordinator.selectedCount() + 1),
+                        ratio = metadata.aspectRatio,
+                        duration = metadata.duration,
+                    )
+                }
+            }
+            mediaCoordinator.selectMedia(newItem)
             if (isSingleChoice) {
                 onSendClick()
+            } else {
+                tempMediaHolder.add(newItem.toDeviceMedia())
+                _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                    currentState.copy(
+                        items = buildList {
+                            add(newItem)
+                            addAll(currentState.items)
+                        },
+                    )
+                }
             }
         } else {
-            deletePhotoFile()
+            deleteCameraFile()
         }
-        cachePhoto = null
-        cachedPhotoFile = null
+        cachedCameraItem = null
+        cachedCameraFile = null
     }
 
-    private suspend fun deletePhotoFile() {
-        cachePhoto?.let { mediaRepository.deleteTempMediaFile(name = "${it.id}${it.name}") }
+    private suspend fun deleteCameraFile() {
+        cachedCameraItem?.let { mediaRepository.deleteTempMediaFile(name = "${it.id}${it.name}") }
     }
 
-    private fun File.getImageRatio(): Float {
+    private fun File.getPhotoRatio(): Float {
         val options = BitmapFactory.Options().apply {
             inJustDecodeBounds = true
         }
@@ -424,5 +490,43 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
 
         return width.toFloat() / height
+    }
+
+    fun File.readVideoMetadata(): VideoMetadata {
+        val retriever = MediaMetadataRetriever()
+
+        try {
+            retriever.setDataSource(absolutePath)
+
+            val width = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH,
+            )!!.toInt()
+
+            val height = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT,
+            )!!.toInt()
+
+            val rotation = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION,
+            )?.toInt() ?: 0
+
+            val durationMs = retriever.extractMetadata(
+                MediaMetadataRetriever.METADATA_KEY_DURATION,
+            )!!.toInt()
+
+            val (actualWidth, actualHeight) =
+                if (rotation == 90 || rotation == 270) {
+                    height to width
+                } else {
+                    width to height
+                }
+
+            return VideoMetadata(
+                aspectRatio = actualWidth.toFloat() / actualHeight,
+                duration = durationMs,
+            )
+        } finally {
+            retriever.release()
+        }
     }
 }

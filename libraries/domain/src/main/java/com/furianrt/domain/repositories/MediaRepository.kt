@@ -91,5 +91,6 @@ interface MediaRepository {
 
     companion object {
         const val CAMERA_PICTURE_NAME = "camera_photo.jpg"
+        const val CAMERA_VIDEO_NAME = "camera_video.mp4"
     }
 }

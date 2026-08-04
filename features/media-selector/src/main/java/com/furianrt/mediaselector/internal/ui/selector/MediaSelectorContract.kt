@@ -16,41 +16,33 @@ internal sealed class MediaSelectorUiState(
     data class Success(
         val items: List<MediaItem>,
         val selectedCount: Int,
+        val allowVideo: Boolean,
         override val selectedAlbum: MediaAlbumItem?,
-        val cameraState: SelectionState,
         val showPartialAccessMessage: Boolean,
     ) : MediaSelectorUiState(selectedAlbum) {
 
         fun setSelectedItems(
             selectedItems: List<MediaItem>,
             useCounter: Boolean,
-        ): Success {
-            val cameraItemIndex = selectedItems.indexOfFirst { it.isCameraItem }
-            return copy(
-                selectedCount = selectedItems.count(),
-                cameraState = when {
-                    cameraItemIndex == -1 -> SelectionState.Default
-                    useCounter -> SelectionState.Counter(cameraItemIndex + 1)
-                    else -> SelectionState.Single
-                },
-                items = items.map { item ->
-                    val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
-                    when {
-                        selectedIndex != -1 -> if (useCounter) {
-                            item.changeState(SelectionState.Counter(order = selectedIndex + 1))
-                        } else {
-                            item.changeState(SelectionState.Single)
-                        }
-
-                        item.state is SelectionState.Counter || item.state is SelectionState.Single -> {
-                            item.changeState(SelectionState.Default)
-                        }
-
-                        else -> item
+        ): Success = copy(
+            selectedCount = selectedItems.count(),
+            items = items.map { item ->
+                val selectedIndex = selectedItems.indexOfFirst { it.id == item.id }
+                when {
+                    selectedIndex != -1 -> if (useCounter) {
+                        item.changeState(SelectionState.Counter(order = selectedIndex + 1))
+                    } else {
+                        item.changeState(SelectionState.Single)
                     }
-                },
-            )
-        }
+
+                    item.state is SelectionState.Counter || item.state is SelectionState.Single -> {
+                        item.changeState(SelectionState.Default)
+                    }
+
+                    else -> item
+                }
+            },
+        )
     }
 }
 
@@ -66,9 +58,11 @@ internal sealed interface MediaSelectorEvent {
     data object OnAlbumsClick : MediaSelectorEvent
     data class OnAlbumSelected(val album: MediaAlbumItem) : MediaSelectorEvent
     data object OnAlbumsDismissed : MediaSelectorEvent
-    data object OnCameraItemClick : MediaSelectorEvent
+    data object OnCameraPhotoItemClick : MediaSelectorEvent
+    data object OnCameraVideoItemClick : MediaSelectorEvent
     data object OnCameraPermissionSelected : MediaSelectorEvent
     data class OnTakePictureResult(val isSuccess: Boolean) : MediaSelectorEvent
+    data class OnTakeVideoResult(val isSuccess: Boolean) : MediaSelectorEvent
     data class OnCameraNotFoundError(val error: Throwable) : MediaSelectorEvent
 }
 
@@ -89,5 +83,6 @@ internal sealed interface MediaSelectorEffect {
     data object RequestCameraPermission : MediaSelectorEffect
     data object ShowCameraPermissionsDeniedDialog : MediaSelectorEffect
     data class TakePicture(val uri: Uri) : MediaSelectorEffect
+    data class TakeVideo(val uri: Uri) : MediaSelectorEffect
     data class ShowMessage(val text: String) : MediaSelectorEffect
 }

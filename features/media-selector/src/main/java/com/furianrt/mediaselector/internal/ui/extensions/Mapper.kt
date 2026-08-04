@@ -93,6 +93,29 @@ internal fun DeviceMedia.toThumbnailItem(): MediaAlbumItem.Thumbnail = when (thi
     )
 }
 
+internal fun MediaItem.toDeviceMedia(): DeviceMedia = when (this) {
+    is MediaItem.Image -> DeviceMedia.Image(
+        id = id,
+        name = name,
+        uri = uri,
+        date = System.currentTimeMillis(),
+        ratio = ratio,
+        albumId = album?.id?.toLongOrNull(),
+        albumName = album?.name,
+    )
+
+    is MediaItem.Video -> DeviceMedia.Video(
+        id = id,
+        name = name,
+        uri = uri,
+        date = System.currentTimeMillis(),
+        ratio = ratio,
+        duration = duration,
+        albumId = album?.id?.toLongOrNull(),
+        albumName = album?.name,
+    )
+}
+
 private fun MediaItem.toResultMedia(): MediaResult.Media = when (this) {
     is MediaItem.Image -> MediaResult.Media.Image(
         name = name,

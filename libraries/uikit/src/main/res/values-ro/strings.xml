@@ -24,6 +24,8 @@
     <string name="action_fix">Remediază</string>
     <string name="action_disable">Dezactivează</string>
     <string name="action_export_pdf">Exportă în PDF</string>
+    <string name="action_photo">Фото</string>
+    <string name="action_video">Видео</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Temă</string>

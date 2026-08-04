@@ -1,95 +1,128 @@
 package com.furianrt.mediaselector.internal.ui.selector.composables
 
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.furianrt.mediaselector.internal.ui.entities.Constants
-import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun CameraItem(
-    state: SelectionState,
+    allowVideo: Boolean,
+    onPhotoClick: () -> Unit,
+    onVideoClick: () -> Unit,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
 ) {
-    val imageScaleValue by animateFloatAsState(
-        targetValue = if (state is SelectionState.Default) 1f else Constants.SELECTED_ITEM_SCALE,
-        animationSpec = tween(durationMillis = Constants.IMAGE_SCALE_ANIM_DURATION),
-    )
-
-    Box(
-        modifier = modifier
-            .aspectRatio(1f)
-            .clip(RoundedCornerShape(2.dp))
-            .clickable(onClick = onClick),
+    Column(
+        modifier = modifier.aspectRatio(1f),
+        verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    scaleX = imageScaleValue
-                    scaleY = imageScaleValue
-                }
-                .background(Color.Black),
-            contentAlignment = Alignment.Center,
+                .fillMaxWidth()
+                .weight(1f)
+                .clip(RoundedCornerShape(8.dp))
+                .background(Color.Black.copy(alpha = 0.6f))
+                .clickable(onClick = onPhotoClick)
+                .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                modifier = Modifier.size(32.dp),
+                modifier = Modifier
+                    .size(if (allowVideo) 24.dp else 32.dp)
+                    .padding(3.dp),
                 painter = painterResource(uiR.drawable.ic_camera),
                 tint = Color.White,
                 contentDescription = null,
             )
+            if (allowVideo) {
+                BasicText(
+                    text = stringResource(uiR.string.action_photo),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color::White,
+                    maxLines = 1,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = MaterialTheme.typography.bodyMedium.fontSize * 0.5f,
+                        maxFontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    ),
+                )
+            }
         }
-        if (state !is SelectionState.Default) {
-            CheckBox(
+        if (allowVideo) {
+            Row(
                 modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 4.dp, end = 4.dp),
-                state = state,
-                onClick = onClick,
-            )
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Color.Black.copy(alpha = 0.6f))
+                    .clickable(onClick = onVideoClick)
+                    .padding(horizontal = 4.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(uiR.drawable.ic_video),
+                    tint = Color.White,
+                    contentDescription = null,
+                )
+                BasicText(
+                    text = stringResource(uiR.string.action_video),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color::White,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = MaterialTheme.typography.bodyMedium.fontSize * 0.5f,
+                        maxFontSize = MaterialTheme.typography.bodyMedium.fontSize,
+                    ),
+                )
+            }
         }
     }
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
-private fun PreviewSelected() {
+private fun PreviewWithVideo() {
     SerenityTheme {
         CameraItem(
-            state = SelectionState.Counter(2),
-            onClick = {},
+            modifier = Modifier.size(140.dp),
+            allowVideo = true,
+            onPhotoClick = {},
+            onVideoClick = {},
         )
     }
 }
 
-@Preview
+@PreviewWithBackground
 @Composable
-private fun PreviewUnselected() {
+private fun PreviewWithoutVideo() {
     SerenityTheme {
         CameraItem(
-            state = SelectionState.Default,
-            onClick = {},
+            modifier = Modifier.size(140.dp),
+            allowVideo = false,
+            onPhotoClick = {},
+            onVideoClick = {},
         )
     }
 }

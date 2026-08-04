@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -103,11 +104,10 @@ internal fun SuccessContent(
 
             item(key = CAMERA_ITEM_KEY) {
                 CameraItem(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(topStart = 8.dp)
-                    ),
-                    state = uiState.cameraState,
-                    onClick = { onEvent(MediaSelectorEvent.OnCameraItemClick) },
+                    modifier = Modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp),
+                    allowVideo = uiState.allowVideo,
+                    onPhotoClick = { onEvent(MediaSelectorEvent.OnCameraPhotoItemClick) },
+                    onVideoClick = { onEvent(MediaSelectorEvent.OnCameraVideoItemClick) },
                 )
             }
 
@@ -211,8 +211,8 @@ private fun Preview() {
                     thumbnail = null,
                     mediaCount = 10,
                 ),
+                allowVideo = true,
                 showPartialAccessMessage = true,
-                cameraState = SelectionState.Counter(3),
             ),
         )
     }

@@ -24,6 +24,8 @@
     <string name="action_fix">Correggi</string>
     <string name="action_disable">Disattiva</string>
     <string name="action_export_pdf">Esporta in PDF</string>
+    <string name="action_photo">Foto</string>
+    <string name="action_video">Video</string>
 
     <string name="title_email">Email</string>
     <string name="title_theme">Tema</string>

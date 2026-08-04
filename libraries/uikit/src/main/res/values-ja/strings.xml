@@ -24,6 +24,8 @@
     <string name="action_fix">修正</string>
     <string name="action_disable">無効化</string>
     <string name="action_export_pdf">PDFとしてエクスポート</string>
+    <string name="action_photo">写真</string>
+    <string name="action_video">動画</string>
 
     <string name="title_email">メール</string>
     <string name="title_theme">テーマ</string>

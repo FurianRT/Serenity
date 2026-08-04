@@ -1,15 +1,17 @@
 package com.furianrt.mediaselector.internal.domain
 
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
-import dagger.hilt.android.scopes.ViewModelScoped
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@ViewModelScoped
+@Singleton
 internal class SelectedMediaCoordinator @Inject constructor() {
 
     private val selectedMedia = mutableListOf<MediaItem>()
 
     fun getSelectedMedia(): List<MediaItem> = selectedMedia
+
+    fun selectedCount(): Int = selectedMedia.size
 
     fun hasSelectedMedia(): Boolean = selectedMedia.isNotEmpty()
 
