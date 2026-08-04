@@ -235,7 +235,7 @@ private fun TabItem(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 6.dp),
             text = when (tab) {
                 is BackgroundContainerUiState.Success.Tab.Solid -> {
                     stringResource(R.string.background_panel_tab_solid_title)
@@ -253,7 +253,7 @@ private fun TabItem(
                     stringResource(R.string.background_panel_custom_title)
                 }
             },
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.labelMedium,
         )
         AnimatedVisibility(
             modifier = Modifier.align(Alignment.BottomCenter),

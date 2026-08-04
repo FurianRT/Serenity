@@ -431,7 +431,7 @@ fun HintItem(
             .fillMaxWidth()
             .alpha(0.5f),
         text = stringResource(R.string.background_panel_remove_background_hint),
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.labelSmall,
         textAlign = TextAlign.Center
     )
 }

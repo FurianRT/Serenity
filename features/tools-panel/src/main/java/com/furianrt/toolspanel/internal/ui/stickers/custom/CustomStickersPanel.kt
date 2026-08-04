@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
@@ -44,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
@@ -240,6 +244,32 @@ private fun SelectImageButton(
 }
 
 @Composable
+private fun AddStickerItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier = modifier
+            .size(80.dp)
+            .alpha(0.3f)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.onSurface,
+                shape = RoundedCornerShape(16.dp),
+            )
+            .clip(RoundedCornerShape(16.dp))
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            painter = painterResource(uiR.drawable.ic_add_media_big),
+            tint = MaterialTheme.colorScheme.onSurface,
+            contentDescription = null,
+        )
+    }
+}
+
+@Composable
 private fun ListContent(
     uiState: CustomStickersUiState.Content,
     onEvent: (event: CustomStickersEvent) -> Unit,
@@ -272,11 +302,19 @@ private fun ListContent(
                 }
             },
         state = listState,
-        columns = StaggeredGridCells.Adaptive(72.dp),
+        columns = StaggeredGridCells.Adaptive(64.dp),
         verticalItemSpacing = 8.dp,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
     ) {
+        item(
+            key = ADD_BUTTON_ITEM_KEY,
+        ) {
+            AddStickerItem(
+                modifier = Modifier.animateItem(),
+                onClick = { onEvent(CustomStickersEvent.OnSelectImageClick) },
+            )
+        }
         items(
             count = uiState.stickers.size,
             key = { uiState.stickers[it].id },
@@ -288,25 +326,6 @@ private fun ListContent(
                 onClick = { onEvent(CustomStickersEvent.OnStickerSelected(it)) },
                 onDeleteClick = { onEvent(CustomStickersEvent.OnDeleteStickerClick(it)) },
             )
-        }
-        item(
-            span = StaggeredGridItemSpan.FullLine,
-            key = ADD_BUTTON_ITEM_KEY,
-        ) {
-            Box(
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .animateItem(),
-                contentAlignment = Alignment.Center,
-            ) {
-                SelectImageButton(
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                    ),
-                    onClick = { onEvent(CustomStickersEvent.OnSelectImageClick) },
-                )
-            }
         }
         item(
             span = StaggeredGridItemSpan.FullLine,
@@ -353,7 +372,19 @@ private fun StickerItem(
     }
 
     Box(
-        modifier = modifier.wrapContentSize(),
+        modifier = modifier
+            .then(
+                if (sticker.ratio != null) {
+                    Modifier.aspectRatio(
+                        sticker.ratio.coerceIn(
+                            minimumValue = 0.5f,
+                            maximumValue = 1.5f,
+                        )
+                    )
+                } else {
+                    Modifier
+                },
+            ),
         contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
@@ -362,18 +393,6 @@ private fun StickerItem(
                     scaleX = scale
                     scaleY = scale
                 }
-                .then(
-                    if (sticker.ratio != null) {
-                        Modifier.aspectRatio(
-                            sticker.ratio.coerceIn(
-                                minimumValue = 0.5f,
-                                maximumValue = 1.5f,
-                            )
-                        )
-                    } else {
-                        Modifier
-                    },
-                )
                 .combinedClickable(
                     onClick = { onClick(sticker) },
                     onLongClick = {
@@ -405,7 +424,7 @@ private fun HintItem(
             .fillMaxWidth()
             .alpha(0.5f),
         text = stringResource(R.string.stickers_panel_remove_sticker_hint),
-        style = MaterialTheme.typography.labelMedium,
+        style = MaterialTheme.typography.labelSmall,
         textAlign = TextAlign.Center
     )
 }
