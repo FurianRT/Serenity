@@ -14,8 +14,6 @@ internal data class SettingsUiState(
         data class Success(
             @param:IntRange(0L, 5L) val rating: Int,
             val appVersion: String,
-            val locale: AppLocale,
-            val font: UiNoteFontFamily,
         ) : Content
     }
 }
@@ -36,6 +34,7 @@ internal sealed interface SettingsEvent {
     data object OnButtonPrivacyPolicyClick : SettingsEvent
     data object OnButtonNoteSettingsClick : SettingsEvent
     data object OnButtonThemeClick : SettingsEvent
+    data object OnButtonWidgetsClick : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
@@ -63,4 +62,5 @@ internal sealed interface SettingsEffect {
     ) : SettingsEffect
 
     data object OpenNoteSettingsScreen : SettingsEffect
+    data object OpenWidgetsScreen : SettingsEffect
 }

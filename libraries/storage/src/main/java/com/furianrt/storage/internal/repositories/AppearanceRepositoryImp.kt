@@ -1,6 +1,5 @@
 package com.furianrt.storage.internal.repositories
 
-import com.furianrt.domain.WidgetsUpdater
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -13,12 +12,10 @@ import javax.inject.Inject
 
 internal class AppearanceRepositoryImp @Inject constructor(
     private val appearanceDataStore: AppearanceDataStore,
-    private val widgetsUpdater: WidgetsUpdater,
 ) : AppearanceRepository {
 
     override suspend fun updateAppThemeColor(colorId: String) {
         appearanceDataStore.updateAppThemeColor(colorId)
-        widgetsUpdater.updateWidgets()
     }
 
     override fun getAppThemeColorId(): StateFlow<String?> = appearanceDataStore.appThemeColorId

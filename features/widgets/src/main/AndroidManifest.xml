@@ -3,7 +3,7 @@
 
     <application>
         <receiver
-            android:name="com.furianrt.widgets.widgets.AllActionsWidgetReceiver"
+            android:name="com.furianrt.widgets.internal.widgets.AllActionsWidgetReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

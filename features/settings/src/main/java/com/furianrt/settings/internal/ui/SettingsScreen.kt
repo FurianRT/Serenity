@@ -80,6 +80,7 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
 
 private data class FontsDialogState(
@@ -99,6 +100,7 @@ internal fun SettingsScreen(
     openNoteSettingsScreen: () -> Unit,
     openAppThemeScreen: () -> Unit,
     openRemindersScreen: () -> Unit,
+    openWidgetsScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -115,6 +117,7 @@ internal fun SettingsScreen(
     val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
     val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
     val openRemindersScreenState by rememberUpdatedState(openRemindersScreen)
+    val openWidgetsScreenState by rememberUpdatedState(openWidgetsScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -174,6 +177,7 @@ internal fun SettingsScreen(
                     }
 
                     is SettingsEffect.OpenNoteSettingsScreen -> openNoteSettingsScreenState()
+                    is SettingsEffect.OpenWidgetsScreen -> openWidgetsScreenState()
                 }
             }
     }
@@ -304,12 +308,6 @@ private fun SuccessScreen(
             onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
         )
         GeneralButton(
-            title = stringResource(R.string.settings_note_content_title),
-            iconPainter = painterResource(R.drawable.ic_note_content),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
-        )
-        GeneralButton(
             title = stringResource(uiR.string.title_theme),
             iconPainter = painterResource(R.drawable.ic_theme),
             hazeState = hazeState,
@@ -317,19 +315,30 @@ private fun SuccessScreen(
         )
         GeneralButton(
             title = stringResource(R.string.settings_font_title),
-            hint = uiState.font.name,
             iconPainter = painterResource(R.drawable.ic_settings_font),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
         )
         GeneralButton(
+            title = stringResource(R.string.settings_note_content_title),
+            iconPainter = painterResource(R.drawable.ic_note_content),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
+        )
+        GeneralButton(
+            title = stringResource(uiR.string.title_widgets),
+            iconPainter = painterResource(R.drawable.ic_note_content),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
+        )
+        GeneralButton(
             title = stringResource(R.string.settings_language_title),
-            hint = uiState.locale.text,
             iconPainter = painterResource(R.drawable.ic_language),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnLocaleClick) },
         )
         Rating(
+            modifier = Modifier.padding(top = 8.dp),
             rating = uiState.rating,
             hazeState = hazeState,
             onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
@@ -399,7 +408,7 @@ private fun Rating(
                 val scale = remember { Animatable(1f) }
                 SkipFirstEffect(rating, isFilled) {
                     if (isFilled) {
-                        delay(50L * index)
+                        delay((50L * index).milliseconds)
                         scale.animateTo(
                             targetValue = 1.15f,
                             animationSpec = tween(durationMillis = 150),
@@ -491,8 +500,6 @@ private fun ScreenContentPreview() {
                 content = SettingsUiState.Content.Success(
                     rating = 4,
                     appVersion = "1.0",
-                    locale = AppLocale.ENGLISH,
-                    font = UiNoteFontFamily.NotoSans,
                 ),
             ),
         )

@@ -1,4 +1,4 @@
-package com.furianrt.widgets.widgets.components
+package com.furianrt.widgets.internal.widgets.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color

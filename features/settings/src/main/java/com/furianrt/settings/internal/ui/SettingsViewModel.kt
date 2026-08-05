@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.core.DispatchersProvider
-import com.furianrt.domain.entities.AppLocale
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -30,6 +29,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val MIN_GOOD_RATING = 4
 private const val RATING_CLICK_DELAY = 250L
@@ -50,9 +50,7 @@ internal class SettingsViewModel @Inject constructor(
 
     val state: StateFlow<SettingsUiState> = combine(
         settingsRepository.getAppRating(),
-        localeRepository.getSelectedLocale(),
         appearanceRepository.getAppThemeColorId(),
-        appearanceRepository.getAppFont(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -87,7 +85,7 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonReportIssueClick -> sendIssueFeedback()
             is SettingsEvent.OnRatingSelected -> launch {
                 settingsRepository.setAppRating(event.rating)
-                delay(RATING_CLICK_DELAY)
+                delay(RATING_CLICK_DELAY.milliseconds)
                 if (event.rating < MIN_GOOD_RATING) {
                     _effect.tryEmit(SettingsEffect.ShowBadRatingDialog)
                 } else {
@@ -110,18 +108,13 @@ internal class SettingsViewModel @Inject constructor(
                 _effect.tryEmit(SettingsEffect.OpenLink(PRIVACY_POLICY_LINK))
             }
 
-            is SettingsEvent.OnLocaleClick -> {
-                val content = state.value.content
-                if (content is SettingsUiState.Content.Success) {
-                    launch {
-                        _effect.tryEmit(
-                            SettingsEffect.ShowLocaleDialog(
-                                locale = localeRepository.getLocaleList().first(),
-                                selectedLocale = content.locale,
-                            )
-                        )
-                    }
-                }
+            is SettingsEvent.OnLocaleClick -> launch {
+                _effect.tryEmit(
+                    SettingsEffect.ShowLocaleDialog(
+                        locale = localeRepository.getLocaleList().first(),
+                        selectedLocale = localeRepository.getSelectedLocale().first(),
+                    )
+                )
             }
 
             is SettingsEvent.OnLocaleSelected -> localeRepository.setSelectedLocale(event.locale)
@@ -131,6 +124,10 @@ internal class SettingsViewModel @Inject constructor(
 
             is SettingsEvent.OnButtonThemeClick -> {
                 _effect.tryEmit(SettingsEffect.OpenAppThemeScreen)
+            }
+
+            is SettingsEvent.OnButtonWidgetsClick -> {
+                _effect.tryEmit(SettingsEffect.OpenWidgetsScreen)
             }
         }
     }
@@ -173,16 +170,12 @@ internal class SettingsViewModel @Inject constructor(
 
     private fun buildState(
         rating: Int,
-        locale: AppLocale,
         appThemeColorId: String?,
-        font: NoteFontFamily,
     ): SettingsUiState = SettingsUiState(
         theme = UiThemeColor.fromId(appThemeColorId),
         content = SettingsUiState.Content.Success(
             rating = rating,
             appVersion = buildInfoProvider.getAppVersionName(),
-            locale = locale,
-            font = font.toUiNoteFontFamily(),
         ),
     )
 }

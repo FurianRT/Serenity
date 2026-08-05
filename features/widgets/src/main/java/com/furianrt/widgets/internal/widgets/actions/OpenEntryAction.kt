@@ -1,4 +1,4 @@
-package com.furianrt.widgets.widgets.actions
+package com.furianrt.widgets.internal.widgets.actions
 
 import android.content.Context
 import android.content.Intent

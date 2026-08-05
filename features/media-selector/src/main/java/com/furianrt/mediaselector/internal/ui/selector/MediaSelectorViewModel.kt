@@ -101,6 +101,8 @@ internal class MediaSelectorViewModel @Inject constructor(
     private var cachedCameraItem: MediaItem? = null
     private var cachedCameraFile: File? = null
 
+    private var hasPendingVideoPermissionRequest = false
+
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = TAG, listener = this)
     }
@@ -355,13 +357,20 @@ internal class MediaSelectorViewModel @Inject constructor(
                 }
             }
         } else {
+            hasPendingVideoPermissionRequest = forVideo
             _effect.tryEmit(MediaSelectorEffect.RequestCameraPermission)
         }
     }
 
     private fun tryOpenCamera() {
         if (permissionsUtils.hasCameraPermission()) {
-            launch { takePicture() }
+            launch {
+                if (hasPendingVideoPermissionRequest) {
+                    takeVideo()
+                } else {
+                    takePicture()
+                }
+            }
         } else {
             _effect.tryEmit(MediaSelectorEffect.ShowCameraPermissionsDeniedDialog)
         }
