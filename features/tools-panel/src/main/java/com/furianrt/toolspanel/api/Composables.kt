@@ -66,6 +66,8 @@ import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
 import dev.chrisbanes.haze.hazeEffect
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 
 private enum class PanelMode {
     REGULAR,
@@ -90,6 +92,7 @@ fun ActionsPanel(
     textAlignment: NoteTextAlignment,
     noteTheme: UiNoteTheme?,
     background: Color,
+    voiceRecordFlow: Channel<Unit>,
     onMenuVisibilityChange: (visible: Boolean) -> Unit,
     onSelectMediaClick: () -> Unit,
     onVoiceRecordStart: () -> Unit,
@@ -152,6 +155,17 @@ fun ActionsPanel(
         isAttachmentsPanelVisible -> PanelMode.ATTACHMENTS
         isBackgroundsPanelVisible -> PanelMode.BACKGROUNDS
         else -> PanelMode.REGULAR
+    }
+
+    fun startVoiceRecord() {
+        isAttachmentsPanelVisible = false
+        audioRecordPermissionsState.launchPermissionRequest()
+    }
+
+    LaunchedEffect(voiceRecordFlow) {
+        voiceRecordFlow.receiveAsFlow().collect {
+            startVoiceRecord()
+        }
     }
 
     LaunchedEffect(hasMultiSelection) {
@@ -282,10 +296,7 @@ fun ActionsPanel(
                             isAttachmentsPanelVisible = false
                             onSelectMediaClick()
                         },
-                        onRecordVoiceClick = {
-                            isAttachmentsPanelVisible = false
-                            audioRecordPermissionsState.launchPermissionRequest()
-                        },
+                        onRecordVoiceClick = { startVoiceRecord() },
                         onCloseClick = { isAttachmentsPanelVisible = false },
                     )
 

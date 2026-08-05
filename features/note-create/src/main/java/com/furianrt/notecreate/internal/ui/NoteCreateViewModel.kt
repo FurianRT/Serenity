@@ -3,13 +3,16 @@ package com.furianrt.notecreate.internal.ui
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
+import com.furianrt.notecreate.api.NoteCreateRoute
 import com.furianrt.notecreate.internal.ui.extensions.toNoteItem
 import com.furianrt.notelistui.extensions.toNoteFont
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.uikit.extensions.getOrPut
 import com.furianrt.uikit.extensions.launch
@@ -39,19 +42,19 @@ import java.util.UUID
 import javax.inject.Inject
 
 private const val KEY_NOTE_ID = "note_id"
-private const val KEY_REQUEST_ID = "requestId"
-private const val KEY_DIALOG_ID = "dialogId"
 
 @HiltViewModel
 internal class NoteCreateViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     appearanceRepository: AppearanceRepository,
     dispatchers: DispatchersProvider,
-    private val savedStateHandle: SavedStateHandle,
     private val notesRepository: NotesRepository,
     private val mediaRepository: MediaRepository,
     private val noteThemeProvider: NoteThemeProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
+
+    private val route = savedStateHandle.toRoute<NoteCreateRoute>()
 
     private val isInEditModeState = MutableStateFlow(true)
 
@@ -70,6 +73,12 @@ internal class NoteCreateViewModel @Inject constructor(
                 ),
             ),
             isInEditMode = isInEditMode,
+            pageAction = when (route.action) {
+                NoteCreateRoute.ACTION_PHOTO -> NotePageAction.PHOTO
+                NoteCreateRoute.ACTION_VIDEO -> NotePageAction.VIDEO
+                NoteCreateRoute.ACTION_VOICE -> NotePageAction.VOICE
+                else -> NotePageAction.DEFAULT
+            },
             font = font.toNoteFont(),
         )
     }.flowOn(
@@ -85,8 +94,8 @@ internal class NoteCreateViewModel @Inject constructor(
 
     private val dialogIdentifier by lazy(LazyThreadSafetyMode.NONE) {
         DialogIdentifier(
-            requestId = savedStateHandle[KEY_REQUEST_ID]!!,
-            dialogId = savedStateHandle[KEY_DIALOG_ID]!!,
+            requestId = route.requestId,
+            dialogId = route.dialogId,
         )
     }
 

@@ -37,6 +37,7 @@ import com.furianrt.notelistui.extensions.toRegular
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.notelistui.extensions.toUiNoteMedia
 import com.furianrt.notepage.R
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.notepage.internal.domain.SearchTagsUseCase
 import com.furianrt.notepage.internal.ui.extensions.addSecondTagTemplate
 import com.furianrt.notepage.internal.ui.extensions.addTagTemplate
@@ -164,6 +165,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val dispatchers: DispatchersProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
+    @Assisted private val action: NotePageAction,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
@@ -190,6 +192,8 @@ internal class PageViewModel @AssistedInject constructor(
     private var pendingMediaSelectorParams: MediaSelectorState.Params? = null
 
     private var locationJob: Job? = null
+
+    private var isActionHandled = false
 
     private val visibleTags: Set<String>
         get() = (_state.value as? PageUiState.Success)?.visibleTags.orEmpty()
@@ -1057,6 +1061,7 @@ internal class PageViewModel @AssistedInject constructor(
                     ).also {
                         tryFocusFirstTitle()
                         tryAutoDetectLocation()
+                        performAction()
                     }
                 }
 
@@ -1074,7 +1079,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun tryFocusFirstTitle(force: Boolean = false) = launch {
-        if (focusFirstTitle || force) {
+        if ((focusFirstTitle && action == NotePageAction.DEFAULT) || force) {
             focusFirstTitle = false
             delay(TITLE_FOCUS_DELAY)
             _state.doWithState<PageUiState.Success> { successState ->
@@ -1252,6 +1257,28 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
+    private fun performAction() {
+        if (isActionHandled) return
+        isActionHandled = true
+        when (action) {
+            NotePageAction.DEFAULT -> Unit
+            NotePageAction.VOICE -> _effect.tryEmit(PageEffect.StartVoiceRecord)
+            NotePageAction.PHOTO -> tryRequestMediaPermissions(
+                params = MediaSelectorState.Params(
+                    action = MediaSelectorState.Params.Action.TAKE_PHOTO,
+                    onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+                ),
+            )
+
+            NotePageAction.VIDEO -> tryRequestMediaPermissions(
+                params = MediaSelectorState.Params(
+                    action = MediaSelectorState.Params.Action.CAPTURE_VIDEO,
+                    onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+                ),
+            )
+        }
+    }
+
     private fun PageUiState.Success.addTag(
         tag: UiNoteTag.Regular,
         addTemplate: Boolean,
@@ -1283,6 +1310,7 @@ internal class PageViewModel @AssistedInject constructor(
         fun create(
             noteId: String?,
             isNoteCreationMode: Boolean,
+            action: NotePageAction,
         ): PageViewModel
     }
 }

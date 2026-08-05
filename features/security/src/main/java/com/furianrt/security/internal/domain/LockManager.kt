@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 internal class LockManager @Inject constructor(
@@ -32,19 +33,25 @@ internal class LockManager @Inject constructor(
     private var lockJob: Job? = null
     private val skipLock = AtomicBoolean(false)
 
+    private var foregroundActivities = 0
+
     private val lifecycleCallbacks = object : ActivityLifecycleCallbacks {
         override fun onActivityStarted(activity: Activity) {
+            foregroundActivities++
             lockJob?.cancel()
         }
 
         override fun onActivityStopped(activity: Activity) {
-            lockJob = scope.launch {
-                val pinRequestDelay = securityRepository.getPinRequestDelay().first().toLong()
-                delay(pinRequestDelay)
-                if (skipLock.get()) {
-                    skipLock.set(false)
-                } else {
-                    isAuthorizedFlow.update { false }
+            foregroundActivities--
+            if (foregroundActivities == 0) {
+                lockJob = scope.launch {
+                    val pinRequestDelay = securityRepository.getPinRequestDelay().first().toLong()
+                    delay(pinRequestDelay.milliseconds)
+                    if (skipLock.get()) {
+                        skipLock.set(false)
+                    } else {
+                        isAuthorizedFlow.update { false }
+                    }
                 }
             }
         }
@@ -71,5 +78,9 @@ internal class LockManager @Inject constructor(
 
     override fun cancelSkipNextLock() {
         skipLock.set(false)
+    }
+
+    override suspend fun waitForAuthorization() {
+        isAuthorized().first { it }
     }
 }

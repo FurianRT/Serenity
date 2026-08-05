@@ -7,4 +7,5 @@ interface LockAuthorizer {
     fun authorize()
     fun skipNextLock()
     fun cancelSkipNextLock()
+    suspend fun waitForAuthorization()
 }

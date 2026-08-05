@@ -7,11 +7,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -26,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,7 +35,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -52,6 +47,7 @@ import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
 import com.furianrt.notepage.api.PageScreenState
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.uikit.components.FileExportProgress
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -240,6 +236,7 @@ internal fun NoteCreateScreen(
                     NotePageScreen(
                         state = pageScreenState,
                         noteId = state.note.id,
+                        action = state.pageAction,
                         isInEditMode = state.isInEditMode,
                         isSelected = true,
                         isNoteCreationMode = true,
@@ -305,9 +302,6 @@ private fun SuccessContent(
     val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
 
-    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
-    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
-
     val date = remember(uiState.note.date) { uiState.note.date.toDateString() }
 
     BackHandler(
@@ -336,7 +330,7 @@ private fun SuccessContent(
         onDimClick = { scope.launch { state.mediaSelectorState.collapse() } },
         toolbar = {
             Toolbar(
-                modifier = Modifier.padding(top = statusBarHeight.dp),
+                modifier = Modifier.statusBarsPadding(),
                 isInEditMode = uiState.isInEditMode,
                 isPinned = uiState.note.isPinned,
                 date = date,
@@ -396,6 +390,7 @@ private fun Preview() {
                     isPinned = false,
                 ),
                 isInEditMode = true,
+                pageAction = NotePageAction.DEFAULT,
                 font = LocalFont.current,
             ),
             hazeState = HazeState(),

@@ -48,8 +48,15 @@ class MediaSelectorState internal constructor(
     data class Params(
         val singleChoice: Boolean = false,
         val allowVideo: Boolean = true,
+        val action: Action = Action.NONE,
         val onMediaSelected: suspend (result: MediaResult) -> Unit,
-    )
+    ) {
+        enum class Action {
+            NONE,
+            TAKE_PHOTO,
+            CAPTURE_VIDEO,
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)

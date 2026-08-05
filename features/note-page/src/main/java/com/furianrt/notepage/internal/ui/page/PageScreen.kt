@@ -98,6 +98,7 @@ import com.furianrt.notelistui.entities.toContentScale
 import com.furianrt.notelistui.extensions.toTextAlign
 import com.furianrt.notepage.R
 import com.furianrt.notepage.api.PageScreenState
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.notepage.internal.ui.page.composables.DetectLocationDialog
 import com.furianrt.notepage.internal.ui.stickers.StickersBox
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
@@ -145,6 +146,7 @@ private data class MoodDialogState(
 internal fun NotePageScreenInternal(
     state: PageScreenState,
     noteId: String,
+    action: NotePageAction,
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
@@ -160,6 +162,7 @@ internal fun NotePageScreenInternal(
             factory.create(
                 noteId = noteId,
                 isNoteCreationMode = isNoteCreationMode,
+                action = action,
             )
         },
     )
@@ -270,6 +273,7 @@ internal fun NotePageScreenInternal(
                 )
 
                 is PageEffect.ShowAutoDetectLocationDialog -> showDetectLocationDialog = true
+                is PageEffect.StartVoiceRecord -> state.startVoiceRecord()
             }
         }
     }
@@ -491,6 +495,7 @@ private fun SuccessScreen(
                 .applyIf(state.isVoiceRecordActive) { Modifier.zIndex(1f) },
             hazeState = hazeState,
             uiState = uiState,
+            state = state,
             focusedTitleId = { focusedTitleId },
             onNoPositionError = { onEvent(PageEvent.OnNoPositionError) },
             onMenuVisibilityChange = { isToolsPanelMenuVisible = it },
@@ -853,6 +858,7 @@ private fun ContentItems(
 @Composable
 private fun Panel(
     uiState: PageUiState.Success,
+    state: PageScreenState,
     hazeState: HazeState,
     focusedTitleId: () -> String?,
     onNoPositionError: () -> Unit,
@@ -899,6 +905,7 @@ private fun Panel(
                     background = MaterialTheme.colorScheme.surface,
                     hazeState = hazeState,
                     titleState = titleState,
+                    voiceRecordFlow = state.voiceRecordTrigger,
                     onNoPositionError = onNoPositionError,
                     onMenuVisibilityChange = onMenuVisibilityChange,
                     onSelectMediaClick = onSelectMediaClick,

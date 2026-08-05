@@ -55,6 +55,7 @@ import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.notepage.api.NotePageScreen
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.notepage.api.rememberPageScreenState
 import com.furianrt.noteview.internal.ui.composables.Toolbar
 import com.furianrt.uikit.components.FileExportProgress
@@ -435,6 +436,7 @@ private fun SuccessScreen(
                     rememberPageScreenState()
                 },
                 noteId = noteId,
+                action = NotePageAction.DEFAULT,
                 isSelected = isCurrentPage,
                 isInEditMode = isCurrentPage && uiState.isInEditMode,
                 isNoteCreationMode = false,

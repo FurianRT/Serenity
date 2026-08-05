@@ -31,6 +31,7 @@ dependencies {
     implementation(projects.features.mood)
     implementation(projects.features.toolsPanel)
     implementation(projects.features.reminders)
+    implementation(projects.features.widgets)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

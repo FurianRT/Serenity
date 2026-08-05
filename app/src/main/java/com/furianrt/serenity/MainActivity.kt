@@ -1,6 +1,7 @@
 package com.furianrt.serenity
 
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.AttributeSet
 import android.view.View
@@ -68,6 +69,7 @@ import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -84,6 +86,8 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
     private val viewModel: MainViewModel by viewModels()
 
     private var keepSplashScreen = true
+
+    private val deepLinks = MutableSharedFlow<Intent>(extraBufferCapacity = 1)
 
     override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
 
@@ -115,6 +119,12 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             val navController = rememberNavController()
             val hazeState = rememberHazeState()
             val activity = LocalActivity.current as? ComponentActivity
+
+            LaunchedEffect(Unit) {
+                deepLinks.collect { intent ->
+                    navController.handleDeepLink(intent)
+                }
+            }
 
             SerenityTheme(
                 colorScheme = uiState.appColor.colorScheme,
@@ -317,5 +327,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                 }
             }
         }
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        deepLinks.tryEmit(intent)
     }
 }

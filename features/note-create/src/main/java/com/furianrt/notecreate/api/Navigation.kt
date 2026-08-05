@@ -11,6 +11,8 @@ import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
+import com.furianrt.common.SerenityDeeplink
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.NoteCreateScreen
 import com.furianrt.uikit.anim.defaultExitTransition
@@ -21,9 +23,16 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class NoteCreateRoute(
-    val dialogId: Int,
-    val requestId: String,
-)
+    val action: String? = null,
+    val dialogId: Int = 0,
+    val requestId: String = "",
+) {
+    companion object {
+        const val ACTION_VOICE = "voice"
+        const val ACTION_PHOTO = "photo"
+        const val ACTION_VIDEO = "video"
+    }
+}
 
 fun NavController.navigateToNoteCreate(
     route: NoteCreateRoute,
@@ -63,6 +72,11 @@ fun NavGraphBuilder.noteCreateScreen(
                 EnterTransition.None
             }
         },
+        deepLinks = listOf(
+            navDeepLink<NoteCreateRoute>(
+                basePath = SerenityDeeplink.NEW_ENTRY
+            ),
+        )
     ) {
         NoteCreateScreen(
             openMediaViewScreen = openMediaViewScreen,

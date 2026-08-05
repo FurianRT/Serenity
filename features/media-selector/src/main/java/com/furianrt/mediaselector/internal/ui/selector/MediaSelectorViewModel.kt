@@ -15,6 +15,7 @@ import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.internal.domain.SelectedMediaCoordinator
 import com.furianrt.mediaselector.internal.domain.TempMediaHolder
 import com.furianrt.mediaselector.internal.domain.usecase.GetPhotosAndVideosUseCase
@@ -134,9 +135,11 @@ internal class MediaSelectorViewModel @Inject constructor(
     fun onEvent(event: MediaSelectorEvent) {
         when (event) {
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
-            is OnMediaPermissionsSelected -> loadMediaItems(
-                selectedAlbum = null,
-            )
+            is OnMediaPermissionsSelected -> launch {
+                loadMediaItems(
+                    selectedAlbum = null,
+                )
+            }
 
             is OnSelectItemClick -> toggleItemSelection(event.item)
             is OnMediaClick -> _effect.tryEmit(
@@ -177,14 +180,19 @@ internal class MediaSelectorViewModel @Inject constructor(
                 ) {
                     allowVideo = allowVideoTemp
                     isSingleChoice = isSingleChoiceTemp
-                    loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+                    launch {
+                        loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+                        handleAction(event.params?.action)
+                    }
                 }
             }
 
             is OnScreenResumed -> if (isDataLoaded) {
-                loadMediaItems(
-                    selectedAlbum = _state.value.selectedAlbum,
-                )
+                launch {
+                    loadMediaItems(
+                        selectedAlbum = _state.value.selectedAlbum,
+                    )
+                }
             }
 
             is OnAlbumsClick -> launch {
@@ -206,9 +214,11 @@ internal class MediaSelectorViewModel @Inject constructor(
                 is MediaSelectorUiState.Loading -> Unit
                 is MediaSelectorUiState.Success -> {
                     if (currentState.selectedAlbum?.id != event.album.id) {
-                        loadMediaItems(
-                            selectedAlbum = event.album,
-                        )
+                        launch {
+                            loadMediaItems(
+                                selectedAlbum = event.album,
+                            )
+                        }
                     }
                 }
             }
@@ -240,7 +250,7 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
     }
 
-    private fun loadMediaItems(
+    private suspend fun loadMediaItems(
         selectedAlbum: MediaAlbumItem?,
     ) {
         if (permissionsUtils.mediaAccessDenied()) {
@@ -254,50 +264,63 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
             return
         }
-        launch {
-            _state.update { currentState ->
-                val media = getPhotosAndVideosUseCase(
-                    albumId = selectedAlbum?.id
-                        ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
-                    allowVideo = allowVideo,
-                )
-                when {
-                    currentState is MediaSelectorUiState.Success -> {
-                        val selectedMedia = mediaCoordinator.getSelectedMedia()
-                        currentState.copy(
-                            items = media.toMediaItems(
-                                state = { id ->
-                                    val selectedIndex = selectedMedia.indexOfFirst { it.id == id }
-                                    when {
-                                        selectedIndex != -1 && isSingleChoice -> {
-                                            SelectionState.Single
-                                        }
-
-                                        selectedIndex != -1 && !isSingleChoice -> {
-                                            SelectionState.Counter(order = selectedIndex + 1)
-                                        }
-
-                                        else -> SelectionState.Default
+        _state.update { currentState ->
+            val media = getPhotosAndVideosUseCase(
+                albumId = selectedAlbum?.id
+                    ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
+                allowVideo = allowVideo,
+            )
+            when {
+                currentState is MediaSelectorUiState.Success -> {
+                    val selectedMedia = mediaCoordinator.getSelectedMedia()
+                    currentState.copy(
+                        items = media.toMediaItems(
+                            state = { id ->
+                                val selectedIndex = selectedMedia.indexOfFirst { it.id == id }
+                                when {
+                                    selectedIndex != -1 && isSingleChoice -> {
+                                        SelectionState.Single
                                     }
-                                },
-                            ),
-                            selectedAlbum = selectedAlbum,
-                            selectedCount = selectedMedia.count(),
-                            allowVideo = allowVideo,
-                            showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
-                        )
-                    }
 
-                    else -> MediaSelectorUiState.Success(
-                        items = media.map(DeviceMedia::toMediaItem),
-                        selectedCount = 0,
-                        showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
+                                    selectedIndex != -1 && !isSingleChoice -> {
+                                        SelectionState.Counter(order = selectedIndex + 1)
+                                    }
+
+                                    else -> SelectionState.Default
+                                }
+                            },
+                        ),
                         selectedAlbum = selectedAlbum,
+                        selectedCount = selectedMedia.count(),
                         allowVideo = allowVideo,
+                        showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
                     )
                 }
+
+                else -> MediaSelectorUiState.Success(
+                    items = media.map(DeviceMedia::toMediaItem),
+                    selectedCount = 0,
+                    showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
+                    selectedAlbum = selectedAlbum,
+                    allowVideo = allowVideo,
+                )
             }
-            isDataLoaded = true
+        }
+        isDataLoaded = true
+    }
+
+    private suspend fun handleAction(action: MediaSelectorState.Params.Action?) {
+        lockAuthorizer.waitForAuthorization()
+        when (action) {
+            MediaSelectorState.Params.Action.TAKE_PHOTO -> tryRequestCameraPermissions(
+                forVideo = false,
+            )
+
+            MediaSelectorState.Params.Action.CAPTURE_VIDEO -> tryRequestCameraPermissions(
+                forVideo = true,
+            )
+
+            else -> Unit
         }
     }
 

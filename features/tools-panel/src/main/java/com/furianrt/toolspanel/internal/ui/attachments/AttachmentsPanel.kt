@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.furianrt.toolspanel.R
 import com.furianrt.uikit.R as uiR
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.uikit.theme.SerenityTheme
@@ -51,7 +50,7 @@ internal fun AttachmentsPanel(
                 onClick = onRecordVoiceClick,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_panel_microphone),
+                    painter = painterResource(uiR.drawable.ic_microphone),
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.onSurface,
                 )

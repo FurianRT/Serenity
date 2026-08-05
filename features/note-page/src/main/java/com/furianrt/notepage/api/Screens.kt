@@ -13,8 +13,10 @@ import androidx.compose.runtime.setValue
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.rememberMediaSelectorState
+import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.notepage.internal.ui.page.NotePageScreenInternal
 import com.furianrt.uikit.utils.DialogIdentifier
+import kotlinx.coroutines.channels.Channel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Stable
@@ -23,6 +25,8 @@ class PageScreenState(
     val mediaSelectorState: MediaSelectorState,
     hasContentChanged: Boolean,
 ) {
+    val voiceRecordTrigger = Channel<Unit>()
+
     val hasContentChanged: Boolean
         get() = hasContentChangedState
 
@@ -39,6 +43,10 @@ class PageScreenState(
 
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed
+    }
+
+    suspend fun startVoiceRecord() {
+        voiceRecordTrigger.send(Unit)
     }
 
     companion object {
@@ -82,6 +90,7 @@ fun rememberPageScreenState(
 fun NotePageScreen(
     state: PageScreenState,
     noteId: String,
+    action: NotePageAction,
     isInEditMode: Boolean,
     isSelected: Boolean,
     isNoteCreationMode: Boolean,
@@ -94,6 +103,7 @@ fun NotePageScreen(
     NotePageScreenInternal(
         state = state,
         noteId = noteId,
+        action = action,
         isSelected = isSelected,
         isInEditMode = isInEditMode,
         isNoteCreationMode = isNoteCreationMode,

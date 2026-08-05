@@ -146,4 +146,5 @@ internal sealed interface PageEffect {
     ) : PageEffect
 
     data object ShowAutoDetectLocationDialog : PageEffect
+    data object StartVoiceRecord : PageEffect
 }
