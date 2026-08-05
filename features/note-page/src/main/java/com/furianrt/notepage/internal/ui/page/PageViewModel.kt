@@ -12,6 +12,7 @@ import com.furianrt.core.orFalse
 import com.furianrt.core.updateState
 import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.entities.NoteTextAlignment
+import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -162,6 +163,7 @@ internal class PageViewModel @AssistedInject constructor(
     private val syncManager: SyncManager,
     private val resourcesManager: ResourcesManager,
     private val locationRepository: LocationRepository,
+    private val lockAuthorizer: LockAuthorizer,
     private val dispatchers: DispatchersProvider,
     @Assisted private val noteId: String,
     @Assisted private val isNoteCreationMode: Boolean,
@@ -1260,22 +1262,25 @@ internal class PageViewModel @AssistedInject constructor(
     private fun performAction() {
         if (isActionHandled) return
         isActionHandled = true
-        when (action) {
-            NotePageAction.DEFAULT -> Unit
-            NotePageAction.VOICE -> _effect.tryEmit(PageEffect.StartVoiceRecord)
-            NotePageAction.PHOTO -> tryRequestMediaPermissions(
-                params = MediaSelectorState.Params(
-                    action = MediaSelectorState.Params.Action.TAKE_PHOTO,
-                    onMediaSelected = { addNewBlock(it.toMediaBlock()) },
-                ),
-            )
+        launch {
+            lockAuthorizer.waitForAuthorization()
+            when (action) {
+                NotePageAction.DEFAULT -> Unit
+                NotePageAction.VOICE -> _effect.tryEmit(PageEffect.StartVoiceRecord)
+                NotePageAction.PHOTO -> tryRequestMediaPermissions(
+                    params = MediaSelectorState.Params(
+                        action = MediaSelectorState.Params.Action.TAKE_PHOTO,
+                        onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+                    ),
+                )
 
-            NotePageAction.VIDEO -> tryRequestMediaPermissions(
-                params = MediaSelectorState.Params(
-                    action = MediaSelectorState.Params.Action.CAPTURE_VIDEO,
-                    onMediaSelected = { addNewBlock(it.toMediaBlock()) },
-                ),
-            )
+                NotePageAction.VIDEO -> tryRequestMediaPermissions(
+                    params = MediaSelectorState.Params(
+                        action = MediaSelectorState.Params.Action.CAPTURE_VIDEO,
+                        onMediaSelected = { addNewBlock(it.toMediaBlock()) },
+                    ),
+                )
+            }
         }
     }
 

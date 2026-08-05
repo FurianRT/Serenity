@@ -6,16 +6,19 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.glance.ColorFilter
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
 import androidx.glance.Image
 import androidx.glance.ImageProvider
+import androidx.glance.LocalSize
 import androidx.glance.action.actionParametersOf
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
+import androidx.glance.appwidget.SizeMode
 import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.cornerRadius
 import androidx.glance.appwidget.provideContent
@@ -36,6 +39,19 @@ import com.furianrt.widgets.widgets.actions.OpenEntryAction
 import com.furianrt.widgets.widgets.components.Separator
 import dagger.hilt.android.EntryPointAccessors
 import com.furianrt.uikit.R as uiR
+
+private enum class WidgetSize(val size: DpSize) {
+    SMALL(DpSize(120.dp, 60.dp)),
+    MEDIUM(DpSize(200.dp, 60.dp));
+
+    companion object {
+        fun fromSize(size: DpSize): WidgetSize = if (size.width > SMALL.size.width) {
+            MEDIUM
+        } else {
+            SMALL
+        }
+    }
+}
 
 internal class AllActionsWidget : GlanceAppWidget() {
     override suspend fun provideGlance(
@@ -58,6 +74,13 @@ internal class AllActionsWidget : GlanceAppWidget() {
         }
     }
 
+    override val sizeMode = SizeMode.Responsive(
+        setOf(
+            WidgetSize.SMALL.size,
+            WidgetSize.MEDIUM.size,
+        )
+    )
+
     @Composable
     private fun WidgetContent(
         theme: UiThemeColor,
@@ -67,6 +90,9 @@ internal class AllActionsWidget : GlanceAppWidget() {
                 override fun getColor(context: Context): Color = theme.primary
             }
         }
+
+        val widgetSize = WidgetSize.fromSize(LocalSize.current)
+
         Box(
             modifier = GlanceModifier
                 .fillMaxSize()
@@ -77,6 +103,7 @@ internal class AllActionsWidget : GlanceAppWidget() {
                     .fillMaxSize()
                     .background(theme.surface)
                     .cornerRadius(32.dp),
+                contentAlignment = Alignment.Center,
             ) {
                 theme.image?.let { image ->
                     Image(
@@ -124,60 +151,6 @@ internal class AllActionsWidget : GlanceAppWidget() {
                             .clickable(
                                 onClick = actionRunCallback<OpenEntryAction>(
                                     parameters = actionParametersOf(
-                                        OpenEntryAction.DEEPLINK_KEY to SerenityDeeplink.NEW_VOICE,
-                                    )
-                                )
-                            )
-                            .padding(8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
-                            modifier = GlanceModifier
-                                .padding(3.dp)
-                                .size(28.dp),
-                            provider = ImageProvider(uiR.drawable.ic_microphone),
-                            colorFilter = ColorFilter.tint(iconsColorProvider),
-                            contentDescription = null,
-                        )
-                    }
-                    Separator(
-                        modifier = GlanceModifier
-                            .padding(vertical = 14.dp)
-                            .defaultWeight(),
-                        color = theme.primary.copy(alpha = 0.08f)
-                    )
-                    Box(
-                        modifier = GlanceModifier
-                            .cornerRadius(64.dp)
-                            .clickable(
-                                onClick = actionRunCallback<OpenEntryAction>(
-                                    parameters = actionParametersOf(
-                                        OpenEntryAction.DEEPLINK_KEY to SerenityDeeplink.NEW_VIDEO,
-                                    )
-                                )
-                            )
-                            .padding(8.dp),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Image(
-                            modifier = GlanceModifier.size(28.dp),
-                            provider = ImageProvider(uiR.drawable.ic_video),
-                            colorFilter = ColorFilter.tint(iconsColorProvider),
-                            contentDescription = null,
-                        )
-                    }
-                    Separator(
-                        modifier = GlanceModifier
-                            .padding(vertical = 14.dp)
-                            .defaultWeight(),
-                        color = theme.primary.copy(alpha = 0.08f)
-                    )
-                    Box(
-                        modifier = GlanceModifier
-                            .cornerRadius(64.dp)
-                            .clickable(
-                                onClick = actionRunCallback<OpenEntryAction>(
-                                    parameters = actionParametersOf(
                                         OpenEntryAction.DEEPLINK_KEY to SerenityDeeplink.NEW_PHOTO,
                                     )
                                 )
@@ -193,6 +166,64 @@ internal class AllActionsWidget : GlanceAppWidget() {
                             colorFilter = ColorFilter.tint(iconsColorProvider),
                             contentDescription = null,
                         )
+                    }
+                    if (widgetSize == WidgetSize.MEDIUM) {
+                        Separator(
+                            modifier = GlanceModifier
+                                .padding(vertical = 14.dp)
+                                .defaultWeight(),
+                            color = theme.primary.copy(alpha = 0.08f)
+                        )
+                        Box(
+                            modifier = GlanceModifier
+                                .cornerRadius(64.dp)
+                                .clickable(
+                                    onClick = actionRunCallback<OpenEntryAction>(
+                                        parameters = actionParametersOf(
+                                            OpenEntryAction.DEEPLINK_KEY to SerenityDeeplink.NEW_VIDEO,
+                                        )
+                                    )
+                                )
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                modifier = GlanceModifier.size(28.dp),
+                                provider = ImageProvider(uiR.drawable.ic_video),
+                                colorFilter = ColorFilter.tint(iconsColorProvider),
+                                contentDescription = null,
+                            )
+                        }
+                    }
+                    if (widgetSize == WidgetSize.MEDIUM) {
+                        Separator(
+                            modifier = GlanceModifier
+                                .padding(vertical = 14.dp)
+                                .defaultWeight(),
+                            color = theme.primary.copy(alpha = 0.08f)
+                        )
+                        Box(
+                            modifier = GlanceModifier
+                                .cornerRadius(64.dp)
+                                .clickable(
+                                    onClick = actionRunCallback<OpenEntryAction>(
+                                        parameters = actionParametersOf(
+                                            OpenEntryAction.DEEPLINK_KEY to SerenityDeeplink.NEW_VOICE,
+                                        )
+                                    )
+                                )
+                                .padding(8.dp),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Image(
+                                modifier = GlanceModifier
+                                    .padding(3.dp)
+                                    .size(28.dp),
+                                provider = ImageProvider(uiR.drawable.ic_microphone),
+                                colorFilter = ColorFilter.tint(iconsColorProvider),
+                                contentDescription = null,
+                            )
+                        }
                     }
                     Spacer(GlanceModifier.defaultWeight())
                 }

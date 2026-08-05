@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:contentDescription="@null"
         android:paddingVertical="6dp"
-        android:src="@drawable/ic_microphone" />
+        android:src="@drawable/ic_camera" />
 
     <FrameLayout
         android:layout_width="1dp"
@@ -52,6 +52,6 @@
         android:layout_height="wrap_content"
         android:contentDescription="@null"
         android:paddingVertical="6dp"
-        android:src="@drawable/ic_camera" />
+        android:src="@drawable/ic_microphone" />
 
 </LinearLayout>
