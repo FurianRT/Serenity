@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/widget_background"
     android:gravity="center"
@@ -11,36 +12,56 @@
         android:layout_width="24dp"
         android:layout_height="24dp"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="20dp"
         android:contentDescription="@null"
         android:src="@drawable/app_logo_small" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        tools:ignore="UselessLeaf" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/main_action_background"
         android:contentDescription="@null"
         android:padding="8dp"
         android:src="@drawable/ic_add" />
 
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:ignore="UselessLeaf" />
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/secondary_action_background"
         android:contentDescription="@null"
         android:padding="12dp"
         android:src="@drawable/ic_camera" />
 
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:ignore="UselessLeaf" />
+
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/secondary_action_background"
         android:contentDescription="@null"
         android:padding="10dp"
         android:src="@drawable/ic_video" />
+
+    <FrameLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        tools:ignore="UselessLeaf" />
 
     <ImageView
         android:layout_width="wrap_content"
