@@ -332,7 +332,7 @@ private fun SuccessScreen(
         )
         GeneralButton(
             title = stringResource(uiR.string.title_widgets),
-            iconPainter = painterResource(R.drawable.ic_note_content),
+            iconPainter = painterResource(uiR.drawable.ic_widgets),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
         )
