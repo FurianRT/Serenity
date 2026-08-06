@@ -29,6 +29,7 @@
 
     <string name="title_email">メール</string>
     <string name="title_theme">テーマ</string>
+    <string name="title_widgets">ウィジェット</string>
 
     <string name="settings_title">設定</string>
     <string name="security_title">セキュリティ</string>

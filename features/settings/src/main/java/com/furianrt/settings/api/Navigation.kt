@@ -21,8 +21,6 @@ import com.furianrt.settings.internal.ui.MainRoute
 import com.furianrt.settings.internal.ui.noteSettings.navigateToNoteSettings
 import com.furianrt.settings.internal.ui.noteSettings.noteSettingsScreen
 import com.furianrt.settings.internal.ui.settingsScreen
-import com.furianrt.widgets.api.navigateToWidgets
-import com.furianrt.widgets.api.widgetsScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -45,7 +43,6 @@ fun NavGraphBuilder.settingsNavigation(
             openNoteSettingsScreen = navController::navigateToNoteSettings,
             openAppThemeScreen = navController::navigateToAppTheme,
             openRemindersScreen = navController::navigateToReminders,
-            openWidgetsScreen = navController::navigateToWidgets,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -72,9 +69,6 @@ fun NavGraphBuilder.settingsNavigation(
         )
         remindersNavigation(
             navController = navController,
-        )
-        widgetsScreen(
-            onCloseRequest = navController::navigateUp,
         )
     }
 }

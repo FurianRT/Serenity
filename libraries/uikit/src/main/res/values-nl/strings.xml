@@ -29,6 +29,7 @@
 
     <string name="title_email">E-mail</string>
     <string name="title_theme">Thema</string>
+    <string name="title_widgets">Widgets</string>
 
     <string name="settings_title">Instellingen</string>
     <string name="security_title">Beveiliging</string>

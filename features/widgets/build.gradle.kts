@@ -11,18 +11,18 @@ android {
 }
 
 dependencies {
+    implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.common)
     implementation(projects.libraries.domain)
 
     implementation(libs.coreKtx)
-    implementation(libs.material3)
     implementation(libs.lifecycle)
+    implementation(libs.material3)
 
     implementation(platform(libs.composeBom))
     implementation(libs.composeRuntime)
     implementation(libs.composeActivity)
-    implementation(libs.composeFoundation)
     implementation(libs.composeUi)
     implementation(libs.composeAnimation)
     implementation(libs.composeGraphics)
@@ -30,11 +30,11 @@ dependencies {
     debugImplementation(libs.composeTooling)
     implementation(libs.composeNavigation)
 
-    implementation(libs.glanceWidget)
-    implementation(libs.glanceMaterial3)
-
     implementation(libs.coroutinesCore)
     implementation(libs.coroutinesAndroid)
+
+    implementation(libs.glanceWidget)
+    implementation(libs.glanceMaterial3)
 
     implementation(libs.hilt)
     implementation(libs.hiltNavigation)

@@ -5,53 +5,49 @@
     android:background="@drawable/widget_background"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingHorizontal="24dp"
-    android:paddingVertical="12dp">
+    android:padding="12dp">
+
+    <ImageView
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginEnd="20dp"
+        android:contentDescription="@null"
+        android:src="@drawable/app_logo_small" />
 
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/main_action_background"
         android:contentDescription="@null"
-        android:paddingVertical="6dp"
+        android:padding="8dp"
         android:src="@drawable/ic_add" />
 
-    <FrameLayout
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        android:background="#14FFFFFF" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/secondary_action_background"
         android:contentDescription="@null"
-        android:paddingVertical="6dp"
+        android:padding="12dp"
         android:src="@drawable/ic_camera" />
 
-    <FrameLayout
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        android:background="#14FFFFFF" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/secondary_action_background"
         android:contentDescription="@null"
-        android:paddingVertical="6dp"
+        android:padding="10dp"
         android:src="@drawable/ic_video" />
 
-    <FrameLayout
-        android:layout_width="1dp"
-        android:layout_height="match_parent"
-        android:layout_marginHorizontal="16dp"
-        android:background="#14FFFFFF" />
-
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/secondary_action_background"
         android:contentDescription="@null"
-        android:paddingVertical="6dp"
+        android:padding="12dp"
         android:src="@drawable/ic_microphone" />
 
 </LinearLayout>

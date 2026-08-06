@@ -62,5 +62,5 @@ internal sealed interface SettingsEffect {
     ) : SettingsEffect
 
     data object OpenNoteSettingsScreen : SettingsEffect
-    data object OpenWidgetsScreen : SettingsEffect
+    data object OpenWidgetsDialog : SettingsEffect
 }

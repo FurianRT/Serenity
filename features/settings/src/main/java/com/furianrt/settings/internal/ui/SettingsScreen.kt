@@ -72,6 +72,7 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.widgets.api.WidgetsDialog
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
@@ -100,7 +101,6 @@ internal fun SettingsScreen(
     openNoteSettingsScreen: () -> Unit,
     openAppThemeScreen: () -> Unit,
     openRemindersScreen: () -> Unit,
-    openWidgetsScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -117,10 +117,10 @@ internal fun SettingsScreen(
     val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
     val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
     val openRemindersScreenState by rememberUpdatedState(openRemindersScreen)
-    val openWidgetsScreenState by rememberUpdatedState(openWidgetsScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
+    var showWidgetsDialog by remember { mutableStateOf(false) }
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
     var localeDialogState: LocaleDialogState? by remember { mutableStateOf(null) }
 
@@ -177,7 +177,7 @@ internal fun SettingsScreen(
                     }
 
                     is SettingsEffect.OpenNoteSettingsScreen -> openNoteSettingsScreenState()
-                    is SettingsEffect.OpenWidgetsScreen -> openWidgetsScreenState()
+                    is SettingsEffect.OpenWidgetsDialog -> showWidgetsDialog = true
                 }
             }
     }
@@ -212,6 +212,11 @@ internal fun SettingsScreen(
             hazeState = hazeState,
             onLocaleSelected = { viewModel.onEvent(SettingsEvent.OnLocaleSelected(it)) },
             onDismissRequest = { localeDialogState = null }
+        )
+    }
+    if (showWidgetsDialog) {
+        WidgetsDialog(
+            onDismissRequest = { showWidgetsDialog = false },
         )
     }
 }

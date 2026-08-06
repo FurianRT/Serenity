@@ -127,7 +127,7 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnButtonWidgetsClick -> {
-                _effect.tryEmit(SettingsEffect.OpenWidgetsScreen)
+                _effect.tryEmit(SettingsEffect.OpenWidgetsDialog)
             }
         }
     }
