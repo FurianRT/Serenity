@@ -205,7 +205,7 @@ internal class AllActionsWidget : GlanceAppWidget() {
     }
 }
 
-internal class AllActionsWidgetReceiver : GlanceAppWidgetReceiver() {
+class AllActionsWidgetReceiver : GlanceAppWidgetReceiver() {
     override val glanceAppWidget: GlanceAppWidget
         get() = AllActionsWidget()
 }

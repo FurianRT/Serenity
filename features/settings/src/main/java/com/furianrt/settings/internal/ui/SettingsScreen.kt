@@ -1,6 +1,8 @@
 package com.furianrt.settings.internal.ui
 
+import android.appwidget.AppWidgetManager
 import android.content.ActivityNotFoundException
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.IntRange
@@ -72,7 +74,7 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
-import com.furianrt.widgets.api.WidgetsDialog
+import com.furianrt.widgets.internal.widgets.AllActionsWidgetReceiver
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeTint
@@ -120,7 +122,6 @@ internal fun SettingsScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
-    var showWidgetsDialog by remember { mutableStateOf(false) }
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
     var localeDialogState: LocaleDialogState? by remember { mutableStateOf(null) }
 
@@ -177,7 +178,11 @@ internal fun SettingsScreen(
                     }
 
                     is SettingsEffect.OpenNoteSettingsScreen -> openNoteSettingsScreenState()
-                    is SettingsEffect.OpenWidgetsDialog -> showWidgetsDialog = true
+                    is SettingsEffect.OpenWidgetsDialog -> {
+                        val provider = ComponentName(context, AllActionsWidgetReceiver::class.java)
+                        val appWidgetManager = AppWidgetManager.getInstance(context)
+                        appWidgetManager.requestPinAppWidget(provider, null, null)
+                    }
                 }
             }
     }
@@ -212,11 +217,6 @@ internal fun SettingsScreen(
             hazeState = hazeState,
             onLocaleSelected = { viewModel.onEvent(SettingsEvent.OnLocaleSelected(it)) },
             onDismissRequest = { localeDialogState = null }
-        )
-    }
-    if (showWidgetsDialog) {
-        WidgetsDialog(
-            onDismissRequest = { showWidgetsDialog = false },
         )
     }
 }
