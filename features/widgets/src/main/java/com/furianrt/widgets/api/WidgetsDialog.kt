@@ -83,7 +83,7 @@ private fun Content(
                     appWidgetManager.requestPinAppWidget(provider, null, null)
                     onDismissRequest()
                 },
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             AllActionsWidget()

@@ -144,7 +144,7 @@ internal class AllActionsWidget : GlanceAppWidget() {
                         .padding(3.dp)
                         .size(30.dp),
                     provider = ImageProvider(uiR.drawable.ic_camera),
-                    colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                    colorFilter = ColorFilter.tint(GlanceTheme.colors.onSecondaryContainer),
                     contentDescription = null,
                 )
             }
@@ -167,7 +167,7 @@ internal class AllActionsWidget : GlanceAppWidget() {
                     Image(
                         modifier = GlanceModifier.size(30.dp),
                         provider = ImageProvider(uiR.drawable.ic_video),
-                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSecondaryContainer),
                         contentDescription = null,
                     )
                 }
@@ -193,7 +193,7 @@ internal class AllActionsWidget : GlanceAppWidget() {
                             .padding(3.dp)
                             .size(30.dp),
                         provider = ImageProvider(uiR.drawable.ic_microphone),
-                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSurface),
+                        colorFilter = ColorFilter.tint(GlanceTheme.colors.onSecondaryContainer),
                         contentDescription = null,
                     )
                 }
