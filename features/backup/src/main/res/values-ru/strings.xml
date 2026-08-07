@@ -59,4 +59,7 @@
     <string name="backup_sing_in_resolution_canceled_error">Вход был прерван</string>
     <string name="backup_success_message">Успешно</string>
     <string name="backup_empty_notes_message">Список заметок пуст</string>
+
+    <string name="restore_warning_title">Восстановить данные?</string>
+    <string name="restore_warning_body">Восстановление из Google Drive заменит все существующие данные на этом устройстве данными из вашей резервной копии</string>
 </resources>

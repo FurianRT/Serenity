@@ -51,4 +51,7 @@
     <string name="backup_sing_in_resolution_canceled_error">로그인 중단됨</string>
     <string name="backup_success_message">성공함</string>
     <string name="backup_empty_notes_message">노트 목록이 비어 있습니다</string>
+
+    <string name="restore_warning_title">데이터를 복원할까요?</string>
+    <string name="restore_warning_body">Google 드라이브에서 복원하면 이 기기에 있는 모든 기존 데이터가 백업 데이터로 대체됩니다</string>
 </resources>

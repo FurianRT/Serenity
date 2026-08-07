@@ -52,4 +52,7 @@
     <string name="backup_sing_in_resolution_canceled_error">साइन इन बाधित हो गया</string>
     <string name="backup_success_message">सफल रहा</string>
     <string name="backup_empty_notes_message">नोट्स सूची खाली है</string>
+
+    <string name="restore_warning_title">अपना डेटा पुनर्स्थापित करें?</string>
+    <string name="restore_warning_body">Google Drive से पुनर्स्थापित करने पर इस डिवाइस का सभी मौजूदा डेटा आपकी बैकअप कॉपी के डेटा से बदल दिया जाएगा</string>
 </resources>

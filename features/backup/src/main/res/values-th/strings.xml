@@ -59,4 +59,7 @@
     <string name="backup_sing_in_resolution_canceled_error">การเข้าสู่ระบบถูกยกเลิก</string>
     <string name="backup_success_message">สำเร็จ</string>
     <string name="backup_empty_notes_message">รายการบันทึกว่างเปล่า</string>
+
+    <string name="restore_warning_title">กู้คืนข้อมูลของคุณไหม?</string>
+    <string name="restore_warning_body">การกู้คืนจาก Google Drive จะแทนที่ข้อมูลที่มีอยู่ทั้งหมดในอุปกรณ์นี้ด้วยข้อมูลจากข้อมูลสำรองของคุณ</string>
 </resources>

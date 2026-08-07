@@ -52,4 +52,7 @@
     <string name="backup_sing_in_resolution_canceled_error">Conectarea a fost întreruptă</string>
     <string name="backup_success_message">Reușit</string>
     <string name="backup_empty_notes_message">Lista de notițe este goală</string>
+
+    <string name="restore_warning_title">Restabiliți datele?</string>
+    <string name="restore_warning_body">Restabilirea din Google Drive va înlocui toate datele existente pe acest dispozitiv cu datele din copia de rezervă</string>
 </resources>

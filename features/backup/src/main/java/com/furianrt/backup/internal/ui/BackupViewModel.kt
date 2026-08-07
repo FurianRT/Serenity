@@ -28,6 +28,7 @@ import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonBackClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonBackupClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnButtonRestoreClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnConfirmBackupClick
+import com.furianrt.backup.internal.ui.BackupScreenEvent.OnConfirmRestoreClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnQuestionClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignInClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnSignOutClick
@@ -164,12 +165,8 @@ internal class BackupViewModel @Inject constructor(
         when (event) {
             is OnButtonBackupClick -> launch { onButtonBackupClick() }
             is OnConfirmBackupClick -> launch { onConfirmBackupClick() }
-            is OnButtonRestoreClick -> {
-                backupDataManager.clearFailureState()
-                restoreDataManager.clearFailureState()
-                serviceLauncher.launchRestoreService()
-            }
-
+            is OnButtonRestoreClick -> launch { onButtonRestoreClick() }
+            is OnConfirmRestoreClick -> startRestore()
             is OnAutoBackupCheckChange -> launch {
                 backupRepository.setAutoBackupEnabled(event.isChecked)
             }
@@ -224,6 +221,20 @@ internal class BackupViewModel @Inject constructor(
         backupDataManager.clearFailureState()
         restoreDataManager.clearFailureState()
         serviceLauncher.launchBackupService()
+    }
+
+    private suspend fun onButtonRestoreClick() {
+        if (notesRepository.hasNotes().first()) {
+            _effect.tryEmit(BackupEffect.ShowConfirmRestoreDialog)
+        } else {
+            startRestore()
+        }
+    }
+
+    private fun startRestore() {
+        backupDataManager.clearFailureState()
+        restoreDataManager.clearFailureState()
+        serviceLauncher.launchRestoreService()
     }
 
     private fun toggleQuestionExpandedState(question: Question) {

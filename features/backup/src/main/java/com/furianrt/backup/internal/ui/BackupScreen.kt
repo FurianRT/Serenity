@@ -66,6 +66,7 @@ import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
 import com.furianrt.backup.internal.ui.composables.BottomPanel
 import com.furianrt.backup.internal.ui.composables.ConfirmBackupDialog
+import com.furianrt.backup.internal.ui.composables.ConfirmRestoreDialog
 import com.furianrt.backup.internal.ui.composables.ConfirmSignOutDialog
 import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
@@ -128,6 +129,7 @@ internal fun BackupScreen(
     val syncSnackBarHostState = remember { SnackbarHostState() }
     var showBackupPeriodDialog by remember { mutableStateOf(false) }
     var showConfirmBackupDialog by remember { mutableStateOf(false) }
+    var showConfirmRestoreDialog by remember { mutableStateOf(false) }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
@@ -166,6 +168,7 @@ internal fun BackupScreen(
                     }
 
                     is BackupEffect.ShowConfirmBackupDialog -> showConfirmBackupDialog = true
+                    is BackupEffect.ShowConfirmRestoreDialog -> showConfirmRestoreDialog = true
                     is BackupEffect.ShowSyncSuccessMessage -> {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
                         syncSnackBarHostState.showSnackbar(
@@ -216,6 +219,13 @@ internal fun BackupScreen(
             hazeState = hazeState,
             onDismissRequest = { showConfirmBackupDialog = false },
             onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnConfirmBackupClick) },
+        )
+    }
+    if (showConfirmRestoreDialog) {
+        ConfirmRestoreDialog(
+            hazeState = hazeState,
+            onDismissRequest = { showConfirmRestoreDialog = false },
+            onConfirmClick = { viewModel.onEvent(BackupScreenEvent.OnConfirmRestoreClick) },
         )
     }
 }

@@ -52,4 +52,7 @@
     <string name="backup_sing_in_resolution_canceled_error">Accesso interrotto</string>
     <string name="backup_success_message">Riuscito</string>
     <string name="backup_empty_notes_message">L\'elenco delle note è vuoto</string>
+
+    <string name="restore_warning_title">Ripristinare i dati?</string>
+    <string name="restore_warning_body">Il ripristino da Google Drive sostituirà tutti i dati esistenti su questo dispositivo con quelli del tuo backup</string>
 </resources>

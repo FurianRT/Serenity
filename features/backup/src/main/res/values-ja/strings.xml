@@ -52,4 +52,7 @@
     <string name="backup_sing_in_resolution_canceled_error">サインインが中断されました</string>
     <string name="backup_success_message">成功しました</string>
     <string name="backup_empty_notes_message">ノート一覧は空です</string>
+
+    <string name="restore_warning_title">データを復元しますか？</string>
+    <string name="restore_warning_body">Google ドライブから復元すると、このデバイスにある既存のすべてのデータがバックアップのデータに置き換えられます</string>
 </resources>

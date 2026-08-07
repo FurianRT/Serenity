@@ -52,4 +52,7 @@
     <string name="backup_sing_in_resolution_canceled_error">Login interrompido</string>
     <string name="backup_success_message">Bem-sucedido</string>
     <string name="backup_empty_notes_message">A lista de notas está vazia</string>
+
+    <string name="restore_warning_title">Restaurar seus dados?</string>
+    <string name="restore_warning_body">A restauração do Google Drive substituirá todos os dados existentes neste dispositivo pelos dados do seu backup</string>
 </resources>
