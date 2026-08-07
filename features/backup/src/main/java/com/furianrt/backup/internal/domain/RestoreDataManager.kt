@@ -253,7 +253,7 @@ internal class RestoreDataManager @Inject constructor(
             return false
         }
 
-        val localStickers = stickersRepository.getAllCustomStickers().first()
+        val localStickers = stickersRepository.getNotHiddenCustomStickers().first()
 
         val stickersToSave = remoteStickers
             .filter { remote -> localStickers.none { it.id == remote.id } }
