@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -45,7 +46,6 @@ import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.AudioRecordPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.entities.Sticker
-import com.furianrt.toolspanel.internal.ui.attachments.AttachmentsPanel
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContent
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundTitleBar
 import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
@@ -76,7 +76,6 @@ private enum class PanelMode {
     FONT,
     STICKERS,
     BULLET,
-    ATTACHMENTS,
     BACKGROUNDS,
 }
 
@@ -127,8 +126,9 @@ fun ActionsPanel(
     var isStickersPanelVisible by rememberSaveable { mutableStateOf(false) }
     var isBulletPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
-    var isAttachmentsPanelVisible by rememberSaveable { mutableStateOf(false) }
     var isBackgroundsPanelVisible by rememberSaveable { mutableStateOf(false) }
+
+    val regularPanelScrollState = rememberScrollState()
 
     val audioRecordPermissionsState = rememberPermissionState(
         permission = PermissionsUtils.getAudioRecordPermission(),
@@ -152,13 +152,11 @@ fun ActionsPanel(
         isStickersPanelVisible -> PanelMode.STICKERS
         isVoiceRecordingActive -> PanelMode.VOICE_RECORD
         hasMultiSelection -> PanelMode.FORMATTING
-        isAttachmentsPanelVisible -> PanelMode.ATTACHMENTS
         isBackgroundsPanelVisible -> PanelMode.BACKGROUNDS
         else -> PanelMode.REGULAR
     }
 
     fun startVoiceRecord() {
-        isAttachmentsPanelVisible = false
         audioRecordPermissionsState.launchPermissionRequest()
     }
 
@@ -232,6 +230,7 @@ fun ActionsPanel(
                 when (targetState) {
                     PanelMode.REGULAR -> RegularPanel(
                         titleState = titleState,
+                        scrollState = regularPanelScrollState,
                         onFontStyleClick = {
                             keyboardController?.hide()
                             isFontPanelVisible = true
@@ -251,12 +250,13 @@ fun ActionsPanel(
                                 onBulletListClick()
                             }
                         },
-                        onAttachClick = { isAttachmentsPanelVisible = true },
                         onBackgroundClick = {
                             keyboardController?.hide()
                             isBackgroundsPanelVisible = true
                             onBackgroundClick()
-                        }
+                        },
+                        onSelectMediaClick = { onSelectMediaClick() },
+                        onRecordVoiceClick = { startVoiceRecord() },
                     )
 
                     PanelMode.FORMATTING -> SelectedPanel(
@@ -289,15 +289,6 @@ fun ActionsPanel(
                     PanelMode.BULLET -> BulletTitleBar(
                         requestTitleFocus = requestTitleFocus,
                         onDoneClick = { isBulletPanelVisible = false },
-                    )
-
-                    PanelMode.ATTACHMENTS -> AttachmentsPanel(
-                        onSelectMediaClick = {
-                            isAttachmentsPanelVisible = false
-                            onSelectMediaClick()
-                        },
-                        onRecordVoiceClick = { startVoiceRecord() },
-                        onCloseClick = { isAttachmentsPanelVisible = false },
                     )
 
                     PanelMode.BACKGROUNDS -> BackgroundTitleBar(
