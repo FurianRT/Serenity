@@ -23,12 +23,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -250,7 +248,8 @@ private fun AddStickerItem(
 ) {
     Box(
         modifier = modifier
-            .size(80.dp)
+            .fillMaxSize()
+            .aspectRatio(1f)
             .alpha(0.3f)
             .border(
                 width = 1.dp,
@@ -275,7 +274,7 @@ private fun ListContent(
     onEvent: (event: CustomStickersEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyStaggeredGridState()
+    val listState = rememberLazyGridState()
     val hazeState = rememberHazeState()
     val showShadow by remember {
         derivedStateOf {
@@ -283,6 +282,7 @@ private fun ListContent(
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
+    val listSpan = 4
 
     var prevItemCount by remember { mutableIntStateOf(uiState.stickers.size) }
     LaunchedEffect(listState, uiState.stickers.size) {
@@ -292,7 +292,7 @@ private fun ListContent(
         prevItemCount = uiState.stickers.size
     }
 
-    LazyVerticalStaggeredGrid(
+    LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
             .hazeSource(hazeState)
@@ -302,8 +302,8 @@ private fun ListContent(
                 }
             },
         state = listState,
-        columns = StaggeredGridCells.Adaptive(64.dp),
-        verticalItemSpacing = 8.dp,
+        columns = GridCells.Fixed(listSpan),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
     ) {
@@ -328,7 +328,7 @@ private fun ListContent(
             )
         }
         item(
-            span = StaggeredGridItemSpan.FullLine,
+            span = { GridItemSpan(listSpan) },
             key = HINT_ITEM_KEY,
         ) {
             HintItem(
@@ -372,34 +372,20 @@ private fun StickerItem(
     }
 
     Box(
-        modifier = modifier
-            .then(
-                if (sticker.ratio != null) {
-                    Modifier.aspectRatio(
-                        sticker.ratio.coerceIn(
-                            minimumValue = 0.5f,
-                            maximumValue = 1.5f,
-                        )
-                    )
-                } else {
-                    Modifier
-                },
-            ),
+        modifier = modifier.combinedClickable(
+            onClick = { onClick(sticker) },
+            onLongClick = {
+                focusManager.clearFocus()
+                showDropDown = true
+            },
+        ),
         contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
-            modifier = Modifier
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                }
-                .combinedClickable(
-                    onClick = { onClick(sticker) },
-                    onLongClick = {
-                        focusManager.clearFocus()
-                        showDropDown = true
-                    },
-                ),
+            modifier = Modifier.graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            },
             error = colorPlaceholder,
             model = request,
             placeholder = placeholder,
