@@ -13,7 +13,7 @@ performancePlugin = "2.0.2"
 coreKtx = "1.19.0"
 lifecycle = "2.11.0"
 
-composeBom = "2026.06.01"
+composeBom = "2026.08.00"
 composeActivity = "1.13.0"
 composeNavigation = "2.9.8"
 
@@ -40,7 +40,7 @@ blur = "1.7.2"
 
 zoom = "1.6.0"
 
-exoplayer = "1.10.1"
+exoplayer = "1.11.0"
 
 calendar = "2.10.1"
 

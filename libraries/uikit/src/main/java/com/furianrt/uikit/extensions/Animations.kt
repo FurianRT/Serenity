@@ -3,7 +3,6 @@ package com.furianrt.uikit.extensions
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector2D
 import androidx.compose.animation.core.DeferredTargetAnimation
-import androidx.compose.animation.core.ExperimentalAnimatableApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.spring
@@ -82,7 +81,6 @@ fun Modifier.animatePlacementInScope(lookaheadScope: LookaheadScope): Modifier {
     return this.then(AnimatePlacementNodeElement(lookaheadScope))
 }
 
-@OptIn(ExperimentalAnimatableApi::class)
 private class AnimatedPlacementModifierNode(
     var lookaheadScope: LookaheadScope,
 ) : ApproachLayoutModifierNode, Modifier.Node() {
