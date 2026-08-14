@@ -1,7 +1,6 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import android.content.ActivityNotFoundException
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
@@ -20,8 +19,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
@@ -39,8 +42,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -105,14 +108,6 @@ internal fun MediaSelectorBottomSheetInternal(
             lifecycle.removeObserver(viewModel)
         }
     }
-
-    LaunchedEffect(state.bottomSheetState) {
-        snapshotFlow { state.bottomSheetState.requireOffset() }
-            .collect {
-                Log.e("ffefwefewfwf", it.toString())
-            }
-    }
-
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),
@@ -254,6 +249,9 @@ internal fun MediaSelectorBottomSheetInternal(
         derivedStateOf { listState.layoutInfo.viewportSize.height * 0.7f }
     }
 
+    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
+    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = state.scaffoldState,
@@ -271,11 +269,11 @@ internal fun MediaSelectorBottomSheetInternal(
             }
         },
         sheetContent = {
+            Spacer(Modifier.height(statusBarHeight.dp))
             SheetContent(
                 modifier = Modifier
                     .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
-                    .hazeSource(hazeState)
-                    .statusBarsPadding(),
+                    .hazeSource(hazeState),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,
