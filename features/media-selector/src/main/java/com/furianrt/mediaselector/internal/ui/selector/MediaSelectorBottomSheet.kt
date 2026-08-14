@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import android.content.ActivityNotFoundException
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.PredictiveBackHandler
@@ -19,13 +20,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.layout.LazyLayoutCacheWindow
@@ -33,7 +29,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -44,8 +39,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -70,9 +65,8 @@ import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.ConfirmationDialog
 import com.furianrt.uikit.components.SkipFirstEffect
-import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.utils.isGestureNavigationEnabled
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -111,6 +105,14 @@ internal fun MediaSelectorBottomSheetInternal(
             lifecycle.removeObserver(viewModel)
         }
     }
+
+    LaunchedEffect(state.bottomSheetState) {
+        snapshotFlow { state.bottomSheetState.requireOffset() }
+            .collect {
+                Log.e("ffefwefewfwf", it.toString())
+            }
+    }
+
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),
@@ -231,8 +233,8 @@ internal fun MediaSelectorBottomSheetInternal(
         }
     }
 
-    LaunchedEffect(state.params, state.bottomSheetState.targetValue) {
-        if (state.bottomSheetState.targetValue == SheetValue.Expanded) {
+    LaunchedEffect(state.params, state.isVisible) {
+        if (state.isVisible) {
             viewModel.onEvent(MediaSelectorEvent.OnExpanded(state.params))
         }
     }
@@ -248,8 +250,9 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val hazeState = rememberHazeState()
 
-    val statusBarPv = WindowInsets.statusBars.asPaddingValues()
-    val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+    val sheetPeekHeight by remember {
+        derivedStateOf { listState.layoutInfo.viewportSize.height * 0.7f }
+    }
 
     BottomSheetScaffold(
         modifier = modifier,
@@ -259,6 +262,7 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetSwipeEnabled = sheetSwipeEnabled,
         sheetShadowElevation = 0.dp,
         sheetShape = RectangleShape,
+        sheetPeekHeight = sheetPeekHeight.pxToDp(),
         sheetDragHandle = null,
         snackbarHost = {},
         content = { paddingValues ->
@@ -267,20 +271,16 @@ internal fun MediaSelectorBottomSheetInternal(
             }
         },
         sheetContent = {
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(ToolbarConstants.toolbarHeight + statusBarHeight.dp)
-                    .clickableNoRipple { scope.launch { state.bottomSheetState.hide() } },
-            )
             SheetContent(
                 modifier = Modifier
                     .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
-                    .hazeSource(hazeState),
+                    .hazeSource(hazeState)
+                    .statusBarsPadding(),
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,
                 albumsDialogState = albumsDialogState,
+                sheetOffset = { state.bottomSheetState.requireOffset() },
             )
         },
     )
@@ -336,6 +336,7 @@ private fun SheetContent(
     onEvent: (event: MediaSelectorEvent) -> Unit,
     listState: LazyGridState,
     albumsDialogState: List<MediaAlbumItem>?,
+    sheetOffset: () -> Float,
     modifier: Modifier = Modifier,
 ) {
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
@@ -370,6 +371,7 @@ private fun SheetContent(
                         onEvent = onEvent,
                         listState = listState,
                         albumsDialogState = albumsDialogState,
+                        sheetOffset = sheetOffset,
                     )
                 }
             }

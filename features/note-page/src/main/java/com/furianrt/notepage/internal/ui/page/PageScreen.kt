@@ -32,12 +32,14 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -131,6 +133,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 private const val TAG = "NotePageScreenInternal"
@@ -389,6 +392,7 @@ private fun SuccessScreen(
     onLocationClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     val view = LocalView.current
     val density = LocalDensity.current
     var isToolsPanelMenuVisible by remember { mutableStateOf(false) }
@@ -541,12 +545,23 @@ private fun SuccessScreen(
             openMediaSelector = { onEvent(PageEvent.OnCustomBackgroundSelectRequest(it)) },
             requestTitleFocus = { onEvent(PageEvent.OnRequestTitleFocus) },
         )
+        val applyPaddingToDim by remember {
+            derivedStateOf {
+                state.isBottomSheetHalfExpanded ||
+                        state.isVoiceRecordActive ||
+                        state.isBottomSheetHidden
+            }
+        }
         DimSurfaceOverlay(
             modifier = Modifier
-                .padding(top = ToolbarConstants.toolbarHeight + statusBarHeightDp)
+                .applyIf(applyPaddingToDim) {
+                    Modifier.padding(top = ToolbarConstants.toolbarHeight + statusBarHeightDp)
+                }
                 .fillMaxSize(),
             visible = state.dimSurface,
+            onClick = { scope.launch { state.mediaSelectorState.collapse() } },
         )
+
         SnackbarHost(
             modifier = Modifier.align(Alignment.BottomCenter),
             hostState = snackBarHostState,
@@ -936,6 +951,7 @@ private fun Panel(
 private fun DimSurfaceOverlay(
     visible: Boolean,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
 ) {
     AnimatedVisibility(
         modifier = modifier,
@@ -947,7 +963,7 @@ private fun DimSurfaceOverlay(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.scrim)
-                .clickableNoRipple {},
+                .clickableNoRipple(onClick = onClick),
         )
     }
 }

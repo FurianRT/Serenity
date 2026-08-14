@@ -36,10 +36,19 @@ class PageScreenState(
     var isVoiceRecordActive by mutableStateOf(false)
         internal set
 
-    private var hasContentChangedState by mutableStateOf(hasContentChanged)
-
-    private val isBottomSheetVisible: Boolean
+    val isBottomSheetVisible: Boolean
         get() = mediaSelectorState.isVisible
+
+    val isBottomSheetExpanded: Boolean
+        get() = mediaSelectorState.isExpanded
+
+    val isBottomSheetHalfExpanded: Boolean
+        get() = mediaSelectorState.isHalfExpanded
+
+    val isBottomSheetHidden: Boolean
+        get() = mediaSelectorState.isHidden
+
+    private var hasContentChangedState by mutableStateOf(hasContentChanged)
 
     fun setContentChanged(changed: Boolean) {
         hasContentChangedState = changed

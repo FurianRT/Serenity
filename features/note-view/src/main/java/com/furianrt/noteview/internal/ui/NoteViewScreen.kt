@@ -384,6 +384,7 @@ private fun SuccessScreen(
         state = toolbarState,
         listState = currentPageState?.listState ?: rememberScrollState(),
         enabled = currentPageState?.mediaSelectorState?.isVisible == false && !uiState.isInEditMode,
+        contentOnTop = currentPageState?.isBottomSheetExpanded.orFalse(),
         dimSurface = currentPageState?.dimSurface ?: cachedDimValue,
         onDimClick = { scope.launch { currentPageState?.mediaSelectorState?.collapse() } },
         toolbar = {

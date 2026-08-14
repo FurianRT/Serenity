@@ -48,7 +48,9 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.fadingBottomEdge
@@ -101,6 +103,7 @@ fun MovableToolbarScaffold(
     blurAlpha: Float = 0.4f,
     dimSurface: Boolean = false,
     contentHazeState: HazeState? = null,
+    contentOnTop: Boolean = false,
     onDimClick: () -> Unit = {},
     content: @Composable BoxScope.(topPadding: Dp) -> Unit,
 ) {
@@ -227,11 +230,9 @@ fun MovableToolbarScaffold(
 
     Box(modifier = modifier.nestedScroll(toolbarScrollConnection)) {
         Box(
-            modifier = if (contentHazeState == null) {
-                Modifier.hazeSource(hazeState)
-            } else {
-                Modifier
-            },
+            modifier = Modifier
+                .applyIf(contentHazeState == null) { Modifier.hazeSource(hazeState) }
+                .applyIf(contentOnTop) { Modifier.zIndex(1f) },
             content = { content(toolbarHeight.pxToDp()) },
         )
         if (!state.isHidden) {

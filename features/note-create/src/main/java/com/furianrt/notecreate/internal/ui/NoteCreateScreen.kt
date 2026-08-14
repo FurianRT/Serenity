@@ -326,6 +326,7 @@ private fun SuccessContent(
         state = toolbarState,
         enabled = !state.mediaSelectorState.isVisible && !uiState.isInEditMode,
         listState = state.listState,
+        contentOnTop = state.isBottomSheetExpanded,
         dimSurface = state.dimSurface,
         onDimClick = { scope.launch { state.mediaSelectorState.collapse() } },
         toolbar = {

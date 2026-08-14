@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
@@ -54,6 +56,7 @@ internal fun SuccessContent(
     uiState: MediaSelectorUiState.Success,
     listState: LazyGridState,
     albumsDialogState: List<MediaAlbumItem>?,
+    sheetOffset: () -> Float,
     onEvent: (event: MediaSelectorEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -143,6 +146,9 @@ internal fun SuccessContent(
         }
 
         BottomPanel(
+            modifier = Modifier.offset {
+                IntOffset(x = 0, y = -sheetOffset().toInt())
+            },
             selectedAlbum = uiState.selectedAlbum,
             selectedCount = uiState.selectedCount,
             visible = showBottomPanel,
@@ -164,6 +170,7 @@ private fun Preview() {
             onEvent = {},
             listState = rememberLazyGridState(),
             albumsDialogState = null,
+            sheetOffset = { 0f },
             uiState = MediaSelectorUiState.Success(
                 items = buildList {
                     repeat(18) { index ->

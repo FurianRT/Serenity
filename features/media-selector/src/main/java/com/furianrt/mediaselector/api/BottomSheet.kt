@@ -20,7 +20,7 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorBottomSheetI
 @Composable
 fun rememberMediaSelectorState(): MediaSelectorState {
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
     )
     return remember { MediaSelectorState(scaffoldState) }
 }
@@ -34,11 +34,21 @@ class MediaSelectorState internal constructor(
         get() = scaffoldState.bottomSheetState
 
     val isVisible: Boolean
-        get() = bottomSheetState.isVisible || bottomSheetState.targetValue == SheetValue.Expanded
+        get() = bottomSheetState.isVisible || isExpanded ||
+                bottomSheetState.targetValue == SheetValue.PartiallyExpanded
+
+    val isHidden: Boolean
+        get() = bottomSheetState.targetValue == SheetValue.Hidden
+
+    val isExpanded: Boolean
+        get() = bottomSheetState.targetValue == SheetValue.Expanded
+
+    val isHalfExpanded: Boolean
+        get() = bottomSheetState.targetValue == SheetValue.PartiallyExpanded
 
     suspend fun expand(params: Params) {
         this.params = params
-        scaffoldState.bottomSheetState.expand()
+        scaffoldState.bottomSheetState.partialExpand()
     }
 
     suspend fun collapse() {
