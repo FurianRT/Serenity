@@ -91,6 +91,7 @@ internal fun SuccessContent(
             columns = GridCells.Fixed(listSpanCount),
             verticalArrangement = Arrangement.spacedBy(4.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
+            overscrollEffect = null,
             contentPadding = PaddingValues(
                 start = 4.dp,
                 end = 4.dp,

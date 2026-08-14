@@ -44,6 +44,12 @@ internal sealed class MediaSelectorUiState(
             },
         )
     }
+
+    val hasSelectedItems: Boolean
+        get() = when (this) {
+            is Loading -> false
+            is Success -> selectedCount > 0
+        }
 }
 
 internal sealed interface MediaSelectorEvent {

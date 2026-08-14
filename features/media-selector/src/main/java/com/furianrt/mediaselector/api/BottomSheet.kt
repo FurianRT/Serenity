@@ -9,9 +9,11 @@ import androidx.compose.material3.SheetValue
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorBottomSheetInternal
@@ -19,23 +21,41 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorBottomSheetI
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun rememberMediaSelectorState(): MediaSelectorState {
+    val isHiddenStateBlocked = remember { mutableStateOf(false) }
+    var blockHiddenState by rememberSaveable { mutableStateOf(true) }
     val scaffoldState = rememberBottomSheetScaffoldState(
-        bottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = false)
+        bottomSheetState = rememberModalBottomSheetState(
+            skipPartiallyExpanded = false,
+            confirmValueChange = { newValue ->
+                val isBlocked = newValue == SheetValue.Hidden && blockHiddenState
+                if (isBlocked) {
+                    isHiddenStateBlocked.value = true
+                }
+                return@rememberModalBottomSheetState !isBlocked
+            },
+        )
     )
-    return remember { MediaSelectorState(scaffoldState) }
+    return remember {
+        MediaSelectorState(
+            scaffoldState = scaffoldState,
+            isHiddenStateBlocked = isHiddenStateBlocked,
+            blockHiddenState = { blockHiddenState = it }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MediaSelectorState internal constructor(
     internal val scaffoldState: BottomSheetScaffoldState,
+    internal val isHiddenStateBlocked: MutableState<Boolean>,
+    internal val blockHiddenState: (block: Boolean) -> Unit,
 ) {
     internal var params: Params? by mutableStateOf(null)
     internal val bottomSheetState: SheetState
         get() = scaffoldState.bottomSheetState
 
     val isVisible: Boolean
-        get() = bottomSheetState.isVisible || isExpanded ||
-                bottomSheetState.targetValue == SheetValue.PartiallyExpanded
+        get() = bottomSheetState.isVisible || isExpanded || isHalfExpanded
 
     val isHidden: Boolean
         get() = bottomSheetState.targetValue == SheetValue.Hidden

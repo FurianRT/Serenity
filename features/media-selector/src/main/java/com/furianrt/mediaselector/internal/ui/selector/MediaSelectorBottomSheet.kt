@@ -129,9 +129,7 @@ internal fun MediaSelectorBottomSheetInternal(
         onResult = { viewModel.onEvent(MediaSelectorEvent.OnTakeVideoResult(it)) },
     )
 
-    var showConfirmDialog by remember { mutableStateOf(false) }
     var albumsDialogState: List<MediaAlbumItem>? by remember { mutableStateOf(null) }
-    var skipConfirmation by remember { mutableStateOf(false) }
     var showCameraPermissionDialog by remember { mutableStateOf(false) }
 
     val listState = rememberLazyGridState(
@@ -145,8 +143,7 @@ internal fun MediaSelectorBottomSheetInternal(
             .collectLatest { effect ->
                 when (effect) {
                     is MediaSelectorEffect.CloseScreen -> {
-                        skipConfirmation = false
-                        showConfirmDialog = false
+                        state.blockHiddenState(false)
                         state.bottomSheetState.hide()
                         listState.scrollToItem(0)
                     }
@@ -212,35 +209,16 @@ internal fun MediaSelectorBottomSheetInternal(
         mutableStateOf(translationYAnim.value.dp)
     }
 
-    val isBottomSheetVisible = state.bottomSheetState.isVisible
-    LaunchedEffect(isBottomSheetVisible) {
-        val selectedCount = (uiState as? MediaSelectorUiState.Success)?.selectedCount ?: 0
-        if (!isBottomSheetVisible) {
-            bottomSheetTranslationY = 0.dp
-        }
-        when {
-            !isBottomSheetVisible && selectedCount > 0 && !skipConfirmation -> {
-                showConfirmDialog = true
-                scope.launch { state.bottomSheetState.expand() }
-            }
-
-            !isBottomSheetVisible -> viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-        }
-    }
-
     LaunchedEffect(state.params, state.isVisible) {
         if (state.isVisible) {
             viewModel.onEvent(MediaSelectorEvent.OnExpanded(state.params))
+        } else {
+            bottomSheetTranslationY = 0.dp
         }
     }
 
-    val sheetSwipeEnabled by remember(uiState) {
-        derivedStateOf {
-            uiState !is MediaSelectorUiState.Success ||
-                    (listState.firstVisibleItemIndex == 0 &&
-                            listState.firstVisibleItemScrollOffset == 0) ||
-                    !listState.isScrollInProgress
-        }
+    LaunchedEffect(uiState.hasSelectedItems) {
+        state.blockHiddenState(uiState.hasSelectedItems)
     }
 
     val hazeState = rememberHazeState()
@@ -257,7 +235,6 @@ internal fun MediaSelectorBottomSheetInternal(
         scaffoldState = state.scaffoldState,
         sheetContainerColor = Color.Transparent,
         containerColor = Color.Transparent,
-        sheetSwipeEnabled = sheetSwipeEnabled,
         sheetShadowElevation = 0.dp,
         sheetShape = RectangleShape,
         sheetPeekHeight = sheetPeekHeight.pxToDp(),
@@ -283,13 +260,13 @@ internal fun MediaSelectorBottomSheetInternal(
         },
     )
 
-    if (showConfirmDialog) {
+    if (state.isHiddenStateBlocked.value) {
         ConfirmationDialog(
             title = stringResource(R.string.media_selector_discard_title),
             hint = stringResource(R.string.media_selector_discard_hint),
             confirmText = stringResource(uiR.string.action_discard),
             hazeState = hazeState,
-            onDismissRequest = { showConfirmDialog = false },
+            onDismissRequest = { state.isHiddenStateBlocked.value = false },
             onConfirmClick = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
         )
     }
@@ -303,7 +280,7 @@ internal fun MediaSelectorBottomSheetInternal(
     }
 
     PredictiveBackHandler(
-        enabled = isBottomSheetVisible && isGestureNavigationEnabled(),
+        enabled = state.bottomSheetState.isVisible && isGestureNavigationEnabled(),
         onBack = { progress ->
             try {
                 progress.collect { event ->
@@ -317,14 +294,8 @@ internal fun MediaSelectorBottomSheetInternal(
     )
 
     BackHandler(
-        enabled = isBottomSheetVisible && !isGestureNavigationEnabled(),
-        onBack = {
-            if (uiState is MediaSelectorUiState.Success && uiState.selectedCount > 0) {
-                showConfirmDialog = true
-            } else {
-                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-            }
-        },
+        enabled = state.bottomSheetState.isVisible && !isGestureNavigationEnabled(),
+        onBack = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
     )
 }
 
