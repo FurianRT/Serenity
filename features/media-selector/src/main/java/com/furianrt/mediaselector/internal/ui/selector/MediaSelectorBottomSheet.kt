@@ -246,7 +246,7 @@ internal fun MediaSelectorBottomSheetInternal(
     val hazeState = rememberHazeState()
 
     val sheetPeekHeight by remember {
-        derivedStateOf { listState.layoutInfo.viewportSize.height * 0.7f }
+        derivedStateOf { listState.layoutInfo.viewportSize.height * 0.75f }
     }
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()

@@ -238,6 +238,7 @@ fun MovableToolbarScaffold(
         if (!state.isHidden) {
             Box(
                 modifier = Modifier
+                    .applyIf(contentOnTop) { Modifier.zIndex(1f) }
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .fadingBottomEdge()
@@ -246,10 +247,10 @@ fun MovableToolbarScaffold(
                         style = HazeDefaults.style(
                             backgroundColor = MaterialTheme.colorScheme.surface,
                             tint = HazeTint(Color.Transparent),
-                            blurRadius = 4.dp,
+                            blurRadius = if (contentOnTop) 12.dp else 4.dp,
                         )
                     )
-                    .padding(12.dp)
+                    .padding(if (contentOnTop) 8.dp else 12.dp)
                     .windowInsetsTopHeight(WindowInsets.statusBars),
             )
             Box(
