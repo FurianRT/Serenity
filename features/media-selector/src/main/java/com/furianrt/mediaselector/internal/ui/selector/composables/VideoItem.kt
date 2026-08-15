@@ -31,6 +31,7 @@ import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import java.time.LocalDate
 
 @Composable
 internal fun VideoItem(
@@ -103,6 +104,7 @@ private fun Preview() {
                 ratio = 1f,
                 state = SelectionState.Counter(1),
                 duration = 10 * 60 * 1000,
+                date = LocalDate.now(),
                 album = MediaItem.Album(id = "1", name = ""),
             ),
         )

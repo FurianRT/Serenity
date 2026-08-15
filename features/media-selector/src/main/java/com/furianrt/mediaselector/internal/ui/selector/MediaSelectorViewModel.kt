@@ -61,6 +61,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
+import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
 
@@ -418,6 +419,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 ratio = 1f,
                 album = null,
                 state = SelectionState.Default,
+                date = LocalDate.now(),
                 isCameraItem = true,
             )
             cachedCameraItem = image
@@ -443,6 +445,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 album = null,
                 state = SelectionState.Default,
                 isCameraItem = true,
+                date = LocalDate.now(),
                 duration = 0,
             )
             cachedCameraItem = video

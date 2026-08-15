@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.entities
 
 import android.net.Uri
+import java.time.LocalDate
 
 internal sealed class MediaItem(
     open val id: Long,
@@ -9,6 +10,7 @@ internal sealed class MediaItem(
     open val ratio: Float,
     open val state: SelectionState,
     open val album: Album?,
+    open val date: LocalDate,
     open val isCameraItem: Boolean,
 ) {
     val isSelected: Boolean
@@ -31,8 +33,9 @@ internal sealed class MediaItem(
         override val ratio: Float,
         override val state: SelectionState,
         override val album: Album?,
+        override val date: LocalDate,
         override val isCameraItem: Boolean = false,
-    ) : MediaItem(id, name, uri, ratio, state, album, isCameraItem)
+    ) : MediaItem(id, name, uri, ratio, state, album, date, isCameraItem)
 
     data class Video(
         override val id: Long,
@@ -41,7 +44,8 @@ internal sealed class MediaItem(
         override val ratio: Float,
         override val state: SelectionState,
         override val album: Album?,
+        override val date: LocalDate,
         override val isCameraItem: Boolean = false,
         val duration: Int,
-    ) : MediaItem(id, name, uri, ratio, state, album, isCameraItem)
+    ) : MediaItem(id, name, uri, ratio, state, album, date, isCameraItem)
 }

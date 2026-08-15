@@ -54,6 +54,8 @@ import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val UI_HIDE_DELAY = 3000L
 
@@ -159,7 +161,7 @@ private fun SuccessContent(
                 isVideoItem = uiState.media[currentPage] is MediaItem.Video
                 val isScrollInProgress = listState.isScrollInProgress
                 if (!isScrollInProgress && showControls && isVideoItem && !isThumbDragging && isPlaying) {
-                    delay(UI_HIDE_DELAY)
+                    delay(UI_HIDE_DELAY.milliseconds)
                     showControls = false
                 }
             }
@@ -261,6 +263,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Default,
+                        date = LocalDate.now(),
                         album = MediaItem.Album(id = "1", name = ""),
                     ),
                     MediaItem.Image(
@@ -269,6 +272,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Counter(order = 1),
+                        date = LocalDate.now(),
                         album = MediaItem.Album(id = "1", name = ""),
                     ),
                     MediaItem.Image(
@@ -277,6 +281,7 @@ private fun Preview() {
                         uri = Uri.EMPTY,
                         ratio = 1f,
                         state = SelectionState.Default,
+                        date = LocalDate.now(),
                         album = MediaItem.Album(id = "1", name = ""),
                     ),
                 ),

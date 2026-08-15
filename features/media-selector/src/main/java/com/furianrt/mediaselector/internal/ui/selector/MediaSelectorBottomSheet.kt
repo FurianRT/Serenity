@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -32,6 +33,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -58,11 +60,14 @@ import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
 import com.furianrt.mediaselector.internal.ui.selector.composables.DragHandle
+import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.CameraPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -217,6 +222,12 @@ internal fun MediaSelectorBottomSheetInternal(
         }
     }
 
+    LaunchedEffect(state.bottomSheetState.isVisible) {
+        if (!state.bottomSheetState.isVisible && !state.isHiddenStateBlocked.value) {
+            listState.scrollToItem(0)
+        }
+    }
+
     LaunchedEffect(uiState.hasSelectedItems) {
         state.blockHiddenState(uiState.hasSelectedItems)
     }
@@ -229,6 +240,7 @@ internal fun MediaSelectorBottomSheetInternal(
 
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
+    var sheetSwipeEnabled by remember { mutableStateOf(true) }
 
     BottomSheetScaffold(
         modifier = modifier,
@@ -238,6 +250,7 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetShadowElevation = 0.dp,
         sheetShape = RectangleShape,
         sheetPeekHeight = sheetPeekHeight.pxToDp(),
+        sheetSwipeEnabled = sheetSwipeEnabled,
         sheetDragHandle = null,
         snackbarHost = {},
         content = { paddingValues ->
@@ -255,7 +268,9 @@ internal fun MediaSelectorBottomSheetInternal(
                 onEvent = viewModel::onEvent,
                 listState = listState,
                 albumsDialogState = albumsDialogState,
-                sheetOffset = { state.bottomSheetState.requireOffset() },
+                sheetState = state.bottomSheetState,
+                onDragStart = { sheetSwipeEnabled = false },
+                onDragEnd = { sheetSwipeEnabled = true }
             )
         },
     )
@@ -299,15 +314,20 @@ internal fun MediaSelectorBottomSheetInternal(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SheetContent(
     uiState: MediaSelectorUiState,
     onEvent: (event: MediaSelectorEvent) -> Unit,
     listState: LazyGridState,
     albumsDialogState: List<MediaAlbumItem>?,
-    sheetOffset: () -> Float,
+    sheetState: SheetState,
+    onDragStart: () -> Unit,
+    onDragEnd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val showPartialAccessMessage = (uiState as? MediaSelectorUiState.Success)
+        ?.showPartialAccessMessage.orFalse()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
     SkipFirstEffect(uiState.selectedAlbum?.id ?: MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
         listState.scrollToItem(0)
@@ -318,13 +338,23 @@ private fun SheetContent(
         shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
     ) {
         Column {
-            DragHandle(
-                modifier = Modifier.drawBehind {
-                    if (listState.canScrollBackward) {
-                        drawBottomShadow(shadowColor)
-                    }
-                },
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .drawBehind {
+                        if (listState.canScrollBackward) {
+                            drawBottomShadow(shadowColor)
+                        }
+                    },
+            ) {
+                DragHandle()
+                if (showPartialAccessMessage) {
+                    PermissionsMessage(
+                        modifier = Modifier.fillMaxWidth(),
+                        onClick = { onEvent(OnPartialAccessMessageClick) },
+                    )
+                }
+            }
             AnimatedContent(
                 targetState = uiState,
                 transitionSpec = {
@@ -340,7 +370,9 @@ private fun SheetContent(
                         onEvent = onEvent,
                         listState = listState,
                         albumsDialogState = albumsDialogState,
-                        sheetOffset = sheetOffset,
+                        sheetState = sheetState,
+                        onBarDragStart = onDragStart,
+                        onBarDragEnd = onDragEnd,
                     )
                 }
             }

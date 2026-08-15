@@ -6,6 +6,8 @@ import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
+import java.time.Instant
+import java.time.ZoneId
 
 internal fun DeviceMedia.toMediaItem(
     state: SelectionState = SelectionState.Default,
@@ -19,6 +21,9 @@ internal fun DeviceMedia.toMediaItem(
             uri = uri,
             ratio = ratio,
             state = state,
+            date = Instant.ofEpochSecond(date)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(),
             album = if (albumId != null && albumName != null) {
                 MediaItem.Album(
                     id = albumId.toString(),
@@ -40,6 +45,9 @@ internal fun DeviceMedia.toMediaItem(
             ratio = ratio,
             duration = duration,
             state = state,
+            date = Instant.ofEpochSecond(date)
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate(),
             album = if (albumId != null && albumName != null) {
                 MediaItem.Album(
                     id = albumId.toString(),

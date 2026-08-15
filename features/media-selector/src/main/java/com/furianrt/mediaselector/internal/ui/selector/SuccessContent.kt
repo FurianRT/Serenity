@@ -6,18 +6,23 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,11 +36,10 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
 import com.furianrt.mediaselector.internal.ui.selector.composables.BottomPanel
 import com.furianrt.mediaselector.internal.ui.selector.composables.CameraItem
 import com.furianrt.mediaselector.internal.ui.selector.composables.ImageItem
-import com.furianrt.mediaselector.internal.ui.selector.composables.PermissionsMessage
+import com.furianrt.mediaselector.internal.ui.selector.composables.VerticalScrollBar
 import com.furianrt.mediaselector.internal.ui.selector.composables.VideoItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -44,20 +48,23 @@ import com.furianrt.uikit.utils.rememberUserInputScrollConnection
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import java.time.LocalDate
 import kotlin.time.Duration.Companion.milliseconds
 
 private const val BOTTOM_PANEL_SHOW_DELAY = 500L
 
-private const val PERMISSION_MESSAGE_KEY = "permission_message"
 private const val CAMERA_ITEM_KEY = "camera_item"
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SuccessContent(
     uiState: MediaSelectorUiState.Success,
     listState: LazyGridState,
     albumsDialogState: List<MediaAlbumItem>?,
-    sheetOffset: () -> Float,
+    sheetState: SheetState,
     onEvent: (event: MediaSelectorEvent) -> Unit,
+    onBarDragStart: () -> Unit,
+    onBarDragEnd: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hazeState = rememberHazeState()
@@ -66,6 +73,14 @@ internal fun SuccessContent(
     val userScrollConnection = rememberUserInputScrollConnection()
 
     var showBottomPanel by remember { mutableStateOf(true) }
+
+    val showScrollBar by remember {
+        derivedStateOf {
+            sheetState.targetValue == SheetValue.Expanded &&
+                    (listState.canScrollForward ||
+                            listState.canScrollBackward)
+        }
+    }
 
     LaunchedEffect(userScrollConnection.scrollState) {
         when (userScrollConnection.scrollState) {
@@ -98,14 +113,6 @@ internal fun SuccessContent(
                 bottom = 56.dp + bottomInsetPadding
             ),
         ) {
-            if (uiState.showPartialAccessMessage) {
-                item(
-                    key = PERMISSION_MESSAGE_KEY,
-                    span = { GridItemSpan(listSpanCount) }) {
-                    PermissionsMessage(onClick = { onEvent(OnPartialAccessMessageClick) })
-                }
-            }
-
             item(key = CAMERA_ITEM_KEY) {
                 CameraItem(
                     modifier = Modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp),
@@ -148,7 +155,7 @@ internal fun SuccessContent(
 
         BottomPanel(
             modifier = Modifier.offset {
-                IntOffset(x = 0, y = -sheetOffset().toInt())
+                IntOffset(x = 0, y = -sheetState.requireOffset().toInt())
             },
             selectedAlbum = uiState.selectedAlbum,
             selectedCount = uiState.selectedCount,
@@ -160,18 +167,37 @@ internal fun SuccessContent(
             onAlbumSelected = { onEvent(MediaSelectorEvent.OnAlbumSelected(it)) },
             onAlbumsDismissed = { onEvent(MediaSelectorEvent.OnAlbumsDismissed) },
         )
+        if (showScrollBar) {
+            VerticalScrollBar(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .fillMaxHeight()
+                    .padding(top = 4.dp, bottom = 100.dp),
+                columns = listSpanCount,
+                verticalSpacing = 4.dp,
+                listState = listState,
+                itemCount = uiState.items.size + 1,
+                hazeState = hazeState,
+                dateProvider = { uiState.items.getOrNull(it)?.date ?: LocalDate.now() },
+                onDragStart = onBarDragStart,
+                onDragEnd = onBarDragEnd,
+            )
+        }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @PreviewWithBackground
 @Composable
 private fun Preview() {
     SerenityTheme {
         SuccessContent(
             onEvent = {},
+            onBarDragStart = {},
+            onBarDragEnd = {},
             listState = rememberLazyGridState(),
             albumsDialogState = null,
-            sheetOffset = { 0f },
+            sheetState = rememberModalBottomSheetState(),
             uiState = MediaSelectorUiState.Success(
                 items = buildList {
                     repeat(18) { index ->
@@ -186,6 +212,7 @@ private fun Preview() {
                                 } else {
                                     SelectionState.Default
                                 },
+                                date = LocalDate.now(),
                                 album = MediaItem.Album(
                                     id = "1",
                                     name = "Camera",
@@ -203,6 +230,7 @@ private fun Preview() {
                                     SelectionState.Default
                                 },
                                 duration = 10 * 60 * 1000,
+                                date = LocalDate.now(),
                                 album = MediaItem.Album(
                                     id = "2",
                                     name = "Recent",

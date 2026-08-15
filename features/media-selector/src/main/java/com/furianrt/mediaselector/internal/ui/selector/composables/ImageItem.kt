@@ -29,6 +29,7 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import java.time.LocalDate
 
 @Composable
 internal fun ImageItem(
@@ -92,6 +93,7 @@ private fun Preview() {
                 uri = Uri.EMPTY,
                 ratio = 1f,
                 state = SelectionState.Counter(1),
+                date = LocalDate.now(),
                 album = MediaItem.Album(id = "1", name = ""),
             ),
         )
