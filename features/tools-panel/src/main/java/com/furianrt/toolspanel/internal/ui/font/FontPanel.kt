@@ -81,6 +81,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
@@ -201,7 +202,7 @@ internal fun FontContent(
                     ).onSuccess { intent ->
                         context.startActivity(intent)
                     }.onFailure { error ->
-                        error.printStackTrace()
+                        ErrorTracker.printStackTrace(error)
                         toast?.cancel()
                         toast = Toast
                             .makeText(context, emailErrorMessage, Toast.LENGTH_SHORT).apply {

@@ -18,7 +18,6 @@ internal class TokenInterceptor @Inject constructor(
         val accessToken = try {
             runBlocking { backupDataStore.getGoogleAccessToken().first() }
         } catch (e: InterruptedException) {
-            e.printStackTrace()
             errorTracker.trackNonFatalError(e)
             null
         }

@@ -42,6 +42,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.common.ErrorTracker
 import com.furianrt.mediaview.R
 import com.furianrt.mediaview.internal.ui.composables.MediaList
 import com.furianrt.mediaview.internal.ui.composables.MediaPager
@@ -61,6 +62,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
 
 private const val UI_HIDE_DELAY = 3000L
@@ -128,7 +130,7 @@ internal fun MediaViewScreen(
                     ).onSuccess { intent ->
                         context.startActivity(intent)
                     }.onFailure { error ->
-                        error.printStackTrace()
+                        ErrorTracker.printStackTrace(error)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
                             message = generalErrorMessage,
@@ -202,7 +204,7 @@ private fun SuccessContent(
                     isPlaying &&
                     !toolbarState.showDropDownMenu
                 ) {
-                    delay(UI_HIDE_DELAY)
+                    delay(UI_HIDE_DELAY.milliseconds)
                     showControls = false
                 }
             }

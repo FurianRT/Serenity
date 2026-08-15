@@ -56,7 +56,6 @@ internal class TokenAuthenticator @Inject constructor(
     private fun tryAuthorize(): AuthResult = try {
         runBlocking { authorizeUseCase.get().invoke() }
     } catch (e: InterruptedException) {
-        e.printStackTrace()
         errorTracker.trackNonFatalError(e)
         AuthResult.Failure(e)
     }
@@ -66,7 +65,6 @@ internal class TokenAuthenticator @Inject constructor(
             runBlocking { backupDataStore.updateGoogleAccessToken(token) }
         } catch (e: InterruptedException) {
             errorTracker.trackNonFatalError(e)
-            e.printStackTrace()
         }
     }
 
@@ -79,7 +77,6 @@ internal class TokenAuthenticator @Inject constructor(
             }
         } catch (e: InterruptedException) {
             errorTracker.trackNonFatalError(e)
-            e.printStackTrace()
         }
     }
 }

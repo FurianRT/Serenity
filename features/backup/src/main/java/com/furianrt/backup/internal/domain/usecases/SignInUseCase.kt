@@ -3,6 +3,7 @@ package com.furianrt.backup.internal.domain.usecases
 import android.content.Intent
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.BackupProfile
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.ProfileRepository
@@ -26,7 +27,7 @@ internal class SignInUseCase @Inject constructor(
         }
 
         val email = backupRepository.getUserEmail()
-            .onFailure { it.printStackTrace() }
+            .onFailure(ErrorTracker::printStackTrace)
             .getOrNull()
 
         if (email == null) {

@@ -57,6 +57,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.settings.R
@@ -144,7 +145,7 @@ internal fun SettingsScreen(
                     ).onSuccess { intent ->
                         context.startActivity(intent)
                     }.onFailure { error ->
-                        error.printStackTrace()
+                        ErrorTracker.printStackTrace(error)
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(
@@ -164,7 +165,7 @@ internal fun SettingsScreen(
                         val intent = Intent(Intent.ACTION_VIEW, effect.url.toUri())
                         context.startActivity(intent)
                     } catch (e: ActivityNotFoundException) {
-                        e.printStackTrace()
+                        ErrorTracker.printStackTrace(e)
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         snackBarHostState.currentSnackbarData?.dismiss()
                         snackBarHostState.showSnackbar(

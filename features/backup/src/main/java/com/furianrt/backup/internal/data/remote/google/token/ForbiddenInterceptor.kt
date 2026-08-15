@@ -36,7 +36,6 @@ internal class ForbiddenInterceptor @Inject constructor(
                 }
             } catch (e: InterruptedException) {
                 errorTracker.trackNonFatalError(e)
-                e.printStackTrace()
             }
         }
         return response

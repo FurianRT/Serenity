@@ -52,7 +52,7 @@ internal object AppModule {
     @Provides
     fun provideErrorTracker(crashlytics: FirebaseCrashlytics) = object : ErrorTracker {
         override fun trackNonFatalError(error: Throwable) {
-            error.printStackTrace()
+            ErrorTracker.printStackTrace(error)
             crashlytics.recordException(error)
         }
     }

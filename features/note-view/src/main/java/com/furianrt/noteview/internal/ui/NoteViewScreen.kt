@@ -50,6 +50,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.orFalse
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notelistui.composables.ConfirmNotesDeleteDialog
@@ -198,7 +199,7 @@ internal fun NoteViewScreen(
                             context.startActivity(intent)
                         }
                         .onFailure { error ->
-                            error.printStackTrace()
+                            ErrorTracker.printStackTrace(error)
                             snackBarHostState.currentSnackbarData?.dismiss()
                             snackBarHostState.showSnackbar(
                                 message = generalErrorMessage,
