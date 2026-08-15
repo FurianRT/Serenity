@@ -131,7 +131,10 @@ internal fun SuccessContent(
                     is MediaItem.Image -> ImageItem(
                         modifier = Modifier.clip(
                             RoundedCornerShape(
-                                topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
+                                topEnd = if (index == listSpanCount - 1) 8.dp else 2.dp,
+                                topStart = 2.dp,
+                                bottomStart = 2.dp,
+                                bottomEnd = 2.dp,
                             )
                         ),
                         item = item,
@@ -142,7 +145,10 @@ internal fun SuccessContent(
                     is MediaItem.Video -> VideoItem(
                         modifier = Modifier.clip(
                             RoundedCornerShape(
-                                topEnd = if (index == listSpanCount - 1) 8.dp else 0.dp,
+                                topEnd = if (index == listSpanCount - 1) 8.dp else 2.dp,
+                                topStart = 2.dp,
+                                bottomStart = 2.dp,
+                                bottomEnd = 2.dp,
                             )
                         ),
                         item = item,

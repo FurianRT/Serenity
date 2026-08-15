@@ -8,14 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
@@ -40,13 +38,16 @@ internal fun VideoItem(
     onSelectClick: (item: MediaItem.Video) -> Unit = {},
     onClick: (item: MediaItem.Video) -> Unit = {},
 ) {
+    val context = LocalContext.current
+
+    val colorScheme = MaterialTheme.colorScheme
+    val placeholder = remember { ColorPainter(colorScheme.tertiary) }
+
     val imageScaleValue by animateFloatAsState(
         targetValue = if (item.isSelected) Constants.SELECTED_ITEM_SCALE else 1f,
         animationSpec = tween(durationMillis = Constants.IMAGE_SCALE_ANIM_DURATION),
-        label = "ItemScale"
     )
-    val context = LocalContext.current
-    val request = remember(item.id) {
+    val request = remember(item.id, context) {
         ImageRequest.Builder(context)
             .size(Constants.REQUESTED_IMAGE_SIZE)
             .diskCachePolicy(CachePolicy.ENABLED)
@@ -60,8 +61,8 @@ internal fun VideoItem(
     Box(
         modifier = modifier
             .aspectRatio(1f)
-            .clip(RoundedCornerShape(2.dp))
             .clickable { onClick(item) },
+        contentAlignment = Alignment.TopEnd,
     ) {
         AsyncImage(
             modifier = Modifier
@@ -72,8 +73,8 @@ internal fun VideoItem(
                 },
             model = request,
             contentScale = ContentScale.Crop,
-            placeholder = ColorPainter(MaterialTheme.colorScheme.tertiary),
-            error = ColorPainter(MaterialTheme.colorScheme.tertiary),
+            placeholder = placeholder,
+            error = placeholder,
             contentDescription = null,
         )
         DurationBadge(
@@ -83,9 +84,7 @@ internal fun VideoItem(
             duration = item.duration,
         )
         CheckBox(
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(top = 4.dp, end = 4.dp),
+            modifier = Modifier.padding(top = 4.dp, end = 4.dp),
             state = item.state,
             onClick = { onSelectClick(item) },
         )
