@@ -76,6 +76,9 @@ internal class NoteCache @Inject constructor(
         scope.launch {
             try {
                 val json = Json.encodeToString(snapshot)
+                if (!cacheFile.exists()) {
+                    cacheFile.createNewFile()
+                }
                 cacheFile.writeText(json)
             } catch (e: Exception) {
                 errorTracker.trackNonFatalError(e)
