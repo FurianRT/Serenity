@@ -59,6 +59,7 @@ internal sealed interface MediaSelectorEvent {
     data object OnSendClick : MediaSelectorEvent
     data class OnMediaClick(val id: Long) : MediaSelectorEvent
     data object OnCloseScreenRequest : MediaSelectorEvent
+    data object OnScreenClosed : MediaSelectorEvent
     data class OnExpanded(val params: MediaSelectorState.Params?) : MediaSelectorEvent
     data object OnScreenResumed : MediaSelectorEvent
     data object OnAlbumsClick : MediaSelectorEvent

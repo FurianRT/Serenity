@@ -34,6 +34,7 @@ import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -222,8 +223,18 @@ internal fun MediaSelectorBottomSheetInternal(
         }
     }
 
-    LaunchedEffect(state.bottomSheetState.isVisible) {
-        if (!state.bottomSheetState.isVisible && !state.isHiddenStateBlocked.value) {
+    val triggerCloseEvent by remember {
+        derivedStateOf {
+            state.bottomSheetState.currentValue == SheetValue.Hidden &&
+                    !state.isHiddenStateBlocked.value &&
+                    !state.bottomSheetState.isAnimationRunning
+
+        }
+    }
+
+    LaunchedEffect(triggerCloseEvent) {
+        if (triggerCloseEvent) {
+            viewModel.onEvent(MediaSelectorEvent.OnScreenClosed)
             listState.scrollToItem(0)
         }
     }

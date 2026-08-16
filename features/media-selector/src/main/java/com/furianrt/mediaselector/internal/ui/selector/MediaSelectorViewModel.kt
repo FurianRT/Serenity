@@ -43,6 +43,7 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpa
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnMediaPermissionsSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnPartialAccessMessageClick
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnScreenClosed
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnScreenResumed
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSelectItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSendClick
@@ -159,15 +160,19 @@ internal class MediaSelectorViewModel @Inject constructor(
             )
 
             is OnSendClick -> launch { onSendClick() }
-            is OnCloseScreenRequest -> {
-                _effect.tryEmit(CloseScreen)
+            is OnCloseScreenRequest -> _effect.tryEmit(CloseScreen)
+            is OnScreenClosed -> {
                 mediaCoordinator.unselectAllMedia()
                 tempMediaHolder.clear()
-                _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                    currentState.setSelectedItems(
-                        selectedItems = emptyList(),
-                        useCounter = !isSingleChoice,
-                    )
+                if (_state.value.selectedAlbum != null) {
+                    _state.update { MediaSelectorUiState.Loading }
+                } else {
+                    _state.updateState<MediaSelectorUiState.Success> { currentState ->
+                        currentState.setSelectedItems(
+                            selectedItems = emptyList(),
+                            useCounter = !isSingleChoice,
+                        )
+                    }
                 }
                 isDataLoaded = false
             }
