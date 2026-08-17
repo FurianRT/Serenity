@@ -278,6 +278,25 @@ fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
     NoteFontColor.PURPLE_DARK -> UiNoteFontColor.PURPLE_DARK
     NoteFontColor.RED -> UiNoteFontColor.RED
     NoteFontColor.RED_DARK -> UiNoteFontColor.RED_DARK
+    NoteFontColor.ORANGE -> UiNoteFontColor.ORANGE
+    NoteFontColor.MINT -> UiNoteFontColor.MINT
+    NoteFontColor.LAVENDER -> UiNoteFontColor.LAVENDER
+    NoteFontColor.CORAL -> UiNoteFontColor.CORAL
+    NoteFontColor.AMBER -> UiNoteFontColor.AMBER
+    NoteFontColor.MINT_DARK -> UiNoteFontColor.MINT_DARK
+    NoteFontColor.SKY -> UiNoteFontColor.SKY
+    NoteFontColor.INDIGO -> UiNoteFontColor.INDIGO
+    NoteFontColor.CORAL_DARK -> UiNoteFontColor.CORAL_DARK
+    NoteFontColor.TEAL -> UiNoteFontColor.TEAL
+    NoteFontColor.PEACH -> UiNoteFontColor.PEACH
+    NoteFontColor.BROWN -> UiNoteFontColor.BROWN
+    NoteFontColor.CHOCOLATE -> UiNoteFontColor.CHOCOLATE
+    NoteFontColor.SAGE -> UiNoteFontColor.SAGE
+    NoteFontColor.OLIVE -> UiNoteFontColor.OLIVE
+    NoteFontColor.KHAKI -> UiNoteFontColor.KHAKI
+    NoteFontColor.SAND -> UiNoteFontColor.SAND
+    NoteFontColor.STEEL -> UiNoteFontColor.STEEL
+    NoteFontColor.NAVI -> UiNoteFontColor.NAVI
 }
 
 fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
@@ -299,6 +318,25 @@ fun UiNoteFontColor.toNoteFontColor(): NoteFontColor = when (this) {
     UiNoteFontColor.PURPLE_DARK -> NoteFontColor.PURPLE_DARK
     UiNoteFontColor.RED -> NoteFontColor.RED
     UiNoteFontColor.RED_DARK -> NoteFontColor.RED_DARK
+    UiNoteFontColor.ORANGE -> NoteFontColor.ORANGE
+    UiNoteFontColor.MINT -> NoteFontColor.MINT
+    UiNoteFontColor.LAVENDER -> NoteFontColor.LAVENDER
+    UiNoteFontColor.CORAL -> NoteFontColor.CORAL
+    UiNoteFontColor.SKY -> NoteFontColor.SKY
+    UiNoteFontColor.INDIGO -> NoteFontColor.INDIGO
+    UiNoteFontColor.AMBER -> NoteFontColor.AMBER
+    UiNoteFontColor.MINT_DARK -> NoteFontColor.MINT_DARK
+    UiNoteFontColor.TEAL -> NoteFontColor.TEAL
+    UiNoteFontColor.PEACH -> NoteFontColor.PEACH
+    UiNoteFontColor.CORAL_DARK -> NoteFontColor.CORAL_DARK
+    UiNoteFontColor.BROWN -> NoteFontColor.BROWN
+    UiNoteFontColor.CHOCOLATE -> NoteFontColor.CHOCOLATE
+    UiNoteFontColor.SAGE -> NoteFontColor.SAGE
+    UiNoteFontColor.OLIVE -> NoteFontColor.OLIVE
+    UiNoteFontColor.KHAKI -> NoteFontColor.KHAKI
+    UiNoteFontColor.SAND -> NoteFontColor.STEEL
+    UiNoteFontColor.STEEL -> NoteFontColor.STEEL
+    UiNoteFontColor.NAVI -> NoteFontColor.NAVI
 }
 
 fun SpanStyle.toSpanType(

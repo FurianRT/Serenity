@@ -105,6 +105,26 @@ object Colors {
         val PurpleDark = Color(0xFFAB47BC)
         val Red = Color(0xFFFF6461)
         val RedDark = Color(0xFFFF2521)
+        val Orange = Color(0xFFFFA726)
+        val Mint = Color(0xFF69E0B0)
+        val Coral = Color(0xFFFF8A80)
+        val Amber = Color(0xFFC58A00)
+        val Teal = Color(0xFF00897B)
+        val MintDark = Color(0xFF3A8F6B)
+        val Sky = Color(0xFF3578B8)
+        val Indigo = Color(0xFF5C6BC0)
+        val Lavender = Color(0xFF8E5AA9)
+        val CoralDark = Color(0xFFD85C50)
+        val Peach = Color(0xFFC96F58)
+
+        val Brown = Color(0xFF9C6B4E)
+        val Chocolate = Color(0xFF795548)
+        val Olive = Color(0xFF8A9A3B)
+        val Sage = Color(0xFF8FAF8F)
+        val Khaki = Color(0xFFB5A36A)
+        val Navy = Color(0xFF3F5F7F)
+        val Steel = Color(0xFF78909C)
+        val Sand = Color(0xFFD2B48C)
     }
 
     object FontBackground {
