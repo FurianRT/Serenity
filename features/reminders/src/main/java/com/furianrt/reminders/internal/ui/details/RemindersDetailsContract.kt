@@ -1,5 +1,6 @@
 package com.furianrt.reminders.internal.ui.details
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.reminders.internal.ui.entities.DayItem
 import com.furianrt.uikit.entities.UiThemeColor
 import java.time.LocalTime
@@ -10,6 +11,8 @@ internal data class RemindersDetailsUiState(
 ) {
     internal sealed interface Content {
         data object Loading : Content
+
+        @Immutable
         data class Success(
             val initialTime: LocalTime,
             val notificationText: String,

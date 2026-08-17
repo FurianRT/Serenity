@@ -1,8 +1,10 @@
 package com.furianrt.mediaselector.internal.ui.entities
 
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import java.time.LocalDate
 
+@Immutable
 internal sealed class MediaItem(
     open val id: Long,
     open val name: String,
@@ -26,6 +28,7 @@ internal sealed class MediaItem(
         val name: String,
     )
 
+    @Immutable
     data class Image(
         override val id: Long,
         override val name: String,
@@ -37,6 +40,7 @@ internal sealed class MediaItem(
         override val isCameraItem: Boolean = false,
     ) : MediaItem(id, name, uri, ratio, state, album, date, isCameraItem)
 
+    @Immutable
     data class Video(
         override val id: Long,
         override val name: String,

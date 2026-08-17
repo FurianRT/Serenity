@@ -8,7 +8,11 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.snap
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -235,7 +239,6 @@ internal fun MediaSelectorBottomSheetInternal(
     LaunchedEffect(triggerCloseEvent) {
         if (triggerCloseEvent) {
             viewModel.onEvent(MediaSelectorEvent.OnScreenClosed)
-            listState.scrollToItem(0)
         }
     }
 
@@ -340,7 +343,8 @@ private fun SheetContent(
     val showPartialAccessMessage = (uiState as? MediaSelectorUiState.Success)
         ?.showPartialAccessMessage.orFalse()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    SkipFirstEffect(uiState.selectedAlbum?.id ?: MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
+
+    SkipFirstEffect(uiState.selectedAlbum?.id, uiState::class) {
         listState.scrollToItem(0)
     }
     Surface(
@@ -369,12 +373,20 @@ private fun SheetContent(
             AnimatedContent(
                 targetState = uiState,
                 transitionSpec = {
-                    fadeIn(tween(CONTENT_ANIM_DURATION))
-                        .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
+                    val hasHiddenState = initialState is MediaSelectorUiState.Hidden ||
+                            targetState is MediaSelectorUiState.Hidden
+                    if (hasHiddenState) {
+                        EnterTransition.None.togetherWith(ExitTransition.None)
+                    } else {
+                        fadeIn(tween(CONTENT_ANIM_DURATION))
+                            .togetherWith(fadeOut(tween(CONTENT_ANIM_DURATION)))
+                            .using(SizeTransform { _, _ -> snap() })
+                    }
                 },
                 contentKey = { it::class.simpleName },
             ) { targetState ->
                 when (targetState) {
+                    is MediaSelectorUiState.Hidden -> Box(Modifier.fillMaxSize())
                     is MediaSelectorUiState.Loading -> LoadingContent()
                     is MediaSelectorUiState.Success -> SuccessContent(
                         uiState = targetState,

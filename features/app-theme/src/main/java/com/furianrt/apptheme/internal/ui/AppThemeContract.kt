@@ -1,11 +1,13 @@
 package com.furianrt.apptheme.internal.ui
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.uikit.entities.UiThemeColor
 
 internal data class AppThemeState(
     val theme: UiThemeColor,
     val content: Content,
 ) {
+    @Immutable
     sealed interface Content {
         data object Loading : Content
         data class Success(

@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.page
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorState
@@ -17,6 +18,8 @@ import com.furianrt.uikit.utils.DialogIdentifier
 internal sealed interface PageUiState {
     data object Loading : PageUiState
     data object Empty : PageUiState
+
+    @Immutable
     data class Success(
         val noteId: String,
         val content: List<UiNoteContent>,

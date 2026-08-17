@@ -88,7 +88,7 @@ internal class MediaSelectorViewModel @Inject constructor(
     DialogResultListener,
     DefaultLifecycleObserver {
 
-    private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Loading)
+    private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Hidden)
     val state = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 10)
@@ -164,16 +164,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnScreenClosed -> {
                 mediaCoordinator.unselectAllMedia()
                 tempMediaHolder.clear()
-                if (_state.value.selectedAlbum != null) {
-                    _state.update { MediaSelectorUiState.Loading }
-                } else {
-                    _state.updateState<MediaSelectorUiState.Success> { currentState ->
-                        currentState.setSelectedItems(
-                            selectedItems = emptyList(),
-                            useCounter = !isSingleChoice,
-                        )
-                    }
-                }
+                _state.update { MediaSelectorUiState.Hidden }
                 isDataLoaded = false
             }
 
@@ -186,6 +177,9 @@ internal class MediaSelectorViewModel @Inject constructor(
                     allowVideo != allowVideoTemp ||
                     isSingleChoice != isSingleChoiceTemp
                 ) {
+                    if (_state.value is MediaSelectorUiState.Hidden) {
+                        _state.update { MediaSelectorUiState.Loading }
+                    }
                     allowVideo = allowVideoTemp
                     isSingleChoice = isSingleChoiceTemp
                     launch {
@@ -219,7 +213,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnAlbumSelected -> when (val currentState = _state.value) {
-                is MediaSelectorUiState.Loading -> Unit
+                is MediaSelectorUiState.Loading, MediaSelectorUiState.Hidden -> Unit
                 is MediaSelectorUiState.Success -> {
                     if (currentState.selectedAlbum?.id != event.album.id) {
                         launch {

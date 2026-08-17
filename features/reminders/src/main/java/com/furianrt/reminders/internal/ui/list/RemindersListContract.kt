@@ -1,5 +1,6 @@
 package com.furianrt.reminders.internal.ui.list
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
 import com.furianrt.uikit.entities.UiThemeColor
 
@@ -10,6 +11,8 @@ internal data class RemindersListUiState(
     sealed interface Content {
         data object Loading : Content
         data object Empty : Content
+
+        @Immutable
         data class Success(
             val reminders: List<ReminderItem>,
         ) : Content

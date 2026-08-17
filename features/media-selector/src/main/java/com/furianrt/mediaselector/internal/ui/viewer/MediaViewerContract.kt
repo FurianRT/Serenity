@@ -1,9 +1,11 @@
 package com.furianrt.mediaselector.internal.ui.viewer
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 
 internal sealed interface MediaViewerUiState {
+    @Immutable
     data class Success(
         val initialMediaIndex: Int,
         val media: List<MediaItem>,

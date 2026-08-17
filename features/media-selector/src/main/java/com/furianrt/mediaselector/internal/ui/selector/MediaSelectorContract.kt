@@ -1,6 +1,7 @@
 package com.furianrt.mediaselector.internal.ui.selector
 
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
@@ -13,6 +14,11 @@ internal sealed class MediaSelectorUiState(
         selectedAlbum = null,
     )
 
+    data object Hidden : MediaSelectorUiState(
+        selectedAlbum = null,
+    )
+
+    @Immutable
     data class Success(
         val items: List<MediaItem>,
         val selectedCount: Int,
@@ -47,7 +53,7 @@ internal sealed class MediaSelectorUiState(
 
     val hasSelectedItems: Boolean
         get() = when (this) {
-            is Loading -> false
+            is Loading, is Hidden -> false
             is Success -> selectedCount > 0
         }
 }

@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 
-private const val SKELETON_COUNT = 24
+private const val SKELETON_COUNT = 15
 
 @Composable
 internal fun LoadingContent(

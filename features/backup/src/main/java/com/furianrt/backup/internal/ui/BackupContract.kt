@@ -2,6 +2,7 @@ package com.furianrt.backup.internal.ui
 
 import android.content.Intent
 import android.content.IntentSender
+import androidx.compose.runtime.Immutable
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress.*
@@ -13,6 +14,7 @@ internal data class BackupUiState(
     val content: Content,
 ) {
     sealed interface Content {
+        @Immutable
         data class Success(
             val isAutoBackupEnabled: Boolean,
             val backupPeriod: BackupPeriod,

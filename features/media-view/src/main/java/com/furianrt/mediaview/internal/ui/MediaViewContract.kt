@@ -1,8 +1,10 @@
 package com.furianrt.mediaview.internal.ui
 
+import androidx.compose.runtime.Immutable
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.theme.NoteFont
 
+@Immutable
 internal data class MediaViewUiState(
     val initialMediaIndex: Int,
     val media: List<MediaItem>,

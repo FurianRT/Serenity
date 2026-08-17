@@ -2,12 +2,14 @@ package com.furianrt.notecreate.internal.ui
 
 import android.graphics.Bitmap
 import android.net.Uri
+import androidx.compose.runtime.Immutable
 import com.furianrt.notecreate.internal.ui.entites.NoteItem
 import com.furianrt.notepage.api.entities.NotePageAction
 import com.furianrt.uikit.theme.NoteFont
 import java.time.LocalDate
 
 internal sealed interface NoteCreateUiState {
+    @Immutable
     data class Success(
         val note: NoteItem,
         val pageAction: NotePageAction,
