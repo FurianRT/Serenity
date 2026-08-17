@@ -426,6 +426,7 @@ private fun SuccessScreen(
         HorizontalPager(
             userScrollEnabled = !uiState.isInEditMode,
             verticalAlignment = Alignment.Top,
+            beyondViewportPageCount = 0,
             state = pagerState,
             key = { uiState.notes[it].id },
         ) { index ->
