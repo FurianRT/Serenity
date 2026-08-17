@@ -195,7 +195,7 @@ private fun SuccessContent(
     ) {
         snapshotFlow { pagerState.currentPage }
             .collectLatest { currentPage ->
-                isVideoItem = uiState.media[currentPage] is MediaItem.Video
+                isVideoItem = uiState.media.getOrNull(currentPage) is MediaItem.Video
                 val isScrollInProgress = listState.isScrollInProgress
                 if (!isScrollInProgress &&
                     showControls &&
