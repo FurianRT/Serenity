@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.furianrt.common.ErrorTracker
 import com.furianrt.common.NotificationChannels
 import com.furianrt.common.RootActivityIntentProvider
 import com.furianrt.core.DispatchersProvider
@@ -44,6 +45,9 @@ internal class ReminderReceiver : BroadcastReceiver() {
     @Inject
     lateinit var rootActivityIntentProvider: RootActivityIntentProvider
 
+    @Inject
+    lateinit var errorTracker: ErrorTracker
+
     private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -57,7 +61,11 @@ internal class ReminderReceiver : BroadcastReceiver() {
                 }
                 reminderScheduler.schedule(reminder)
             } finally {
-                pendingResult.finish()
+                try {
+                    pendingResult.finish()
+                } catch (e: IllegalStateException) {
+                    errorTracker.trackNonFatalError(e)
+                }
             }
         }
     }

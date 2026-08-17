@@ -3,6 +3,7 @@ package com.furianrt.reminders.internal.receivers
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.RemindersRepository
 import com.furianrt.reminders.internal.schedulers.ReminderScheduler
@@ -21,6 +22,9 @@ internal class BootReceiver : BroadcastReceiver() {
     lateinit var reminderScheduler: ReminderScheduler
 
     @Inject
+    lateinit var errorTracker: ErrorTracker
+
+    @Inject
     lateinit var dispatchers: DispatchersProvider
 
     private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
@@ -37,7 +41,11 @@ internal class BootReceiver : BroadcastReceiver() {
                         reminderScheduler.schedule(reminder)
                     }
                 } finally {
-                    pendingResult.finish()
+                    try {
+                        pendingResult.finish()
+                    } catch (e: IllegalStateException) {
+                        errorTracker.trackNonFatalError(e)
+                    }
                 }
             }
         }
