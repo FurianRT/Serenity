@@ -37,6 +37,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -53,6 +54,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.drop
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(
     FlowPreview::class,
@@ -73,6 +75,7 @@ fun NoteContentTitle(
     onTitleFocusChange: (id: String, focused: Boolean) -> Unit = { _, _ -> },
     onTitleTextChange: (id: String) -> Unit = {},
     onCheckedListChange: () -> Unit = {},
+    onAcceptText: (titleId: String, text: TextFieldValue) -> TextFieldValue? = { _, text -> text },
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -113,7 +116,7 @@ fun NoteContentTitle(
         val imeTarget = WindowInsets.imeAnimationTarget.getBottom(LocalDensity.current)
         LaunchedEffect(imeTarget) {
             snapshotFlow { keyboardOffset }
-                .debounce(50)
+                .debounce(50.milliseconds)
                 .collect { offset ->
                     if (imeTarget != 0) {
                         title.bringIntoViewRequester.bringIntoView(
@@ -127,7 +130,7 @@ fun NoteContentTitle(
         }
         LaunchedEffect(hasFocus) {
             snapshotFlow { title.state.selection }
-                .debounce(50)
+                .debounce(50.milliseconds)
                 .collect { selection ->
                     title.bringIntoViewRequester.bringIntoView(
                         textResult = layoutResult,
@@ -160,7 +163,13 @@ fun NoteContentTitle(
             },
         value = title.state.textValue,
         onTextLayout = { layoutResult = it },
-        onValueChange = { title.state.updateValue(it) },
+        onValueChange = { value ->
+            if (value.text.length > title.state.text.length) {
+                onAcceptText(title.id, value)?.let(title.state::updateValue)
+            } else {
+                title.state.updateValue(value)
+            }
+        },
         textStyle = adjustedStyle,
         cursorBrush = SolidColor(MaterialTheme.colorScheme.surfaceContainer),
         keyboardOptions = KeyboardOptions(

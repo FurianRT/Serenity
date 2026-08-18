@@ -67,6 +67,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -298,6 +299,7 @@ internal fun NotePageScreenInternal(
         onEvent = viewModel::onEvent,
         onTitleFocused = onTitleFocused,
         onLocationClick = onLocationClick,
+        onAcceptText = viewModel::onAcceptText,
     )
 
     if (showMediaPermissionDialog) {
@@ -345,6 +347,7 @@ private fun PageScreenContent(
     onEvent: (event: PageEvent) -> Unit,
     onTitleFocused: () -> Unit,
     onLocationClick: () -> Unit,
+    onAcceptText: (titleId: String, text: TextFieldValue) -> TextFieldValue?,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -371,6 +374,7 @@ private fun PageScreenContent(
                     onEvent = onEvent,
                     onTitleFocused = onTitleFocused,
                     onLocationClick = onLocationClick,
+                    onAcceptText = onAcceptText,
                 )
             }
         }
@@ -391,6 +395,7 @@ private fun SuccessScreen(
     onEvent: (event: PageEvent) -> Unit,
     onTitleFocused: () -> Unit,
     onLocationClick: () -> Unit,
+    onAcceptText: (titleId: String, text: TextFieldValue) -> TextFieldValue?,
     modifier: Modifier = Modifier,
 ) {
     val scope = rememberCoroutineScope()
@@ -474,6 +479,7 @@ private fun SuccessScreen(
                 },
                 onLocationClick = onLocationClick,
                 onEmptyTitleHeightChange = { topEmptyTitleHeight = it },
+                onAcceptText = onAcceptText,
             )
             if (uiState.stickers.isNotEmpty()) {
                 StickersBox(
@@ -691,6 +697,7 @@ private fun ContentItems(
     onEmptyTitleHeightChange: (height: Float) -> Unit,
     onLocationClick: () -> Unit,
     onEvent: (event: PageEvent) -> Unit,
+    onAcceptText: (titleId: String, text: TextFieldValue) -> TextFieldValue?,
     modifier: Modifier = Modifier,
 ) {
     val hapticFeedback = LocalHapticFeedback.current
@@ -748,6 +755,7 @@ private fun ContentItems(
                             },
                             onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
                             onCheckedListChange = { onEvent(PageEvent.OnCheckedListChange) },
+                            onAcceptText = onAcceptText,
                         )
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(

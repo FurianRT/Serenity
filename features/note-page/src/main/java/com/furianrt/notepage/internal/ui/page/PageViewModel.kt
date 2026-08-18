@@ -2,10 +2,13 @@ package com.furianrt.notepage.internal.ui.page
 
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.coerceIn
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
+import com.furianrt.core.findInstance
 import com.furianrt.core.getState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.orFalse
@@ -146,6 +149,7 @@ private val TITLE_FOCUS_DELAY = 150.milliseconds
 private const val MAX_STICKERS_COUNT = 50
 private const val MIN_LINE_HEIGHT_MULTIPLIER = 0.5f
 private const val MAX_LINE_HEIGHT_MULTIPLIER = 1.5f
+private const val MAX_TEXT_LENGTH = 40_000
 
 @OptIn(DelicateCoroutinesApi::class)
 @HiltViewModel(assistedFactory = PageViewModel.Factory::class)
@@ -354,6 +358,46 @@ internal class PageViewModel @AssistedInject constructor(
                 onChangeTextAlightClickClick(event.alignment)
             }
         }
+    }
+
+    fun onAcceptText(
+        titleId: String,
+        value: TextFieldValue,
+    ): TextFieldValue? {
+        val currentState = _state.value
+        if (currentState !is PageUiState.Success) {
+            return null
+        }
+        val fullTextLength = currentState.content.sumOf { content ->
+            if (content is UiNoteContent.Title && content.id != titleId) {
+                content.state.textWithSnapshot.length
+            } else {
+                0
+            }
+        }
+        if ((fullTextLength + value.text.length) <= MAX_TEXT_LENGTH) {
+            return value
+        }
+
+        _effect.tryEmit(
+            PageEffect.ShowToast(
+                message = resourcesManager.getString(R.string.note_characters_limit_message),
+            )
+        )
+
+        val titleItem = currentState.content
+            .findInstance<UiNoteContent.Title> { it.id == titleId } ?: return null
+
+        if (titleItem.state.textWithSnapshot.isNotEmpty()) {
+            return null
+        }
+
+        val availableLength = MAX_TEXT_LENGTH - fullTextLength
+
+        return value.copy(
+            text = value.text.take(availableLength),
+            selection = value.selection.coerceIn(minimumValue = 0, maximumValue = availableLength)
+        )
     }
 
     override fun onDialogResult(dialogId: Int, result: DialogResult) {
