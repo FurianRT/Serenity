@@ -72,7 +72,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 9
+        private const val VERSION = 10
 
         fun create(
             context: Context,
@@ -95,6 +95,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_6_7,
                 MIGRATION_7_8,
                 MIGRATION_8_9,
+                MIGRATION_9_10,
             )
             .build()
     }
@@ -195,5 +196,11 @@ private val MIGRATION_8_9 = object : Migration(8, 9) {
             )
             """.trimIndent()
         )
+    }
+}
+
+private val MIGRATION_9_10 = object : Migration(9, 10) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("DELETE FROM Notes WHERE length(text) > 50000")
     }
 }
