@@ -93,4 +93,14 @@ sealed class NoteTextSpan(
         override val end: Int,
         val color: Int,
     ) : NoteTextSpan(titleId, start, end)
+
+    fun changeEnd(end: Int): NoteTextSpan = when (this) {
+        is Bold -> copy(end = end)
+        is FillColor -> copy(end = end)
+        is FontColor -> copy(end = end)
+        is FontSize -> copy(end = end)
+        is Italic -> copy(end = end)
+        is Strikethrough -> copy(end = end)
+        is Underline -> copy(end = end)
+    }
 }

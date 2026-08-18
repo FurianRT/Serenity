@@ -45,7 +45,7 @@ interface NotesRepository {
 
     suspend fun deleteNote(noteId: String)
     suspend fun deleteNotes(noteIds: Set<String>)
-    fun getAllNotes(): Flow<List<LocalNote>>
+    fun getAllNotes(limitText: Boolean = false): Flow<List<LocalNote>>
     fun getAllNotes(query: String): Flow<List<LocalNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
     fun getOrCreateTemplateNote(noteId: String): Flow<SimpleNote>

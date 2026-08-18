@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
 
 private const val TAG = "MainViewModel"
@@ -52,7 +53,7 @@ internal class NoteListViewModel @Inject constructor(
     private val selectedNotesState = MutableStateFlow<Set<String>>(emptySet())
 
     val state: StateFlow<NoteListUiState> = combine(
-        notesRepository.getAllNotes(),
+        notesRepository.getAllNotes(limitText = true),
         scrollToNoteState,
         selectedNotesState,
         appearanceRepository.getAppFont(),
@@ -119,7 +120,7 @@ internal class NoteListViewModel @Inject constructor(
 
             NOTE_CREATE_DIALOG_ID -> if (result is DialogResult.Ok<*>) {
                 launch {
-                    delay(500)
+                    delay(500.milliseconds)
                     scrollToNoteState.update { result.data as String }
                 }
             } else {

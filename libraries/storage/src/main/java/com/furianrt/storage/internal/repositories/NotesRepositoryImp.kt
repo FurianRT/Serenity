@@ -150,11 +150,16 @@ internal class NotesRepositoryImp @Inject constructor(
         noteDao.delete(noteIds.map { PartNoteId(it) }.toList())
     }
 
-    override fun getAllNotes(): Flow<List<LocalNote>> = noteDao.getAllNotes()
+    override fun getAllNotes(limitText: Boolean): Flow<List<LocalNote>> = noteDao.getAllNotes()
         .deepMap { note ->
-            note.toLocalNote(
+            val localNote = note.toLocalNote(
                 onFailure = { errorTracker.trackNonFatalError(TitleParsingException(it)) },
             )
+            if (limitText) {
+                localNote.limitText()
+            } else {
+                localNote
+            }
         }
         .map { notes ->
             notes.sortedWith(
@@ -261,5 +266,48 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun enqueuePeriodicCacheCleanup() {
         CacheCleanupWorker.enqueuePeriodic(context)
+    }
+
+    private fun LocalNote.limitText(length: Int = 400): LocalNote {
+        val titleIndices = content.mapIndexedNotNull { index, item ->
+            index.takeIf { item is LocalNote.Content.Title }
+        }
+        var remainingLength = content
+            .filterIsInstance<LocalNote.Content.Title>()
+            .sumOf { it.text.length }
+
+        if (remainingLength <= length) {
+            return this
+        }
+
+        val newContent = content.toMutableList()
+
+        for (index in titleIndices.asReversed()) {
+            val title = newContent[index] as LocalNote.Content.Title
+
+            if (remainingLength - title.text.length >= length) {
+                remainingLength -= title.text.length
+                newContent.removeAt(index)
+            } else {
+                val allowedLength = length - (remainingLength - title.text.length)
+
+                newContent[index] = title.copy(
+                    text = title.text.take(allowedLength),
+                    spans = title.spans
+                        .filter { it.start < allowedLength }
+                        .map { span ->
+                            if (span.end > allowedLength) {
+                                span.changeEnd(allowedLength)
+                            } else {
+                                span
+                            }
+                        },
+                )
+
+                break
+            }
+        }
+
+        return copy(content = newContent)
     }
 }
