@@ -1,10 +1,8 @@
 package com.furianrt.serenity
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.AttributeSet
-import android.view.View
+import android.view.ViewPropertyAnimator
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
@@ -18,12 +16,14 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -75,7 +75,6 @@ import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 private const val SPLASH_SCREEN_EXIT_ANIM_DURATION = 200L
-private const val SPLASH_SCREEN_DELAY = 400L
 
 @AndroidEntryPoint
 internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
@@ -85,252 +84,265 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var keepSplashScreen = true
+    private var isUiReady = false
 
     private val deepLinks = MutableSharedFlow<Intent>(extraBufferCapacity = 1)
 
-    override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
+    private var splashAnim: ViewPropertyAnimator? = null
 
-    override fun onCreateView(
-        parent: View?,
-        name: String,
-        context: Context,
-        attrs: AttributeSet,
-    ): View? = super.onCreateView(parent, name, context, attrs)
-        .also { parent?.postDelayed({ keepSplashScreen = false }, SPLASH_SCREEN_DELAY) }
+    override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            setKeepOnScreenCondition { keepSplashScreen }
+            setKeepOnScreenCondition { !isUiReady }
             setOnExitAnimationListener { splashScreenViewProvider ->
-                splashScreenViewProvider.view
+                if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    splashScreenViewProvider.remove()
+                    return@setOnExitAnimationListener
+                }
+                splashAnim = splashScreenViewProvider.view
                     .animate()
                     .scaleX(1.1f)
                     .scaleY(1.1f)
                     .alpha(0f)
                     .setDuration(SPLASH_SCREEN_EXIT_ANIM_DURATION)
-                    .withEndAction { splashScreenViewProvider.remove() }
+                    .withEndAction {
+                        if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                            splashScreenViewProvider.remove()
+                        }
+                    }
             }
         }
-
         setContent {
-            val uiState by viewModel.state.collectAsStateWithLifecycle()
-            val navController = rememberNavController()
-            val hazeState = rememberHazeState()
-            val activity = LocalActivity.current as? ComponentActivity
-
-            LaunchedEffect(Unit) {
-                deepLinks.collect { intent ->
-                    navController.handleDeepLink(intent)
-                }
-            }
-
-            SerenityTheme(
-                colorScheme = uiState.appColor.colorScheme,
-                font = uiState.appFont,
-                isLightTheme = uiState.appColor.isLight,
-            ) {
-                LaunchedEffect(uiState.appColor.isLight) {
-                    navController.currentBackStackEntryFlow
-                        .filter { entry ->
-                            val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>()
-                            val hasNoteCreateRoute = entry.destination.hasRoute<NoteCreateRoute>()
-                            !hasNoteViewRoute && !hasNoteCreateRoute
-                        }
-                        .collect { entry ->
-                            val hasMediaViewRoute = entry.destination.hasRoute<MediaViewRoute>() ||
-                                    entry.destination.hasRoute<MediaViewerRoute>()
-                            val color = SystemBarsConstants.InsetsColor.toArgb()
-                            when {
-                                hasMediaViewRoute -> activity?.enableEdgeToEdge(
-                                    statusBarStyle = SystemBarStyle.dark(color),
-                                    navigationBarStyle = SystemBarStyle.dark(color),
-                                )
-
-                                uiState.appColor.isLight -> activity?.enableEdgeToEdge(
-                                    statusBarStyle = SystemBarStyle.light(color, color),
-                                    navigationBarStyle = SystemBarStyle.light(color, color),
-                                )
-
-                                else -> activity?.enableEdgeToEdge(
-                                    statusBarStyle = SystemBarStyle.dark(color),
-                                    navigationBarStyle = SystemBarStyle.dark(color),
-                                )
-                            }
-                        }
-                }
-
-                val currentEntry by navController.currentBackStackEntryFlow
-                    .collectAsStateWithLifecycle(null)
-                val currentDestination = currentEntry?.destination
-                val hasMediaRoute = currentDestination?.hasRoute<MediaViewRoute>() == true ||
-                        currentDestination?.hasRoute<MediaViewerRoute>() == true
-                val hasMediaSortingRoute = currentDestination?.hasRoute<MediaSortingRoute>() == true
-
-                CompositionLocalProvider(
-                    LocalAuth provides this,
-                    LocalHasMediaRoute provides hasMediaRoute,
-                    LocalHasMediaSortingRoute provides hasMediaSortingRoute,
-                ) {
-                    NavHost(
-                        modifier = Modifier
-                            .background(MaterialTheme.colorScheme.surface)
-                            .hazeSource(hazeState),
-                        navController = navController,
-                        startDestination = NoteListRoute,
-                        enterTransition = { defaultEnterTransition() },
-                        exitTransition = { defaultExitTransition() },
-                        popExitTransition = { defaultPopExitTransition() },
-                        popEnterTransition = { defaultPopEnterTransition() },
-                    ) {
-                        noteListScreen(
-                            hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
-                            hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
-                            openSettingsScreen = navController::navigateToSettings,
-                            openBackupScreen = navController::navigateToBackup,
-                            openNoteCreateScreen = { identifier ->
-                                navController.navigateToNoteCreate(
-                                    route = NoteCreateRoute(
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    ),
-                                )
-                            },
-                            openNoteViewScreen = { noteId, identifier ->
-                                navController.navigateToNoteView(
-                                    route = NoteViewRoute(
-                                        noteId = noteId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    ),
-                                )
-                            },
-                            openNoteSearchScreen = {
-                                navController.navigateToNoteSearch()
-                            }
-                        )
-
-                        noteViewScreen(
-                            openMediaViewScreen = { noteId, mediaId, identifier ->
-                                navController.navigateToMediaView(
-                                    route = MediaViewRoute(
-                                        noteId = noteId,
-                                        mediaId = mediaId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    ),
-                                )
-                            },
-                            openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
-                                navController.navigateToMediaSorting(
-                                    route = MediaSortingRoute(
-                                        noteId = noteId,
-                                        mediaBlockId = mediaBlockId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    )
-                                )
-                            },
-                            openMediaViewer = navController::navigateToMediaViewer,
-                            hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
-                            onCloseRequest = navController::navigateUp,
-                        )
-
-                        noteCreateScreen(
-                            openMediaViewScreen = { noteId, mediaId, identifier ->
-                                navController.navigateToMediaView(
-                                    route = MediaViewRoute(
-                                        noteId = noteId,
-                                        mediaId = mediaId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    ),
-                                )
-                            },
-                            openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
-                                navController.navigateToMediaSorting(
-                                    route = MediaSortingRoute(
-                                        noteId = noteId,
-                                        mediaBlockId = mediaBlockId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    )
-                                )
-                            },
-                            openMediaViewer = navController::navigateToMediaViewer,
-                            hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
-                            onCloseRequest = navController::navigateUp,
-                        )
-
-                        settingsNavigation(navController)
-                        mediaViewScreen(onCloseRequest = navController::navigateUp)
-                        mediaViewerScreen(onCloseRequest = navController::navigateUp)
-                        mediaSortingScreen(
-                            openMediaViewScreen = { noteId, mediaId, mediaBlockId, identifier ->
-                                navController.navigateToMediaView(
-                                    route = MediaViewRoute(
-                                        noteId = noteId,
-                                        mediaBlockId = mediaBlockId,
-                                        mediaId = mediaId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                    ),
-                                )
-                            },
-                            openMediaViewer = navController::navigateToMediaViewer,
-                            onCloseRequest = navController::navigateUp
-                        )
-                        noteSearchScreen(
-                            openNoteViewScreen = { noteId, identifier, data ->
-                                navController.navigateToNoteView(
-                                    route = NoteViewRoute(
-                                        noteId = noteId,
-                                        dialogId = identifier.dialogId,
-                                        requestId = identifier.requestId,
-                                        searchData = NoteViewRoute.SearchData(
-                                            query = data.query,
-                                            tags = data.tags,
-                                            startDate = data.startDate,
-                                            endDate = data.endDate,
-                                        ),
-                                    ),
-                                )
-                            },
-                            onCloseRequest = navController::navigateUp
-                        )
-                        backupScreen(
-                            onCloseRequest = navController::navigateUp
-                        )
-                    }
-                    AnimatedVisibility(
-                        visible = uiState.isOnboardingNeeded,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        OnboardingScreen(
-                            onCloseRequest = {
-                                viewModel.onEvent(MainEvent.OnOnboardingCompleted)
-                            },
-                        )
-                    }
-                    AnimatedVisibility(
-                        visible = uiState.isScreenLocked,
-                        enter = EnterTransition.None,
-                        exit = fadeOut(spring(stiffness = 300f)),
-                    ) {
-                        CheckPinScreen(
-                            hazeState = hazeState,
-                            onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
-                        )
-                    }
-                }
-            }
+            ComposeContent()
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        splashAnim?.cancel()
+        splashAnim = null
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         deepLinks.tryEmit(intent)
+    }
+
+    @Composable
+    private fun ComposeContent() {
+        val uiState by viewModel.state.collectAsStateWithLifecycle()
+        val navController = rememberNavController()
+        val hazeState = rememberHazeState()
+        val activity = LocalActivity.current as? ComponentActivity
+
+        LaunchedEffect(Unit) {
+            isUiReady = true
+            deepLinks.collect { intent ->
+                navController.handleDeepLink(intent)
+            }
+        }
+
+        SerenityTheme(
+            colorScheme = uiState.appColor.colorScheme,
+            font = uiState.appFont,
+            isLightTheme = uiState.appColor.isLight,
+        ) {
+            LaunchedEffect(uiState.appColor.isLight) {
+                navController.currentBackStackEntryFlow
+                    .filter { entry ->
+                        val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>()
+                        val hasNoteCreateRoute = entry.destination.hasRoute<NoteCreateRoute>()
+                        !hasNoteViewRoute && !hasNoteCreateRoute
+                    }
+                    .collect { entry ->
+                        val hasMediaViewRoute = entry.destination.hasRoute<MediaViewRoute>() ||
+                                entry.destination.hasRoute<MediaViewerRoute>()
+                        val color = SystemBarsConstants.InsetsColor.toArgb()
+                        when {
+                            hasMediaViewRoute -> activity?.enableEdgeToEdge(
+                                statusBarStyle = SystemBarStyle.dark(color),
+                                navigationBarStyle = SystemBarStyle.dark(color),
+                            )
+
+                            uiState.appColor.isLight -> activity?.enableEdgeToEdge(
+                                statusBarStyle = SystemBarStyle.light(color, color),
+                                navigationBarStyle = SystemBarStyle.light(color, color),
+                            )
+
+                            else -> activity?.enableEdgeToEdge(
+                                statusBarStyle = SystemBarStyle.dark(color),
+                                navigationBarStyle = SystemBarStyle.dark(color),
+                            )
+                        }
+                    }
+            }
+
+            val currentEntry by navController.currentBackStackEntryFlow
+                .collectAsStateWithLifecycle(null)
+            val currentDestination = currentEntry?.destination
+            val hasMediaRoute = currentDestination?.hasRoute<MediaViewRoute>() == true ||
+                    currentDestination?.hasRoute<MediaViewerRoute>() == true
+            val hasMediaSortingRoute = currentDestination?.hasRoute<MediaSortingRoute>() == true
+
+            CompositionLocalProvider(
+                LocalAuth provides this,
+                LocalHasMediaRoute provides hasMediaRoute,
+                LocalHasMediaSortingRoute provides hasMediaSortingRoute,
+            ) {
+                NavHost(
+                    modifier = Modifier
+                        .background(MaterialTheme.colorScheme.surface)
+                        .hazeSource(hazeState),
+                    navController = navController,
+                    startDestination = NoteListRoute,
+                    enterTransition = { defaultEnterTransition() },
+                    exitTransition = { defaultExitTransition() },
+                    popExitTransition = { defaultPopExitTransition() },
+                    popEnterTransition = { defaultPopEnterTransition() },
+                ) {
+                    noteListScreen(
+                        hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
+                        hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
+                        openSettingsScreen = navController::navigateToSettings,
+                        openBackupScreen = navController::navigateToBackup,
+                        openNoteCreateScreen = { identifier ->
+                            navController.navigateToNoteCreate(
+                                route = NoteCreateRoute(
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                ),
+                            )
+                        },
+                        openNoteViewScreen = { noteId, identifier ->
+                            navController.navigateToNoteView(
+                                route = NoteViewRoute(
+                                    noteId = noteId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                ),
+                            )
+                        },
+                        openNoteSearchScreen = {
+                            navController.navigateToNoteSearch()
+                        }
+                    )
+
+                    noteViewScreen(
+                        openMediaViewScreen = { noteId, mediaId, identifier ->
+                            navController.navigateToMediaView(
+                                route = MediaViewRoute(
+                                    noteId = noteId,
+                                    mediaId = mediaId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                ),
+                            )
+                        },
+                        openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
+                            navController.navigateToMediaSorting(
+                                route = MediaSortingRoute(
+                                    noteId = noteId,
+                                    mediaBlockId = mediaBlockId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                )
+                            )
+                        },
+                        openMediaViewer = navController::navigateToMediaViewer,
+                        hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
+                        onCloseRequest = navController::navigateUp,
+                    )
+
+                    noteCreateScreen(
+                        openMediaViewScreen = { noteId, mediaId, identifier ->
+                            navController.navigateToMediaView(
+                                route = MediaViewRoute(
+                                    noteId = noteId,
+                                    mediaId = mediaId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                ),
+                            )
+                        },
+                        openMediaSortingScreen = { noteId, mediaBlockId, identifier ->
+                            navController.navigateToMediaSorting(
+                                route = MediaSortingRoute(
+                                    noteId = noteId,
+                                    mediaBlockId = mediaBlockId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                )
+                            )
+                        },
+                        openMediaViewer = navController::navigateToMediaViewer,
+                        hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
+                        onCloseRequest = navController::navigateUp,
+                    )
+
+                    settingsNavigation(navController)
+                    mediaViewScreen(onCloseRequest = navController::navigateUp)
+                    mediaViewerScreen(onCloseRequest = navController::navigateUp)
+                    mediaSortingScreen(
+                        openMediaViewScreen = { noteId, mediaId, mediaBlockId, identifier ->
+                            navController.navigateToMediaView(
+                                route = MediaViewRoute(
+                                    noteId = noteId,
+                                    mediaBlockId = mediaBlockId,
+                                    mediaId = mediaId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                ),
+                            )
+                        },
+                        openMediaViewer = navController::navigateToMediaViewer,
+                        onCloseRequest = navController::navigateUp
+                    )
+                    noteSearchScreen(
+                        openNoteViewScreen = { noteId, identifier, data ->
+                            navController.navigateToNoteView(
+                                route = NoteViewRoute(
+                                    noteId = noteId,
+                                    dialogId = identifier.dialogId,
+                                    requestId = identifier.requestId,
+                                    searchData = NoteViewRoute.SearchData(
+                                        query = data.query,
+                                        tags = data.tags,
+                                        startDate = data.startDate,
+                                        endDate = data.endDate,
+                                    ),
+                                ),
+                            )
+                        },
+                        onCloseRequest = navController::navigateUp
+                    )
+                    backupScreen(
+                        onCloseRequest = navController::navigateUp
+                    )
+                }
+                AnimatedVisibility(
+                    visible = uiState.isOnboardingNeeded,
+                    enter = fadeIn(),
+                    exit = fadeOut(),
+                ) {
+                    OnboardingScreen(
+                        onCloseRequest = {
+                            viewModel.onEvent(MainEvent.OnOnboardingCompleted)
+                        },
+                    )
+                }
+                AnimatedVisibility(
+                    visible = uiState.isScreenLocked,
+                    enter = EnterTransition.None,
+                    exit = fadeOut(spring(stiffness = 300f)),
+                ) {
+                    CheckPinScreen(
+                        hazeState = hazeState,
+                        onCloseRequest = { viewModel.onEvent(MainEvent.OnUnlockScreenRequest) },
+                    )
+                }
+            }
+        }
     }
 }
