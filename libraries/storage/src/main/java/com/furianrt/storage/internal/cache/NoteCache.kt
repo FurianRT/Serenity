@@ -72,13 +72,14 @@ internal class NoteCache @Inject constructor(
 
     private fun saveToDiskAsync() {
         val snapshot = synchronized(this) { cache.toMap() }
-
         scope.launch {
             try {
-                val json = Json.encodeToString(snapshot)
-                if (!cacheFile.exists()) {
-                    cacheFile.createNewFile()
+                cacheFile.parentFile?.let { parentDir ->
+                    if (!parentDir.exists()) {
+                        parentDir.mkdirs()
+                    }
                 }
+                val json = Json.encodeToString(snapshot)
                 cacheFile.writeText(json)
             } catch (e: Exception) {
                 errorTracker.trackNonFatalError(e)
@@ -88,18 +89,21 @@ internal class NoteCache @Inject constructor(
 
     private fun restoreFromDiskAsync() {
         scope.launch {
-            synchronized(this@NoteCache) {
-                try {
-                    if (!cacheFile.exists()) return@launch
-                    val json = cacheFile.readText()
-                    val restored = Json.decodeFromString<Map<String, List<LocalNote.Content>>>(json)
+            try {
+                if (!cacheFile.exists()) return@launch
+                val json = cacheFile.readText()
+                val restored = Json.decodeFromString<Map<String, List<LocalNote.Content>>>(json)
+                synchronized(this@NoteCache) {
                     cache.clear()
                     cache.putAll(restored)
-                } catch (e: Exception) {
-                    cache.clear()
-                    errorTracker.trackNonFatalError(e)
                 }
+            } catch (e: Exception) {
+                synchronized(this@NoteCache) {
+                    cache.clear()
+                }
+                errorTracker.trackNonFatalError(e)
             }
         }
     }
+
 }
