@@ -2,7 +2,6 @@ package com.furianrt.serenity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.ViewPropertyAnimator
 import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.LocalActivity
@@ -88,8 +87,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     private val deepLinks = MutableSharedFlow<Intent>(extraBufferCapacity = 1)
 
-    private var splashAnim: ViewPropertyAnimator? = null
-
     override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -101,7 +98,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                     splashScreenViewProvider.remove()
                     return@setOnExitAnimationListener
                 }
-                splashAnim = splashScreenViewProvider.view
+                splashScreenViewProvider.view
                     .animate()
                     .scaleX(1.1f)
                     .scaleY(1.1f)
@@ -117,12 +114,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         setContent {
             ComposeContent()
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        splashAnim?.cancel()
-        splashAnim = null
     }
 
     override fun onNewIntent(intent: Intent) {
