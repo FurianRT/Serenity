@@ -54,5 +54,6 @@ internal class MainViewModel @Inject constructor(
         appFont = appFont.toNoteFont(),
         isScreenLocked = !isAuthorized,
         isOnboardingNeeded = !isOnboardingShown,
+        isThemeLoaded = true,
     )
 }

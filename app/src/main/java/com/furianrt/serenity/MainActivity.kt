@@ -128,8 +128,13 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         val hazeState = rememberHazeState()
         val activity = LocalActivity.current as? ComponentActivity
 
+        LaunchedEffect(uiState.isThemeLoaded) {
+            if (uiState.isThemeLoaded) {
+                isUiReady = true
+            }
+        }
+
         LaunchedEffect(Unit) {
-            isUiReady = true
             deepLinks.collect { intent ->
                 navController.handleDeepLink(intent)
             }

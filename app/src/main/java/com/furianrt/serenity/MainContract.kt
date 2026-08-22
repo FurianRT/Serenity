@@ -8,6 +8,7 @@ internal data class MainState(
     val appFont: NoteFont = NoteFont.NotoSans,
     val isScreenLocked: Boolean = false,
     val isOnboardingNeeded: Boolean = false,
+    val isThemeLoaded: Boolean = false,
 )
 
 internal sealed interface MainEvent {
