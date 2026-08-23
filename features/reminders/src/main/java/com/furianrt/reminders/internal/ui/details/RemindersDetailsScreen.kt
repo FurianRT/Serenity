@@ -206,7 +206,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = RemindersDetailsUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = RemindersDetailsUiState.Content.Success(
                     initialTime = LocalTime.now(),
                     notificationText = "How was your day?",

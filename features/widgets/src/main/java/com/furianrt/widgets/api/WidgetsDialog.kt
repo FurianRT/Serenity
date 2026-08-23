@@ -68,7 +68,7 @@ private fun Content(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT
+    val theme = UiThemeColor.defaultTheme
     SerenityTheme(
         colorScheme = theme.colorScheme,
         isLightTheme = theme.isLight,

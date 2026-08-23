@@ -459,7 +459,7 @@ private fun PreviewSignedIn() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
@@ -482,7 +482,7 @@ private fun PreviewSignedOut() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
@@ -502,7 +502,7 @@ private fun PreviewLoading() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = false,
                     backupPeriod = BackupPeriod.TreeDays,

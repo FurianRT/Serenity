@@ -176,7 +176,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = NoteSettingsState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = NoteSettingsState.Content.Success(
                     isAutoDetectLocationEnabled = true,
                     isMinimalisticHomeScreenEnabled = false,

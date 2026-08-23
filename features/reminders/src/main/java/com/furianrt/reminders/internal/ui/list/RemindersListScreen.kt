@@ -338,7 +338,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         Content(
             uiState = RemindersListUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = RemindersListUiState.Content.Empty,
             ),
             listState = rememberLazyListState(),
@@ -353,7 +353,7 @@ private fun SuccessPreview() {
     SerenityTheme {
         Content(
             uiState = RemindersListUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = RemindersListUiState.Content.Success(
                     reminders = listOf(
                         ReminderItem(

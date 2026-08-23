@@ -502,7 +502,7 @@ private fun ScreenContentPreview() {
         ScreenContent(
             snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = SettingsUiState.Content.Success(
                     rating = 4,
                     appVersion = "1.0",

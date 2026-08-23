@@ -15,7 +15,7 @@ import java.time.LocalDate
 internal data class SearchUiState(
     val searchQuery: TextFieldState = TextFieldState(),
     val selectedFilters: List<SelectedFilter> = emptyList(),
-    val theme: UiThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+    val theme: UiThemeColor = UiThemeColor.defaultTheme,
     val state: State = Success(),
 ) {
     val enableSelection: Boolean

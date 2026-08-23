@@ -489,7 +489,7 @@ private fun SuccessPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = false),
@@ -510,7 +510,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Empty,
             ),
@@ -526,7 +526,7 @@ private fun SuccessWithSelectedPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = true),

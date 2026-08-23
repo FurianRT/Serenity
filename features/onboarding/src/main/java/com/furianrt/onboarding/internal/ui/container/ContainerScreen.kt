@@ -271,7 +271,7 @@ private fun Preview() {
                     ),
                 )
             ),
-            appThemeColor = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+            appThemeColor = UiThemeColor.defaultTheme,
         ),
         onEvent = {},
     )

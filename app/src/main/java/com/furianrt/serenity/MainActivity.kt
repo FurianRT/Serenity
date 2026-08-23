@@ -83,8 +83,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private var isUiReady = false
-
     private val deepLinks = MutableSharedFlow<Intent>(extraBufferCapacity = 1)
 
     override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
@@ -92,7 +90,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         installSplashScreen().apply {
-            setKeepOnScreenCondition { !isUiReady }
+            setKeepOnScreenCondition { !viewModel.state.value.isThemeLoaded }
             setOnExitAnimationListener { splashScreenViewProvider ->
                 if (!lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
                     splashScreenViewProvider.remove()
@@ -127,12 +125,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         val navController = rememberNavController()
         val hazeState = rememberHazeState()
         val activity = LocalActivity.current as? ComponentActivity
-
-        LaunchedEffect(uiState.isThemeLoaded) {
-            if (uiState.isThemeLoaded) {
-                isUiReady = true
-            }
-        }
 
         LaunchedEffect(Unit) {
             deepLinks.collect { intent ->

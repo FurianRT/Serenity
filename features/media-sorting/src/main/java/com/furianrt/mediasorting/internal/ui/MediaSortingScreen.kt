@@ -408,7 +408,7 @@ private fun Preview() {
         Content(
             uiState = MediaSortingUiState(
                 hasContentChanged = false,
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 media = buildList {
                     repeat(7) { index ->
                         add(

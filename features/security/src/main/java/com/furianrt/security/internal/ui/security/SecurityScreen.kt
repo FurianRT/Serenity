@@ -191,7 +191,7 @@ private fun Preview() {
     SerenityTheme {
         ScreenContent(
             uiState = SecurityUiState(
-                theme = UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT,
+                theme = UiThemeColor.defaultTheme,
                 content = Content.Success(
                     isPinEnabled = true,
                     isFingerprintEnabled = false,

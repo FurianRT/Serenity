@@ -97,7 +97,7 @@ fun getDefaultLightColorScheme(
     surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
 )
 
-val LocalColorScheme = compositionLocalOf { UiThemeColor.STORM_IN_THE_NIGHT_BLUE_LIGHT.colorScheme }
+val LocalColorScheme = compositionLocalOf { UiThemeColor.defaultTheme.colorScheme }
 val LocalIsLightTheme = compositionLocalOf { false }
 val LocalFont = compositionLocalOf<NoteFont> { NoteFont.NotoSans }
 val LocalHasMediaRoute = compositionLocalOf { false }

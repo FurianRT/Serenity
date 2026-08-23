@@ -634,7 +634,7 @@ enum class UiThemeColor(
     );
 
     companion object {
-        fun fromId(id: String?) = entries.find { it.id == id } ?: STORM_IN_THE_NIGHT_BLUE_LIGHT
+        fun fromId(id: String?) = entries.find { it.id == id } ?: defaultTheme
         fun getDarkThemesList() = listOf(
             STORM_IN_THE_NIGHT_BLUE_LIGHT,
             DISTANT_CASTLE_GREEN,
@@ -678,6 +678,8 @@ enum class UiThemeColor(
             APP_BACKGROUND_PICTURE_13,
             APP_BACKGROUND_PICTURE_6,
         )
+
+        val defaultTheme: UiThemeColor = STORM_IN_THE_NIGHT_BLUE_LIGHT
     }
 }
 
