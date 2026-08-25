@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">새 노트에 마지막으로 사용한 정렬을 자동으로 적용합니다</string>
     <string name="settings_note_keep_prev_line_height_title">이전 줄 높이 사용</string>
     <string name="settings_note_keep_prev_line_height_hint">새 노트에 마지막으로 사용한 줄 높이를 자동으로 적용합니다</string>
+
+    <string name="settings_widget_error_dialog_title">위젯을 추가할 수 없습니다</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">앱 설정에서 Serenity가 홈 화면에 바로가기를 추가하도록 허용한 후 다시 시도해 주세요</string>
+    <string name="settings_widget_error_dialog_text">기기에서 Serenity의 위젯 추가가 차단되었을 수 있습니다. 앱 및 홈 화면 설정을 확인한 후 다시 시도해 주세요</string>
 </resources>

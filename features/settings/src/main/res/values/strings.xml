@@ -27,4 +27,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Automatically apply the last used text alignment to new notes</string>
     <string name="settings_note_keep_prev_line_height_title">Use Previous Line Height</string>
     <string name="settings_note_keep_prev_line_height_hint">Automatically apply the last used line height to new notes</string>
+
+    <string name="settings_widget_error_dialog_title">Unable to add widget</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Please allow Serenity to add shortcuts to your Home screen in the app settings, then try again</string>
+    <string name="settings_widget_error_dialog_text">Your device may be preventing Serenity from adding widgets. Check the app and Home screen settings, then try again</string>
 </resources>

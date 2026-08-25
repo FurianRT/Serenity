@@ -60,10 +60,12 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
+import com.furianrt.settings.internal.ui.composables.WidgetErrorDialog
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
@@ -123,6 +125,7 @@ internal fun SettingsScreen(
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
+    var showWidgetErrorDialog by remember { mutableStateOf(false) }
     var fontsDialogState: FontsDialogState? by remember { mutableStateOf(null) }
     var localeDialogState: LocaleDialogState? by remember { mutableStateOf(null) }
 
@@ -156,6 +159,7 @@ internal fun SettingsScreen(
 
                     is SettingsEffect.OpenMarketPage -> openAppMarketPage(context, effect.url)
                     is SettingsEffect.ShowBadRatingDialog -> showBadRatingDialog = true
+                    is SettingsEffect.ShowWidgetErrorDialog -> showWidgetErrorDialog = true
                     is SettingsEffect.ShowFontDialog -> fontsDialogState = FontsDialogState(
                         fonts = effect.fonts,
                         selectedFont = effect.selectedFont,
@@ -182,7 +186,9 @@ internal fun SettingsScreen(
                     is SettingsEffect.OpenWidgetsDialog -> {
                         val provider = ComponentName(context, AllActionsWidgetReceiver::class.java)
                         val appWidgetManager = AppWidgetManager.getInstance(context)
-                        appWidgetManager.requestPinAppWidget(provider, null, null)
+                        if (!appWidgetManager.requestPinAppWidget(provider, null, null)) {
+                            viewModel.onEvent(SettingsEvent.OnAddWidgetError)
+                        }
                     }
                 }
             }
@@ -200,6 +206,13 @@ internal fun SettingsScreen(
             hazeState = hazeState,
             onSendClick = { viewModel.onEvent(SettingsEvent.OnButtonFeedbackClick) },
             onDismissRequest = { showBadRatingDialog = false },
+        )
+    }
+    if (showWidgetErrorDialog) {
+        WidgetErrorDialog(
+            hazeState = hazeState,
+            onSettingsClick = context::openAppSettingsScreen,
+            onDismissRequest = { showWidgetErrorDialog = false },
         )
     }
     fontsDialogState?.let { state ->
@@ -331,12 +344,14 @@ private fun SuccessScreen(
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
         )
-        GeneralButton(
-            title = stringResource(uiR.string.title_widgets),
-            iconPainter = painterResource(uiR.drawable.ic_widgets),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
-        )
+        if (uiState.showWidgetsButton) {
+            GeneralButton(
+                title = stringResource(uiR.string.title_widgets),
+                iconPainter = painterResource(uiR.drawable.ic_widgets),
+                hazeState = hazeState,
+                onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
+            )
+        }
         GeneralButton(
             title = stringResource(R.string.settings_language_title),
             iconPainter = painterResource(R.drawable.ic_language),
@@ -506,6 +521,7 @@ private fun ScreenContentPreview() {
                 content = SettingsUiState.Content.Success(
                     rating = 4,
                     appVersion = "1.0",
+                    showWidgetsButton = true,
                 ),
             ),
         )

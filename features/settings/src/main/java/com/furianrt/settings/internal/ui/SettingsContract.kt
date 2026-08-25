@@ -14,6 +14,7 @@ internal data class SettingsUiState(
         data class Success(
             @param:IntRange(0L, 5L) val rating: Int,
             val appVersion: String,
+            val showWidgetsButton: Boolean,
         ) : Content
     }
 }
@@ -35,6 +36,7 @@ internal sealed interface SettingsEvent {
     data object OnButtonNoteSettingsClick : SettingsEvent
     data object OnButtonThemeClick : SettingsEvent
     data object OnButtonWidgetsClick : SettingsEvent
+    data object OnAddWidgetError : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
@@ -50,6 +52,7 @@ internal sealed interface SettingsEffect {
 
     data class OpenMarketPage(val url: String) : SettingsEffect
     data object ShowBadRatingDialog : SettingsEffect
+    data object ShowWidgetErrorDialog : SettingsEffect
     data class ShowFontDialog(
         val fonts: List<UiNoteFontFamily>,
         val selectedFont: UiNoteFontFamily,

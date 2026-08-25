@@ -5,4 +5,6 @@ import kotlinx.coroutines.flow.Flow
 internal interface SettingsRepository {
     fun getAppRating(): Flow<Int>
     suspend fun setAppRating(rating: Int)
+
+    fun isPinAppWidgetSupported(): Boolean
 }

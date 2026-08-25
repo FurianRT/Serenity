@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Aplică automat ultima aliniere folosită la notele noi</string>
     <string name="settings_note_keep_prev_line_height_title">Folosește înălțimea liniei anterioare</string>
     <string name="settings_note_keep_prev_line_height_hint">Aplică automat ultima înălțime a liniei la notele noi</string>
+
+    <string name="settings_widget_error_dialog_title">Widgetul nu a putut fi adăugat</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Permiteți aplicației Serenity să adauge comenzi rapide pe ecranul principal din setările aplicației, apoi încercați din nou</string>
+    <string name="settings_widget_error_dialog_text">Este posibil ca dispozitivul dvs. să împiedice Serenity să adauge widgeturi. Verificați setările aplicației și ale ecranului principal, apoi încercați din nou</string>
 </resources>

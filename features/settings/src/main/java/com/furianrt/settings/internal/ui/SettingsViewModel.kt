@@ -3,6 +3,7 @@ package com.furianrt.settings.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
+import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
@@ -46,6 +47,7 @@ internal class SettingsViewModel @Inject constructor(
     private val localeRepository: LocaleRepository,
     private val buildInfoProvider: BuildInfoProvider,
     private val resourcesManager: ResourcesManager,
+    private val errorTracker: ErrorTracker,
 ) : ViewModel() {
 
     val state: StateFlow<SettingsUiState> = combine(
@@ -129,6 +131,11 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonWidgetsClick -> {
                 _effect.tryEmit(SettingsEffect.OpenWidgetsDialog)
             }
+
+            is SettingsEvent.OnAddWidgetError -> {
+                errorTracker.trackNonFatalError(Exception("Unable to show widgets dialog"))
+                _effect.tryEmit(SettingsEffect.ShowWidgetErrorDialog)
+            }
         }
     }
 
@@ -176,6 +183,7 @@ internal class SettingsViewModel @Inject constructor(
         content = SettingsUiState.Content.Success(
             rating = rating,
             appVersion = buildInfoProvider.getAppVersionName(),
+            showWidgetsButton = settingsRepository.isPinAppWidgetSupported(),
         ),
     )
 }

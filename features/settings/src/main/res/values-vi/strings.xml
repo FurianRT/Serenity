@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Tự động áp dụng căn chỉnh đã dùng gần nhất cho ghi chú mới</string>
     <string name="settings_note_keep_prev_line_height_title">Sử dụng chiều cao dòng trước đó</string>
     <string name="settings_note_keep_prev_line_height_hint">Tự động áp dụng chiều cao dòng đã dùng gần nhất cho ghi chú mới</string>
+
+    <string name="settings_widget_error_dialog_title">Không thể thêm tiện ích</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Hãy cho phép Serenity thêm lối tắt vào Màn hình chính trong phần cài đặt ứng dụng, sau đó thử lại</string>
+    <string name="settings_widget_error_dialog_text">Thiết bị của bạn có thể đang ngăn Serenity thêm tiện ích. Hãy kiểm tra cài đặt ứng dụng và Màn hình chính, sau đó thử lại</string>
 </resources>

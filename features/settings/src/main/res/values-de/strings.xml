@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Die zuletzt verwendete Ausrichtung automatisch auf neue Notizen anwenden</string>
     <string name="settings_note_keep_prev_line_height_title">Vorherige Zeilenhöhe verwenden</string>
     <string name="settings_note_keep_prev_line_height_hint">Die zuletzt verwendete Zeilenhöhe automatisch auf neue Notizen anwenden</string>
+
+    <string name="settings_widget_error_dialog_title">Widget konnte nicht hinzugefügt werden</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Erlauben Sie Serenity in den App-Einstellungen, Verknüpfungen zum Startbildschirm hinzuzufügen, und versuchen Sie es erneut</string>
+    <string name="settings_widget_error_dialog_text">Ihr Gerät verhindert möglicherweise, dass Serenity Widgets hinzufügt. Überprüfen Sie die App- und Startbildschirm-Einstellungen und versuchen Sie es erneut</string>
 </resources>

@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Automatycznie zastosuj ostatnio użyte wyrównanie do nowych notatek</string>
     <string name="settings_note_keep_prev_line_height_title">Użyj poprzedniej wysokości linii</string>
     <string name="settings_note_keep_prev_line_height_hint">Automatycznie zastosuj ostatnią wysokość linii do nowych notatek</string>
+
+    <string name="settings_widget_error_dialog_title">Nie można dodać widżetu</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Zezwól aplikacji Serenity na dodawanie skrótów do ekranu głównego w ustawieniach aplikacji, a następnie spróbuj ponownie</string>
+    <string name="settings_widget_error_dialog_text">Twoje urządzenie może uniemożliwiać aplikacji Serenity dodawanie widżetów. Sprawdź ustawienia aplikacji i ekranu głównego, a następnie spróbuj ponownie</string>
 </resources>

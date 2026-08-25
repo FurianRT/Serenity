@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Terapkan otomatis perataan terakhir ke catatan baru</string>
     <string name="settings_note_keep_prev_line_height_title">Gunakan Tinggi Baris Sebelumnya</string>
     <string name="settings_note_keep_prev_line_height_hint">Terapkan otomatis tinggi baris terakhir ke catatan baru</string>
+
+    <string name="settings_widget_error_dialog_title">Widget tidak dapat ditambahkan</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Izinkan Serenity menambahkan pintasan ke layar utama di pengaturan aplikasi, lalu coba lagi</string>
+    <string name="settings_widget_error_dialog_text">Perangkat Anda mungkin mencegah Serenity menambahkan widget. Periksa pengaturan aplikasi dan layar utama, lalu coba lagi</string>
 </resources>

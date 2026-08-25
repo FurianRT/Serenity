@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">नई नोट्स में अंतिम उपयोग किया गया संरेखण स्वतः लागू करें</string>
     <string name="settings_note_keep_prev_line_height_title">पिछली लाइन ऊँचाई उपयोग करें</string>
     <string name="settings_note_keep_prev_line_height_hint">नई नोट्स में अंतिम उपयोग की गई लाइन ऊँचाई स्वतः लागू करें</string>
+
+    <string name="settings_widget_error_dialog_title">विजेट नहीं जोड़ा जा सका</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">ऐप की सेटिंग में Serenity को होम स्क्रीन पर शॉर्टकट जोड़ने की अनुमति दें, फिर दोबारा कोशिश करें</string>
+    <string name="settings_widget_error_dialog_text">हो सकता है कि आपका डिवाइस Serenity को विजेट जोड़ने की अनुमति न दे रहा हो। ऐप और होम स्क्रीन की सेटिंग जांचें, फिर दोबारा कोशिश करें</string>
 </resources>

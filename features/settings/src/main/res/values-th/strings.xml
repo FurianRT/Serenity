@@ -24,4 +24,8 @@
     <string name="settings_note_keep_prev_text_align_hint">ใช้การจัดแนวล่าสุดกับโน้ตใหม่โดยอัตโนมัติ</string>
     <string name="settings_note_keep_prev_line_height_title">ใช้ความสูงบรรทัดก่อนหน้า</string>
     <string name="settings_note_keep_prev_line_height_hint">ใช้ความสูงบรรทัดล่าสุดกับโน้ตใหม่โดยอัตโนมัติ</string>
+
+    <string name="settings_widget_error_dialog_title">ไม่สามารถเพิ่มวิดเจ็ตได้</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">อนุญาตให้ Serenity เพิ่มทางลัดไปยังหน้าจอหลักในการตั้งค่าแอป แล้วลองอีกครั้ง</string>
+    <string name="settings_widget_error_dialog_text">อุปกรณ์ของคุณอาจไม่อนุญาตให้ Serenity เพิ่มวิดเจ็ต ตรวจสอบการตั้งค่าแอปและหน้าจอหลัก แล้วลองอีกครั้ง</string>
 </resources>

@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Pas automatisch de laatst gebruikte uitlijning toe op nieuwe notities</string>
     <string name="settings_note_keep_prev_line_height_title">Vorige regelhoogte gebruiken</string>
     <string name="settings_note_keep_prev_line_height_hint">Pas automatisch de laatst gebruikte regelhoogte toe op nieuwe notities</string>
+
+    <string name="settings_widget_error_dialog_title">Kan widget niet toevoegen</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Sta Serenity in de app-instellingen toe om snelkoppelingen aan het startscherm toe te voegen en probeer het daarna opnieuw</string>
+    <string name="settings_widget_error_dialog_text">Je apparaat verhindert mogelijk dat Serenity widgets toevoegt. Controleer de instellingen van de app en het startscherm en probeer het daarna opnieuw</string>
 </resources>

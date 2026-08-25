@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">新しいノートに前回使用した配置を自動的に適用します</string>
     <string name="settings_note_keep_prev_line_height_title">前回の行間を使用</string>
     <string name="settings_note_keep_prev_line_height_hint">新しいノートに前回使用した行間を自動的に適用します</string>
+
+    <string name="settings_widget_error_dialog_title">ウィジェットを追加できません</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">アプリの設定でSerenityがホーム画面にショートカットを追加できるように許可してから、もう一度お試しください</string>
+    <string name="settings_widget_error_dialog_text">お使いのデバイスでSerenityによるウィジェットの追加が制限されている可能性があります。アプリとホーム画面の設定を確認して、もう一度お試しください</string>
 </resources>

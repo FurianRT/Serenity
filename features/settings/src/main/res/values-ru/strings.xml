@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Автоматически применять последнее использованное выравнивание к новым заметкам</string>
     <string name="settings_note_keep_prev_line_height_title">Использовать предыдущую высоту строки</string>
     <string name="settings_note_keep_prev_line_height_hint">Автоматически применять последнюю высоту строки к новым заметкам</string>
+
+    <string name="settings_widget_error_dialog_title">Не удалось добавить виджет</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Разрешите Serenity добавлять ярлыки на главный экран в настройках приложения, затем попробуйте снова</string>
+    <string name="settings_widget_error_dialog_text">Возможно, ваше устройство не позволяет Serenity добавлять виджеты. Проверьте настройки приложения и главного экрана, затем попробуйте снова</string>
 </resources>

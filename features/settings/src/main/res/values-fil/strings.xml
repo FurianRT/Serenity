@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Awtomatikong ilapat ang huling ginamit na ayos sa mga bagong tala</string>
     <string name="settings_note_keep_prev_line_height_title">Gamitin ang Nakaraang Taas ng Linya</string>
     <string name="settings_note_keep_prev_line_height_hint">Awtomatikong ilapat ang huling ginamit na taas ng linya sa mga bagong tala</string>
+
+    <string name="settings_widget_error_dialog_title">Hindi ma-add ang widget</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Payagan ang Serenity na magdagdag ng mga shortcut sa Home screen sa mga setting ng app, pagkatapos ay subukan muli</string>
+    <string name="settings_widget_error_dialog_text">Maaaring pinipigilan ng iyong device ang Serenity na magdagdag ng mga widget. Suriin ang mga setting ng app at Home screen, pagkatapos ay subukan muli</string>
 </resources>

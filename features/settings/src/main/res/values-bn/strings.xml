@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">নতুন নোটে সর্বশেষ ব্যবহৃত অ্যালাইনমেন্ট স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
     <string name="settings_note_keep_prev_line_height_title">আগের লাইন উচ্চতা ব্যবহার করুন</string>
     <string name="settings_note_keep_prev_line_height_hint">নতুন নোটে সর্বশেষ ব্যবহৃত লাইন উচ্চতা স্বয়ংক্রিয়ভাবে প্রয়োগ করুন</string>
+
+    <string name="settings_widget_error_dialog_title">উইজেট যোগ করা যায়নি</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">অ্যাপের সেটিংসে Serenity-কে হোম স্ক্রিনে শর্টকাট যোগ করার অনুমতি দিন, তারপর আবার চেষ্টা করুন</string>
+    <string name="settings_widget_error_dialog_text">আপনার ডিভাইস Serenity-কে উইজেট যোগ করতে বাধা দিচ্ছে। অ্যাপ এবং হোম স্ক্রিনের সেটিংস পরীক্ষা করে আবার চেষ্টা করুন</string>
 </resources>

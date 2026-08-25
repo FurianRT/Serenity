@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Автоматично застосовувати останнє використане вирівнювання до нових нотаток</string>
     <string name="settings_note_keep_prev_line_height_title">Використовувати попередню висоту рядка</string>
     <string name="settings_note_keep_prev_line_height_hint">Автоматично застосовувати останню висоту рядка до нових нотаток</string>
+
+    <string name="settings_widget_error_dialog_title">Не вдалося додати віджет</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Дозвольте Serenity додавати ярлики на головний екран у налаштуваннях застосунку, а потім спробуйте ще раз</string>
+    <string name="settings_widget_error_dialog_text">Можливо, ваш пристрій не дозволяє Serenity додавати віджети. Перевірте налаштування застосунку та головного екрана, а потім спробуйте ще раз</string>
 </resources>

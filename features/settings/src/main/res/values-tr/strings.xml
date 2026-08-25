@@ -22,4 +22,8 @@
     <string name="settings_note_keep_prev_text_align_hint">Son kullanılan hizalamayı yeni notlara otomatik olarak uygula</string>
     <string name="settings_note_keep_prev_line_height_title">Önceki Satır Yüksekliğini Kullan</string>
     <string name="settings_note_keep_prev_line_height_hint">Son kullanılan satır yüksekliğini yeni notlara otomatik olarak uygula</string>
+
+    <string name="settings_widget_error_dialog_title">Widget eklenemedi</string>
+    <string name="settings_xiaomi_widget_error_dialog_text">Uygulama ayarlarından Serenity\'nin ana ekrana kısayol eklemesine izin verin, ardından tekrar deneyin</string>
+    <string name="settings_widget_error_dialog_text">Cihazınız Serenity\'nin widget eklemesini engelliyor olabilir. Uygulama ve ana ekran ayarlarını kontrol edip tekrar deneyin</string>
 </resources>
