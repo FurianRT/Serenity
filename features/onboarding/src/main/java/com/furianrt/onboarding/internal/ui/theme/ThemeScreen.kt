@@ -1,6 +1,7 @@
 package com.furianrt.onboarding.internal.ui.theme
 
 import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -89,6 +90,7 @@ private fun Content(
     Column(
         modifier = modifier.padding(top = 40.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(32.dp),
     ) {
         Text(
             modifier = Modifier
