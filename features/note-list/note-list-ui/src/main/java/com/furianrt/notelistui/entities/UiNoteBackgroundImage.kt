@@ -20,6 +20,7 @@ data class UiNoteBackgroundImage(
         REPEAT,
         FILL,
         CENTER,
+        CENTER_ALIGN_END,
         CROP_ALIGN_BOTTOM,
         CROP_ALIGN_CENTER,
         CROP_ALIGN_TOP,
@@ -29,7 +30,7 @@ data class UiNoteBackgroundImage(
 fun UiNoteBackgroundImage.ScaleType.toContentScale() = when (this) {
     REPEAT -> ContentScale.FillBounds
     FILL -> ContentScale.FillBounds
-    CENTER -> ContentScale.Inside
+    CENTER, CENTER_ALIGN_END -> ContentScale.Inside
     CROP_ALIGN_BOTTOM, CROP_ALIGN_CENTER, CROP_ALIGN_TOP -> ContentScale.Crop
 }
 
@@ -37,6 +38,7 @@ fun UiNoteBackgroundImage.ScaleType.toContentAlignment() = when (this) {
     REPEAT -> Alignment.Center
     FILL -> Alignment.Center
     CENTER -> Alignment.Center
+    CENTER_ALIGN_END -> Alignment.CenterEnd
     CROP_ALIGN_BOTTOM -> Alignment.BottomCenter
     CROP_ALIGN_CENTER -> Alignment.Center
     CROP_ALIGN_TOP -> Alignment.TopCenter

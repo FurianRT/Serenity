@@ -675,7 +675,10 @@ private fun NoteBackgroundImage(
                     AsyncImage(
                         modifier = Modifier
                             .fillMaxSize()
-                            .applyIf(targetState.image.scaleType == ScaleType.CENTER) {
+                            .applyIf(
+                                targetState.image.scaleType == ScaleType.CENTER ||
+                                targetState.image.scaleType == ScaleType.CENTER_ALIGN_END
+                            ) {
                                 Modifier.background(targetState.color.colorScheme.surface)
                             },
                         model = request,

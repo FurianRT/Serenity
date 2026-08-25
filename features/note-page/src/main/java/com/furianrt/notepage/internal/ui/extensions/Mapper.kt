@@ -105,6 +105,7 @@ private fun UiThemeImage.ScaleType.toNoteThemeScaleType() = when (this) {
     UiThemeImage.ScaleType.REPEAT -> UiNoteBackgroundImage.ScaleType.REPEAT
     UiThemeImage.ScaleType.FILL -> UiNoteBackgroundImage.ScaleType.FILL
     UiThemeImage.ScaleType.CENTER -> UiNoteBackgroundImage.ScaleType.CENTER
+    UiThemeImage.ScaleType.CENTER_ALIGN_END -> UiNoteBackgroundImage.ScaleType.CENTER_ALIGN_END
     UiThemeImage.ScaleType.CROP_ALIGN_BOTTOM -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM
     UiThemeImage.ScaleType.CROP_ALIGN_CENTER -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER
     UiThemeImage.ScaleType.CROP_ALIGN_TOP -> UiNoteBackgroundImage.ScaleType.CROP_ALIGN_TOP

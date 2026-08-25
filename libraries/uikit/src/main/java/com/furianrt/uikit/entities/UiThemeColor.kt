@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import com.furianrt.uikit.R
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CENTER
+import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CENTER_ALIGN_END
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_BOTTOM
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_CENTER
 import com.furianrt.uikit.entities.UiThemeImage.ScaleType.CROP_ALIGN_TOP
@@ -24,6 +25,7 @@ data class UiThemeImage(
         REPEAT,
         FILL,
         CENTER,
+        CENTER_ALIGN_END,
         CROP_ALIGN_BOTTOM,
         CROP_ALIGN_CENTER,
         CROP_ALIGN_TOP,
@@ -33,7 +35,7 @@ data class UiThemeImage(
 fun UiThemeImage.ScaleType.toContentScale() = when (this) {
     REPEAT -> ContentScale.FillBounds
     FILL -> ContentScale.FillBounds
-    CENTER -> ContentScale.Inside
+    CENTER, CENTER_ALIGN_END -> ContentScale.Inside
     CROP_ALIGN_BOTTOM, CROP_ALIGN_CENTER, CROP_ALIGN_TOP -> ContentScale.Crop
 }
 
@@ -41,6 +43,7 @@ fun UiThemeImage.ScaleType.toContentAlignment() = when (this) {
     REPEAT -> Alignment.Center
     FILL -> Alignment.Center
     CENTER -> Alignment.Center
+    CENTER_ALIGN_END -> Alignment.CenterEnd
     CROP_ALIGN_BOTTOM -> Alignment.BottomCenter
     CROP_ALIGN_CENTER -> Alignment.Center
     CROP_ALIGN_TOP -> Alignment.TopCenter
@@ -97,7 +100,7 @@ enum class UiThemeColor(
     EUPHORIA_VIOLET(
         id = "4",
         surface = Colors.Primary.EuphoriaViolet,
-        primaryContainer = Colors.Accent.Purple2,
+        primaryContainer = Colors.Accent.Pink4,
     ),
     EUPHORIA_BLUE(
         id = "5",
@@ -189,13 +192,6 @@ enum class UiThemeColor(
         surface = Colors.Primary.Pink,
         primaryContainer = Colors.Accent.Orange,
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
-    ),
-
-    ORANGE(
-        id = "dark_22",
-        surface = Colors.Primary.Orange,
-        primaryContainer = Colors.Accent.Green,
-        surfaceDim = Color.Black.copy(alpha = 0.05f),
     ),
 
     PINK_PANTHER(
@@ -332,17 +328,6 @@ enum class UiThemeColor(
         ),
     ),
 
-    APP_BACKGROUND_PICTURE_8(
-        id = "app_background_picture_8",
-        surface = Colors.Primary.Blue4,
-        inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
-        primaryContainer = Colors.Accent.Blue5,
-        image = UiThemeImage(
-            resId = R.drawable.app_background_picture_8,
-            scaleType = CROP_ALIGN_CENTER,
-        ),
-    ),
-
     APP_BACKGROUND_PICTURE_9(
         id = "app_background_picture_9",
         surface = EUPHORIA_VIOLET.surface,
@@ -351,6 +336,19 @@ enum class UiThemeColor(
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_9,
             scaleType = CROP_ALIGN_CENTER,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_21(
+        id = "app_background_picture_21",
+        surface = Color.Black,
+        inverseSurface = Color.Black.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Red1,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.3f),
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_21,
+            scaleType = CENTER_ALIGN_END,
         ),
     ),
 
@@ -375,6 +373,17 @@ enum class UiThemeColor(
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_11,
             scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_8(
+        id = "app_background_picture_8",
+        surface = Colors.Primary.Blue4,
+        inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Blue5,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_8,
+            scaleType = CROP_ALIGN_CENTER,
         ),
     ),
 
@@ -436,6 +445,72 @@ enum class UiThemeColor(
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_13,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_14(
+        id = "app_background_picture_14",
+        surface = Colors.Primary.PurpleDark,
+        inverseSurface = Colors.Primary.PurpleDark.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Pink5,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_14,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_15(
+        id = "app_background_picture_15",
+        surface = Colors.Primary.Dark1,
+        inverseSurface = Colors.Primary.Dark1.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Purple2,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_15,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_16(
+        id = "app_background_picture_16",
+        surface = Colors.Primary.Brawn1,
+        inverseSurface = Colors.Primary.Brawn1.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Orange,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_16,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_17(
+        id = "app_background_picture_17",
+        surface = Colors.Primary.Dark2,
+        inverseSurface = Colors.Primary.Dark2.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Orange,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_17,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_19(
+        id = "app_background_picture_19",
+        surface = Colors.Primary.Green2,
+        inverseSurface = Colors.Primary.Green2.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Green2,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_19,
+            scaleType = FILL,
+        ),
+    ),
+
+    APP_BACKGROUND_PICTURE_20(
+        id = "app_background_picture_20",
+        surface = Colors.Primary.PurpleDark2,
+        inverseSurface = Colors.Primary.PurpleDark2.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Pink5,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_20,
             scaleType = FILL,
         ),
     ),
@@ -663,16 +738,23 @@ enum class UiThemeColor(
         )
 
         fun getPictureThemes() = listOf(
+            APP_BACKGROUND_PICTURE_10,
+            APP_BACKGROUND_PICTURE_17,
+            APP_BACKGROUND_PICTURE_9,
+            APP_BACKGROUND_PICTURE_3,
+            APP_BACKGROUND_PICTURE_14,
+            APP_BACKGROUND_PICTURE_19,
+            APP_BACKGROUND_PICTURE_15,
+            APP_BACKGROUND_PICTURE_16,
+            APP_BACKGROUND_PICTURE_20,
+            APP_BACKGROUND_PICTURE_21,
             APP_BACKGROUND_PICTURE_0,
             APP_BACKGROUND_PICTURE_1,
             APP_BACKGROUND_PICTURE_2,
-            APP_BACKGROUND_PICTURE_3,
             APP_BACKGROUND_PICTURE_4,
             APP_BACKGROUND_PICTURE_5,
             APP_BACKGROUND_PICTURE_7,
             APP_BACKGROUND_PICTURE_8,
-            APP_BACKGROUND_PICTURE_9,
-            APP_BACKGROUND_PICTURE_10,
             APP_BACKGROUND_PICTURE_11,
             APP_BACKGROUND_PICTURE_12,
             APP_BACKGROUND_PICTURE_13,

@@ -39,9 +39,8 @@ object Colors {
         val Blue4 = Color(0xFF013358)
         val Blue5 = Color(0xFF5B6EA5)
 
-        val Orange = Color(0xFFFC9337)
-
         val Green1 = Color(0xFF06272C)
+        val Green2 = Color(0xFF0D2C2B)
 
         val LightBlue = Color(0xFFC0E0F4)
         val LightGreen = Color(0xFFD3EEDF)
@@ -51,14 +50,22 @@ object Colors {
         val LightWhite = Color(0xFFFFFFFF)
 
         val LightRed = Color(0xFFF4E4E3)
+
+        val PurpleDark = Color(0xFF3E2A40)
+        val PurpleDark2 = Color(0xFF3A1F32)
+
+        val Dark1 = Color(0xFF1F1F21)
+        val Dark2 = Color(0xFF1E2329)
+
+        val Brawn1 = Color(0xFF261F19)
     }
 
     object Accent {
         val GreenLight = Color(0xFF6DA646)
-        val Green = Color(0xFF23A074)
+        val Green2 = Color(0xFF45C58A)
         val Purple = Color(0xFF8D6EFD)
-        val Purple2 = Color(0xFF8F63BF)
         val PurpleDark = Color(0xFF8D4BF6)
+        val Purple2 = Color(0xFF7447A2)
         val AvatarPurple = Color(0xFF9C4BD2)
         val Turquoise = Color(0xFF39A0A8)
         val Blue = Color(0xFF446DFF)
@@ -84,6 +91,8 @@ object Colors {
         val LightOrange = Color(0xFFF77950)
         val LightBlue2 = Color(0xFF59A9D6)
         val LightGrey = Color(0xFF95A4AB)
+
+        val Red1 = Color(0xFF75010D)
     }
 
     object Font {

@@ -33,7 +33,6 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.drawscope.clipPath
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.unit.dp
@@ -46,6 +45,8 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
+import com.furianrt.notelistui.entities.toContentAlignment
+import com.furianrt.notelistui.entities.toContentScale
 import com.furianrt.toolspanel.internal.domain.NoteThemesHolder
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelectedThemeProvider
 import com.furianrt.uikit.extensions.applyIf
@@ -189,6 +190,7 @@ private fun ThemeItem(
 
         UiNoteBackgroundImage.ScaleType.FILL,
         UiNoteBackgroundImage.ScaleType.CENTER,
+        UiNoteBackgroundImage.ScaleType.CENTER_ALIGN_END,
         UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
         UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
         UiNoteBackgroundImage.ScaleType.CROP_ALIGN_TOP,
@@ -235,17 +237,17 @@ private fun ThemeItem(
                             }
                         }
                     }
-                    .applyIf(theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
+                    .applyIf(
+                        theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER ||
+                                theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER_ALIGN_END
+                    ) {
                         Modifier.background(theme.color.colorScheme.surface)
                     }
                     .clickableNoRipple { onClick(theme) },
                 model = request,
-                contentScale = if (theme.image.scaleType == UiNoteBackgroundImage.ScaleType.CENTER) {
-                    ContentScale.Inside
-                } else {
-                    ContentScale.Crop
-                },
+                contentScale = theme.image.scaleType.toContentScale(),
                 contentDescription = null,
+                alignment = theme.image.scaleType.toContentAlignment(),
             )
         }
     }

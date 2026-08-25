@@ -20,14 +20,16 @@ fun AppBackground(
 ) {
     if (theme.image != null) {
         val context = LocalContext.current
-        val request = remember(theme.image.resId) {
+        val request = remember(context, theme.image.resId) {
             ImageRequest.Builder(context)
                 .data(theme.image.resId)
                 .memoryCacheKey(theme.image.resId.toString())
                 .build()
         }
         AsyncImage(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier
+                .fillMaxSize()
+                .background(theme.surface),
             model = request,
             contentScale = theme.image.scaleType.toContentScale(),
             alignment = theme.image.scaleType.toContentAlignment(),
