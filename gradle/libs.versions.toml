@@ -1,13 +1,13 @@
 [versions]
 
-agp = "9.3.1"
+agp = "9.3.2"
 kotlin = "2.4.10"
 
-ksp = "2.3.6"
+ksp = "2.3.11"
 
 gms = "4.5.0"
 
-crashlyticsPlugin = "3.0.7"
+crashlyticsPlugin = "3.0.8"
 performancePlugin = "2.0.2"
 
 coreKtx = "1.19.0"
@@ -50,7 +50,7 @@ biometric = "1.4.0-alpha07"
 
 mail = "1.6.8"
 
-googleAuth = "21.6.0"
+googleAuth = "22.0.0"
 credentials = "1.6.0"
 googleid = "1.2.0"
 
@@ -60,7 +60,7 @@ googleDriveGms = "17.0.0"
 googleLocationGms = "21.4.0"
 
 retrofit = "3.0.0"
-loggingInterceptor = "5.4.0"
+loggingInterceptor = "5.5.0"
 kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.2"
@@ -69,7 +69,7 @@ workManager = "2.11.2"
 
 startupRuntime = "1.2.0"
 
-firebaseBom = "34.17.0"
+firebaseBom = "34.18.0"
 
 kolor = "5.0.0"
 palette = "1.0.0"
