@@ -8,14 +8,17 @@ import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
 
 internal sealed class MediaSelectorUiState(
-    open val selectedAlbum: MediaAlbumItem?,
+    open val selectedAlbumId: String,
+    open val selectedAlbumName: String?,
 ) {
     data object Loading : MediaSelectorUiState(
-        selectedAlbum = null,
+        selectedAlbumId = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+        selectedAlbumName = null,
     )
 
     data object Hidden : MediaSelectorUiState(
-        selectedAlbum = null,
+        selectedAlbumId = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+        selectedAlbumName = null,
     )
 
     @Immutable
@@ -23,9 +26,10 @@ internal sealed class MediaSelectorUiState(
         val items: List<MediaItem>,
         val selectedCount: Int,
         val allowVideo: Boolean,
-        override val selectedAlbum: MediaAlbumItem?,
+        override val selectedAlbumId: String,
+        override val selectedAlbumName: String?,
         val showPartialAccessMessage: Boolean,
-    ) : MediaSelectorUiState(selectedAlbum) {
+    ) : MediaSelectorUiState(selectedAlbumId, selectedAlbumName) {
 
         fun setSelectedItems(
             selectedItems: List<MediaItem>,

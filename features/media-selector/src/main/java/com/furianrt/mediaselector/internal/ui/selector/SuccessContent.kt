@@ -27,12 +27,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.mediaselector.internal.ui.entities.MediaItem
 import com.furianrt.mediaselector.internal.ui.entities.SelectionState
@@ -48,6 +51,7 @@ import com.furianrt.uikit.utils.rememberUserInputScrollConnection
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.milliseconds
 
@@ -77,20 +81,22 @@ internal fun SuccessContent(
     val showScrollBar by remember {
         derivedStateOf {
             sheetState.targetValue == SheetValue.Expanded &&
-                    (listState.canScrollForward ||
-                            listState.canScrollBackward)
+                    (listState.canScrollForward || listState.canScrollBackward)
         }
     }
 
-    LaunchedEffect(userScrollConnection.scrollState) {
-        when (userScrollConnection.scrollState) {
-            UserScrollState.SCROLLING_DOWN -> showBottomPanel = false
-            UserScrollState.SCROLLING_UP -> showBottomPanel = true
-            UserScrollState.IDLE -> {
-                delay(BOTTOM_PANEL_SHOW_DELAY.milliseconds)
-                showBottomPanel = true
+    LaunchedEffect(Unit) {
+        snapshotFlow { userScrollConnection.scrollState }
+            .collectLatest { scrollState ->
+                when (scrollState) {
+                    UserScrollState.SCROLLING_DOWN -> showBottomPanel = false
+                    UserScrollState.SCROLLING_UP -> showBottomPanel = true
+                    UserScrollState.IDLE -> {
+                        delay(BOTTOM_PANEL_SHOW_DELAY.milliseconds)
+                        showBottomPanel = true
+                    }
+                }
             }
-        }
     }
 
     Box(
@@ -113,15 +119,16 @@ internal fun SuccessContent(
                 bottom = 56.dp + bottomInsetPadding
             ),
         ) {
-            item(key = CAMERA_ITEM_KEY) {
-                CameraItem(
-                    modifier = Modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp),
-                    allowVideo = uiState.allowVideo,
-                    onPhotoClick = { onEvent(MediaSelectorEvent.OnCameraPhotoItemClick) },
-                    onVideoClick = { onEvent(MediaSelectorEvent.OnCameraVideoItemClick) },
-                )
+            if (uiState.selectedAlbumId == MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
+                item(key = CAMERA_ITEM_KEY) {
+                    CameraItem(
+                        modifier = Modifier.padding(start = 2.dp, end = 2.dp, bottom = 2.dp),
+                        allowVideo = uiState.allowVideo,
+                        onPhotoClick = { onEvent(MediaSelectorEvent.OnCameraPhotoItemClick) },
+                        onVideoClick = { onEvent(MediaSelectorEvent.OnCameraVideoItemClick) },
+                    )
+                }
             }
-
             items(
                 count = uiState.items.size,
                 key = { uiState.items[it].id },
@@ -163,7 +170,8 @@ internal fun SuccessContent(
             modifier = Modifier.offset {
                 IntOffset(x = 0, y = -sheetState.requireOffset().toInt())
             },
-            selectedAlbum = uiState.selectedAlbum,
+            selectedAlbumName = uiState.selectedAlbumName
+                ?: stringResource(R.string.media_selector_albums),
             selectedCount = uiState.selectedCount,
             visible = showBottomPanel,
             albumsDialogState = albumsDialogState,
@@ -247,12 +255,8 @@ private fun Preview() {
                     }
                 },
                 selectedCount = 2,
-                selectedAlbum = MediaAlbumItem(
-                    id = "",
-                    name = "Albums",
-                    thumbnail = null,
-                    mediaCount = 10,
-                ),
+                selectedAlbumId = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+                selectedAlbumName = "Albums",
                 allowVideo = true,
                 showPartialAccessMessage = true,
             ),

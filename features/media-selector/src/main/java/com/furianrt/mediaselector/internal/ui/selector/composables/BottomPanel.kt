@@ -31,10 +31,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import com.furianrt.mediaselector.R
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -49,7 +47,7 @@ private const val ACTION_FAB_ANIM_DURATION = 250
 
 @Composable
 internal fun BottomPanel(
-    selectedAlbum: MediaAlbumItem?,
+    selectedAlbumName: String,
     selectedCount: Int,
     visible: Boolean,
     hazeState: HazeState,
@@ -88,7 +86,7 @@ internal fun BottomPanel(
                     .background(MaterialTheme.colorScheme.outlineVariant)
                     .navigationBarsPadding(),
                 hazeState = hazeState,
-                selectedAlbum = selectedAlbum,
+                selectedAlbumName = selectedAlbumName,
                 onAlbumsClick = onAlbumsClick,
                 albumsDialogState = albumsDialogState,
                 onAlbumSelected = onAlbumSelected,
@@ -122,7 +120,7 @@ internal fun BottomPanel(
 
 @Composable
 private fun AlbumsButton(
-    selectedAlbum: MediaAlbumItem?,
+    selectedAlbumName: String,
     albumsDialogState: List<MediaAlbumItem>?,
     hazeState: HazeState,
     onAlbumsClick: () -> Unit,
@@ -150,11 +148,7 @@ private fun AlbumsButton(
                 .clickable(onClick = onAlbumsClick)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             contentAlignment = Alignment.Center,
-            targetState = if (selectedAlbum == null || selectedAlbum.id == MediaAlbumItem.ALL_MEDIA_ALBUM_ID) {
-                stringResource(R.string.media_selector_albums)
-            } else {
-                selectedAlbum.name
-            },
+            targetState = selectedAlbumName,
         ) { targetState ->
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -187,12 +181,7 @@ private fun AlbumsButton(
 private fun Preview() {
     SerenityTheme {
         BottomPanel(
-            selectedAlbum = MediaAlbumItem(
-                id = "",
-                name = "Albums",
-                thumbnail = null,
-                mediaCount = 10,
-            ),
+            selectedAlbumName = "Albums",
             albumsDialogState = null,
             selectedCount = 3,
             visible = true,

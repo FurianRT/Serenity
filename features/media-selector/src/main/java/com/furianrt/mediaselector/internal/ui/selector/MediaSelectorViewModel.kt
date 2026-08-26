@@ -141,7 +141,8 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> launch {
                 loadMediaItems(
-                    selectedAlbum = null,
+                    selectedAlbumId = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
+                    selectedAlbumName = null,
                 )
             }
 
@@ -152,7 +153,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     requestId = TAG,
                     mediaId = event.id,
                     albumId = (_state.value as? MediaSelectorUiState.Success)
-                        ?.selectedAlbum?.id
+                        ?.selectedAlbumId
                         ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
                     allowVideo = allowVideo,
                     singleChoice = isSingleChoice,
@@ -183,7 +184,10 @@ internal class MediaSelectorViewModel @Inject constructor(
                     allowVideo = allowVideoTemp
                     isSingleChoice = isSingleChoiceTemp
                     launch {
-                        loadMediaItems(selectedAlbum = _state.value.selectedAlbum)
+                        loadMediaItems(
+                            selectedAlbumId = _state.value.selectedAlbumId,
+                            selectedAlbumName = _state.value.selectedAlbumName,
+                        )
                         handleAction(event.params?.action)
                     }
                 }
@@ -192,7 +196,8 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnScreenResumed -> if (isDataLoaded) {
                 launch {
                     loadMediaItems(
-                        selectedAlbum = _state.value.selectedAlbum,
+                        selectedAlbumId = _state.value.selectedAlbumId,
+                        selectedAlbumName = _state.value.selectedAlbumName,
                     )
                 }
             }
@@ -215,10 +220,11 @@ internal class MediaSelectorViewModel @Inject constructor(
             is OnAlbumSelected -> when (val currentState = _state.value) {
                 is MediaSelectorUiState.Loading, MediaSelectorUiState.Hidden -> Unit
                 is MediaSelectorUiState.Success -> {
-                    if (currentState.selectedAlbum?.id != event.album.id) {
+                    if (currentState.selectedAlbumId != event.album.id) {
                         launch {
                             loadMediaItems(
-                                selectedAlbum = event.album,
+                                selectedAlbumId = event.album.id,
+                                selectedAlbumName = event.album.name,
                             )
                         }
                     }
@@ -253,7 +259,8 @@ internal class MediaSelectorViewModel @Inject constructor(
     }
 
     private suspend fun loadMediaItems(
-        selectedAlbum: MediaAlbumItem?,
+        selectedAlbumId: String,
+        selectedAlbumName: String?,
     ) {
         if (permissionsUtils.mediaAccessDenied()) {
             _effect.tryEmit(CloseScreen)
@@ -268,8 +275,7 @@ internal class MediaSelectorViewModel @Inject constructor(
         }
         _state.update { currentState ->
             val media = getPhotosAndVideosUseCase(
-                albumId = selectedAlbum?.id
-                    ?.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
+                albumId = selectedAlbumId.takeUnless { it == MediaAlbumItem.ALL_MEDIA_ALBUM_ID },
                 allowVideo = allowVideo,
             )
             when {
@@ -292,7 +298,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                                 }
                             },
                         ),
-                        selectedAlbum = selectedAlbum,
+                        selectedAlbumId = selectedAlbumId,
                         selectedCount = selectedMedia.count(),
                         allowVideo = allowVideo,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
@@ -303,7 +309,8 @@ internal class MediaSelectorViewModel @Inject constructor(
                     items = media.map(DeviceMedia::toMediaItem),
                     selectedCount = 0,
                     showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
-                    selectedAlbum = selectedAlbum,
+                    selectedAlbumId = selectedAlbumId,
+                    selectedAlbumName = selectedAlbumName,
                     allowVideo = allowVideo,
                 )
             }

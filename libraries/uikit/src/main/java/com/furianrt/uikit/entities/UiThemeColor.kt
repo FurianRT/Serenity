@@ -465,6 +465,7 @@ enum class UiThemeColor(
         surface = Colors.Primary.Dark1,
         inverseSurface = Colors.Primary.Dark1.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Purple2,
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.3f),
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_15,
             scaleType = FILL,

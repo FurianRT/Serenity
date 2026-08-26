@@ -256,6 +256,25 @@ internal fun MediaSelectorBottomSheetInternal(
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
     var sheetSwipeEnabled by remember { mutableStateOf(true) }
 
+    PredictiveBackHandler(
+        enabled = state.bottomSheetState.isVisible && isGestureNavigationEnabled(),
+        onBack = { progress ->
+            try {
+                progress.collect { event ->
+                    bottomSheetTranslationY = PREDICTIVE_BACK_TRANSLATION * event.progress
+                }
+                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
+            } catch (_: CancellationException) {
+                translationYAnim.animateTo(0f)
+            }
+        },
+    )
+
+    BackHandler(
+        enabled = state.bottomSheetState.isVisible && !isGestureNavigationEnabled(),
+        onBack = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
+    )
+
     BottomSheetScaffold(
         modifier = modifier,
         scaffoldState = state.scaffoldState,
@@ -307,25 +326,6 @@ internal fun MediaSelectorBottomSheetInternal(
             onSettingsClick = context::openAppSettingsScreen,
         )
     }
-
-    PredictiveBackHandler(
-        enabled = state.bottomSheetState.isVisible && isGestureNavigationEnabled(),
-        onBack = { progress ->
-            try {
-                progress.collect { event ->
-                    bottomSheetTranslationY = PREDICTIVE_BACK_TRANSLATION * event.progress
-                }
-                viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest)
-            } catch (_: CancellationException) {
-                translationYAnim.animateTo(0f)
-            }
-        },
-    )
-
-    BackHandler(
-        enabled = state.bottomSheetState.isVisible && !isGestureNavigationEnabled(),
-        onBack = { viewModel.onEvent(MediaSelectorEvent.OnCloseScreenRequest) },
-    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -344,7 +344,7 @@ private fun SheetContent(
         ?.showPartialAccessMessage.orFalse()
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
-    SkipFirstEffect(uiState.selectedAlbum?.id, uiState::class) {
+    SkipFirstEffect(uiState.selectedAlbumId, uiState::class) {
         listState.scrollToItem(0)
     }
     Surface(
