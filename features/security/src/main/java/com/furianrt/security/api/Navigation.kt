@@ -81,7 +81,6 @@ fun NavGraphBuilder.securityScreen(
     composable<SecurityScreenRoute>(
         popEnterTransition = { fadeIn(animationSpec = tween(500)) },
         exitTransition = { fadeOut(animationSpec = tween(500)) },
-        popExitTransition = null,
     ) {
         SecurityScreen(
             openChangePinScreen = openChangePinScreen,

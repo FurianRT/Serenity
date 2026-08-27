@@ -1,6 +1,5 @@
 package com.furianrt.security.internal.ui.lock.email
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -101,10 +100,6 @@ internal fun EmailScreen(
         emailShakeState = emailShakeState,
         onEvent = viewModel::onEvent,
     )
-
-    BackHandler {
-        viewModel.onEvent(EmailEvent.OnCloseClick)
-    }
 }
 
 @Composable

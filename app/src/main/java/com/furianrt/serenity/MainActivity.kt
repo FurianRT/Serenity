@@ -189,6 +189,8 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                     exitTransition = { defaultExitTransition() },
                     popExitTransition = { defaultPopExitTransition() },
                     popEnterTransition = { defaultPopEnterTransition() },
+                    predictivePopEnterTransition = { defaultPopEnterTransition() },
+                    predictivePopExitTransition = { defaultPopExitTransition() },
                 ) {
                     noteListScreen(
                         hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },

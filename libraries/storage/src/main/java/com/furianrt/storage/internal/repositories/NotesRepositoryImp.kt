@@ -1,7 +1,6 @@
 package com.furianrt.storage.internal.repositories
 
 import android.content.Context
-import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.LocalNote
@@ -13,6 +12,7 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
+import com.furianrt.storage.internal.database.notes.entities.LinkedNote
 import com.furianrt.storage.internal.database.notes.entities.PartNoteBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
 import com.furianrt.storage.internal.database.notes.entities.PartNoteFont
@@ -40,15 +40,12 @@ import java.time.LocalDate
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
-private class TitleParsingException(message: String) : Exception(message)
-
 internal class NotesRepositoryImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val noteDao: NoteDao,
     private val appearanceDataStore: AppearanceDataStore,
     private val noteCache: NoteCache,
     private val dispatchers: DispatchersProvider,
-    private val errorTracker: ErrorTracker,
 ) : NotesRepository {
 
     override suspend fun insertNote(note: SimpleNote) {
@@ -152,9 +149,7 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getAllNotes(limitText: Boolean): Flow<List<LocalNote>> = noteDao.getAllNotes()
         .deepMap { note ->
-            val localNote = note.toLocalNote(
-                onFailure = { errorTracker.trackNonFatalError(TitleParsingException(it)) },
-            )
+            val localNote = note.toLocalNote()
             if (limitText) {
                 localNote.limitText()
             } else {
@@ -171,11 +166,7 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getAllNotes(query: String): Flow<List<LocalNote>> = if (query.isNotEmpty()) {
         noteDao.getAllNotes("%$query%")
-            .deepMap { note ->
-                note.toLocalNote(
-                    onFailure = { errorTracker.trackNonFatalError(TitleParsingException(it)) },
-                )
-            }
+            .deepMap(LinkedNote::toLocalNote)
             .map { it.sortedByDescending(LocalNote::date) }
             .flowOn(dispatchers.default)
     } else {
@@ -184,11 +175,7 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId)
-            .map { note ->
-                note?.toLocalNote(
-                    onFailure = { errorTracker.trackNonFatalError(TitleParsingException(it)) },
-                )
-            }
+            .map { it?.toLocalNote() }
             .flowOn(dispatchers.default)
 
     override fun getOrCreateTemplateNote(
