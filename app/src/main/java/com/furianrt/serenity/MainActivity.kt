@@ -68,6 +68,7 @@ import com.furianrt.uikit.utils.LocalAuth
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
@@ -83,7 +84,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     private val viewModel: MainViewModel by viewModels()
 
-    private val deepLinks = MutableSharedFlow<Intent>(extraBufferCapacity = 1)
+    private val deepLinks = MutableSharedFlow<Intent>(
+        extraBufferCapacity = 1,
+        replay = 1,
+    )
 
     override suspend fun isAuthorized(): Boolean = lockAuthorizer.isAuthorized().first()
 
@@ -119,6 +123,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         deepLinks.tryEmit(intent)
     }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     @Composable
     private fun ComposeContent() {
         val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -126,8 +131,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         val hazeState = rememberHazeState()
         val activity = LocalActivity.current as? ComponentActivity
 
-        LaunchedEffect(Unit) {
+        LaunchedEffect(navController) {
             deepLinks.collect { intent ->
+                deepLinks.resetReplayCache()
                 navController.handleDeepLink(intent)
             }
         }
