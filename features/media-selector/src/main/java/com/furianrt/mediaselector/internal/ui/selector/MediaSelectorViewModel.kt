@@ -299,6 +299,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                             },
                         ),
                         selectedAlbumId = selectedAlbumId,
+                        selectedAlbumName = selectedAlbumName,
                         selectedCount = selectedMedia.count(),
                         allowVideo = allowVideo,
                         showPartialAccessMessage = permissionsUtils.hasPartialMediaAccess(),
