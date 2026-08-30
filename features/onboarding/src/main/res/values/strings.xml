@@ -3,7 +3,7 @@
     <string name="onboarding_go_to_diary_button_title">Go to diary</string>
 
     <string name="onboarding_greeting_page_title">Welcome to your diary!</string>
-    <string name="onboarding_greeting_page_body">Let’s make it cozy and ready just\nfor you</string>
+    <string name="onboarding_greeting_page_body">Let’s make it cozy and ready just\u00A0for\u00A0you</string>
 
     <string name="onboarding_theme_page_title">Find your perfect look</string>
 

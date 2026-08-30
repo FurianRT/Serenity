@@ -2,13 +2,13 @@
     <string name="onboarding_start_button_title">Поехали!</string>
     <string name="onboarding_go_to_diary_button_title">Перейти к дневнику</string>
 
-    <string name="onboarding_greeting_page_title">Добро пожаловать в ваш дневник!</string>
-    <string name="onboarding_greeting_page_body">Давайте сделаем его уютным и готовым для вас</string>
+    <string name="onboarding_greeting_page_title">Добро пожаловать!</string>
+    <string name="onboarding_greeting_page_body">Давай вместе создадим место, куда будет приятно возвращаться</string>
 
-    <string name="onboarding_theme_page_title">Давай выберем тему</string>
+    <string name="onboarding_theme_page_title">Сначала выберем тему</string>
 
-    <string name="onboarding_notifications_title">Можно отправлять вам уведомления?</string>
-    <string name="onboarding_notifications_body">Только о бэкапе и важных обновлениях - мы не будем беспокоить вас без необходимости</string>
+    <string name="onboarding_notifications_title">Можем отправлять уведомления?</string>
+    <string name="onboarding_notifications_body">Будем бережно напоминать о важных вещах. Никаких лишних уведомлений️</string>
 
     <string name="onboarding_complete_title">Ну вот, всё готово!</string>
 </resources>
