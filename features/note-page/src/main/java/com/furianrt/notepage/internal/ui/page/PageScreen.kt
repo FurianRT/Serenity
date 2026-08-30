@@ -96,7 +96,6 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.notelistui.entities.UiNoteTag
 import com.furianrt.notelistui.entities.UiNoteTheme
-import com.furianrt.notelistui.entities.isEmptyTitle
 import com.furianrt.notelistui.entities.toContentAlignment
 import com.furianrt.notelistui.entities.toContentScale
 import com.furianrt.notelistui.extensions.toTextAlign
@@ -713,53 +712,63 @@ private fun ContentItems(
         LookaheadScope {
             uiState.content.forEachIndexed { index, item ->
                 val nextItem = uiState.content.getOrNull(index + 1)
+                val isNextTitleEmpty by remember(nextItem?.id) {
+                    derivedStateOf {
+                        nextItem is UiNoteContent.Title && nextItem.state.text.isEmpty()
+                    }
+                }
                 key(item.id) {
                     when (item) {
-                        is UiNoteContent.Title -> NoteContentTitle(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    top = when {
-                                        index == 0 -> topTitlePadding
-                                        item.isEmptyTitle() -> 0.dp
-                                        else -> 14.dp
-                                    },
-                                    bottom = when {
-                                        index == 0 && item.isEmptyTitle() -> 4.dp
-                                        item.isEmptyTitle() -> 0.dp
-                                        else -> 14.dp
-                                    },
-                                    start = 8.dp,
-                                    end = 8.dp,
-                                )
-                                .applyIf(index == 0 && item.state.text.isEmpty()) {
-                                    Modifier.onSizeChanged { size ->
-                                        onEmptyTitleHeightChange(size.height + topPadding)
+                        is UiNoteContent.Title -> {
+                            val isEmptyTitle by remember(item.id) {
+                                derivedStateOf { item.state.text.isEmpty() }
+                            }
+                            NoteContentTitle(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        top = when {
+                                            index == 0 -> topTitlePadding
+                                            isEmptyTitle -> 0.dp
+                                            else -> 14.dp
+                                        },
+                                        bottom = when {
+                                            index == 0 && isEmptyTitle -> 4.dp
+                                            isEmptyTitle -> 0.dp
+                                            else -> 14.dp
+                                        },
+                                        start = 8.dp,
+                                        end = 8.dp,
+                                    )
+                                    .applyIf(index == 0 && item.state.text.isEmpty()) {
+                                        Modifier.onSizeChanged { size ->
+                                            onEmptyTitleHeightChange(size.height + topPadding)
+                                        }
                                     }
-                                }
-                                .animatePlacementInScope(this@LookaheadScope),
-                            title = item,
-                            color = uiState.fontColor?.value,
-                            fontFamily = uiState.fontFamily?.regular,
-                            fontSizeMultiplier = (uiState.fontFamily ?: uiState.appFontFamily)
-                                .sizeMultiplier,
-                            fontSize = uiState.fontSize.sp,
-                            textAlign = uiState.textAlignment.toTextAlign(),
-                            lineHeightMultiplier = uiState.lineHeightMultiplier,
-                            hint = if (index == 0) {
-                                stringResource(R.string.note_title_hint_text)
-                            } else {
-                                stringResource(R.string.note_title_hint_write_more_here)
-                            },
-                            isInEditMode = uiState.isInEditMode,
-                            onTitleFocusChange = { id, focused ->
-                                onEvent(PageEvent.OnTitleFocusChange(id, focused))
-                                onTitleFocusChange(id, focused)
-                            },
-                            onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
-                            onCheckedListChange = { onEvent(PageEvent.OnCheckedListChange) },
-                            onAcceptText = onAcceptText,
-                        )
+                                    .animatePlacementInScope(this@LookaheadScope),
+                                title = item,
+                                color = uiState.fontColor?.value,
+                                fontFamily = uiState.fontFamily?.regular,
+                                fontSizeMultiplier = (uiState.fontFamily ?: uiState.appFontFamily)
+                                    .sizeMultiplier,
+                                fontSize = uiState.fontSize.sp,
+                                textAlign = uiState.textAlignment.toTextAlign(),
+                                lineHeightMultiplier = uiState.lineHeightMultiplier,
+                                hint = if (index == 0) {
+                                    stringResource(R.string.note_title_hint_text)
+                                } else {
+                                    stringResource(R.string.note_title_hint_write_more_here)
+                                },
+                                isInEditMode = uiState.isInEditMode,
+                                onTitleFocusChange = { id, focused ->
+                                    onEvent(PageEvent.OnTitleFocusChange(id, focused))
+                                    onTitleFocusChange(id, focused)
+                                },
+                                onTitleTextChange = { onEvent(PageEvent.OnTitleTextChange(it)) },
+                                onCheckedListChange = { onEvent(PageEvent.OnCheckedListChange) },
+                                onAcceptText = onAcceptText,
+                            )
+                        }
 
                         is UiNoteContent.MediaBlock -> NoteContentMedia(
                             modifier = Modifier.animatePlacementInScope(this@LookaheadScope),
@@ -780,7 +789,7 @@ private fun ContentItems(
                                     start = 8.dp,
                                     end = 8.dp,
                                     top = if (index == 0) 8.dp else 0.dp,
-                                    bottom = if (nextItem.isEmptyTitle()) 0.dp else 4.dp,
+                                    bottom = if (isNextTitleEmpty) 0.dp else 4.dp,
                                 )
                                 .animatePlacementInScope(this@LookaheadScope),
                             voice = item,
