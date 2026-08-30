@@ -204,6 +204,18 @@ internal class NoteThemesHolder @Inject constructor(
             ),
             UiNoteTheme.Image.Picture(
                 color = UiNoteBackground(
+                    id = "picture_color_35",
+                    isLight = false,
+                    colorScheme = UiThemeColor.APP_BACKGROUND_PICTURE_22.colorScheme,
+                ),
+                image = UiNoteBackgroundImage(
+                    id = "picture_image_35",
+                    source = UiNoteBackgroundImage.Source.Resource(uiR.drawable.app_background_picture_22),
+                    scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
+                )
+            ),
+            UiNoteTheme.Image.Picture(
+                color = UiNoteBackground(
                     id = "picture_color_1",
                     isLight = false,
                     colorScheme = UiThemeColor.NIGHT_RAIN.colorScheme,
@@ -350,11 +362,11 @@ internal class NoteThemesHolder @Inject constructor(
                 color = UiNoteBackground(
                     id = "picture_color_32",
                     isLight = true,
-                    colorScheme = UiThemeColor.LIGHT_21.colorScheme,
+                    colorScheme = UiThemeColor.APP_BACKGROUND_PICTURE_23.colorScheme,
                 ),
                 image = UiNoteBackgroundImage(
                     id = "picture_image_32",
-                    source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_picture_22),
+                    source = UiNoteBackgroundImage.Source.Resource(uiR.drawable.app_background_picture_23),
                     scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
                 )
             ),
@@ -362,11 +374,11 @@ internal class NoteThemesHolder @Inject constructor(
                 color = UiNoteBackground(
                     id = "picture_color_33",
                     isLight = true,
-                    colorScheme = UiThemeColor.LIGHT_22.colorScheme,
+                    colorScheme = UiThemeColor.APP_BACKGROUND_PICTURE_24.colorScheme,
                 ),
                 image = UiNoteBackgroundImage(
                     id = "picture_image_33",
-                    source = UiNoteBackgroundImage.Source.Resource(R.drawable.background_picture_25),
+                    source = UiNoteBackgroundImage.Source.Resource(uiR.drawable.app_background_picture_24),
                     scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_BOTTOM,
                 )
             ),
