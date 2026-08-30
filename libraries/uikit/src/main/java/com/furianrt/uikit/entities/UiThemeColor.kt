@@ -169,12 +169,6 @@ enum class UiThemeColor(
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
     ),
 
-    FIREFLY_OLIVE(
-        id = "dark_16",
-        surface = Colors.Primary.FireflyOlive,
-        primaryContainer = Colors.Accent.FireflyYellow,
-    ),
-
     GREEN_FOREST(
         id = "dark_17",
         surface = Colors.Primary.Green1,
@@ -676,6 +670,37 @@ enum class UiThemeColor(
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
+    ),
+
+    LIGHT_21(
+        id = "light_22",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.Orange2.copy(alpha = 0.1f),
+        outlineVariant = Colors.Accent.Orange2.copy(alpha = 0.1f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.Orange2.copy(alpha = 0.15f),
+        onTertiaryContainer = Colors.Accent.Orange2.copy(alpha = 0.2f),
+        background = Colors.Common.LightGray.copy(alpha = 0.3f),
+        secondaryContainer = Colors.Common.LightGray.copy(alpha = 0.3f),
+        inverseSurface = Colors.Common.LightGray.copy(alpha = 0.3f),
+        onSurfaceVariant = Colors.Accent.Orange2.copy(alpha = 0.2f),
+        surface = Colors.Primary.LightYellow,
+        surfaceContainer = Colors.Accent.Orange2,
+        primaryContainer = Colors.Accent.Orange2,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_12,
+            scaleType = FILL,
+        ),
     ),
 
     APP_BACKGROUND_PICTURE_18(

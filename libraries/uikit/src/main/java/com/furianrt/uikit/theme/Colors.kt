@@ -30,8 +30,6 @@ object Colors {
 
         val TotalBlack = Color(0xFF040009)
 
-        val FireflyOlive = Color(0xFF2D3526)
-
         val AvatarBlue = Color(0xFF193579)
         val Blue1 = Color(0xFF00366E)
         val Blue2 = Color(0xFF012B39)
@@ -58,6 +56,8 @@ object Colors {
         val Dark2 = Color(0xFF1E2329)
 
         val Brawn1 = Color(0xFF261F19)
+
+        val LightYellow = Color(0xFFEDDFD1)
     }
 
     object Accent {
@@ -81,8 +81,8 @@ object Colors {
         val Pink5 = Color(0xFFC51DB7)
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
-        val FireflyYellow = Color(0xFFADAE62)
         val Orange = Color(0xFFE6812F)
+        val Orange2 = Color(0xFFFD822C)
 
         val LightBlue = Color(0xFF7D8BFF)
         val LightGreen = Color(0xFF4FA78C)
