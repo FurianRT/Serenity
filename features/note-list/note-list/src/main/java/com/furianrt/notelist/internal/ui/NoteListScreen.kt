@@ -1,16 +1,19 @@
 package com.furianrt.notelist.internal.ui
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.MutableTransitionState
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -46,9 +49,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -102,7 +103,7 @@ import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
 private const val SHOW_SCROLL_TO_TOP_MIN_ITEM_INDEX = 3
-private const val EMPTY_STATE_ANIM_DURATION = 2500
+private const val EMPTY_STATE_ANIM_DURATION = 3000
 
 @Composable
 internal fun NoteListScreen(
@@ -250,27 +251,44 @@ private fun MainScreenContent(
                 .hazeSource(hazeState, zIndex = 0f),
             theme = uiState.theme,
         )
-        when (uiState.content) {
-            is NoteListUiState.Content.Loading -> LoadingContent(
-                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
-            )
+        AnimatedContent(
+            modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
+            targetState = uiState.content,
+            contentKey = { it::class.simpleName },
+            transitionSpec = {
+                if (targetState is NoteListUiState.Content.Empty) {
+                    (slideIntoContainer(
+                        towards = SlideDirection.Up,
+                        animationSpec = tween(
+                            durationMillis = EMPTY_STATE_ANIM_DURATION,
+                        ),
+                    ) + fadeIn(
+                        animationSpec = tween(
+                            durationMillis = EMPTY_STATE_ANIM_DURATION,
+                            easing = LinearEasing,
+                        )
+                    )).togetherWith(ExitTransition.None)
+                } else {
+                    EnterTransition.None.togetherWith(ExitTransition.None)
+                }
+            }
+        ) { targetState ->
+            when (targetState) {
+                is NoteListUiState.Content.Loading -> LoadingContent()
+                is NoteListUiState.Content.Empty -> EmptyContent(
+                    onEvent = onEvent,
+                    hazeState = hazeState,
+                )
 
-            is NoteListUiState.Content.Empty -> EmptyContent(
-                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
-                onEvent = onEvent,
-                hazeState = hazeState,
-            )
-
-            is NoteListUiState.Content.Success -> SuccessContent(
-                modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
-                uiState = uiState.content,
-                screenState = screenState,
-                toolbarPadding = topPadding,
-                hazeState = backgroundHazeState,
-                onEvent = onEvent,
-            )
+                is NoteListUiState.Content.Success -> SuccessContent(
+                    uiState = targetState,
+                    screenState = screenState,
+                    toolbarPadding = topPadding,
+                    hazeState = backgroundHazeState,
+                    onEvent = onEvent,
+                )
+            }
         }
-
         BottomNavigationBar(
             modifier = Modifier.align(Alignment.BottomEnd),
             hazeState = hazeState,
@@ -365,26 +383,6 @@ private fun EmptyContent(
     hazeState: HazeState,
     onEvent: (event: NoteListEvent) -> Unit,
 ) {
-    val (initialOffsetPx, initialAlpha) = if (LocalInspectionMode.current) {
-        0f to 1f
-    } else {
-        500.dp.dpToPx() to 0f
-    }
-
-    val transitionState = MutableTransitionState(initialState = false).apply {
-        targetState = true
-    }
-    val transition = rememberTransition(transitionState)
-
-    val contentAlpha by transition.animateFloat(
-        transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },
-        targetValueByState = { if (it) 1f else initialAlpha },
-    )
-    val contentTranslationY by transition.animateFloat(
-        transitionSpec = { tween(EMPTY_STATE_ANIM_DURATION) },
-        targetValueByState = { if (it) 0f else initialOffsetPx },
-    )
-
     val composition by rememberLottieComposition(
         LottieCompositionSpec.RawRes(R.raw.anim_empty_diary),
     )
@@ -407,12 +405,7 @@ private fun EmptyContent(
     )
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .graphicsLayer {
-                alpha = contentAlpha
-                translationY = contentTranslationY
-            },
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
