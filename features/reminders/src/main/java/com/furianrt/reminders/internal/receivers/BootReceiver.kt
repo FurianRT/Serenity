@@ -12,6 +12,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.concurrent.atomics.AtomicBoolean
+import kotlin.concurrent.atomics.ExperimentalAtomicApi
 
 @AndroidEntryPoint
 internal class BootReceiver : BroadcastReceiver() {
@@ -29,11 +31,13 @@ internal class BootReceiver : BroadcastReceiver() {
 
     private val scope by lazy { CoroutineScope(dispatchers.main + SupervisorJob()) }
 
+    @OptIn(ExperimentalAtomicApi::class)
     override fun onReceive(
         context: Context,
         intent: Intent,
     ) {
         if (intent.action == Intent.ACTION_BOOT_COMPLETED) {
+            val isFinished = AtomicBoolean(false)
             val pendingResult = goAsync()
             scope.launch {
                 try {
@@ -41,10 +45,12 @@ internal class BootReceiver : BroadcastReceiver() {
                         reminderScheduler.schedule(reminder)
                     }
                 } finally {
-                    try {
-                        pendingResult.finish()
-                    } catch (e: IllegalStateException) {
-                        errorTracker.trackNonFatalError(e)
+                    if (isFinished.compareAndSet(expectedValue = false, newValue = true)) {
+                        try {
+                            pendingResult.finish()
+                        } catch (e: Exception) {
+                            errorTracker.trackNonFatalError(e)
+                        }
                     }
                 }
             }
