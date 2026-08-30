@@ -84,7 +84,7 @@ fun UiNoteContent?.isEmptyTitle(): Boolean {
     }
     return try {
         state.text.isEmpty()
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         state.textWithSnapshot.isEmpty()
     }
 }
