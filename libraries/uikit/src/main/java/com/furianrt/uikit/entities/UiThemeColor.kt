@@ -734,7 +734,7 @@ enum class UiThemeColor(
         id = "app_background_picture_22",
         surface = Colors.Primary.Green3,
         inverseSurface = Colors.Primary.Green3.copy(alpha = 0.9f),
-        primaryContainer = Colors.Accent.Pink6,
+        primaryContainer = Colors.Accent.Orange3,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_22,
             scaleType = CROP_ALIGN_BOTTOM,

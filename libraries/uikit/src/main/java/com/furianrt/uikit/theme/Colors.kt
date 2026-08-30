@@ -65,6 +65,7 @@ object Colors {
 
     object Accent {
         val GreenLight = Color(0xFF6DA646)
+        val Green1 = Color(0xFF7B7A5E)
         val Green2 = Color(0xFF45C58A)
         val Purple = Color(0xFF8D6EFD)
         val PurpleDark = Color(0xFF8D4BF6)
@@ -82,11 +83,11 @@ object Colors {
         val Pink3 = Color(0xFFA65768)
         val Pink4 = Color(0xFFC467E5)
         val Pink5 = Color(0xFFC51DB7)
-        val Pink6 = Color(0xFFCA8499)
         val PlumWine = Color(0xFF6B2F4E)
         val RedDark = Color(0xFF5D0F0F)
         val Orange = Color(0xFFE6812F)
         val Orange2 = Color(0xFFFD822C)
+        val Orange3 = Color(0xFFC56C51)
 
         val LightBlue = Color(0xFF7D8BFF)
         val LightGreen = Color(0xFF4FA78C)
@@ -98,8 +99,6 @@ object Colors {
 
         val Red1 = Color(0xFF75010D)
         val Red2 = Color(0xFF50030A)
-
-        val Green1 = Color(0xFF7B7A5E)
     }
 
     object Font {
