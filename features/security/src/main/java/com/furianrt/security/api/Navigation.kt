@@ -13,6 +13,7 @@ import com.furianrt.security.internal.ui.lock.change.ChangePinRoute
 import com.furianrt.security.internal.ui.lock.change.changePinScreen
 import com.furianrt.security.internal.ui.lock.email.EmailScreen
 import com.furianrt.security.internal.ui.security.SecurityScreen
+import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -81,6 +82,7 @@ fun NavGraphBuilder.securityScreen(
     composable<SecurityScreenRoute>(
         popEnterTransition = { fadeIn(animationSpec = tween(500)) },
         exitTransition = { fadeOut(animationSpec = tween(500)) },
+        popExitTransition = { defaultPopExitTransition() },
     ) {
         SecurityScreen(
             openChangePinScreen = openChangePinScreen,
