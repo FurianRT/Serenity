@@ -78,16 +78,14 @@ sealed class UiNoteContent(
     }
 }
 
-fun UiNoteContent?.isEmptyTitle(
-    withSnapshot: Boolean = false,
-): Boolean {
+fun UiNoteContent?.isEmptyTitle(): Boolean {
     if (this !is UiNoteContent.Title) {
         return false
     }
-    return if (withSnapshot) {
-        state.textWithSnapshot.isEmpty()
-    } else {
+    return try {
         state.text.isEmpty()
+    } catch (e: Exception) {
+        state.textWithSnapshot.isEmpty()
     }
 }
 
