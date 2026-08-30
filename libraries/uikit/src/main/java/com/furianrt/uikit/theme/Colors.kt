@@ -56,6 +56,7 @@ object Colors {
         val Dark2 = Color(0xFF1E2329)
 
         val Brawn1 = Color(0xFF261F19)
+        val Brawn2 = Color(0xFFB0A496)
 
         val LightYellow = Color(0xFFEDDFD1)
     }
@@ -93,6 +94,8 @@ object Colors {
         val LightGrey = Color(0xFF95A4AB)
 
         val Red1 = Color(0xFF75010D)
+
+        val Green1 = Color(0xFF7B7A5E)
     }
 
     object Font {
