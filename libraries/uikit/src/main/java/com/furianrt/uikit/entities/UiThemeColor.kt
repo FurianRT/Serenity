@@ -697,10 +697,6 @@ enum class UiThemeColor(
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
-        image = UiThemeImage(
-            resId = R.drawable.app_background_picture_12,
-            scaleType = FILL,
-        ),
     ),
 
     LIGHT_22(
@@ -728,10 +724,33 @@ enum class UiThemeColor(
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
         isLight = true,
-        image = UiThemeImage(
-            resId = R.drawable.app_background_picture_12,
-            scaleType = FILL,
-        ),
+    ),
+
+    LIGHT_23(
+        id = "light_23",
+        primary = Color.Black,
+        onPrimary = Color.Black,
+        secondary = Color.Black,
+        onSecondary = Color.Black,
+        onBackground = Color.Black,
+        onSurface = Color.Black,
+        onPrimaryContainer = Color.White,
+        tertiary = Colors.Accent.Red2.copy(alpha = 0.1f),
+        outlineVariant = Colors.Accent.Red2.copy(alpha = 0.1f),
+        onTertiary = Color.Black,
+        tertiaryContainer = Colors.Accent.Red2.copy(alpha = 0.15f),
+        onTertiaryContainer = Colors.Accent.Red2.copy(alpha = 0.2f),
+        background = Colors.Common.LightGray.copy(alpha = 0.3f),
+        secondaryContainer = Colors.Common.LightGray.copy(alpha = 0.3f),
+        inverseSurface = Colors.Common.LightGray.copy(alpha = 0.3f),
+        onSurfaceVariant = Colors.Accent.Red2.copy(alpha = 0.2f),
+        surface = Colors.Primary.Brawn3,
+        surfaceContainer = Colors.Accent.Red2,
+        primaryContainer = Colors.Accent.Red2,
+        surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
+        scrim = Color.Black.copy(alpha = 0.35f),
+        surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        isLight = true,
     ),
 
     APP_BACKGROUND_PICTURE_18(
