@@ -43,6 +43,10 @@ android {
         language.enableSplit = false
     }
 
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     buildTypes {
         defaultConfig {
             buildConfigField("String", "FILE_PROVIDER_AUTHORITY", "\"SerenityFileProvider\"")

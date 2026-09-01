@@ -26,6 +26,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeEffect
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -75,7 +76,7 @@ internal fun LocaleDialog(
                     onClick = {
                         onLocaleSelected(locale)
                         scope.launch {
-                            delay(150)
+                            delay(150.milliseconds)
                             onDismissRequest()
                         }
                     },
