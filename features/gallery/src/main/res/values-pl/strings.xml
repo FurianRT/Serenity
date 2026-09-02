@@ -1,0 +1,6 @@
+<resources>
+    <string name="gallery_screen_title">Wspomnienia</string>
+    <string name="gallery_screen_empty_state_title">Nie ma tu jeszcze wspomnień</string>
+    <string name="gallery_screen_empty_state_body">Uwieczniaj małe chwile każdego dnia. Z czasem staną się Twoimi ulubionymi wspomnieniami</string>
+    <string name="gallery_screen_empty_state_button">Utwórz wpis</string>
+</resources>

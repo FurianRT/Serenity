@@ -1,0 +1,6 @@
+<resources>
+    <string name="gallery_screen_title">Mga Alaala</string>
+    <string name="gallery_screen_empty_state_title">Wala pang mga alaala dito</string>
+    <string name="gallery_screen_empty_state_body">I-enjoy at itala ang maliliit na sandali araw-araw. Sila ang magiging pinakapaborito mong mga alaala</string>
+    <string name="gallery_screen_empty_state_button">Gumawa ng tala</string>
+</resources>

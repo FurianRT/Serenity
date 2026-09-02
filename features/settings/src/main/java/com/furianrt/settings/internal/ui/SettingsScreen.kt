@@ -106,6 +106,7 @@ internal fun SettingsScreen(
     openNoteSettingsScreen: () -> Unit,
     openAppThemeScreen: () -> Unit,
     openRemindersScreen: () -> Unit,
+    openGalleryScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -122,6 +123,7 @@ internal fun SettingsScreen(
     val openNoteSettingsScreenState by rememberUpdatedState(openNoteSettingsScreen)
     val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
     val openRemindersScreenState by rememberUpdatedState(openRemindersScreen)
+    val openGalleryScreenState by rememberUpdatedState(openGalleryScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -183,13 +185,15 @@ internal fun SettingsScreen(
                     }
 
                     is SettingsEffect.OpenNoteSettingsScreen -> openNoteSettingsScreenState()
-                    is SettingsEffect.OpenWidgetsDialog -> {
+                    is SettingsEffect.ShowWidgetsDialog -> {
                         val provider = ComponentName(context, AllActionsWidgetReceiver::class.java)
                         val appWidgetManager = AppWidgetManager.getInstance(context)
                         if (!appWidgetManager.requestPinAppWidget(provider, null, null)) {
                             viewModel.onEvent(SettingsEvent.OnAddWidgetError)
                         }
                     }
+
+                    is SettingsEffect.OpenGalleryScreen -> openGalleryScreenState()
                 }
             }
     }
@@ -319,6 +323,12 @@ private fun SuccessScreen(
             iconPainter = painterResource(R.drawable.ic_cloud),
             hazeState = hazeState,
             onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
+        )
+        GeneralButton(
+            title = stringResource(uiR.string.action_gallery),
+            iconPainter = painterResource(uiR.drawable.ic_photos),
+            hazeState = hazeState,
+            onClick = { onEvent(SettingsEvent.OnButtonGalleryClick) },
         )
         GeneralButton(
             title = stringResource(R.string.settings_reminders_title),

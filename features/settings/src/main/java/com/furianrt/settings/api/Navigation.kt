@@ -33,6 +33,7 @@ fun NavController.navigateToSettings(
 
 fun NavGraphBuilder.settingsNavigation(
     navController: NavHostController,
+    openGalleryScreen: () -> Unit,
 ) {
     navigation<SettingsRoute>(
         startDestination = MainRoute,
@@ -43,6 +44,7 @@ fun NavGraphBuilder.settingsNavigation(
             openNoteSettingsScreen = navController::navigateToNoteSettings,
             openAppThemeScreen = navController::navigateToAppTheme,
             openRemindersScreen = navController::navigateToReminders,
+            openGalleryScreen = openGalleryScreen,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },
@@ -50,7 +52,7 @@ fun NavGraphBuilder.settingsNavigation(
         securityScreen(
             openChangePinScreen = navController::navigateToChangePin,
             openChangeEmailScreen = navController::navigateToChangeEmail,
-            onCloseRequest = { navController.popBackStack(route = MainRoute, inclusive = false) },
+            onCloseRequest = navController::navigateUp,
         )
         changePinNavigation(
             navController = navController,

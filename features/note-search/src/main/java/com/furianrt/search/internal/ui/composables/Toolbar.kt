@@ -272,7 +272,7 @@ private fun ButtonCalendar(
     ) {
         Icon(
             modifier = Modifier.padding(8.dp),
-            painter = painterResource(R.drawable.ic_calendar),
+            painter = painterResource(uiR.drawable.ic_calendar),
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurface,
         )

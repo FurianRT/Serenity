@@ -1,0 +1,6 @@
+<resources>
+    <string name="gallery_screen_title">यादें</string>
+    <string name="gallery_screen_empty_state_title">अभी तक कोई यादें नहीं हैं</string>
+    <string name="gallery_screen_empty_state_body">हर दिन के छोटे-छोटे पलों को संजोएं। वे आपकी सबसे पसंदीदा यादें बन जाएंगे।</string>
+    <string name="gallery_screen_empty_state_button">नोट बनाएं</string>
+</resources>

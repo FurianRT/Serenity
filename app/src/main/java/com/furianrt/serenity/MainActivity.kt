@@ -37,6 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
 import com.furianrt.domain.managers.LockAuthorizer
+import com.furianrt.gallery.api.galleryScreen
+import com.furianrt.gallery.api.navigateToGallery
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediaselector.api.mediaViewerScreen
 import com.furianrt.mediaselector.api.navigateToMediaViewer
@@ -307,7 +309,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             onCloseRequest = navController::navigateUp,
                         )
 
-                        settingsNavigation(navController)
+                        settingsNavigation(
+                            navController = navController,
+                            openGalleryScreen = navController::navigateToGallery,
+                        )
                         mediaViewScreen(onCloseRequest = navController::navigateUp)
                         mediaViewerScreen(onCloseRequest = navController::navigateUp)
                         mediaSortingScreen(
@@ -341,10 +346,19 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
-                            onCloseRequest = navController::navigateUp
+                            onCloseRequest = navController::navigateUp,
                         )
                         backupScreen(
-                            onCloseRequest = navController::navigateUp
+                            onCloseRequest = navController::navigateUp,
+                        )
+                        galleryScreen(
+                            hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
+                            onCloseRequest = navController::navigateUp,
+                            openCreateNoteRequest = {
+                                navController.navigateToNoteCreate(
+                                    route = NoteCreateRoute(),
+                                )
+                            },
                         )
                     }
                     AnimatedVisibility(

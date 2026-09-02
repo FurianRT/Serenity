@@ -12,6 +12,7 @@ import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
+import com.furianrt.domain.entities.NoteMedia
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
@@ -22,6 +23,7 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBack
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteImage
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
+import com.furianrt.storage.internal.database.notes.entities.NoteWithMedia
 import com.furianrt.storage.internal.database.notes.entities.PartImageId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundIsHidden
@@ -35,6 +37,7 @@ import com.furianrt.storage.internal.database.notes.mappers.toEntryVoice
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentImage
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVideo
 import com.furianrt.storage.internal.database.notes.mappers.toNoteContentVoice
+import com.furianrt.storage.internal.database.notes.mappers.toNoteMedia
 import com.furianrt.storage.internal.device.AppMediaSource
 import com.furianrt.storage.internal.device.SharedMediaSource
 import com.furianrt.storage.internal.managers.MediaSaver
@@ -43,6 +46,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -66,7 +70,7 @@ internal class MediaRepositoryImp @Inject constructor(
         noteId: String,
         media: List<LocalNote.Content.Media>,
         updateFile: Boolean,
-    ) = withContext(NonCancellable) {
+    ) = withContext(dispatchers.default + NonCancellable) {
         val images = media
             .filterIsInstance<LocalNote.Content.Image>()
             .map { it.toEntryImage(noteId = noteId, isSaved = !updateFile) }
@@ -90,7 +94,7 @@ internal class MediaRepositoryImp @Inject constructor(
         if (media.isEmpty()) {
             return
         }
-        withContext(NonCancellable) {
+        withContext(dispatchers.default + NonCancellable) {
             mediaSaver.cancel(media)
             val images = media
                 .filterIsInstance<LocalNote.Content.Image>()
@@ -122,6 +126,10 @@ internal class MediaRepositoryImp @Inject constructor(
         imageDao.getAllImages().deepMap(EntryNoteImage::toNoteContentImage),
         videoDao.getAllVideos().deepMap(EntryNoteVideo::toNoteContentVideo),
     ) { images, videos -> images + videos }
+
+    override fun getNotesMedia(): Flow<List<NoteMedia>> = noteDao.getNotesWithMedia()
+        .map { it.flatMap(NoteWithMedia::toNoteMedia) }
+        .flowOn(dispatchers.default)
 
     override suspend fun getDeviceMediaList(
         allowVideo: Boolean,

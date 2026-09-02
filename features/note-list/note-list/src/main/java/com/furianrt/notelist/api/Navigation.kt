@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import com.furianrt.notelist.internal.ui.NoteListScreen
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
+import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
 
@@ -47,6 +48,7 @@ fun NavGraphBuilder.noteListScreen(
                 else -> defaultExitTransition()
             }
         },
+        popExitTransition = { defaultPopExitTransition() },
         popEnterTransition = {
             if (hasSearchScreenRoute(initialState.destination)) {
                 fadeIn() + scaleIn(

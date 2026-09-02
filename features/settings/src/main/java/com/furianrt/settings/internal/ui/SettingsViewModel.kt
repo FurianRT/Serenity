@@ -129,12 +129,16 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnButtonWidgetsClick -> {
-                _effect.tryEmit(SettingsEffect.OpenWidgetsDialog)
+                _effect.tryEmit(SettingsEffect.ShowWidgetsDialog)
             }
 
             is SettingsEvent.OnAddWidgetError -> {
                 errorTracker.trackNonFatalError(Exception("Unable to show widgets dialog"))
                 _effect.tryEmit(SettingsEffect.ShowWidgetErrorDialog)
+            }
+
+            is SettingsEvent.OnButtonGalleryClick -> {
+                _effect.tryEmit(SettingsEffect.OpenGalleryScreen)
             }
         }
     }

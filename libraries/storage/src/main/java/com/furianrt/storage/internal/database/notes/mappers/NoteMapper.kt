@@ -2,6 +2,7 @@ package com.furianrt.storage.internal.database.notes.mappers
 
 import android.util.Base64
 import com.furianrt.domain.entities.LocalNote
+import com.furianrt.domain.entities.NoteMedia
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
@@ -10,6 +11,8 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteSticker
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.NoteWithMedia
+import java.time.ZonedDateTime
 
 private const val TITLE_START_TAG = "{text}"
 private const val TITLE_ENCODED_START_TAG = "{text-encoded}"
@@ -107,7 +110,7 @@ internal fun EntryNote.toSimpleNote() = SimpleNote(
     isPinned = isPinned,
 )
 
-private fun LinkedNote.getLocalNoteContent(text: String, ): List<LocalNote.Content> {
+private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content> {
     val (startIndex, content) = when (getFirstTagType(text)) {
         FirstTagType.TITLE -> {
             (text.indexOf(TITLE_END_TAG) + TITLE_END_TAG.length) to extractTitle(
@@ -139,6 +142,36 @@ private fun LinkedNote.getLocalNoteContent(text: String, ): List<LocalNote.Conte
         listOf(content) + getLocalNoteContent(text.substring(startIndex, text.length))
     }
 }
+
+internal fun NoteWithMedia.toNoteMedia(): List<NoteMedia> {
+    val noteImages = images.map { it.toNoteMedia(date) }
+    val noteVideos = videos.map { it.toNoteMedia(date) }
+    return (noteImages + noteVideos).sortedWith(
+        compareByDescending(NoteMedia::noteDate)
+            .thenByDescending(NoteMedia::addedDate)
+    )
+}
+
+private fun EntryNoteImage.toNoteMedia(noteDate: ZonedDateTime) = NoteMedia.Image(
+    id = id,
+    noteId = noteId,
+    name = name,
+    noteDate = noteDate,
+    uri = uri,
+    ratio = ratio,
+    addedDate = addedDate,
+)
+
+private fun EntryNoteVideo.toNoteMedia(noteDate: ZonedDateTime) = NoteMedia.Video(
+    id = id,
+    noteId = noteId,
+    name = name,
+    noteDate = noteDate,
+    uri = uri,
+    ratio = ratio,
+    addedDate = addedDate,
+    duration = duration,
+)
 
 private fun LinkedNote.extractTitle(
     text: String,

@@ -1,0 +1,6 @@
+<resources>
+    <string name="gallery_screen_title">Amintiri</string>
+    <string name="gallery_screen_empty_state_title">Nicio amintire încă</string>
+    <string name="gallery_screen_empty_state_body">Surprinde momentele mici în fiecare zi. Vor deveni amintirile tale preferate</string>
+    <string name="gallery_screen_empty_state_button">Creează o notă</string>
+</resources>

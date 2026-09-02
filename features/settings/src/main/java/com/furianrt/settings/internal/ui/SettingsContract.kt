@@ -37,6 +37,7 @@ internal sealed interface SettingsEvent {
     data object OnButtonThemeClick : SettingsEvent
     data object OnButtonWidgetsClick : SettingsEvent
     data object OnAddWidgetError : SettingsEvent
+    data object OnButtonGalleryClick : SettingsEvent
 }
 
 internal sealed interface SettingsEffect {
@@ -65,5 +66,6 @@ internal sealed interface SettingsEffect {
     ) : SettingsEffect
 
     data object OpenNoteSettingsScreen : SettingsEffect
-    data object OpenWidgetsDialog : SettingsEffect
+    data object ShowWidgetsDialog : SettingsEffect
+    data object OpenGalleryScreen : SettingsEffect
 }

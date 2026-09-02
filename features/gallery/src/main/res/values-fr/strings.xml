@@ -1,0 +1,6 @@
+<resources>
+    <string name="gallery_screen_title">Souvenirs</string>
+    <string name="gallery_screen_empty_state_title">Aucun souvenir pour l’instant</string>
+    <string name="gallery_screen_empty_state_body">Capturez les petits moments de chaque jour. Ils deviendront vos plus beaux souvenirs</string>
+    <string name="gallery_screen_empty_state_button">Créer une note</string>
+</resources>

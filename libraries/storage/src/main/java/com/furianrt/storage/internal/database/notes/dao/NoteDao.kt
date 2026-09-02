@@ -11,6 +11,7 @@ import androidx.room3.Upsert
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.entities.NoteWithMedia
 import com.furianrt.storage.internal.database.notes.entities.PartNoteLineHeightMultiplier
 import com.furianrt.storage.internal.database.notes.entities.PartNoteBackgroundId
 import com.furianrt.storage.internal.database.notes.entities.PartNoteDate
@@ -76,6 +77,16 @@ internal interface NoteDao {
 
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 1")
     fun getAllTemplates(): Flow<List<EntryNote>>
+
+    @Transaction
+    @Query(
+        """
+            SELECT ${EntryNote.FIELD_ID}, ${EntryNote.FIELD_DATE} 
+            FROM ${EntryNote.TABLE_NAME} 
+            WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0
+        """
+    )
+    fun getNotesWithMedia(): Flow<List<NoteWithMedia>>
 
     @Transaction
     @Query(

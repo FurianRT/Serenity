@@ -7,6 +7,7 @@ import com.furianrt.domain.entities.DeviceMedia
 import com.furianrt.domain.entities.LocalMedia
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
+import com.furianrt.domain.entities.NoteMedia
 import kotlinx.coroutines.flow.Flow
 import java.io.File
 
@@ -21,6 +22,7 @@ interface MediaRepository {
     suspend fun deleteMediaFiles(noteId: String)
     fun getMedia(noteId: String): Flow<List<LocalNote.Content.Media>>
     fun getAllMedia(): Flow<List<LocalNote.Content.Media>>
+    fun getNotesMedia(): Flow<List<NoteMedia>>
 
     suspend fun getDeviceMediaList(
         allowVideo: Boolean,
