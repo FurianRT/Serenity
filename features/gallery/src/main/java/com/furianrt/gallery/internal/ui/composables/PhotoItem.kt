@@ -44,7 +44,7 @@ internal fun PhotoItem(
                 shape = RectangleShape,
                 shadow = Shadow(
                     radius = 10.dp,
-                    color = Color.Black.copy(alpha = 0.2f),
+                    color = Color.Black.copy(alpha = 0.15f),
                 )
             )
             .clip(RoundedCornerShape(2.dp))

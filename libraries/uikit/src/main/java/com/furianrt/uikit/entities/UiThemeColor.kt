@@ -335,8 +335,8 @@ enum class UiThemeColor(
 
     APP_BACKGROUND_PICTURE_21(
         id = "app_background_picture_21",
-        surface = Color.Black,
-        inverseSurface = Color.Black.copy(alpha = 0.9f),
+        surface = Colors.Primary.TotalBlackRed,
+        inverseSurface = Colors.Primary.TotalBlackRed.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Red1,
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.3f),
