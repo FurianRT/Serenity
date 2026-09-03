@@ -7,7 +7,6 @@ import androidx.navigation.toRoute
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.MediaSortingResult
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediasorting.api.MediaSortingRoute
 import com.furianrt.mediasorting.internal.domain.GetNoteMediaUseCase
@@ -40,7 +39,6 @@ internal class MediaSortingViewModel @Inject constructor(
     private val getNoteMediaUseCase: GetNoteMediaUseCase,
     private val permissionsUtils: PermissionsUtils,
     private val dialogResultCoordinator: DialogResultCoordinator,
-    private val notesRepository: NotesRepository,
     private val appearanceRepository: AppearanceRepository,
 ) : ViewModel(), DialogResultListener {
 
@@ -49,11 +47,20 @@ internal class MediaSortingViewModel @Inject constructor(
     private val _state = MutableStateFlow(buildInitialState())
     val state: StateFlow<MediaSortingUiState> = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<MediaSortingEffect>(extraBufferCapacity = 10)
+    private val _effect = MutableSharedFlow<MediaSortingEffect>(extraBufferCapacity = 5)
     val effect = _effect.asSharedFlow()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = route.noteId, listener = this)
+        launch {
+            _state.update { currentState ->
+                currentState.copy(
+                    media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
+                        .first()
+                        .map(LocalNote.Content.Media::toMediaItem),
+                )
+            }
+        }
     }
 
     override fun onCleared() {
@@ -180,18 +187,7 @@ internal class MediaSortingViewModel @Inject constructor(
         }
     }
 
-    private suspend fun openMediaViewScreen(mediaId: String) {
-        val cachedNoteContent = notesRepository.getNote(route.noteId).first()?.content ?: return
-        notesRepository.cacheNoteContent(
-            noteId = route.noteId,
-            content = cachedNoteContent.map { content ->
-                if (content is LocalNote.Content.MediaBlock && content.id == route.mediaBlockId) {
-                    content.copy(media = state.value.media.map(MediaItem::toLocalNoteMedia))
-                } else {
-                    content
-                }
-            },
-        )
+    private fun openMediaViewScreen(mediaId: String) {
         _effect.tryEmit(
             MediaSortingEffect.OpenMediaViewScreen(
                 noteId = route.noteId,
@@ -206,8 +202,7 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun buildInitialState() = MediaSortingUiState(
-        media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
-            .map(LocalNote.Content.Media::toMediaItem),
+        media = emptyList(),
         hasContentChanged = false,
         theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
     )

@@ -4,12 +4,16 @@ import androidx.compose.runtime.Immutable
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.uikit.theme.NoteFont
 
-@Immutable
-internal data class MediaViewUiState(
-    val initialMediaIndex: Int,
-    val media: List<MediaItem>,
-    val font: NoteFont? = null,
-)
+internal sealed interface MediaViewUiState {
+    data object Loading : MediaViewUiState
+
+    @Immutable
+    data class Success(
+        val media: List<MediaItem>,
+        val font: NoteFont,
+        val initialPage: Int,
+    ) : MediaViewUiState
+}
 
 internal sealed interface MediaViewEvent {
     data object OnButtonBackClick : MediaViewEvent

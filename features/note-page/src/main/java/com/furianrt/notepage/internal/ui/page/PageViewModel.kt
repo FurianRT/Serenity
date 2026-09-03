@@ -213,7 +213,6 @@ internal class PageViewModel @AssistedInject constructor(
     override fun onCleared() {
         dialogResultCoordinator.removeDialogResultListener(requestId = noteId, listener = this)
         audioPlayer.clearProgressListener()
-        notesRepository.deleteNoteContentFromCache(noteId)
         stopCurrentVoicePlaying()
     }
 
@@ -497,12 +496,13 @@ internal class PageViewModel @AssistedInject constructor(
         }
     }
 
-    private fun trySaveContent() {
+    private fun trySaveContent(): Job? {
         if (isInEditMode && hasContentChanged) {
             _state.doWithState<PageUiState.Success> { successState ->
-                GlobalScope.launch { saveNoteContent(successState) }
+                return GlobalScope.launch { saveNoteContent(successState) }
             }
         }
+        return null
     }
 
     private fun addNewBlock(newBlock: UiNoteContent) {
@@ -731,11 +731,8 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun openMediaViewScreen(mediaId: String) {
-        _state.doWithState<PageUiState.Success> { successState ->
-            notesRepository.cacheNoteContent(
-                noteId = noteId,
-                content = successState.content.map(UiNoteContent::toLocalNoteContent),
-            )
+        launch {
+            trySaveContent()?.join()
             _effect.tryEmit(
                 PageEffect.OpenMediaViewScreen(
                     noteId = noteId,
@@ -770,11 +767,8 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun openMediaSortingScreen(mediaBlockId: String) {
-        _state.doWithState<PageUiState.Success> { successState ->
-            notesRepository.cacheNoteContent(
-                noteId = noteId,
-                content = successState.content.map(UiNoteContent::toLocalNoteContent),
-            )
+        launch {
+            trySaveContent()?.join()
             _effect.tryEmit(
                 PageEffect.OpenMediaSortingScreen(
                     noteId = noteId,

@@ -55,6 +55,7 @@ import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.extensions.hideSystemUi
 import com.furianrt.uikit.extensions.showSystemUi
 import com.furianrt.uikit.theme.Colors
+import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import dev.chrisbanes.haze.hazeSource
@@ -141,17 +142,31 @@ internal fun MediaViewScreen(
             }
     }
 
-    SuccessContent(
-        snackBarHostState = snackBarHostState,
-        uiState = uiState,
-        onEvent = viewModel::onEvent,
-        onCloseRequest = onCloseRequest,
+    when (val state = uiState) {
+        is MediaViewUiState.Loading -> LoadingContent()
+        is MediaViewUiState.Success -> SuccessContent(
+            snackBarHostState = snackBarHostState,
+            uiState = state,
+            onEvent = viewModel::onEvent,
+            onCloseRequest = onCloseRequest,
+        )
+    }
+}
+
+@Composable
+private fun LoadingContent(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Black),
     )
 }
 
 @Composable
 private fun SuccessContent(
-    uiState: MediaViewUiState,
+    uiState: MediaViewUiState.Success,
     modifier: Modifier = Modifier,
     snackBarHostState: SnackbarHostState,
     onEvent: (event: MediaViewEvent) -> Unit = {},
@@ -160,7 +175,7 @@ private fun SuccessContent(
     val configuration = LocalConfiguration.current
 
     val pagerState = rememberPagerState(
-        initialPage = uiState.initialMediaIndex,
+        initialPage = uiState.initialPage,
         pageCount = { uiState.media.count() },
     )
     val scope = rememberCoroutineScope()
@@ -285,7 +300,7 @@ private fun SuccessContent(
                     .navigationBarsPadding(),
                 media = uiState.media,
                 state = listState,
-                initialMediaIndex = uiState.initialMediaIndex,
+                initialMediaIndex = uiState.initialPage,
                 currentItem = pagerState.currentPage,
                 onItemClick = { scope.launch { pagerState.scrollToPage(it) } },
             )
@@ -312,8 +327,9 @@ private fun SuccessContent(
 private fun Preview() {
     SerenityTheme {
         SuccessContent(
-            uiState = MediaViewUiState(
-                initialMediaIndex = 1,
+            uiState = MediaViewUiState.Success(
+                initialPage = 1,
+                font = NoteFont.NotoSans,
                 media = listOf(
                     MediaItem.Image(id = "1", name = "1", uri = Uri.EMPTY, ratio = 0.5f),
                     MediaItem.Image(id = "2", name = "2", uri = Uri.EMPTY, ratio = 0.5f),

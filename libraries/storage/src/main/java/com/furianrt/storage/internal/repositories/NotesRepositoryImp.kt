@@ -9,7 +9,6 @@ import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.entities.SimpleNote
 import com.furianrt.domain.repositories.NotesRepository
-import com.furianrt.storage.internal.cache.NoteCache
 import com.furianrt.storage.internal.database.notes.dao.NoteDao
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.LinkedNote
@@ -44,7 +43,6 @@ internal class NotesRepositoryImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val noteDao: NoteDao,
     private val appearanceDataStore: AppearanceDataStore,
-    private val noteCache: NoteCache,
     private val dispatchers: DispatchersProvider,
 ) : NotesRepository {
 
@@ -230,18 +228,6 @@ internal class NotesRepositoryImp @Inject constructor(
             .deepMap { it.date.toLocalDate() }
             .map { it.toSet() }
             .flowOn(dispatchers.default)
-
-    override fun getNoteContentFromCache(noteId: String): List<LocalNote.Content> {
-        return noteCache.getNoteContent(noteId)
-    }
-
-    override fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>) {
-        noteCache.cacheNoteContent(noteId, content)
-    }
-
-    override fun deleteNoteContentFromCache(noteId: String) {
-        noteCache.deleteCache(noteId)
-    }
 
     override fun enqueueOneTimeCleanup() {
         DatabaseCleanupWorker.enqueueOneTime(context)

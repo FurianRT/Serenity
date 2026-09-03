@@ -54,10 +54,6 @@ interface NotesRepository {
 
     fun getUniqueNotesDates(): Flow<Set<LocalDate>>
 
-    fun cacheNoteContent(noteId: String, content: List<LocalNote.Content>)
-    fun deleteNoteContentFromCache(noteId: String)
-    fun getNoteContentFromCache(noteId: String): List<LocalNote.Content>
-
     fun enqueueOneTimeCleanup()
     fun enqueuePeriodicCleanup()
     fun enqueuePeriodicCacheCleanup()
