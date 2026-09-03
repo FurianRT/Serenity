@@ -63,7 +63,7 @@ enum class UiThemeColor(
     val onSurface: Color = Color.White,
     val onPrimaryContainer: Color = Color.White,
     val surfaceContainer: Color = Color.White,
-    val surfaceContainerLowest: Color = surface,
+    val surfaceContainerLowest: Color = Color.White.copy(alpha = 0.2f),
     val onSurfaceVariant: Color = primaryContainer.copy(alpha = 0.3f),
     val outlineVariant: Color = Color.White.copy(alpha = 0.05f),
     val background: Color = Color.White.copy(alpha = 0.1f),
@@ -304,6 +304,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_6,
@@ -405,6 +406,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_12,
@@ -436,6 +438,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_13,
@@ -534,6 +537,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -561,6 +565,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -588,6 +593,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -615,6 +621,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.07f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -642,6 +649,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.07f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -669,6 +677,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -696,6 +705,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
     ),
 
@@ -723,6 +733,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_6,
@@ -765,6 +776,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_23,
@@ -796,6 +808,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.05f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_24,
@@ -827,6 +840,7 @@ enum class UiThemeColor(
         surfaceDim = Color.DarkGray.copy(alpha = 0.1f),
         scrim = Color.Black.copy(alpha = 0.35f),
         surfaceContainerLow = Color.Black.copy(alpha = 0.3f),
+        surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_25,

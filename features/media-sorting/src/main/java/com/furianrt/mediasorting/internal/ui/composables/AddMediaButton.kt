@@ -44,7 +44,7 @@ internal fun AddMediaButton(
             )
             .border(
                 width = 2.dp,
-                color = MaterialTheme.colorScheme.surfaceContainerLow,
+                color = MaterialTheme.colorScheme.surfaceContainerLowest,
                 shape = RoundedCornerShape(24.dp),
             )
             .clickable(onClick = onClick)
