@@ -131,6 +131,10 @@ internal class MediaRepositoryImp @Inject constructor(
         .map { it.flatMap(NoteWithMedia::toNoteMedia) }
         .flowOn(dispatchers.default)
 
+    override suspend fun getNoteId(
+        mediaId: String,
+    ): String? = imageDao.getNoteId(mediaId) ?: videoDao.getNoteId(mediaId)
+
     override suspend fun getDeviceMediaList(
         allowVideo: Boolean,
         albumId: String?,

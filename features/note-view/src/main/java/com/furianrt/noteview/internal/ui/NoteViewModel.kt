@@ -183,13 +183,14 @@ internal class NoteViewModel @Inject constructor(
     }
 
     private fun sendPageChangeResult(page: Int) {
-        dialogResultCoordinator.onDialogResult(
-            dialogIdentifier = DialogIdentifier(
-                requestId = route.requestId,
-                dialogId = route.dialogId,
-            ),
-            code = DialogResult.Ok(data = page),
-        )
+        if (route.requestId != null && route.dialogId != null)
+            dialogResultCoordinator.onDialogResult(
+                dialogIdentifier = DialogIdentifier(
+                    requestId = route.requestId,
+                    dialogId = route.dialogId,
+                ),
+                code = DialogResult.Ok(data = page),
+            )
     }
 
     private fun toggleEditMode() {

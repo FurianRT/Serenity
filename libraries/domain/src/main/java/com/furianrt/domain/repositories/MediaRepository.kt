@@ -24,6 +24,8 @@ interface MediaRepository {
     fun getAllMedia(): Flow<List<LocalNote.Content.Media>>
     fun getNotesMedia(): Flow<List<NoteMedia>>
 
+    suspend fun getNoteId(mediaId: String): String?
+
     suspend fun getDeviceMediaList(
         allowVideo: Boolean,
         albumId: String? = null,

@@ -1,4 +1,5 @@
 <resources>
     <string name="media_view_save_to_gallery">Zapisz do galerii</string>
     <string name="media_view_saved_to_gallery">Zapisano w galerii</string>
+    <string name="media_view_go_to_note">Przejdź do notatki</string>
 </resources>

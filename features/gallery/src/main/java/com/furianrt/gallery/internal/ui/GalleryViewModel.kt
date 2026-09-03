@@ -115,7 +115,7 @@ internal class GalleryViewModel @Inject constructor(
     }
 
     private fun onPhotoItemClick(item: ListItem.Photo) {
-
+        _effect.tryEmit(GalleryEffect.OpenMediaViewScreen(item.id))
     }
 
     private fun onCreateNoteClick() {

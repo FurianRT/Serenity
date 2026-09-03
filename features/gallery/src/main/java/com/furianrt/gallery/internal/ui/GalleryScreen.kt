@@ -80,6 +80,7 @@ private data class CalendarState(
 @Composable
 internal fun GalleryScreen(
     openCreateNoteRequest: () -> Unit,
+    openMediaViewRequest: (mediaId: String) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: GalleryViewModel = hiltViewModel()
@@ -90,6 +91,7 @@ internal fun GalleryScreen(
     val listState = rememberLazyGridState()
 
     val openCreateNoteRequestState by rememberUpdatedState(openCreateNoteRequest)
+    val openMediaViewRequestState by rememberUpdatedState(openMediaViewRequest)
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
     var calendarState: CalendarState? by remember { mutableStateOf(null) }
@@ -101,6 +103,10 @@ internal fun GalleryScreen(
                 when (effect) {
                     is GalleryEffect.CloseScreen -> onCloseRequestState()
                     is GalleryEffect.OpenCreateNoteScreen -> openCreateNoteRequestState()
+                    is GalleryEffect.OpenMediaViewScreen -> {
+                        openMediaViewRequestState(effect.mediaId)
+                    }
+
                     is GalleryEffect.ShowDateSelector -> {
                         calendarState = CalendarState(
                             start = effect.start?.let { SelectedDate(it) },

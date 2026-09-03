@@ -1,4 +1,5 @@
 <resources>
     <string name="media_view_save_to_gallery">Salvar na Galeria</string>
     <string name="media_view_saved_to_gallery">Salvo na Galeria</string>
+    <string name="media_view_go_to_note">Ir para a nota</string>
 </resources>

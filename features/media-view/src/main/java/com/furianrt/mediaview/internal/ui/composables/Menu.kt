@@ -30,6 +30,9 @@ import kotlinx.coroutines.launch
 internal fun Menu(
     expanded: Boolean,
     hazeState: HazeState,
+    showDeleteButton: Boolean,
+    showGoToNoteButton: Boolean,
+    onGoToNoteClick: () -> Unit,
     onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     onSaveMediaClick: () -> Unit,
@@ -66,6 +69,17 @@ internal fun Menu(
             textColor = MaterialTheme.colorScheme.onPrimaryContainer,
             leadingIconColor = MaterialTheme.colorScheme.onPrimaryContainer,
         )
+        if (showGoToNoteButton) {
+            MenuItem(
+                icon = painterResource(R.drawable.ic_go_to_note),
+                text = stringResource(R.string.media_view_go_to_note),
+                colors = colors,
+                onClick = {
+                    onGoToNoteClick()
+                    onDismissRequest()
+                }
+            )
+        }
         MenuItem(
             icon = painterResource(R.drawable.ic_download),
             text = stringResource(R.string.media_view_save_to_gallery),
@@ -84,15 +98,17 @@ internal fun Menu(
                 onDismissRequest()
             }
         )
-        MenuItem(
-            icon = painterResource(com.furianrt.uikit.R.drawable.ic_delete),
-            text = stringResource(com.furianrt.uikit.R.string.action_delete),
-            colors = colors,
-            onClick = {
-                onDeleteClick()
-                onDismissRequest()
-            }
-        )
+        if (showDeleteButton) {
+            MenuItem(
+                icon = painterResource(uiR.drawable.ic_delete),
+                text = stringResource(uiR.string.action_delete),
+                colors = colors,
+                onClick = {
+                    onDeleteClick()
+                    onDismissRequest()
+                }
+            )
+        }
     }
 }
 
@@ -103,10 +119,13 @@ private fun Preview() {
         Menu(
             expanded = true,
             hazeState = HazeState(),
+            showDeleteButton = true,
+            showGoToNoteButton = true,
             onDismissRequest = {},
             onShareClick = {},
             onDeleteClick = {},
             onSaveMediaClick = {},
+            onGoToNoteClick = {},
         )
     }
 }

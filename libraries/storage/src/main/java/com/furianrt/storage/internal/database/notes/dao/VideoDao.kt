@@ -33,4 +33,7 @@ internal interface VideoDao {
 
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_ID} = :videoId AND ${EntryNoteVideo.FIELD_IS_SAVED} = 1)")
     suspend fun isSaved(videoId: String): Boolean
+
+    @Query("SELECT ${EntryNoteVideo.FIELD_NOTE_ID} FROM ${EntryNoteVideo.TABLE_NAME} WHERE ${EntryNoteVideo.FIELD_ID} = :mediaId")
+    suspend fun getNoteId(mediaId: String): String?
 }

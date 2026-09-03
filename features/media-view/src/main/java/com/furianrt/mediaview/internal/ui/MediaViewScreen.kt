@@ -71,6 +71,7 @@ private const val UI_HIDE_DELAY = 3000L
 @Composable
 internal fun MediaViewScreen(
     onCloseRequest: () -> Unit,
+    onOpenNoteViewRequest: (noteId: String) -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaViewModel>()
     val uiState by viewModel.state.collectAsStateWithLifecycle()
@@ -83,6 +84,7 @@ internal fun MediaViewScreen(
     val generalErrorMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val onOpenNoteViewRequestState by rememberUpdatedState(onOpenNoteViewRequest)
 
     DisposableEffect(Unit) {
         val requestedOrientation = activity?.requestedOrientation
@@ -137,6 +139,10 @@ internal fun MediaViewScreen(
                             message = generalErrorMessage,
                             duration = SnackbarDuration.Short,
                         )
+                    }
+
+                    is MediaViewEffect.OpenNoteViewScreen -> {
+                        onOpenNoteViewRequestState(effect.noteId)
                     }
                 }
             }
@@ -273,6 +279,8 @@ private fun SuccessContent(
                 totalImages = uiState.media.count(),
                 currentImageIndex = pagerState.currentPage,
                 hazeState = hazeState,
+                showDeleteButton = uiState.showDeleteButton,
+                showGoToNoteButton = uiState.showGoToNoteButton,
                 onBackClick = { onEvent(MediaViewEvent.OnButtonBackClick) },
                 onDeleteClick = {
                     hapticFeedback.performHapticFeedback(HapticFeedbackType.Confirm)
@@ -284,6 +292,9 @@ private fun SuccessContent(
                 onShareClick = {
                     onEvent(MediaViewEvent.OnButtonShareClick(pagerState.currentPage))
                 },
+                onGoToNoteClick = {
+                    onEvent(MediaViewEvent.OnButtonGoToNoteClick(pagerState.currentPage))
+                }
             )
         }
         ControlsAnimatedVisibility(
@@ -335,6 +346,8 @@ private fun Preview() {
                     MediaItem.Image(id = "2", name = "2", uri = Uri.EMPTY, ratio = 0.5f),
                     MediaItem.Image(id = "3", name = "3", uri = Uri.EMPTY, ratio = 1.4f),
                 ),
+                showDeleteButton = true,
+                showGoToNoteButton = true,
             ),
             snackBarHostState = SnackbarHostState(),
         )

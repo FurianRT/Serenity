@@ -1,4 +1,5 @@
 <resources>
     <string name="media_view_save_to_gallery">गैलरी में सहेजें</string>
     <string name="media_view_saved_to_gallery">गैलरी में सहेजा गया</string>
+    <string name="media_view_go_to_note">नोट पर जाएँ</string>
 </resources>

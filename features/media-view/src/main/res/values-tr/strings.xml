@@ -1,4 +1,5 @@
 <resources>
     <string name="media_view_save_to_gallery">Galeriye Kaydet</string>
     <string name="media_view_saved_to_gallery">Galeriye Kaydedildi</string>
+    <string name="media_view_go_to_note">Nota Git</string>
 </resources>

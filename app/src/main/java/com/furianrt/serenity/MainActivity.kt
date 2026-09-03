@@ -227,7 +227,13 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         exitTransition = { defaultExitTransition() },
                         popExitTransition = { defaultPopExitTransition() },
                         popEnterTransition = { defaultPopEnterTransition() },
-                        predictivePopEnterTransition = { defaultPopEnterTransition() },
+                        predictivePopEnterTransition = {
+                            if (targetState.destination.hasRoute<MediaViewRoute>()) {
+                                EnterTransition.None
+                            } else {
+                                defaultPopEnterTransition()
+                            }
+                        },
                         predictivePopExitTransition = { defaultPopExitTransition() },
                     ) {
                         noteListScreen(
@@ -262,7 +268,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
                                         noteId = noteId,
-                                        mediaId = mediaId,
+                                        initialMediaId = mediaId,
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -288,7 +294,8 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
                                         noteId = noteId,
-                                        mediaId = mediaId,
+                                        mediaBlockId = null,
+                                        initialMediaId = mediaId,
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -313,7 +320,16 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             navController = navController,
                             openGalleryScreen = navController::navigateToGallery,
                         )
-                        mediaViewScreen(onCloseRequest = navController::navigateUp)
+                        mediaViewScreen(
+                            onCloseRequest = navController::navigateUp,
+                            onOpenNoteViewRequest = { noteId ->
+                                navController.navigateToNoteView(
+                                    route = NoteViewRoute(
+                                        noteId = noteId,
+                                    ),
+                                )
+                            },
+                        )
                         mediaViewerScreen(onCloseRequest = navController::navigateUp)
                         mediaSortingScreen(
                             openMediaViewScreen = { noteId, mediaId, mediaBlockId, identifier ->
@@ -321,7 +337,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     route = MediaViewRoute(
                                         noteId = noteId,
                                         mediaBlockId = mediaBlockId,
-                                        mediaId = mediaId,
+                                        initialMediaId = mediaId,
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -353,12 +369,22 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
                         galleryScreen(
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
+                            hasMediaViewScreenRoute = { it.hasRoute<MediaViewRoute>() },
                             onCloseRequest = navController::navigateUp,
                             openCreateNoteRequest = {
                                 navController.navigateToNoteCreate(
                                     route = NoteCreateRoute(),
                                 )
                             },
+                            openMediaViewRequest = { mediaId ->
+                                navController.navigateToMediaView(
+                                    route = MediaViewRoute(
+                                        initialMediaId = mediaId,
+                                        allowDelete = false,
+                                        allowGoToNote = true,
+                                    ),
+                                )
+                            }
                         )
                     }
                     AnimatedVisibility(

@@ -36,11 +36,14 @@ internal fun Toolbar(
     totalImages: Int,
     currentImageIndex: Int,
     hazeState: HazeState,
+    showDeleteButton: Boolean,
+    showGoToNoteButton: Boolean,
     modifier: Modifier = Modifier,
     onBackClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onSaveMediaClick: () -> Unit = {},
+    onGoToNoteClick: () -> Unit = {},
 ) {
     Row(
         modifier = modifier
@@ -68,9 +71,12 @@ internal fun Toolbar(
             Menu(
                 expanded = state.showDropDownMenu,
                 hazeState = hazeState,
+                showDeleteButton = showDeleteButton,
+                showGoToNoteButton = showGoToNoteButton,
                 onDeleteClick = onDeleteClick,
                 onSaveMediaClick = onSaveMediaClick,
                 onShareClick = onShareClick,
+                onGoToNoteClick = onGoToNoteClick,
                 onDismissRequest = { state.showDropDownMenu = false },
             )
         }
@@ -101,6 +107,8 @@ private fun Preview() {
             totalImages = 50,
             currentImageIndex = 25,
             hazeState = HazeState(),
+            showDeleteButton = true,
+            showGoToNoteButton = true,
         )
     }
 }

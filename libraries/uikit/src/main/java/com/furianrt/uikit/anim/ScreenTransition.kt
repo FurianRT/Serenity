@@ -18,13 +18,13 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultEnterTransition(): 
             durationMillis = 350,
             easing = FastOutSlowInEasing,
         ),
-    ) + fadeIn(animationSpec = tween(200), initialAlpha = 0.05f)
+    ) + fadeIn(animationSpec = tween(200), initialAlpha = 0.02f)
 }
 
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): ExitTransition {
     return slideOutOfContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Left,
-        targetOffset = { (it * 0.1f).toInt() },
+        targetOffset = { (it * 0.05f).toInt() },
         animationSpec = tween(
             durationMillis = 350,
             easing = LinearEasing,
@@ -46,7 +46,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopExitTransition()
 fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopEnterTransition(): EnterTransition {
     return slideIntoContainer(
         towards = AnimatedContentTransitionScope.SlideDirection.Right,
-        initialOffset = { (it * 0.1f).toInt() },
+        initialOffset = { (it * 0.02f).toInt() },
         animationSpec = tween(
             durationMillis = 350,
             easing = FastOutSlowInEasing,

@@ -1,5 +1,7 @@
 package com.furianrt.mediaview.api
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -11,12 +13,14 @@ import com.furianrt.mediaview.internal.ui.MediaViewScreen
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class MediaViewRoute(
-    val noteId: String,
-    val mediaId: String,
-    val dialogId: Int,
-    val requestId: String,
+class MediaViewRoute(
+    val noteId: String? = null,
     val mediaBlockId: String? = null,
+    val initialMediaId: String? = null,
+    val dialogId: Int? = null,
+    val requestId: String? = null,
+    val allowDelete: Boolean = true,
+    val allowGoToNote: Boolean = false,
 )
 
 fun NavController.navigateToMediaView(
@@ -26,10 +30,18 @@ fun NavController.navigateToMediaView(
 
 fun NavGraphBuilder.mediaViewScreen(
     onCloseRequest: () -> Unit,
+    onOpenNoteViewRequest: (noteId: String) -> Unit,
 ) {
     composable<MediaViewRoute>(
         enterTransition = { fadeIn(animationSpec = tween(500)) },
-        exitTransition = { fadeOut(animationSpec = tween(500)) },
-        content = { MediaViewScreen(onCloseRequest) },
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { fadeOut(animationSpec = tween(500)) },
+        content = {
+            MediaViewScreen(
+                onCloseRequest = onCloseRequest,
+                onOpenNoteViewRequest = onOpenNoteViewRequest,
+            )
+        },
     )
 }

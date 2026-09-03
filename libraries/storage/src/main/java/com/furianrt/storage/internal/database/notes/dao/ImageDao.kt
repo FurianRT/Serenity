@@ -34,4 +34,7 @@ internal interface ImageDao {
 
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_ID} = :imageId AND ${EntryNoteImage.FIELD_IS_SAVED} = 1)")
     suspend fun isSaved(imageId: String): Boolean
+
+    @Query("SELECT ${EntryNoteImage.FIELD_NOTE_ID} FROM ${EntryNoteImage.TABLE_NAME} WHERE ${EntryNoteImage.FIELD_ID} = :mediaId")
+    suspend fun getNoteId(mediaId: String): String?
 }

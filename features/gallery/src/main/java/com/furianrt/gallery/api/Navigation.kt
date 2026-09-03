@@ -1,5 +1,7 @@
 package com.furianrt.gallery.api
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
@@ -9,6 +11,7 @@ import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.furianrt.gallery.internal.ui.GalleryScreen
 import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
 
@@ -24,15 +27,24 @@ fun NavController.navigateToGallery(
 
 fun NavGraphBuilder.galleryScreen(
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
+    hasMediaViewScreenRoute: (destination: NavDestination) -> Boolean,
     onCloseRequest: () -> Unit,
     openCreateNoteRequest: () -> Unit,
+    openMediaViewRequest: (mediaId: String) -> Unit,
 ) {
     composable<GalleryRoute>(
         exitTransition = {
-            if (hasNoteCreateScreenRoute(targetState.destination)) {
-                fadeOut(tween(250))
+            when {
+                hasNoteCreateScreenRoute(targetState.destination) -> fadeOut(tween(250))
+                hasMediaViewScreenRoute(targetState.destination) -> ExitTransition.None
+                else -> defaultExitTransition()
+            }
+        },
+        popEnterTransition = {
+            if (hasMediaViewScreenRoute(initialState.destination)) {
+                EnterTransition.None
             } else {
-                defaultExitTransition()
+                defaultPopEnterTransition()
             }
         },
         popExitTransition = { defaultPopExitTransition() },
@@ -40,6 +52,7 @@ fun NavGraphBuilder.galleryScreen(
         GalleryScreen(
             onCloseRequest = onCloseRequest,
             openCreateNoteRequest = openCreateNoteRequest,
+            openMediaViewRequest = openMediaViewRequest,
         )
     }
 }

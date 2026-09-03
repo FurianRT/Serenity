@@ -14,6 +14,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.api.MediaViewRoute
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
+import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
 import com.furianrt.mediaview.internal.ui.extensions.toMediaItem
 import com.furianrt.notelistui.extensions.toNoteFont
@@ -70,11 +71,13 @@ internal class MediaViewModel @Inject constructor(
     val effect = _effect.asSharedFlow()
 
     override fun onCleared() {
-        if (deletedMediaIdsState.value.isNotEmpty()) {
+        val requestId = route.requestId
+        val dialogId = route.dialogId
+        if (requestId != null && dialogId != null && deletedMediaIdsState.value.isNotEmpty()) {
             dialogResultCoordinator.onDialogResult(
                 dialogIdentifier = DialogIdentifier(
-                    requestId = route.requestId,
-                    dialogId = route.dialogId,
+                    requestId = requestId,
+                    dialogId = dialogId,
                 ),
                 code = DialogResult.Ok(data = deletedMediaIdsState.value),
             )
@@ -93,6 +96,17 @@ internal class MediaViewModel @Inject constructor(
             }
 
             is MediaViewEvent.OnButtonShareClick -> onButtonShareClick(event.mediaIndex)
+            is MediaViewEvent.OnButtonGoToNoteClick -> onButtonGoToNoteClick(event.mediaIndex)
+        }
+    }
+
+    private fun onButtonGoToNoteClick(mediaIndex: Int) {
+        val media = getMediaItem(mediaIndex) ?: return
+        launch {
+            val noteId = mediaRepository.getNoteId(media.id)
+            if (noteId != null) {
+                _effect.tryEmit(MediaViewEffect.OpenNoteViewScreen(noteId))
+            }
         }
     }
 
@@ -117,8 +131,7 @@ internal class MediaViewModel @Inject constructor(
     }
 
     private fun onButtonSaveToGalleryClick(mediaIndex: Int) {
-        val successState = (state.value as? MediaViewUiState.Success) ?: return
-        val media = successState.media.getOrNull(mediaIndex) ?: return
+        val media = getMediaItem(mediaIndex) ?: return
         launch {
             if (mediaRepository.saveToGallery(media.toLocalMedia())) {
                 _effect.tryEmit(MediaViewEffect.ShowMediaSavedMessage)
@@ -129,8 +142,7 @@ internal class MediaViewModel @Inject constructor(
     }
 
     private fun onButtonShareClick(mediaIndex: Int) {
-        val successState = (state.value as? MediaViewUiState.Success) ?: return
-        val media = successState.media.getOrNull(mediaIndex) ?: return
+        val media = getMediaItem(mediaIndex) ?: return
         _effect.tryEmit(MediaViewEffect.ShareMedia(media))
     }
 
@@ -144,6 +156,9 @@ internal class MediaViewModel @Inject constructor(
         }
     }
 
+    private fun getMediaItem(index: Int): MediaItem? = (state.value as? MediaViewUiState.Success)
+        ?.media?.getOrNull(index)
+
     private fun buildState(
         media: List<LocalNote.Content.Media>,
         deletedMediaIds: Set<String>,
@@ -153,7 +168,9 @@ internal class MediaViewModel @Inject constructor(
         return MediaViewUiState.Success(
             media = filteredMedia.map(LocalNote.Content.Media::toMediaItem),
             font = font.toNoteFont(),
-            initialPage = filteredMedia.indexOfFirstOrNull { it.id == route.mediaId } ?: 0,
+            initialPage = filteredMedia.indexOfFirstOrNull { it.id == route.initialMediaId } ?: 0,
+            showDeleteButton = route.allowDelete,
+            showGoToNoteButton = route.allowGoToNote,
         )
     }
 }

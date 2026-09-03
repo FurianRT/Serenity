@@ -25,8 +25,8 @@ import kotlin.reflect.typeOf
 @Serializable
 data class NoteViewRoute(
     val noteId: String,
-    val dialogId: Int,
-    val requestId: String,
+    val dialogId: Int? = null,
+    val requestId: String? = null,
     val searchData: SearchData? = null,
 ) {
     @Serializable
