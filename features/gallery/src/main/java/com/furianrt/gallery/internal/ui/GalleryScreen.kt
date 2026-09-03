@@ -60,6 +60,7 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.components.SelectedDate
+import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -118,7 +119,7 @@ internal fun GalleryScreen(
             }
     }
 
-    LaunchedEffect(uiState.dateFilter) {
+    SkipFirstEffect(uiState.dateFilter) {
         listState.scrollToItem(0)
     }
 

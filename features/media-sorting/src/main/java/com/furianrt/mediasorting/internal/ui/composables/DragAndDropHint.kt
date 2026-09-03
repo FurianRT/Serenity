@@ -32,7 +32,7 @@ internal fun DragAndDropHint(
         contentAlignment = Alignment.Center,
     ) {
         Text(
-            modifier = modifier
+            modifier = Modifier
                 .clip(RoundedCornerShape(24.dp))
                 .hazeEffect(
                     state = hazeState,

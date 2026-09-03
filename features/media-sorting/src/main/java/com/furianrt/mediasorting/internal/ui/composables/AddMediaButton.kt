@@ -44,7 +44,7 @@ internal fun AddMediaButton(
             )
             .border(
                 width = 2.dp,
-                color = MaterialTheme.colorScheme.tertiaryContainer,
+                color = MaterialTheme.colorScheme.surfaceContainerLow,
                 shape = RoundedCornerShape(24.dp),
             )
             .clickable(onClick = onClick)
@@ -54,7 +54,7 @@ internal fun AddMediaButton(
         Icon(
             painter = painterResource(uiR.drawable.ic_add_media_big),
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.tertiaryContainer,
+            tint = MaterialTheme.colorScheme.surfaceContainerLow,
         )
     }
 }
