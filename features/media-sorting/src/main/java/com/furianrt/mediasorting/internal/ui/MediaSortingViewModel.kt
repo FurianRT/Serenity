@@ -24,6 +24,7 @@ import com.furianrt.uikit.utils.DialogResultListener
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,16 +49,18 @@ internal class MediaSortingViewModel @Inject constructor(
     val state: StateFlow<MediaSortingUiState> = _state.asStateFlow()
 
     private val _effect = MutableSharedFlow<MediaSortingEffect>(extraBufferCapacity = 5)
-    val effect = _effect.asSharedFlow()
+    val effect: SharedFlow<MediaSortingEffect> = _effect.asSharedFlow()
 
     init {
         dialogResultCoordinator.addDialogResultListener(requestId = route.noteId, listener = this)
         launch {
             _state.update { currentState ->
                 currentState.copy(
-                    media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
-                        .first()
-                        .map(LocalNote.Content.Media::toMediaItem),
+                    content = MediaSortingUiState.Content.Success(
+                        media = getNoteMediaUseCase(route.noteId, route.mediaBlockId)
+                            .first()
+                            .map(LocalNote.Content.Media::toMediaItem),
+                    )
                 )
             }
         }
@@ -107,20 +110,22 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun sendResult() {
-        if (state.value.hasContentChanged) {
-            dialogResultCoordinator.onDialogResult(
-                dialogIdentifier = DialogIdentifier(
-                    requestId = route.requestId,
-                    dialogId = route.dialogId,
-                ),
-                code = DialogResult.Ok(
-                    data = MediaSortingResult(
-                        noteId = route.noteId,
-                        mediaBlockId = route.mediaBlockId,
-                        media = state.value.media.map(MediaItem::toLocalNoteMedia),
-                    )
-                ),
-            )
+        (state.value.content as? MediaSortingUiState.Content.Success)?.let { successContent ->
+            if (state.value.hasContentChanged) {
+                dialogResultCoordinator.onDialogResult(
+                    dialogIdentifier = DialogIdentifier(
+                        requestId = route.requestId,
+                        dialogId = route.dialogId,
+                    ),
+                    code = DialogResult.Ok(
+                        data = MediaSortingResult(
+                            noteId = route.noteId,
+                            mediaBlockId = route.mediaBlockId,
+                            media = successContent.media.map(MediaItem::toLocalNoteMedia),
+                        )
+                    ),
+                )
+            }
         }
     }
 
@@ -133,13 +138,17 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun changeMediaOrder(from: LazyGridItemInfo, to: LazyGridItemInfo) {
-        _state.update { currentState ->
-            currentState.copy(
-                media = currentState.media.toMutableList().apply {
-                    add(to.index, removeAt(from.index))
-                },
-                hasContentChanged = true,
-            )
+        (state.value.content as? MediaSortingUiState.Content.Success)?.let { successContent ->
+            _state.update { currentState ->
+                currentState.copy(
+                    content = successContent.copy(
+                        media = successContent.media.toMutableList().apply {
+                            add(to.index, removeAt(from.index))
+                        },
+                    ),
+                    hasContentChanged = true,
+                )
+            }
         }
     }
 
@@ -148,22 +157,30 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun addMedia(media: List<MediaItem>) {
-        _state.update { currentState ->
-            currentState.copy(
-                media = currentState.media.toMutableList().apply { addAll(media) },
-                hasContentChanged = true
-            )
+        (state.value.content as? MediaSortingUiState.Content.Success)?.let { successContent ->
+            _state.update { currentState ->
+                currentState.copy(
+                    content = successContent.copy(
+                        media = successContent.media.toMutableList().apply { addAll(media) },
+                    ),
+                    hasContentChanged = true
+                )
+            }
         }
     }
 
     private fun removeMedia(mediaIds: Set<String>) {
-        _state.update { currentState ->
-            currentState.copy(
-                media = currentState.media.toMutableList().apply {
-                    removeAll { mediaIds.contains(it.id) }
-                },
-                hasContentChanged = true,
-            )
+        (state.value.content as? MediaSortingUiState.Content.Success)?.let { successContent ->
+            _state.update { currentState ->
+                currentState.copy(
+                    content = successContent.copy(
+                        media = successContent.media.toMutableList().apply {
+                            removeAll { mediaIds.contains(it.id) }
+                        },
+                    ),
+                    hasContentChanged = true,
+                )
+            }
         }
     }
 
@@ -202,8 +219,8 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun buildInitialState() = MediaSortingUiState(
-        media = emptyList(),
-        hasContentChanged = false,
         theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+        content = MediaSortingUiState.Content.Loading,
+        hasContentChanged = false,
     )
 }

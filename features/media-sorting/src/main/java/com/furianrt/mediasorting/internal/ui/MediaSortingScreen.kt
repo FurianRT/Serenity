@@ -104,13 +104,14 @@ internal fun MediaSortingScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
-    val hazeState = rememberHazeState()
+
     val snackBarHostState = remember { SnackbarHostState() }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
     val mediaSelectorState = rememberMediaSelectorState()
+    val hazeState = rememberHazeState()
 
     val storagePermissionsState = rememberMultiplePermissionsState(
         permissions = PermissionsUtils.getMediaPermissionList(),
@@ -163,38 +164,17 @@ internal fun MediaSortingScreen(
             }
     }
 
-    MediaSelectorBottomSheet(
-        modifier = Modifier
-            .fillMaxSize()
-            .hazeSource(hazeState),
-        state = mediaSelectorState,
-        openMediaViewer = { viewModel.onEvent(MediaSortingEvent.OnOpenMediaViewerRequest(it)) },
-    ) {
-        Content(
-            uiState = uiState,
-            onEvent = viewModel::onEvent,
-        )
-        DimSurfaceOverlay(
-            visible = mediaSelectorState.isVisible,
-        )
-        SnackbarHost(
-            modifier = Modifier
-                .navigationBarsPadding()
-                .align(Alignment.BottomCenter),
-            hostState = snackBarHostState,
-            snackbar = { data ->
-                SnackBar(
-                    title = data.visuals.message,
-                    icon = painterResource(uiR.drawable.ic_info),
-                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
-                )
-            },
-        )
-    }
-
     BackHandler(
         enabled = uiState.hasContentChanged,
         onBack = { viewModel.onEvent(MediaSortingEvent.OnButtonBackClick) },
+    )
+
+    Content(
+        modifier = Modifier.hazeSource(hazeState),
+        uiState = uiState,
+        mediaSelectorState = mediaSelectorState,
+        snackBarHostState = snackBarHostState,
+        onEvent = viewModel::onEvent,
     )
 
     if (showMediaPermissionDialog) {
@@ -218,52 +198,90 @@ internal fun MediaSortingScreen(
 @Composable
 private fun Content(
     uiState: MediaSortingUiState,
+    mediaSelectorState: MediaSelectorState,
+    snackBarHostState: SnackbarHostState,
     onEvent: (event: MediaSortingEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyGridState()
     val hazeState = rememberHazeState()
-    val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val listState = rememberLazyGridState()
 
+    val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     val statusBarPv = WindowInsets.statusBars.asPaddingValues()
     val statusBarHeight = rememberSaveable { statusBarPv.calculateTopPadding().value }
 
-    MovableToolbarScaffold(
-        modifier = modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface),
-        listState = listState,
-        enabled = false,
-        toolbar = {
-            Toolbar(
-                modifier = Modifier.padding(top = statusBarHeight.dp),
-                onBackClick = { onEvent(MediaSortingEvent.OnButtonBackClick) },
-                onDoneClick = { onEvent(MediaSortingEvent.OnButtonDoneClick) },
-            )
-        }
-    ) { topPadding ->
-        AppBackground(
-            modifier = Modifier.hazeSource(hazeState),
-            theme = uiState.theme,
-        )
-        ContentList(
-            uiState = uiState,
-            onEvent = onEvent,
+    MediaSelectorBottomSheet(
+        modifier = modifier.fillMaxSize(),
+        state = mediaSelectorState,
+        openMediaViewer = { onEvent(MediaSortingEvent.OnOpenMediaViewerRequest(it)) },
+    ) {
+        MovableToolbarScaffold(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surface),
             listState = listState,
-            hazeState = hazeState,
-            contentPadding = PaddingValues(
-                top = topPadding + 8.dp,
-                bottom = 80.dp + bottomInsetPadding,
-                start = 8.dp,
-                end = 4.dp,
-            ),
+            enabled = false,
+            toolbar = {
+                Toolbar(
+                    modifier = Modifier.padding(top = statusBarHeight.dp),
+                    onBackClick = { onEvent(MediaSortingEvent.OnButtonBackClick) },
+                    onDoneClick = { onEvent(MediaSortingEvent.OnButtonDoneClick) },
+                )
+            }
+        ) { topPadding ->
+            AppBackground(
+                modifier = Modifier.hazeSource(hazeState),
+                theme = uiState.theme,
+            )
+            when (val content = uiState.content) {
+                is MediaSortingUiState.Content.Loading -> LoadingContent()
+                is MediaSortingUiState.Content.Success -> SuccessContent(
+                    uiState = content,
+                    onEvent = onEvent,
+                    listState = listState,
+                    hazeState = hazeState,
+                    contentPadding = PaddingValues(
+                        top = topPadding + 8.dp,
+                        bottom = 80.dp + bottomInsetPadding,
+                        start = 8.dp,
+                        end = 4.dp,
+                    ),
+                )
+            }
+        }
+        DimSurfaceOverlay(
+            visible = mediaSelectorState.isVisible,
+        )
+        SnackbarHost(
+            modifier = Modifier
+                .navigationBarsPadding()
+                .align(Alignment.BottomCenter),
+            hostState = snackBarHostState,
+            snackbar = { data ->
+                SnackBar(
+                    title = data.visuals.message,
+                    icon = painterResource(uiR.drawable.ic_info),
+                    tonalColor = MaterialTheme.colorScheme.tertiaryContainer,
+                )
+            },
         )
     }
 }
 
 @Composable
-private fun ContentList(
-    uiState: MediaSortingUiState,
+private fun LoadingContent(
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surface),
+    )
+}
+
+@Composable
+private fun SuccessContent(
+    uiState: MediaSortingUiState.Content.Success,
     onEvent: (event: MediaSortingEvent) -> Unit,
     listState: LazyGridState,
     hazeState: HazeState,
@@ -407,35 +425,39 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = MediaSortingUiState(
-                hasContentChanged = false,
                 theme = UiThemeColor.defaultTheme,
-                media = buildList {
-                    repeat(7) { index ->
-                        add(
-                            MediaItem.Image(
-                                id = index.toString(),
-                                name = "",
-                                uri = Uri.EMPTY,
-                                ratio = 1f,
-                                addedDate = ZonedDateTime.now(),
+                hasContentChanged = false,
+                content = MediaSortingUiState.Content.Success(
+                    media = buildList {
+                        repeat(7) { index ->
+                            add(
+                                MediaItem.Image(
+                                    id = index.toString(),
+                                    name = "",
+                                    uri = Uri.EMPTY,
+                                    ratio = 1f,
+                                    addedDate = ZonedDateTime.now(),
+                                )
                             )
-                        )
-                    }
-                    repeat(6) { index ->
-                        add(
-                            MediaItem.Video(
-                                id = (7 + index).toString(),
-                                name = "",
-                                uri = Uri.EMPTY,
-                                ratio = 1f,
-                                duration = 1500,
-                                addedDate = ZonedDateTime.now(),
+                        }
+                        repeat(6) { index ->
+                            add(
+                                MediaItem.Video(
+                                    id = (7 + index).toString(),
+                                    name = "",
+                                    uri = Uri.EMPTY,
+                                    ratio = 1f,
+                                    duration = 1500,
+                                    addedDate = ZonedDateTime.now(),
+                                )
                             )
-                        )
+                        }
                     }
-                }
+                ),
             ),
             onEvent = {},
+            mediaSelectorState = rememberMediaSelectorState(),
+            snackBarHostState = SnackbarHostState(),
         )
     }
 }

@@ -10,10 +10,19 @@ import com.furianrt.uikit.utils.DialogIdentifier
 
 @Immutable
 internal data class MediaSortingUiState(
-    val media: List<MediaItem>,
-    val hasContentChanged: Boolean,
     val theme: UiThemeColor,
-)
+    val content: Content,
+    val hasContentChanged: Boolean,
+) {
+    sealed interface Content {
+        data object Loading : Content
+
+        @Immutable
+        data class Success(
+            val media: List<MediaItem>,
+        ) : Content
+    }
+}
 
 internal sealed interface MediaSortingEvent {
     data class OnRemoveMediaClick(val media: MediaItem) : MediaSortingEvent
