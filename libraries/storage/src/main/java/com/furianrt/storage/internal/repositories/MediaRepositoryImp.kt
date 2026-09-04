@@ -128,7 +128,14 @@ internal class MediaRepositoryImp @Inject constructor(
     ) { images, videos -> images + videos }
 
     override fun getNotesMedia(): Flow<List<NoteMedia>> = noteDao.getNotesWithMedia()
-        .map { it.flatMap(NoteWithMedia::toNoteMedia) }
+        .map { media ->
+            media
+                .flatMap(NoteWithMedia::toNoteMedia)
+                .sortedWith(
+                    compareByDescending(NoteMedia::noteDate)
+                        .thenByDescending(NoteMedia::addedDate)
+                )
+        }
         .flowOn(dispatchers.default)
 
     override suspend fun getNoteId(

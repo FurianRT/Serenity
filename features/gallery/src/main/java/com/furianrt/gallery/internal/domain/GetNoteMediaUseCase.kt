@@ -24,8 +24,8 @@ internal class GetNoteMediaUseCase @Inject constructor(
                 val noteDate = media.noteDate.toLocalDate()
                 when {
                     startDate != null && endDate != null -> noteDate in startDate..endDate
-                    startDate != null -> noteDate >= startDate
-                    else -> noteDate <= startDate
+                    startDate != null -> noteDate == startDate
+                    else -> noteDate == endDate
                 }
             }
             .flowOn(dispatchers.default)

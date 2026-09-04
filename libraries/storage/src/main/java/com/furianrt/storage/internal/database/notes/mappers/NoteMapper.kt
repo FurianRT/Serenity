@@ -146,10 +146,7 @@ private fun LinkedNote.getLocalNoteContent(text: String): List<LocalNote.Content
 internal fun NoteWithMedia.toNoteMedia(): List<NoteMedia> {
     val noteImages = images.map { it.toNoteMedia(date) }
     val noteVideos = videos.map { it.toNoteMedia(date) }
-    return (noteImages + noteVideos).sortedWith(
-        compareByDescending(NoteMedia::noteDate)
-            .thenByDescending(NoteMedia::addedDate)
-    )
+    return noteImages + noteVideos
 }
 
 private fun EntryNoteImage.toNoteMedia(noteDate: ZonedDateTime) = NoteMedia.Image(
