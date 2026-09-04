@@ -13,6 +13,7 @@ import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaview.api.MediaViewRoute
+import com.furianrt.mediaview.api.SearchDataType
 import com.furianrt.mediaview.internal.domain.GetNoteMediaUseCase
 import com.furianrt.mediaview.internal.ui.entities.MediaItem
 import com.furianrt.mediaview.internal.ui.extensions.toLocalMedia
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.reflect.typeOf
 import com.furianrt.uikit.R as uiR
 
 @HiltViewModel
@@ -47,14 +49,18 @@ internal class MediaViewModel @Inject constructor(
     private val dialogResultCoordinator: DialogResultCoordinator,
 ) : ViewModel() {
 
-    private val route = savedStateHandle.toRoute<MediaViewRoute>()
+    private val route = savedStateHandle.toRoute<MediaViewRoute>(
+        typeMap = mapOf(typeOf<MediaViewRoute.SearchData?>() to SearchDataType),
+    )
 
     private val deletedMediaIdsState = MutableStateFlow(emptySet<String>())
 
     val state: StateFlow<MediaViewUiState> = combine(
         getNoteMediaUseCase(
-            noteId = route.noteId,
-            blockId = route.mediaBlockId
+            noteId = route.searchData?.noteId,
+            blockId = route.searchData?.mediaBlockId,
+            startDate = route.searchData?.startDate,
+            endDate = route.searchData?.endDate,
         ),
         deletedMediaIdsState,
         appearanceRepository.getAppFont(),
@@ -168,7 +174,9 @@ internal class MediaViewModel @Inject constructor(
         return MediaViewUiState.Success(
             media = filteredMedia.map(LocalNote.Content.Media::toMediaItem),
             font = font.toNoteFont(),
-            initialPage = filteredMedia.indexOfFirstOrNull { it.id == route.initialMediaId } ?: 0,
+            initialPage = filteredMedia.indexOfFirstOrNull { media ->
+                media.id == route.searchData?.initialMediaId
+            } ?: 0,
             showDeleteButton = route.allowDelete,
             showGoToNoteButton = route.allowGoToNote,
         )

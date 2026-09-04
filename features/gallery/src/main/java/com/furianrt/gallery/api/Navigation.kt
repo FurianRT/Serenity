@@ -14,6 +14,7 @@ import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 
 @Serializable
 data object GalleryRoute
@@ -30,7 +31,7 @@ fun NavGraphBuilder.galleryScreen(
     hasMediaViewScreenRoute: (destination: NavDestination) -> Boolean,
     onCloseRequest: () -> Unit,
     openCreateNoteRequest: () -> Unit,
-    openMediaViewRequest: (mediaId: String) -> Unit,
+    openMediaViewRequest: (mediaId: String, startDate: LocalDate?, endDate: LocalDate?) -> Unit,
 ) {
     composable<GalleryRoute>(
         exitTransition = {

@@ -267,8 +267,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
-                                        noteId = noteId,
-                                        initialMediaId = mediaId,
+                                        searchData = MediaViewRoute.SearchData(
+                                            noteId = noteId,
+                                            initialMediaId = mediaId,
+                                        ),
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -293,9 +295,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
-                                        noteId = noteId,
-                                        mediaBlockId = null,
-                                        initialMediaId = mediaId,
+                                        searchData = MediaViewRoute.SearchData(
+                                            noteId = noteId,
+                                            initialMediaId = mediaId,
+                                        ),
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -335,9 +338,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             openMediaViewScreen = { noteId, mediaId, mediaBlockId, identifier ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
-                                        noteId = noteId,
-                                        mediaBlockId = mediaBlockId,
-                                        initialMediaId = mediaId,
+                                        searchData = MediaViewRoute.SearchData(
+                                            noteId = noteId,
+                                            mediaBlockId = mediaBlockId,
+                                            initialMediaId = mediaId,
+                                        ),
                                         dialogId = identifier.dialogId,
                                         requestId = identifier.requestId,
                                     ),
@@ -376,10 +381,14 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     route = NoteCreateRoute(),
                                 )
                             },
-                            openMediaViewRequest = { mediaId ->
+                            openMediaViewRequest = { mediaId, startDate, endDate ->
                                 navController.navigateToMediaView(
                                     route = MediaViewRoute(
-                                        initialMediaId = mediaId,
+                                        searchData = MediaViewRoute.SearchData(
+                                            initialMediaId = mediaId,
+                                            startDate = startDate,
+                                            endDate = endDate,
+                                        ),
                                         allowDelete = false,
                                         allowGoToNote = true,
                                     ),

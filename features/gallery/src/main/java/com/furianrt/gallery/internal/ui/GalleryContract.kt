@@ -36,7 +36,12 @@ internal sealed interface GalleryEvent {
 internal sealed interface GalleryEffect {
     data object CloseScreen : GalleryEffect
     data object OpenCreateNoteScreen : GalleryEffect
-    data class OpenMediaViewScreen(val mediaId: String) : GalleryEffect
+    data class OpenMediaViewScreen(
+        val mediaId: String,
+        val startDate: LocalDate?,
+        val endDate: LocalDate?,
+    ) : GalleryEffect
+
     data class ShowDateSelector(
         val start: LocalDate?,
         val end: LocalDate?,

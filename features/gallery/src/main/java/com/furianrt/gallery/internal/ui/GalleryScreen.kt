@@ -81,7 +81,7 @@ private data class CalendarState(
 @Composable
 internal fun GalleryScreen(
     openCreateNoteRequest: () -> Unit,
-    openMediaViewRequest: (mediaId: String) -> Unit,
+    openMediaViewRequest: (mediaId: String, startDate: LocalDate?, endDate: LocalDate?) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: GalleryViewModel = hiltViewModel()
@@ -105,7 +105,7 @@ internal fun GalleryScreen(
                     is GalleryEffect.CloseScreen -> onCloseRequestState()
                     is GalleryEffect.OpenCreateNoteScreen -> openCreateNoteRequestState()
                     is GalleryEffect.OpenMediaViewScreen -> {
-                        openMediaViewRequestState(effect.mediaId)
+                        openMediaViewRequestState(effect.mediaId, effect.startDate, effect.endDate)
                     }
 
                     is GalleryEffect.ShowDateSelector -> {

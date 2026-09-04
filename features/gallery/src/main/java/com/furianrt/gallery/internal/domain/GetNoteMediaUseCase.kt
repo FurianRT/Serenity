@@ -16,18 +16,18 @@ internal class GetNoteMediaUseCase @Inject constructor(
     operator fun invoke(
         startDate: LocalDate?,
         endDate: LocalDate?,
-    ): Flow<List<NoteMedia>> = if (startDate == null && endDate == null) {
-        mediaRepository.getNotesMedia()
-    } else {
+    ): Flow<List<NoteMedia>> = if (startDate != null) {
         mediaRepository.getNotesMedia()
             .deepFilter { media ->
                 val noteDate = media.noteDate.toLocalDate()
-                when {
-                    startDate != null && endDate != null -> noteDate in startDate..endDate
-                    startDate != null -> noteDate == startDate
-                    else -> noteDate == endDate
+                if (endDate != null) {
+                    noteDate in startDate..endDate
+                } else {
+                    noteDate == startDate
                 }
             }
             .flowOn(dispatchers.default)
+    } else {
+        mediaRepository.getNotesMedia()
     }
 }
