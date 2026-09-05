@@ -27,7 +27,7 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultExitTransition(): E
         targetOffset = { (it * 0.05f).toInt() },
         animationSpec = tween(
             durationMillis = 350,
-            easing = LinearEasing,
+            easing = FastOutSlowInEasing,
         ),
     ) + fadeOut(animationSpec = tween(250))
 }
