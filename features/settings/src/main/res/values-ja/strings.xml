@@ -26,4 +26,5 @@
     <string name="settings_widget_error_dialog_title">ウィジェットを追加できません</string>
     <string name="settings_xiaomi_widget_error_dialog_text">アプリの設定でSerenityがホーム画面にショートカットを追加できるように許可してから、もう一度お試しください</string>
     <string name="settings_widget_error_dialog_text">お使いのデバイスでSerenityによるウィジェットの追加が制限されている可能性があります。アプリとホーム画面の設定を確認して、もう一度お試しください</string>
+    <string name="settings_app_store_open_error">アプリのページを開けませんでした</string>
 </resources>

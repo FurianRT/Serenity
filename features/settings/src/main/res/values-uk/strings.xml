@@ -26,4 +26,5 @@
     <string name="settings_widget_error_dialog_title">Не вдалося додати віджет</string>
     <string name="settings_xiaomi_widget_error_dialog_text">Дозвольте Serenity додавати ярлики на головний екран у налаштуваннях застосунку, а потім спробуйте ще раз</string>
     <string name="settings_widget_error_dialog_text">Можливо, ваш пристрій не дозволяє Serenity додавати віджети. Перевірте налаштування застосунку та головного екрана, а потім спробуйте ще раз</string>
+    <string name="settings_app_store_open_error">Не вдалося відкрити сторінку застосунку</string>
 </resources>

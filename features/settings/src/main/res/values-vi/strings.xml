@@ -26,4 +26,5 @@
     <string name="settings_widget_error_dialog_title">Không thể thêm tiện ích</string>
     <string name="settings_xiaomi_widget_error_dialog_text">Hãy cho phép Serenity thêm lối tắt vào Màn hình chính trong phần cài đặt ứng dụng, sau đó thử lại</string>
     <string name="settings_widget_error_dialog_text">Thiết bị của bạn có thể đang ngăn Serenity thêm tiện ích. Hãy kiểm tra cài đặt ứng dụng và Màn hình chính, sau đó thử lại</string>
+    <string name="settings_app_store_open_error">Không thể mở trang ứng dụng</string>
 </resources>

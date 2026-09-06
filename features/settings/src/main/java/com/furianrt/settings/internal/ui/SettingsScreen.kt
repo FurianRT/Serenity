@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.widget.Toast
 import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -591,7 +592,11 @@ private fun openAppMarketPage(
     val intent = Intent(Intent.ACTION_VIEW).apply {
         data = url.toUri()
     }
-    context.startActivity(intent)
+    try {
+        context.startActivity(intent)
+    } catch (_: ActivityNotFoundException) {
+        Toast.makeText(context, R.string.settings_app_store_open_error, Toast.LENGTH_SHORT).show()
+    }
 }
 
 @Composable

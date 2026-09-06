@@ -26,4 +26,5 @@
     <string name="settings_widget_error_dialog_title">Widgetul nu a putut fi adăugat</string>
     <string name="settings_xiaomi_widget_error_dialog_text">Permiteți aplicației Serenity să adauge comenzi rapide pe ecranul principal din setările aplicației, apoi încercați din nou</string>
     <string name="settings_widget_error_dialog_text">Este posibil ca dispozitivul dvs. să împiedice Serenity să adauge widgeturi. Verificați setările aplicației și ale ecranului principal, apoi încercați din nou</string>
+    <string name="settings_app_store_open_error">Nu s-a putut deschide pagina aplicației</string>
 </resources>

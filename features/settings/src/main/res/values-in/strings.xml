@@ -26,4 +26,5 @@
     <string name="settings_widget_error_dialog_title">Widget tidak dapat ditambahkan</string>
     <string name="settings_xiaomi_widget_error_dialog_text">Izinkan Serenity menambahkan pintasan ke layar utama di pengaturan aplikasi, lalu coba lagi</string>
     <string name="settings_widget_error_dialog_text">Perangkat Anda mungkin mencegah Serenity menambahkan widget. Periksa pengaturan aplikasi dan layar utama, lalu coba lagi</string>
+    <string name="settings_app_store_open_error">Tidak dapat membuka halaman aplikasi</string>
 </resources>
