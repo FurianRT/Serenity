@@ -340,6 +340,16 @@ private fun SuccessScreen(
             hazeState = hazeState,
         ) {
             OptionButton(
+                title = stringResource(R.string.settings_reminders_title),
+                icon = painterResource(R.drawable.ic_reminders),
+                onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+        ) {
+            OptionButton(
                 title = stringResource(uiR.string.action_gallery),
                 icon = painterResource(uiR.drawable.ic_photos),
                 onClick = { onEvent(SettingsEvent.OnButtonGalleryClick) },
@@ -369,16 +379,6 @@ private fun SuccessScreen(
                 title = stringResource(R.string.settings_note_content_title),
                 icon = painterResource(R.drawable.ic_note_content),
                 onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
-            )
-        }
-        OptionButtonWrapper(
-            modifier = Modifier.fillMaxWidth(),
-            hazeState = hazeState,
-        ) {
-            OptionButton(
-                title = stringResource(R.string.settings_reminders_title),
-                icon = painterResource(R.drawable.ic_reminders),
-                onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
             )
         }
         if (uiState.showWidgetsButton) {

@@ -28,7 +28,7 @@ object Colors {
         val DistantCastleGreen = Color(0xFF2E4E3B)
         val DistantCastleBlue = Color(0xFF0F1A29)
 
-        val TotalBlack = Color(0xFF040009)
+        val TotalBlackGrey = Color(0xFF1F1F1F)
         val TotalBlackPurple = Color(0xFF040009)
         val TotalBlackGreen = Color(0xFF0A1514)
         val TotalBlackBlue = Color(0xFF091727)
