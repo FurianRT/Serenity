@@ -5,14 +5,17 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.uikit.extensions.dpToPx
+import com.furianrt.uikit.extensions.pxToDp
 
 @Composable
 internal fun StickersBox(
@@ -56,12 +59,20 @@ private fun StickerElement(
         targetValue = emptyTitleHeight(),
         animationSpec = tween(250),
     )
+    LaunchedEffect(Unit) {
+        var prevOffset = addOffset
+        snapshotFlow { addOffset }
+            .collect { offset ->
+                sticker.state.dpOffsetY += (offset - prevOffset).pxToDp(density)
+                prevOffset = offset
+            }
+    }
     StickerScreenItem(
         modifier = modifier.offset {
             val stickerSize = StickerItem.DEFAULT_SIZE.toPx()
             IntOffset(
                 x = (containerWidth * sticker.state.biasX - stickerSize / 2f).toInt(),
-                y = (sticker.state.dpOffsetY.toPx() - stickerSize / 2f + addOffset).toInt(),
+                y = (sticker.state.dpOffsetY.toPx() - stickerSize / 2f).toInt(),
             )
         },
         item = sticker,
@@ -73,9 +84,8 @@ private fun StickerElement(
                 val stickerOffset = containerWidth * sticker.state.biasX + delta.x
                 stickerOffset.coerceIn(0f, containerWidth) / containerWidth
             }
-            sticker.state.dpOffsetY = density.run {
-                (sticker.state.dpOffsetY + delta.y.toDp()).coerceAtLeast(0.dp)
-            }
+            sticker.state.dpOffsetY =
+                (sticker.state.dpOffsetY + delta.y.pxToDp(density)).coerceAtLeast(0.dp)
         },
         onTransformed = { onStickerChanged(sticker) },
         onClick = onStickerClick,
