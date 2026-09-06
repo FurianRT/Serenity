@@ -1,6 +1,7 @@
 package com.furianrt.reminders.internal.ui.list.composables
 
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -56,20 +58,25 @@ internal fun ReminderListItem(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 82.dp)
-            .clip(RoundedCornerShape(12.dp))
+            .clip(RoundedCornerShape(16.dp))
             .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 12.dp,
-                    tint = HazeTint(MaterialTheme.colorScheme.background),
+                    blurRadius = 16.dp,
+                    tint = HazeTint(Color.Transparent),
                 )
+            )
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.background,
+                shape = RoundedCornerShape(16.dp),
             )
             .clickable { onClick(item) }
             .padding(
-                top = 8.dp,
-                bottom = if (item.title != null) 16.dp else 8.dp,
-                start = 12.dp,
+                top = 12.dp,
+                bottom = if (item.title != null) 20.dp else 12.dp,
+                start = 16.dp,
                 end = 6.dp
             )
             .animateContentSize(),
@@ -110,7 +117,7 @@ private fun Title(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        modifier = modifier,
+        modifier = modifier.alpha(0.8f),
         text = text,
         style = MaterialTheme.typography.labelSmall,
         maxLines = 1,
