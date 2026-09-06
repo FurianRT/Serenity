@@ -445,7 +445,6 @@ private fun SuccessScreen(
         }
         Spacer(modifier = Modifier.weight(1f))
         Version(
-            modifier = Modifier.padding(top = 4.dp),
             name = uiState.appVersion,
             hazeState = hazeState,
         )

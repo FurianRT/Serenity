@@ -242,7 +242,7 @@ internal class NoteThemesHolder @Inject constructor(
                 color = UiNoteBackground(
                     id = "picture_color_12",
                     isLight = false,
-                    colorScheme = UiThemeColor.TOTAL_BLACK.colorScheme,
+                    colorScheme = UiThemeColor.TOTAL_BLACK_PURPLE.colorScheme,
                 ),
                 image = UiNoteBackgroundImage(
                     id = "picture_image_12",
@@ -487,7 +487,7 @@ internal class NoteThemesHolder @Inject constructor(
                 color = UiNoteBackground(
                     id = "solid_dark_01",
                     isLight = false,
-                    colorScheme = UiThemeColor.TOTAL_BLACK.colorScheme,
+                    colorScheme = UiThemeColor.TOTAL_BLACK_PURPLE.colorScheme,
                 ),
             ),
             UiNoteTheme.Solid(

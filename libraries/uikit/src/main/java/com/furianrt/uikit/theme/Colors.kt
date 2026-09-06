@@ -29,6 +29,9 @@ object Colors {
         val DistantCastleBlue = Color(0xFF0F1A29)
 
         val TotalBlack = Color(0xFF040009)
+        val TotalBlackPurple = Color(0xFF040009)
+        val TotalBlackGreen = Color(0xFF0A1514)
+        val TotalBlackBlue = Color(0xFF091727)
         val TotalBlackRed = Color(0xFF040000)
 
         val AvatarBlue = Color(0xFF193579)
@@ -54,7 +57,7 @@ object Colors {
         val PurpleDark = Color(0xFF3E2A40)
         val PurpleDark2 = Color(0xFF3A1F32)
 
-        val Dark1 = Color(0xFF1F1F21)
+        val Dark1 = Color(0xFF110A14)
         val Dark2 = Color(0xFF1E2329)
 
         val Brawn1 = Color(0xFF261F19)
@@ -68,6 +71,7 @@ object Colors {
         val GreenLight = Color(0xFF6DA646)
         val Green1 = Color(0xFF7B7A5E)
         val Green2 = Color(0xFF45C58A)
+        val Green3 = Color(0xFF378773)
         val Purple = Color(0xFF8D6EFD)
         val PurpleDark = Color(0xFF8D4BF6)
         val Purple2 = Color(0xFF7447A2)

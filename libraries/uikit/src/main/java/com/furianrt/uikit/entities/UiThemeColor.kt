@@ -161,9 +161,9 @@ enum class UiThemeColor(
         surfaceDim = Color.Black.copy(alpha = 0.2f),
     ),
 
-    TOTAL_BLACK(
+    TOTAL_BLACK_PURPLE(
         id = "dark_15",
-        surface = Colors.Primary.TotalBlack,
+        surface = Colors.Primary.TotalBlackPurple,
         primaryContainer = Colors.Accent.Purple,
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
@@ -196,7 +196,7 @@ enum class UiThemeColor(
 
     WALLY_BLACK(
         id = "dark_24",
-        surface = Colors.Primary.TotalBlack,
+        surface = Colors.Primary.TotalBlackPurple,
         primaryContainer = Colors.Accent.Pink5,
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
@@ -210,11 +210,11 @@ enum class UiThemeColor(
 
     APP_BACKGROUND_PICTURE_0(
         id = "app_background_picture_0",
-        surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
-        primaryContainer = TOTAL_BLACK.primaryContainer,
-        surfaceTint = TOTAL_BLACK.surfaceTint,
-        surfaceDim = TOTAL_BLACK.surfaceDim,
+        surface = Colors.Primary.TotalBlackBlue,
+        inverseSurface = Colors.Primary.TotalBlackBlue.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Purple,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_0,
             scaleType = CROP_ALIGN_CENTER,
@@ -234,11 +234,11 @@ enum class UiThemeColor(
 
     APP_BACKGROUND_PICTURE_2(
         id = "app_background_picture_2",
-        surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
-        primaryContainer = TOTAL_BLACK.primaryContainer,
-        surfaceTint = TOTAL_BLACK.surfaceTint,
-        surfaceDim = TOTAL_BLACK.surfaceDim,
+        surface = Colors.Primary.TotalBlack,
+        inverseSurface = Colors.Primary.TotalBlack.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Purple,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_2,
             scaleType = FILL,
@@ -258,11 +258,11 @@ enum class UiThemeColor(
 
     APP_BACKGROUND_PICTURE_4(
         id = "app_background_picture_4",
-        surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
-        primaryContainer = TOTAL_BLACK.primaryContainer,
-        surfaceTint = TOTAL_BLACK.surfaceTint,
-        surfaceDim = TOTAL_BLACK.surfaceDim,
+        surface = Colors.Primary.TotalBlackGreen,
+        inverseSurface = Colors.Primary.TotalBlackGreen.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Green3,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_4,
             scaleType = CROP_ALIGN_TOP,
@@ -349,11 +349,11 @@ enum class UiThemeColor(
 
     APP_BACKGROUND_PICTURE_10(
         id = "app_background_picture_10",
-        surface = TOTAL_BLACK.surface,
-        inverseSurface = TOTAL_BLACK.surface.copy(alpha = 0.9f),
-        primaryContainer = TOTAL_BLACK.primaryContainer,
-        surfaceTint = TOTAL_BLACK.surfaceTint,
-        surfaceDim = TOTAL_BLACK.surfaceDim,
+        surface = Colors.Primary.TotalBlackBlue,
+        inverseSurface = Colors.Primary.TotalBlackBlue.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Purple,
+        surfaceTint = Color.White.copy(alpha = 0.1f),
+        surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
             resId = R.drawable.app_background_picture_10,
             scaleType = CROP_ALIGN_BOTTOM,
@@ -857,7 +857,7 @@ enum class UiThemeColor(
             IRIS_RED_DARK,
             STORM_IN_THE_NIGHT_BLUE,
             SCANDI_GRANDPA_GRAY_DARK,
-            TOTAL_BLACK,
+            TOTAL_BLACK_PURPLE,
             EUPHORIA_BLUE_DARK,
             EUPHORIA_BLUE,
             UNICORN_2012_BLUE,
