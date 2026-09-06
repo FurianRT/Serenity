@@ -58,7 +58,7 @@ object Colors {
         val PurpleDark2 = Color(0xFF3A1F32)
 
         val Dark1 = Color(0xFF110A14)
-        val Dark2 = Color(0xFF1E2329)
+        val Dark2 = Color(0xFF161A1A)
 
         val Brawn1 = Color(0xFF261F19)
         val Brawn2 = Color(0xFFB0A496)
