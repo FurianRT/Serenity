@@ -3,9 +3,10 @@ package com.furianrt.security.internal.ui.security
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -28,6 +29,7 @@ import com.furianrt.security.internal.ui.security.SecurityUiState.Content
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
+import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
@@ -94,9 +96,11 @@ private fun ScreenContent(
             modifier = Modifier.hazeSource(hazeState),
             theme = uiState.theme,
         )
-        Column {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             DefaultToolbar(
-                modifier = Modifier.systemBarsPadding(),
+                modifier = Modifier.statusBarsPadding(),
                 title = stringResource(uiR.string.security_title),
                 onBackClick = { onEvent(SecurityEvent.OnButtonBackClick) },
             )
@@ -125,56 +129,76 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+            .padding(horizontal = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        SwitchWithLabel(
-            title = stringResource(R.string.security_enable_pin_title),
-            isChecked = uiState.isPinEnabled,
-            withHaptic = false,
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxSize(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                if (!isChecked) {
-                    hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
-                }
-                onEvent(SecurityEvent.OnEnablePinCheckChanged(isChecked))
-            },
-        )
-        GeneralButton(
-            title = stringResource(R.string.security_email_to_recover_pin_title),
-            hint = uiState.recoveryEmail,
-            enabled = uiState.isPinEnabled,
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.security_enable_pin_title),
+                isChecked = uiState.isPinEnabled,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                withHaptic = false,
+                onCheckedChange = { isChecked ->
+                    if (!isChecked) {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOff)
+                    }
+                    onEvent(SecurityEvent.OnEnablePinCheckChanged(isChecked))
+                },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxSize(),
             hazeState = hazeState,
-            onClick = { onEvent(SecurityEvent.OnChangeEmailClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.security_pin_request_title),
-            hint = if (uiState.requestDelay < 60 * 1000) {
-                pluralStringResource(
-                    R.plurals.security_pin_delay_seconds_plural,
-                    uiState.requestDelay / 1000,
-                    uiState.requestDelay / 1000,
-                )
-            } else {
-                pluralStringResource(
-                    R.plurals.security_pin_delay_minutes_plural,
-                    uiState.requestDelay / 60 / 1000,
-                    uiState.requestDelay / 60 / 1000,
-                )
-            },
-            enabled = uiState.isPinEnabled,
+        ) {
+            GeneralButton(
+                title = stringResource(R.string.security_email_to_recover_pin_title),
+                hint = uiState.recoveryEmail,
+                enabled = uiState.isPinEnabled,
+                contentPadding = PaddingValues(16.dp),
+                onClick = { onEvent(SecurityEvent.OnChangeEmailClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxSize(),
             hazeState = hazeState,
-            onClick = { onEvent(SecurityEvent.OnPinDelayClick) },
-        )
-        SwitchWithLabel(
-            title = stringResource(R.string.security_enable_fingerprint_title),
-            isChecked = uiState.isFingerprintEnabled,
-            enabled = uiState.isPinEnabled,
+        ) {
+            GeneralButton(
+                title = stringResource(R.string.security_pin_request_title),
+                hint = if (uiState.requestDelay < 60 * 1000) {
+                    pluralStringResource(
+                        R.plurals.security_pin_delay_seconds_plural,
+                        uiState.requestDelay / 1000,
+                        uiState.requestDelay / 1000,
+                    )
+                } else {
+                    pluralStringResource(
+                        R.plurals.security_pin_delay_minutes_plural,
+                        uiState.requestDelay / 60 / 1000,
+                        uiState.requestDelay / 60 / 1000,
+                    )
+                },
+                contentPadding = PaddingValues(16.dp),
+                enabled = uiState.isPinEnabled,
+                onClick = { onEvent(SecurityEvent.OnPinDelayClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxSize(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
-            },
-        )
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.security_enable_fingerprint_title),
+                isChecked = uiState.isFingerprintEnabled,
+                enabled = uiState.isPinEnabled,
+                contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(SecurityEvent.OnFingerprintCheckChanged(isChecked))
+                },
+            )
+        }
     }
 }
 

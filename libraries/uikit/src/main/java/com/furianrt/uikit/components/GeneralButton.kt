@@ -4,6 +4,7 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -38,6 +39,12 @@ fun GeneralButton(
     iconPainter: Painter? = null,
     hint: String? = null,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(
+        start = 8.dp,
+        end = 12.dp,
+        top = 12.dp,
+        bottom = 12.dp,
+    ),
 ) {
     Row(
         modifier = modifier
@@ -45,7 +52,7 @@ fun GeneralButton(
             .clip(RoundedCornerShape(8.dp))
             .clickable(enabled = enabled, onClick = onClick)
             .applyIf(!enabled) { Modifier.alpha(0.5f) }
-            .padding(start = 8.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
+            .padding(contentPadding)
             .animateContentSize(),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = if (hint != null) Alignment.Top else Alignment.CenterVertically

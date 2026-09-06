@@ -33,6 +33,7 @@
 
     <string name="settings_title">Impostazioni</string>
     <string name="security_title">Sicurezza</string>
+    <string name="profile_title">Profilo</string>
 
     <string name="media_counter_pattern">%1$d di %2$d</string>
     <string name="general_error">Qualcosa è andato storto</string>

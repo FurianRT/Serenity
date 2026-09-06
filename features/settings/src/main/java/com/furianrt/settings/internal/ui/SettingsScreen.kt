@@ -9,6 +9,7 @@ import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,10 +21,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -44,6 +47,7 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -68,8 +72,8 @@ import com.furianrt.settings.internal.ui.composables.LocaleDialog
 import com.furianrt.settings.internal.ui.composables.WidgetErrorDialog
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
-import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.entities.UiThemeColor
@@ -259,7 +263,7 @@ private fun ScreenContent(
         toolbar = {
             DefaultToolbar(
                 modifier = Modifier.padding(top = statusBarHeight.dp),
-                title = stringResource(uiR.string.settings_title),
+                title = stringResource(uiR.string.profile_title),
                 onBackClick = { onEvent(SettingsEvent.OnButtonBackClick) },
             )
         }
@@ -308,94 +312,140 @@ private fun SuccessScreen(
         modifier = modifier
             .fillMaxSize()
             .verticalScroll(scrollState)
-            .padding(start = 8.dp, end = 8.dp, top = topPadding + 8.dp)
+            .padding(start = 16.dp, end = 16.dp, top = topPadding + 12.dp)
             .navigationBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        GeneralButton(
-            title = stringResource(R.string.settings_security_title),
-            iconPainter = painterResource(R.drawable.ic_lock),
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.settings_backup_title),
-            iconPainter = painterResource(R.drawable.ic_cloud),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
-        )
-        GeneralButton(
-            title = stringResource(uiR.string.action_gallery),
-            iconPainter = painterResource(uiR.drawable.ic_photos),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonGalleryClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.settings_reminders_title),
-            iconPainter = painterResource(R.drawable.ic_reminders),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
-        )
-        GeneralButton(
-            title = stringResource(uiR.string.title_theme),
-            iconPainter = painterResource(R.drawable.ic_theme),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.settings_font_title),
-            iconPainter = painterResource(R.drawable.ic_settings_font),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.settings_note_content_title),
-            iconPainter = painterResource(R.drawable.ic_note_content),
-            hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
-        )
-        if (uiState.showWidgetsButton) {
-            GeneralButton(
-                title = stringResource(uiR.string.title_widgets),
-                iconPainter = painterResource(uiR.drawable.ic_widgets),
-                hazeState = hazeState,
-                onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
+        ) {
+            OptionButton(
+                title = stringResource(R.string.settings_security_title),
+                icon = painterResource(R.drawable.ic_lock),
+                onClick = { onEvent(SettingsEvent.OnButtonSecurityClick) },
+            )
+            OptionButtonDivider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
+            OptionButton(
+                title = stringResource(R.string.settings_backup_title),
+                icon = painterResource(R.drawable.ic_cloud),
+                onClick = { onEvent(SettingsEvent.OnButtonBackupClick) },
             )
         }
-        GeneralButton(
-            title = stringResource(R.string.settings_language_title),
-            iconPainter = painterResource(R.drawable.ic_language),
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnLocaleClick) },
-        )
-        Rating(
-            modifier = Modifier.padding(top = 8.dp),
-            rating = uiState.rating,
+        ) {
+            OptionButton(
+                title = stringResource(uiR.string.action_gallery),
+                icon = painterResource(uiR.drawable.ic_photos),
+                onClick = { onEvent(SettingsEvent.OnButtonGalleryClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
-        )
-        GeneralButton(
-            modifier = Modifier.padding(top = 16.dp),
-            title = stringResource(R.string.settings_feedback_title),
-            iconPainter = painterResource(R.drawable.ic_mail),
+        ) {
+            OptionButton(
+                title = stringResource(uiR.string.title_theme),
+                icon = painterResource(R.drawable.ic_theme),
+                onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
+            )
+            OptionButtonDivider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
+            OptionButton(
+                title = stringResource(R.string.settings_font_title),
+                icon = painterResource(R.drawable.ic_settings_font),
+                onClick = { onEvent(SettingsEvent.OnButtonFontClick) },
+            )
+            OptionButtonDivider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
+            OptionButton(
+                title = stringResource(R.string.settings_note_content_title),
+                icon = painterResource(R.drawable.ic_note_content),
+                onClick = { onEvent(SettingsEvent.OnButtonNoteSettingsClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
-        )
-        GeneralButton(
-            title = stringResource(R.string.settings_terms_and_conditions_title),
-            iconPainter = painterResource(uiR.drawable.ic_text_snippet),
+        ) {
+            OptionButton(
+                title = stringResource(R.string.settings_reminders_title),
+                icon = painterResource(R.drawable.ic_reminders),
+                onClick = { onEvent(SettingsEvent.OnButtonRemindersClick) },
+            )
+        }
+        if (uiState.showWidgetsButton) {
+            OptionButtonWrapper(
+                modifier = Modifier.fillMaxWidth(),
+                hazeState = hazeState,
+            ) {
+                OptionButton(
+                    title = stringResource(uiR.string.title_widgets),
+                    icon = painterResource(uiR.drawable.ic_widgets),
+                    onClick = { onEvent(SettingsEvent.OnButtonWidgetsClick) },
+                )
+            }
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
-        )
-        GeneralButton(
-            title = stringResource(id = R.string.settings_privacy_policy_title),
-            iconPainter = painterResource(uiR.drawable.ic_text_snippet),
+        ) {
+            OptionButton(
+                title = stringResource(R.string.settings_language_title),
+                icon = painterResource(R.drawable.ic_language),
+                onClick = { onEvent(SettingsEvent.OnLocaleClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onClick = { onEvent(SettingsEvent.OnButtonPrivacyPolicyClick) },
-        )
+        ) {
+            Rating(
+                modifier = Modifier.padding(
+                    start = 24.dp,
+                    end = 24.dp,
+                    top = 16.dp,
+                    bottom = 20.dp,
+                ),
+                rating = uiState.rating,
+                onSelected = { onEvent(SettingsEvent.OnRatingSelected(it)) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+        ) {
+            OptionButton(
+                title = stringResource(R.string.settings_feedback_title),
+                icon = painterResource(R.drawable.ic_mail),
+                onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
+            )
+            OptionButtonDivider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
+            OptionButton(
+                title = stringResource(R.string.settings_terms_and_conditions_title),
+                icon = painterResource(uiR.drawable.ic_text_snippet),
+                onClick = { onEvent(SettingsEvent.OnButtonTermsAndConditionsClick) },
+            )
+            OptionButtonDivider(
+                modifier = Modifier.padding(horizontal = 24.dp),
+            )
+            OptionButton(
+                title = stringResource(R.string.settings_privacy_policy_title),
+                icon = painterResource(uiR.drawable.ic_text_snippet),
+                onClick = { onEvent(SettingsEvent.OnButtonPrivacyPolicyClick) },
+            )
+        }
         Spacer(modifier = Modifier.weight(1f))
         Version(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier.padding(top = 4.dp),
             name = uiState.appVersion,
             hazeState = hazeState,
         )
@@ -406,31 +456,17 @@ private fun SuccessScreen(
 private fun Rating(
     @IntRange(0, 5) rating: Int,
     onSelected: (rating: Int) -> Unit,
-    hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(8.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
-                )
-                .padding(horizontal = 4.dp),
             text = stringResource(id = R.string.settings_rate_us_title),
             style = MaterialTheme.typography.bodyMedium,
         )
         Row(
-            modifier = Modifier.padding(horizontal = 4.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -469,6 +505,45 @@ private fun Rating(
             }
         }
     }
+}
+
+@Composable
+private fun OptionButton(
+    title: String,
+    icon: Painter,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier
+            .clickable(onClick = onClick)
+            .padding(horizontal = 20.dp, vertical = 16.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.weight(1f),
+            text = title,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Icon(
+            modifier = Modifier.size(26.dp),
+            painter = icon,
+            contentDescription = title,
+            tint = MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+@Composable
+private fun OptionButtonDivider(
+    modifier: Modifier = Modifier,
+) {
+    HorizontalDivider(
+        modifier = modifier,
+        thickness = 1.dp,
+        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
+    )
 }
 
 @Composable

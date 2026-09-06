@@ -33,6 +33,7 @@
 
     <string name="settings_title">Instellingen</string>
     <string name="security_title">Beveiliging</string>
+    <string name="profile_title">Profiel</string>
 
     <string name="media_counter_pattern">%1$d van %2$d</string>
     <string name="general_error">Er is iets misgegaan</string>

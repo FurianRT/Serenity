@@ -33,6 +33,7 @@
 
     <string name="settings_title">সেটিংস</string>
     <string name="security_title">নিরাপত্তা</string>
+    <string name="profile_title">প্রোফাইল</string>
 
     <string name="media_counter_pattern">%1$d এর মধ্যে %2$d</string>
     <string name="general_error">কিছু ভুল হয়েছে</string>

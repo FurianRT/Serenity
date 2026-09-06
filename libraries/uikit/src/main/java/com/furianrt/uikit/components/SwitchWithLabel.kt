@@ -3,6 +3,7 @@ package com.furianrt.uikit.components
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -39,6 +40,12 @@ fun SwitchWithLabel(
     hint: String? = null,
     enabled: Boolean = true,
     withHaptic: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(
+        start = 8.dp,
+        end = 12.dp,
+        top = 8.dp,
+        bottom = 8.dp,
+    ),
 ) {
     val hapticFeedback = LocalHapticFeedback.current
     Row(
@@ -55,7 +62,7 @@ fun SwitchWithLabel(
                     onCheckedChange(!isChecked)
                 },
             )
-            .padding(start = 8.dp, end = 12.dp, top = 8.dp, bottom = 8.dp),
+            .padding(contentPadding),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = if (hint == null) {
             Alignment.CenterVertically
