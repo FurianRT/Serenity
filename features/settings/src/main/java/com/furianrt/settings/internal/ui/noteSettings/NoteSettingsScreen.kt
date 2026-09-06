@@ -3,10 +3,12 @@ package com.furianrt.settings.internal.ui.noteSettings
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
@@ -26,6 +28,7 @@ import com.furianrt.settings.R
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SwitchWithLabel
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
@@ -74,7 +77,7 @@ private fun Content(
         enabled = false,
         toolbar = {
             DefaultToolbar(
-                modifier = Modifier.systemBarsPadding(),
+                modifier = Modifier.statusBarsPadding(),
                 title = stringResource(R.string.settings_note_content_title),
                 onBackClick = { onEvent(NoteSettingsEvent.OnButtonBackClick) },
             )
@@ -111,55 +114,80 @@ private fun SuccessContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(start = 8.dp, end = 8.dp, top = 8.dp, bottom = 24.dp)
+            .padding(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 24.dp)
             .navigationBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        SwitchWithLabel(
-            title = stringResource(R.string.settings_note_detect_location_title),
-            hint = stringResource(R.string.settings_note_detect_location_hint),
-            isChecked = uiState.isAutoDetectLocationEnabled,
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))
-            },
-        )
-        SwitchWithLabel(
-            title = stringResource(R.string.settings_note_keep_prev_background_title),
-            hint = stringResource(R.string.settings_note_keep_prev_background_hint),
-            isChecked = uiState.isKeepPrevBackgroundEnabled,
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.settings_note_detect_location_title),
+                hint = stringResource(R.string.settings_note_detect_location_hint),
+                isChecked = uiState.isAutoDetectLocationEnabled,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(NoteSettingsEvent.OnEnableAutoDetectLocationChanged(isChecked))
+                },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(NoteSettingsEvent.OnKeepNotePrevBackgroundChanged(isChecked))
-            },
-        )
-        SwitchWithLabel(
-            title = stringResource(R.string.settings_note_keep_prev_text_align_title),
-            hint = stringResource(R.string.settings_note_keep_prev_text_align_hint),
-            isChecked = uiState.isKeepPrevTextAlignEnabled,
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.settings_note_keep_prev_background_title),
+                hint = stringResource(R.string.settings_note_keep_prev_background_hint),
+                isChecked = uiState.isKeepPrevBackgroundEnabled,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(NoteSettingsEvent.OnKeepNotePrevBackgroundChanged(isChecked))
+                },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(NoteSettingsEvent.OnKeepNoteTextAlignChanged(isChecked))
-            },
-        )
-        SwitchWithLabel(
-            title = stringResource(R.string.settings_note_keep_prev_line_height_title),
-            hint = stringResource(R.string.settings_note_keep_prev_line_height_hint),
-            isChecked = uiState.isKeepPrevLineHeightEnabled,
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.settings_note_keep_prev_text_align_title),
+                hint = stringResource(R.string.settings_note_keep_prev_text_align_hint),
+                isChecked = uiState.isKeepPrevTextAlignEnabled,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(NoteSettingsEvent.OnKeepNoteTextAlignChanged(isChecked))
+                },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(NoteSettingsEvent.OnKeepNoteLineHeightChanged(isChecked))
-            },
-        )
-        SwitchWithLabel(
-            title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
-            hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
-            isChecked = uiState.isMinimalisticHomeScreenEnabled,
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.settings_note_keep_prev_line_height_title),
+                hint = stringResource(R.string.settings_note_keep_prev_line_height_hint),
+                isChecked = uiState.isKeepPrevLineHeightEnabled,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(NoteSettingsEvent.OnKeepNoteLineHeightChanged(isChecked))
+                },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
-            onCheckedChange = { isChecked ->
-                onEvent(NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged(isChecked))
-            },
-        )
+        ) {
+            SwitchWithLabel(
+                title = stringResource(R.string.settings_note_minimalistic_home_screen_title),
+                hint = stringResource(R.string.settings_note_minimalistic_home_screen_hint),
+                isChecked = uiState.isMinimalisticHomeScreenEnabled,
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                onCheckedChange = { isChecked ->
+                    onEvent(NoteSettingsEvent.OnEnableMinimalisticHomeScreenChanged(isChecked))
+                },
+            )
+        }
     }
 }
 
