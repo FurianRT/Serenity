@@ -27,6 +27,7 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -40,6 +41,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -65,7 +68,10 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
+import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -190,6 +196,7 @@ private fun ScreenContent(
             when (targetState) {
                 is GalleryState.Content.Loading -> LoadingContent()
                 is GalleryState.Content.Empty -> EmptyContent(
+                    hazeState = hazeState,
                     onEvent = onEvent,
                 )
 
@@ -222,13 +229,12 @@ private fun LoadingContent(
 
 @Composable
 private fun EmptyContent(
+    hazeState: HazeState,
     onEvent: (event: GalleryEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Box(
-        modifier = modifier
-            .padding(horizontal = 24.dp)
-            .fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -236,21 +242,49 @@ private fun EmptyContent(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
+                modifier = Modifier
+                    .padding(horizontal = 20.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                    .padding(horizontal = 4.dp),
                 text = stringResource(R.string.gallery_screen_empty_state_title),
                 style = MaterialTheme.typography.titleLarge,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.size(12.dp))
             Text(
-                modifier = Modifier.alpha(0.5f),
+                modifier = Modifier
+                    .padding(horizontal = 12.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .hazeEffect(
+                        state = hazeState,
+                        style = HazeDefaults.style(
+                            backgroundColor = MaterialTheme.colorScheme.surface,
+                            blurRadius = 12.dp,
+                            noiseFactor = 0f,
+                            tint = HazeTint(Color.Transparent),
+                        ),
+                    )
+                    .padding(horizontal = 4.dp)
+                    .alpha(0.5f),
                 text = stringResource(R.string.gallery_screen_empty_state_body),
                 style = MaterialTheme.typography.bodyMedium,
-                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 0.6f,
+                lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 0.9f,
                 textAlign = TextAlign.Center,
             )
             Spacer(Modifier.size(32.dp))
             RegularButton(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .fillMaxWidth(),
                 text = stringResource(R.string.gallery_screen_empty_state_button),
                 icon = painterResource(uiR.drawable.ic_add),
                 onClick = { onEvent(GalleryEvent.OnCreateNoteClick) },
