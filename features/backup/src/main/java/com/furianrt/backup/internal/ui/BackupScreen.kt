@@ -14,12 +14,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -27,7 +26,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
@@ -62,7 +60,6 @@ import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.BackupUiState.Content
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
-import com.furianrt.backup.internal.ui.composables.BackupPeriod
 import com.furianrt.backup.internal.ui.composables.BackupPeriodDialog
 import com.furianrt.backup.internal.ui.composables.BottomPanel
 import com.furianrt.backup.internal.ui.composables.ConfirmBackupDialog
@@ -72,13 +69,16 @@ import com.furianrt.backup.internal.ui.composables.Header
 import com.furianrt.backup.internal.ui.composables.QuestionsList
 import com.furianrt.backup.internal.ui.composables.RestoreButton
 import com.furianrt.backup.internal.ui.composables.SuccessSyncSnackBar
+import com.furianrt.backup.internal.ui.composables.getBackupPeriodTitle
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
 import com.furianrt.uikit.anim.shakable
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
+import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
@@ -333,17 +333,61 @@ private fun SuccessContent(
                 .fillMaxSize()
                 .hazeSource(backgroundHazeState, zIndex = 1f)
                 .verticalScroll(scrollState)
-                .padding(top = toolbarPadding),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
+                .padding(top = toolbarPadding + 12.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Header(
-                modifier = Modifier.padding(top = 4.dp),
+                modifier = Modifier.padding(horizontal = 16.dp),
                 authState = uiState.authState,
                 hazeState = backgroundHazeState,
                 onSingInClick = { onEvent(BackupScreenEvent.OnSignInClick) },
                 onSingOutClick = { onEvent(BackupScreenEvent.OnSignOutClick) },
             )
-            Column(
+            OptionButtonWrapper(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                hazeState = backgroundHazeState,
+            ) {
+                SwitchWithLabel(
+                    title = stringResource(R.string.backup_auto_backup_title),
+                    hint = stringResource(R.string.backup_auto_backup_hint),
+                    isChecked = uiState.isAutoBackupEnabled,
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
+                    onCheckedChange = { isChecked ->
+                        onEvent(BackupScreenEvent.OnAutoBackupCheckChange(isChecked))
+                    },
+                    enabled = uiState.isSignedIn,
+                )
+            }
+            OptionButtonWrapper(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth(),
+                hazeState = backgroundHazeState,
+            ) {
+                GeneralButton(
+                    title = stringResource(R.string.backup_auto_backup_period_title),
+                    hint = getBackupPeriodTitle(uiState.backupPeriod),
+                    enabled = uiState.isSignedIn && uiState.isAutoBackupEnabled,
+                    contentPadding = PaddingValues(16.dp),
+                    onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
+                )
+            }
+            RestoreButton(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp, vertical = 14.dp)
+                    .shakable(restoreShakeState),
+                isEnabled = uiState.isSignedIn && !uiState.isSyncInProgress,
+                hazeState = backgroundHazeState,
+                onClick = {
+                    if (!uiState.isSyncInProgress) {
+                        onEvent(BackupScreenEvent.OnButtonRestoreClick)
+                    }
+                },
+            )
+            QuestionsList(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(
@@ -351,64 +395,19 @@ private fun SuccessContent(
                         shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
                     )
                     .padding(
-                        bottom = if (uiState.isSignedIn) {
+                        top = 24.dp,
+                        start = 24.dp,
+                        end = 24.dp,
+                        bottom = 24.dp + if (uiState.isSignedIn) {
                             backupBlockHeight.pxToDp() + navBarPadding
                         } else {
                             navBarPadding
                         },
                     ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Spacer(Modifier.height(16.dp))
-                SwitchWithLabel(
-                    modifier = Modifier.padding(horizontal = 12.dp),
-                    title = stringResource(R.string.backup_auto_backup_title),
-                    hint = stringResource(R.string.backup_auto_backup_hint),
-                    isChecked = uiState.isAutoBackupEnabled,
-                    onCheckedChange = { isChecked ->
-                        onEvent(BackupScreenEvent.OnAutoBackupCheckChange(isChecked))
-                    },
-                    enabled = uiState.isSignedIn,
-                )
-                Spacer(Modifier.height(8.dp))
-                BackupPeriod(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 12.dp),
-                    period = uiState.backupPeriod,
-                    isEnabled = uiState.isSignedIn && uiState.isAutoBackupEnabled,
-                    onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
-                )
-                Spacer(Modifier.height(32.dp))
-                RestoreButton(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .shakable(restoreShakeState),
-                    isEnabled = uiState.isSignedIn && !uiState.isSyncInProgress,
-                    onClick = {
-                        if (!uiState.isSyncInProgress) {
-                            onEvent(BackupScreenEvent.OnButtonRestoreClick)
-                        }
-                    },
-                )
-                if (uiState.questions.isNotEmpty()) {
-                    Spacer(Modifier.height(24.dp))
-                    HorizontalDivider(
-                        modifier = Modifier.padding(start = 24.dp),
-                        thickness = 1.dp,
-                        color = MaterialTheme.colorScheme.tertiary,
-                    )
-                    Spacer(Modifier.height(24.dp))
-                    QuestionsList(
-                        modifier = Modifier.padding(start = 24.dp, end = 24.dp),
-                        questions = uiState.questions,
-                        isSignedIn = uiState.isSignedIn,
-                        onQuestionClick = { onEvent(BackupScreenEvent.OnQuestionClick(it)) },
-                    )
-                    Spacer(Modifier.height(24.dp))
-                }
-            }
+                questions = uiState.questions,
+                isSignedIn = uiState.isSignedIn,
+                onQuestionClick = { onEvent(BackupScreenEvent.OnQuestionClick(it)) },
+            )
         }
         AnimatedVisibility(
             modifier = Modifier

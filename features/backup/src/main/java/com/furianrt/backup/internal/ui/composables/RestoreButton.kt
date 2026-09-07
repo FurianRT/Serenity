@@ -14,15 +14,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.backup.R
+import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
 internal fun RestoreButton(
     isEnabled: Boolean,
+    hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -31,6 +38,14 @@ internal fun RestoreButton(
         modifier = modifier
             .alpha(alpha)
             .clip(RoundedCornerShape(32.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    blurRadius = 16.dp,
+                    tint = HazeTint(Color.Transparent),
+                ),
+            )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primaryContainer,
@@ -53,6 +68,7 @@ private fun Preview() {
     SerenityTheme {
         RestoreButton(
             isEnabled = true,
+            hazeState = rememberHazeState(),
             onClick = {},
         )
     }

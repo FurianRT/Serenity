@@ -31,7 +31,7 @@ internal fun QuestionsList(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         questions.forEachIndexed { index, question ->

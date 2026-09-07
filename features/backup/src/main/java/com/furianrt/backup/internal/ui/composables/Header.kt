@@ -4,7 +4,6 @@ import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,8 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
@@ -49,14 +45,12 @@ import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.model.KeyPath
 import com.furianrt.backup.R
 import com.furianrt.backup.internal.ui.BackupUiState
+import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
@@ -86,56 +80,62 @@ internal fun Header(
         isPlaying = lottieState.isPlaying
     }
 
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(start = 16.dp, end = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    OptionButtonWrapper(
+        modifier = modifier.fillMaxWidth(),
+        hazeState = hazeState,
     ) {
-        Crossfade(
-            modifier = Modifier.size(64.dp),
-            targetState = authState.isLoading,
-        ) { targetState ->
-            if (targetState) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(34.dp),
-                        color = MaterialTheme.colorScheme.primary,
-                        trackColor = MaterialTheme.colorScheme.tertiaryContainer,
-                        strokeWidth = 4.dp,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable(
+                    enabled = !authState.isLoading,
+                    onClick = {
+                        when (authState) {
+                            is BackupUiState.Content.Success.AuthState.SignedOut -> onSingInClick()
+                            is BackupUiState.Content.Success.AuthState.SignedIn -> onSingOutClick()
+                        }
+                    },
+                )
+                .padding(horizontal = 12.dp, vertical = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Crossfade(
+                modifier = Modifier.size(48.dp),
+                targetState = authState.isLoading,
+            ) { targetState ->
+                if (targetState) {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(34.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            trackColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            strokeWidth = 4.dp,
+                        )
+                    }
+                } else {
+                    LottieAnimation(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clickableWithScaleAnim { isPlaying = true },
+                        composition = composition,
+                        progress = { lottieState.progress },
+                        dynamicProperties = dynamicProperties,
                     )
                 }
-            } else {
-                LottieAnimation(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .clickableWithScaleAnim { isPlaying = true },
-                    composition = composition,
-                    progress = { lottieState.progress },
-                    dynamicProperties = dynamicProperties,
-                )
             }
-        }
-        Crossfade(
-            targetState = authState,
-        ) { targetState ->
-            when (targetState) {
-                is BackupUiState.Content.Success.AuthState.SignedOut -> SignedOutHeader(
-                    isEnabled = !targetState.isLoading,
-                    hazeState = hazeState,
-                    onSingInClick = onSingInClick,
-                )
-
-                is BackupUiState.Content.Success.AuthState.SignedIn -> SignedInHeader(
-                    email = targetState.email,
-                    isEnabled = !targetState.isLoading,
-                    hazeState = hazeState,
-                    onSingOutClick = onSingOutClick,
-                )
+            Crossfade(
+                targetState = authState,
+            ) { targetState ->
+                when (targetState) {
+                    is BackupUiState.Content.Success.AuthState.SignedOut -> SignedOutHeader()
+                    is BackupUiState.Content.Success.AuthState.SignedIn -> SignedInHeader(
+                        email = targetState.email,
+                    )
+                }
             }
         }
     }
@@ -144,9 +144,6 @@ internal fun Header(
 @Composable
 private fun SignedInHeader(
     email: String,
-    isEnabled: Boolean,
-    hazeState: HazeState,
-    onSingOutClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val wholeText = stringResource(R.string.backup_tap_to_sing_out_title)
@@ -168,42 +165,15 @@ private fun SignedInHeader(
         }
     }
     Column(
-        modifier = modifier
-            .alpha(0.5f)
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(enabled = isEnabled, onClick = onSingOutClick)
-            .padding(horizontal = 4.dp, vertical = 8.dp),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
-                )
-                .padding(horizontal = 4.dp),
             text = email,
             style = MaterialTheme.typography.bodySmall,
         )
         Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
-                )
-                .padding(horizontal = 4.dp),
+            modifier = Modifier.alpha(0.5f),
             text = title,
             style = MaterialTheme.typography.bodySmall,
         )
@@ -212,9 +182,6 @@ private fun SignedInHeader(
 
 @Composable
 private fun SignedOutHeader(
-    isEnabled: Boolean,
-    hazeState: HazeState,
-    onSingInClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition()
@@ -230,7 +197,6 @@ private fun SignedOutHeader(
             repeatMode = RepeatMode.Reverse,
         ),
     )
-    val alpha by animateFloatAsState(targetValue = if (isEnabled) 1f else 0.5f)
     val wholeText = stringResource(R.string.backup_tap_to_sing_in_title)
     val underlinePart = stringResource(R.string.backup_tap_to_sing_in_underline_part)
     val underlinePartIndex = wholeText.indexOf(underlinePart)
@@ -251,28 +217,12 @@ private fun SignedOutHeader(
     }
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .clickable(enabled = isEnabled, onClick = onSingInClick)
-            .padding(horizontal = 4.dp, vertical = 16.dp)
             .graphicsLayer {
                 scaleX = scale
                 scaleY = scale
-                this.alpha = alpha
             }
     ) {
         Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
-                )
-                .padding(horizontal = 4.dp),
             text = title,
             style = MaterialTheme.typography.bodyMedium,
         )
