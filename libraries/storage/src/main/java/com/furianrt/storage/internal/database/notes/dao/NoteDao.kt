@@ -95,7 +95,7 @@ internal interface NoteDao {
     FROM ${EntryNote.TABLE_NAME} 
     WHERE ${EntryNote.FIELD_IS_TEMPLATE} = 0
     AND (
-        ${EntryNote.FIELD_TEXT} LIKE :query 
+        ${EntryNote.FIELD_SEARCH_DATA} LIKE :query 
         OR EXISTS (
             SELECT 1 
             FROM ${EntryNoteToTag.TABLE_NAME} 

@@ -51,7 +51,10 @@ internal class EntryNote(
     val isPinned: Boolean,
 
     @ColumnInfo(name = FIELD_IS_TEMPLATE)
-    val isTemplate: Boolean
+    val isTemplate: Boolean,
+
+    @ColumnInfo(name = FIELD_SEARCH_DATA)
+    val searchData: String,
 ) {
     enum class TextAlignment(val value: Int) {
         START(-1),
@@ -84,6 +87,7 @@ internal class EntryNote(
         const val FIELD_DATE = "date"
         const val FIELD_IS_PINNED = "is_pinned"
         const val FIELD_IS_TEMPLATE = "is_template"
+        const val FIELD_SEARCH_DATA = "search_data"
     }
 }
 
@@ -103,6 +107,9 @@ internal class PartNoteText(
 
     @ColumnInfo(name = EntryNote.FIELD_TEXT_SPANS)
     val textSpans: List<NoteTextSpan>,
+
+    @ColumnInfo(name = EntryNote.FIELD_SEARCH_DATA)
+    val searchData: String,
 )
 
 @Entity

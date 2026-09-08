@@ -46,22 +46,18 @@ internal class NotesRepositoryImp @Inject constructor(
     private val dispatchers: DispatchersProvider,
 ) : NotesRepository {
 
-    override suspend fun insertNote(note: SimpleNote) {
-        noteDao.insert(note.toEntryNote())
-    }
-
     override suspend fun upsertNote(note: SimpleNote) {
         noteDao.upsert(note.toEntryNote())
     }
 
     override suspend fun updateNoteText(noteId: String, content: List<LocalNote.Content>) {
+        val titles = content.filterIsInstance<LocalNote.Content.Title>()
         noteDao.update(
             PartNoteText(
                 id = noteId,
                 text = content.toEntryNoteText(),
-                textSpans = content
-                    .filterIsInstance<LocalNote.Content.Title>()
-                    .flatMap(LocalNote.Content.Title::spans),
+                textSpans = titles.flatMap(LocalNote.Content.Title::spans),
+                searchData = titles.joinToString(separator = " ").lowercase(),
             )
         )
     }
@@ -213,6 +209,7 @@ internal class NotesRepositoryImp @Inject constructor(
                 date = ZonedDateTime.now(),
                 isPinned = false,
                 isTemplate = true,
+                searchData = "",
             )
                 .also { noteDao.insert(it) }
                 .toSimpleNote()

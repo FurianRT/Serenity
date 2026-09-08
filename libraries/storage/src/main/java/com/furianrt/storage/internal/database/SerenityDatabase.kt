@@ -10,6 +10,7 @@ import androidx.room3.withWriteTransaction
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.furianrt.domain.TransactionsHelper
+import com.furianrt.domain.entities.LocalNote
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
@@ -33,8 +34,11 @@ import com.furianrt.storage.internal.database.notes.entities.EntryNoteTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteToTag
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVideo
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteVoice
+import com.furianrt.storage.internal.database.notes.entities.LinkedNote
+import com.furianrt.storage.internal.database.notes.mappers.toLocalNote
 import com.furianrt.storage.internal.database.reminders.dao.RemindersDao
 import com.furianrt.storage.internal.database.reminders.entities.EntryReminder
+import java.time.ZonedDateTime
 
 @Database(
     entities = [
@@ -72,7 +76,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 10
+        private const val VERSION = 11
 
         fun create(
             context: Context,
@@ -96,6 +100,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_7_8,
                 MIGRATION_8_9,
                 MIGRATION_9_10,
+                MIGRATION_10_11,
             )
             .build()
     }
@@ -202,5 +207,54 @@ private val MIGRATION_8_9 = object : Migration(8, 9) {
 private val MIGRATION_9_10 = object : Migration(9, 10) {
     override suspend fun migrate(connection: SQLiteConnection) {
         connection.execSQL("DELETE FROM Notes WHERE length(text) > 50000")
+    }
+}
+
+private val MIGRATION_10_11 = object : Migration(10, 11) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN search_data TEXT NOT NULL DEFAULT ''")
+        val selectStatement = connection.prepare("SELECT id, text FROM Notes")
+        selectStatement.use { selectStatement ->
+            while (selectStatement.step()) {
+                val id = selectStatement.getText(0)
+                val text = selectStatement.getText(1)
+
+                val note = LinkedNote(
+                    note = EntryNote(
+                        id = id,
+                        text = text,
+                        textSpans = emptyList(),
+                        font = null,
+                        fontColor = null,
+                        fontSize = 12,
+                        textAlignment = null,
+                        lineHeightMultiplier = null,
+                        backgroundId = null,
+                        backgroundImageId = null,
+                        moodId = null,
+                        date = ZonedDateTime.now(),
+                        isPinned = false,
+                        isTemplate = false,
+                        searchData = "",
+                    ),
+                    images = emptyList(),
+                    voices = emptyList(),
+                    videos = emptyList(),
+                    tags = emptyList(),
+                    stickers = emptyList(),
+                    location = null,
+                ).toLocalNote()
+
+                val titles = note.content.filterIsInstance<LocalNote.Content.Title>()
+                val searchData = titles.joinToString(separator = " ").lowercase()
+
+                connection.prepare("UPDATE Notes SET search_data = ? WHERE id = ?")
+                    .use { updateStatement ->
+                        updateStatement.bindText(1, searchData)
+                        updateStatement.bindText(2, id)
+                        updateStatement.step()
+                    }
+            }
+        }
     }
 }

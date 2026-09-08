@@ -43,6 +43,7 @@ internal fun SimpleNote.toEntryNote() = EntryNote(
     date = date,
     isPinned = isPinned,
     isTemplate = false,
+    searchData = "",
 )
 
 internal fun LinkedNote.toLocalNote() = LocalNote(
