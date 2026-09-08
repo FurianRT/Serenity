@@ -42,8 +42,9 @@ internal fun RestoreButton(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 16.dp,
+                    blurRadius = 8.dp,
                     tint = HazeTint(Color.Transparent),
+                    noiseFactor = 0f,
                 ),
             )
             .border(

@@ -30,6 +30,7 @@ fun OptionButtonWrapper(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 16.dp,
                     tint = HazeTint(Color.Transparent),
+                    noiseFactor = 0.1f,
                 ),
             )
             .border(

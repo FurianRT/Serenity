@@ -30,7 +30,7 @@ private fun NoteMedia.toPhotoItem() = ListItem.Photo(
 )
 
 private fun ZonedDateTime.toTitleItem() = ListItem.Title(
-    text = toDateString(pattern = "MMMM yyyy"),
+    text = toDateString(pattern = "LLLL yyyy").replaceFirstChar(Char::uppercase),
 )
 
 private fun getStableRotationFromUuid(uuidString: String): Float {
