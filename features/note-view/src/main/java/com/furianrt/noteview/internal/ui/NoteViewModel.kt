@@ -273,12 +273,13 @@ internal class NoteViewModel @Inject constructor(
 
     private fun updateCurrentPage(index: Int) {
         _state.updateState<NoteViewUiState.Success> { currentState ->
-            savedStateHandle[EXTRA_CURRENT_PAGE] = index
+            val safeIndex = index.coerceAtMost(currentState.notes.lastIndex)
+            savedStateHandle[EXTRA_CURRENT_PAGE] = safeIndex
+            sendPageChangeResult(safeIndex)
             currentState.copy(
-                currentPageIndex = index,
-                date = currentState.notes[index].date,
+                currentPageIndex = safeIndex,
+                date = currentState.notes.getOrNull(safeIndex)?.date ?: currentState.date,
             )
         }
-        sendPageChangeResult(index)
     }
 }
