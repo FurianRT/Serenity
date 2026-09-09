@@ -69,6 +69,7 @@ import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.isTablet
 import com.furianrt.uikit.theme.LocalHasMediaRoute
 import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
@@ -205,15 +206,11 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .then(
-                            if (configuration.isTablet) {
-                                Modifier
-                                    .background(MaterialTheme.colorScheme.surface)
-                                    .background(Color.Black.copy(alpha = 0.2f))
-                            } else {
-                                Modifier
-                            }
-                        ),
+                        .applyIf(configuration.isTablet) {
+                            Modifier
+                                .background(MaterialTheme.colorScheme.surface)
+                                .background(Color.Black.copy(alpha = 0.2f))
+                        },
                     contentAlignment = Alignment.Center,
                 ) {
                     NavHost(
