@@ -52,7 +52,7 @@ internal fun ReminderListItem(
     modifier: Modifier = Modifier,
 ) {
     val showSelectedDays = remember(item.daysOfWeek) {
-        item.daysOfWeek.count(DayItem::isSelected) in 2..<7
+        item.daysOfWeek.count(DayItem::isSelected) in 1..6
     }
     Column(
         modifier = modifier
