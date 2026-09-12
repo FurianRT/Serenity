@@ -96,6 +96,7 @@ object Colors {
         val Orange = Color(0xFFE6812F)
         val Orange2 = Color(0xFFFD822C)
         val Orange3 = Color(0xFFC56C51)
+        val Orange4 = Color(0xFFFFA62C)
 
         val LightBlue = Color(0xFF7D8BFF)
         val LightGreen = Color(0xFF4FA78C)
@@ -107,8 +108,6 @@ object Colors {
 
         val Red1 = Color(0xFF75010D)
         val Red2 = Color(0xFF50030A)
-
-        val Brown = Color(0xFF2E1A00)
     }
 
     object Font {
