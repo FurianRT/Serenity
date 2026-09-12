@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -71,6 +72,7 @@ import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.ui.stickers.custom.composables.PopUpMenu
 import com.furianrt.uikit.anim.rememberOvershootEasing
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -370,6 +372,7 @@ private fun StickerItem(
             .size(300)
             .build()
     }
+    var hasError by remember(sticker.id) { mutableStateOf(false) }
 
     Box(
         modifier = modifier.combinedClickable(
@@ -382,14 +385,19 @@ private fun StickerItem(
         contentAlignment = Alignment.Center,
     ) {
         AsyncImage(
-            modifier = Modifier.graphicsLayer {
-                scaleX = scale
-                scaleY = scale
-            },
+            modifier = Modifier
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+                .applyIf(hasError) {
+                    Modifier.size(80.dp)
+                },
             error = colorPlaceholder,
             model = request,
             placeholder = placeholder,
             onSuccess = { placeholder = it.painter },
+            onError = { hasError = true },
             contentDescription = null,
         )
         PopUpMenu(
