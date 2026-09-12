@@ -846,6 +846,17 @@ enum class UiThemeColor(
             resId = R.drawable.app_background_picture_25,
             scaleType = FILL,
         ),
+    ),
+
+    APP_BACKGROUND_PICTURE_26(
+        id = "app_background_picture_26",
+        surface = Colors.Primary.Orange,
+        inverseSurface = Colors.Primary.Orange.copy(alpha = 0.9f),
+        primaryContainer = Colors.Accent.Brown,
+        image = UiThemeImage(
+            resId = R.drawable.app_background_picture_26,
+            scaleType = FILL,
+        ),
     );
 
     companion object {

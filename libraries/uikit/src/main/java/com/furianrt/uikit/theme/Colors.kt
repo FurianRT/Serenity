@@ -65,6 +65,8 @@ object Colors {
         val Brawn3 = Color(0xFFC5B7AA)
 
         val LightYellow = Color(0xFFEDDFD1)
+
+        val Orange = Color(0xFFA64C23)
     }
 
     object Accent {
@@ -105,6 +107,8 @@ object Colors {
 
         val Red1 = Color(0xFF75010D)
         val Red2 = Color(0xFF50030A)
+
+        val Brown = Color(0xFF2E1A00)
     }
 
     object Font {

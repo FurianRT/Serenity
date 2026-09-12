@@ -427,9 +427,11 @@ private fun SuccessScreen(
                 icon = painterResource(R.drawable.ic_mail),
                 onClick = { onEvent(SettingsEvent.OnButtonReportIssueClick) },
             )
-            OptionButtonDivider(
-                modifier = Modifier.padding(horizontal = 24.dp),
-            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
+        ) {
             OptionButton(
                 title = stringResource(R.string.settings_terms_and_conditions_title),
                 icon = painterResource(uiR.drawable.ic_text_snippet),
