@@ -48,7 +48,9 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
@@ -127,6 +129,7 @@ import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.LocalColorScheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
+import com.furianrt.uikit.utils.brighterBy
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
@@ -600,25 +603,48 @@ private fun NoteBackgroundImage(
             null -> Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surface),
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.surface,
+                                MaterialTheme.colorScheme.surface.brighterBy(0.1f),
+                            ),
+                            start = Offset.Zero,
+                            end = Offset.Infinite
+                        )
+                    ),
             )
 
             is UiNoteTheme.Solid -> Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(targetState.color.colorScheme.surface),
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                targetState.color.colorScheme.surface,
+                                targetState.color.colorScheme.surface.brighterBy(0.1f),
+                            ),
+                            start = Offset.Zero,
+                            end = Offset.Infinite
+                        )
+                    ),
             )
 
             is UiNoteTheme.Image.Pattern -> {
                 val resId =
                     (targetState.image.source as UiNoteBackgroundImage.Source.Resource).resId
                 val bitmap = ImageBitmap.imageResource(resId)
+                val backgroundColor = targetState.color?.colorScheme?.surface
+                    ?: MaterialTheme.colorScheme.surface
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
                         .background(
-                            targetState.color?.colorScheme?.surface
-                                ?: MaterialTheme.colorScheme.surface
+                            brush = Brush.linearGradient(
+                                colors = listOf(backgroundColor, backgroundColor.brighterBy(0.1f)),
+                                start = Offset.Zero,
+                                end = Offset.Infinite
+                            )
                         )
                         .drawWithCache {
                             val brush = ShaderBrush(
@@ -676,7 +702,7 @@ private fun NoteBackgroundImage(
                             .fillMaxSize()
                             .applyIf(
                                 targetState.image.scaleType == ScaleType.CENTER ||
-                                targetState.image.scaleType == ScaleType.CENTER_ALIGN_END
+                                        targetState.image.scaleType == ScaleType.CENTER_ALIGN_END
                             ) {
                                 Modifier.background(targetState.color.colorScheme.surface)
                             },

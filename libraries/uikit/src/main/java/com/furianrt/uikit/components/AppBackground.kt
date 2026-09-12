@@ -6,12 +6,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.toContentAlignment
 import com.furianrt.uikit.entities.toContentScale
+import com.furianrt.uikit.utils.brighterBy
 
 @Composable
 fun AppBackground(
@@ -39,7 +42,13 @@ fun AppBackground(
         Box(
             modifier = modifier
                 .fillMaxSize()
-                .background(theme.surface)
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(theme.surface, theme.surface.brighterBy(0.1f)),
+                        start = Offset.Zero,
+                        end = Offset.Infinite
+                    )
+                )
         )
     }
 }
