@@ -173,21 +173,25 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                 .collect { entry ->
                     val hasMediaViewRoute = entry.destination.hasRoute<MediaViewRoute>() ||
                             entry.destination.hasRoute<MediaViewerRoute>()
-                    val color = SystemBarsConstants.InsetsColor.toArgb()
+                    val statusBarColor = Color.Transparent.toArgb()
+                    val navigationBarColor = SystemBarsConstants.NavigationBarColor.toArgb()
                     when {
                         hasMediaViewRoute -> activity?.enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.dark(color),
-                            navigationBarStyle = SystemBarStyle.dark(color),
+                            statusBarStyle = SystemBarStyle.dark(statusBarColor),
+                            navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
                         )
 
                         uiState.appColor.isLight -> activity?.enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.light(color, color),
-                            navigationBarStyle = SystemBarStyle.light(color, color),
+                            statusBarStyle = SystemBarStyle.light(statusBarColor, statusBarColor),
+                            navigationBarStyle = SystemBarStyle.light(
+                                scrim = navigationBarColor,
+                                darkScrim = navigationBarColor,
+                            ),
                         )
 
                         else -> activity?.enableEdgeToEdge(
-                            statusBarStyle = SystemBarStyle.dark(color),
-                            navigationBarStyle = SystemBarStyle.dark(color),
+                            statusBarStyle = SystemBarStyle.dark(statusBarColor),
+                            navigationBarStyle = SystemBarStyle.dark(navigationBarColor),
                         )
                     }
                 }

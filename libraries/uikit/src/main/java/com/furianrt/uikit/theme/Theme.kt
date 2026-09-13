@@ -212,19 +212,23 @@ fun SerenityTheme(
     )
 
     LaunchedEffect(isLightTheme) {
-        val color = SystemBarsConstants.InsetsColor.toArgb()
+        val statusBarColor = SystemBarsConstants.StatusBarColor.toArgb()
+        val navigationBarColor = SystemBarsConstants.NavigationBarColor.toArgb()
         if (isLightTheme) {
             activity?.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.light(scrim = color, darkScrim = color),
+                statusBarStyle = SystemBarStyle.light(
+                    scrim = statusBarColor,
+                    darkScrim = statusBarColor
+                ),
                 navigationBarStyle = SystemBarStyle.light(
-                    scrim = color,
-                    darkScrim = color
+                    scrim = navigationBarColor,
+                    darkScrim = navigationBarColor
                 ),
             )
         } else {
             activity?.enableEdgeToEdge(
-                statusBarStyle = SystemBarStyle.dark(color),
-                navigationBarStyle = SystemBarStyle.dark(color),
+                statusBarStyle = SystemBarStyle.dark(statusBarColor),
+                navigationBarStyle = SystemBarStyle.dark(navigationBarColor),
             )
         }
     }
