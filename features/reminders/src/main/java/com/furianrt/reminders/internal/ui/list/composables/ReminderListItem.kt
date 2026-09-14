@@ -63,7 +63,7 @@ internal fun ReminderListItem(
                 state = hazeState,
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 16.dp,
+                    blurRadius = 6.dp,
                     tint = HazeTint(Color.Transparent),
                 )
             )
