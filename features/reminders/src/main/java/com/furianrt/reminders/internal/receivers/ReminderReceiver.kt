@@ -102,47 +102,11 @@ internal class ReminderReceiver : BroadcastReceiver() {
 
         val notificationId = reminder.id.hashCode()
 
-        val remoteViews = RemoteViews(
-            context.packageName,
-            R.layout.layout_notification_reminder,
-        ).apply {
-            setTextViewText(R.id.title, title)
-            setOnClickPendingIntent(
-                R.id.note,
-                context.createOpenEntryPendingIntent(
-                    deeplink = SerenityDeeplink.NEW_ENTRY,
-                    notificationId = notificationId,
-                ),
-            )
-            setOnClickPendingIntent(
-                R.id.photo,
-                context.createOpenEntryPendingIntent(
-                    deeplink = SerenityDeeplink.NEW_PHOTO,
-                    notificationId = notificationId,
-                ),
-            )
-            setOnClickPendingIntent(
-                R.id.video,
-                context.createOpenEntryPendingIntent(
-                    deeplink = SerenityDeeplink.NEW_VIDEO,
-                    notificationId = notificationId,
-                ),
-            )
-            setOnClickPendingIntent(
-                R.id.voice,
-                context.createOpenEntryPendingIntent(
-                    deeplink = SerenityDeeplink.NEW_VOICE,
-                    notificationId = notificationId,
-                ),
-            )
-        }
-
-        val notification = NotificationCompat.Builder(
-            context,
-            NotificationChannels.REMINDERS_CHANNEL_ID,
-        )
+        val notification = NotificationCompat
+            .Builder(context, NotificationChannels.REMINDERS_CHANNEL_ID)
             .setContentIntent(createNotificationIntent(context))
-            .setCustomBigContentView(remoteViews)
+            .setCustomContentView(createSmallContent(context, notificationId, title))
+            .setCustomBigContentView(createBigContent(context, notificationId, title))
             .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setSmallIcon(uiR.drawable.notification_small_logo)
             .setContentTitle(title)
@@ -152,6 +116,86 @@ internal class ReminderReceiver : BroadcastReceiver() {
             .build()
 
         notificationManager.notify(reminder.id.hashCode(), notification)
+    }
+
+    private fun createSmallContent(
+        context: Context,
+        notificationId: Int,
+        title: String,
+    ) = RemoteViews(
+        context.packageName,
+        R.layout.layout_notification_reminder_small_content,
+    ).apply {
+        setTextViewText(R.id.title, title)
+
+        setOnClickPendingIntent(
+            R.id.note,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_ENTRY,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.photo,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_PHOTO,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.video,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_VIDEO,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.voice,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_VOICE,
+                notificationId = notificationId,
+            ),
+        )
+    }
+
+    private fun createBigContent(
+        context: Context,
+        notificationId: Int,
+        title: String,
+    ) = RemoteViews(
+        context.packageName,
+        R.layout.layout_notification_reminder_big_content,
+    ).apply {
+        setTextViewText(R.id.title, title)
+
+        setOnClickPendingIntent(
+            R.id.note,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_ENTRY,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.photo,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_PHOTO,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.video,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_VIDEO,
+                notificationId = notificationId,
+            ),
+        )
+        setOnClickPendingIntent(
+            R.id.voice,
+            context.createOpenEntryPendingIntent(
+                deeplink = SerenityDeeplink.NEW_VOICE,
+                notificationId = notificationId,
+            ),
+        )
     }
 
     private fun createNotificationIntent(context: Context) = PendingIntent.getActivity(

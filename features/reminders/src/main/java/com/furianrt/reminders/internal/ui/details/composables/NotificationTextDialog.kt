@@ -53,7 +53,7 @@ import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
-private const val MAX_TEXT_LENGTH = 100
+private const val MAX_TEXT_LENGTH = 150
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
