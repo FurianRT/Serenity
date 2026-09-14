@@ -57,6 +57,7 @@ import com.furianrt.noteview.api.NoteViewRoute
 import com.furianrt.noteview.api.navigateToNoteView
 import com.furianrt.noteview.api.noteViewScreen
 import com.furianrt.onboarding.api.OnboardingScreen
+import com.furianrt.reminders.api.RemindersApi
 import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.navigateToNoteSearch
 import com.furianrt.search.api.noteSearchScreen
@@ -93,6 +94,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
     @Inject
     lateinit var lockAuthorizer: LockAuthorizer
 
+    @Inject
+    lateinit var remindersApi: RemindersApi
+
     private val viewModel: MainViewModel by viewModels()
 
     private val deepLinks = MutableSharedFlow<Intent>(
@@ -104,6 +108,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        remindersApi.cancelNotification(intent)
         installSplashScreen().apply {
             setKeepOnScreenCondition { !viewModel.state.value.isThemeLoaded }
             setOnExitAnimationListener { splashScreenViewProvider ->

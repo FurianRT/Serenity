@@ -1,7 +1,7 @@
 <resources>
     <string name="reminders_screen_title">रिमाइंडर</string>
     <string name="reminders_screen_description">एक रिमाइंडर बनाएं ताकि आप लिखने लायक कोई भी पल न चूकें</string>
-    <string name="reminders_default_reminder_notification_title">भविष्य का आपका स्वरूप आपका धन्यवाद करेगा</string>
+    <string name="reminders_default_reminder_notification_title">आपका %s कैसा रहा?</string>
     <string name="reminders_default_reminder_notification_body">अपनी डायरी खोलने के लिए टैप करें</string>
     <string name="reminders_troubleshooting_title">रिमाइंडर काम नहीं कर रहे?</string>
     <string name="reminders_troubleshooting_body">समाधान देखने के लिए टैप करें</string>

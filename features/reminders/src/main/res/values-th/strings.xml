@@ -1,7 +1,7 @@
 <resources>
     <string name="reminders_screen_title">การแจ้งเตือน</string>
     <string name="reminders_screen_description">สร้างการแจ้งเตือนเพื่อไม่ให้พลาดช่วงเวลาที่ควรค่าแก่การเขียน</string>
-    <string name="reminders_default_reminder_notification_title">ตัวคุณในอนาคตจะขอบคุณคุณ</string>
+    <string name="reminders_default_reminder_notification_title">%s ของคุณเป็นอย่างไรบ้าง?</string>
     <string name="reminders_default_reminder_notification_body">แตะเพื่อเปิดไดอารี่ของคุณ</string>
     <string name="reminders_troubleshooting_title">การแจ้งเตือนไม่ทำงาน?</string>
     <string name="reminders_troubleshooting_body">แตะเพื่อดูวิธีแก้ไข</string>

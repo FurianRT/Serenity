@@ -5,11 +5,14 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.net.toUri
 import com.furianrt.common.ErrorTracker
 import com.furianrt.common.NotificationChannels
 import com.furianrt.common.RootActivityIntentProvider
+import com.furianrt.common.SerenityDeeplink
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.RemindersRepository
@@ -21,6 +24,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.TextStyle
+import java.util.Locale
 import javax.inject.Inject
 import kotlin.concurrent.atomics.AtomicBoolean
 import kotlin.concurrent.atomics.ExperimentalAtomicApi
@@ -30,6 +36,7 @@ internal class ReminderReceiver : BroadcastReceiver() {
 
     companion object {
         const val EXTRA_REMINDER_ID = "reminder_id"
+        const val EXTRA_NOTIFICATION_ID = "reminder_notification_id"
     }
 
     @Inject
@@ -46,6 +53,9 @@ internal class ReminderReceiver : BroadcastReceiver() {
 
     @Inject
     lateinit var rootActivityIntentProvider: RootActivityIntentProvider
+
+    @Inject
+    lateinit var notificationManager: NotificationManagerCompat
 
     @Inject
     lateinit var errorTracker: ErrorTracker
@@ -85,29 +95,83 @@ internal class ReminderReceiver : BroadcastReceiver() {
     ) {
         val title = reminder.title ?: context.getString(
             R.string.reminders_default_reminder_notification_title,
+            LocalDate.now()
+                .dayOfWeek
+                .getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault()),
         )
-        val text = context.getString(
-            R.string.reminders_default_reminder_notification_body,
-        )
+
+        val notificationId = reminder.id.hashCode()
+
+        val remoteViews = RemoteViews(
+            context.packageName,
+            R.layout.layout_notification_reminder,
+        ).apply {
+            setTextViewText(R.id.title, title)
+            setOnClickPendingIntent(
+                R.id.note,
+                context.createOpenEntryPendingIntent(
+                    deeplink = SerenityDeeplink.NEW_ENTRY,
+                    notificationId = notificationId,
+                ),
+            )
+            setOnClickPendingIntent(
+                R.id.photo,
+                context.createOpenEntryPendingIntent(
+                    deeplink = SerenityDeeplink.NEW_PHOTO,
+                    notificationId = notificationId,
+                ),
+            )
+            setOnClickPendingIntent(
+                R.id.video,
+                context.createOpenEntryPendingIntent(
+                    deeplink = SerenityDeeplink.NEW_VIDEO,
+                    notificationId = notificationId,
+                ),
+            )
+            setOnClickPendingIntent(
+                R.id.voice,
+                context.createOpenEntryPendingIntent(
+                    deeplink = SerenityDeeplink.NEW_VOICE,
+                    notificationId = notificationId,
+                ),
+            )
+        }
+
         val notification = NotificationCompat.Builder(
             context,
             NotificationChannels.REMINDERS_CHANNEL_ID,
         )
             .setContentIntent(createNotificationIntent(context))
+            .setCustomBigContentView(remoteViews)
+            .setStyle(NotificationCompat.DecoratedCustomViewStyle())
             .setSmallIcon(uiR.drawable.notification_small_logo)
             .setContentTitle(title)
-            .setContentText(text)
             .setAutoCancel(true)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
             .build()
 
-        NotificationManagerCompat.from(context)
-            .notify(reminder.id.hashCode(), notification)
+        notificationManager.notify(reminder.id.hashCode(), notification)
     }
 
     private fun createNotificationIntent(context: Context) = PendingIntent.getActivity(
         context,
         0,
         rootActivityIntentProvider.provide(),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
+    private fun Context.createOpenEntryPendingIntent(
+        deeplink: String,
+        notificationId: Int,
+    ) = PendingIntent.getActivity(
+        this,
+        deeplink.hashCode(),
+        Intent(Intent.ACTION_VIEW, deeplink.toUri()).apply {
+            addCategory(Intent.CATEGORY_DEFAULT)
+            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            putExtra(EXTRA_NOTIFICATION_ID, notificationId)
+        },
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
     )
 }
