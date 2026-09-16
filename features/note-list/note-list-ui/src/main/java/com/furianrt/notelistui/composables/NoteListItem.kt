@@ -88,9 +88,7 @@ fun NoteListItem(
     val backgroundColor = if (isSelected) {
         MaterialTheme.colorScheme.onSurfaceVariant
     } else {
-        MaterialTheme.colorScheme.background.copy(
-            alpha = MaterialTheme.colorScheme.background.alpha * 0.3f,
-        )
+        Color.Transparent
     }
     val showMood = content.isEmpty() && moodId != null
     val hasLocation = locationState is LocationState.Success
@@ -110,6 +108,7 @@ fun NoteListItem(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 12.dp,
                     tint = HazeTint(backgroundColor),
+                    noiseFactor = 0.1f,
                 )
             )
             .then(
