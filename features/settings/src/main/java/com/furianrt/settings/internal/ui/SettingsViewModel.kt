@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val MIN_GOOD_RATING = 4
+private const val MIN_GOOD_RATING = 5
 private const val RATING_CLICK_DELAY = 250L
 private const val PRIVACY_POLICY_LINK = "https://sites.google.com/view/serenityapp/privacy-policy"
 private const val TERMS_AND_CONDITIONS_LINK =

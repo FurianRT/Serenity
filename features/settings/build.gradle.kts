@@ -51,4 +51,6 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.dataStore)
+
+    implementation(libs.lottie)
 }
