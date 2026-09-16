@@ -18,7 +18,6 @@ import com.furianrt.backup.internal.domain.usecases.GetPopularQuestionsUseCase
 import com.furianrt.backup.internal.domain.usecases.SignInUseCase
 import com.furianrt.backup.internal.domain.usecases.SignOutUseCase
 import com.furianrt.backup.internal.extensions.toQuestion
-import com.furianrt.backup.internal.extensions.toSyncDate
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnAutoBackupCheckChange
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupPeriodClick
 import com.furianrt.backup.internal.ui.BackupScreenEvent.OnBackupPeriodSelected
@@ -38,11 +37,14 @@ import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgres
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.TimeFormat
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.launch
+import com.furianrt.uikit.extensions.toDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,9 +56,14 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import com.furianrt.uikit.R as uiR
+
+private const val LAST_SYNC_DATE_PATTERN = "dd.MM.yyyy"
+private const val LAST_SYNC_24_TIME_PATTERN = "HH:mm"
+private const val LAST_SYNC_AM_PM_TIME_PATTERN = "hh:mm a"
 
 @HiltViewModel
 internal class BackupViewModel @Inject constructor(
@@ -73,6 +80,7 @@ internal class BackupViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
     private val serviceLauncher: ServiceLauncher,
     private val notesRepository: NotesRepository,
+    private val localeRepository: LocaleRepository,
     private val errorTracker: ErrorTracker,
 ) : ViewModel() {
 
@@ -356,10 +364,31 @@ internal class BackupViewModel @Inject constructor(
         content = Content.Success(
             isAutoBackupEnabled = isAutoBackupEnabled,
             backupPeriod = backupPeriod,
-            lastSyncDate = lastSyncDate.toSyncDate(),
+            lastSyncDate = buildSyncDateString(lastSyncDate),
             questions = questions,
             authState = authState,
             syncProgress = syncProgress,
         ),
     )
+
+    private fun buildSyncDateString(date: ZonedDateTime?): String {
+        val localDateNow = LocalDate.now()
+        val localDate = date?.toLocalDate() ?: return resourcesManager.getString(
+            R.string.backup_last_sync_time_none_title,
+        )
+        val timePattern = when (localeRepository.getTimeFormat()) {
+            TimeFormat.AM_PM -> LAST_SYNC_AM_PM_TIME_PATTERN
+            TimeFormat.HOUR_24 -> LAST_SYNC_24_TIME_PATTERN
+        }
+        val dateString = when {
+            localDateNow == localDate -> resourcesManager.getString(uiR.string.today_title)
+            localDateNow.minusDays(1) == localDate -> resourcesManager.getString(
+                uiR.string.yesterday_title,
+            )
+
+            else -> date.toDateString(LAST_SYNC_DATE_PATTERN)
+        }
+        val timeString = date.toDateString(timePattern)
+        return "$dateString $timeString"
+    }
 }

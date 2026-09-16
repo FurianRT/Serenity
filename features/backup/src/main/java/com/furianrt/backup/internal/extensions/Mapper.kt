@@ -3,14 +3,8 @@ package com.furianrt.backup.internal.extensions
 import com.furianrt.backup.internal.data.remote.google.drive.DriveFilesListResponse
 import com.furianrt.backup.internal.domain.entities.PopularQuestion
 import com.furianrt.backup.internal.domain.entities.RemoteFile
-import com.furianrt.backup.internal.ui.BackupUiState.Content
 import com.furianrt.backup.internal.ui.entities.Question
-import com.furianrt.uikit.extensions.toDateString
 import java.time.Instant
-import java.time.LocalDate
-import java.time.ZonedDateTime
-
-private const val LAST_SYNC_DATE_PATTERN = "dd/MM/yyyy hh:mm a"
 
 internal fun PopularQuestion.toQuestion(isExpanded: Boolean) = Question(
     id = id,
@@ -58,17 +52,4 @@ internal fun DriveFilesListResponse.File.toRemoteFile() = when {
     }
 
     else -> null
-}
-
-internal fun ZonedDateTime?.toSyncDate(): Content.Success.SyncDate {
-    val localDateNow = LocalDate.now()
-    val localDate = this?.toLocalDate()
-    return when {
-        this == null || localDate == null -> Content.Success.SyncDate.None
-        localDateNow == localDate -> Content.Success.SyncDate.Today
-        localDateNow.minusDays(1) == localDate -> Content.Success.SyncDate.Yesterday
-        else -> Content.Success.SyncDate.Other(
-            text = this.toDateString(LAST_SYNC_DATE_PATTERN),
-        )
-    }
 }

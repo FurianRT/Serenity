@@ -5,8 +5,10 @@ import android.app.Application
 import android.app.LocaleManager
 import android.content.Context
 import android.os.LocaleList
+import android.text.format.DateFormat
 import com.furianrt.common.ActivityLifecycleCallbacks
 import com.furianrt.domain.entities.AppLocale
+import com.furianrt.domain.entities.TimeFormat
 import com.furianrt.domain.repositories.LocaleRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
@@ -59,6 +61,12 @@ internal class LocaleRepositoryImp @Inject constructor(
     )
 
     override fun getSelectedLocale(): Flow<AppLocale> = localeFlow
+
+    override fun getTimeFormat(): TimeFormat = if (DateFormat.is24HourFormat(applicationContext)) {
+        TimeFormat.HOUR_24
+    } else {
+        TimeFormat.AM_PM
+    }
 
     private fun getCurrentAppLocale(): AppLocale {
         val localeManager = applicationContext.getSystemService(LocaleManager::class.java)

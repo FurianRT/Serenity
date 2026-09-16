@@ -462,7 +462,7 @@ private fun PreviewSignedIn() {
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
-                    lastSyncDate = Content.Success.SyncDate.None,
+                    lastSyncDate = "Today 12:00 PM",
                     questions = buildPreviewQuestionsList(expandedIndex = 0),
                     authState = Content.Success.AuthState.SignedIn(
                         email = "felmemfmelflmfe",
@@ -485,7 +485,7 @@ private fun PreviewSignedOut() {
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
-                    lastSyncDate = Content.Success.SyncDate.None,
+                    lastSyncDate = "Today 12:00 PM",
                     questions = buildPreviewQuestionsList(expandedIndex = 1),
                     authState = Content.Success.AuthState.SignedOut(isLoading = false),
                     syncProgress = SyncProgress.Idle,
@@ -505,7 +505,7 @@ private fun PreviewLoading() {
                 content = Content.Success(
                     isAutoBackupEnabled = false,
                     backupPeriod = BackupPeriod.TreeDays,
-                    lastSyncDate = Content.Success.SyncDate.None,
+                    lastSyncDate = "Today 12:00 PM",
                     questions = buildPreviewQuestionsList(expandedIndex = null),
                     authState = Content.Success.AuthState.SignedIn(
                         email = "test@gmail.com",

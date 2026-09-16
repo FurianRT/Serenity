@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.backup.R
-import com.furianrt.backup.internal.ui.BackupUiState
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress
 import com.furianrt.uikit.anim.ShakingState
 import com.furianrt.uikit.anim.rememberShakingState
@@ -22,7 +21,7 @@ import com.furianrt.uikit.utils.PreviewWithBackground
 @Composable
 internal fun BottomPanel(
     syncProgress: SyncProgress,
-    lastSyncDate: BackupUiState.Content.Success.SyncDate,
+    lastSyncDate: String,
     shakingState: ShakingState,
     onBackupClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -93,7 +92,7 @@ private fun Preview() {
     SerenityTheme {
         BottomPanel(
             syncProgress = SyncProgress.Idle,
-            lastSyncDate = BackupUiState.Content.Success.SyncDate.Yesterday,
+            lastSyncDate = "Today 12:00 PM",
             shakingState = rememberShakingState(),
             onBackupClick = {},
         )
@@ -109,7 +108,7 @@ private fun PreviewProgress() {
                 syncedNotesCount = 12,
                 totalNotesCount = 25,
             ),
-            lastSyncDate = BackupUiState.Content.Success.SyncDate.Yesterday,
+            lastSyncDate = "Today 12:00 PM",
             shakingState = rememberShakingState(),
             onBackupClick = {},
         )
