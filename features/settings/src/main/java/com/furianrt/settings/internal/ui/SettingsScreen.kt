@@ -320,6 +320,18 @@ private fun SuccessScreen(
         OptionButtonWrapper(
             modifier = Modifier.fillMaxWidth(),
             hazeState = hazeState,
+            borderColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
+        ) {
+            OptionButton(
+                title = stringResource(uiR.string.title_serenity_plus),
+                icon = painterResource(uiR.drawable.app_logo_small),
+                onClick = { onEvent(SettingsEvent.OnLocaleClick) },
+            )
+        }
+        OptionButtonWrapper(
+            modifier = Modifier.fillMaxWidth(),
+            hazeState = hazeState,
         ) {
             OptionButton(
                 title = stringResource(R.string.settings_security_title),

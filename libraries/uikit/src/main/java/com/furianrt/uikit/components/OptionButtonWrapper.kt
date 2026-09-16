@@ -19,6 +19,8 @@ import dev.chrisbanes.haze.hazeEffect
 fun OptionButtonWrapper(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
+    borderColor: Color = MaterialTheme.colorScheme.background,
+    backgroundColor: Color = Color.Transparent,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -29,13 +31,13 @@ fun OptionButtonWrapper(
                 style = HazeDefaults.style(
                     backgroundColor = MaterialTheme.colorScheme.surface,
                     blurRadius = 6.dp,
-                    tint = HazeTint(Color.Transparent),
+                    tint = HazeTint(backgroundColor),
                     noiseFactor = 0.1f,
                 ),
             )
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.background,
+                color = borderColor,
                 shape = RoundedCornerShape(16.dp),
             ),
         content = { content() },

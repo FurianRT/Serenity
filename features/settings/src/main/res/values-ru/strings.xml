@@ -1,5 +1,5 @@
 <resources>
-    <string name="settings_security_title">Безопасность</string>
+    <string name="settings_security_title">Защита</string>
     <string name="settings_backup_title">Синхронизация</string>
     <string name="settings_reminders_title">Напоминания</string>
     <string name="settings_font_title">Шрифт</string>

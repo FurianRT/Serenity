@@ -1,5 +1,5 @@
 <resources>
-    <string name="settings_security_title">Security</string>
+    <string name="settings_security_title">Lock</string>
     <string name="settings_backup_title">Backup and Restore</string>
     <string name="settings_reminders_title">Reminders</string>
     <string name="settings_font_title">App Font</string>
