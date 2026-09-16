@@ -238,7 +238,7 @@ fun SerenityTheme(
         typography = typography,
     ) {
         val rippleConfig = RippleConfiguration(
-            color = MaterialTheme.colorScheme.surfaceContainer,
+            color = MaterialTheme.colorScheme.primaryContainer,
             rippleAlpha = RippleAlpha(
                 draggedAlpha = 0.1f,
                 focusedAlpha = 0.1f,

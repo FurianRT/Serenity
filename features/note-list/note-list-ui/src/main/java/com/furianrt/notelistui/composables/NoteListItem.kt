@@ -15,17 +15,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RippleConfiguration
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -90,18 +85,6 @@ fun NoteListItem(
             easing = if (isSelected) overshootEasing else FastOutSlowInEasing,
         ),
     )
-    val rippleColor = MaterialTheme.colorScheme.surfaceContainer
-    val rippleConfig = remember(rippleColor) {
-        RippleConfiguration(
-            color = rippleColor,
-            rippleAlpha = RippleAlpha(
-                draggedAlpha = 0.05f,
-                focusedAlpha = 0.05f,
-                hoveredAlpha = 0.05f,
-                pressedAlpha = 0.05f,
-            ),
-        )
-    }
     val backgroundColor = if (isSelected) {
         MaterialTheme.colorScheme.onSurfaceVariant
     } else {
@@ -113,125 +96,123 @@ fun NoteListItem(
     val hasLocation = locationState is LocationState.Success
     val showLocation = hasLocation && !showMood && content.isEmpty()
 
-    CompositionLocalProvider(LocalRippleConfiguration provides rippleConfig) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .graphicsLayer {
-                    scaleX = scale
-                    scaleY = scale
-                }
-                .clip(RoundedCornerShape(8.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 12.dp,
-                        tint = HazeTint(backgroundColor),
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .graphicsLayer {
+                scaleX = scale
+                scaleY = scale
+            }
+            .clip(RoundedCornerShape(8.dp))
+            .hazeEffect(
+                state = hazeState,
+                style = HazeDefaults.style(
+                    backgroundColor = MaterialTheme.colorScheme.surface,
+                    blurRadius = 12.dp,
+                    tint = HazeTint(backgroundColor),
+                )
+            )
+            .then(
+                if (isPinned) {
+                    Modifier.border(
+                        width = 0.7.dp,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = RoundedCornerShape(8.dp),
                     )
-                )
-                .then(
-                    if (isPinned) {
-                        Modifier.border(
-                            width = 0.7.dp,
-                            color = MaterialTheme.colorScheme.primaryContainer,
-                            shape = RoundedCornerShape(8.dp),
-                        )
-                    } else {
-                        Modifier.border(
-                            width = 1.dp,
-                            color = MaterialTheme.colorScheme.background,
-                            shape = RoundedCornerShape(8.dp),
-                        )
-                    }
-                )
-                .combinedClickable(
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                ),
+                } else {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(8.dp),
+                    )
+                }
+            )
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick,
+            ),
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .hazeSource(itemHazeState),
         ) {
-            Column(
+            content.forEachIndexed { index, item ->
+                when (item) {
+                    is UiNoteContent.Title -> Title(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                        item = item,
+                        fontFamily = fontFamily,
+                        fontSize = fontSize,
+                        textAlign = textAlign,
+                        lineHeightMultiplier = lineHeightMultiplier,
+                    )
+
+                    is UiNoteContent.MediaBlock -> NoteContentMedia(
+                        modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
+                        block = item,
+                        clickable = false,
+                    )
+
+                    is UiNoteContent.Voice -> NoteContentVoice(
+                        modifier = Modifier.padding(
+                            start = 8.dp,
+                            top = if (index == 0) 4.dp else 12.dp,
+                        ),
+                        voice = item,
+                        isPayable = false,
+                        isPlaying = false,
+                        isRemovable = false,
+                    )
+                }
+            }
+            when {
+                showMood -> MoodButton(
+                    modifier = Modifier
+                        .padding(
+                            top = 12.dp,
+                            bottom = if (tags.isEmpty()) 0.dp else 8.dp,
+                        )
+                        .size(70.dp)
+                        .align(Alignment.CenterHorizontally),
+                    moodId = moodId,
+                    defaultMoodId = null,
+                )
+
+                showLocation -> LocationCard(
+                    modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
+                    state = locationState,
+                    hazeState = hazeState,
+                    clickable = false,
+                    fullAlpha = true,
+                )
+
+                content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
+            }
+
+            NoteTags(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .hazeSource(itemHazeState),
-            ) {
-                content.forEachIndexed { index, item ->
-                    when (item) {
-                        is UiNoteContent.Title -> Title(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                            item = item,
-                            fontFamily = fontFamily,
-                            fontSize = fontSize,
-                            textAlign = textAlign,
-                            lineHeightMultiplier = lineHeightMultiplier,
-                        )
-
-                        is UiNoteContent.MediaBlock -> NoteContentMedia(
-                            modifier = Modifier.padding(top = if (index == 0) 0.dp else 12.dp),
-                            block = item,
-                            clickable = false,
-                        )
-
-                        is UiNoteContent.Voice -> NoteContentVoice(
-                            modifier = Modifier.padding(
-                                start = 8.dp,
-                                top = if (index == 0) 4.dp else 12.dp,
-                            ),
-                            voice = item,
-                            isPayable = false,
-                            isPlaying = false,
-                            isRemovable = false,
-                        )
-                    }
-                }
-                when {
-                    showMood -> MoodButton(
-                        modifier = Modifier
-                            .padding(
-                                top = 12.dp,
-                                bottom = if (tags.isEmpty()) 0.dp else 8.dp,
-                            )
-                            .size(70.dp)
-                            .align(Alignment.CenterHorizontally),
-                        moodId = moodId,
-                        defaultMoodId = null,
-                    )
-
-                    showLocation -> LocationCard(
-                        modifier = Modifier.padding(start = 8.dp, end = 8.dp, top = 8.dp),
-                        state = locationState,
-                        hazeState = hazeState,
-                        clickable = false,
-                        fullAlpha = true,
-                    )
-
-                    content.isEmpty() -> Spacer(modifier = Modifier.height(40.dp))
-                }
-
-                NoteTags(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(
-                            start = 4.dp,
-                            end = 4.dp,
-                            top = if (tags.isEmpty() || showMood) 0.dp else 16.dp,
-                            bottom = 10.dp,
-                        ),
-                    tags = tags,
-                    date = date,
-                    popupHazeState = null,
-                    onTagClick = onTagClick,
-                )
-            }
-            if (isPinned) {
-                PinIcon(
-                    modifier = Modifier.align(Alignment.TopEnd),
-                    hasMedia = content.firstOrNull() is UiNoteContent.MediaBlock,
-                    hazeState = itemHazeState,
-                )
-            }
+                    .padding(
+                        start = 4.dp,
+                        end = 4.dp,
+                        top = if (tags.isEmpty() || showMood) 0.dp else 16.dp,
+                        bottom = 10.dp,
+                    ),
+                tags = tags,
+                date = date,
+                popupHazeState = null,
+                onTagClick = onTagClick,
+            )
+        }
+        if (isPinned) {
+            PinIcon(
+                modifier = Modifier.align(Alignment.TopEnd),
+                hasMedia = content.firstOrNull() is UiNoteContent.MediaBlock,
+                hazeState = itemHazeState,
+            )
         }
     }
 }
