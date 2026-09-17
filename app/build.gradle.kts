@@ -33,6 +33,7 @@ dependencies {
     implementation(projects.features.reminders)
     implementation(projects.features.widgets)
     implementation(projects.features.gallery)
+    implementation(projects.features.billing)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

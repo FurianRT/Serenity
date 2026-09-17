@@ -36,6 +36,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
+import com.furianrt.billing.api.billingScreen
+import com.furianrt.billing.api.navigateToBilling
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.gallery.api.galleryScreen
 import com.furianrt.gallery.api.navigateToGallery
@@ -268,7 +270,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 navController.navigateToNoteSearch()
                             }
                         )
-
                         noteViewScreen(
                             openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
@@ -296,7 +297,6 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
-
                         noteCreateScreen(
                             openMediaViewScreen = { noteId, mediaId, identifier ->
                                 navController.navigateToMediaView(
@@ -324,10 +324,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
-
                         settingsNavigation(
                             navController = navController,
                             openGalleryScreen = navController::navigateToGallery,
+                            openBillingScreen = navController::navigateToBilling,
                         )
                         mediaViewScreen(
                             onCloseRequest = navController::navigateUp,
@@ -400,6 +400,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             }
+                        )
+                        billingScreen(
+                            onCloseRequest = navController::navigateUp,
                         )
                     }
                     AnimatedVisibility(

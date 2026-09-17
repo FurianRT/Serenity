@@ -34,6 +34,7 @@ fun NavController.navigateToSettings(
 fun NavGraphBuilder.settingsNavigation(
     navController: NavHostController,
     openGalleryScreen: () -> Unit,
+    openBillingScreen: () -> Unit,
 ) {
     navigation<SettingsRoute>(
         startDestination = MainRoute,
@@ -45,6 +46,7 @@ fun NavGraphBuilder.settingsNavigation(
             openAppThemeScreen = navController::navigateToAppTheme,
             openRemindersScreen = navController::navigateToReminders,
             openGalleryScreen = openGalleryScreen,
+            openBillingScreen = openBillingScreen,
             onCloseRequest = {
                 navController.popBackStack(route = SettingsRoute, inclusive = true)
             },

@@ -114,6 +114,7 @@ internal fun SettingsScreen(
     openAppThemeScreen: () -> Unit,
     openRemindersScreen: () -> Unit,
     openGalleryScreen: () -> Unit,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: SettingsViewModel = hiltViewModel()
@@ -131,6 +132,7 @@ internal fun SettingsScreen(
     val openAppThemeScreenState by rememberUpdatedState(openAppThemeScreen)
     val openRemindersScreenState by rememberUpdatedState(openRemindersScreen)
     val openGalleryScreenState by rememberUpdatedState(openGalleryScreen)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     val snackBarHostState = remember { SnackbarHostState() }
     var showBadRatingDialog by remember { mutableStateOf(false) }
@@ -201,6 +203,7 @@ internal fun SettingsScreen(
                     }
 
                     is SettingsEffect.OpenGalleryScreen -> openGalleryScreenState()
+                    is SettingsEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }
@@ -336,7 +339,7 @@ private fun SuccessScreen(
                 ),
                 title = stringResource(uiR.string.title_serenity_plus),
                 icon = painterResource(uiR.drawable.app_logo_small),
-                onClick = {  },
+                onClick = { onEvent(SettingsEvent.OnButtonSerenityPlusClick) },
             )
         }
         OptionButtonWrapper(

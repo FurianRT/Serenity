@@ -140,6 +140,10 @@ internal class SettingsViewModel @Inject constructor(
             is SettingsEvent.OnButtonGalleryClick -> {
                 _effect.tryEmit(SettingsEffect.OpenGalleryScreen)
             }
+
+            is SettingsEvent.OnButtonSerenityPlusClick -> {
+                _effect.tryEmit(SettingsEffect.OpenBillingScreen)
+            }
         }
     }
 
