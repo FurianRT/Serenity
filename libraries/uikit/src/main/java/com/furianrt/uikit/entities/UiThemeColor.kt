@@ -889,15 +889,15 @@ enum class UiThemeColor(
         )
 
         fun getPictureThemes() = listOf(
-            APP_BACKGROUND_PICTURE_10,
             APP_BACKGROUND_PICTURE_17,
+            APP_BACKGROUND_PICTURE_19,
+            APP_BACKGROUND_PICTURE_16,
+            APP_BACKGROUND_PICTURE_10,
+            APP_BACKGROUND_PICTURE_15,
+            APP_BACKGROUND_PICTURE_14,
+            APP_BACKGROUND_PICTURE_20,
             APP_BACKGROUND_PICTURE_9,
             APP_BACKGROUND_PICTURE_3,
-            APP_BACKGROUND_PICTURE_14,
-            APP_BACKGROUND_PICTURE_19,
-            APP_BACKGROUND_PICTURE_15,
-            APP_BACKGROUND_PICTURE_16,
-            APP_BACKGROUND_PICTURE_20,
             APP_BACKGROUND_PICTURE_21,
             APP_BACKGROUND_PICTURE_0,
             APP_BACKGROUND_PICTURE_1,
