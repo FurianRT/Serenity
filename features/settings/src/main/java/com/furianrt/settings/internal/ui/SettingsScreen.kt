@@ -8,6 +8,7 @@ import android.content.Intent
 import android.widget.Toast
 import androidx.annotation.IntRange
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
@@ -71,6 +72,7 @@ import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
 import com.furianrt.settings.internal.ui.composables.WidgetErrorDialog
+import com.furianrt.uikit.anim.shimmer
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
@@ -324,9 +326,17 @@ private fun SuccessScreen(
             backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
         ) {
             OptionButton(
+                modifier = Modifier.shimmer(
+                    durationMillis = 2000,
+                    delayMills = 2000,
+                    color = MaterialTheme.colorScheme.background.copy(
+                        alpha = MaterialTheme.colorScheme.background.alpha * 0.5f,
+                    ),
+                    easing = FastOutSlowInEasing,
+                ),
                 title = stringResource(uiR.string.title_serenity_plus),
                 icon = painterResource(uiR.drawable.app_logo_small),
-                onClick = { onEvent(SettingsEvent.OnLocaleClick) },
+                onClick = {  },
             )
         }
         OptionButtonWrapper(

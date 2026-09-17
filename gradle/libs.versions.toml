@@ -52,7 +52,7 @@ mail = "1.6.8"
 
 googleAuth = "22.0.0"
 credentials = "1.6.0"
-googleid = "1.2.0"
+googleid = "1.2.1"
 
 googleDrive = "v3-rev197-1.25.0"
 googleDriveGms = "17.0.0"

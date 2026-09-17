@@ -17,9 +17,11 @@ import androidx.compose.ui.platform.InspectorInfo
 import kotlinx.coroutines.launch
 
 private const val DEFAULT_SHIMMER_DURATION = 800
+private const val DEFAULT_SHIMMER_DELAY = 1000
 
 private class ShimmerModifierNode(
     val durationMillis: Int,
+    val delayMills: Int,
     val easing: Easing,
     val color: Color,
 ) : Modifier.Node(),
@@ -58,7 +60,7 @@ private class ShimmerModifierNode(
                 targetValue = 2f,
                 animationSpec = infiniteRepeatable(
                     animation = tween(
-                        delayMillis = 1000,
+                        delayMillis = delayMills,
                         durationMillis = durationMillis,
                         easing = easing,
                     ),
@@ -79,10 +81,17 @@ private class ShimmerModifierNode(
 
 private data class ShimmerModifierElement(
     val durationMillis: Int,
+    val delayMills: Int,
     val easing: Easing,
     val color: Color,
 ) : ModifierNodeElement<ShimmerModifierNode>() {
-    override fun create(): ShimmerModifierNode = ShimmerModifierNode(durationMillis, easing, color)
+    override fun create(): ShimmerModifierNode = ShimmerModifierNode(
+        durationMillis = durationMillis,
+        delayMills = delayMills,
+        easing = easing,
+        color = color,
+    )
+
     override fun update(node: ShimmerModifierNode) = Unit
     override fun InspectorInfo.inspectableProperties() {
         name = "com.furianrt.uikit.anim.shimmer"
@@ -93,4 +102,10 @@ fun Modifier.shimmer(
     durationMillis: Int = DEFAULT_SHIMMER_DURATION,
     easing: Easing = LinearEasing,
     color: Color = Color.White.copy(alpha = 0.1f),
-): Modifier = this then ShimmerModifierElement(durationMillis, easing, color)
+    delayMills: Int = DEFAULT_SHIMMER_DELAY,
+): Modifier = this then ShimmerModifierElement(
+    durationMillis = durationMillis,
+    delayMills = delayMills,
+    easing = easing,
+    color = color,
+)
