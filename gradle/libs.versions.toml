@@ -79,6 +79,8 @@ glance = "1.2.0"
 timePicker = "1.4.0"
 kotlinDatetime = "0.8.0"
 
+billing = "9.1.0"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -172,6 +174,8 @@ palette = { module = "androidx.palette:palette-ktx", version.ref = "palette" }
 
 timePicker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref = "timePicker" }
 kotlinDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinDatetime" }
+
+billing = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

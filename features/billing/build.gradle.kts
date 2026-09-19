@@ -40,4 +40,6 @@ dependencies {
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.blur)
+
+    implementation(libs.billing)
 }
