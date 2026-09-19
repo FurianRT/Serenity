@@ -20,8 +20,9 @@ import com.furianrt.uikit.utils.brighterBy
 fun AppBackground(
     theme: UiThemeColor,
     modifier: Modifier = Modifier,
+    ignoreImage: Boolean = false,
 ) {
-    if (theme.image != null) {
+    if (!ignoreImage && theme.image != null) {
         val context = LocalContext.current
         val request = remember(context, theme.image.resId) {
             ImageRequest.Builder(context)
