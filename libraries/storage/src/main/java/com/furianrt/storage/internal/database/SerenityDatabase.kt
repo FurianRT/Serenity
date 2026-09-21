@@ -14,6 +14,8 @@ import com.furianrt.domain.entities.LocalNote
 import com.furianrt.storage.internal.database.SerenityDatabase.Companion.VERSION
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
+import com.furianrt.storage.internal.database.billing.dao.BillingPlanDao
+import com.furianrt.storage.internal.database.billing.entities.EntryBillingPlan
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
@@ -54,6 +56,7 @@ import java.time.ZonedDateTime
         EntryNoteCustomBackground::class,
         EntryCustomSticker::class,
         EntryReminder::class,
+        EntryBillingPlan::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -73,10 +76,11 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun customBackgroundDao(): CustomBackgroundDao
     abstract fun customStickerDao(): CustomStickerDao
     abstract fun remindersDao(): RemindersDao
+    abstract fun billingPlanDao(): BillingPlanDao
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 11
+        private const val VERSION = 12
 
         fun create(
             context: Context,
@@ -101,6 +105,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_8_9,
                 MIGRATION_9_10,
                 MIGRATION_10_11,
+                MIGRATION_11_12,
             )
             .build()
     }
@@ -256,5 +261,22 @@ private val MIGRATION_10_11 = object : Migration(10, 11) {
                     }
             }
         }
+    }
+}
+
+private val MIGRATION_11_12 = object : Migration(11, 12) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS BillingPlans (
+                id TEXT NOT NULL PRIMARY KEY,
+                price TEXT NOT NULL,
+                is_trial_available INTEGER NOT NULL, 
+                type TEXT NOT NULL,
+                per_month_price TEXT,
+                FIELD_DISCOUNT INTEGER,
+            )
+            """.trimIndent(),
+        )
     }
 }

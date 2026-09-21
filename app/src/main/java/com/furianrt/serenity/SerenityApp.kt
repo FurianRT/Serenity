@@ -15,6 +15,7 @@ import coil3.SingletonImageLoader
 import coil3.request.CachePolicy
 import com.furianrt.common.NotificationChannels
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -46,6 +47,9 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
 
     @Inject
     lateinit var syncManager: SyncManager
+
+    @Inject
+    lateinit var serenityPlusProvider: SerenityPlusProvider
 
     @Inject
     lateinit var dispatchers: DispatchersProvider
@@ -83,6 +87,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     private suspend fun startPeriodicWorks() = withContext(dispatchers.io) {
         notesRepository.enqueuePeriodicCleanup()
         notesRepository.enqueuePeriodicCacheCleanup()
+        serenityPlusProvider.enqueuePeriodicWork()
         syncManager.tryStartAutoBackup()
     }
 

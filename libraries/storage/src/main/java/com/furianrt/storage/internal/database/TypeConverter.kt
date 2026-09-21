@@ -8,6 +8,7 @@ import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 import androidx.core.net.toUri
 import androidx.room3.ColumnTypeConverter
+import com.furianrt.storage.internal.database.billing.entities.EntryBillingPlan
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -73,4 +74,11 @@ internal class TypeConverter {
 
     @ColumnTypeConverter
     fun stringToLocalTime(value: String): LocalTime = LocalTime.parse(value)
+
+    @ColumnTypeConverter
+    fun billingPlanTypeToString(type: EntryBillingPlan.Type): String = type.id
+
+    @ColumnTypeConverter
+    fun stringToBillingPlanType(value: String): EntryBillingPlan.Type =
+        EntryBillingPlan.Type.fromId(value)
 }

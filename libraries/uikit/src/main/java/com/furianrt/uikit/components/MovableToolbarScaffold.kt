@@ -248,6 +248,7 @@ fun MovableToolbarScaffold(
                             backgroundColor = MaterialTheme.colorScheme.surface,
                             tint = HazeTint(Color.Transparent),
                             blurRadius = if (contentOnTop) 12.dp else 4.dp,
+                            noiseFactor = 0f,
                         )
                     )
                     .padding(if (contentOnTop) 8.dp else 12.dp)

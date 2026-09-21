@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.common.ErrorTracker
+import com.furianrt.common.SerenityTermsLink
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
@@ -34,9 +35,6 @@ import kotlin.time.Duration.Companion.milliseconds
 
 private const val MIN_GOOD_RATING = 5
 private const val RATING_CLICK_DELAY = 250L
-private const val PRIVACY_POLICY_LINK = "https://sites.google.com/view/serenityapp/privacy-policy"
-private const val TERMS_AND_CONDITIONS_LINK =
-    "https://sites.google.com/view/serenityapp/terms-and-conditions"
 
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
@@ -103,11 +101,11 @@ internal class SettingsViewModel @Inject constructor(
             }
 
             is SettingsEvent.OnButtonTermsAndConditionsClick -> {
-                _effect.tryEmit(SettingsEffect.OpenLink(TERMS_AND_CONDITIONS_LINK))
+                _effect.tryEmit(SettingsEffect.OpenLink(SerenityTermsLink.TERMS_AND_CONDITIONS_LINK))
             }
 
             is SettingsEvent.OnButtonPrivacyPolicyClick -> {
-                _effect.tryEmit(SettingsEffect.OpenLink(PRIVACY_POLICY_LINK))
+                _effect.tryEmit(SettingsEffect.OpenLink(SerenityTermsLink.PRIVACY_POLICY_LINK))
             }
 
             is SettingsEvent.OnLocaleClick -> launch {

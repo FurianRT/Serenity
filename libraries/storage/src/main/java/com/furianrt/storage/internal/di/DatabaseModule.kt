@@ -15,6 +15,7 @@ import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
+import com.furianrt.storage.internal.database.billing.dao.BillingPlanDao
 import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
@@ -153,6 +154,10 @@ internal interface DatabaseModule {
         @Provides
         @Singleton
         fun remindersDao(database: SerenityDatabase): RemindersDao = database.remindersDao()
+
+        @Provides
+        @Singleton
+        fun billingPlanDao(database: SerenityDatabase): BillingPlanDao = database.billingPlanDao()
 
         @Provides
         @Singleton

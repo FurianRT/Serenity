@@ -15,6 +15,7 @@ dependencies {
     implementation(projects.libraries.uikit)
     implementation(projects.libraries.domain)
     implementation(projects.libraries.common)
+    implementation(projects.libraries.storage)
 
     implementation(libs.coreKtx)
     implementation(libs.lifecycle)
@@ -42,4 +43,8 @@ dependencies {
     implementation(libs.blur)
 
     implementation(libs.billing)
+
+    implementation(libs.dataStore)
+
+    implementation(libs.workManager)
 }

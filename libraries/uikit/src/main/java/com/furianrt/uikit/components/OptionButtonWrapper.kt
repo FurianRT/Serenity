@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
@@ -19,13 +20,14 @@ import dev.chrisbanes.haze.hazeEffect
 fun OptionButtonWrapper(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
+    shape: Shape = RoundedCornerShape(16.dp),
     borderColor: Color = MaterialTheme.colorScheme.background,
     backgroundColor: Color = Color.Transparent,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(shape)
             .hazeEffect(
                 state = hazeState,
                 style = HazeDefaults.style(
@@ -38,7 +40,7 @@ fun OptionButtonWrapper(
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp),
+                shape = shape,
             ),
         content = { content() },
     )

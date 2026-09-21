@@ -23,10 +23,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.uikit.anim.shimmer
+import com.furianrt.uikit.components.DotsAnimation
 import com.furianrt.uikit.utils.shiftToAccent
 
 @Composable
 internal fun ButtonSubscribe(
+    text: String,
+    showProgress: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val rippleConfig = RippleConfiguration(
@@ -55,22 +59,26 @@ internal fun ButtonSubscribe(
                 )
                 .shimmer(
                     delayMills = 1500,
-                    color = MaterialTheme.colorScheme.tertiary,
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
                 )
-                .clickable {}
+                .clickable(enabled = !showProgress, onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 6.dp),
             contentAlignment = Alignment.Center,
         ) {
-            BasicText(
-                text = "Start Free Trial",
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme::onPrimaryContainer,
-                autoSize = TextAutoSize.StepBased(
-                    minFontSize = 14.sp,
-                    maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
-                ),
-            )
+            if (showProgress) {
+                DotsAnimation()
+            } else {
+                BasicText(
+                    text = text,
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme::onPrimaryContainer,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = 14.sp,
+                        maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    ),
+                )
+            }
         }
     }
 }
