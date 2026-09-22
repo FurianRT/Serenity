@@ -102,6 +102,7 @@ val LocalIsLightTheme = compositionLocalOf { false }
 val LocalFont = compositionLocalOf<NoteFont> { NoteFont.NotoSans }
 val LocalHasMediaRoute = compositionLocalOf { false }
 val LocalHasMediaSortingRoute = compositionLocalOf { false }
+val LocalSerenityPlus = compositionLocalOf { false }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

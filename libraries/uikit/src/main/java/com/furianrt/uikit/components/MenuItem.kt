@@ -36,6 +36,7 @@ fun MenuItem(
     leadingIcon: @Composable (() -> Unit)?,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    trailingIcon: @Composable (() -> Unit)? = null,
     colors: MenuItemColors = defaultMenuItemColors(),
     animate: Boolean = true,
 ) {
@@ -70,6 +71,19 @@ fun MenuItem(
         } else {
             null
         },
+        trailingIcon = if (trailingIcon != null) {
+            {
+                Box(
+                    modifier = Modifier.graphicsLayer {
+                        scaleY = if (isInspectionMode) 1f else scale.value
+                    },
+                ) {
+                    trailingIcon()
+                }
+            }
+        } else {
+            null
+        },
         onClick = onClick,
     )
 }
@@ -80,6 +94,7 @@ fun MenuItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     icon: Painter? = null,
+    iconEnd: Painter? = null,
     colors: MenuItemColors = defaultMenuItemColors(),
 ) {
     MenuItem(
@@ -95,6 +110,16 @@ fun MenuItem(
             {
                 Icon(
                     painter = icon,
+                    contentDescription = null,
+                )
+            }
+        } else {
+            null
+        },
+        trailingIcon = if (iconEnd != null) {
+            {
+                Icon(
+                    painter = iconEnd,
                     contentDescription = null,
                 )
             }

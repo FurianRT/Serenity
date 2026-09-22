@@ -47,4 +47,5 @@ internal sealed interface NoteCreateEffect {
     ) : NoteCreateEffect
 
     data class SharePdfFile(val uri: Uri) : NoteCreateEffect
+    data object OpenBillingScreen : NoteCreateEffect
 }

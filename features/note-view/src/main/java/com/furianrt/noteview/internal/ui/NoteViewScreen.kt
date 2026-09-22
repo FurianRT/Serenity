@@ -99,6 +99,7 @@ internal fun NoteViewScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteViewModel = hiltViewModel()
@@ -120,6 +121,7 @@ internal fun NoteViewScreen(
     var exportStubBitmap: BitmapPainter? by remember { mutableStateOf(null) }
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -206,6 +208,8 @@ internal fun NoteViewScreen(
                                 duration = SnackbarDuration.Short,
                             )
                         }
+
+                    is NoteViewEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }

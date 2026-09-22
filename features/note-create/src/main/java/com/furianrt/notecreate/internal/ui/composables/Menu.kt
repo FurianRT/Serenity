@@ -1,9 +1,12 @@
 package com.furianrt.notecreate.internal.ui.composables
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -16,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import dev.chrisbanes.haze.HazeDefaults
@@ -69,7 +73,7 @@ internal fun Menu(
             } else {
                 painterResource(uiR.drawable.ic_pin)
             },
-            text =  if (isPinned) {
+            text = if (isPinned) {
                 stringResource(uiR.string.action_unpin)
             } else {
                 stringResource(uiR.string.action_pin)
@@ -83,8 +87,30 @@ internal fun Menu(
             },
         )
         MenuItem(
-            icon = painterResource(uiR.drawable.ic_export_file),
-            text = stringResource(uiR.string.action_export_pdf),
+            leadingIcon = {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_export_file),
+                    contentDescription = null,
+                )
+            },
+            trailingIcon = if (LocalSerenityPlus.current) {
+                null
+            } else {
+                {
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        painter = painterResource(uiR.drawable.ic_leaf),
+                        tint = MaterialTheme.colorScheme.primaryContainer,
+                        contentDescription = null,
+                    )
+                }
+            },
+            text = {
+                Text(
+                    text = stringResource(uiR.string.action_export_pdf),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+            },
             onClick = {
                 onExportPdfClick()
                 onDismissRequest()

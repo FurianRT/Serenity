@@ -11,6 +11,7 @@ import androidx.activity.viewModels
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -36,9 +37,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
+import com.furianrt.billing.api.BillingRoute
 import com.furianrt.billing.api.billingScreen
 import com.furianrt.billing.api.navigateToBilling
 import com.furianrt.domain.managers.LockAuthorizer
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.gallery.api.galleryScreen
 import com.furianrt.gallery.api.navigateToGallery
 import com.furianrt.mediaselector.api.MediaViewerRoute
@@ -76,6 +79,7 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.isTablet
 import com.furianrt.uikit.theme.LocalHasMediaRoute
 import com.furianrt.uikit.theme.LocalHasMediaSortingRoute
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IsAuthorizedProvider
 import com.furianrt.uikit.utils.LocalAuth
@@ -98,6 +102,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
 
     @Inject
     lateinit var remindersApi: RemindersApi
+
+    @Inject
+    lateinit var serenityPlusProvider: SerenityPlusProvider
 
     private val viewModel: MainViewModel by viewModels()
 
@@ -132,7 +139,10 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             }
         }
         setContent {
-            ComposeContent()
+            val serenityPlus by serenityPlusProvider.hasSerenityPlus().collectAsStateWithLifecycle()
+            CompositionLocalProvider(LocalSerenityPlus provides serenityPlus) {
+                ComposeContent()
+            }
         }
     }
 
@@ -232,7 +242,13 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         navController = navController,
                         startDestination = NoteListRoute,
                         enterTransition = { defaultEnterTransition() },
-                        exitTransition = { defaultExitTransition() },
+                        exitTransition = {
+                            if (targetState.destination.hasRoute<BillingRoute>()) {
+                                fadeOut(tween(250))
+                            } else {
+                                defaultExitTransition()
+                            }
+                        },
                         popExitTransition = { defaultPopExitTransition() },
                         popEnterTransition = { defaultPopEnterTransition() },
                         predictivePopEnterTransition = {
@@ -294,7 +310,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 )
                             },
                             openMediaViewer = navController::navigateToMediaViewer,
+                            openBillingScreen = navController::navigateToBilling,
                             hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
+                            hasBillingRoute = { it.hasRoute<BillingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
                         noteCreateScreen(
@@ -321,7 +339,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 )
                             },
                             openMediaViewer = navController::navigateToMediaViewer,
+                            openBillingScreen = navController::navigateToBilling,
                             hasMediaSortingRoute = { it.hasRoute<MediaSortingRoute>() },
+                            hasBillingRoute = { it.hasRoute<BillingRoute>() },
                             onCloseRequest = navController::navigateUp,
                         )
                         settingsNavigation(

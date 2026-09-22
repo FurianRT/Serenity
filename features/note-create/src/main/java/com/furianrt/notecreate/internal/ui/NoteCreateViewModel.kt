@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.doWithState
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -52,6 +53,7 @@ internal class NoteCreateViewModel @Inject constructor(
     private val mediaRepository: MediaRepository,
     private val noteThemeProvider: NoteThemeProvider,
     private val dialogResultCoordinator: DialogResultCoordinator,
+    private val serenityPlusProvider: SerenityPlusProvider,
 ) : ViewModel() {
 
     private val route = savedStateHandle.toRoute<NoteCreateRoute>()
@@ -150,6 +152,14 @@ internal class NoteCreateViewModel @Inject constructor(
     }
 
     private fun onExportPdfClick() {
+        if (serenityPlusProvider.hasSerenityPlus().value) {
+            exportPdf()
+        } else {
+            _effect.tryEmit(NoteCreateEffect.OpenBillingScreen)
+        }
+    }
+
+    private fun exportPdf() {
         disableEditMode()
         (state.value as? NoteCreateUiState.Success)?.let  { successState ->
             val effect = NoteCreateEffect.CaptureNoteScreenContent(

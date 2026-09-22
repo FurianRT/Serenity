@@ -53,3 +53,11 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.defaultPopEnterTransition(
         ),
     )
 }
+
+fun defaultExitForBillingTransition(): ExitTransition = fadeOut(
+    animationSpec = tween(
+        durationMillis = 500,
+        easing = LinearEasing,
+    ),
+    targetAlpha = 0.4f,
+)

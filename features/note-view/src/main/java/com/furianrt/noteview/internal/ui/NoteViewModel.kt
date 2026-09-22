@@ -8,6 +8,7 @@ import com.furianrt.core.doWithState
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.core.updateState
 import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.managers.SyncManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
@@ -58,6 +59,7 @@ internal class NoteViewModel @Inject constructor(
     private val noteThemeProvider: NoteThemeProvider,
     private val appearanceRepository: AppearanceRepository,
     private val pageScreenStatesHolder: PageScreenStatesHolder,
+    private val serenityPlusProvider: SerenityPlusProvider,
     private val dispatchers: DispatchersProvider,
 ) : ViewModel() {
 
@@ -210,6 +212,14 @@ internal class NoteViewModel @Inject constructor(
     }
 
     private fun onExportPdfClick(noteId: String) {
+        if (serenityPlusProvider.hasSerenityPlus().value) {
+            exportPdf(noteId)
+        } else {
+            _effect.tryEmit(NoteViewEffect.OpenBillingScreen)
+        }
+    }
+
+    private fun exportPdf(noteId: String) {
         disableEditMode()
         _state.doWithState<NoteViewUiState.Success> { successState ->
             val effect = NoteViewEffect.CaptureNoteScreenContent(

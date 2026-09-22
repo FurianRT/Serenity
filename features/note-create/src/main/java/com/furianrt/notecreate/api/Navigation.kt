@@ -15,6 +15,7 @@ import androidx.navigation.navDeepLink
 import com.furianrt.common.SerenityDeeplink
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.notecreate.internal.ui.NoteCreateScreen
+import com.furianrt.uikit.anim.defaultExitForBillingTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
@@ -44,14 +45,16 @@ fun NavGraphBuilder.noteCreateScreen(
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     hasMediaSortingRoute: (destination: NavDestination) -> Boolean,
+    hasBillingRoute: (destination: NavDestination) -> Boolean,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<NoteCreateRoute>(
         exitTransition = {
-            if (hasMediaSortingRoute(targetState.destination)) {
-                defaultExitTransition()
-            } else {
-                ExitTransition.None
+            when {
+                hasMediaSortingRoute(targetState.destination) -> defaultExitTransition()
+                hasBillingRoute(targetState.destination) -> defaultExitForBillingTransition()
+                else -> ExitTransition.None
             }
         },
         popExitTransition = { defaultPopExitTransition() },
@@ -66,7 +69,7 @@ fun NavGraphBuilder.noteCreateScreen(
             )
         },
         popEnterTransition = {
-            if (hasMediaSortingRoute(initialState.destination)) {
+            if (hasMediaSortingRoute(initialState.destination) || hasBillingRoute(initialState.destination)) {
                 defaultPopEnterTransition()
             } else {
                 EnterTransition.None
@@ -82,6 +85,7 @@ fun NavGraphBuilder.noteCreateScreen(
             openMediaViewScreen = openMediaViewScreen,
             openMediaSortingScreen = openMediaSortingScreen,
             openMediaViewer = openMediaViewer,
+            openBillingScreen = openBillingScreen,
             onCloseRequest = onCloseRequest,
         )
     }

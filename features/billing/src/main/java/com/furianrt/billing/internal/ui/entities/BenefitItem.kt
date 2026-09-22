@@ -34,6 +34,6 @@ internal enum class BenefitItem {
         CUSTOM_STICKERS -> painterResource(uiR.drawable.ic_stickers)
         CUSTOM_BACKGROUNDS -> painterResource(uiR.drawable.ic_theme)
         EXPORT_PDF -> painterResource(uiR.drawable.ic_export_file)
-        MORE_FEATURES -> painterResource(R.drawable.ic_sprout)
+        MORE_FEATURES -> painterResource(uiR.drawable.ic_leaf)
     }
 }

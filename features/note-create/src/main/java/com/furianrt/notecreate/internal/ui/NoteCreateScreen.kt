@@ -90,6 +90,7 @@ internal fun NoteCreateScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: NoteCreateViewModel = hiltViewModel()
@@ -107,6 +108,7 @@ internal fun NoteCreateScreen(
     val generalErrorMessage = stringResource(uiR.string.general_error)
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     val graphicsLayer = rememberGraphicsLayer()
     var exportRedrawTrigger by remember { mutableIntStateOf(0) }
@@ -192,6 +194,8 @@ internal fun NoteCreateScreen(
                                 duration = SnackbarDuration.Short,
                             )
                         }
+
+                    is NoteCreateEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }
