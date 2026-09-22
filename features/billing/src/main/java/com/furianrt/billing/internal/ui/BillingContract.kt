@@ -35,4 +35,5 @@ internal sealed interface BillingEvent {
 internal sealed interface BillingEffect {
     data object CloseScreen : BillingEffect
     data class OpenLink(val url: String) : BillingEffect
+    data object ShowGeneralErrorMessage : BillingEffect
 }

@@ -7,6 +7,7 @@ import android.os.Bundle
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
 import com.android.billingclient.api.BillingClientStateListener
+import com.android.billingclient.api.BillingFlowParams
 import com.android.billingclient.api.BillingResult
 import com.android.billingclient.api.PendingPurchasesParams
 import com.android.billingclient.api.ProductDetails
@@ -21,6 +22,7 @@ import com.furianrt.billing.internal.data.sources.BillingDataStore
 import com.furianrt.billing.internal.domain.entities.SerenityPlusPlan
 import com.furianrt.billing.internal.domain.repository.BillingRepository
 import com.furianrt.billing.internal.workers.AcknowledgePurchaseWorker
+import com.furianrt.common.ActivityChecker
 import com.furianrt.common.ActivityLifecycleCallbacks
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.deepMap
@@ -32,7 +34,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -59,6 +60,7 @@ internal class BillingRepositoryImp @Inject constructor(
     private val billingDataStore: BillingDataStore,
     private val billingPlanDao: BillingPlanDao,
     private val errorTracker: ErrorTracker,
+    private val activityChecker: ActivityChecker,
 ) : BillingRepository,
     PurchasesUpdatedListener {
 
@@ -87,13 +89,13 @@ internal class BillingRepositoryImp @Inject constructor(
             return
         }
         val deferredSubs = scope.async {
-            queryPurchasesForType(
+            queryPlansForType(
                 productId = SerenityProductId.SUBSCRIPTIONS_ID,
                 productType = BillingClient.ProductType.SUBS,
             )
         }
         val deferredInApps = scope.async {
-            queryPurchasesForType(
+            queryPlansForType(
                 productId = SerenityProductId.PERMANENT_ID,
                 productType = BillingClient.ProductType.INAPP,
             )
@@ -170,7 +172,6 @@ internal class BillingRepositoryImp @Inject constructor(
         billingPlanDao.getBillingPlans()
             .deepMap(EntryBillingPlan::toDomain)
             .map { plans ->
-                delay(4000)
                 plans.sortedBy { plan ->
                     when (plan) {
                         is SerenityPlusPlan.Monthly -> 1
@@ -191,39 +192,103 @@ internal class BillingRepositoryImp @Inject constructor(
         AcknowledgePurchaseWorker.enqueuePeriodic(applicationContext)
     }
 
-    override suspend fun launchBillingFlow(productId: String) {
-        /*// 1. Формируем параметры конкретного продукта (подписки или разовой покупки)
-
-        val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(productDetails)
-
-        // 2. Если это подписка, Google Play требует offerToken (даже для базового плана)
-        if (offerToken != null) {
-            productDetailsParams.setOfferToken(offerToken)
-        } else if (productDetails.productType == BillingClient.ProductType.SUBS) {
-            // Если токен не передан, берем дефолтный (первый доступный базовый план)
-            val defaultToken = productDetails.subscriptionOfferDetails?.firstOrNull()?.offerToken
-            defaultToken?.let { productDetailsParams.setOfferToken(it) }
+    private suspend fun getSubscriptionBillingParams(
+        productId: String,
+    ): Result<BillingFlowParams> {
+        val plan = try {
+            queryPlansForType(
+                productId = SerenityProductId.SUBSCRIPTIONS_ID,
+                productType = BillingClient.ProductType.SUBS,
+            ).firstOrNull() ?: throw IllegalStateException()
+        } catch (e: Exception) {
+            return Result.failure(e)
         }
 
-        // 3. Собираем финальные параметры для запуска флоу оплаты
-        val billingFlowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(productDetailsParams.build()))
-            // Здесь можно передать обфусцированный ID пользователя для защиты от фрода:
-            // .setObfuscatedAccountId("user_id_sha256")
-            .build()
+        val offer = plan.subscriptionOfferDetails?.findTrialOffer(productId)
+            ?: plan.subscriptionOfferDetails?.findOffer(productId)
+            ?: return Result.failure(IllegalStateException())
 
-        // 4. Запускаем флоу оплаты Google Play
-        val billingResult = billingClient.launchBillingFlow(activity, billingFlowParams)
+        val productDetailsParamsList = listOf(
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(plan)
+                .setOfferToken(offer.offerToken)
+                .build()
+        )
 
-        // 5. Проверяем, успешно ли открылось окно (это НЕ результат покупки, а именно старт процесса)
-        if (billingResult.responseCode != BillingClient.BillingResponseCode.OK) {
-            // Логируем ошибку, если окно Google Play не смогло открыться (например, старая версия Маркета)
-            Log.e("BillingRepository", "Ошибка запуска оплаты: ${billingResult.debugMessage}")
-        }*/
+        return Result.success(
+            BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .build()
+        )
     }
 
-    private suspend fun queryPurchasesForType(
+    private suspend fun getPermanentBillingParams(
+        productId: String,
+    ): Result<BillingFlowParams> {
+        val plan = try {
+            queryPlansForType(
+                productId = SerenityProductId.PERMANENT_ID,
+                productType = BillingClient.ProductType.INAPP,
+            ).find { it.productId == productId } ?: throw IllegalStateException()
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+        val productDetailsParamsList = listOf(
+            BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(plan)
+                .build()
+        )
+        return Result.success(
+            BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(productDetailsParamsList)
+                .build()
+        )
+    }
+
+    override suspend fun launchBillingFlow(productId: String): Result<Unit> {
+        val activity = activityCallbacks.currentActivity
+            ?: return Result.failure(IllegalStateException())
+
+        val connectionResult = startConnection()
+        if (connectionResult.isFailure) {
+            return connectionResult
+        }
+
+        val billingFlowParams = if (productId == SerenityProductId.PERMANENT_ID) {
+            getPermanentBillingParams(productId)
+        } else {
+            getSubscriptionBillingParams(productId)
+        }.onFailure { error ->
+            return Result.failure(error)
+        }.getOrNull() ?: return Result.failure(IllegalStateException())
+
+        val result = billingClient.launchBillingFlow(activity, billingFlowParams)
+
+        return if (result.responseCode == BillingClient.BillingResponseCode.OK) {
+            Result.success(Unit)
+        } else {
+            Result.failure(
+                BillingException(
+                    code = result.responseCode,
+                    message = result.debugMessage,
+                ),
+            )
+        }
+    }
+
+    private fun List<ProductDetails.SubscriptionOfferDetails>.findOffer(
+        productId: String,
+    ): ProductDetails.SubscriptionOfferDetails? = find { details ->
+        details.basePlanId == productId
+    }
+
+    private fun List<ProductDetails.SubscriptionOfferDetails>.findTrialOffer(
+        productId: String,
+    ): ProductDetails.SubscriptionOfferDetails? = find { details ->
+        details.basePlanId == productId && details.offerTags.contains(SerenityProductId.TAG_TRIAL)
+    }
+
+    private suspend fun queryPlansForType(
         productId: String,
         productType: String,
     ): List<ProductDetails> {
@@ -362,7 +427,7 @@ internal class BillingRepositoryImp @Inject constructor(
         }
     }
 
-    private class CurrentActivityCallbacks : ActivityLifecycleCallbacks {
+    private inner class CurrentActivityCallbacks : ActivityLifecycleCallbacks {
 
         private var currentActivityRef: WeakReference<Activity>? = null
 
@@ -370,7 +435,9 @@ internal class BillingRepositoryImp @Inject constructor(
             get() = currentActivityRef?.get()?.takeUnless { it.isDestroyed }
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            currentActivityRef = WeakReference(activity)
+            if (activityChecker.isMainActivity(activity)) {
+                currentActivityRef = WeakReference(activity)
+            }
         }
     }
 }

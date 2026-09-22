@@ -1,7 +1,9 @@
 package com.furianrt.serenity.di
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import com.furianrt.common.ActivityChecker
 import com.furianrt.common.BuildInfoProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.common.RootActivityIntentProvider
@@ -61,5 +63,11 @@ internal object AppModule {
     @Provides
     fun provideBuildInfoProvider(): BuildInfoProvider = object : BuildInfoProvider {
         override fun getAppVersionName(): String = BuildConfig.VERSION_NAME
+    }
+
+    @Singleton
+    @Provides
+    fun provideActivityChecker(): ActivityChecker = object : ActivityChecker {
+        override fun isMainActivity(activity: Activity): Boolean = activity is MainActivity
     }
 }

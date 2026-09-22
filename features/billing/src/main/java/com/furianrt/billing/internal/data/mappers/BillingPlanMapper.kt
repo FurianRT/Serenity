@@ -7,8 +7,6 @@ import com.furianrt.storage.internal.database.billing.entities.EntryBillingPlan
 import java.util.Locale
 import kotlin.collections.orEmpty
 
-private const val TAG_TRIAL = "trial"
-
 internal fun EntryBillingPlan.toDomain(): SerenityPlusPlan = when (type) {
     EntryBillingPlan.Type.MONTHLY -> SerenityPlusPlan.Monthly(
         productId = id,
@@ -92,20 +90,20 @@ private fun ProductDetails.toSubscriptionPlans(): List<EntryBillingPlan> {
             SerenityProductId.MONTHLY_SUBSCRIPTIONS_PRODUCT_ID -> subscription.toMonthSubscription(
                 hasTrial = availableSubscriptions.any { details ->
                     details.basePlanId == SerenityProductId.MONTHLY_SUBSCRIPTIONS_PRODUCT_ID &&
-                            details.offerTags.contains(TAG_TRIAL)
+                            details.offerTags.contains(SerenityProductId.TAG_TRIAL)
                 },
             )
 
             SerenityProductId.YEARLY_SUBSCRIPTIONS_PRODUCT_ID -> {
                 val monthSubscription = availableSubscriptions.find { details ->
                     details.basePlanId == SerenityProductId.MONTHLY_SUBSCRIPTIONS_PRODUCT_ID &&
-                            !details.offerTags.contains(TAG_TRIAL)
+                            !details.offerTags.contains(SerenityProductId.TAG_TRIAL)
                 }
                 val monthDetails = monthSubscription?.pricingPhases?.pricingPhaseList?.firstOrNull()
                 subscription.toYearSubscription(
                     hasTrial = availableSubscriptions.any { details ->
                         details.basePlanId == SerenityProductId.YEARLY_SUBSCRIPTIONS_PRODUCT_ID &&
-                                details.offerTags.contains(TAG_TRIAL)
+                                details.offerTags.contains(SerenityProductId.TAG_TRIAL)
                     },
                     perMonthPrice = monthDetails?.formattedPrice,
                 )

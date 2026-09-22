@@ -7,6 +7,8 @@ internal object SerenityProductId {
 
     const val PERMANENT_ID = "permament_plan"
 
+    const val TAG_TRIAL = "trial"
+
     val availableIds = setOf(
         PERMANENT_ID,
         SUBSCRIPTIONS_ID,

@@ -95,6 +95,7 @@ internal fun BillingScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
     val appNotFoundMessage = stringResource(uiR.string.app_not_found_error)
+    val generalErrorMessage = stringResource(uiR.string.general_error)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -109,6 +110,10 @@ internal fun BillingScreen(
                         ErrorTracker.printStackTrace(e)
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.Reject)
                         Toast.makeText(context, appNotFoundMessage, Toast.LENGTH_SHORT).show()
+                    }
+
+                    is BillingEffect.ShowGeneralErrorMessage -> {
+                        Toast.makeText(context, generalErrorMessage, Toast.LENGTH_SHORT).show()
                     }
                 }
             }

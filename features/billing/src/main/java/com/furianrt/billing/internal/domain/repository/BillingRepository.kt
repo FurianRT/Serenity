@@ -7,6 +7,6 @@ import kotlinx.coroutines.flow.Flow
 internal interface BillingRepository : SerenityPlusProvider {
     suspend fun sync()
     fun getSerenityPlusPlans(): Flow<List<SerenityPlusPlan>>
-    suspend fun launchBillingFlow(productId: String)
+    suspend fun launchBillingFlow(productId: String): Result<Unit>
     suspend fun acknowledgePurchases()
 }

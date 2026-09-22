@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.annotation.StringRes
+import com.furianrt.common.ActivityChecker
 import com.furianrt.common.ActivityLifecycleCallbacks
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.lang.ref.WeakReference
@@ -15,6 +16,7 @@ import javax.inject.Singleton
 @Singleton
 class ResourcesManager @Inject constructor(
     @param:ApplicationContext private val applicationContext: Context,
+    private val activityChecker: ActivityChecker,
 ) {
 
     private val activityCallbacks = CurrentActivityCallbacks()
@@ -34,7 +36,7 @@ class ResourcesManager @Inject constructor(
         vararg objects: Any,
     ): String = resources.getString(resourceId, *objects)
 
-    private class CurrentActivityCallbacks : ActivityLifecycleCallbacks {
+    private inner class CurrentActivityCallbacks : ActivityLifecycleCallbacks {
 
         private var currentActivity: WeakReference<Activity>? = null
 
@@ -42,7 +44,9 @@ class ResourcesManager @Inject constructor(
             get() = currentActivity?.get()?.takeUnless { it.isDestroyed }
 
         override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
-            currentActivity = WeakReference(activity)
+            if (activityChecker.isMainActivity(activity)) {
+                currentActivity = WeakReference(activity)
+            }
         }
     }
 }

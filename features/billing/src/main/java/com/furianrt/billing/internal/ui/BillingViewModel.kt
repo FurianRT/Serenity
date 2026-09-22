@@ -9,6 +9,7 @@ import com.furianrt.billing.internal.domain.entities.SerenityPlusPlan
 import com.furianrt.billing.internal.domain.repository.BillingRepository
 import com.furianrt.billing.internal.ui.entities.BenefitItem
 import com.furianrt.billing.internal.ui.mappers.SubscriptionPlanMapper
+import com.furianrt.common.ErrorTracker
 import com.furianrt.common.SerenityTermsLink
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
@@ -34,6 +35,7 @@ internal class BillingViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
     private val billingRepository: BillingRepository,
     private val resourcesManager: ResourcesManager,
+    private val errorTracker: ErrorTracker,
     private val mapper: SubscriptionPlanMapper,
 ) : ViewModel() {
 
@@ -100,7 +102,12 @@ internal class BillingViewModel @Inject constructor(
         showButtonProgressState.update { true }
         launch {
             billingRepository.launchBillingFlow(selectedPlanIdState.value)
-            showButtonProgressState.update { false }
+                .onSuccess { showButtonProgressState.update { false } }
+                .onFailure { error ->
+                    showButtonProgressState.update { false }
+                    errorTracker.trackNonFatalError(error)
+                    _effect.tryEmit(BillingEffect.ShowGeneralErrorMessage)
+                }
         }
     }
 
