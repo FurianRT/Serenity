@@ -15,6 +15,7 @@ internal data class SettingsUiState(
             @param:IntRange(0L, 5L) val rating: Int,
             val appVersion: String,
             val showWidgetsButton: Boolean,
+            val showSerenityPlusButton: Boolean,
         ) : Content
     }
 }

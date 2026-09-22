@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="billing_subscription_plan_monthly">Месячная</string>
-    <string name="billing_subscription_plan_yearly">Годовая</string>
+    <string name="billing_subscription_plan_monthly">На Месяц</string>
+    <string name="billing_subscription_plan_yearly">На Год</string>
     <string name="billing_subscription_plan_permanent">Бессрочно</string>
     <string name="billing_subscription_plan_permanent_body">Один раз и навсегда!</string>
 

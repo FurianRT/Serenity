@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.widget.Toast
 import androidx.annotation.IntRange
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -322,25 +323,29 @@ private fun SuccessScreen(
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        OptionButtonWrapper(
-            modifier = Modifier.fillMaxWidth(),
-            hazeState = hazeState,
-            borderColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
+        AnimatedVisibility(
+            visible = uiState.showSerenityPlusButton,
         ) {
-            OptionButton(
-                modifier = Modifier.shimmer(
-                    durationMillis = 2000,
-                    delayMills = 2000,
-                    color = MaterialTheme.colorScheme.background.copy(
-                        alpha = MaterialTheme.colorScheme.background.alpha * 0.5f,
+            OptionButtonWrapper(
+                modifier = Modifier.fillMaxWidth(),
+                hazeState = hazeState,
+                borderColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.4f),
+                backgroundColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.1f),
+            ) {
+                OptionButton(
+                    modifier = Modifier.shimmer(
+                        durationMillis = 2000,
+                        delayMills = 2000,
+                        color = MaterialTheme.colorScheme.background.copy(
+                            alpha = MaterialTheme.colorScheme.background.alpha * 0.5f,
+                        ),
+                        easing = FastOutSlowInEasing,
                     ),
-                    easing = FastOutSlowInEasing,
-                ),
-                title = stringResource(uiR.string.title_serenity_plus),
-                icon = painterResource(uiR.drawable.app_logo_small),
-                onClick = { onEvent(SettingsEvent.OnButtonSerenityPlusClick) },
-            )
+                    title = stringResource(uiR.string.title_serenity_plus),
+                    icon = painterResource(uiR.drawable.app_logo_small),
+                    onClick = { onEvent(SettingsEvent.OnButtonSerenityPlusClick) },
+                )
+            }
         }
         OptionButtonWrapper(
             modifier = Modifier.fillMaxWidth(),
@@ -638,6 +643,7 @@ private fun ScreenContentPreview() {
                     rating = 4,
                     appVersion = "1.0",
                     showWidgetsButton = true,
+                    showSerenityPlusButton = true,
                 ),
             ),
         )

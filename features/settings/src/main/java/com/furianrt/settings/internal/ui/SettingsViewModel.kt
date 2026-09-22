@@ -8,6 +8,7 @@ import com.furianrt.common.SerenityTermsLink
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.LocaleRepository
@@ -39,6 +40,7 @@ private const val RATING_CLICK_DELAY = 250L
 @HiltViewModel
 internal class SettingsViewModel @Inject constructor(
     dispatchers: DispatchersProvider,
+    serenityPlusProvider: SerenityPlusProvider,
     private val settingsRepository: SettingsRepository,
     private val appearanceRepository: AppearanceRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
@@ -49,6 +51,7 @@ internal class SettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<SettingsUiState> = combine(
+        serenityPlusProvider.hasSerenityPlus(),
         settingsRepository.getAppRating(),
         appearanceRepository.getAppThemeColorId(),
         ::buildState,
@@ -182,6 +185,7 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun buildState(
+        hasSerenityPlus: Boolean,
         rating: Int,
         appThemeColorId: String?,
     ): SettingsUiState = SettingsUiState(
@@ -190,6 +194,7 @@ internal class SettingsViewModel @Inject constructor(
             rating = rating,
             appVersion = buildInfoProvider.getAppVersionName(),
             showWidgetsButton = settingsRepository.isPinAppWidgetSupported(),
+            showSerenityPlusButton = !hasSerenityPlus,
         ),
     )
 }

@@ -196,8 +196,9 @@ internal class BillingRepositoryImp @Inject constructor(
             initialValue = false
         )
 
-    override fun enqueuePeriodicWork() {
+    override fun enqueueBillingUpdateWork() {
         AcknowledgePurchaseWorker.enqueuePeriodic(applicationContext)
+        AcknowledgePurchaseWorker.enqueueOneTime(applicationContext)
     }
 
     private suspend fun getSubscriptionBillingParams(

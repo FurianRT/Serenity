@@ -87,7 +87,7 @@ internal class SerenityApp : Application(), Configuration.Provider, SingletonIma
     private suspend fun startPeriodicWorks() = withContext(dispatchers.io) {
         notesRepository.enqueuePeriodicCleanup()
         notesRepository.enqueuePeriodicCacheCleanup()
-        serenityPlusProvider.enqueuePeriodicWork()
+        serenityPlusProvider.enqueueBillingUpdateWork()
         syncManager.tryStartAutoBackup()
     }
 

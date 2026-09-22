@@ -5,7 +5,9 @@ import androidx.hilt.work.HiltWorker
 import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.ExistingWorkPolicy
 import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
@@ -15,7 +17,8 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
 import java.util.concurrent.TimeUnit
 
-private const val WORK_NAME = "AcknowledgePurchase"
+private const val WORK_NAME_PERIODIC = "AcknowledgePurchasePeriodic"
+private const val WORK_NAME_ONE_TIME = "AcknowledgePurchaseOneTime"
 
 @HiltWorker
 internal class AcknowledgePurchaseWorker @AssistedInject constructor(
@@ -36,12 +39,21 @@ internal class AcknowledgePurchaseWorker @AssistedInject constructor(
                 repeatIntervalTimeUnit = TimeUnit.DAYS,
             )
                 .setConstraints(constraints)
+                .setInitialDelay(duration = 1, timeUnit = TimeUnit.DAYS)
                 .build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-                uniqueWorkName = WORK_NAME,
+                uniqueWorkName = WORK_NAME_PERIODIC,
                 existingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP,
                 request = workRequest,
+            )
+        }
+
+        fun enqueueOneTime(context: Context) {
+            WorkManager.getInstance(context).enqueueUniqueWork(
+                WORK_NAME_ONE_TIME,
+                ExistingWorkPolicy.KEEP,
+                OneTimeWorkRequest.Builder(AcknowledgePurchaseWorker::class.java).build(),
             )
         }
     }
