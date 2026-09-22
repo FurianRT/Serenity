@@ -37,6 +37,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -88,6 +89,13 @@ internal class BillingRepositoryImp @Inject constructor(
         if (connectionResult.isFailure) {
             return
         }
+
+        acknowledgePurchases()
+
+        if (billingDataStore.isSerenityPlusAvailable().first()) {
+            return
+        }
+
         val deferredSubs = scope.async {
             queryPlansForType(
                 productId = SerenityProductId.SUBSCRIPTIONS_ID,

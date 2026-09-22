@@ -36,7 +36,6 @@ internal class AcknowledgePurchaseWorker @AssistedInject constructor(
                 repeatIntervalTimeUnit = TimeUnit.DAYS,
             )
                 .setConstraints(constraints)
-                .setInitialDelay(duration = 1, timeUnit = TimeUnit.DAYS)
                 .build()
 
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
