@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.billing.internal.ui.entities.BenefitItem
 import com.furianrt.uikit.components.OptionButtonWrapper
@@ -24,7 +23,6 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.rememberHazeState
-import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun Benefit(
@@ -48,7 +46,7 @@ internal fun Benefit(
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                painter = painterResource(uiR.drawable.ic_photos),
+                painter = benefit.getIcon(),
                 tint = MaterialTheme.colorScheme.onSurface,
                 contentDescription = null,
             )
@@ -56,12 +54,12 @@ internal fun Benefit(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 Text(
-                    text = "Custom Stickers",
+                    text = benefit.getTitle(),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
                     modifier = Modifier.alpha(0.5f),
-                    text = "Add bla bla stickers bla bla cool awesome best fuck yeah",
+                    text = benefit.getSubtitle(),
                     style = MaterialTheme.typography.labelSmall,
                     lineHeight = MaterialTheme.typography.labelSmall.lineHeight * 0.9f,
                 )

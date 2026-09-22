@@ -14,4 +14,16 @@
     <string name="billing_subscription_plan_yearly_pattern">%s/Year</string>
 
     <string name="billing_start_trial_title">Start 7-Day Trial</string>
+
+    <string name="billing_benefit_custom_stickers_title">Your Own Stickers</string>
+    <string name="billing_benefit_custom_stickers_body">Make your notes truly yours with stickers you create and love</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">Custom Backgrounds</string>
+    <string name="billing_benefit_custom_backgrounds_body">Give every note a look and feeling of its own</string>
+
+    <string name="billing_benefit_export_pdf_title">PDF Export</string>
+    <string name="billing_benefit_export_pdf_body">Save your favorite notes as beautiful PDFs, ready to keep or share</string>
+
+    <string name="billing_benefit_future_features_title">More to Come</string>
+    <string name="billing_benefit_future_features_body">Discover new ways to personalize your diary as Serenity continues to grow</string>
 </resources>

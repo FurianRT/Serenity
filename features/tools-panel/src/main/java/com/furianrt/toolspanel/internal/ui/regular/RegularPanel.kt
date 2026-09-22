@@ -115,7 +115,7 @@ internal fun RegularPanel(
             onClick = onStickersClick,
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_panel_stickers),
+                painter = painterResource(id = uiR.drawable.ic_stickers),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.onSurface,
             )

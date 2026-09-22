@@ -1,0 +1,29 @@
+<resources>
+    <string name="billing_subscription_plan_monthly">Lunar</string>
+    <string name="billing_subscription_plan_yearly">Anual</string>
+    <string name="billing_subscription_plan_permanent">Achiziție pe viață</string>
+    <string name="billing_subscription_plan_permanent_body">Plătește o dată și folosește pentru totdeauna</string>
+
+    <string name="billing_subscriptions_description">Descoperă mai multe moduri de a-ți personaliza jurnalul și de a face fiecare notiță specială</string>
+
+    <string name="billing_subscription_plan_monthly_pattern">%s/lună</string>
+    <string name="billing_subscription_plan_yearly_pattern">%s/an</string>
+
+    <string name="billing_terms_warning_text">Prin abonarea la Serenity Plus, ești de acord cu Termenii de utilizare și Politica de confidențialitate. Abonamentul se reînnoiește automat dacă nu îl anulezi din setările Google Play</string>
+    <string name="billing_terms_warning_clickable_part_terms_of_service">Termenii de utilizare</string>
+    <string name="billing_terms_warning_clickable_part_privacy_policy">Politica de confidențialitate</string>
+
+    <string name="billing_start_trial_title">Începe perioada de probă de 7 zile</string>
+
+    <string name="billing_benefit_custom_stickers_title">Stickerele tale</string>
+    <string name="billing_benefit_custom_stickers_body">Adaugă imaginile preferate ca stickere și fă ca fiecare notiță să fie cu adevărat a ta</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">Fundaluri personalizate</string>
+    <string name="billing_benefit_custom_backgrounds_body">Oferă fiecărei notițe un aspect și o atmosferă aparte</string>
+
+    <string name="billing_benefit_export_pdf_title">Export PDF</string>
+    <string name="billing_benefit_export_pdf_body">Salvează notițele preferate ca PDF-uri frumoase, gata de păstrat sau distribuit</string>
+
+    <string name="billing_benefit_future_features_title">Mai multe în curând</string>
+    <string name="billing_benefit_future_features_body">Descoperă funcții noi și îmbunătățiri plăcute pe măsură ce Serenity continuă să evolueze</string>
+</resources>

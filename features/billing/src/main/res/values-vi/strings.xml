@@ -1,0 +1,29 @@
+<resources>
+    <string name="billing_subscription_plan_monthly">Hàng tháng</string>
+    <string name="billing_subscription_plan_yearly">Hàng năm</string>
+    <string name="billing_subscription_plan_permanent">Mua trọn đời</string>
+    <string name="billing_subscription_plan_permanent_body">Thanh toán một lần, dùng mãi mãi</string>
+
+    <string name="billing_subscriptions_description">Khám phá thêm cách cá nhân hóa nhật ký và biến mỗi ghi chú thành điều đặc biệt</string>
+
+    <string name="billing_subscription_plan_monthly_pattern">%s/tháng</string>
+    <string name="billing_subscription_plan_yearly_pattern">%s/năm</string>
+
+    <string name="billing_terms_warning_text">Khi đăng ký Serenity Plus, bạn đồng ý với Điều khoản dịch vụ và Chính sách quyền riêng tư. Gói đăng ký sẽ tự động gia hạn nếu bạn không hủy trong cài đặt Google Play</string>
+    <string name="billing_terms_warning_clickable_part_terms_of_service">Điều khoản dịch vụ</string>
+    <string name="billing_terms_warning_clickable_part_privacy_policy">Chính sách quyền riêng tư</string>
+
+    <string name="billing_start_trial_title">Dùng thử 7 ngày</string>
+
+    <string name="billing_benefit_custom_stickers_title">Nhãn dán của bạn</string>
+    <string name="billing_benefit_custom_stickers_body">Thêm hình ảnh yêu thích làm nhãn dán và khiến mỗi ghi chú mang đậm dấu ấn riêng</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">Nền tùy chỉnh</string>
+    <string name="billing_benefit_custom_backgrounds_body">Mang đến cho mỗi ghi chú một diện mạo và cảm xúc riêng</string>
+
+    <string name="billing_benefit_export_pdf_title">Xuất PDF</string>
+    <string name="billing_benefit_export_pdf_body">Lưu những ghi chú yêu thích thành các tệp PDF đẹp mắt để lưu giữ hoặc chia sẻ</string>
+
+    <string name="billing_benefit_future_features_title">Còn nhiều điều phía trước</string>
+    <string name="billing_benefit_future_features_body">Khám phá các tính năng mới và những cải tiến thú vị khi Serenity không ngừng phát triển</string>
+</resources>

@@ -386,7 +386,7 @@ private fun SuccessScreen(
         ) {
             OptionButton(
                 title = stringResource(uiR.string.title_theme),
-                icon = painterResource(R.drawable.ic_theme),
+                icon = painterResource(uiR.drawable.ic_theme),
                 onClick = { onEvent(SettingsEvent.OnButtonThemeClick) },
             )
             OptionButtonDivider(

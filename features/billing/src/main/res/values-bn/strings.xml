@@ -1,0 +1,29 @@
+<resources>
+    <string name="billing_subscription_plan_monthly">মাসিক</string>
+    <string name="billing_subscription_plan_yearly">বার্ষিক</string>
+    <string name="billing_subscription_plan_permanent">আজীবন ক্রয়</string>
+    <string name="billing_subscription_plan_permanent_body">একবার পেমেন্ট করুন, চিরকাল ব্যবহার করুন</string>
+
+    <string name="billing_subscriptions_description">আপনার ডায়েরিকে আরও নিজের মতো করে সাজানোর নতুন উপায় আবিষ্কার করুন এবং প্রতিটি নোটকে বিশেষ করে তুলুন</string>
+
+    <string name="billing_subscription_plan_monthly_pattern">%s/মাস</string>
+    <string name="billing_subscription_plan_yearly_pattern">%s/বছর</string>
+
+    <string name="billing_terms_warning_text">Serenity Plus-এ সাবস্ক্রাইব করলে আপনি পরিষেবার শর্তাবলি এবং গোপনীয়তা নীতিতে সম্মতি দিচ্ছেন। Google Play-এর সেটিংস থেকে বাতিল না করলে সাবস্ক্রিপশন স্বয়ংক্রিয়ভাবে নবায়ন হবে</string>
+    <string name="billing_terms_warning_clickable_part_terms_of_service">পরিষেবার শর্তাবলি</string>
+    <string name="billing_terms_warning_clickable_part_privacy_policy">গোপনীয়তা নীতি</string>
+
+    <string name="billing_start_trial_title">৭ দিনের ট্রায়াল শুরু করুন</string>
+
+    <string name="billing_benefit_custom_stickers_title">আপনার নিজের স্টিকার</string>
+    <string name="billing_benefit_custom_stickers_body">আপনার পছন্দের ছবি স্টিকার হিসেবে যোগ করুন এবং প্রতিটি নোটকে আরও নিজের মতো করে তুলুন</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">কাস্টম ব্যাকগ্রাউন্ড</string>
+    <string name="billing_benefit_custom_backgrounds_body">প্রতিটি নোটকে দিন তার নিজস্ব চেহারা ও অনুভূতি</string>
+
+    <string name="billing_benefit_export_pdf_title">PDF-এ এক্সপোর্ট</string>
+    <string name="billing_benefit_export_pdf_body">আপনার পছন্দের নোট সুন্দর PDF হিসেবে সংরক্ষণ করুন, পরে রাখুন বা শেয়ার করুন</string>
+
+    <string name="billing_benefit_future_features_title">আরও আসছে</string>
+    <string name="billing_benefit_future_features_body">Serenity আরও উন্নত হওয়ার সঙ্গে সঙ্গে নতুন ফিচার ও সুন্দর সব উন্নতি আবিষ্কার করুন</string>
+</resources>

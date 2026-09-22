@@ -1,0 +1,29 @@
+<resources>
+    <string name="billing_subscription_plan_monthly">Mensal</string>
+    <string name="billing_subscription_plan_yearly">Anual</string>
+    <string name="billing_subscription_plan_permanent">Compra vitalícia</string>
+    <string name="billing_subscription_plan_permanent_body">Pague uma vez e use para sempre</string>
+
+    <string name="billing_subscriptions_description">Descubra novas formas de personalizar seu diário e tornar cada nota especial</string>
+
+    <string name="billing_subscription_plan_monthly_pattern">%s/mês</string>
+    <string name="billing_subscription_plan_yearly_pattern">%s/ano</string>
+
+    <string name="billing_terms_warning_text">Ao assinar o Serenity Plus, você concorda com os Termos de Serviço e a Política de Privacidade. A assinatura é renovada automaticamente, a menos que seja cancelada nas configurações do Google Play</string>
+    <string name="billing_terms_warning_clickable_part_terms_of_service">Termos de Serviço</string>
+    <string name="billing_terms_warning_clickable_part_privacy_policy">Política de Privacidade</string>
+
+    <string name="billing_start_trial_title">Iniciar teste de 7 dias</string>
+
+    <string name="billing_benefit_custom_stickers_title">Seus próprios adesivos</string>
+    <string name="billing_benefit_custom_stickers_body">Adicione suas imagens favoritas como adesivos e deixe cada nota com a sua cara</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">Planos de fundo personalizados</string>
+    <string name="billing_benefit_custom_backgrounds_body">Dê a cada nota um visual e uma sensação únicos</string>
+
+    <string name="billing_benefit_export_pdf_title">Exportar para PDF</string>
+    <string name="billing_benefit_export_pdf_body">Salve suas notas favoritas em belos PDFs, prontos para guardar ou compartilhar</string>
+
+    <string name="billing_benefit_future_features_title">Mais por vir</string>
+    <string name="billing_benefit_future_features_body">Descubra novos recursos e melhorias enquanto o Serenity continua crescendo</string>
+</resources>

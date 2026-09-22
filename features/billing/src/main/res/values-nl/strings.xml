@@ -1,0 +1,29 @@
+<resources>
+    <string name="billing_subscription_plan_monthly">Maandelijks</string>
+    <string name="billing_subscription_plan_yearly">Jaarlijks</string>
+    <string name="billing_subscription_plan_permanent">Eenmalige aankoop</string>
+    <string name="billing_subscription_plan_permanent_body">Eenmalig betalen, voor altijd gebruiken</string>
+
+    <string name="billing_subscriptions_description">Ontdek meer manieren om je dagboek persoonlijk te maken en van elke notitie iets bijzonders te maken</string>
+
+    <string name="billing_subscription_plan_monthly_pattern">%s/maand</string>
+    <string name="billing_subscription_plan_yearly_pattern">%s/jaar</string>
+
+    <string name="billing_terms_warning_text">Door je te abonneren op Serenity Plus ga je akkoord met de Servicevoorwaarden en het Privacybeleid. Het abonnement wordt automatisch verlengd, tenzij je het opzegt via je Google Play-instellingen</string>
+    <string name="billing_terms_warning_clickable_part_terms_of_service">Servicevoorwaarden</string>
+    <string name="billing_terms_warning_clickable_part_privacy_policy">Privacybeleid</string>
+
+    <string name="billing_start_trial_title">7 dagen gratis proberen</string>
+
+    <string name="billing_benefit_custom_stickers_title">Je eigen stickers</string>
+    <string name="billing_benefit_custom_stickers_body">Voeg je favoriete afbeeldingen toe als stickers en maak elke notitie helemaal van jou</string>
+
+    <string name="billing_benefit_custom_backgrounds_title">Aangepaste achtergronden</string>
+    <string name="billing_benefit_custom_backgrounds_body">Geef elke notitie een eigen uitstraling en sfeer</string>
+
+    <string name="billing_benefit_export_pdf_title">Exporteren naar PDF</string>
+    <string name="billing_benefit_export_pdf_body">Bewaar je favoriete notities als mooie PDF\'s om te bewaren of te delen</string>
+
+    <string name="billing_benefit_future_features_title">Er komt nog meer</string>
+    <string name="billing_benefit_future_features_body">Ontdek nieuwe functies en fijne verbeteringen terwijl Serenity blijft groeien</string>
+</resources>
