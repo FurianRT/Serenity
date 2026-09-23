@@ -9,7 +9,6 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -77,16 +76,18 @@ internal fun BottomPanel(
         ) {
             AlbumsButton(
                 modifier = Modifier
+                    .fillMaxWidth()
                     .hazeBlur(
                         input = HazeInput.Sources(hazeState),
                         style = HazeBlurStyle {
-                            blurRadius(12.dp)
+                            backgroundColor(colorScheme.outlineVariant)
+                            blurRadius(20.dp)
                             colorEffects(
-                                listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)))
+                                listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.6f)))
                             )
                         },
                     )
-                    .background(MaterialTheme.colorScheme.outlineVariant)
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
                     .navigationBarsPadding(),
                 hazeState = hazeState,
                 selectedAlbumName = selectedAlbumName,
@@ -140,9 +141,7 @@ private fun AlbumsButton(
     }
 
     Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 4.dp),
+        modifier = modifier,
         contentAlignment = Alignment.Center,
     ) {
         AnimatedContent(

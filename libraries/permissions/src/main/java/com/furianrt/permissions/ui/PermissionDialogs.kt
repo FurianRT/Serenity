@@ -214,6 +214,7 @@ fun CameraPermissionDialog(
     val lottieState = animateLottieCompositionAsState(
         composition = composition,
         isPlaying = isPlaying,
+        speed = 1.2f,
     )
     val dynamicProperties = rememberLottieDynamicProperties(
         LottieDynamicProperty(

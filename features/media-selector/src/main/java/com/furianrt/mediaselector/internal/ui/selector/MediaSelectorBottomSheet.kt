@@ -276,7 +276,7 @@ internal fun MediaSelectorBottomSheetInternal(
     )
 
     BottomSheetScaffold(
-        modifier = modifier,
+        modifier = modifier.hazeSource(hazeState),
         scaffoldState = state.scaffoldState,
         sheetContainerColor = Color.Transparent,
         containerColor = Color.Transparent,
@@ -294,9 +294,7 @@ internal fun MediaSelectorBottomSheetInternal(
         sheetContent = {
             Spacer(Modifier.height(statusBarHeight.dp))
             SheetContent(
-                modifier = Modifier
-                    .graphicsLayer { translationY = bottomSheetTranslationY.toPx() }
-                    .hazeSource(hazeState),
+                modifier = Modifier.graphicsLayer { translationY = bottomSheetTranslationY.toPx() },
                 uiState = uiState,
                 onEvent = viewModel::onEvent,
                 listState = listState,
