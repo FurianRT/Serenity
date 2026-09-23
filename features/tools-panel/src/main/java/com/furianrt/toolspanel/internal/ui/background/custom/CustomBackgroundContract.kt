@@ -21,4 +21,5 @@ internal sealed interface CustomBackgroundEvent {
 internal sealed interface CustomBackgroundEffect {
     data class OnThemeSelected(val theme: UiNoteTheme.Image.Picture?) : CustomBackgroundEffect
     data class OpenMediaSelector(val params: MediaSelectorState.Params) : CustomBackgroundEffect
+    data object OpenBillingScreen : CustomBackgroundEffect
 }

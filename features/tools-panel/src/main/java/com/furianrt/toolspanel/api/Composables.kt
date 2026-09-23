@@ -111,6 +111,7 @@ fun ActionsPanel(
     onBackgroundClick: () -> Unit,
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     requestTitleFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -320,6 +321,7 @@ fun ActionsPanel(
                 visible = isStickersPanelVisible,
                 onStickerSelected = onStickerSelected,
                 openMediaSelector = openMediaSelector,
+                openBillingScreen = openBillingScreen,
             )
 
             BulletContent(
@@ -333,6 +335,7 @@ fun ActionsPanel(
                 visible = isBackgroundsPanelVisible,
                 onThemeSelected = onThemeSelected,
                 openMediaSelector = openMediaSelector,
+                openBillingScreen = openBillingScreen,
             )
         }
         AnimatedVisibility(

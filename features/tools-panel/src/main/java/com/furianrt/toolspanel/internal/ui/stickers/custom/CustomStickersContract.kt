@@ -20,4 +20,5 @@ internal sealed interface CustomStickersEvent {
 internal sealed interface CustomStickersEffect {
     data class SelectSticker(val sticker: Sticker) : CustomStickersEffect
     data class OpenMediaSelector(val params: MediaSelectorState.Params) : CustomStickersEffect
+    data object OpenBillingScreen : CustomStickersEffect
 }

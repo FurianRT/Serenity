@@ -113,6 +113,7 @@ internal sealed interface PageEvent {
     data object OnAutoDetectLocationClickClick : PageEvent
     data object OnCheckedListChange : PageEvent
     data class OnCustomBackgroundSelectRequest(val params: MediaSelectorState.Params) : PageEvent
+    data object OnOpenBillingScreenRequest : PageEvent
     data object OnRequestTitleFocus : PageEvent
     data object OnDecreaseLineHeightClick : PageEvent
     data object OnIncreaseLineHeightClick : PageEvent
@@ -150,4 +151,5 @@ internal sealed interface PageEffect {
 
     data object ShowAutoDetectLocationDialog : PageEffect
     data object StartVoiceRecord : PageEffect
+    data object OpenBillingScreen : PageEffect
 }

@@ -108,6 +108,7 @@ fun NotePageScreen(
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
+    openBillingScreen: () -> Unit,
 ) {
     NotePageScreenInternal(
         state = state,
@@ -121,5 +122,6 @@ fun NotePageScreen(
         openMediaViewer = openMediaViewer,
         openMediaViewScreen = openMediaViewScreen,
         openMediaSortingScreen = openMediaSortingScreen,
+        openBillingScreen = openBillingScreen,
     )
 }

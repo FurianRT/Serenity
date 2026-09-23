@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
+import com.furianrt.uikit.components.SerenityPlusIcon
 import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
@@ -92,11 +93,8 @@ internal fun Menu(
                 null
             } else {
                 {
-                    Icon(
+                    SerenityPlusIcon(
                         modifier = Modifier.size(24.dp),
-                        painter = painterResource(uiR.drawable.ic_leaf),
-                        tint = MaterialTheme.colorScheme.primaryContainer,
-                        contentDescription = null,
                     )
                 }
             },

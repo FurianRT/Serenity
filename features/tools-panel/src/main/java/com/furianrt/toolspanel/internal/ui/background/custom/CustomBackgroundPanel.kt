@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -80,8 +81,10 @@ import com.furianrt.toolspanel.internal.domain.NoteThemesHolder
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelectedThemeProvider
 import com.furianrt.toolspanel.internal.ui.background.custom.composables.PopUpMenu
 import com.furianrt.uikit.anim.rememberOvershootEasing
+import com.furianrt.uikit.components.SerenityPlusIcon
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
@@ -100,6 +103,7 @@ internal fun CustomBackgroundPanel(
     selectedThemeProvider: BackgroundSelectedThemeProvider,
     onThemeSelected: (theme: UiNoteTheme.Image.Picture?) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<CustomBackgroundViewModel, CustomBackgroundViewModel.Factory>(
@@ -116,6 +120,7 @@ internal fun CustomBackgroundPanel(
                 when (effect) {
                     is CustomBackgroundEffect.OnThemeSelected -> onThemeSelected(effect.theme)
                     is CustomBackgroundEffect.OpenMediaSelector -> openMediaSelector(effect.params)
+                    is CustomBackgroundEffect.OpenBillingScreen -> openBillingScreen()
                 }
             }
     }
@@ -189,7 +194,7 @@ private fun EmptyContent(
                 ),
                 contentPadding = PaddingValues(
                     start = 24.dp,
-                    end = 32.dp,
+                    end = if (LocalSerenityPlus.current) 16.dp else 32.dp,
                     top = 8.dp,
                     bottom = 8.dp,
                 ),
@@ -208,6 +213,9 @@ private fun EmptyContent(
                         text = stringResource(R.string.background_panel_select_image_action),
                         style = MaterialTheme.typography.bodyMedium,
                     )
+                    if (!LocalSerenityPlus.current) {
+                        SerenityPlusIcon()
+                    }
                 }
             }
         }
@@ -404,10 +412,9 @@ private fun AddBackgroundItem(
             .fillMaxWidth()
             .aspectRatio(0.6f)
             .padding(horizontal = 6.dp, vertical = 8.dp)
-            .alpha(0.3f)
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(16.dp),
             )
             .clip(RoundedCornerShape(16.dp))
@@ -415,10 +422,19 @@ private fun AddBackgroundItem(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
+            modifier = Modifier .alpha(0.3f),
             painter = painterResource(uiR.drawable.ic_add_media_big),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
+        if (!LocalSerenityPlus.current) {
+            SerenityPlusIcon(
+                modifier = Modifier
+                    .padding(top = 8.dp, end = 8.dp)
+                    .size(20.dp)
+                    .align(Alignment.TopEnd)
+            )
+        }
     }
 }
 

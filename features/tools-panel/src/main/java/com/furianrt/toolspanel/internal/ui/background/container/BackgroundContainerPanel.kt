@@ -59,6 +59,7 @@ import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnCloseClick
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnContentPageChange
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnKeyboardClick
+import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnOpenBillingScreenRequest
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnOpenMediaSelectorRequest
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnThemeSelected
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnTitleTabClick
@@ -277,6 +278,7 @@ internal fun BackgroundContent(
     visible: Boolean,
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel =
@@ -299,6 +301,7 @@ internal fun BackgroundContent(
 
     val onThemeSelectedState by rememberUpdatedState(onThemeSelected)
     val openMediaSelectorState by rememberUpdatedState(openMediaSelector)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LaunchedEffect(imeTarget, imeSource) {
         val imeMaxHeight = max(imeTarget, imeSource)
@@ -334,6 +337,8 @@ internal fun BackgroundContent(
                         is BackgroundContainerEffect.OpenMediaSelector -> {
                             openMediaSelectorState(effect.params)
                         }
+
+                        is BackgroundContainerEffect.OpenBillingScreen -> openBillingScreenState()
                     }
                 }
         }
@@ -403,6 +408,7 @@ private fun Content(
                 selectedThemeProvider = uiState.selectedThemeProvider,
                 onThemeSelected = { onEvent(OnThemeSelected(it)) },
                 openMediaSelector = { onEvent(OnOpenMediaSelectorRequest(it)) },
+                openBillingScreen = { onEvent(OnOpenBillingScreenRequest) },
             )
         }
     }

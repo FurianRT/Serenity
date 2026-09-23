@@ -252,6 +252,7 @@ internal fun NoteViewScreen(
             openMediaViewScreen = openMediaViewScreen,
             openMediaViewer = openMediaViewer,
             openMediaSortingScreen = openMediaSortingScreen,
+            openBillingScreen = openBillingScreenState,
         )
         calendarDialogState?.let { dialogState ->
             SingleChoiceCalendar(
@@ -293,6 +294,7 @@ private fun ScreenContent(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (uiState) {
@@ -311,6 +313,7 @@ private fun ScreenContent(
             openMediaViewScreen = openMediaViewScreen,
             openMediaViewer = openMediaViewer,
             openMediaSortingScreen = openMediaSortingScreen,
+            openBillingScreen = openBillingScreen,
         )
     }
 }
@@ -327,6 +330,7 @@ private fun SuccessScreen(
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    openBillingScreen: () -> Unit,
     onEvent: (event: NoteViewEvent) -> Unit = {},
 ) {
     val scope = rememberCoroutineScope()
@@ -452,6 +456,7 @@ private fun SuccessScreen(
                 openMediaViewScreen = openMediaViewScreen,
                 openMediaViewer = openMediaViewer,
                 openMediaSortingScreen = openMediaSortingScreen,
+                openBillingScreen = openBillingScreen,
             )
         }
 
@@ -498,6 +503,7 @@ private fun ScreenSuccessPreview() {
             openMediaViewScreen = { _, _, _ -> },
             openMediaViewer = {},
             openMediaSortingScreen = { _, _, _ -> },
+            openBillingScreen = {},
         )
     }
 }

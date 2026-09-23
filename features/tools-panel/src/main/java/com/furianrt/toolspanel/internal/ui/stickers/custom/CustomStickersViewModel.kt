@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.CustomSticker
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.StickersRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaSelectorState
@@ -26,6 +27,7 @@ import javax.inject.Inject
 internal class CustomStickersViewModel @Inject constructor(
     dispatchers: DispatchersProvider,
     private val stickersRepository: StickersRepository,
+    private val serenityPlusProvider: SerenityPlusProvider,
 ) : ViewModel() {
 
     val state: StateFlow<CustomStickersUiState> = stickersRepository.getNotHiddenCustomStickers()
@@ -53,11 +55,17 @@ internal class CustomStickersViewModel @Inject constructor(
     }
 
     private fun onSelectImageClick() {
-        val params = MediaSelectorState.Params(
-            allowVideo = false,
-            onMediaSelected = ::onMediaSelected,
-        )
-        _effect.tryEmit(CustomStickersEffect.OpenMediaSelector(params))
+        launch {
+            if (serenityPlusProvider.hasSerenityPlus().first()) {
+                val params = MediaSelectorState.Params(
+                    allowVideo = false,
+                    onMediaSelected = ::onMediaSelected,
+                )
+                _effect.tryEmit(CustomStickersEffect.OpenMediaSelector(params))
+            } else {
+                _effect.tryEmit(CustomStickersEffect.OpenBillingScreen)
+            }
+        }
     }
 
     private fun onDeleteStickerClick(sticker: Sticker) = launch {

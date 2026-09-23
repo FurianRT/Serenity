@@ -254,6 +254,7 @@ internal fun StickersContent(
     visible: Boolean,
     onStickerSelected: (sticker: Sticker) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<StickersContainerViewModel, StickersContainerViewModel.Factory>(
@@ -265,6 +266,7 @@ internal fun StickersContent(
 
     val onStickerSelectedState by rememberUpdatedState(onStickerSelected)
     val openMediaSelectorState by rememberUpdatedState(openMediaSelector)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     val density = LocalDensity.current
 
@@ -293,6 +295,10 @@ internal fun StickersContent(
 
                     is StickersContainerEffect.OpenMediaSelector -> {
                         openMediaSelectorState(effect.params)
+                    }
+
+                    is StickersContainerEffect.OpenBillingScreen -> {
+                        openBillingScreenState()
                     }
                 }
             }
@@ -353,6 +359,9 @@ private fun Content(
                 openMediaSelector = {
                     onEvent(StickersContainerEvent.OnOpenMediaSelectorRequest(it))
                 },
+                openBillingScreen = {
+                    onEvent(StickersContainerEvent.OnOpenBillingScreenRequest)
+                }
             )
         }
     }

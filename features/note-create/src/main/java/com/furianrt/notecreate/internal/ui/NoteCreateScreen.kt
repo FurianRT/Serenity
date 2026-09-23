@@ -250,6 +250,7 @@ internal fun NoteCreateScreen(
                         openMediaViewScreen = openMediaViewScreen,
                         openMediaViewer = openMediaViewer,
                         openMediaSortingScreen = openMediaSortingScreen,
+                        openBillingScreen = openBillingScreenState,
                     )
                 },
             )

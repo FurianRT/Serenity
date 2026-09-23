@@ -30,6 +30,7 @@ internal sealed interface StickersContainerEvent {
     data class OnTitleStickerPackClick(val index: Int) : StickersContainerEvent
     data object OnKeyboardClick : StickersContainerEvent
     data class OnStickerSelected(val sticker: Sticker) : StickersContainerEvent
+    data object OnOpenBillingScreenRequest : StickersContainerEvent
     data class OnOpenMediaSelectorRequest(
         val params: MediaSelectorState.Params,
     ) : StickersContainerEvent
@@ -41,4 +42,5 @@ internal sealed interface StickersContainerEffect {
     data object ShowKeyboard : StickersContainerEffect
     data class SelectSticker(val sticker: Sticker) : StickersContainerEffect
     data class OpenMediaSelector(val params: MediaSelectorState.Params) : StickersContainerEffect
+    data object OpenBillingScreen : StickersContainerEffect
 }

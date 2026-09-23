@@ -35,11 +35,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
@@ -189,12 +186,7 @@ internal class BillingRepositoryImp @Inject constructor(
                 }
             }
 
-    override fun hasSerenityPlus(): StateFlow<Boolean> = billingDataStore.isSerenityPlusAvailable()
-        .stateIn(
-            scope = scope,
-            started = SharingStarted.Eagerly,
-            initialValue = false
-        )
+    override fun hasSerenityPlus(): Flow<Boolean> = billingDataStore.isSerenityPlusAvailable()
 
     override fun enqueueBillingUpdateWork() {
         AcknowledgePurchaseWorker.enqueuePeriodic(applicationContext)

@@ -152,10 +152,12 @@ internal class NoteCreateViewModel @Inject constructor(
     }
 
     private fun onExportPdfClick() {
-        if (serenityPlusProvider.hasSerenityPlus().value) {
-            exportPdf()
-        } else {
-            _effect.tryEmit(NoteCreateEffect.OpenBillingScreen)
+        launch {
+            if (serenityPlusProvider.hasSerenityPlus().first()) {
+                exportPdf()
+            } else {
+                _effect.tryEmit(NoteCreateEffect.OpenBillingScreen)
+            }
         }
     }
 

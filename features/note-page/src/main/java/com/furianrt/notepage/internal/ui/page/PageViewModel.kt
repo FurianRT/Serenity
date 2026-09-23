@@ -84,6 +84,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnMoodSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoPositionError
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnNoteThemeSelected
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenBillingScreenRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnOpenMediaViewerRequest
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnRemoveStickerClick
@@ -350,6 +351,7 @@ internal class PageViewModel @AssistedInject constructor(
                 tryRequestMediaPermissions(event.params)
             }
 
+            is OnOpenBillingScreenRequest -> _effect.tryEmit(PageEffect.OpenBillingScreen)
             is OnRequestTitleFocus -> focusLastFocusedTitle()
             is PageEvent.OnDecreaseLineHeightClick -> onDecreaseLineHeightClick()
             is PageEvent.OnIncreaseLineHeightClick -> onIncreaseLineHeightClick()

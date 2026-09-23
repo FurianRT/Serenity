@@ -72,10 +72,12 @@ import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.ui.stickers.custom.composables.PopUpMenu
 import com.furianrt.uikit.anim.rememberOvershootEasing
+import com.furianrt.uikit.components.SerenityPlusIcon
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
 import com.furianrt.uikit.extensions.drawTopInnerShadow
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
@@ -93,6 +95,7 @@ internal fun CustomStickersPanel(
     noteId: String,
     onStickerSelected: (sticker: Sticker) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel: CustomStickersViewModel = hiltViewModel(
@@ -103,6 +106,7 @@ internal fun CustomStickersPanel(
 
     val onStickerSelectedState by rememberUpdatedState(onStickerSelected)
     val openMediaSelectorState by rememberUpdatedState(openMediaSelector)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -116,6 +120,8 @@ internal fun CustomStickersPanel(
                     is CustomStickersEffect.OpenMediaSelector -> {
                         openMediaSelectorState(effect.params)
                     }
+
+                    is CustomStickersEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }
@@ -220,7 +226,7 @@ private fun SelectImageButton(
         ),
         contentPadding = PaddingValues(
             start = 24.dp,
-            end = 32.dp,
+            end = if (LocalSerenityPlus.current) 16.dp else 32.dp,
             top = 8.dp,
             bottom = 8.dp,
         ),
@@ -239,6 +245,9 @@ private fun SelectImageButton(
                 text = stringResource(R.string.background_panel_select_image_action),
                 style = MaterialTheme.typography.bodyMedium,
             )
+            if (!LocalSerenityPlus.current) {
+                SerenityPlusIcon()
+            }
         }
     }
 }
@@ -252,10 +261,9 @@ private fun AddStickerItem(
         modifier = modifier
             .fillMaxSize()
             .aspectRatio(1f)
-            .alpha(0.3f)
             .border(
                 width = 1.dp,
-                color = MaterialTheme.colorScheme.onSurface,
+                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(16.dp),
             )
             .clip(RoundedCornerShape(16.dp))
@@ -263,10 +271,19 @@ private fun AddStickerItem(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
+            modifier = Modifier.alpha(0.3f),
             painter = painterResource(uiR.drawable.ic_add_media_big),
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
+        if (!LocalSerenityPlus.current) {
+            SerenityPlusIcon(
+                modifier = Modifier
+                    .padding(top = 6.dp, end = 6.dp)
+                    .size(18.dp)
+                    .align(Alignment.TopEnd)
+            )
+        }
     }
 }
 

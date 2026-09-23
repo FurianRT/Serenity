@@ -30,6 +30,7 @@ internal sealed interface BackgroundContainerEvent {
     data class OnTitleTabClick(val index: Int) : BackgroundContainerEvent
     data class OnThemeSelected(val theme: UiNoteTheme?) : BackgroundContainerEvent
     data class OnContentPageChange(val index: Int) : BackgroundContainerEvent
+    data object OnOpenBillingScreenRequest : BackgroundContainerEvent
     data class OnOpenMediaSelectorRequest(
         val params: MediaSelectorState.Params,
     ) : BackgroundContainerEvent
@@ -40,4 +41,5 @@ internal sealed interface BackgroundContainerEffect {
     data object ShowKeyboard : BackgroundContainerEffect
     data class ScrollToPage(val index: Int) : BackgroundContainerEffect
     data class OpenMediaSelector(val params: MediaSelectorState.Params) : BackgroundContainerEffect
+    data object OpenBillingScreen : BackgroundContainerEffect
 }

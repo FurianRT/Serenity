@@ -1,6 +1,7 @@
 package com.furianrt.settings.api
 
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptions
@@ -21,6 +22,11 @@ import com.furianrt.settings.internal.ui.MainRoute
 import com.furianrt.settings.internal.ui.noteSettings.navigateToNoteSettings
 import com.furianrt.settings.internal.ui.noteSettings.noteSettingsScreen
 import com.furianrt.settings.internal.ui.settingsScreen
+import com.furianrt.uikit.anim.defaultEnterTransition
+import com.furianrt.uikit.anim.defaultExitForBillingTransition
+import com.furianrt.uikit.anim.defaultExitTransition
+import com.furianrt.uikit.anim.defaultPopEnterTransition
+import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -33,11 +39,22 @@ fun NavController.navigateToSettings(
 
 fun NavGraphBuilder.settingsNavigation(
     navController: NavHostController,
+    hasBillingRoute: (destination: NavDestination) -> Boolean,
     openGalleryScreen: () -> Unit,
     openBillingScreen: () -> Unit,
 ) {
     navigation<SettingsRoute>(
         startDestination = MainRoute,
+        enterTransition = { defaultEnterTransition() },
+        exitTransition = {
+            if (hasBillingRoute(targetState.destination)) {
+                defaultExitForBillingTransition()
+            } else {
+                defaultExitTransition()
+            }
+        },
+        popExitTransition = { defaultPopExitTransition() },
+        popEnterTransition = { defaultPopEnterTransition() },
     ) {
         settingsScreen(
             openSecurityScreen = navController::navigateToSecurity,

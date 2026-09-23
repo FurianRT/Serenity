@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
 import com.furianrt.domain.entities.NoteCustomBackground
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaSelectorState
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.stateIn
 internal class CustomBackgroundViewModel @AssistedInject constructor(
     dispatchers: DispatchersProvider,
     private val mediaRepository: MediaRepository,
+    private val serenityPlusProvider: SerenityPlusProvider,
     @Assisted private val selectedThemeProvider: BackgroundSelectedThemeProvider,
 ) : ViewModel() {
 
@@ -75,12 +77,18 @@ internal class CustomBackgroundViewModel @AssistedInject constructor(
     }
 
     private fun onSelectImageClick() {
-        val params = MediaSelectorState.Params(
-            singleChoice = true,
-            allowVideo = false,
-            onMediaSelected = ::onMediaSelected,
-        )
-        _effect.tryEmit(CustomBackgroundEffect.OpenMediaSelector(params))
+        launch {
+            if (serenityPlusProvider.hasSerenityPlus().first()) {
+                val params = MediaSelectorState.Params(
+                    singleChoice = true,
+                    allowVideo = false,
+                    onMediaSelected = ::onMediaSelected,
+                )
+                _effect.tryEmit(CustomBackgroundEffect.OpenMediaSelector(params))
+            } else {
+                _effect.tryEmit(CustomBackgroundEffect.OpenBillingScreen)
+            }
+        }
     }
 
     private suspend fun onMediaSelected(result: MediaResult) {

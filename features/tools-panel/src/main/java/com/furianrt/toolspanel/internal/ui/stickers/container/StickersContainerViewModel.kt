@@ -65,6 +65,10 @@ internal class StickersContainerViewModel @AssistedInject constructor(
             is StickersContainerEvent.OnOpenMediaSelectorRequest -> {
                 _effect.tryEmit(StickersContainerEffect.OpenMediaSelector(event.params))
             }
+
+            is StickersContainerEvent.OnOpenBillingScreenRequest -> {
+                _effect.tryEmit(StickersContainerEffect.OpenBillingScreen)
+            }
         }
     }
 

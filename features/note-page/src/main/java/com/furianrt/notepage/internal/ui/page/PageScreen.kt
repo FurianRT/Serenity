@@ -162,6 +162,7 @@ internal fun NotePageScreenInternal(
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     openMediaViewScreen: (noteId: String, mediaId: String, identifier: DialogIdentifier) -> Unit,
     openMediaSortingScreen: (noteId: String, blockId: String, identifier: DialogIdentifier) -> Unit,
+    openBillingScreen: () -> Unit,
 ) {
     val viewModel = hiltViewModel<PageViewModel, PageViewModel.Factory>(
         key = noteId + TAG,
@@ -208,6 +209,7 @@ internal fun NotePageScreenInternal(
     val openMediaViewScreenState by rememberUpdatedState(openMediaViewScreen)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
     val openMediaSortingScreenState by rememberUpdatedState(openMediaSortingScreen)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LifecycleStartEffect(Unit) {
         onStopOrDispose { viewModel.onEvent(PageEvent.OnScreenStopped) }
@@ -281,6 +283,7 @@ internal fun NotePageScreenInternal(
 
                 is PageEffect.ShowAutoDetectLocationDialog -> showDetectLocationDialog = true
                 is PageEffect.StartVoiceRecord -> state.startVoiceRecord()
+                is PageEffect.OpenBillingScreen -> openBillingScreenState()
             }
         }
     }
@@ -552,6 +555,7 @@ private fun SuccessScreen(
             onBackgroundClick = { onEvent(PageEvent.OnBackgroundsClick) },
             onThemeSelected = { onEvent(PageEvent.OnNoteThemeSelected(it)) },
             openMediaSelector = { onEvent(PageEvent.OnCustomBackgroundSelectRequest(it)) },
+            openBillingScreen = { onEvent(PageEvent.OnOpenBillingScreenRequest) },
             requestTitleFocus = { onEvent(PageEvent.OnRequestTitleFocus) },
         )
         val applyPaddingToDim by remember {
@@ -944,6 +948,7 @@ private fun Panel(
     onBackgroundClick: () -> Unit,
     onThemeSelected: (theme: UiNoteTheme?) -> Unit,
     openMediaSelector: (params: MediaSelectorState.Params) -> Unit,
+    openBillingScreen: () -> Unit,
     requestTitleFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -989,6 +994,7 @@ private fun Panel(
                     onBackgroundClick = onBackgroundClick,
                     onThemeSelected = onThemeSelected,
                     openMediaSelector = openMediaSelector,
+                    openBillingScreen = openBillingScreen,
                     requestTitleFocus = requestTitleFocus,
                 )
             }

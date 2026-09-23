@@ -1,8 +1,8 @@
 package com.furianrt.domain.managers
 
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.Flow
 
 interface SerenityPlusProvider {
     fun enqueueBillingUpdateWork()
-    fun hasSerenityPlus(): StateFlow<Boolean>
+    fun hasSerenityPlus(): Flow<Boolean>
 }

@@ -139,7 +139,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             }
         }
         setContent {
-            val serenityPlus by serenityPlusProvider.hasSerenityPlus().collectAsStateWithLifecycle()
+            val serenityPlus by serenityPlusProvider.hasSerenityPlus()
+                .collectAsStateWithLifecycle(false)
+
             CompositionLocalProvider(LocalSerenityPlus provides serenityPlus) {
                 ComposeContent()
             }
@@ -346,6 +348,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
                         settingsNavigation(
                             navController = navController,
+                            hasBillingRoute = { it.hasRoute<BillingRoute>() },
                             openGalleryScreen = navController::navigateToGallery,
                             openBillingScreen = navController::navigateToBilling,
                         )

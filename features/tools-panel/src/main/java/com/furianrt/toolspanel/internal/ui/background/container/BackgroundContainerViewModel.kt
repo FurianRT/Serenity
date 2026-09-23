@@ -84,6 +84,10 @@ internal class BackgroundContainerViewModel @AssistedInject constructor(
             is BackgroundContainerEvent.OnOpenMediaSelectorRequest -> {
                 _effect.tryEmit(OpenMediaSelector(event.params))
             }
+
+            is BackgroundContainerEvent.OnOpenBillingScreenRequest -> {
+                _effect.tryEmit(OpenBillingScreen)
+            }
         }
     }
 
