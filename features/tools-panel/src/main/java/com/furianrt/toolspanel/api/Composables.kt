@@ -62,10 +62,11 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -207,14 +208,14 @@ fun ActionsPanel(
                     Modifier.imePadding()
                 }
                 .fillMaxWidth()
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = background,
-                        tint = HazeTint(background.copy(alpha = 0.7f)),
-                        noiseFactor = 0f,
-                        blurRadius = 12.dp,
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(20.dp)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(background.copy(alpha = 0.7f))),
+                        )
+                    },
                 )
                 .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding()

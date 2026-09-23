@@ -69,10 +69,11 @@ import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
@@ -177,6 +178,7 @@ private fun TemplateNoteTagItem(
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
     val textMeasurer = rememberTextMeasurer()
+    val colorScheme = MaterialTheme.colorScheme
 
     var hasFocus by remember { mutableStateOf(false) }
     var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
@@ -264,17 +266,22 @@ private fun TemplateNoteTagItem(
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .padding(4.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .applyIf(enabled) {
-                    Modifier.hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
-                    )
-                }
+                .then(
+                    if (enabled && hazeState != null) {
+                        Modifier.hazeBlur(
+                            input = HazeInput.Sources(hazeState),
+                            style = HazeBlurStyle {
+                                blurRadius(12.dp)
+                                noiseFactor(0f)
+                                colorEffects(
+                                    listOf(HazeColorEffect.tint(Color.Transparent)),
+                                )
+                            },
+                        )
+                    } else {
+                        Modifier
+                    }
+                 )
                 .dashedRoundedRectBorder(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 )
@@ -318,12 +325,20 @@ private fun TemplateNoteTagItem(
         ExposedDropdownMenu(
             modifier = Modifier
                 .widthIn(min = 64.dp, max = 200.dp)
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 12.dp,
-                    )
+                .then(
+                    if (hazeState != null) {
+                        Modifier.hazeBlur(
+                            input = HazeInput.Sources(hazeState),
+                            style = HazeBlurStyle {
+                                blurRadius(12.dp)
+                                colorEffects(
+                                    listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))
+                                )
+                            },
+                        )
+                    } else {
+                        Modifier
+                    }
                 )
                 .background(MaterialTheme.colorScheme.background),
             expanded = showTagSuggests,

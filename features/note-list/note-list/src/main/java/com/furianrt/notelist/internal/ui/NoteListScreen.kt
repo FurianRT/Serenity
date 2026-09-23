@@ -93,10 +93,11 @@ import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -252,7 +253,6 @@ private fun MainScreenContent(
             theme = uiState.theme,
         )
         AnimatedContent(
-            modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
             targetState = uiState.content,
             contentKey = { it::class.simpleName },
             transitionSpec = {
@@ -274,13 +274,17 @@ private fun MainScreenContent(
             }
         ) { targetState ->
             when (targetState) {
-                is NoteListUiState.Content.Loading -> LoadingContent()
+                is NoteListUiState.Content.Loading -> LoadingContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
+                )
                 is NoteListUiState.Content.Empty -> EmptyContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     onEvent = onEvent,
                     hazeState = hazeState,
                 )
 
                 is NoteListUiState.Content.Success -> SuccessContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     uiState = targetState,
                     screenState = screenState,
                     toolbarPadding = topPadding,
@@ -426,14 +430,15 @@ private fun EmptyContent(
             Text(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 16.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(16.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent)),
+                            )
+                            noiseFactor(0f)
+                        },
                     )
                     .padding(horizontal = 4.dp),
                 text = stringResource(R.string.notes_list_empty_list_title),
@@ -444,14 +449,15 @@ private fun EmptyContent(
             Text(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 16.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(16.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent)),
+                            )
+                            noiseFactor(0f)
+                        },
                     )
                     .alpha(0.5f)
                     .padding(horizontal = 4.dp),

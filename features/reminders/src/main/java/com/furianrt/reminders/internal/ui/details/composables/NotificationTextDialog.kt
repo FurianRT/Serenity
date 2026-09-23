@@ -46,9 +46,11 @@ import com.furianrt.reminders.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
@@ -99,6 +101,7 @@ private fun Content(
 ) {
     val focusRequester = remember { FocusRequester() }
     val textState = rememberTextFieldState(initialText)
+    val colorScheme = MaterialTheme.colorScheme
 
     val isTextEmpty by remember(textState) {
         derivedStateOf { textState.text.isEmpty() }
@@ -112,12 +115,14 @@ private fun Content(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 20.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(20.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
+                    )
+                },
             )
             .background(MaterialTheme.colorScheme.surfaceTint)
             .padding(16.dp),

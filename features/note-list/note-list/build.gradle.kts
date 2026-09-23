@@ -43,7 +43,9 @@ dependencies {
     ksp(libs.hiltCompiler)
     ksp(libs.hiltAndroidCompiler)
 
-    implementation(libs.blur)
+    implementation(libs.haze)
+implementation(libs.hazeBlur)
+implementation(libs.hazeMaterials)
 
     implementation(libs.kotlinxSerializationJson)
 

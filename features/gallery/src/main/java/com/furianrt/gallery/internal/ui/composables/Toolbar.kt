@@ -35,9 +35,9 @@ import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
@@ -49,6 +49,7 @@ internal fun Toolbar(
     modifier: Modifier = Modifier,
 ) {
     val haptic = LocalHapticFeedback.current
+    val colorScheme = MaterialTheme.colorScheme
 
     var tempDateFilter: String? by remember { mutableStateOf(null) }
 
@@ -97,12 +98,15 @@ internal fun Toolbar(
                     modifier = Modifier.padding(start = 20.dp),
                     title = filter,
                     hazeState = hazeState,
-                    hazeStyle = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                        noiseFactor = 0f,
-                        blurRadius = 8.dp,
-                    ),
+                    hazeStyle = HazeBlurStyle {
+                        blurRadius(8.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                            )
+                        )
+                    },
                     hazeStyleExtraColor = true,
                     isRemovable = true,
                     onClick = { onEvent(GalleryEvent.OnDateFiltersClick) },

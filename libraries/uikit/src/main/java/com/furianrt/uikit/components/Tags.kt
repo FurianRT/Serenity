@@ -31,11 +31,11 @@ import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 
 private const val ANIM_EDIT_MODE_DURATION = 250
 
@@ -45,7 +45,7 @@ fun TagItem(
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
     hazeState: HazeState? = null,
-    hazeStyle: HazeStyle? = null,
+    hazeStyle: HazeBlurStyle? = null,
     hazeStyleExtraColor: Boolean = false,
     background: Color = MaterialTheme.colorScheme.secondaryContainer,
     textStyle: TextStyle = MaterialTheme.typography.labelSmall,
@@ -55,6 +55,7 @@ fun TagItem(
     onRemoveClick: () -> Unit = {},
     icon: (@Composable () -> Unit)? = null,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier,
         contentAlignment = Alignment.TopStart,
@@ -66,13 +67,16 @@ fun TagItem(
                 .then(
                     if (hazeState != null) {
                         Modifier
-                            .hazeEffect(
-                                state = hazeState,
-                                style = hazeStyle ?: HazeDefaults.style(
-                                    backgroundColor = MaterialTheme.colorScheme.surface,
-                                    blurRadius = 12.dp,
-                                    tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
-                                )
+                            .hazeBlur(
+                                input = HazeInput.Sources(hazeState),
+                                style = hazeStyle ?: HazeBlurStyle {
+                                    blurRadius(12.dp)
+                                    colorEffects(
+                                        listOf(
+                                            HazeColorEffect.tint(colorScheme.secondaryContainer),
+                                        )
+                                    )
+                                },
                             )
                             .applyIf(hazeStyleExtraColor) {
                                 Modifier.background(background)

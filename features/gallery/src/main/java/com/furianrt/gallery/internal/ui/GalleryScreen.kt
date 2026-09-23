@@ -53,7 +53,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.gallery.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.gallery.internal.ui.composables.PhotoItem
 import com.furianrt.gallery.internal.ui.composables.TitleItem
 import com.furianrt.gallery.internal.ui.composables.Toolbar
@@ -68,14 +67,16 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
+import com.furianrt.uikit.R as uiR
 
 @Immutable
 private data class CalendarState(
@@ -245,14 +246,15 @@ private fun EmptyContent(
                 modifier = Modifier
                     .padding(horizontal = 20.dp)
                     .clip(RoundedCornerShape(6.dp))
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            noiseFactor(0f)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent))
+                            )
+                        },
                     )
                     .padding(horizontal = 4.dp),
                 text = stringResource(R.string.gallery_screen_empty_state_title),
@@ -264,14 +266,15 @@ private fun EmptyContent(
                 modifier = Modifier
                     .padding(horizontal = 12.dp)
                     .clip(RoundedCornerShape(6.dp))
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            noiseFactor = 0f,
-                            tint = HazeTint(Color.Transparent),
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            noiseFactor(0f)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent))
+                            )
+                        },
                     )
                     .padding(horizontal = 4.dp)
                     .alpha(0.5f),

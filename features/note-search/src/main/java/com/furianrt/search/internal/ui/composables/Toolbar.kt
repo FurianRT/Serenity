@@ -65,10 +65,11 @@ import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
 
@@ -288,17 +289,21 @@ private fun SearchBar(
     modifier: Modifier = Modifier,
 ) {
     val showCloseButton by remember(state) { derivedStateOf { state.text.isNotEmpty() } }
+    val colorScheme = MaterialTheme.colorScheme
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                    noiseFactor = 0f,
-                    blurRadius = 8.dp,
-                ),
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(8.dp)
+                    noiseFactor(0f)
+                    colorEffects(
+                        listOf(
+                            HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f))
+                        )
+                    )
+                },
             )
             .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp),
@@ -354,6 +359,7 @@ private fun SelectedFiltersList(
     modifier: Modifier = Modifier,
 ) {
     val haptic = LocalHapticFeedback.current
+    val colorScheme = MaterialTheme.colorScheme
     LazyRow(
         modifier = modifier.fillMaxWidth(),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, bottom = 8.dp),
@@ -377,12 +383,15 @@ private fun SelectedFiltersList(
                     },
                     isRemovable = filter.isSelected,
                     hazeState = hazeState,
-                    hazeStyle = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                        noiseFactor = 0f,
-                        blurRadius = 8.dp,
-                    ),
+                    hazeStyle = HazeBlurStyle {
+                        blurRadius(8.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                            )
+                        )
+                    },
                     hazeStyleExtraColor = true,
                     onRemoveClick = {
                         haptic.performHapticFeedback(HapticFeedbackType.ContextClick)
@@ -408,12 +417,15 @@ private fun SelectedFiltersList(
                     },
                     isRemovable = true,
                     hazeState = hazeState,
-                    hazeStyle = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                        noiseFactor = 0f,
-                        blurRadius = 8.dp,
-                    ),
+                    hazeStyle = HazeBlurStyle {
+                        blurRadius(8.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                            )
+                        )
+                    },
                     hazeStyleExtraColor = true,
                     onClick = { onDateFilterClick(filter) },
                     onRemoveClick = {

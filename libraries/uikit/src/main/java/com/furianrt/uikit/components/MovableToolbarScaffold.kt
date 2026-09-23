@@ -55,10 +55,11 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -223,6 +224,8 @@ fun MovableToolbarScaffold(
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
     var showBlur by rememberSaveable { mutableStateOf(showShadow) }
 
+    val colorScheme = MaterialTheme.colorScheme
+
     LaunchedEffect(listState) {
         snapshotFlow { toolbarOffset + totalScroll }
             .collect { showBlur = showShadow }
@@ -242,14 +245,15 @@ fun MovableToolbarScaffold(
                     .align(Alignment.TopCenter)
                     .fillMaxWidth()
                     .fadingBottomEdge()
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint(Color.Transparent),
-                            blurRadius = if (contentOnTop) 12.dp else 4.dp,
-                            noiseFactor = 0f,
-                        )
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(if (contentOnTop) 12.dp else 4.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent)),
+                            )
+                            noiseFactor(0f)
+                        },
                     )
                     .padding(if (contentOnTop) 8.dp else 12.dp)
                     .windowInsetsTopHeight(WindowInsets.statusBars),
@@ -269,14 +273,18 @@ fun MovableToolbarScaffold(
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .hazeEffect(
-                                state = hazeState,
-                                style = HazeDefaults.style(
-                                    backgroundColor = MaterialTheme.colorScheme.surface,
-                                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = blurAlpha)),
-                                    noiseFactor = 0f,
-                                    blurRadius = blurRadius,
-                                )
+                            .hazeBlur(
+                                input = HazeInput.Sources(hazeState),
+                                style = HazeBlurStyle {
+                                    blurRadius(blurRadius)
+                                    colorEffects(
+                                        listOf(
+                                            HazeColorEffect
+                                                .tint(colorScheme.surface.copy(alpha = blurAlpha))
+                                        ),
+                                    )
+                                    noiseFactor(0f)
+                                },
                             )
                             .drawBehind {
                                 if (showShadow) {

@@ -38,16 +38,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.LocationState
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.anim.shimmer
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
+import com.furianrt.uikit.R as uiR
 
 @Composable
 fun LocationCard(
@@ -156,14 +157,15 @@ private fun EmptyContent(
         Text(
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 12.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(12.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent)),
+                        )
+                    },
                 )
                 .alpha(0.5f)
                 .padding(horizontal = 4.dp),
@@ -179,13 +181,15 @@ private fun LoadingContent(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
-    val hazeModifier = Modifier.hazeEffect(
-        state = hazeState,
-        style = HazeDefaults.style(
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            blurRadius = 12.dp,
-            tint = HazeTint(MaterialTheme.colorScheme.secondaryContainer),
-        )
+    val colorScheme = MaterialTheme.colorScheme
+    val hazeModifier = Modifier.hazeBlur(
+        input = HazeInput.Sources(hazeState),
+        style = HazeBlurStyle {
+            blurRadius(12.dp)
+            colorEffects(
+                listOf(HazeColorEffect.tint(colorScheme.secondaryContainer)),
+            )
+        },
     )
     Row(
         modifier = modifier

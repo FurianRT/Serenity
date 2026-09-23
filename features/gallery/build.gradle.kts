@@ -43,5 +43,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coilVideo)
 
-    implementation(libs.blur)
+    implementation(libs.haze)
+implementation(libs.hazeBlur)
+implementation(libs.hazeMaterials)
 }

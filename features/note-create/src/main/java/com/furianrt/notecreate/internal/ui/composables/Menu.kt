@@ -17,18 +17,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.components.SerenityPlusIcon
 import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun Menu(
@@ -42,6 +44,7 @@ internal fun Menu(
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
+    val colorScheme = MaterialTheme.colorScheme
 
     LifecycleStartEffect(Unit) {
         scope.launch {
@@ -53,12 +56,14 @@ internal fun Menu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeEffect(
-                state = dropDownHazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 12.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(dropDownHazeState),
+                style = HazeBlurStyle {
+                    blurRadius(12.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))
+                    )
+                },
             )
             .background(MaterialTheme.colorScheme.background),
         offset = DpOffset(x = (-8).dp, y = 0.dp),

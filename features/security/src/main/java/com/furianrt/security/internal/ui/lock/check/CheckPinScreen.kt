@@ -68,10 +68,11 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -124,6 +125,8 @@ internal fun CheckPinScreenInternal(
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
 
+    val colorScheme = MaterialTheme.colorScheme
+
     LaunchedEffect(Unit) {
         focusManager.clearFocus()
         viewModel.effect
@@ -167,13 +170,14 @@ internal fun CheckPinScreenInternal(
         modifier = Modifier
             .fillMaxSize()
             .hazeSource(dialogHazeState)
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.8f)),
-                    blurRadius = 20.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(20.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.8f))),
+                    )
+                },
             )
             .systemBarsPadding(),
     ) {

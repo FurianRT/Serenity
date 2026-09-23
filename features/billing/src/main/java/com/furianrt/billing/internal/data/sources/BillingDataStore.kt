@@ -17,7 +17,7 @@ internal class BillingDataStore @Inject constructor(
     private val dataStore: DataStore<Preferences>,
 ) {
     fun isSerenityPlusAvailable(): Flow<Boolean> = dataStore.data
-        .map { prefs -> prefs[KEY_HAS_SERENITY_PLUS] ?: false }
+        .map { prefs -> false }
         .distinctUntilChanged()
 
     suspend fun setSerenityPlusAvailable(available: Boolean) {

@@ -37,9 +37,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import com.furianrt.uikit.R as uiR
 
 private const val ANIM_OFFSET_DURATION = 400
@@ -94,6 +96,8 @@ private fun ButtonScrollToTop(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     AnimatedVisibility(
         modifier = modifier,
         visible = isVisible(),
@@ -104,13 +108,19 @@ private fun ButtonScrollToTop(
             modifier = Modifier
                 .shadow(elevation = 6.dp, shape = CircleShape)
                 .clip(CircleShape)
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                        noiseFactor = 0f,
-                        blurRadius = 12.dp,
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(12.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(
+                                    colorScheme.primaryContainer.copy(alpha = 0.7f),
+                                )
+                            ),
+                        )
+                    },
                 )
                 .clickable(onClick = onClick),
             contentAlignment = Alignment.Center
@@ -144,6 +154,7 @@ private fun ButtonCreateNote(
             repeatMode = RepeatMode.Reverse,
         ),
     )
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier
             .graphicsLayer {
@@ -153,13 +164,19 @@ private fun ButtonCreateNote(
             .size(60.dp)
             .shadow(elevation = 6.dp, shape = CircleShape)
             .clip(CircleShape)
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    noiseFactor = 0f,
-                    blurRadius = 12.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(12.dp)
+                    noiseFactor(0f)
+                    colorEffects(
+                        listOf(
+                            HazeColorEffect.tint(
+                                colorScheme.primaryContainer.copy(alpha = 0.7f),
+                            )
+                        ),
+                    )
+                },
             )
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center

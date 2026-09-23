@@ -17,10 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
@@ -29,17 +30,19 @@ internal fun SearchBar(
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                    noiseFactor = 0f,
-                    blurRadius = 8.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(8.dp)
+                    noiseFactor(0f)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f))),
+                    )
+                },
             )
             .background(MaterialTheme.colorScheme.background)
             .clickableNoRipple(onClick = onClick)

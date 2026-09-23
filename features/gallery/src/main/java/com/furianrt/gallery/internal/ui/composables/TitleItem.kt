@@ -17,10 +17,11 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.gallery.internal.ui.entities.ListItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
@@ -37,14 +38,15 @@ internal fun TitleItem(
         Text(
             modifier = Modifier
                 .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 12.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(12.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent))
+                        )
+                    },
                 )
                 .padding(horizontal = 4.dp),
             text = item.text,

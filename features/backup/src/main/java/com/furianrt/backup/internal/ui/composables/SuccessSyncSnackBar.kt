@@ -22,10 +22,11 @@ import com.furianrt.backup.R
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 
 @Composable
 internal fun SuccessSyncSnackBar(
@@ -40,18 +41,20 @@ internal fun SuccessSyncSnackBar(
         composition = composition,
         speed = 1.4f,
     )
+    val colorScheme = MaterialTheme.colorScheme
 
     Column(
         modifier = modifier
             .widthIn(min = 200.dp)
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.primaryContainer,
-                    tint = HazeTint(MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3f)),
-                    blurRadius = 16.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(16.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.primaryContainer.copy(alpha = 0.3f))),
+                    )
+                },
             )
             .clickableNoRipple {}
             .padding(32.dp),

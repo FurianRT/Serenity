@@ -86,10 +86,11 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -421,14 +422,15 @@ private fun SuccessContent(
         ) {
             BottomPanel(
                 modifier = Modifier
-                    .hazeEffect(
-                        state = backgroundHazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint(Color.Transparent),
-                            noiseFactor = 0f,
-                            blurRadius = 12.dp,
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(backgroundHazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent)),
+                            )
+                            noiseFactor(0f)
+                        },
                     )
                     .padding(bottom = 8.dp)
                     .navigationBarsPadding(),

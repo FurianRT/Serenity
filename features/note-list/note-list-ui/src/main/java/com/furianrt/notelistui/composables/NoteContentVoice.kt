@@ -60,10 +60,11 @@ import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlin.random.Random
 import com.furianrt.uikit.R as uiR
 
@@ -121,19 +122,19 @@ private fun VoiceContent(
     val isZeroProgress by remember {
         derivedStateOf { voice.progressState.progress.floatValue == 0f }
     }
+    val colorScheme = MaterialTheme.colorScheme
     Row(
         modifier = modifier
             .width(if (isPayable) 240.dp else 200.dp)
             .clip(RoundedCornerShape(24))
             .then(
                 if (hazeState != null) {
-                    Modifier.hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 12.dp,
-                            tint = HazeTint(MaterialTheme.colorScheme.tertiary),
-                        )
+                    Modifier.hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            colorEffects(listOf(HazeColorEffect.tint(colorScheme.tertiary)))
+                        },
                     )
                 } else {
                     Modifier.background(MaterialTheme.colorScheme.tertiary)

@@ -23,9 +23,11 @@ import com.furianrt.uikit.components.RadioButtonWithText
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -48,6 +50,7 @@ internal fun BackupPeriodDialog(
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
+    val colorScheme = MaterialTheme.colorScheme
 
     LifecycleStartEffect(Unit) {
         scope.launch {
@@ -62,12 +65,14 @@ internal fun BackupPeriodDialog(
         Column(
             modifier = modifier
                 .clip(RoundedCornerShape(16.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 20.dp,
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(20.dp)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
+                        )
+                    },
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
                 .padding(vertical = 16.dp),

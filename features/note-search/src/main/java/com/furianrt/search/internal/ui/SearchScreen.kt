@@ -77,10 +77,11 @@ import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.rememberMovableToolbarState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -391,14 +392,15 @@ private fun EmptyContent(
             modifier = Modifier
                 .padding(top = 100.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(16.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent))
+                        )
+                    },
                 )
                 .padding(horizontal = 4.dp),
             text = stringResource(R.string.notes_search_empty_search_title),

@@ -52,10 +52,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.R
 import com.furianrt.uikit.extensions.dpToPx
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -250,13 +251,14 @@ private fun Thumb(
                     }
                     .padding(start = 2.dp)
                     .clip(CircleShape)
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = Color.Black,
-                            blurRadius = 16.dp,
-                            tint = HazeTint(Color.Black.copy(alpha = 0.4f)),
-                        ),
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(16.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Black.copy(alpha = 0.4f)))
+                            )
+                        },
                     )
                     .padding(horizontal = 16.dp, vertical = 14.dp)
                     .systemGestureExclusion(),
@@ -284,13 +286,14 @@ private fun DateLabel(
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = Color.Black,
-                    blurRadius = 16.dp,
-                    tint = HazeTint(Color.Black.copy(alpha = 0.4f)),
-                ),
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(16.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(Color.Black.copy(alpha = 0.4f)))
+                    )
+                },
             )
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically,

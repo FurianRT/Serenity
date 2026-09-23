@@ -32,5 +32,7 @@ dependencies {
     implementation(libs.composeToolingPreview)
     debugImplementation(libs.composeTooling)
 
-    implementation(libs.blur)
+    implementation(libs.haze)
+implementation(libs.hazeBlur)
+implementation(libs.hazeMaterials)
 }

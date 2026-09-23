@@ -17,13 +17,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.furianrt.backup.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import com.furianrt.backup.R
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 
 @Composable
@@ -38,14 +39,15 @@ internal fun RestoreButton(
         modifier = modifier
             .alpha(alpha)
             .clip(RoundedCornerShape(32.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 8.dp,
-                    tint = HazeTint(Color.Transparent),
-                    noiseFactor = 0f,
-                ),
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(8.dp)
+                    noiseFactor(0f)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(Color.Transparent)),
+                    )
+                },
             )
             .border(
                 width = 1.dp,

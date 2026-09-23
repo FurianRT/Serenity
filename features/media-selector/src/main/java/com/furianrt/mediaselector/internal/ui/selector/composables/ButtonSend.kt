@@ -34,10 +34,11 @@ import com.furianrt.uikit.components.ActionButton
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
@@ -85,13 +86,14 @@ internal fun ButtonSend(
                     }
                     .size(28.dp)
                     .clip(CircleShape)
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = hazeColor,
-                            tint = HazeTint(hazeColor.copy(alpha = 0.4f)),
-                            blurRadius = 12.dp,
-                        )
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(hazeColor.copy(alpha = 0.4f)))
+                            )
+                        },
                     )
                     .background(MaterialTheme.colorScheme.outlineVariant),
             )

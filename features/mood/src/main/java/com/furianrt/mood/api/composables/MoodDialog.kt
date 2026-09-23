@@ -50,9 +50,11 @@ import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import kotlinx.coroutines.launch
 
@@ -97,16 +99,20 @@ fun MoodDialog(
     var topPanelHeight by remember { mutableIntStateOf(-1) }
     var bottomPanelHeight by remember { mutableIntStateOf(-1) }
 
+    val colorScheme = MaterialTheme.colorScheme
+
     BasicAlertDialog(onDismissRequest = onDismissRequest) {
         Box(
             modifier = modifier
                 .clip(RoundedCornerShape(16.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 20.dp,
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(20.dp)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
+                        )
+                    },
                 )
                 .background(MaterialTheme.colorScheme.surfaceTint)
         ) {
@@ -152,12 +158,14 @@ fun MoodDialog(
                             drawBottomShadow(color = shadowColor, elevation = 2.dp)
                         }
                     }
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 16.dp,
-                        )
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(16.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
+                            )
+                        },
                     )
                     .background(MaterialTheme.colorScheme.surfaceTint)
                     .onSizeChanged { topPanelHeight = it.height }
@@ -175,12 +183,14 @@ fun MoodDialog(
                             drawTopInnerShadow(color = shadowColor, elevation = 2.dp)
                         }
                     }
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            blurRadius = 16.dp,
-                        )
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(16.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
+                            )
+                        },
                     )
                     .background(MaterialTheme.colorScheme.surfaceTint)
                     .onSizeChanged { bottomPanelHeight = it.height }

@@ -35,10 +35,11 @@ import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.kizitonwose.calendar.core.daysOfWeek
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 import java.time.format.TextStyle
 import com.furianrt.uikit.R as uiR
@@ -59,13 +60,12 @@ internal fun ReminderListItem(
             .fillMaxWidth()
             .heightIn(min = 82.dp)
             .clip(RoundedCornerShape(16.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 6.dp,
-                    tint = HazeTint(Color.Transparent),
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(6.dp)
+                    colorEffects(listOf(HazeColorEffect.tint(Color.Transparent)))
+                },
             )
             .border(
                 width = 1.dp,

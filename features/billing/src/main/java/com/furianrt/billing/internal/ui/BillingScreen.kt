@@ -57,9 +57,10 @@ import com.furianrt.uikit.components.AppBackgroundWithStars
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
-import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -272,14 +273,14 @@ private fun Content(
                 .align(Alignment.TopCenter)
                 .fillMaxWidth()
                 .fadingBottomEdge()
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(Color.Transparent),
-                        blurRadius = 4.dp,
-                        noiseFactor = 0f,
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(4.dp)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent))
+                        )
+                    },
                 )
                 .padding(4.dp)
                 .windowInsetsTopHeight(WindowInsets.statusBars),

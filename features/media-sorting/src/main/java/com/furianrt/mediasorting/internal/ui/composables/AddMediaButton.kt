@@ -17,10 +17,11 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -33,14 +34,15 @@ internal fun AddMediaButton(
         modifier = modifier
             .padding(start = 8.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
             .clip(RoundedCornerShape(24.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 6.dp,
-                    noiseFactor = 0f,
-                    tint = HazeTint(Color.Transparent),
-                ),
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(6.dp)
+                    noiseFactor(0f)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(Color.Transparent))
+                    )
+                },
             )
             .border(
                 width = 2.dp,

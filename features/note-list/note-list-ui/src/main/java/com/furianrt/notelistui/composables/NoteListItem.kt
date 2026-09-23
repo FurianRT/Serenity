@@ -44,10 +44,11 @@ import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import java.time.ZonedDateTime
@@ -102,14 +103,15 @@ fun NoteListItem(
                 scaleY = scale
             }
             .clip(RoundedCornerShape(8.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 12.dp,
-                    tint = HazeTint(backgroundColor),
-                    noiseFactor = 0.1f,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(12.dp)
+                    noiseFactor(0.1f)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(backgroundColor)),
+                    )
+                },
             )
             .then(
                 if (isPinned) {
@@ -252,14 +254,15 @@ private fun PinIcon(
             .padding(4.dp)
             .clip(CircleShape)
             .applyIf(hasMedia) {
-                Modifier.hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        tint = HazeTint(Color.Transparent),
-                        blurRadius = 12.dp,
-                        noiseFactor = 0f,
-                    )
+                Modifier.hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(12.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent)),
+                        )
+                    },
                 )
             },
         painter = painterResource(R.drawable.ic_list_note_pin),

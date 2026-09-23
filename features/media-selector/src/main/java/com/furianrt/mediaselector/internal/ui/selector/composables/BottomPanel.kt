@@ -36,10 +36,11 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.internal.ui.entities.MediaAlbumItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import com.furianrt.uikit.R as uiR
 
 private const val ACTION_PANEL_ANIM_DURATION = 350
@@ -58,6 +59,7 @@ internal fun BottomPanel(
     onAlbumSelected: (album: MediaAlbumItem) -> Unit = {},
     onAlbumsDismissed: () -> Unit = {},
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter,
@@ -75,13 +77,14 @@ internal fun BottomPanel(
         ) {
             AlbumsButton(
                 modifier = Modifier
-                    .hazeEffect(
-                        state = hazeState,
-                        style = HazeDefaults.style(
-                            backgroundColor = MaterialTheme.colorScheme.surface,
-                            tint = HazeTint(MaterialTheme.colorScheme.surface.copy(alpha = 0.4f)),
-                            blurRadius = 12.dp,
-                        )
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(12.dp)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)))
+                            )
+                        },
                     )
                     .background(MaterialTheme.colorScheme.outlineVariant)
                     .navigationBarsPadding(),

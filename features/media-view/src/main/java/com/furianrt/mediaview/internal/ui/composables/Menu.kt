@@ -14,17 +14,18 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.mediaview.R
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.components.defaultMenuItemColors
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.LocalAuth
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.launch
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun Menu(
@@ -50,13 +51,14 @@ internal fun Menu(
         onStopOrDispose {}
     }
     DropdownMenu(
-        modifier = Modifier.hazeEffect(
-            state = hazeState,
-            style = HazeDefaults.style(
-                backgroundColor = Colors.Common.DarkGray,
-                tint = HazeTint(Colors.Common.DarkGray.copy(alpha = 0.5f)),
-                blurRadius = 12.dp,
-            )
+        modifier = Modifier.hazeBlur(
+            input = HazeInput.Sources(hazeState),
+            style = HazeBlurStyle {
+                blurRadius(12.dp)
+                colorEffects(
+                    listOf(HazeColorEffect.tint(Colors.Common.DarkGray.copy(alpha = 0.5f)))
+                )
+            },
         ),
         offset = DpOffset(x = (-8).dp, y = 0.dp),
         containerColor = Color.Transparent,

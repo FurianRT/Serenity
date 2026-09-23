@@ -86,10 +86,11 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.widgets.internal.widgets.AllActionsWidgetReceiver
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -593,14 +594,15 @@ private fun Version(
         Text(
             modifier = Modifier
                 .clip(RoundedCornerShape(8.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(16.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent)),
+                        )
+                    },
                 )
                 .padding(horizontal = 6.dp)
                 .alpha(0.5f),

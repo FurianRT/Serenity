@@ -13,13 +13,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.utils.LocalAuth
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.launch
+import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun PopUpMenu(
@@ -30,6 +32,7 @@ internal fun PopUpMenu(
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
+    val colorScheme = MaterialTheme.colorScheme
 
     LifecycleStartEffect(Unit) {
         scope.launch {
@@ -41,12 +44,14 @@ internal fun PopUpMenu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.surface,
-                    blurRadius = 12.dp,
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(12.dp)
+                    colorEffects(
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))
+                    )
+                },
             )
             .background(MaterialTheme.colorScheme.background),
         containerColor = Color.Transparent,

@@ -30,10 +30,11 @@ import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
-import dev.chrisbanes.haze.HazeDefaults
+import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
@@ -96,6 +97,7 @@ private fun Toolbar(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Row(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -106,13 +108,16 @@ private fun Toolbar(
                 .height(8.dp)
                 .weight(1f)
                 .clip(RoundedCornerShape(16.dp))
-                .hazeEffect(
-                    state = hazeState,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.background,
-                        blurRadius = 12.dp,
-                        tint = HazeTint(MaterialTheme.colorScheme.background.copy(alpha = 0.1f)),
-                    )
+                .hazeBlur(
+                    input = HazeInput.Sources(hazeState),
+                    style = HazeBlurStyle {
+                        blurRadius(12.dp)
+                        colorEffects(
+                            listOf(
+                                HazeColorEffect.tint(colorScheme.background.copy(alpha = 0.1f))
+                            )
+                        )
+                    },
                 ),
         )
         Icon(
@@ -129,17 +134,21 @@ private fun SkeletonItem(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
     Column(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(6.dp))
-            .hazeEffect(
-                state = hazeState,
-                style = HazeDefaults.style(
-                    backgroundColor = MaterialTheme.colorScheme.background,
-                    blurRadius = 12.dp,
-                    tint = HazeTint(MaterialTheme.colorScheme.background.copy(alpha = 0.1f)),
-                )
+            .hazeBlur(
+                input = HazeInput.Sources(hazeState),
+                style = HazeBlurStyle {
+                    blurRadius(12.dp)
+                    colorEffects(
+                        listOf(
+                            HazeColorEffect.tint(colorScheme.background.copy(alpha = 0.1f))
+                        )
+                    )
+                },
             )
             .padding(vertical = 4.dp, horizontal = 4.dp),
         verticalArrangement = Arrangement.spacedBy(5.dp),

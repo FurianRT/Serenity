@@ -35,9 +35,10 @@ import com.furianrt.onboarding.internal.ui.container.LocalHazeState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
-import dev.chrisbanes.haze.HazeDefaults
-import dev.chrisbanes.haze.HazeTint
-import dev.chrisbanes.haze.hazeEffect
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 
 @Composable
 internal fun GreetingScreen(
@@ -121,14 +122,15 @@ internal fun GreetingScreen(
             modifier = Modifier
                 .padding(horizontal = 32.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .hazeEffect(
-                    state = LocalHazeState.current,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(LocalHazeState.current),
+                    style = HazeBlurStyle {
+                        blurRadius(16.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent))
+                        )
+                    },
                 )
                 .padding(vertical = 2.dp, horizontal = 4.dp),
             text = stringResource(R.string.onboarding_greeting_page_title),
@@ -140,14 +142,15 @@ internal fun GreetingScreen(
             modifier = Modifier
                 .padding(horizontal = 28.dp)
                 .clip(RoundedCornerShape(8.dp))
-                .hazeEffect(
-                    state = LocalHazeState.current,
-                    style = HazeDefaults.style(
-                        backgroundColor = MaterialTheme.colorScheme.surface,
-                        blurRadius = 16.dp,
-                        noiseFactor = 0f,
-                        tint = HazeTint(Color.Transparent),
-                    ),
+                .hazeBlur(
+                    input = HazeInput.Sources(LocalHazeState.current),
+                    style = HazeBlurStyle {
+                        blurRadius(16.dp)
+                        noiseFactor(0f)
+                        colorEffects(
+                            listOf(HazeColorEffect.tint(Color.Transparent))
+                        )
+                    },
                 )
                 .padding(vertical = 2.dp, horizontal = 4.dp),
             text = stringResource(R.string.onboarding_greeting_page_body),
