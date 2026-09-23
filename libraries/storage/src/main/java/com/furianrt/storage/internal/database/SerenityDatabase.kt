@@ -274,7 +274,8 @@ private val MIGRATION_11_12 = object : Migration(11, 12) {
                 is_trial_available INTEGER NOT NULL, 
                 type TEXT NOT NULL,
                 per_month_price TEXT,
-                FIELD_DISCOUNT INTEGER,
+                yearly_per_month_price TEXT,
+                discount INTEGER
             )
             """.trimIndent(),
         )
