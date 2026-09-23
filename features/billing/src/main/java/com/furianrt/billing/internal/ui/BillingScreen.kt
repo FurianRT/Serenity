@@ -4,17 +4,10 @@ import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.RepeatMode
-import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.infiniteRepeatable
-import androidx.compose.animation.core.rememberInfiniteTransition
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
@@ -40,7 +33,6 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -57,15 +49,11 @@ import com.furianrt.billing.internal.ui.components.Benefit
 import com.furianrt.billing.internal.ui.components.ButtonClose
 import com.furianrt.billing.internal.ui.components.ButtonSubscribe
 import com.furianrt.billing.internal.ui.components.Logo
-import com.furianrt.billing.internal.ui.components.ShootingStarsLayout
 import com.furianrt.billing.internal.ui.components.SubscriptionOption
 import com.furianrt.billing.internal.ui.components.SubscriptionOptionSkeleton
 import com.furianrt.billing.internal.ui.components.TermsWarning
 import com.furianrt.common.ErrorTracker
-import com.furianrt.uikit.R as uiR
-import com.furianrt.uikit.components.AppBackground
-import com.furianrt.uikit.components.StarsLayout
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.components.AppBackgroundWithStars
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
@@ -75,6 +63,7 @@ import dev.chrisbanes.haze.hazeEffect
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import com.furianrt.uikit.R as uiR
 
 private const val KEY_LOGO = "logo"
 private const val KEY_PLAN_SKELETON = "plan_skeleton"
@@ -145,7 +134,7 @@ private fun Content(
     val benefitDividerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
 
     Box(modifier = modifier.fillMaxSize()) {
-        Background(
+        AppBackgroundWithStars(
             modifier = Modifier
                 .fillMaxSize()
                 .hazeSource(hazeState, zIndex = 0f),
@@ -308,52 +297,6 @@ private fun Content(
             },
             showProgress = uiState.showButtonProgress,
             onClick = { onEvent(BillingEvent.OnSubscribeClick) },
-        )
-    }
-}
-
-@Composable
-private fun Background(
-    theme: UiThemeColor,
-    modifier: Modifier = Modifier,
-) {
-    val infiniteTransition = rememberInfiniteTransition()
-    val rotationAnim by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 360f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(
-                durationMillis = 200000,
-                easing = LinearEasing,
-            ),
-            repeatMode = RepeatMode.Restart,
-        ),
-    )
-
-    Box(
-        modifier = modifier,
-    ) {
-        AppBackground(
-            theme = theme,
-        )
-        StarsLayout(
-            modifier = Modifier
-                .aspectRatio(1f)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
-                .graphicsLayer { rotationZ = rotationAnim },
-            starCount = 75,
-            starRotation = { rotationAnim },
-        )
-        ShootingStarsLayout(
-            modifier = Modifier
-                .aspectRatio(1.2f)
-                .fillMaxWidth()
-                .align(Alignment.TopCenter),
-        )
-        StarsLayout(
-            modifier = Modifier.fillMaxSize(),
-            starCount = 75,
         )
     }
 }

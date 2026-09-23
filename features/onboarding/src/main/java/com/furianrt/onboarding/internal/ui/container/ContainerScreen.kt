@@ -50,7 +50,7 @@ import com.furianrt.onboarding.internal.ui.theme.ThemeScreenState
 import com.furianrt.permissions.extensions.openNotificationsSettingsScreen
 import com.furianrt.permissions.ui.NotificationsPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.uikit.components.AppBackground
+import com.furianrt.uikit.components.AppBackgroundWithStars
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
@@ -144,14 +144,10 @@ private fun SuccessContent(
                 .background(MaterialTheme.colorScheme.surface)
                 .clickableNoRipple {},
         ) {
-            Crossfade(
+            AppBackgroundWithStars(
                 modifier = Modifier.hazeSource(hazeState),
-                targetState = themeScreenState.selectedTheme,
-            ) { targetState ->
-                AppBackground(
-                    theme = targetState,
-                )
-            }
+                theme = themeScreenState.selectedTheme,
+            )
             Column(
                 modifier = Modifier
                     .fillMaxWidth()

@@ -1,4 +1,4 @@
-package com.furianrt.billing.internal.ui.components
+package com.furianrt.uikit.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
@@ -20,13 +20,13 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
-import com.furianrt.billing.R
+import com.furianrt.uikit.R
 import kotlin.math.cos
 import kotlin.math.hypot
 import kotlin.math.sin
 
 @Composable
-internal fun ShootingStarsLayout(
+fun ShootingStarsLayout(
     modifier: Modifier = Modifier,
     angle: Float = 152f,
     starColor: Color = MaterialTheme.colorScheme.surfaceContainer,
