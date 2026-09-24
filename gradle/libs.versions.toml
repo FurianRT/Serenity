@@ -134,6 +134,8 @@ zoomCoil = { module = "io.github.panpf.zoomimage:zoomimage-compose-coil3", versi
 haze = { module = "dev.chrisbanes.haze:haze", version.ref = "blur" }
 hazeBlur = { module = "dev.chrisbanes.haze:haze-blur", version.ref = "blur" }
 hazeMaterials = { module = "dev.chrisbanes.haze:haze-blur-materials", version.ref = "blur" }
+hazeGlass = { module = "dev.chrisbanes.haze:haze-glass", version.ref = "blur" }
+hazeGlassMaterials = { module = "dev.chrisbanes.haze:haze-glass-material3", version.ref = "blur" }
 
 exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "exoplayer" }
 exoplayerUi = { module = "androidx.media3:media3-ui", version.ref = "exoplayer" }

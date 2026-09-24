@@ -47,6 +47,6 @@ dependencies {
     implementation(libs.kotlinxSerializationJson)
 
     implementation(libs.haze)
-implementation(libs.hazeBlur)
-implementation(libs.hazeMaterials)
+    implementation(libs.hazeBlur)
+    implementation(libs.hazeMaterials)
 }

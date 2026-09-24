@@ -44,8 +44,8 @@ dependencies {
     implementation(libs.lottie)
 
     implementation(libs.haze)
-implementation(libs.hazeBlur)
-implementation(libs.hazeMaterials)
+    implementation(libs.hazeBlur)
+    implementation(libs.hazeMaterials)
 
     implementation(libs.googleAuth)
     implementation(libs.credentials)
