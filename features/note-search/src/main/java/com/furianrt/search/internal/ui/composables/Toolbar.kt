@@ -63,13 +63,17 @@ import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.extensions.toDateString
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
 import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
 
@@ -349,6 +353,7 @@ private fun SearchBar(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun SelectedFiltersList(
     filters: List<SelectedFilter>,
@@ -383,12 +388,13 @@ private fun SelectedFiltersList(
                     },
                     isRemovable = filter.isSelected,
                     hazeState = hazeState,
-                    hazeStyle = HazeBlurStyle {
-                        blurRadius(8.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(
-                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                    hazeStyle = LocalGlassStyle.current.then {
+                        tint(colorScheme.surface.copy(alpha = 0.4f))
+                        shape(RoundedCornerShape(16.dp))
+                        whitePoint(0f)
+                        optics(
+                            GlassDefaults.optics.copy(
+                                blurRadius = OpticalSizeValue.Fixed(8.dp),
                             )
                         )
                     },
@@ -417,12 +423,13 @@ private fun SelectedFiltersList(
                     },
                     isRemovable = true,
                     hazeState = hazeState,
-                    hazeStyle = HazeBlurStyle {
-                        blurRadius(8.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(
-                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                    hazeStyle = LocalGlassStyle.current.then {
+                        tint(colorScheme.surface.copy(alpha = 0.4f))
+                        shape(RoundedCornerShape(16.dp))
+                        whitePoint(0f)
+                        optics(
+                            GlassDefaults.optics.copy(
+                                blurRadius = OpticalSizeValue.Fixed(8.dp),
                             )
                         )
                     },

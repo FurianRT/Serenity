@@ -60,11 +60,12 @@ import com.furianrt.uikit.extensions.debounceClickable
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import kotlin.random.Random
 import com.furianrt.uikit.R as uiR
 
@@ -108,6 +109,7 @@ fun NoteContentVoice(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun VoiceContent(
     voice: Voice,
@@ -115,8 +117,9 @@ private fun VoiceContent(
     isPayable: Boolean,
     onPlayClick: (voice: Voice) -> Unit,
     onProgressSelected: (voice: Voice, value: Float) -> Unit,
-    modifier: Modifier = Modifier,
     hazeState: HazeState?,
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(24),
 ) {
     var wasStarted by rememberSaveable { mutableStateOf(false) }
     val isZeroProgress by remember {
@@ -126,18 +129,23 @@ private fun VoiceContent(
     Row(
         modifier = modifier
             .width(if (isPayable) 240.dp else 200.dp)
-            .clip(RoundedCornerShape(24))
+            .clip(shape)
             .then(
                 if (hazeState != null) {
-                    Modifier.hazeBlur(
+                    Modifier.hazeGlass(
                         input = HazeInput.Sources(hazeState),
-                        style = HazeBlurStyle {
-                            blurRadius(12.dp)
-                            colorEffects(listOf(HazeColorEffect.tint(colorScheme.tertiary)))
+                        performanceMode = HazePerformanceMode.Performance,
+                        style = LocalGlassStyle.current.then {
+                            tint(colorScheme.tertiary)
+                            shape(shape)
+                            whitePoint(0f)
                         },
                     )
                 } else {
-                    Modifier.background(MaterialTheme.colorScheme.tertiary)
+                    Modifier.background(
+                        color = MaterialTheme.colorScheme.tertiary,
+                        shape = shape,
+                    )
                 }
             )
             .padding(4.dp),

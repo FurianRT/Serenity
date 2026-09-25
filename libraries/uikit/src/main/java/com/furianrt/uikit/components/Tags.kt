@@ -31,24 +31,28 @@ import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 
 private const val ANIM_EDIT_MODE_DURATION = 250
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun TagItem(
     title: String,
     isRemovable: Boolean,
     modifier: Modifier = Modifier,
     hazeState: HazeState? = null,
-    hazeStyle: HazeBlurStyle? = null,
+    hazeStyle: GlassStyle? = null,
     hazeStyleExtraColor: Boolean = false,
     background: Color = MaterialTheme.colorScheme.secondaryContainer,
     textStyle: TextStyle = MaterialTheme.typography.labelSmall,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
     textColor: Color = Color.Unspecified,
     horizontalPadding: Dp = 10.dp,
     onClick: (() -> Unit)? = null,
@@ -63,19 +67,17 @@ fun TagItem(
         Row(
             modifier = Modifier
                 .padding(all = 4.dp)
-                .clip(RoundedCornerShape(size = 16.dp))
+                .clip(shape)
                 .then(
                     if (hazeState != null) {
                         Modifier
-                            .hazeBlur(
+                            .hazeGlass(
                                 input = HazeInput.Sources(hazeState),
-                                style = hazeStyle ?: HazeBlurStyle {
-                                    blurRadius(12.dp)
-                                    colorEffects(
-                                        listOf(
-                                            HazeColorEffect.tint(colorScheme.secondaryContainer),
-                                        )
-                                    )
+                                performanceMode = HazePerformanceMode.Performance,
+                                style = hazeStyle ?: LocalGlassStyle.current.then {
+                                    tint(colorScheme.secondaryContainer)
+                                    shape(shape)
+                                    whitePoint(0f)
                                 },
                             )
                             .applyIf(hazeStyleExtraColor) {
@@ -133,6 +135,7 @@ private fun DeleteTagButton(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @PreviewWithBackground
 @Composable
 private fun NoteTagsPreview() {

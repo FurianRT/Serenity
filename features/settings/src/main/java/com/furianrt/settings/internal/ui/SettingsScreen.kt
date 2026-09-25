@@ -27,7 +27,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -46,9 +45,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -72,6 +68,7 @@ import com.furianrt.settings.R
 import com.furianrt.settings.internal.ui.composables.AppFontDialog
 import com.furianrt.settings.internal.ui.composables.BadRatingDialog
 import com.furianrt.settings.internal.ui.composables.LocaleDialog
+import com.furianrt.settings.internal.ui.composables.Version
 import com.furianrt.settings.internal.ui.composables.WidgetErrorDialog
 import com.furianrt.uikit.anim.shimmer
 import com.furianrt.uikit.components.AppBackground
@@ -86,11 +83,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.widgets.internal.widgets.AllActionsWidgetReceiver
-import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
@@ -323,6 +316,7 @@ private fun SuccessScreen(
             .padding(start = 16.dp, end = 16.dp, top = topPadding + 12.dp)
             .navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(10.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         AnimatedVisibility(
             visible = uiState.showSerenityPlusButton,
@@ -479,6 +473,7 @@ private fun SuccessScreen(
         }
         Spacer(modifier = Modifier.weight(1f))
         Version(
+            modifier = Modifier.padding(vertical = 24.dp),
             name = uiState.appVersion,
             hazeState = hazeState,
         )
@@ -577,39 +572,6 @@ private fun OptionButtonDivider(
         thickness = 1.dp,
         color = MaterialTheme.colorScheme.primary.copy(alpha = 0.05f),
     )
-}
-
-@Composable
-private fun Version(
-    name: String,
-    hazeState: HazeState,
-    modifier: Modifier = Modifier,
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(vertical = 24.dp),
-        contentAlignment = Alignment.Center,
-    ) {
-        Text(
-            modifier = Modifier
-                .clip(RoundedCornerShape(8.dp))
-                .hazeBlur(
-                    input = HazeInput.Sources(hazeState),
-                    style = HazeBlurStyle {
-                        blurRadius(16.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(HazeColorEffect.tint(Color.Transparent)),
-                        )
-                    },
-                )
-                .padding(horizontal = 6.dp)
-                .alpha(0.5f),
-            text = stringResource(R.string.settings_version_title, name),
-            style = MaterialTheme.typography.labelSmall,
-        )
-    }
 }
 
 @Composable

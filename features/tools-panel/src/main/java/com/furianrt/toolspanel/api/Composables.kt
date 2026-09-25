@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -63,6 +62,7 @@ import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
@@ -158,6 +158,8 @@ fun ActionsPanel(
         else -> PanelMode.REGULAR
     }
 
+    val colorScheme = MaterialTheme.colorScheme
+
     fun startVoiceRecord() {
         audioRecordPermissionsState.launchPermissionRequest()
     }
@@ -210,14 +212,17 @@ fun ActionsPanel(
                 .fillMaxWidth()
                 .hazeBlur(
                     input = HazeInput.Sources(hazeState),
+                    performanceMode = HazePerformanceMode.Performance,
                     style = HazeBlurStyle {
-                        blurRadius(20.dp)
+                        blurRadius(12.dp)
                         colorEffects(
-                            listOf(HazeColorEffect.tint(background.copy(alpha = 0.7f))),
+                            listOf(
+                                HazeColorEffect.tint(background.copy(alpha = 0.7f)),
+                                HazeColorEffect.tint(colorScheme.background),
+                            ),
                         )
                     },
                 )
-                .background(MaterialTheme.colorScheme.background)
                 .navigationBarsPadding()
                 .align(Alignment.BottomCenter),
         ) {

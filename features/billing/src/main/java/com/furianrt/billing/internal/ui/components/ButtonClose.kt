@@ -1,6 +1,7 @@
 package com.furianrt.billing.internal.ui.components
 
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -11,16 +12,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.theme.GlassDefaults
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun ButtonClose(
     hazeState: HazeState,
@@ -31,14 +34,16 @@ internal fun ButtonClose(
         IconButton(
             modifier = modifier
                 .clip(CircleShape)
-                .hazeBlur(
+                .hazeGlass(
                     input = HazeInput.Sources(hazeState),
-                    style = HazeBlurStyle {
-                        blurRadius(8.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(HazeColorEffect.tint(Color.Transparent))
+                    style = LocalGlassStyle.current.then {
+                        optics(
+                            GlassDefaults.optics.copy(
+                                blurRadius = OpticalSizeValue.Fixed(0.dp),
+                            )
                         )
+                        shape(RoundedCornerShape(64.dp))
+                        whitePoint(0f)
                     },
                 )
                 .systemGestureExclusion(),

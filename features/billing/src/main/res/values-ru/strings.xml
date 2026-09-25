@@ -5,7 +5,7 @@
     <string name="billing_subscription_plan_permanent">Бессрочно</string>
     <string name="billing_subscription_plan_permanent_body">Один раз и навсегда!</string>
 
-    <string name="billing_subscriptions_description">Откройте новые возможности персонализации дневника и сделайте каждую заметку особенной</string>
+    <string name="billing_subscriptions_description">Сделайте каждую заметку особенной!</string>
 
     <string name="billing_subscription_plan_monthly_pattern">%s/месяц</string>
     <string name="billing_subscription_plan_yearly_pattern">%s/год</string>

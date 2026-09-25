@@ -28,7 +28,7 @@ fun NavGraphBuilder.billingScreen(
         enterTransition = {
             fadeIn(
                 tween(
-                    durationMillis = 500,
+                    durationMillis = 400,
                     easing = LinearEasing,
                 )
             ) + slideIntoContainer(

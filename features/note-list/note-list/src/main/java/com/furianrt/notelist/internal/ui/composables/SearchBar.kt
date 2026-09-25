@@ -17,25 +17,30 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.rememberHazeState
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun SearchBar(
     hazeState: HazeState,
-    modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
 ) {
     val colorScheme = MaterialTheme.colorScheme
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(shape)
             .hazeBlur(
                 input = HazeInput.Sources(hazeState),
+                performanceMode = HazePerformanceMode.Performance,
                 style = HazeBlurStyle {
                     blurRadius(8.dp)
                     noiseFactor(0f)

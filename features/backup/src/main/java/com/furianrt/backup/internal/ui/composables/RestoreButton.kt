@@ -14,48 +14,47 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.backup.R
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.rememberHazeState
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun RestoreButton(
     isEnabled: Boolean,
     hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
 ) {
     val alpha by animateFloatAsState(targetValue = if (isEnabled) 1f else 0.5f)
     Box(
         modifier = modifier
-            .alpha(alpha)
-            .clip(RoundedCornerShape(32.dp))
-            .hazeBlur(
+            .clip(shape)
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(8.dp)
-                    noiseFactor(0f)
-                    colorEffects(
-                        listOf(HazeColorEffect.tint(Color.Transparent)),
-                    )
+                style = LocalGlassStyle.current.then {
+                    contrast(0f)
                 },
+                performanceMode = HazePerformanceMode.Performance,
             )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.primaryContainer,
-                shape = RoundedCornerShape(32.dp),
+                shape = shape,
             )
             .clickable(enabled = isEnabled, onClick = onClick)
-            .padding(horizontal = 8.dp, vertical = 14.dp),
+            .padding(horizontal = 8.dp, vertical = 14.dp)
+            .alpha(alpha),
         contentAlignment = Alignment.Center,
     ) {
         Text(

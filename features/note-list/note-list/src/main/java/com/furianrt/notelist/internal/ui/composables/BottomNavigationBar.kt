@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -36,12 +37,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelist.R
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
 private const val ANIM_OFFSET_DURATION = 400
@@ -89,6 +93,7 @@ internal fun BottomNavigationBar(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun ButtonScrollToTop(
     hazeState: HazeState,
@@ -108,17 +113,20 @@ private fun ButtonScrollToTop(
             modifier = Modifier
                 .shadow(elevation = 6.dp, shape = CircleShape)
                 .clip(CircleShape)
-                .hazeBlur(
+                .hazeGlass(
                     input = HazeInput.Sources(hazeState),
-                    style = HazeBlurStyle {
-                        blurRadius(12.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(
-                                HazeColorEffect.tint(
-                                    colorScheme.primaryContainer.copy(alpha = 0.7f),
-                                )
-                            ),
+                    performanceMode = HazePerformanceMode.Performance,
+                    style = LocalGlassStyle.current.then {
+                        tint(colorScheme.primaryContainer.copy(alpha = 0.8f))
+                        shape(RoundedCornerShape(100.dp))
+                        whitePoint(0f)
+                        optics(
+                            GlassDefaults.optics.copy(
+                                refractionStrength = 1f,
+                                refractionHeightFraction = 0.25f,
+                                refractionDisplacement = 56.dp,
+                                depth = OpticalSizeValue.Fixed(0.5f),
+                            )
                         )
                     },
                 )
@@ -135,6 +143,7 @@ private fun ButtonScrollToTop(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun ButtonCreateNote(
     hazeState: HazeState,
@@ -162,19 +171,21 @@ private fun ButtonCreateNote(
                 scaleY = scale
             }
             .size(60.dp)
-            .shadow(elevation = 6.dp, shape = CircleShape)
             .clip(CircleShape)
-            .hazeBlur(
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(12.dp)
-                    noiseFactor(0f)
-                    colorEffects(
-                        listOf(
-                            HazeColorEffect.tint(
-                                colorScheme.primaryContainer.copy(alpha = 0.7f),
-                            )
-                        ),
+                performanceMode = HazePerformanceMode.Performance,
+                style = LocalGlassStyle.current.then {
+                    tint(colorScheme.primaryContainer.copy(alpha = 0.8f))
+                    shape(RoundedCornerShape(100.dp))
+                    whitePoint(0f)
+                    optics(
+                        GlassDefaults.optics.copy(
+                            refractionStrength = 1f,
+                            refractionHeightFraction = 0.25f,
+                            refractionDisplacement = 56.dp,
+                            depth = OpticalSizeValue.Fixed(0.5f),
+                        )
                     )
                 },
             )

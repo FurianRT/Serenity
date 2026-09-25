@@ -69,15 +69,21 @@ import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
+import kotlin.time.Duration.Companion.milliseconds
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun NoteTags(
     tags: List<UiNoteTag>,
@@ -163,7 +169,9 @@ fun NoteTags(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalMaterial3Api::class,
+    ExperimentalHazeApi::class
+)
 @Composable
 private fun TemplateNoteTagItem(
     tag: UiNoteTag.Template,
@@ -174,6 +182,7 @@ private fun TemplateNoteTagItem(
     onFocusChanged: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
 ) {
     val bringIntoViewRequester = remember { BringIntoViewRequester() }
     val focusManager = LocalFocusManager.current
@@ -205,7 +214,7 @@ private fun TemplateNoteTagItem(
 
     LaunchedEffect(imeTarget, hasFocus) {
         snapshotFlow { keyboardOffset }
-            .debounce(50)
+            .debounce(50.milliseconds)
             .collect { offset ->
                 if (imeTarget != 0 && hasFocus) {
                     bringIntoViewRequester.bringIntoView(
@@ -236,7 +245,7 @@ private fun TemplateNoteTagItem(
     if (tag.suggestsProvider != null) {
         LaunchedEffect(tag.suggestsProvider) {
             snapshotFlow { tag.textState.text }
-                .debounce(100)
+                .debounce(100.milliseconds)
                 .collectLatest { tagText ->
                     if (tagText.isNotBlank()) {
                         val result = tag.suggestsProvider(tagText.toString())
@@ -265,17 +274,16 @@ private fun TemplateNoteTagItem(
             modifier = Modifier
                 .bringIntoViewRequester(bringIntoViewRequester)
                 .padding(4.dp)
-                .clip(RoundedCornerShape(16.dp))
+                .clip(shape)
                 .then(
                     if (enabled && hazeState != null) {
-                        Modifier.hazeBlur(
+                        Modifier.hazeGlass(
                             input = HazeInput.Sources(hazeState),
-                            style = HazeBlurStyle {
-                                blurRadius(12.dp)
-                                noiseFactor(0f)
-                                colorEffects(
-                                    listOf(HazeColorEffect.tint(Color.Transparent)),
-                                )
+                            performanceMode = HazePerformanceMode.Performance,
+                            style = LocalGlassStyle.current.then {
+                                shape(shape)
+                                whitePoint(0f)
+                                contrast(0f)
                             },
                         )
                     } else {
@@ -324,9 +332,17 @@ private fun TemplateNoteTagItem(
         )
         ExposedDropdownMenu(
             modifier = Modifier
-                .widthIn(min = 64.dp, max = 200.dp)
+                .widthIn(min = 56.dp, max = 200.dp)
                 .then(
                     if (hazeState != null) {
+                        Modifier.hazeGlass(
+                            input = HazeInput.Sources(hazeState),
+                            performanceMode = HazePerformanceMode.Performance,
+                            style = LocalGlassStyle.current.then {
+                                shape(shape)
+                                whitePoint(0f)
+                            },
+                        )
                         Modifier.hazeBlur(
                             input = HazeInput.Sources(hazeState),
                             style = HazeBlurStyle {

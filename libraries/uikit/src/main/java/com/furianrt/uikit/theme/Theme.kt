@@ -113,42 +113,18 @@ val LocalHasMediaRoute = compositionLocalOf { false }
 val LocalHasMediaSortingRoute = compositionLocalOf { false }
 val LocalSerenityPlus = compositionLocalOf { false }
 
-@OptIn(ExperimentalHazeApi::class)
-val defaultDarkThemeGlassOptics = GlassOptics(
-    refractionStrength = 0.6f,
-    refractionHeightFraction = 0.25f,
-    refractionDisplacement = 32.dp,
-    refractionProfile = RefractionProfile.Surface,
-    depth = OpticalSizeValue.Fixed(0.8f),
-    blurRadius = OpticalSizeValue.Fixed(16.dp),
-    refractionDetailIntensity = 0.76f,
-)
+data object GlassDefaults {
 
-@OptIn(ExperimentalHazeApi::class)
-private val defaultDarkThemeGlassStyle = GlassStyle {
-    optics(defaultDarkThemeGlassOptics)
-
-    edgeShadow(Color.Transparent)
-    edgeSoftness(0.dp)
-
-    ambientResponse(1f)
-
-    surfaceProfile(SurfaceProfile.Circle)
-
-    contrast(0f)
-
-    whitePoint(0.03f)
-
-    chromaMultiplier(1f)
-    chromaticAberrationStrength(1f)
-    chromaticAberrationMode(ChromaticAberrationMode.Simple)
-
-    contentNormalBlend(1f)
-
-    specularExponent(0f)
-    specularIntensity(0f)
-
-    fresnelExponent(2.5f)
+    @OptIn(ExperimentalHazeApi::class)
+    val optics: GlassOptics = GlassOptics(
+        refractionStrength = 0.6f,
+        refractionHeightFraction = 0.25f,
+        refractionDisplacement = 32.dp,
+        refractionProfile = RefractionProfile.Surface,
+        depth = OpticalSizeValue.Fixed(0.8f),
+        blurRadius = OpticalSizeValue.Fixed(16.dp),
+        refractionDetailIntensity = 0.76f,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
@@ -298,6 +274,35 @@ fun SerenityTheme(
             backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
             handleColor = MaterialTheme.colorScheme.surfaceContainer,
         )
+
+        val glassStyle = remember(isLightTheme) {
+            GlassStyle {
+                optics(GlassDefaults.optics)
+
+                edgeShadow(Color.Transparent)
+                edgeSoftness(0.dp)
+
+                ambientResponse(1f)
+
+                surfaceProfile(SurfaceProfile.Circle)
+
+                contrast(if (isLightTheme) -0.05f else 0f)
+
+                whitePoint(0.03f)
+
+                chromaMultiplier(1f)
+                chromaticAberrationStrength(1f)
+                chromaticAberrationMode(ChromaticAberrationMode.Simple)
+
+                contentNormalBlend(1f)
+
+                specularExponent(0f)
+                specularIntensity(0f)
+
+                fresnelExponent(2.5f)
+            }
+        }
+
         CompositionLocalProvider(
             LocalRippleConfiguration provides rippleConfig,
             LocalTextSelectionColors provides textSelectionColors,
@@ -305,7 +310,7 @@ fun SerenityTheme(
             LocalIsLightTheme provides isLightTheme,
             LocalColorScheme provides resultColorTheme,
             LocalFont provides font,
-            LocalGlassStyle provides defaultDarkThemeGlassStyle,
+            LocalGlassStyle provides glassStyle,
             content = content,
         )
     }

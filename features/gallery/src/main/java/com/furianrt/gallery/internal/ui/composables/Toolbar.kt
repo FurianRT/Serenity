@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -33,14 +34,17 @@ import com.furianrt.gallery.R
 import com.furianrt.gallery.internal.ui.GalleryEvent
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
 import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun Toolbar(
     dateFilter: String?,
@@ -98,12 +102,13 @@ internal fun Toolbar(
                     modifier = Modifier.padding(start = 20.dp),
                     title = filter,
                     hazeState = hazeState,
-                    hazeStyle = HazeBlurStyle {
-                        blurRadius(8.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(
-                                HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                    hazeStyle = LocalGlassStyle.current.then {
+                        tint(colorScheme.surface.copy(alpha = 0.4f))
+                        shape(RoundedCornerShape(16.dp))
+                        whitePoint(0f)
+                        optics(
+                            GlassDefaults.optics.copy(
+                                blurRadius = OpticalSizeValue.Fixed(8.dp),
                             )
                         )
                     },

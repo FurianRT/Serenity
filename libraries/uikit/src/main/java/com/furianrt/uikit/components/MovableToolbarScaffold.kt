@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -55,11 +56,17 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
+import com.furianrt.uikit.theme.GlassDefaults
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -93,6 +100,7 @@ class MovableToolbarState {
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun MovableToolbarScaffold(
     listState: ScrollableState,
@@ -273,17 +281,18 @@ fun MovableToolbarScaffold(
                     Box(
                         modifier = Modifier
                             .matchParentSize()
-                            .hazeBlur(
+                            .hazeGlass(
                                 input = HazeInput.Sources(hazeState),
-                                style = HazeBlurStyle {
-                                    blurRadius(blurRadius)
-                                    colorEffects(
-                                        listOf(
-                                            HazeColorEffect
-                                                .tint(colorScheme.surface.copy(alpha = blurAlpha))
-                                        ),
+                                performanceMode = HazePerformanceMode.Performance,
+                                style = LocalGlassStyle.current.then {
+                                    tint(colorScheme.surface.copy(alpha = blurAlpha))
+                                    shape(RoundedCornerShape(0.dp))
+                                    optics(
+                                        GlassDefaults.optics.copy(
+                                            depth = OpticalSizeValue.Fixed(0.9f),
+                                            blurRadius = OpticalSizeValue.Fixed(blurRadius),
+                                        )
                                     )
-                                    noiseFactor(0f)
                                 },
                             )
                             .drawBehind {

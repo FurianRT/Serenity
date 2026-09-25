@@ -2,12 +2,10 @@ package com.furianrt.billing.internal.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -15,7 +13,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
 import com.furianrt.billing.internal.ui.entities.BenefitItem
 import com.furianrt.uikit.components.OptionButtonWrapper
@@ -29,19 +26,16 @@ internal fun Benefit(
     benefit: BenefitItem,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 16.dp),
-    shape: Shape = RoundedCornerShape(16.dp),
 ) {
     OptionButtonWrapper(
         modifier = modifier,
         hazeState = hazeState,
         borderColor = Color.Transparent,
-        shape = shape,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(contentPadding),
+                .padding(horizontal = 12.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Icon(

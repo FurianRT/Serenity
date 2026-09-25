@@ -44,4 +44,6 @@ dependencies {
     implementation(libs.haze)
     implementation(libs.hazeBlur)
     implementation(libs.hazeMaterials)
+    implementation(libs.hazeGlass)
+    implementation(libs.hazeGlassMaterials)
 }

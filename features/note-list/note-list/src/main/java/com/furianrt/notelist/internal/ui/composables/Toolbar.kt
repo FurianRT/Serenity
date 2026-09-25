@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,7 +29,12 @@ import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
 @Composable
@@ -111,14 +117,17 @@ private fun UnselectedContent(
             .fillMaxSize()
             .padding(start = 16.dp, end = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         SearchBar(
             modifier = Modifier.weight(1f),
             hazeState = hazeState,
             onClick = onSearchClick,
         )
-        SettingsButton(onClick = onSettingsClick)
+        SettingsButton(
+            hazeState = hazeState,
+            onClick = onSettingsClick
+        )
     }
 }
 
@@ -146,8 +155,10 @@ private fun ButtonWithScale(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun SettingsButton(
+    hazeState: HazeState,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
@@ -159,6 +170,15 @@ private fun SettingsButton(
         onClick = onClick,
     ) {
         Icon(
+            modifier = Modifier
+                .hazeGlass(
+                    input = HazeInput.Sources(hazeState),
+                    performanceMode = HazePerformanceMode.Performance,
+                    style = LocalGlassStyle.current.then {
+                        shape(RoundedCornerShape(64.dp))
+                    },
+                )
+                .padding(8.dp),
             painter = painterResource(uiR.drawable.ic_profile),
             contentDescription = null,
         )

@@ -18,8 +18,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,10 +27,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -54,7 +49,6 @@ import com.furianrt.billing.internal.ui.components.SubscriptionOptionSkeleton
 import com.furianrt.billing.internal.ui.components.TermsWarning
 import com.furianrt.common.ErrorTracker
 import com.furianrt.uikit.components.AppBackgroundWithStars
-import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.fadingBottomEdge
 import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.HazeInput
@@ -132,8 +126,6 @@ private fun Content(
     val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
     val navBarPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
-    val benefitDividerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
-
     Box(modifier = modifier.fillMaxSize()) {
         AppBackgroundWithStars(
             modifier = Modifier
@@ -148,8 +140,8 @@ private fun Content(
             contentPadding = PaddingValues(
                 start = 16.dp,
                 end = 16.dp,
-                top = statusBarPadding + 40.dp,
-                bottom = subscribeButtonHeight.pxToDp() + navBarPadding + 32.dp,
+                top = statusBarPadding + 32.dp,
+                bottom = subscribeButtonHeight.pxToDp() + navBarPadding + 40.dp,
             ),
         ) {
             item(
@@ -157,7 +149,9 @@ private fun Content(
                 contentType = KEY_LOGO,
             ) {
                 Logo(
-                    modifier = Modifier.padding(bottom = 24.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 24.dp),
                 )
             }
 
@@ -210,42 +204,9 @@ private fun Content(
                 Benefit(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .applyIf(index != uiState.benefits.lastIndex) {
-                            Modifier.drawWithCache {
-                                val startOffset = Offset(x = 48.dp.toPx(), y = size.height)
-                                val endOffset = Offset(x = size.width, y = size.height)
-                                onDrawWithContent {
-                                    drawContent()
-                                    drawLine(
-                                        color = benefitDividerColor,
-                                        start = startOffset,
-                                        end = endOffset,
-                                        strokeWidth = 1.dp.toPx(),
-                                    )
-                                }
-                            }
-                        },
+                        .padding(bottom = if (index != uiState.benefits.lastIndex) 10.dp else 0.dp),
                     benefit = benefit,
                     hazeState = hazeState,
-                    shape = when (index) {
-                        0 -> RoundedCornerShape(
-                            topStart = 16.dp,
-                            topEnd = 16.dp,
-                        )
-
-                        uiState.benefits.lastIndex -> RoundedCornerShape(
-                            bottomStart = 16.dp,
-                            bottomEnd = 16.dp,
-                        )
-
-                        else -> RectangleShape
-                    },
-                    contentPadding = PaddingValues(
-                        start = 12.dp,
-                        end = 12.dp,
-                        top = if (index == 0) 20.dp else 16.dp,
-                        bottom = if (index == uiState.benefits.lastIndex) 20.dp else 16.dp,
-                    )
                 )
             }
 

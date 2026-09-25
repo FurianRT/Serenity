@@ -40,7 +40,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -86,11 +85,11 @@ import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
@@ -285,6 +284,7 @@ private fun ScreenContent(
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun SuccessContent(
     uiState: Content.Success,
@@ -422,14 +422,12 @@ private fun SuccessContent(
         ) {
             BottomPanel(
                 modifier = Modifier
-                    .hazeBlur(
+                    .hazeGlass(
                         input = HazeInput.Sources(backgroundHazeState),
-                        style = HazeBlurStyle {
-                            blurRadius(12.dp)
-                            colorEffects(
-                                listOf(HazeColorEffect.tint(Color.Transparent)),
-                            )
-                            noiseFactor(0f)
+                        style = LocalGlassStyle.current.then {
+                            whitePoint(0f)
+                            shape(RoundedCornerShape(0.dp))
+                            contrast(0f)
                         },
                     )
                     .padding(bottom = 8.dp)

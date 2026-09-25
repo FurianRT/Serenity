@@ -33,7 +33,7 @@ internal fun Logo(
             modifier = Modifier
                 .padding(end = 2.dp)
                 .alpha(0.85f)
-                .size(120.dp),
+                .size(116.dp),
             painter = painterResource(uiR.drawable.app_logo_big),
             tint = MaterialTheme.colorScheme.primaryContainer,
             contentDescription = null,
