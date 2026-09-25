@@ -68,6 +68,7 @@ import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
@@ -79,6 +80,7 @@ import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.Executors
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun CheckPinScreenInternal(
     hazeState: HazeState,
@@ -173,9 +175,9 @@ internal fun CheckPinScreenInternal(
             .hazeBlur(
                 input = HazeInput.Sources(hazeState),
                 style = HazeBlurStyle {
-                    blurRadius(20.dp)
+                    blurRadius(32.dp)
                     colorEffects(
-                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.8f))),
+                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f))),
                     )
                 },
             )

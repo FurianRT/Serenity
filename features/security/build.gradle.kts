@@ -41,8 +41,10 @@ dependencies {
     implementation(libs.dataStore)
 
     implementation(libs.haze)
-implementation(libs.hazeBlur)
-implementation(libs.hazeMaterials)
+    implementation(libs.hazeBlur)
+    implementation(libs.hazeMaterials)
+    implementation(libs.hazeGlass)
+    implementation(libs.hazeGlassMaterials)
 
     implementation(libs.kotlinxSerializationJson)
 

@@ -27,9 +27,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.constants.SystemBarsConstants
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.colorScheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.glass.ChromaticAberrationMode
+import dev.chrisbanes.haze.glass.GlassOptics
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.RefractionProfile
+import dev.chrisbanes.haze.glass.SurfaceProfile
 
 private const val THEME_COLOR_ANIM_DURATION = 250
 
@@ -104,7 +113,45 @@ val LocalHasMediaRoute = compositionLocalOf { false }
 val LocalHasMediaSortingRoute = compositionLocalOf { false }
 val LocalSerenityPlus = compositionLocalOf { false }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalHazeApi::class)
+val defaultDarkThemeGlassOptics = GlassOptics(
+    refractionStrength = 0.6f,
+    refractionHeightFraction = 0.25f,
+    refractionDisplacement = 32.dp,
+    refractionProfile = RefractionProfile.Surface,
+    depth = OpticalSizeValue.Fixed(0.8f),
+    blurRadius = OpticalSizeValue.Fixed(16.dp),
+    refractionDetailIntensity = 0.76f,
+)
+
+@OptIn(ExperimentalHazeApi::class)
+private val defaultDarkThemeGlassStyle = GlassStyle {
+    optics(defaultDarkThemeGlassOptics)
+
+    edgeShadow(Color.Transparent)
+    edgeSoftness(0.dp)
+
+    ambientResponse(1f)
+
+    surfaceProfile(SurfaceProfile.Circle)
+
+    contrast(0f)
+
+    whitePoint(0.03f)
+
+    chromaMultiplier(1f)
+    chromaticAberrationStrength(1f)
+    chromaticAberrationMode(ChromaticAberrationMode.Simple)
+
+    contentNormalBlend(1f)
+
+    specularExponent(0f)
+    specularIntensity(0f)
+
+    fresnelExponent(2.5f)
+}
+
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
 @Composable
 fun SerenityTheme(
     colorScheme: ColorScheme = LocalColorScheme.current,
@@ -258,6 +305,7 @@ fun SerenityTheme(
             LocalIsLightTheme provides isLightTheme,
             LocalColorScheme provides resultColorTheme,
             LocalFont provides font,
+            LocalGlassStyle provides defaultDarkThemeGlassStyle,
             content = content,
         )
     }

@@ -11,12 +11,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.unit.dp
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun OptionButtonWrapper(
     hazeState: HazeState,
@@ -29,12 +30,10 @@ fun OptionButtonWrapper(
     Column(
         modifier = modifier
             .clip(shape)
-            .hazeBlur(
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(6.dp)
-                    noiseFactor(0.1f)
-                    colorEffects(listOf(HazeColorEffect.tint(backgroundColor)))
+                style = LocalGlassStyle.current.then {
+                    tint(backgroundColor)
                 },
             )
             .border(

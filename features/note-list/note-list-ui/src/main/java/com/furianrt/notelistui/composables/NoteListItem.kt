@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -44,11 +45,15 @@ import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import java.time.ZonedDateTime
@@ -57,7 +62,7 @@ private const val SELECTED_SCALE = 0.98f
 private const val SELECTED_SCALE_DURATION = 350
 private const val MAX_TEXT_LINES = 4
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalHazeApi::class)
 @Composable
 fun NoteListItem(
     content: List<UiNoteContent>,
@@ -95,6 +100,8 @@ fun NoteListItem(
     val hasLocation = locationState is LocationState.Success
     val showLocation = hasLocation && !showMood && content.isEmpty()
 
+    val shape = remember { RoundedCornerShape(8.dp) }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -102,15 +109,13 @@ fun NoteListItem(
                 scaleX = scale
                 scaleY = scale
             }
-            .clip(RoundedCornerShape(8.dp))
-            .hazeBlur(
+            .clip(shape)
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(12.dp)
-                    noiseFactor(0.1f)
-                    colorEffects(
-                        listOf(HazeColorEffect.tint(backgroundColor)),
-                    )
+                performanceMode = HazePerformanceMode.Performance,
+                style = LocalGlassStyle.current.then {
+                    tint(backgroundColor)
+                    shape(shape)
                 },
             )
             .then(
@@ -118,13 +123,13 @@ fun NoteListItem(
                     Modifier.border(
                         width = 0.7.dp,
                         color = MaterialTheme.colorScheme.primaryContainer,
-                        shape = RoundedCornerShape(8.dp),
+                        shape = shape,
                     )
                 } else {
                     Modifier.border(
                         width = 1.dp,
                         color = MaterialTheme.colorScheme.background,
-                        shape = RoundedCornerShape(8.dp),
+                        shape = shape,
                     )
                 }
             )
