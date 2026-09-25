@@ -22,7 +22,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,15 +34,16 @@ import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.kizitonwose.calendar.core.daysOfWeek
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.rememberHazeState
 import java.time.format.TextStyle
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun ReminderListItem(
     item: ReminderItem,
@@ -51,6 +51,7 @@ internal fun ReminderListItem(
     onClick: (item: ReminderItem) -> Unit,
     onDeleteClick: (item: ReminderItem) -> Unit,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
 ) {
     val showSelectedDays = remember(item.daysOfWeek) {
         item.daysOfWeek.count(DayItem::isSelected) in 1..6
@@ -59,18 +60,17 @@ internal fun ReminderListItem(
         modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 82.dp)
-            .clip(RoundedCornerShape(16.dp))
-            .hazeBlur(
+            .clip(shape)
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(6.dp)
-                    colorEffects(listOf(HazeColorEffect.tint(Color.Transparent)))
+                style = LocalGlassStyle.current.then {
+                    shape(shape)
                 },
             )
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.background,
-                shape = RoundedCornerShape(16.dp),
+                shape = shape,
             )
             .clickable { onClick(item) }
             .padding(

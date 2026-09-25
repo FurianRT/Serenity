@@ -176,6 +176,7 @@ private fun SettingsButton(
                     performanceMode = HazePerformanceMode.Performance,
                     style = LocalGlassStyle.current.then {
                         shape(RoundedCornerShape(64.dp))
+                        whitePoint(0f)
                     },
                 )
                 .padding(8.dp),
