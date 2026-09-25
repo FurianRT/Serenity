@@ -49,9 +49,6 @@ import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.hazeSource
@@ -248,6 +245,7 @@ private fun Title(
     )
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun PinIcon(
     hasMedia: Boolean,
@@ -259,14 +257,12 @@ private fun PinIcon(
             .padding(4.dp)
             .clip(CircleShape)
             .applyIf(hasMedia) {
-                Modifier.hazeBlur(
+                Modifier.hazeGlass(
                     input = HazeInput.Sources(hazeState),
-                    style = HazeBlurStyle {
-                        blurRadius(12.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(HazeColorEffect.tint(Color.Transparent)),
-                        )
+                    performanceMode = HazePerformanceMode.Performance,
+                    style = LocalGlassStyle.current.then {
+                        whitePoint(0f)
+                        shape(RoundedCornerShape(64.dp))
                     },
                 )
             },
