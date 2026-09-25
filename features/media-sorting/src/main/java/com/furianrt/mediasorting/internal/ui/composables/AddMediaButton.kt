@@ -12,37 +12,38 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun AddMediaButton(
     hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(24.dp),
 ) {
     Box(
         modifier = modifier
             .padding(start = 8.dp, end = 12.dp, top = 12.dp, bottom = 12.dp)
-            .clip(RoundedCornerShape(24.dp))
-            .hazeBlur(
+            .clip(shape)
+            .hazeGlass(
                 input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(6.dp)
-                    noiseFactor(0f)
-                    colorEffects(
-                        listOf(HazeColorEffect.tint(Color.Transparent))
-                    )
+                style = LocalGlassStyle.current.then {
+                    contrast(0f)
+                    whitePoint(0f)
+                    shape(shape)
                 },
+                performanceMode = HazePerformanceMode.Performance,
             )
             .border(
                 width = 2.dp,
