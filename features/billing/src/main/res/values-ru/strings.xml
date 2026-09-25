@@ -16,15 +16,15 @@
 
     <string name="billing_start_trial_title">7-Дневный Пробный Период</string>
 
-    <string name="billing_benefit_custom_stickers_title">Ваши собственные стикеры</string>
+    <string name="billing_benefit_custom_stickers_title">Свои стикеры</string>
     <string name="billing_benefit_custom_stickers_body">Добавляйте любимые изображения в качестве стикеров и делайте заметки по-настоящему своими</string>
 
-    <string name="billing_benefit_custom_backgrounds_title">Собственные фоны</string>
+    <string name="billing_benefit_custom_backgrounds_title">Свои фоны</string>
     <string name="billing_benefit_custom_backgrounds_body">Подарите каждой заметке свой неповторимый вид и настроение</string>
 
     <string name="billing_benefit_export_pdf_title">Экспорт в PDF</string>
     <string name="billing_benefit_export_pdf_body">Сохраняйте любимые заметки в красивых PDF-файлах, которыми можно поделиться или сохранить на память</string>
 
-    <string name="billing_benefit_future_features_title">Больше впереди</string>
+    <string name="billing_benefit_future_features_title">Дальше больше</string>
     <string name="billing_benefit_future_features_body">Открывайте новые возможности и приятные улучшения по мере развития Serenity</string>
 </resources>
