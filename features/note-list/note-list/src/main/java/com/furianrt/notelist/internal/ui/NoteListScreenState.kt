@@ -43,6 +43,6 @@ internal class NoteListScreenState(
 @Composable
 internal fun rememberMainState(): NoteListScreenState {
     val listState = rememberLazyListState()
-    val toolbarState = rememberMovableToolbarState()
+    val toolbarState = rememberMovableToolbarState(initialShowBlur = false)
     return remember { NoteListScreenState(listState, toolbarState) }
 }

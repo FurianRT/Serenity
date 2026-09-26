@@ -74,12 +74,23 @@ import kotlinx.coroutines.launch
 import kotlin.math.absoluteValue
 
 @Composable
-fun rememberMovableToolbarState(): MovableToolbarState {
-    return remember { MovableToolbarState() }
+fun rememberMovableToolbarState(
+    initialIsHidden: Boolean = false,
+    initialShowBlur: Boolean = true,
+): MovableToolbarState {
+    return remember {
+        MovableToolbarState(
+            initialIsHidden = initialIsHidden,
+            initialShowBlur = initialShowBlur,
+        )
+    }
 }
 
 @Stable
-class MovableToolbarState {
+class MovableToolbarState(
+    initialIsHidden: Boolean = false,
+    initialShowBlur: Boolean = true,
+) {
 
     companion object {
         const val TOOLBAR_SNAP_DURATION = 350
@@ -87,9 +98,9 @@ class MovableToolbarState {
 
     private var onExpandRequest: (duration: Int) -> Unit = {}
 
-    var isHidden by mutableStateOf(false)
+    var isHidden by mutableStateOf(initialIsHidden)
 
-    var showBlur by mutableStateOf(true)
+    var showBlur by mutableStateOf(initialShowBlur)
 
     fun setExpandRequestListener(callback: (duration: Int) -> Unit) {
         onExpandRequest = callback
