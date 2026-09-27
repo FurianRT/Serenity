@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.applyIf
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.ExperimentalHazeApi
@@ -37,6 +38,7 @@ import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.glass.GlassStyle
 import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
 import dev.chrisbanes.haze.glass.hazeGlass
 
 private const val ANIM_EDIT_MODE_DURATION = 250
@@ -78,6 +80,12 @@ fun TagItem(
                                     tint(colorScheme.secondaryContainer)
                                     shape(shape)
                                     whitePoint(0f)
+                                    optics(
+                                        GlassDefaults.optics.copy(
+                                            refractionStrength = 0.8f,
+                                            depth = OpticalSizeValue.Fixed(0.5f),
+                                        )
+                                    )
                                 },
                             )
                             .applyIf(hazeStyleExtraColor) {
