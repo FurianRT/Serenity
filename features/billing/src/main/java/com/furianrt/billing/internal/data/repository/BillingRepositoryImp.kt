@@ -440,5 +440,13 @@ internal class BillingRepositoryImp @Inject constructor(
                 currentActivityRef = WeakReference(activity)
             }
         }
+
+        override fun onActivityDestroyed(activity: Activity) {
+            super.onActivityDestroyed(activity)
+            if (activityChecker.isMainActivity(activity)) {
+                currentActivityRef?.clear()
+                currentActivityRef = null
+            }
+        }
     }
 }

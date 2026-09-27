@@ -48,5 +48,13 @@ class ResourcesManager @Inject constructor(
                 currentActivity = WeakReference(activity)
             }
         }
+
+        override fun onActivityDestroyed(activity: Activity) {
+            super.onActivityDestroyed(activity)
+            if (activityChecker.isMainActivity(activity)) {
+                currentActivity?.clear()
+                currentActivity = null
+            }
+        }
     }
 }
