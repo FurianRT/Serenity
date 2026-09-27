@@ -200,11 +200,12 @@ private fun MainScreenContent(
 
     val successState = uiState.content as? NoteListUiState.Content.Success
 
-    LaunchedEffect(uiState.content.enableSelection) {
+    LaunchedEffect(uiState.content.enableSelection, uiState.hasAutoBackupFailure) {
         if (uiState.content.enableSelection) {
             screenState.toolbarState.expand()
         }
-        screenState.toolbarState.showBlur = uiState.content.enableSelection
+        screenState.toolbarState.showBlur =
+            uiState.content.enableSelection || uiState.hasAutoBackupFailure
     }
 
     BackHandler(enabled = uiState.content.enableSelection) {
