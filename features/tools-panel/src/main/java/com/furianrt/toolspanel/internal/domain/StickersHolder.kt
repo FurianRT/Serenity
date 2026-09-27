@@ -34,6 +34,9 @@ internal class StickersHolder @Inject constructor(
 
     private fun loadPacks(): List<StickerPack> = buildList {
         add(getPack13())
+        add(getPack14())
+        add(getPack15())
+        add(getPack16())
         add(getPack11())
         add(getPack8())
         add(getPack9())
@@ -504,6 +507,117 @@ internal class StickersHolder @Inject constructor(
         return StickerPack(
             id = "pack_13",
             icon = R.drawable.pack_13_sticker_15,
+            stickers = stickers,
+        )
+    }
+
+    private fun getPack14(): StickerPack {
+        val stickers = buildList {
+            add(Sticker(id = "pack_14_sticker_1", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_1)))
+            add(Sticker(id = "pack_14_sticker_2", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_2)))
+            add(Sticker(id = "pack_14_sticker_3", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_3)))
+            add(Sticker(id = "pack_14_sticker_4", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_4)))
+            add(Sticker(id = "pack_14_sticker_5", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_5)))
+            add(Sticker(id = "pack_14_sticker_6", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_6)))
+            add(Sticker(id = "pack_14_sticker_7", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_7)))
+            add(Sticker(id = "pack_14_sticker_8", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_8)))
+            add(Sticker(id = "pack_14_sticker_9", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_9)))
+            add(Sticker(id = "pack_14_sticker_10", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_10)))
+            add(Sticker(id = "pack_14_sticker_11", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_11)))
+            add(Sticker(id = "pack_14_sticker_12", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_12)))
+            add(Sticker(id = "pack_14_sticker_13", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_13)))
+            add(Sticker(id = "pack_14_sticker_26", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_26)))
+            add(Sticker(id = "pack_14_sticker_14", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_14)))
+            add(Sticker(id = "pack_14_sticker_15", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_15)))
+            add(Sticker(id = "pack_14_sticker_16", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_16)))
+            add(Sticker(id = "pack_14_sticker_17", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_17)))
+            add(Sticker(id = "pack_14_sticker_18", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_18)))
+            add(Sticker(id = "pack_14_sticker_19", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_19)))
+            add(Sticker(id = "pack_14_sticker_20", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_20)))
+            add(Sticker(id = "pack_14_sticker_21", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_21)))
+            add(Sticker(id = "pack_14_sticker_22", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_22)))
+            add(Sticker(id = "pack_14_sticker_23", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_23)))
+            add(Sticker(id = "pack_14_sticker_24", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_24)))
+            add(Sticker(id = "pack_14_sticker_25", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_25)))
+            add(Sticker(id = "pack_14_sticker_27", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_27)))
+            add(Sticker(id = "pack_14_sticker_28", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_28)))
+        }
+
+        return StickerPack(
+            id = "pack_14",
+            icon = R.drawable.pack_14_sticker_1,
+            stickers = stickers,
+        )
+    }
+
+    private fun getPack15(): StickerPack {
+        val stickers = buildList {
+            add(Sticker(id = "pack_15_sticker_1", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_1)))
+            add(Sticker(id = "pack_15_sticker_2", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_2)))
+            add(Sticker(id = "pack_15_sticker_6", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_6)))
+            add(Sticker(id = "pack_15_sticker_7", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_7)))
+            add(Sticker(id = "pack_15_sticker_8", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_8)))
+            add(Sticker(id = "pack_15_sticker_12", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_12)))
+            add(Sticker(id = "pack_15_sticker_14", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_14)))
+            add(Sticker(id = "pack_15_sticker_18", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_18)))
+            add(Sticker(id = "pack_15_sticker_19", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_19)))
+            add(Sticker(id = "pack_15_sticker_20", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_20)))
+            add(Sticker(id = "pack_15_sticker_27", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_27)))
+            add(Sticker(id = "pack_15_sticker_29", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_29)))
+            add(Sticker(id = "pack_15_sticker_30", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_30)))
+            add(Sticker(id = "pack_15_sticker_32", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_32)))
+            add(Sticker(id = "pack_15_sticker_34", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_34)))
+            add(Sticker(id = "pack_15_sticker_35", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_35)))
+        }
+
+        return StickerPack(
+            id = "pack_15",
+            icon = R.drawable.pack_15_sticker_32,
+            stickers = stickers,
+        )
+    }
+
+    private fun getPack16(): StickerPack {
+        val stickers = buildList {
+            add(Sticker(id = "pack_16_sticker_2", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_5)))
+            add(Sticker(id = "pack_16_sticker_3", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_10)))
+            add(Sticker(id = "pack_16_sticker_4", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_17)))
+            add(Sticker(id = "pack_16_sticker_5", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_21)))
+            add(Sticker(id = "pack_16_sticker_6", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_23)))
+            add(Sticker(id = "pack_16_sticker_8", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_31)))
+            add(Sticker(id = "pack_16_sticker_9", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_33)))
+            add(Sticker(id = "pack_16_sticker_10", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_37)))
+            add(Sticker(id = "pack_16_sticker_11", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_38)))
+            add(Sticker(id = "pack_16_sticker_12", icon = Sticker.Icon.Res(R.drawable.pack_15_sticker_39)))
+            add(Sticker(id = "pack_16_sticker_13", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_7)))
+            add(Sticker(id = "pack_16_sticker_14", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_8)))
+            add(Sticker(id = "pack_16_sticker_15", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_10)))
+            add(Sticker(id = "pack_16_sticker_16", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_11)))
+            add(Sticker(id = "pack_16_sticker_17", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_12)))
+            add(Sticker(id = "pack_16_sticker_18", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_13)))
+            add(Sticker(id = "pack_16_sticker_19", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_14)))
+            add(Sticker(id = "pack_16_sticker_20", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_15)))
+            add(Sticker(id = "pack_16_sticker_21", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_16)))
+            add(Sticker(id = "pack_16_sticker_22", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_17)))
+            add(Sticker(id = "pack_16_sticker_23", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_18)))
+            add(Sticker(id = "pack_16_sticker_24", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_19)))
+            add(Sticker(id = "pack_16_sticker_25", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_22)))
+            add(Sticker(id = "pack_16_sticker_26", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_23)))
+            add(Sticker(id = "pack_16_sticker_27", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_24)))
+            add(Sticker(id = "pack_16_sticker_28", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_25)))
+            add(Sticker(id = "pack_16_sticker_29", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_26)))
+            add(Sticker(id = "pack_16_sticker_30", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_27)))
+            add(Sticker(id = "pack_16_sticker_31", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_28)))
+            add(Sticker(id = "pack_16_sticker_32", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_30)))
+            add(Sticker(id = "pack_16_sticker_33", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_31)))
+            add(Sticker(id = "pack_16_sticker_34", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_1)))
+            add(Sticker(id = "pack_16_sticker_35", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_3)))
+            add(Sticker(id = "pack_16_sticker_36", icon = Sticker.Icon.Res(R.drawable.pack_16_sticker_5)))
+        }
+
+        return StickerPack(
+            id = "pack_16",
+            icon = R.drawable.pack_16_sticker_17,
             stickers = stickers,
         )
     }

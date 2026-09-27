@@ -281,7 +281,7 @@ internal fun StickersContent(
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collect { effect ->
+            .collectLatest { effect ->
                 when (effect) {
                     is StickersContainerEffect.ClosePanel -> Unit
                     is StickersContainerEffect.ShowKeyboard -> Unit
