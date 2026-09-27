@@ -18,6 +18,7 @@ internal class StickerState(
     initialDpOffsetY: Dp = 0.dp,
     initialEditTime: Long = System.currentTimeMillis(),
     initialIsEditing: Boolean = true,
+    initialOverContent: Boolean = true,
 ) {
     var isFlipped: Boolean by mutableStateOf(initialIsFlipped)
 
@@ -32,4 +33,6 @@ internal class StickerState(
     var editTime: Long by mutableLongStateOf(initialEditTime)
 
     var isEditing: Boolean by mutableStateOf(initialIsEditing)
+
+    var overContent: Boolean by mutableStateOf(initialOverContent)
 }

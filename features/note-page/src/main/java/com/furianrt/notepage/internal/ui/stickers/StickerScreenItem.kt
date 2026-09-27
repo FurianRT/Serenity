@@ -31,9 +31,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -41,6 +43,7 @@ import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -67,12 +70,15 @@ import com.furianrt.uikit.R as uiR
 @Composable
 internal fun StickerScreenItem(
     item: StickerItem,
+    interactable: Boolean,
     modifier: Modifier = Modifier,
     onRemoveClick: (item: StickerItem) -> Unit = {},
     onDragged: (delta: Offset) -> Unit = {},
     onTransformed: () -> Unit = {},
     onClick: (tem: StickerItem) -> Unit = {},
 ) {
+    val hapticFeedback = LocalHapticFeedback.current
+
     var parentCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var childCoordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var stickerCenter by remember { mutableStateOf<Offset?>(null) }
@@ -97,7 +103,7 @@ internal fun StickerScreenItem(
                 scaleX = item.state.scale
                 scaleY = item.state.scale
             }
-            .applyIf(item.state.isEditing) {
+            .applyIf(item.state.isEditing && interactable) {
                 Modifier
                     .pointerInput(Unit) {
                         detectTransformGestures { _, pan, scale, rotation ->
@@ -144,7 +150,7 @@ internal fun StickerScreenItem(
             Sticker(
                 modifier = Modifier
                     .padding(8.dp)
-                    .applyIf(item.state.isEditing) {
+                    .applyIf(item.state.isEditing && interactable) {
                         Modifier.dashedRoundedRectBorder(
                             color = MaterialTheme.colorScheme.primaryContainer,
                             width = 1.6.dp / item.state.scale,
@@ -155,11 +161,12 @@ internal fun StickerScreenItem(
                     .padding(2.dp)
                     .onGloballyPositioned { stickerCenter = it.boundsInParent().center },
                 item = item,
+                interactable = interactable,
                 onClick = onClick,
             )
 
-            if (item.state.isEditing) {
-                val buttonSize = 24.dp
+            if (item.state.isEditing && interactable) {
+                val buttonSize = 26.dp
                 val scaledSize = buttonSize * item.state.scale
                 val offsetPx = with(LocalDensity.current) { (scaledSize - buttonSize).toPx() / 6 }
                 val sizeModifier = Modifier.size(buttonSize)
@@ -172,7 +179,10 @@ internal fun StickerScreenItem(
                             scaleY = scale
                         }
                         .offset { IntOffset(-offsetPx.toInt(), -offsetPx.toInt()) },
-                    onClick = { onRemoveClick(item) },
+                    onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
+                        onRemoveClick(item)
+                    },
                 )
 
                 ButtonResize(
@@ -249,7 +259,24 @@ internal fun StickerScreenItem(
                         }
                         .offset { IntOffset(offsetPx.toInt(), -offsetPx.toInt()) },
                     onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
                         item.state.isFlipped = !item.state.isFlipped
+                        onTransformedState()
+                    },
+                )
+
+                ButtonLayer(
+                    modifier = sizeModifier
+                        .align(Alignment.BottomStart)
+                        .graphicsLayer {
+                            val scale = 1f / item.state.scale
+                            scaleX = scale
+                            scaleY = scale
+                        }
+                        .offset { IntOffset(-offsetPx.toInt(), offsetPx.toInt()) },
+                    onClick = {
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
+                        item.state.overContent = !item.state.overContent
                         onTransformedState()
                     },
                 )
@@ -273,6 +300,7 @@ private fun calculateRotationAngle(center: Offset, start: Offset, current: Offse
 @Composable
 private fun Sticker(
     item: StickerItem,
+    interactable: Boolean,
     onClick: (item: StickerItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -291,7 +319,12 @@ private fun Sticker(
         modifier = modifier
             .size(StickerItem.DEFAULT_SIZE)
             .graphicsLayer { scaleX = scaleXAnim }
-            .clickableNoRipple { onClick(item) },
+            .clickableNoRipple { onClick(item) }
+            .drawWithContent {
+                if (!interactable || item.state.overContent) {
+                    drawContent()
+                }
+            },
         model = request,
         error = colorPlaceholder,
         contentDescription = null,
@@ -347,6 +380,23 @@ private fun ButtonFlip(
 }
 
 @Composable
+private fun ButtonLayer(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Icon(
+        modifier = modifier
+            .clip(CircleShape)
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .clickable(onClick = onClick)
+            .padding(4.dp),
+        painter = painterResource(R.drawable.ic_layer_sticker),
+        tint = MaterialTheme.colorScheme.onPrimaryContainer,
+        contentDescription = null
+    )
+}
+
+@Composable
 @PreviewWithBackground
 private fun Preview() {
     SerenityTheme {
@@ -354,9 +404,10 @@ private fun Preview() {
             item = StickerItem(
                 id = "",
                 typeId = "",
-                icon = StickerItem.Icon.Res(uiR.drawable.ic_folder),
+                icon = StickerItem.Icon.Res(uiR.drawable.ic_stickers),
                 state = StickerState(initialIsEditing = true),
-            )
+            ),
+            interactable = true,
         )
     }
 }

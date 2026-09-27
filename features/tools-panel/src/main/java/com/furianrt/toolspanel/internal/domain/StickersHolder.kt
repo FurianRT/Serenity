@@ -537,7 +537,6 @@ internal class StickersHolder @Inject constructor(
             add(Sticker(id = "pack_14_sticker_21", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_21)))
             add(Sticker(id = "pack_14_sticker_22", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_22)))
             add(Sticker(id = "pack_14_sticker_23", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_23)))
-            add(Sticker(id = "pack_14_sticker_24", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_24)))
             add(Sticker(id = "pack_14_sticker_25", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_25)))
             add(Sticker(id = "pack_14_sticker_27", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_27)))
             add(Sticker(id = "pack_14_sticker_28", icon = Sticker.Icon.Res(R.drawable.pack_14_sticker_28)))

@@ -15,6 +15,7 @@ internal fun EntryNoteSticker.toNoteContentSticker() = LocalNote.Sticker(
     isFlipped = isFlipped,
     biasX = biasX,
     dpOffsetY = dpOffsetY,
+    overContent = overContent,
     editTime = editTime,
 )
 
@@ -27,6 +28,7 @@ internal fun LocalNote.Sticker.toEntryNoteToSticker(noteId: String) = EntryNoteS
     isFlipped = isFlipped,
     biasX = biasX,
     dpOffsetY = dpOffsetY,
+    overContent = overContent,
     editTime = editTime,
 )
 
@@ -37,6 +39,7 @@ internal fun LocalNote.Sticker.toEntryTransformationsPart() = PartStickerTransfo
     isFlipped = isFlipped,
     biasX = biasX,
     dpOffsetY = dpOffsetY,
+    overContent = overContent,
     editTime = editTime,
 )
 

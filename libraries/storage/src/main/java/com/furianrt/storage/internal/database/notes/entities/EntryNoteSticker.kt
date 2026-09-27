@@ -42,6 +42,9 @@ internal class EntryNoteSticker(
     @ColumnInfo(name = FIELD_DP_OFFSET_Y)
     val dpOffsetY: Float,
 
+    @ColumnInfo(name = FIELD_OVER_CONTENT)
+    val overContent: Boolean,
+
     @ColumnInfo(name = FIELD_EDIT_TIME)
     val editTime: Long,
 ) {
@@ -55,6 +58,7 @@ internal class EntryNoteSticker(
         const val FIELD_IS_FLIPPED = "is_flipped"
         const val FIELD_BIAS_X = "bias_x"
         const val FIELD_DP_OFFSET_Y = "dp_offset_y"
+        const val FIELD_OVER_CONTENT = "over_content"
         const val FIELD_EDIT_TIME = "edit_time"
     }
 }
@@ -78,6 +82,9 @@ internal class PartStickerTransformations(
 
     @ColumnInfo(name = EntryNoteSticker.FIELD_DP_OFFSET_Y)
     val dpOffsetY: Float,
+
+    @ColumnInfo(name = EntryNoteSticker.FIELD_OVER_CONTENT)
+    val overContent: Boolean,
 
     @ColumnInfo(name = EntryNoteSticker.FIELD_EDIT_TIME)
     val editTime: Long,

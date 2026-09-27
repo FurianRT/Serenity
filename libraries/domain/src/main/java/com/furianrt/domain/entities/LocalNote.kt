@@ -44,6 +44,7 @@ data class LocalNote(
         val isFlipped: Boolean,
         val biasX: Float,
         val dpOffsetY: Float,
+        val overContent: Boolean,
         val editTime: Long,
     )
 

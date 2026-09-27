@@ -453,20 +453,35 @@ private fun SuccessScreen(
         },
     ) {
         NoteBackgroundImage(
-            modifier = Modifier.hazeSource(hazeState, 0f),
+            modifier = Modifier.hazeSource(hazeState, zIndex = 0f),
             theme = uiState.noteTheme ?: uiState.appTheme,
         )
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 8.dp)
-                .hazeSource(hazeState, 1f)
+                .hazeSource(hazeState, zIndex = 2f)
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
                 .padding(top = toolbarMargin)
                 .padding(bottom = listPanelPaddingAnim + navBarPadding)
                 .imePadding(),
         ) {
+            if (uiState.stickers.isNotEmpty()) {
+                StickersBox(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
+                        .hazeSource(hazeState, zIndex = 1f)
+                        .matchParentSize(),
+                    stickers = uiState.stickers,
+                    interactable = false,
+                    emptyTitleHeight = { if (uiState.hasTopTitle) topEmptyTitleHeight else 0f },
+                    onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
+                    onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
+                    onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
+                )
+            }
             ContentItems(
                 modifier = Modifier.fillMaxSize(),
                 uiState = uiState,
@@ -493,6 +508,7 @@ private fun SuccessScreen(
                         .heightIn(min = StickerItem.DEFAULT_SIZE * 2)
                         .matchParentSize(),
                     stickers = uiState.stickers,
+                    interactable = true,
                     emptyTitleHeight = { if (uiState.hasTopTitle) topEmptyTitleHeight else 0f },
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },

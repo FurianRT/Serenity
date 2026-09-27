@@ -20,6 +20,7 @@ import com.furianrt.uikit.extensions.pxToDp
 @Composable
 internal fun StickersBox(
     stickers: List<StickerItem>,
+    interactable: Boolean,
     emptyTitleHeight: () -> Float,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
@@ -31,6 +32,7 @@ internal fun StickersBox(
             key(sticker.id) {
                 StickerElement(
                     sticker = sticker,
+                    interactable = interactable,
                     emptyTitleHeight = emptyTitleHeight,
                     containerWidth = maxWidth.dpToPx(),
                     containerHeight = maxHeight.dpToPx(),
@@ -46,6 +48,7 @@ internal fun StickersBox(
 @Composable
 private fun StickerElement(
     sticker: StickerItem,
+    interactable: Boolean,
     emptyTitleHeight: () -> Float,
     containerWidth: Float,
     containerHeight: Float,
@@ -76,6 +79,7 @@ private fun StickerElement(
             )
         },
         item = sticker,
+        interactable = interactable,
         onRemoveClick = onRemoveStickerClick,
         onDragged = { delta ->
             sticker.state.biasX = if (containerHeight == 0f) {

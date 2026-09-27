@@ -80,7 +80,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 12
+        private const val VERSION = 13
 
         fun create(
             context: Context,
@@ -106,6 +106,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_9_10,
                 MIGRATION_10_11,
                 MIGRATION_11_12,
+                MIGRATION_12_13,
             )
             .build()
     }
@@ -278,6 +279,14 @@ private val MIGRATION_11_12 = object : Migration(11, 12) {
                 discount INTEGER
             )
             """.trimIndent(),
+        )
+    }
+}
+
+private val MIGRATION_12_13 = object : Migration(12, 13) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            "ALTER TABLE Stickers ADD COLUMN over_content INTEGER NOT NULL DEFAULT 1",
         )
     }
 }

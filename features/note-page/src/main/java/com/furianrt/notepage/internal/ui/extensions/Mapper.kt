@@ -73,6 +73,7 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     isFlipped = state.isFlipped,
     biasX = state.biasX,
     dpOffsetY = state.dpOffsetY.value,
+    overContent = state.overContent,
     editTime = state.editTime,
 )
 
@@ -131,6 +132,7 @@ private fun LocalNote.Sticker.toStickerItem(
             initialDpOffsetY = dpOffsetY.dp,
             initialEditTime = editTime,
             initialIsEditing = false,
+            initialOverContent = overContent,
         ),
     )
 }
