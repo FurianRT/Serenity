@@ -321,7 +321,7 @@ private fun Sticker(
             .graphicsLayer { scaleX = scaleXAnim }
             .clickableNoRipple { onClick(item) }
             .drawWithContent {
-                if (!interactable || item.state.overContent) {
+                if (interactable == item.state.overContent) {
                     drawContent()
                 }
             },
