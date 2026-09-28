@@ -101,7 +101,7 @@ fun AppBackgroundWithStars(
                 .fillMaxWidth()
                 .align(Alignment.TopCenter)
                 .graphicsLayer { rotationZ = rotationAnim },
-            starCount = 75,
+            starCount = 70,
             starRotation = { rotationAnim },
         )
         ShootingStarsLayout(
@@ -112,7 +112,7 @@ fun AppBackgroundWithStars(
         )
         StarsLayout(
             modifier = Modifier.fillMaxSize(),
-            starCount = 75,
+            starCount = 70,
         )
     }
 }

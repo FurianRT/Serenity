@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.drawscope.withTransform
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
+import com.furianrt.common.nextFloat
 import com.furianrt.uikit.R
 import kotlin.random.Random
 
@@ -76,9 +77,9 @@ fun StarsLayout(
                     repeatMode = RepeatMode.Reverse,
                 ),
             ),
-            translationXMultiplier = remember { Random.nextFloat() },
-            translationYMultiplier = remember { Random.nextFloat() },
-            sizeMultiplier = remember { Random.nextDouble(0.2, 1.0).toFloat() },
+            translationXMultiplier = remember { Random.nextFloat(0f, 1f) },
+            translationYMultiplier = remember { Random.nextFloat(0f, 1f) },
+            sizeMultiplier = remember { Random.nextFloat(0.2f, 1f) },
         )
     }
 
