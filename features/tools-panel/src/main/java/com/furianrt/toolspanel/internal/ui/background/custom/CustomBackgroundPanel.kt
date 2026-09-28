@@ -194,7 +194,7 @@ private fun EmptyContent(
                 ),
                 contentPadding = PaddingValues(
                     start = 24.dp,
-                    end = if (LocalSerenityPlus.current) 16.dp else 32.dp,
+                    end = if (LocalSerenityPlus.current) 32.dp else 16.dp,
                     top = 8.dp,
                     bottom = 8.dp,
                 ),
