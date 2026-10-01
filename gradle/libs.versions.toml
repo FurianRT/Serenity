@@ -10,12 +10,12 @@ gms = "4.5.0"
 crashlyticsPlugin = "3.0.8"
 performancePlugin = "2.0.2"
 
-coreKtx = "1.19.0"
+coreKtx = "1.19.1"
 lifecycle = "2.11.0"
 
 composeBom = "2026.09.00"
 composeActivity = "1.13.0"
-composeNavigation = "2.10.1"
+composeNavigation = "2.10.2"
 
 accompanist = "0.37.3"
 
@@ -36,9 +36,9 @@ coil = "3.6.3"
 
 kotlinxSerializationJson = "1.11.0"
 
-blur = "2.0.0"
+blur = "2.0.1"
 
-zoom = "1.6.0"
+zoom = "1.7.0"
 
 exoplayer = "1.11.1"
 
@@ -65,7 +65,7 @@ kotlinSerializationConverter = "1.0.0"
 
 exifinterface = "1.4.2"
 
-workManager = "2.11.2"
+workManager = "2.12.0"
 
 startupRuntime = "1.2.0"
 
