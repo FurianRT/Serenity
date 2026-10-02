@@ -22,17 +22,20 @@ import com.furianrt.mood.internal.entites.MoodPack
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.hazeGlass
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun MoodButton(
     moodId: String?,
     defaultMoodId: String?,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(20.dp),
     hazeState: HazeState? = null,
     onClick: (() -> Unit)? = null,
 ) {
@@ -54,24 +57,28 @@ fun MoodButton(
 
     Box(
         modifier = modifier
-            .clip(RoundedCornerShape(20.dp))
             .then(
                 if (hazeState != null) {
-                    Modifier.hazeBlur(
+                    Modifier.hazeGlass(
                         input = HazeInput.Sources(hazeState),
-                        style = HazeBlurStyle {
-                            blurRadius(12.dp)
-                            colorEffects(
-                                listOf(HazeColorEffect.tint(colorScheme.secondaryContainer)),
-                            )
+                        performanceMode = HazePerformanceMode.Performance,
+                        style = LocalGlassStyle.current.then {
+                            tint(colorScheme.secondaryContainer)
+                            shape(shape)
+                            whitePoint(0f)
                         },
                     )
                 } else {
-                    Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
+                    Modifier.background(
+                        shape = shape,
+                        color = MaterialTheme.colorScheme.secondaryContainer,
+                    )
                 }
             )
             .applyIf(onClick != null) {
-                Modifier.clickable { onClick?.invoke() }
+                Modifier
+                    .clip(shape)
+                    .clickable { onClick?.invoke() }
             }
             .padding(4.dp),
         contentAlignment = Alignment.Center,
