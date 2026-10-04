@@ -41,8 +41,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.mood.R
-import com.furianrt.mood.internal.MoodHolder
-import com.furianrt.mood.internal.entites.Mood
+import com.furianrt.mood.api.MoodHolder
+import com.furianrt.mood.api.entities.Mood
 import com.furianrt.uikit.extensions.clickableUnbounded
 import com.furianrt.uikit.extensions.drawBottomShadow
 import com.furianrt.uikit.extensions.drawTopInnerShadow
@@ -83,7 +83,7 @@ fun MoodDialog(
     }
 
     val moodPacks = remember(moodId, defaultMoodId, isExpandedState) {
-        val packs = MoodHolder.getMoodPacks()
+        val packs = MoodHolder.moodPacks
         val topMoodId = moodId ?: defaultMoodId ?: packs.first().moods.first().id
         val sortedPacks = packs.sortedBy { pack -> pack.moods.none { it.id == topMoodId } }
         if (isExpandedState) {

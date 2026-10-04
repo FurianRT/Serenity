@@ -114,6 +114,9 @@ internal interface NoteDao {
     @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_ID} = :noteId")
     fun getSimpleNote(noteId: String): Flow<EntryNote?>
 
+    @Query("SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_MOOD_ID} IS NOT NULL")
+    fun getNotesWithMood(): Flow<List<EntryNote>>
+
     @Query("SELECT EXISTS(SELECT * FROM ${EntryNote.TABLE_NAME} WHERE ${EntryNote.FIELD_BACKGROUND_IMAGE_ID} = :backgroundImageId)")
     suspend fun hasNoteWithBackgroundId(backgroundImageId: String): Boolean
 

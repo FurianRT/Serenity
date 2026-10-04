@@ -167,10 +167,18 @@ internal class NotesRepositoryImp @Inject constructor(
         getAllNotes()
     }
 
+    override fun getAllSimpleNotes(): Flow<List<SimpleNote>> = noteDao.getAllSimpleNotes()
+        .deepMap(EntryNote::toSimpleNote)
+        .flowOn(dispatchers.default)
+
     override fun getNote(noteId: String): Flow<LocalNote?> =
         noteDao.getNote(noteId)
             .map { it?.toLocalNote() }
             .flowOn(dispatchers.default)
+
+    override fun getSimpleNotesWithMood(): Flow<List<SimpleNote>> = noteDao.getNotesWithMood()
+        .deepMap(EntryNote::toSimpleNote)
+        .flowOn(dispatchers.default)
 
     override fun getOrCreateTemplateNote(
         noteId: String,

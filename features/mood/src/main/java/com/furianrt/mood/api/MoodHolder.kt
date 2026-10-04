@@ -1,12 +1,13 @@
-package com.furianrt.mood.internal
+package com.furianrt.mood.api
 
 import com.furianrt.mood.R
-import com.furianrt.mood.internal.entites.Mood
+import com.furianrt.mood.api.entities.Mood
 import com.furianrt.mood.internal.entites.MoodPack
+import kotlin.collections.get
 
-internal object MoodHolder {
+object MoodHolder {
 
-    fun getMoodPacks(): List<MoodPack> = listOf(
+    internal val moodPacks: List<MoodPack> = listOf(
         pack5(),
         pack4(),
         raccoonPack(),
@@ -17,6 +18,12 @@ internal object MoodHolder {
         pack1(),
         pack2(),
     )
+
+    private val moodMap: Map<String, Mood> by lazy {
+        moodPacks.flatMap(MoodPack::moods).associateBy(Mood::id)
+    }
+
+    fun findMood(id: String?): Mood? = moodMap[id]
 
     private fun pack2() = MoodPack(
         icon = R.drawable.mood_pack_2_default,

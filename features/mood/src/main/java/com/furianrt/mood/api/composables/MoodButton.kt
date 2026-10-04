@@ -17,8 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.furianrt.mood.R
-import com.furianrt.mood.internal.MoodHolder
-import com.furianrt.mood.internal.entites.MoodPack
+import com.furianrt.mood.api.MoodHolder
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -39,10 +38,8 @@ fun MoodButton(
     hazeState: HazeState? = null,
     onClick: (() -> Unit)? = null,
 ) {
-    val moodPacks = remember { MoodHolder.getMoodPacks() }
-    val selectedMood = remember(moodId) {
-        moodPacks.flatMap(MoodPack::moods).find { it.id == moodId }
-    }
+    val moodPacks = remember { MoodHolder.moodPacks }
+    val selectedMood = remember(moodId) { MoodHolder.findMood(moodId) }
 
     val iconRes = remember(selectedMood, defaultMoodId) {
         if (selectedMood == null) {

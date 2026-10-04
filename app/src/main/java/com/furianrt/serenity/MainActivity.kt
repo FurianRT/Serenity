@@ -69,6 +69,8 @@ import com.furianrt.search.api.noteSearchScreen
 import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
+import com.furianrt.statistics.api.navigateToStatistics
+import com.furianrt.statistics.api.statisticsScreen
 import com.furianrt.uikit.anim.defaultEnterTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
@@ -266,7 +268,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
                             openSettingsScreen = navController::navigateToSettings,
-                            openStatsScreen = {},
+                            openStatsScreen = navController::navigateToStatistics,
                             openBackupScreen = navController::navigateToBackup,
                             openNoteCreateScreen = { identifier ->
                                 navController.navigateToNoteCreate(
@@ -426,6 +428,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             }
                         )
                         billingScreen(
+                            onCloseRequest = navController::navigateUp,
+                        )
+                        statisticsScreen(
                             onCloseRequest = navController::navigateUp,
                         )
                     }

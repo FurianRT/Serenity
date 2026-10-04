@@ -1,0 +1,12 @@
+<resources>
+    <string name="stats_screen_title">Statistics</string>
+    <string name="stats_period_seven_days">7D</string>
+    <string name="stats_period_one_month">1M</string>
+    <string name="stats_period_six_month">6M</string>
+    <string name="stats_period_one_year">1Y</string>
+    <string name="stats_period_all_time">All</string>
+
+    <string name="stats_notes_title">Notes</string>
+    <string name="stats_media_title">Gallery</string>
+    <string name="stats_mood_title">Mood</string>
+</resources>

@@ -170,5 +170,7 @@ object Colors {
     object Common {
         val DarkGray = Color(0xFF212121)
         val LightGray = Color(0xFFE9E9E9)
+        val SuccessDark = Color(0xFF40EF00)
+        val SuccessLight = Color(0xFF2F9E07)
     }
 }

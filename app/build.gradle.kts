@@ -34,6 +34,7 @@ dependencies {
     implementation(projects.features.widgets)
     implementation(projects.features.gallery)
     implementation(projects.features.billing)
+    implementation(projects.features.statistics)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

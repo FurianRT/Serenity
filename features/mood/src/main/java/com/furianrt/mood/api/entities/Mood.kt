@@ -1,4 +1,4 @@
-package com.furianrt.mood.internal.entites
+package com.furianrt.mood.api.entities
 
 import androidx.annotation.DrawableRes
 
