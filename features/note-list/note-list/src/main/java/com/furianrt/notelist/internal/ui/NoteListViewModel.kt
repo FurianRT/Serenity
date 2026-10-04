@@ -89,6 +89,7 @@ internal class NoteListViewModel @Inject constructor(
             is NoteListEvent.OnScrolledToItem -> scrollToNoteState.update { null }
             is NoteListEvent.OnScrollToTopClick -> _effect.tryEmit(NoteListEffect.ScrollToTop)
             is NoteListEvent.OnSettingsClick -> openSettingsScreen()
+            is NoteListEvent.OnStatsClick -> openStatsScreen()
             is NoteListEvent.OnSearchClick -> openSearchScreen()
             is NoteListEvent.OnAddNoteClick -> openCreateNoteScreen()
             is NoteListEvent.OnNoteClick -> if (selectedNotesState.value.isEmpty()) {
@@ -182,6 +183,11 @@ internal class NoteListViewModel @Inject constructor(
     private fun openSettingsScreen() {
         clearSelectedNotes()
         _effect.tryEmit(NoteListEffect.OpenSettingsScreen)
+    }
+
+    private fun openStatsScreen() {
+        clearSelectedNotes()
+        _effect.tryEmit(NoteListEffect.OpenStatsScreen)
     }
 
     private fun openSearchScreen() {

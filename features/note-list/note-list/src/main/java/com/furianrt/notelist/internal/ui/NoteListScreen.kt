@@ -112,6 +112,7 @@ internal fun NoteListScreen(
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
     openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openStatsScreen: () -> Unit,
     openBackupScreen: () -> Unit,
 ) {
     val viewModel: NoteListViewModel = hiltViewModel()
@@ -128,6 +129,7 @@ internal fun NoteListScreen(
     val openNoteCreateScreenState by rememberUpdatedState(openNoteCreateScreen)
     val openNoteSearchScreenState by rememberUpdatedState(openNoteSearchScreen)
     val openSettingsScreenState by rememberUpdatedState(openSettingsScreen)
+    val openStatsScreenState by rememberUpdatedState(openStatsScreen)
     val openBackupScreenState by rememberUpdatedState(openBackupScreen)
 
     LaunchedEffect(Unit) {
@@ -137,6 +139,7 @@ internal fun NoteListScreen(
                 when (effect) {
                     is NoteListEffect.ScrollToTop -> screenState.scrollToTop()
                     is NoteListEffect.OpenSettingsScreen -> openSettingsScreenState()
+                    is NoteListEffect.OpenStatsScreen -> openStatsScreenState()
                     is NoteListEffect.OpenNoteSearchScreen -> openNoteSearchScreenState()
                     is NoteListEffect.OpenNoteViewScreen -> {
                         openNoteViewScreenState(effect.noteId, effect.identifier)
@@ -241,6 +244,7 @@ private fun MainScreenContent(
                     selectedNotesCount = successState?.selectedNotesCount ?: 0,
                     hazeState = hazeState,
                     onSettingsClick = { onEvent(NoteListEvent.OnSettingsClick) },
+                    onStatsClick = { onEvent(NoteListEvent.OnStatsClick) },
                     onSearchClick = { onEvent(NoteListEvent.OnSearchClick) },
                     onDeleteClick = { onEvent(NoteListEvent.OnDeleteSelectedNotesClick) },
                     onCloseSelectionClick = { onEvent(NoteListEvent.OnCloseSelectionClick) },

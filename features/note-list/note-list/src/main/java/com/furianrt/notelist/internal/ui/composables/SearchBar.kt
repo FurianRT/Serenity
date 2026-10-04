@@ -1,6 +1,5 @@
 package com.furianrt.notelist.internal.ui.composables
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -32,7 +31,7 @@ internal fun SearchBar(
     hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
+    shape: RoundedCornerShape = RoundedCornerShape(32.dp),
 ) {
     val colorScheme = MaterialTheme.colorScheme
     Box(
@@ -45,21 +44,23 @@ internal fun SearchBar(
                     blurRadius(8.dp)
                     noiseFactor(0f)
                     colorEffects(
-                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f))),
+                        listOf(
+                            HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                            HazeColorEffect.tint(colorScheme.background),
+                        ),
                     )
                 },
             )
-            .background(MaterialTheme.colorScheme.background)
             .clickableNoRipple(onClick = onClick)
             .padding(vertical = 8.dp),
-        contentAlignment = Alignment.CenterStart,
+        contentAlignment = Alignment.Center,
     ) {
         Text(
             modifier = Modifier
                 .alpha(0.6f)
                 .padding(horizontal = 16.dp),
             text = stringResource(R.string.notes_list_search_bar_title),
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }

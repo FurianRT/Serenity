@@ -1,5 +1,7 @@
 package com.furianrt.search.api
 
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
@@ -28,7 +30,7 @@ fun NavGraphBuilder.noteSearchScreen(
     onCloseRequest: () -> Unit,
 ) {
     composable<NoteSearchRoute>(
-        enterTransition = { fadeIn() },
+        enterTransition = { fadeIn(spring(stiffness = Spring.StiffnessMediumLow)) },
         exitTransition = { defaultExitTransition() },
         popExitTransition = { fadeOut() },
         popEnterTransition = { defaultPopEnterTransition() },

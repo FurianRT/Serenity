@@ -1,12 +1,7 @@
 package com.furianrt.search.internal.ui.composables
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.expandHorizontally
-import androidx.compose.animation.shrinkHorizontally
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
@@ -33,10 +27,7 @@ import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -47,7 +38,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -78,7 +68,6 @@ import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
 
 private const val DATE_PATTERN = "dd.MM.yy"
-private const val BACK_BUTTON_ANIM_DURATION = 200
 
 @Composable
 internal fun Toolbar(
@@ -98,10 +87,7 @@ internal fun Toolbar(
     onCloseSelectionClick: () -> Unit = {},
 ) {
     val focusRequester = remember { FocusRequester() }
-    val isInspectionMode = LocalInspectionMode.current
-    var showBackButton by rememberSaveable { mutableStateOf(isInspectionMode) }
     OneTimeEffect {
-        showBackButton = true
         focusRequester.requestFocus()
     }
     val test = if (selectedNotesCount > 0) emptyList() else selectedFilters
@@ -125,13 +111,9 @@ internal fun Toolbar(
             UnselectedContent(
                 selectedFilters = test,
                 queryState = queryState,
-                showBackButton = showBackButton,
                 focusRequester = focusRequester,
                 hazeState = hazeState,
-                onBackClick = {
-                    showBackButton = false
-                    onBackClick()
-                },
+                onBackClick = onBackClick,
                 onCalendarClick = onCalendarClick,
                 onDateFilterClick = onDateFilterClick,
                 onUnselectedTagClick = onUnselectedTagClick,
@@ -159,7 +141,7 @@ private fun SelectedContent(
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .minimumInteractiveComponentSize()
                 .clickableWithScaleAnim(
                     maxScale = 1.1f,
@@ -181,7 +163,7 @@ private fun SelectedContent(
             textAlign = TextAlign.Center,
         )
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .minimumInteractiveComponentSize()
                 .clickableWithScaleAnim(
                     maxScale = 1.1f,
@@ -203,7 +185,6 @@ private fun SelectedContent(
 private fun UnselectedContent(
     selectedFilters: List<SelectedFilter>,
     queryState: TextFieldState,
-    showBackButton: Boolean,
     focusRequester: FocusRequester,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
@@ -222,22 +203,14 @@ private fun UnselectedContent(
                 .height(ToolbarConstants.bigToolbarHeight)
                 .padding(horizontal = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            Box(modifier = Modifier.widthIn(min = 8.dp)) {
-                this@Row.AnimatedVisibility(
-                    enter = expandHorizontally(tween(BACK_BUTTON_ANIM_DURATION)),
-                    exit = shrinkHorizontally(tween(BACK_BUTTON_ANIM_DURATION)),
-                    visible = showBackButton,
-                ) {
-                    ButtonBack(
-                        onClick = {
-                            focusManager.clearFocus()
-                            onBackClick()
-                        },
-                    )
-                }
-            }
+            ButtonBack(
+                onClick = {
+                    focusManager.clearFocus()
+                    onBackClick()
+                },
+            )
             SearchBar(
                 modifier = Modifier.weight(1f),
                 state = queryState,
@@ -296,7 +269,7 @@ private fun SearchBar(
     val colorScheme = MaterialTheme.colorScheme
     Row(
         modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
+            .clip(RoundedCornerShape(32.dp))
             .hazeBlur(
                 input = HazeInput.Sources(hazeState),
                 style = HazeBlurStyle {
@@ -304,12 +277,12 @@ private fun SearchBar(
                     noiseFactor(0f)
                     colorEffects(
                         listOf(
-                            HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f))
-                        )
+                            HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.4f)),
+                            HazeColorEffect.tint(colorScheme.background),
+                        ),
                     )
                 },
             )
-            .background(MaterialTheme.colorScheme.background)
             .padding(start = 16.dp, end = 10.dp, top = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

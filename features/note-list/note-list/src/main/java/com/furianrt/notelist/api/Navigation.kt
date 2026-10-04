@@ -26,6 +26,7 @@ fun NavGraphBuilder.noteListScreen(
     openNoteCreateScreen: (identifier: DialogIdentifier) -> Unit,
     openNoteSearchScreen: () -> Unit,
     openSettingsScreen: () -> Unit,
+    openStatsScreen: () -> Unit,
     openBackupScreen: () -> Unit,
     hasSearchScreenRoute: (destination: NavDestination) -> Boolean,
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
@@ -34,7 +35,7 @@ fun NavGraphBuilder.noteListScreen(
         exitTransition = {
             when {
                 hasSearchScreenRoute(targetState.destination) -> {
-                    fadeOut(spring(stiffness = Spring.StiffnessMedium)) + scaleOut(
+                    fadeOut(spring(stiffness = Spring.StiffnessMediumLow)) + scaleOut(
                         targetScale = 0.95f,
                         transformOrigin = TransformOrigin(
                             pivotFractionX = 0.5f,
@@ -65,6 +66,7 @@ fun NavGraphBuilder.noteListScreen(
             openNoteCreateScreen = openNoteCreateScreen,
             openNoteSearchScreen = openNoteSearchScreen,
             openSettingsScreen = openSettingsScreen,
+            openStatsScreen = openStatsScreen,
             openBackupScreen = openBackupScreen,
         )
     }

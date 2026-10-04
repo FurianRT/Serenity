@@ -266,6 +266,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasSearchScreenRoute = { it.hasRoute<NoteSearchRoute>() },
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
                             openSettingsScreen = navController::navigateToSettings,
+                            openStatsScreen = {},
                             openBackupScreen = navController::navigateToBackup,
                             openNoteCreateScreen = { identifier ->
                                 navController.navigateToNoteCreate(

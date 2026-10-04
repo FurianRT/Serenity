@@ -37,6 +37,7 @@ internal sealed interface NoteListEvent {
     data class OnNoteLongClick(val note: NoteListScreenNote) : NoteListEvent
     data object OnScrollToTopClick : NoteListEvent
     data object OnSettingsClick : NoteListEvent
+    data object OnStatsClick : NoteListEvent
     data object OnSearchClick : NoteListEvent
     data object OnAddNoteClick : NoteListEvent
     data object OnScrolledToItem : NoteListEvent
@@ -50,6 +51,7 @@ internal sealed interface NoteListEvent {
 internal sealed interface NoteListEffect {
     data object ScrollToTop : NoteListEffect
     data object OpenSettingsScreen : NoteListEffect
+    data object OpenStatsScreen : NoteListEffect
     data object OpenNoteSearchScreen : NoteListEffect
     data object OpenBackupScreen : NoteListEffect
     data class OpenNoteCreateScreen(val identifier: DialogIdentifier) : NoteListEffect

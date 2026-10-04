@@ -44,6 +44,7 @@ internal fun Toolbar(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
     onSettingsClick: () -> Unit = {},
+    onStatsClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     onDeleteClick: () -> Unit = {},
     onCloseSelectionClick: () -> Unit = {},
@@ -67,6 +68,7 @@ internal fun Toolbar(
             UnselectedContent(
                 hazeState = hazeState,
                 onSettingsClick = onSettingsClick,
+                onStatsClick = onStatsClick,
                 onSearchClick = onSearchClick,
             )
         }
@@ -109,16 +111,21 @@ private fun SelectedContent(
 private fun UnselectedContent(
     hazeState: HazeState,
     onSettingsClick: () -> Unit,
+    onStatsClick: () -> Unit,
     onSearchClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(start = 16.dp, end = 6.dp),
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        StatsButton(
+            hazeState = hazeState,
+            onClick = onStatsClick,
+        )
         SearchBar(
             modifier = Modifier.weight(1f),
             hazeState = hazeState,
@@ -181,6 +188,37 @@ private fun SettingsButton(
                 )
                 .padding(8.dp),
             painter = painterResource(uiR.drawable.ic_profile),
+            contentDescription = null,
+        )
+    }
+}
+
+@OptIn(ExperimentalHazeApi::class)
+@Composable
+private fun StatsButton(
+    hazeState: HazeState,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    IconButton(
+        modifier = modifier,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        onClick = onClick,
+    ) {
+        Icon(
+            modifier = Modifier
+                .hazeGlass(
+                    input = HazeInput.Sources(hazeState),
+                    performanceMode = HazePerformanceMode.Performance,
+                    style = LocalGlassStyle.current.then {
+                        shape(RoundedCornerShape(64.dp))
+                        whitePoint(0f)
+                    },
+                )
+                .padding(8.dp),
+            painter = painterResource(uiR.drawable.ic_pie_chart),
             contentDescription = null,
         )
     }

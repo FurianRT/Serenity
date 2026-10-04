@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.mediaselector.R
 import com.furianrt.uikit.extensions.dpToPx
 import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.blur.HazeBlurStyle
 import dev.chrisbanes.haze.blur.HazeColorEffect
@@ -253,6 +254,7 @@ private fun Thumb(
                     .clip(CircleShape)
                     .hazeBlur(
                         input = HazeInput.Sources(hazeState),
+                        performanceMode = HazePerformanceMode.Performance,
                         style = HazeBlurStyle {
                             blurRadius(16.dp)
                             colorEffects(
@@ -288,6 +290,7 @@ private fun DateLabel(
             .clip(RoundedCornerShape(16.dp))
             .hazeBlur(
                 input = HazeInput.Sources(hazeState),
+                performanceMode = HazePerformanceMode.Performance,
                 style = HazeBlurStyle {
                     blurRadius(16.dp)
                     colorEffects(
