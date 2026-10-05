@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
@@ -84,7 +85,7 @@ fun StarsLayout(
     }
 
     Canvas(
-        modifier = modifier,
+        modifier = modifier.clipToBounds(),
     ) {
         stars.forEach { star ->
             val scale = star.scaleAnim.value * star.sizeMultiplier

@@ -86,7 +86,7 @@ private fun SelectedContent(
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(start = 10.dp, end = 6.dp),
+            .padding(horizontal = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {

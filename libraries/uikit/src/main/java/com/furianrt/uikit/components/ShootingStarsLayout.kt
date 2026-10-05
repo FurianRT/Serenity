@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.lerp
 import androidx.compose.ui.graphics.Color
@@ -21,8 +22,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.vectorResource
 import com.furianrt.uikit.R
+import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.hypot
+import kotlin.math.min
 import kotlin.math.sin
 
 @Composable
@@ -47,19 +50,27 @@ fun ShootingStarsLayout(
         targetValue = 1f,
         animationSpec = infiniteRepeatable(
             animation = tween(
-                durationMillis = 10000,
+                durationMillis = 8000,
+                delayMillis = 4000,
                 easing = LinearEasing,
             ),
             repeatMode = RepeatMode.Restart,
         ),
     )
 
-    Canvas(modifier) {
-        val distance = hypot(size.width, size.height)
-        val center = Offset(size.width / 2f, size.height / 2f)
+    Canvas(modifier = modifier.clipToBounds()) {
+        val halfWidth = size.width / 2f
+        val halfHeight = size.height / 2f
+        val center = Offset(halfWidth, halfHeight)
 
-        val start = center - direction * distance
-        val end = center + direction * distance
+        val tX = if (direction.x != 0f) abs(halfWidth / direction.x) else Float.MAX_VALUE
+        val tY = if (direction.y != 0f) abs(halfHeight / direction.y) else Float.MAX_VALUE
+        val tEdge = min(tX, tY)
+
+        val starRadius = hypot(starSize.width, starSize.height) / 2f
+
+        val start = center - direction * (tEdge + starRadius)
+        val end = center + direction * (tEdge + starRadius)
 
         val position = lerp(start, end, anim)
 

@@ -47,5 +47,5 @@ dependencies {
     implementation(libs.hazeGlass)
     implementation(libs.hazeGlassMaterials)
 
-    implementation(libs.workManager)
+    implementation(libs.lottie)
 }

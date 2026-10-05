@@ -11,10 +11,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -335,7 +336,6 @@ private fun SuccessContent(
                 .hazeSource(backgroundHazeState, zIndex = 1f)
                 .verticalScroll(scrollState)
                 .padding(top = toolbarPadding + 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Header(
                 modifier = Modifier.padding(horizontal = 16.dp),
@@ -344,6 +344,7 @@ private fun SuccessContent(
                 onSingInClick = { onEvent(BackupScreenEvent.OnSignInClick) },
                 onSingOutClick = { onEvent(BackupScreenEvent.OnSignOutClick) },
             )
+            Spacer(Modifier.size(10.dp))
             OptionButtonWrapper(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -361,6 +362,7 @@ private fun SuccessContent(
                     enabled = uiState.isSignedIn,
                 )
             }
+            Spacer(Modifier.size(10.dp))
             OptionButtonWrapper(
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
@@ -375,6 +377,7 @@ private fun SuccessContent(
                     onClick = { onEvent(BackupScreenEvent.OnBackupPeriodClick) },
                 )
             }
+            Spacer(Modifier.size(10.dp))
             RestoreButton(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -388,6 +391,7 @@ private fun SuccessContent(
                     }
                 },
             )
+            Spacer(Modifier.size(10.dp))
             QuestionsList(
                 modifier = Modifier
                     .fillMaxSize()
@@ -408,6 +412,12 @@ private fun SuccessContent(
                 questions = uiState.questions,
                 isSignedIn = uiState.isSignedIn,
                 onQuestionClick = { onEvent(BackupScreenEvent.OnQuestionClick(it)) },
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+                    .background(MaterialTheme.colorScheme.inverseSurface),
             )
         }
         AnimatedVisibility(

@@ -6,13 +6,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,16 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.LottieConstants
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.StatsState
 import com.furianrt.uikit.extensions.pxToDp
-import com.furianrt.uikit.theme.LocalIsLightTheme
-import com.furianrt.uikit.utils.brighterBy
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
@@ -42,7 +45,6 @@ import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
-import com.furianrt.uikit.R as uiR
 
 @OptIn(ExperimentalHazeApi::class)
 @Composable
@@ -54,6 +56,16 @@ internal fun NoteStreakBlock(
     val glassStyle = LocalGlassStyle.current
 
     var streakHeight by remember { mutableIntStateOf(0) }
+
+    val composition by rememberLottieComposition(
+        spec = LottieCompositionSpec.RawRes(R.raw.anim_streak_fire),
+    )
+
+    val lottieState = animateLottieCompositionAsState(
+        composition = composition,
+        iterations = LottieConstants.IterateForever,
+        speed = 0.6f,
+    )
 
     Column(
         modifier = modifier.hazeGlass(
@@ -78,15 +90,12 @@ internal fun NoteStreakBlock(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        modifier = Modifier.size(32.dp),
-                        painter = painterResource(uiR.drawable.ic_fire),
-                        tint = if (LocalIsLightTheme.current) {
-                            MaterialTheme.colorScheme.primaryContainer
-                        } else {
-                            MaterialTheme.colorScheme.primaryContainer.brighterBy(0.12f)
-                        },
-                        contentDescription = null,
+                    LottieAnimation(
+                        modifier = Modifier
+                            .offset(y = (-4).dp)
+                            .size(32.dp),
+                        composition = composition,
+                        progress = { lottieState.progress * 0.99f },
                     )
                     Text(
                         text = stats.currentStreak.toString(),
@@ -125,7 +134,10 @@ internal fun NoteStreakBlock(
                     )
                     Text(
                         modifier = Modifier.padding(bottom = 1.dp),
-                        text = "days", // TODO
+                        text = pluralStringResource(
+                            R.plurals.stats_days_count,
+                            stats.longestStreak,
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                     )
                 }

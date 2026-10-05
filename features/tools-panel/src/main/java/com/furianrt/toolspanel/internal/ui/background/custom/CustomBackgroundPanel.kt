@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
@@ -154,13 +153,7 @@ private fun EmptyContent(
         modifier = modifier
             .fillMaxSize()
             .clickableNoRipple {}
-            .padding(12.dp)
-            .background(
-                color = MaterialTheme.colorScheme.secondaryContainer.copy(
-                    alpha = MaterialTheme.colorScheme.secondaryContainer.alpha * 0.7f,
-                ),
-                shape = RoundedCornerShape(8.dp),
-            ),
+            .padding(12.dp),
         contentAlignment = Alignment.Center,
     ) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {

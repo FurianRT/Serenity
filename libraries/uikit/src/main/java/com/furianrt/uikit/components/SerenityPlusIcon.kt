@@ -6,6 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import com.furianrt.uikit.R
+import com.furianrt.uikit.theme.LocalIsLightTheme
+import com.furianrt.uikit.utils.brighterBy
 
 @Composable
 fun SerenityPlusIcon(
@@ -14,7 +16,11 @@ fun SerenityPlusIcon(
     Icon(
         modifier = modifier,
         painter = painterResource(R.drawable.ic_leaf),
-        tint = MaterialTheme.colorScheme.primaryContainer,
+        tint = if (LocalIsLightTheme.current) {
+            MaterialTheme.colorScheme.primaryContainer
+        } else {
+            MaterialTheme.colorScheme.primaryContainer.brighterBy(0.1f)
+        },
         contentDescription = null,
     )
 }
