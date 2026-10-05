@@ -120,6 +120,7 @@ internal fun GeneralStatCard(
                     glassStyle.then {
                         tint(Color.Transparent)
                         shape(shape)
+                        whitePoint(0.06f)
                     }
                 },
             )
@@ -146,6 +147,7 @@ internal fun GeneralStatCard(
                 ) {
                     ValueChange(
                         value = change,
+                        digits = valueDigits,
                         postfix = changePostfix,
                     )
                 }
@@ -231,6 +233,7 @@ private fun ValueText(
 @Composable
 private fun ValueChange(
     value: Float,
+    digits: Int,
     modifier: Modifier = Modifier,
     postfix: String,
 ) {
@@ -239,10 +242,10 @@ private fun ValueChange(
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
     )
 
-    val resultValue by remember {
-        derivedStateOf { valueAnim.truncateToMaxDigits(1) }
-    }
+    val resultValue by remember { derivedStateOf { valueAnim.truncateToMaxDigits(digits) } }
+
     val style = MaterialTheme.typography.bodySmall
+    
     Text(
         modifier = modifier,
         text = if (resultValue > 0f) {

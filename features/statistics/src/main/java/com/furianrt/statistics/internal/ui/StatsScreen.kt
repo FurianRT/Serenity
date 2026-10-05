@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.components.GeneralStatsBlock
+import com.furianrt.statistics.internal.ui.components.NoteStreakBlock
 import com.furianrt.statistics.internal.ui.components.PeriodTabsLayout
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
@@ -35,6 +36,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 private const val TIME_PERIOD_ITEM_KEY = "time_period"
 private const val GENERAL_STATS_ITEM_KEY = "general_stats"
+private const val STREAK_STATS_ITEM_KEY = "streak_stats"
 
 @Composable
 internal fun StatsScreen(
@@ -128,6 +130,9 @@ private fun SuccessContent(
             contentType = TIME_PERIOD_ITEM_KEY,
         ) {
             PeriodTabsLayout(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
                 periods = uiState.periods,
                 selectedPeriod = uiState.selectedPeriod,
                 hazeState = hazeState,
@@ -140,8 +145,22 @@ private fun SuccessContent(
             contentType = GENERAL_STATS_ITEM_KEY,
         ) {
             GeneralStatsBlock(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
                 stats = uiState.generalStats,
+                hazeState = hazeState,
+            )
+        }
+        item(
+            key = STREAK_STATS_ITEM_KEY,
+            contentType = STREAK_STATS_ITEM_KEY,
+        ) {
+            NoteStreakBlock(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
+                stats = uiState.streakStats,
                 hazeState = hazeState,
             )
         }

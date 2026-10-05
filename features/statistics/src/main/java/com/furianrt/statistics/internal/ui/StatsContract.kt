@@ -3,6 +3,7 @@ package com.furianrt.statistics.internal.ui
 import androidx.compose.runtime.Immutable
 import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.uikit.entities.UiThemeColor
+import java.time.LocalDate
 
 internal data class StatsState(
     val theme: UiThemeColor,
@@ -16,6 +17,7 @@ internal data class StatsState(
             val periods: List<TimePeriod>,
             val selectedPeriod: TimePeriod,
             val generalStats: GeneralStats,
+            val streakStats: StreakStats,
         ) : Content
     }
 
@@ -27,6 +29,17 @@ internal data class StatsState(
         val averageMood: Float,
         val moodChange: Float,
     )
+
+    data class StreakStats(
+        val currentStreak: Int,
+        val longestStreak: Int,
+        val streakDays: List<StreakDay>,
+    ) {
+        data class StreakDay(
+            val hasNotes: Boolean,
+            val date: LocalDate,
+        )
+    }
 }
 
 internal sealed interface StatsEvent {

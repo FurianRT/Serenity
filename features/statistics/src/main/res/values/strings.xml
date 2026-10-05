@@ -9,4 +9,7 @@
     <string name="stats_notes_title">Notes</string>
     <string name="stats_media_title">Gallery</string>
     <string name="stats_mood_title">Mood</string>
+
+    <string name="stats_current_streak_title">Current Streak</string>
+    <string name="stats_longest_streak_title">Longest Streak</string>
 </resources>

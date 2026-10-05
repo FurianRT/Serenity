@@ -108,6 +108,11 @@ internal class StatsViewModel @Inject constructor(
                 mediaChange = mediaData.change,
                 averageMood = moodData.averageMood,
                 moodChange = moodData.change,
+            ),
+            streakStats = StatsState.StreakStats(
+                currentStreak = 26,
+                longestStreak = 128,
+                streakDays = emptyList(),
             )
         ),
     )

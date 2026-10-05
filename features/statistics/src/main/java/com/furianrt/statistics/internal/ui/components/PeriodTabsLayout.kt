@@ -68,6 +68,7 @@ internal fun PeriodTabsLayout(
                 glassStyle.then {
                     tint(Color.Transparent)
                     shape(RoundedCornerShape(32.dp))
+                    whitePoint(0.06f)
                 }
             },
         ),
@@ -84,7 +85,7 @@ internal fun PeriodTabsLayout(
                 isSelected = period == selectedPeriod,
                 onClick = {
                     if (period != selectedPeriod) {
-                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ToggleOn)
+                        hapticFeedback.performHapticFeedback(HapticFeedbackType.ContextClick)
                         onClick(period)
                     }
                 },
