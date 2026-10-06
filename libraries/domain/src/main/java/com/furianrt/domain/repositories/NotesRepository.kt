@@ -49,7 +49,11 @@ interface NotesRepository {
     fun getAllSimpleNotes(): Flow<List<SimpleNote>>
     fun getNote(noteId: String): Flow<LocalNote?>
     fun getSimpleNotesWithMood(): Flow<List<SimpleNote>>
-    fun getOrCreateTemplateNote(noteId: String): Flow<SimpleNote>
+    fun getOrCreateTemplateNote(
+        noteId: String,
+        date: ZonedDateTime,
+    ): Flow<SimpleNote>
+
     fun getAllTemplates(): Flow<List<SimpleNote>>
     fun hasNotes(): Flow<Boolean>
 

@@ -21,12 +21,14 @@ import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
+import java.time.ZonedDateTime
 
 @Serializable
 data class NoteCreateRoute(
     val action: String? = null,
     val dialogId: Int = 0,
     val requestId: String = "",
+    val date: String = ZonedDateTime.now().toString(),
 ) {
     companion object {
         const val ACTION_VOICE = "voice"

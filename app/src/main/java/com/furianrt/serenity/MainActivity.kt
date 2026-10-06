@@ -431,7 +431,13 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             onCloseRequest = navController::navigateUp,
                         )
                         statisticsScreen(
+                            hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
                             onCloseRequest = navController::navigateUp,
+                            openCreateNoteRequest = { date ->
+                                navController.navigateToNoteCreate(
+                                    route = NoteCreateRoute(date = date.toString()),
+                                )
+                            }
                         )
                     }
                     AnimatedVisibility(

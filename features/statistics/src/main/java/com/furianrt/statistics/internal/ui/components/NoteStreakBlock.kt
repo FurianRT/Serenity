@@ -279,6 +279,7 @@ private fun StreakDayItem(
             } else {
                 val dateTextStyle = MaterialTheme.typography.titleSmall
                 BasicText(
+                    modifier = Modifier.padding(2.dp),
                     text = item.date.dayOfMonth.toString(),
                     style = dateTextStyle,
                     maxLines = 1,

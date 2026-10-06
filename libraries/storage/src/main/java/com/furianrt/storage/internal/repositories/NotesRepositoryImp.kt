@@ -182,6 +182,7 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getOrCreateTemplateNote(
         noteId: String,
+        date: ZonedDateTime,
     ): Flow<SimpleNote> = noteDao.getSimpleNote(noteId)
         .map { note ->
             note?.toSimpleNote() ?: EntryNote(
@@ -214,7 +215,7 @@ internal class NotesRepositoryImp @Inject constructor(
                     null
                 },
                 moodId = null,
-                date = ZonedDateTime.now(),
+                date = date,
                 isPinned = false,
                 isTemplate = true,
                 searchData = "",

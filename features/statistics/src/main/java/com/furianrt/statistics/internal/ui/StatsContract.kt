@@ -6,6 +6,7 @@ import com.furianrt.statistics.internal.ui.entities.GeneralStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.entities.UiThemeColor
+import java.time.ZonedDateTime
 
 internal data class StatsState(
     val theme: UiThemeColor,
@@ -35,4 +36,5 @@ internal sealed interface StatsEvent {
 
 internal sealed interface StatsEffect {
     data object CloseScreen : StatsEffect
+    data class OpenNoteCreateScreen(val date: ZonedDateTime) : StatsEffect
 }

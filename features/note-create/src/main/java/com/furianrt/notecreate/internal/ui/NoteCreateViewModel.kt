@@ -63,7 +63,8 @@ internal class NoteCreateViewModel @Inject constructor(
     val state: StateFlow<NoteCreateUiState> = combine(
         isInEditModeState,
         notesRepository.getOrCreateTemplateNote(
-            savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),
+            noteId = savedStateHandle.getOrPut(KEY_NOTE_ID, UUID.randomUUID().toString()),
+            date = ZonedDateTime.parse(route.date),
         ),
         appearanceRepository.getAppFont(),
     ) { isInEditMode, note, font ->
