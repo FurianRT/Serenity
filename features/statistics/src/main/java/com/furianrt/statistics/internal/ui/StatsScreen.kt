@@ -16,6 +16,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -23,12 +24,18 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.statistics.R
+import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.ui.components.GeneralStatsBlock
 import com.furianrt.statistics.internal.ui.components.NoteStreakBlock
 import com.furianrt.statistics.internal.ui.components.PeriodTabsLayout
+import com.furianrt.statistics.internal.ui.entities.GeneralStats
+import com.furianrt.statistics.internal.ui.entities.StreakDay
+import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
@@ -191,4 +198,43 @@ private fun LoadingContent(
     Box(
         modifier = modifier.fillMaxSize(),
     )
+}
+
+@Preview
+@Composable
+private fun Preview() {
+    SerenityTheme {
+        Content(
+            uiState = StatsState(
+                theme = UiThemeColor.defaultTheme,
+                content = StatsState.Content.Success(
+                    periods = TimePeriod.entries.toList(),
+                    selectedPeriod = TimePeriod.ONE_MONTH,
+                    generalStats = GeneralStats(
+                        notesCount = 142,
+                        notesChange = 12f,
+                        mediaCount = 251,
+                        mediaChange = -17.2f,
+                        averageMood = 4.8f,
+                        moodChange = -0.2f,
+                    ),
+                    streakStats = StreakStats(
+                        currentStreak = 23,
+                        longestStreak = 32,
+                        streakDays = buildList {
+                            repeat(7) { index ->
+                                add(
+                                    StreakDay(
+                                        hasNotes = index % 2 == 0,
+                                        date = LocalDate.now(),
+                                    ),
+                                )
+                            }
+                        },
+                    ),
+                ),
+            ),
+            onEvent = {},
+        )
+    }
 }

@@ -47,6 +47,8 @@ import com.furianrt.uikit.R as uiR
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.extensions.pxToDp
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
@@ -55,6 +57,8 @@ import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
+import dev.chrisbanes.haze.rememberHazeState
+import java.time.LocalDate
 import java.time.format.TextStyle
 
 @OptIn(ExperimentalHazeApi::class)
@@ -291,5 +295,30 @@ private fun StreakDayItem(
                 )
             }
         }
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun Preview() {
+    SerenityTheme {
+        NoteStreakBlock(
+            stats = StreakStats(
+                currentStreak = 23,
+                longestStreak = 32,
+                streakDays = buildList {
+                    repeat(7) { index ->
+                        add(
+                            StreakDay(
+                                hasNotes = index % 2 == 0,
+                                date = LocalDate.now(),
+                            ),
+                        )
+                    }
+                },
+            ),
+            hazeState = rememberHazeState(),
+            onDayClick = {},
+        )
     }
 }
