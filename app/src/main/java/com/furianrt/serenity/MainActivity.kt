@@ -70,6 +70,7 @@ import com.furianrt.search.api.noteSearchScreen
 import com.furianrt.security.api.CheckPinScreen
 import com.furianrt.settings.api.navigateToSettings
 import com.furianrt.settings.api.settingsNavigation
+import com.furianrt.statistics.api.StatisticsRoute
 import com.furianrt.statistics.api.navigateToStatistics
 import com.furianrt.statistics.api.statisticsScreen
 import com.furianrt.uikit.anim.defaultEnterTransition
@@ -385,6 +386,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             onCloseRequest = navController::navigateUp
                         )
                         noteSearchScreen(
+                            hasStatsRoute = { it.hasRoute<StatisticsRoute>() },
                             openNoteViewScreen = { noteId, identifier, data ->
                                 navController.navigateToNoteView(
                                     route = NoteViewRoute(
