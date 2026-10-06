@@ -5,6 +5,7 @@ import android.icu.text.DecimalFormatSymbols
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -36,7 +38,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.common.truncateToMaxDigits
 import com.furianrt.statistics.R
 import com.furianrt.uikit.R as uiR
-import com.furianrt.statistics.internal.ui.StatsState
+import com.furianrt.statistics.internal.ui.entities.GeneralStats
 import com.furianrt.uikit.theme.Colors
 import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
@@ -49,14 +51,13 @@ import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.rememberHazeState
 
-private val symbols = DecimalFormatSymbols()
-
-private val df = DecimalFormat("#.#", symbols)
-
 @Composable
 internal fun GeneralStatsBlock(
-    stats: StatsState.GeneralStats,
+    stats: GeneralStats,
     hazeState: HazeState,
+    onNotesClick: () -> Unit,
+    onGalleryClick: () -> Unit,
+    onMoodClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -72,6 +73,7 @@ internal fun GeneralStatsBlock(
             valueDigits = 0,
             change = stats.notesChange,
             hazeState = hazeState,
+            onClick = onNotesClick,
         )
         GeneralStatCard(
             modifier = Modifier.weight(1f),
@@ -81,6 +83,7 @@ internal fun GeneralStatsBlock(
             valueDigits = 0,
             change = stats.mediaChange,
             hazeState = hazeState,
+            onClick = onGalleryClick,
         )
         GeneralStatCard(
             modifier = Modifier.weight(1f),
@@ -92,6 +95,7 @@ internal fun GeneralStatsBlock(
             changePostfix = "",
             forMood = true,
             hazeState = hazeState,
+            onClick = onMoodClick,
         )
     }
 }
@@ -105,6 +109,7 @@ internal fun GeneralStatCard(
     change: Float,
     icon: Painter,
     hazeState: HazeState,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
     forMood: Boolean = false,
     changePostfix: String = "%",
@@ -114,6 +119,7 @@ internal fun GeneralStatCard(
 
     Column(
         modifier = modifier
+            .clip(shape)
             .hazeGlass(
                 input = HazeInput.Sources(hazeState),
                 style = remember(glassStyle) {
@@ -124,6 +130,7 @@ internal fun GeneralStatCard(
                     }
                 },
             )
+            .clickable(onClick = onClick)
             .padding(horizontal = 8.dp, vertical = 16.dp),
     ) {
         Row(
@@ -245,13 +252,15 @@ private fun ValueChange(
     val resultValue by remember { derivedStateOf { valueAnim.truncateToMaxDigits(digits) } }
 
     val style = MaterialTheme.typography.bodySmall
-    
+
+    val dateFormat = remember { DecimalFormat("#.#", DecimalFormatSymbols()) }
+
     Text(
         modifier = modifier,
         text = if (resultValue > 0f) {
-            "+${df.format(resultValue)}$postfix"
+            "+${dateFormat.format(resultValue)}$postfix"
         } else {
-            "${df.format(resultValue)}$postfix"
+            "${dateFormat.format(resultValue)}$postfix"
         },
         color = if (resultValue > 0f) {
             if (LocalIsLightTheme.current) {
@@ -273,7 +282,7 @@ private fun ValueChange(
 private fun Preview() {
     SerenityTheme {
         GeneralStatsBlock(
-            stats = StatsState.GeneralStats(
+            stats = GeneralStats(
                 notesCount = 142,
                 notesChange = 12f,
                 mediaCount = 251,
@@ -282,6 +291,9 @@ private fun Preview() {
                 moodChange = -0.2f,
             ),
             hazeState = rememberHazeState(),
+            onMoodClick = {},
+            onNotesClick = {},
+            onGalleryClick = {},
         )
     }
 }

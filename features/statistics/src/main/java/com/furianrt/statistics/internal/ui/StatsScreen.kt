@@ -150,6 +150,9 @@ private fun SuccessContent(
                     .animateItem(),
                 stats = uiState.generalStats,
                 hazeState = hazeState,
+                onNotesClick = { onEvent(StatsEvent.OnNotesStatClick) },
+                onGalleryClick = { onEvent(StatsEvent.OnGalleryStatClick) },
+                onMoodClick = { onEvent(StatsEvent.OnMoodStatClick) },
             )
         }
         item(
@@ -162,6 +165,7 @@ private fun SuccessContent(
                     .animateItem(),
                 stats = uiState.streakStats,
                 hazeState = hazeState,
+                onDayClick = { onEvent(StatsEvent.OnStreakDayClick(it)) },
             )
         }
     }

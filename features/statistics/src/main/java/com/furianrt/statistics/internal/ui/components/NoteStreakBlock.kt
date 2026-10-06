@@ -1,9 +1,13 @@
 package com.furianrt.statistics.internal.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -13,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,8 +27,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -35,7 +43,9 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.furianrt.statistics.R
-import com.furianrt.statistics.internal.ui.StatsState
+import com.furianrt.uikit.R as uiR
+import com.furianrt.statistics.internal.ui.entities.StreakDay
+import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.extensions.pxToDp
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
@@ -45,12 +55,14 @@ import dev.chrisbanes.haze.blur.HazeColorEffect
 import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
+import java.time.format.TextStyle
 
 @OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun NoteStreakBlock(
-    stats: StatsState.StreakStats,
+    stats: StreakStats,
     hazeState: HazeState,
+    onDayClick: (item: StreakDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val glassStyle = LocalGlassStyle.current
@@ -160,7 +172,10 @@ internal fun NoteStreakBlock(
         )
         StreakDays(
             modifier = Modifier
-                .fillMaxWidth()
+                .padding(start = 11.dp, end = 11.dp, top = 11.dp, bottom = 15.dp)
+                .fillMaxWidth(),
+            days = stats.streakDays,
+            onClick = onDayClick,
         )
     }
 }
@@ -196,9 +211,84 @@ private fun StreakCard(
 
 @Composable
 private fun StreakDays(
+    days: List<StreakDay>,
+    onClick: (item: StreakDay) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier.height(80.dp),
-    )
+    Row(
+        modifier = modifier,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        days.forEach { day ->
+            StreakDayItem(
+                modifier = Modifier.weight(1f),
+                item = day,
+                onClick = onClick,
+            )
+        }
+    }
+}
+
+@Composable
+private fun StreakDayItem(
+    item: StreakDay,
+    onClick: (item: StreakDay) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val locale = LocalLocale.current.platformLocale
+    val dayShape = RoundedCornerShape(8.dp)
+
+    Column(
+        modifier = modifier
+            .clip(dayShape)
+            .clickable { onClick(item) }
+            .padding(5.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        Text(
+            text = item.date.dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, locale),
+            style = MaterialTheme.typography.labelSmall,
+        )
+        Box(
+            modifier = Modifier
+                .aspectRatio(1f)
+                .fillMaxWidth()
+                .then(
+                    if (item.hasNotes) {
+                        Modifier.background(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            shape = dayShape,
+                        )
+                    } else {
+                        Modifier.border(
+                            color = MaterialTheme.colorScheme.primaryContainer,
+                            width = 1.dp,
+                            shape = dayShape,
+                        )
+                    }
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (item.hasNotes) {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_action_done),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentDescription = null,
+                )
+            } else {
+                val dateTextStyle = MaterialTheme.typography.titleSmall
+                BasicText(
+                    text = item.date.dayOfMonth.toString(),
+                    style = dateTextStyle,
+                    maxLines = 1,
+                    color = MaterialTheme.colorScheme::onSurface,
+                    autoSize = TextAutoSize.StepBased(
+                        minFontSize = dateTextStyle.fontSize * 0.5f,
+                        maxFontSize = dateTextStyle.fontSize,
+                    ),
+                )
+            }
+        }
+    }
 }

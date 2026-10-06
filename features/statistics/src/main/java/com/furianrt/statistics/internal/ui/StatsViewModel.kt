@@ -6,10 +6,16 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.statistics.internal.domain.entities.MediaData
 import com.furianrt.statistics.internal.domain.entities.MoodData
 import com.furianrt.statistics.internal.domain.entities.NotesData
+import com.furianrt.statistics.internal.domain.entities.StreakData
 import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.domain.usecase.GetMediaDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetMoodDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetNotesDataUseCase
+import com.furianrt.statistics.internal.domain.usecase.GetStreakDataUseCase
+import com.furianrt.statistics.internal.ui.entities.GeneralStats
+import com.furianrt.statistics.internal.ui.entities.StreakDay
+import com.furianrt.statistics.internal.ui.entities.StreakStats
+import com.furianrt.statistics.internal.ui.entities.toUI
 import com.furianrt.uikit.entities.UiThemeColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -33,6 +39,7 @@ internal class StatsViewModel @Inject constructor(
     private val getMoodDataUseCase: GetMoodDataUseCase,
     private val getMediaDataUseCase: GetMediaDataUseCase,
     private val getNotesDataUseCase: GetNotesDataUseCase,
+    private val getStreakDataUseCase: GetStreakDataUseCase,
 ) : ViewModel() {
 
     private val periods = listOf(
@@ -51,13 +58,15 @@ internal class StatsViewModel @Inject constructor(
             getNotesDataUseCase(period),
             getMediaDataUseCase(period),
             getMoodDataUseCase(period),
+            getStreakDataUseCase(),
             appearanceRepository.getAppThemeColorId(),
-        ) { notesData, mediaData, moodData, appThemeId ->
+        ) { notesData, mediaData, moodData, streakData, appThemeId ->
             buildState(
                 selectedPeriod = period,
                 notesData = notesData,
                 mediaData = mediaData,
                 moodData = moodData,
+                streakData = streakData,
                 appThemeColorId = appThemeId,
             )
         }
@@ -79,6 +88,10 @@ internal class StatsViewModel @Inject constructor(
         when (event) {
             is StatsEvent.OnPeriodSelected -> onPeriodSelected(event.period)
             is StatsEvent.OnButtonBackClick -> onButtonBackClick()
+            is StatsEvent.OnStreakDayClick -> onStreakDayClick(event.day)
+            is StatsEvent.OnGalleryStatClick -> onGalleryStatClick()
+            is StatsEvent.OnMoodStatClick -> onMoodStatClick()
+            is StatsEvent.OnNotesStatClick -> onNotesStatClick()
         }
     }
 
@@ -90,18 +103,35 @@ internal class StatsViewModel @Inject constructor(
         _effect.tryEmit(StatsEffect.CloseScreen)
     }
 
+    private fun onStreakDayClick(day: StreakDay) {
+
+    }
+
+    private fun onGalleryStatClick() {
+
+    }
+
+    private fun onMoodStatClick() {
+
+    }
+
+    private fun onNotesStatClick() {
+
+    }
+
     private fun buildState(
         selectedPeriod: TimePeriod,
         notesData: NotesData,
         mediaData: MediaData,
         moodData: MoodData,
+        streakData: StreakData,
         appThemeColorId: String?,
     ) = StatsState(
         theme = UiThemeColor.fromId(appThemeColorId),
         content = StatsState.Content.Success(
             periods = periods,
             selectedPeriod = selectedPeriod,
-            generalStats = StatsState.GeneralStats(
+            generalStats = GeneralStats(
                 notesCount = notesData.totalNotes,
                 notesChange = notesData.change,
                 mediaCount = mediaData.totalMedia,
@@ -109,10 +139,10 @@ internal class StatsViewModel @Inject constructor(
                 averageMood = moodData.averageMood,
                 moodChange = moodData.change,
             ),
-            streakStats = StatsState.StreakStats(
-                currentStreak = 26,
-                longestStreak = 128,
-                streakDays = emptyList(),
+            streakStats = StreakStats(
+                currentStreak = streakData.currentStreak,
+                longestStreak = streakData.longestStreak,
+                streakDays = streakData.streakDays.map(StreakData.StreakDay::toUI),
             )
         ),
     )
