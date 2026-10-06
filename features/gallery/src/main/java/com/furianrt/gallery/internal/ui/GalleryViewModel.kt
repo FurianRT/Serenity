@@ -1,10 +1,13 @@
 package com.furianrt.gallery.internal.ui
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.NoteMedia
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.gallery.api.GalleryRoute
 import com.furianrt.gallery.internal.domain.GetNoteDatesWithMediaUseCase
 import com.furianrt.gallery.internal.domain.GetNoteMediaUseCase
 import com.furianrt.gallery.internal.ui.entities.DateFilter
@@ -32,13 +35,23 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class GalleryViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     dispatchers: DispatchersProvider,
     getNoteMediaUseCase: GetNoteMediaUseCase,
     appearanceRepository: AppearanceRepository,
     private val getNoteDatesWithMediaUseCase: GetNoteDatesWithMediaUseCase,
 ) : ViewModel() {
 
-    private val dateFilterState = MutableStateFlow<DateFilter?>(null)
+    private val route = savedStateHandle.toRoute<GalleryRoute>()
+
+    private val dateFilterState = MutableStateFlow(
+        route.startDate?.let { startDate ->
+            DateFilter(
+                start = LocalDate.parse(startDate),
+                end = LocalDate.now(),
+            )
+        }
+    )
 
     private val _effect = MutableSharedFlow<GalleryEffect>(extraBufferCapacity = 5)
     val effect: SharedFlow<GalleryEffect> = _effect.asSharedFlow()
@@ -66,7 +79,7 @@ internal class GalleryViewModel @Inject constructor(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = GalleryState(
                 theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
-                dateFilter = null,
+                dateFilter = dateFilterState.value?.toDateString(),
                 content = GalleryState.Content.Loading,
             ),
         )

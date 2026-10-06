@@ -55,7 +55,7 @@ internal fun Toolbar(
     val haptic = LocalHapticFeedback.current
     val colorScheme = MaterialTheme.colorScheme
 
-    var tempDateFilter: String? by remember { mutableStateOf(null) }
+    var tempDateFilter: String? by remember { mutableStateOf(dateFilter) }
 
     LaunchedEffect(dateFilter) {
         if (dateFilter != null) {
@@ -67,7 +67,7 @@ internal fun Toolbar(
         modifier = modifier.fillMaxWidth(),
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .padding(horizontal = 4.dp)
                 .fillMaxWidth()
                 .height(ToolbarConstants.toolbarHeight),

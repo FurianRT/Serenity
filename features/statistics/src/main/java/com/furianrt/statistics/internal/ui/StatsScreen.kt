@@ -33,6 +33,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 private const val TIME_PERIOD_ITEM_KEY = "time_period"
@@ -42,6 +43,7 @@ private const val STREAK_STATS_ITEM_KEY = "streak_stats"
 @Composable
 internal fun StatsScreen(
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
+    openGalleryRequest: (startDate: LocalDate?) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: StatsViewModel = hiltViewModel()
@@ -51,6 +53,7 @@ internal fun StatsScreen(
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openCreateNoteRequestState by rememberUpdatedState(openCreateNoteRequest)
+    val openGalleryRequestState by rememberUpdatedState(openGalleryRequest)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -59,6 +62,7 @@ internal fun StatsScreen(
                 when (effect) {
                     is StatsEffect.CloseScreen -> onCloseRequestState()
                     is StatsEffect.OpenNoteCreateScreen -> openCreateNoteRequestState(effect.date)
+                    is StatsEffect.OpenGalleryRequest -> openGalleryRequestState(effect.startDate)
                 }
             }
     }

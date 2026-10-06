@@ -17,10 +17,12 @@ import kotlinx.serialization.Serializable
 import java.time.LocalDate
 
 @Serializable
-data object GalleryRoute
+data class GalleryRoute(
+    val startDate: String? = null,
+)
 
 fun NavController.navigateToGallery(
-    route: GalleryRoute = GalleryRoute,
+    route: GalleryRoute = GalleryRoute(),
     navOptions: NavOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
 ) {
     navigate(route = route, navOptions = navOptions)

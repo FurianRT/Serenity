@@ -42,6 +42,7 @@ import com.furianrt.billing.api.billingScreen
 import com.furianrt.billing.api.navigateToBilling
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.managers.SerenityPlusProvider
+import com.furianrt.gallery.api.GalleryRoute
 import com.furianrt.gallery.api.galleryScreen
 import com.furianrt.gallery.api.navigateToGallery
 import com.furianrt.mediaselector.api.MediaViewerRoute
@@ -433,6 +434,13 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         statisticsScreen(
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
                             onCloseRequest = navController::navigateUp,
+                            openGalleryRequest = { startDate ->
+                                navController.navigateToGallery(
+                                    route = GalleryRoute(
+                                        startDate = startDate?.toString(),
+                                    ),
+                                )
+                            },
                             openCreateNoteRequest = { date ->
                                 navController.navigateToNoteCreate(
                                     route = NoteCreateRoute(date = date.toString()),

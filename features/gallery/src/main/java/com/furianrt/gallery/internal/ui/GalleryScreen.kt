@@ -183,7 +183,6 @@ private fun ScreenContent(
             theme = uiState.theme,
         )
         AnimatedContent(
-            modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
             targetState = uiState.content,
             transitionSpec = {
                 if (initialState is GalleryState.Content.Loading) {
@@ -195,13 +194,17 @@ private fun ScreenContent(
             contentKey = { it::class.simpleName },
         ) { targetState ->
             when (targetState) {
-                is GalleryState.Content.Loading -> LoadingContent()
+                is GalleryState.Content.Loading -> LoadingContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
+                )
                 is GalleryState.Content.Empty -> EmptyContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     hazeState = hazeState,
                     onEvent = onEvent,
                 )
 
                 is GalleryState.Content.Success -> SuccessContent(
+                    modifier = Modifier.hazeSource(hazeState, zIndex = 1f),
                     uiState = targetState,
                     onEvent = onEvent,
                     listState = listState,

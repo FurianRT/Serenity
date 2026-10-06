@@ -11,6 +11,7 @@ import com.furianrt.statistics.internal.ui.StatsScreen
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 @Serializable
@@ -24,6 +25,7 @@ fun NavController.navigateToStatistics(
 fun NavGraphBuilder.statisticsScreen(
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
+    openGalleryRequest: (startDate: LocalDate?) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<StatisticsRoute>(
@@ -38,6 +40,7 @@ fun NavGraphBuilder.statisticsScreen(
     ) {
         StatsScreen(
             openCreateNoteRequest = openCreateNoteRequest,
+            openGalleryRequest = openGalleryRequest,
             onCloseRequest = onCloseRequest,
         )
     }

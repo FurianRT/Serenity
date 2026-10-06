@@ -31,6 +31,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
 
@@ -111,7 +112,12 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onGalleryStatClick() {
-
+        val startDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
+            null
+        } else {
+            LocalDate.now().minusDays(selectedPeriodState.value.days)
+        }
+        _effect.tryEmit(StatsEffect.OpenGalleryRequest(startDate))
     }
 
     private fun onMoodStatClick() {
