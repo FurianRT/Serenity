@@ -13,6 +13,7 @@ import com.furianrt.statistics.internal.domain.usecase.GetMoodDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetNotesDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetStreakDataUseCase
 import com.furianrt.statistics.internal.ui.entities.GeneralStats
+import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.statistics.internal.ui.entities.toUI
@@ -33,6 +34,8 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.TextStyle
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -121,7 +124,7 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onMoodStatClick() {
-
+        _effect.tryEmit(StatsEffect.ScrollToMoodBlock)
     }
 
     private fun onNotesStatClick() {
@@ -162,7 +165,14 @@ internal class StatsViewModel @Inject constructor(
                 currentStreak = streakData.currentStreak,
                 longestStreak = streakData.longestStreak,
                 streakDays = streakData.streakDays.map(StreakData.StreakDay::toUI),
-            )
+            ),
+            moodStats = MoodStats(
+                bestDaysOfWeek = moodData.bestDays.map { day ->
+                    day.getDisplayName(TextStyle.FULL_STANDALONE, Locale.getDefault())
+                },
+                notesCount = moodData.noteWithMood,
+                pieChartData = moodData.moods.map(MoodData.Mood::toUI),
+            ),
         ),
     )
 }

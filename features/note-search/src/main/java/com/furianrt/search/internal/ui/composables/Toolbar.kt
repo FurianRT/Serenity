@@ -88,7 +88,9 @@ internal fun Toolbar(
 ) {
     val focusRequester = remember { FocusRequester() }
     OneTimeEffect {
-        focusRequester.requestFocus()
+        if (selectedFilters.isEmpty()) {
+            focusRequester.requestFocus()
+        }
     }
     val test = if (selectedNotesCount > 0) emptyList() else selectedFilters
     Crossfade(

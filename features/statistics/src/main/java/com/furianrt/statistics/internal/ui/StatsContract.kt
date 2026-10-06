@@ -3,6 +3,7 @@ package com.furianrt.statistics.internal.ui
 import androidx.compose.runtime.Immutable
 import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.ui.entities.GeneralStats
+import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.entities.UiThemeColor
@@ -22,6 +23,7 @@ internal data class StatsState(
             val selectedPeriod: TimePeriod,
             val generalStats: GeneralStats,
             val streakStats: StreakStats,
+            val moodStats: MoodStats,
         ) : Content
     }
 }
@@ -37,6 +39,7 @@ internal sealed interface StatsEvent {
 
 internal sealed interface StatsEffect {
     data object CloseScreen : StatsEffect
+    data object ScrollToMoodBlock : StatsEffect
     data class OpenNoteCreateScreen(val date: ZonedDateTime) : StatsEffect
     data class OpenGalleryRequest(val startDate: LocalDate?) : StatsEffect
     data class OpenNoteSearchRequest(

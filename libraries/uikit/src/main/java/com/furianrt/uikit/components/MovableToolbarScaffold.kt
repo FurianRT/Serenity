@@ -233,7 +233,7 @@ fun MovableToolbarScaffold(
         }
     }
 
-    val showShadow by remember(listState) {
+    val showShadow by remember(listState, listState.canScrollBackward) {
         derivedStateOf {
             (totalScroll - toolbarOffset).absoluteValue > 5 &&
                     listState.canScrollBackward ||
@@ -241,7 +241,7 @@ fun MovableToolbarScaffold(
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    var showBlur by rememberSaveable { mutableStateOf(showShadow) }
+    var showBlur by rememberSaveable(listState.canScrollBackward) { mutableStateOf(showShadow) }
 
     val colorScheme = MaterialTheme.colorScheme
 

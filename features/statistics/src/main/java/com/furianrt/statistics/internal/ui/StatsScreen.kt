@@ -3,8 +3,11 @@ package com.furianrt.statistics.internal.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -26,9 +29,11 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.ui.components.GeneralStatsBlock
+import com.furianrt.statistics.internal.ui.components.MoodInsightsBlock
 import com.furianrt.statistics.internal.ui.components.NoteStreakBlock
 import com.furianrt.statistics.internal.ui.components.PeriodTabsLayout
 import com.furianrt.statistics.internal.ui.entities.GeneralStats
+import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.components.AppBackground
@@ -46,6 +51,8 @@ import java.time.ZonedDateTime
 private const val TIME_PERIOD_ITEM_KEY = "time_period"
 private const val GENERAL_STATS_ITEM_KEY = "general_stats"
 private const val STREAK_STATS_ITEM_KEY = "streak_stats"
+private const val MOOD_STATS_ITEM_KEY = "mood_stats"
+private const val MOOD_BLOCK_INDEX = 3
 
 @Composable
 internal fun StatsScreen(
@@ -58,6 +65,7 @@ internal fun StatsScreen(
     val uiState by viewModel.state.collectAsStateWithLifecycle()
 
     val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val listState = rememberLazyListState()
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openCreateNoteRequestState by rememberUpdatedState(openCreateNoteRequest)
@@ -75,12 +83,17 @@ internal fun StatsScreen(
                     is StatsEffect.OpenNoteSearchRequest -> {
                         openNoteSearchRequestState(effect.startDate, effect.endDate)
                     }
+
+                    is StatsEffect.ScrollToMoodBlock -> {
+                        listState.animateScrollToItem(MOOD_BLOCK_INDEX)
+                    }
                 }
             }
     }
 
     Content(
         uiState = uiState,
+        listState = listState,
         onEvent = viewModel::onEvent,
     )
 }
@@ -88,11 +101,14 @@ internal fun StatsScreen(
 @Composable
 private fun Content(
     uiState: StatsState,
+    listState: LazyListState,
     onEvent: (event: StatsEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val listState = rememberLazyListState()
+
     val hazeState = rememberHazeState()
+
+    val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     MovableToolbarScaffold(
         modifier = modifier,
@@ -116,7 +132,7 @@ private fun Content(
                 listState = listState,
                 contentPadding = PaddingValues(
                     top = topPadding + 16.dp,
-                    bottom = 24.dp,
+                    bottom = bottomInsetPadding + 24.dp,
                     start = 16.dp,
                     end = 16.dp,
                 ),
@@ -143,7 +159,7 @@ private fun SuccessContent(
         state = listState,
         contentPadding = contentPadding,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(
             key = TIME_PERIOD_ITEM_KEY,
@@ -186,6 +202,18 @@ private fun SuccessContent(
                 stats = uiState.streakStats,
                 hazeState = hazeState,
                 onDayClick = { onEvent(StatsEvent.OnStreakDayClick(it)) },
+            )
+        }
+        item(
+            key = MOOD_STATS_ITEM_KEY,
+            contentType = MOOD_STATS_ITEM_KEY,
+        ) {
+            MoodInsightsBlock(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .animateItem(),
+                stats = uiState.moodStats,
+                hazeState = hazeState,
             )
         }
     }
@@ -232,8 +260,39 @@ private fun Preview() {
                             }
                         },
                     ),
+                    moodStats = MoodStats(
+                        bestDaysOfWeek = listOf("Sunday", "Friday"),
+                        notesCount = 242,
+                        pieChartData = listOf(
+                            MoodStats.Mood(
+                                level = MoodStats.Level.TERRIBLE,
+                                percent = 0,
+                            ),
+                            MoodStats.Mood(
+                                level = MoodStats.Level.BAD,
+                                percent = 10,
+                            ),
+                            MoodStats.Mood(
+                                level = MoodStats.Level.SAD,
+                                percent = 15,
+                            ),
+                            MoodStats.Mood(
+                                level = MoodStats.Level.NORMAL,
+                                percent = 20,
+                            ),
+                            MoodStats.Mood(
+                                level = MoodStats.Level.GOOD,
+                                percent = 25,
+                            ),
+                            MoodStats.Mood(
+                                level = MoodStats.Level.PERFECT,
+                                percent = 25,
+                            ),
+                        ),
+                    ),
                 ),
             ),
+            listState = rememberLazyListState(),
             onEvent = {},
         )
     }

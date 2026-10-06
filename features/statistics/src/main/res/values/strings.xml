@@ -13,6 +13,9 @@
     <string name="stats_current_streak_title">Current Streak</string>
     <string name="stats_longest_streak_title">Longest Streak</string>
 
+    <string name="stats_mood_block_title">Mood Insights</string>
+    <string name="stats_mood_block_best_days_of_week_title">Best Days of Week:</string>
+
     <plurals name="stats_days_count">
         <item quantity="one">day</item>
         <item quantity="other">days</item>
