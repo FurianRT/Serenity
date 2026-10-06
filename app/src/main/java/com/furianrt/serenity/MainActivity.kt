@@ -445,7 +445,15 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                 navController.navigateToNoteCreate(
                                     route = NoteCreateRoute(date = date.toString()),
                                 )
-                            }
+                            },
+                            openNoteSearchRequest = { startDate, endDate ->
+                                navController.navigateToNoteSearch(
+                                    route = NoteSearchRoute(
+                                        startDate = startDate?.toString(),
+                                        endDate = endDate?.toString(),
+                                    ),
+                                )
+                            },
                         )
                     }
                     AnimatedVisibility(

@@ -26,6 +26,7 @@ fun NavGraphBuilder.statisticsScreen(
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
     openGalleryRequest: (startDate: LocalDate?) -> Unit,
+    openNoteSearchRequest: (startDate: LocalDate?, endDate: LocalDate?) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<StatisticsRoute>(
@@ -41,6 +42,7 @@ fun NavGraphBuilder.statisticsScreen(
         StatsScreen(
             openCreateNoteRequest = openCreateNoteRequest,
             openGalleryRequest = openGalleryRequest,
+            openNoteSearchRequest = openNoteSearchRequest,
             onCloseRequest = onCloseRequest,
         )
     }

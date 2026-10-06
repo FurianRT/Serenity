@@ -125,7 +125,17 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onNotesStatClick() {
-
+        val startDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
+            null
+        } else {
+            LocalDate.now().minusDays(selectedPeriodState.value.days)
+        }
+        val endDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
+            null
+        } else {
+            LocalDate.now()
+        }
+        _effect.tryEmit(StatsEffect.OpenNoteSearchRequest(startDate, endDate))
     }
 
     private fun buildState(

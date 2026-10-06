@@ -16,10 +16,13 @@ import com.furianrt.uikit.utils.DialogIdentifier
 import kotlinx.serialization.Serializable
 
 @Serializable
-data object NoteSearchRoute
+data class NoteSearchRoute(
+    val startDate: String? = null,
+    val endDate: String? = null,
+)
 
 fun NavController.navigateToNoteSearch(
-    route: NoteSearchRoute = NoteSearchRoute,
+    route: NoteSearchRoute = NoteSearchRoute(),
     navOptions: NavOptions = NavOptions.Builder().setLaunchSingleTop(true).build(),
 ) {
     navigate(route = route, navOptions = navOptions)

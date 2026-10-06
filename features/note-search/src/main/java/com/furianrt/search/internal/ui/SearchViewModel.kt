@@ -3,8 +3,10 @@ package com.furianrt.search.internal.ui
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.delete
 import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.LocalNote
@@ -16,6 +18,7 @@ import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.domain.usecase.GetFilteredNotesUseCase
+import com.furianrt.search.api.NoteSearchRoute
 import com.furianrt.search.api.entities.QueryData
 import com.furianrt.search.internal.domain.GetAllUniqueTagsUseCase
 import com.furianrt.search.internal.ui.entities.SearchListItem
@@ -48,6 +51,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val TAG = "SearchViewModel"
 private const val NOTE_VIEW_DIALOG_ID = 1
@@ -63,6 +67,7 @@ private class SearchData(
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 internal class SearchViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     getAllUniqueTagsUseCase: GetAllUniqueTagsUseCase,
     dispatchers: DispatchersProvider,
     private val getFilteredNotesUseCase: GetFilteredNotesUseCase,
@@ -74,11 +79,13 @@ internal class SearchViewModel @Inject constructor(
     private val resourcesManager: ResourcesManager,
 ) : ViewModel(), DialogResultListener {
 
+    private val route = savedStateHandle.toRoute<NoteSearchRoute>()
+
     private val scrollToPositionState = MutableStateFlow<Int?>(null)
     private val selectedNotesState = MutableStateFlow<Set<String>>(emptySet())
     private val queryState = TextFieldState()
     private val queryTextFlow = snapshotFlow { queryState.text.toString() }
-        .debounce(QUERY_DEBOUNCE_DURATION)
+        .debounce(QUERY_DEBOUNCE_DURATION.milliseconds)
         .onEach { scrollToPositionState.update { 0 } }
         .stateIn(
             scope = viewModelScope,
@@ -86,7 +93,18 @@ internal class SearchViewModel @Inject constructor(
             initialValue = "",
         )
     private val selectedFiltersFlow: MutableStateFlow<List<SelectedFilter>> =
-        MutableStateFlow(emptyList())
+        MutableStateFlow(
+            if (route.startDate != null) {
+                listOf(
+                    SelectedFilter.DateRange(
+                        start = route.startDate.let(LocalDate::parse),
+                        end = route.endDate?.let(LocalDate::parse),
+                    )
+                )
+            } else {
+                emptyList()
+            }
+        )
 
     val state: StateFlow<SearchUiState> = combine(
         getAllUniqueTagsUseCase(),
@@ -131,6 +149,7 @@ internal class SearchViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SearchUiState(
             searchQuery = queryState,
+            selectedFilters = selectedFiltersFlow.value,
             theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
         ),
     )

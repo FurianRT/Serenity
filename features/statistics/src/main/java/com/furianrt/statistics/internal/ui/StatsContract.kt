@@ -39,4 +39,8 @@ internal sealed interface StatsEffect {
     data object CloseScreen : StatsEffect
     data class OpenNoteCreateScreen(val date: ZonedDateTime) : StatsEffect
     data class OpenGalleryRequest(val startDate: LocalDate?) : StatsEffect
+    data class OpenNoteSearchRequest(
+        val startDate: LocalDate?,
+        val endDate: LocalDate?,
+    ) : StatsEffect
 }

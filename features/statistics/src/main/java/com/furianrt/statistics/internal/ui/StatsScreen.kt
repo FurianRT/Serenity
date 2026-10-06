@@ -44,6 +44,7 @@ private const val STREAK_STATS_ITEM_KEY = "streak_stats"
 internal fun StatsScreen(
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
     openGalleryRequest: (startDate: LocalDate?) -> Unit,
+    openNoteSearchRequest: (startDate: LocalDate?, endDate: LocalDate?) -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: StatsViewModel = hiltViewModel()
@@ -54,6 +55,7 @@ internal fun StatsScreen(
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openCreateNoteRequestState by rememberUpdatedState(openCreateNoteRequest)
     val openGalleryRequestState by rememberUpdatedState(openGalleryRequest)
+    val openNoteSearchRequestState by rememberUpdatedState(openNoteSearchRequest)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -63,6 +65,9 @@ internal fun StatsScreen(
                     is StatsEffect.CloseScreen -> onCloseRequestState()
                     is StatsEffect.OpenNoteCreateScreen -> openCreateNoteRequestState(effect.date)
                     is StatsEffect.OpenGalleryRequest -> openGalleryRequestState(effect.startDate)
+                    is StatsEffect.OpenNoteSearchRequest -> {
+                        openNoteSearchRequestState(effect.startDate, effect.endDate)
+                    }
                 }
             }
     }
