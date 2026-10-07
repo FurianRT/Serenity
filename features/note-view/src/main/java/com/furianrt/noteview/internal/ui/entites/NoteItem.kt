@@ -1,7 +1,6 @@
 package com.furianrt.noteview.internal.ui.entites
 
 import androidx.compose.runtime.Immutable
-import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteTheme
 import java.time.ZonedDateTime
 
