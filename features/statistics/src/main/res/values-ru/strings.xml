@@ -16,9 +16,9 @@
     <string name="stats_mood_block_title">Анализ настроения</string>
     <string name="stats_mood_block_best_days_of_week_title">Лучшие дни недели:</string>
 
-    <string name="stats_mood_block_description_1">● Ваше настроение в целом</string>
+    <string name="stats_mood_block_description_1">● Общая картина настроения</string>
     <string name="stats_mood_block_description_2">● Изменения настроения со временем</string>
-    <string name="stats_mood_block_description_3">● Ваши лучшие дни</string>
+    <string name="stats_mood_block_description_3">● Лучшие дни недели</string>
 
     <plurals name="stats_days_count">
         <item quantity="one">день</item>

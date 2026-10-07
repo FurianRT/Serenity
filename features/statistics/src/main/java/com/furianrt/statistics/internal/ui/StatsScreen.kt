@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -131,6 +132,9 @@ private fun Content(
         )
         when (uiState.content) {
             is StatsState.Content.Success -> SuccessContent(
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .widthIn(max = 450.dp),
                 uiState = uiState.content,
                 listState = listState,
                 contentPadding = PaddingValues(
