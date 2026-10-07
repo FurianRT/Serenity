@@ -21,6 +21,9 @@
     <string name="billing_benefit_custom_backgrounds_title">Custom Backgrounds</string>
     <string name="billing_benefit_custom_backgrounds_body">Give every note a look and feeling of its own</string>
 
+    <string name="billing_benefit_mood_insights_title">Mood Insights</string>
+    <string name="billing_benefit_mood_insights_body">See how your mood changes and find your happiest days</string>
+
     <string name="billing_benefit_export_pdf_title">PDF Export</string>
     <string name="billing_benefit_export_pdf_body">Save your favorite notes as beautiful PDFs, ready to keep or share</string>
 

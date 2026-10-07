@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Mais por vir</string>
     <string name="billing_benefit_future_features_body">Descubra novos recursos e melhorias enquanto o Serenity continua crescendo</string>
+
+    <string name="billing_benefit_mood_insights_title">Análise do humor</string>
+    <string name="billing_benefit_mood_insights_body">Veja como seu humor muda e descubra seus dias mais felizes</string>
 </resources>

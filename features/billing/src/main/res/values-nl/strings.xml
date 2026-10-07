@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Er komt nog meer</string>
     <string name="billing_benefit_future_features_body">Ontdek nieuwe functies en fijne verbeteringen terwijl Serenity blijft groeien</string>
+
+    <string name="billing_benefit_mood_insights_title">Inzicht in je stemming</string>
+    <string name="billing_benefit_mood_insights_body">Zie hoe je stemming verandert en ontdek je gelukkigste dagen</string>
 </resources>

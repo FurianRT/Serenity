@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">ยังมีอีกมากรออยู่</string>
     <string name="billing_benefit_future_features_body">ค้นพบฟีเจอร์ใหม่และการปรับปรุงดี ๆ ไปพร้อมกับการเติบโตของ Serenity</string>
+
+    <string name="billing_benefit_mood_insights_title">วิเคราะห์อารมณ์</string>
+    <string name="billing_benefit_mood_insights_body">ดูว่าอารมณ์ของคุณเปลี่ยนแปลงอย่างไร และค้นหาวันที่มีความสุขที่สุดของคุณ</string>
 </resources>

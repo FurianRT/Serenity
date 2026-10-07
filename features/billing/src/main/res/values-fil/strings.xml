@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">May Darating Pa</string>
     <string name="billing_benefit_future_features_body">Tuklasin ang mga bagong feature at magagandang pagpapahusay habang patuloy na lumalago ang Serenity</string>
+
+    <string name="billing_benefit_mood_insights_title">Mga Insight sa Mood</string>
+    <string name="billing_benefit_mood_insights_body">Tingnan kung paano nagbabago ang mood mo at tuklasin ang mga araw na pinakamasaya ka</string>
 </resources>

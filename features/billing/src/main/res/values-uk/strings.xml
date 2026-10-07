@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Більше попереду</string>
     <string name="billing_benefit_future_features_body">Відкривайте нові функції та приємні покращення в міру розвитку Serenity</string>
+
+    <string name="billing_benefit_mood_insights_title">Аналіз настрою</string>
+    <string name="billing_benefit_mood_insights_body">Дивіться, як змінюється настрій, і знаходьте свої найщасливіші дні</string>
 </resources>

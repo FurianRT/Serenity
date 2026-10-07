@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">더 많은 기능이 찾아옵니다</string>
     <string name="billing_benefit_future_features_body">Serenity와 함께 새로운 기능과 세심한 개선을 계속 만나보세요</string>
+
+    <string name="billing_benefit_mood_insights_title">기분 분석</string>
+    <string name="billing_benefit_mood_insights_body">기분이 어떻게 변하는지 살펴보고 가장 행복했던 날을 찾아보세요</string>
 </resources>

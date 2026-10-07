@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Et ce n’est pas fini</string>
     <string name="billing_benefit_future_features_body">Découvrez de nouvelles fonctionnalités et de belles améliorations au fil de l’évolution de Serenity</string>
+
+    <string name="billing_benefit_mood_insights_title">Analyse de l’humeur</string>
+    <string name="billing_benefit_mood_insights_body">Voyez comment votre humeur évolue et découvrez vos journées les plus heureuses</string>
 </resources>

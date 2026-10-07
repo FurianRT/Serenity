@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Akan Hadir</string>
     <string name="billing_benefit_future_features_body">Temukan fitur baru dan berbagai penyempurnaan seiring Serenity terus berkembang</string>
+
+    <string name="billing_benefit_mood_insights_title">Insight Suasana Hati</string>
+    <string name="billing_benefit_mood_insights_body">Lihat bagaimana suasana hatimu berubah dan temukan hari-hari terbaikmu</string>
 </resources>

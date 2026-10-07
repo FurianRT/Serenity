@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">আরও আসছে</string>
     <string name="billing_benefit_future_features_body">Serenity আরও উন্নত হওয়ার সঙ্গে সঙ্গে নতুন ফিচার ও সুন্দর সব উন্নতি আবিষ্কার করুন</string>
+
+    <string name="billing_benefit_mood_insights_title">মনের অবস্থার বিশ্লেষণ</string>
+    <string name="billing_benefit_mood_insights_body">আপনার মনের অবস্থার পরিবর্তন দেখুন এবং আপনার সবচেয়ে আনন্দের দিনগুলো খুঁজে নিন</string>
 </resources>

@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Daha Fazlası Yolda</string>
     <string name="billing_benefit_future_features_body">Serenity gelişmeye devam ederken yeni özellikleri ve keyifli iyileştirmeleri keşfedin</string>
+
+    <string name="billing_benefit_mood_insights_title">Ruh Hali Analizi</string>
+    <string name="billing_benefit_mood_insights_body">Ruh halinin nasıl değiştiğini gör ve en mutlu günlerini keşfet</string>
 </resources>

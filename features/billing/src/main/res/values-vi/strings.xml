@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Còn nhiều điều phía trước</string>
     <string name="billing_benefit_future_features_body">Khám phá các tính năng mới và những cải tiến thú vị khi Serenity không ngừng phát triển</string>
+
+    <string name="billing_benefit_mood_insights_title">Phân tích tâm trạng</string>
+    <string name="billing_benefit_mood_insights_body">Xem tâm trạng của bạn thay đổi thế nào và tìm ra những ngày vui nhất</string>
 </resources>

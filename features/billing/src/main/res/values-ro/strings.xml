@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">Mai multe în curând</string>
     <string name="billing_benefit_future_features_body">Descoperă funcții noi și îmbunătățiri plăcute pe măsură ce Serenity continuă să evolueze</string>
+
+    <string name="billing_benefit_mood_insights_title">Analiza stării de spirit</string>
+    <string name="billing_benefit_mood_insights_body">Vezi cum se schimbă starea ta de spirit și descoperă cele mai fericite zile</string>
 </resources>

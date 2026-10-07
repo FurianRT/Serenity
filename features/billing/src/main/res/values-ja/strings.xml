@@ -26,4 +26,7 @@
 
     <string name="billing_benefit_future_features_title">これからも続々登場</string>
     <string name="billing_benefit_future_features_body">Serenityの成長とともに、新しい機能やうれしい改善をお楽しみください</string>
+
+    <string name="billing_benefit_mood_insights_title">気分の分析</string>
+    <string name="billing_benefit_mood_insights_body">気分の変化を見て、いちばん幸せな日を見つけよう</string>
 </resources>
