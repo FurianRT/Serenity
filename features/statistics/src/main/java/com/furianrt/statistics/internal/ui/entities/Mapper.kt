@@ -19,3 +19,8 @@ internal fun MoodData.Mood.toUI() = MoodStats.Mood(
     },
     percent = (percent * 100f),
 )
+
+internal fun MoodData.MoodDay.toUI() = MoodStats.ChartEntry(
+    date = date,
+    averageMood = averageMood,
+)

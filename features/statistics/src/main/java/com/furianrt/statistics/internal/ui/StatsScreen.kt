@@ -289,6 +289,16 @@ private fun Preview() {
                                 percent = 25f,
                             ),
                         ),
+                        chartData = buildList {
+                            repeat(5) { index ->
+                                add(
+                                    MoodStats.ChartEntry(
+                                        date = ZonedDateTime.now().plusDays(index.toLong()),
+                                        averageMood = index + 1f,
+                                    ),
+                                )
+                            }
+                        },
                     ),
                 ),
             ),

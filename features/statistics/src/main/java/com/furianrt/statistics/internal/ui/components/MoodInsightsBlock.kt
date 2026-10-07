@@ -33,9 +33,13 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
@@ -49,6 +53,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.uikit.extensions.pxToDp
+import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -62,6 +67,8 @@ import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.rememberHazeState
+import java.time.LocalDate
+import java.time.ZonedDateTime
 import kotlin.math.min
 import com.furianrt.uikit.R as uiR
 
@@ -86,7 +93,8 @@ internal fun MoodInsightsBlock(
                     }
                 },
             )
-            .padding(vertical = 12.dp)
+            .padding(top = 12.dp)
+            .animateContentSize()
     ) {
         Title(
             modifier = Modifier
@@ -117,26 +125,31 @@ internal fun MoodInsightsBlock(
                 .padding(horizontal = 12.dp),
             days = stats.bestDaysOfWeek,
         )
-        Spacer(Modifier.size(10.dp))
-        Box(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-                .hazeBlur(
-                    input = HazeInput.Sources(hazeState),
-                    style = HazeBlurStyle {
-                        blurRadius(0.dp)
-                        noiseFactor(0f)
-                        colorEffects(
-                            listOf(HazeColorEffect.tint(Color.Transparent)),
-                        )
-                    },
-                )
-        )
-        Spacer(Modifier.size(10.dp))
-        Box(
-            Modifier.size(100.dp)
-        )
+        Spacer(Modifier.size(4.dp))
+        if (stats.chartData.isNotEmpty()) {
+            Box(
+                modifier = Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .hazeBlur(
+                        input = HazeInput.Sources(hazeState),
+                        style = HazeBlurStyle {
+                            blurRadius(0.dp)
+                            noiseFactor(0f)
+                            colorEffects(
+                                listOf(HazeColorEffect.tint(Color.Transparent)),
+                            )
+                        },
+                    )
+            )
+            Spacer(Modifier.size(10.dp))
+            MoodChart(
+                chartData = stats.chartData,
+            )
+            Spacer(Modifier.size(4.dp))
+        } else {
+            Spacer(Modifier.size(12.dp))
+        }
     }
 }
 
@@ -394,6 +407,178 @@ private fun MoodLine(
     }
 }
 
+@Composable
+private fun MoodChart(
+    chartData: List<MoodStats.ChartEntry>,
+    modifier: Modifier = Modifier,
+    minPixelDistance: Float = 25f
+) {
+    if (chartData.isEmpty()) return
+
+    val startDate = remember(chartData) {
+        if (LocalDate.now().year == chartData.first().date.year) {
+            chartData.first().date.toDateString("dd LLL")
+        } else {
+            chartData.first().date.toDateString()
+        }
+    }
+
+    val endDate = remember(chartData) {
+        if (LocalDate.now().year == chartData.last().date.year) {
+            chartData.last().date.toDateString("dd LLL")
+        } else {
+            chartData.last().date.toDateString()
+        }
+    }
+
+    val lineColor = MaterialTheme.colorScheme.primaryContainer
+
+    val (minDay, totalDaysRange) = remember(chartData) {
+        val days = chartData.map { it.date.toEpochSecond() }
+        val min = days.minOrNull() ?: 0L
+        val max = days.maxOrNull() ?: 0L
+        val range = (max - min).coerceAtLeast(1L)
+        min to range
+    }
+
+    val animatedMoods = chartData.map { point ->
+        animateFloatAsState(
+            targetValue = point.averageMood,
+            animationSpec = tween(durationMillis = 500),
+            label = "MoodAnimation"
+        ).value
+    }
+
+    val minMood = 0f
+    val maxMood = 5f
+    val moodRange = maxMood - minMood // Равно 5f
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        Canvas(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .clipToBounds()
+        ) {
+            val width = size.width
+            val height = size.height
+
+            val verticalPadding = 12.dp.toPx()
+            val usableHeight = height - (verticalPadding * 2)
+
+            val rawPoints = chartData.mapIndexed { index, entry ->
+                val currentDayOffset = entry.date.toEpochSecond() - minDay
+                val x = (currentDayOffset.toFloat() / totalDaysRange) * width
+
+                val normalizedY = (animatedMoods[index] - minMood) / moodRange
+
+                val y = height - verticalPadding - (normalizedY * usableHeight)
+
+                Offset(x, y)
+            }
+
+            val collapsedPoints = mutableListOf<Offset>()
+
+            if (rawPoints.isNotEmpty()) {
+                var currentGroup = mutableListOf<Offset>()
+                currentGroup.add(rawPoints.first())
+
+                for (i in 1 until rawPoints.size) {
+                    val nextPoint = rawPoints[i]
+                    if (nextPoint.x - currentGroup.first().x < minPixelDistance) {
+                        currentGroup.add(nextPoint)
+                    } else {
+                        collapsedPoints.add(averageOfPoints(currentGroup))
+                        currentGroup = mutableListOf(nextPoint)
+                    }
+                }
+                if (currentGroup.isNotEmpty()) {
+                    collapsedPoints.add(averageOfPoints(currentGroup))
+                }
+            }
+
+            val strokePath = Path().apply {
+                if (collapsedPoints.isNotEmpty()) {
+                    moveTo(collapsedPoints.first().x, collapsedPoints.first().y)
+
+                    for (i in 0 until collapsedPoints.size - 1) {
+                        val p0 = collapsedPoints[i]
+                        val p1 = collapsedPoints[i + 1]
+
+                        val controlX1 = p0.x + (p1.x - p0.x) / 2f
+                        val controlY1 = p0.y
+                        val controlX2 = p0.x + (p1.x - p0.x) / 2f
+                        val controlY2 = p1.y
+
+                        cubicTo(controlX1, controlY1, controlX2, controlY2, p1.x, p1.y)
+                    }
+                }
+            }
+
+            val fillPath = Path().apply {
+                addPath(strokePath)
+                lineTo(width, height)
+                lineTo(0f, height)
+                close()
+            }
+
+            drawPath(
+                path = fillPath,
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        lineColor.copy(alpha = 0.4f),
+                        lineColor.copy(alpha = 0.02f)
+                    ),
+                    startY = collapsedPoints.minOfOrNull { it.y } ?: 0f,
+                    endY = height
+                )
+            )
+
+            drawPath(
+                path = strokePath,
+                color = lineColor,
+                style = Stroke(
+                    width = 1.dp.toPx(),
+                    cap = StrokeCap.Round
+                )
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp)
+                .alpha(0.5f),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = startDate,
+                style = MaterialTheme.typography.labelSmall,
+                fontSize = MaterialTheme.typography.labelSmall.fontSize * 0.85f,
+            )
+            Text(
+                text = endDate,
+                style = MaterialTheme.typography.labelSmall,
+                fontSize = MaterialTheme.typography.labelSmall.fontSize * 0.85f,
+            )
+        }
+    }
+}
+
+private fun averageOfPoints(points: List<Offset>): Offset {
+    if (points.isEmpty()) return Offset.Zero
+    var sumX = 0f
+    var sumY = 0f
+    for (point in points) {
+        sumX += point.x
+        sumY += point.y
+    }
+    return Offset(sumX / points.size, sumY / points.size)
+}
+
 @PreviewWithBackground
 @Composable
 private fun Preview() {
@@ -428,6 +613,16 @@ private fun Preview() {
                         percent = 25f,
                     ),
                 ),
+                chartData = buildList {
+                    repeat(5) { index ->
+                        add(
+                            MoodStats.ChartEntry(
+                                date = ZonedDateTime.now().plusDays(index.toLong()),
+                                averageMood = index + 1f,
+                            ),
+                        )
+                    }
+                },
             ),
             hazeState = rememberHazeState(),
         )

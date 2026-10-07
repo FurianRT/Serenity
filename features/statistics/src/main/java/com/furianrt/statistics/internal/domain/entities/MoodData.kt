@@ -1,7 +1,7 @@
 package com.furianrt.statistics.internal.domain.entities
 
 import java.time.DayOfWeek
-import java.time.LocalDate
+import java.time.ZonedDateTime
 
 internal data class MoodData(
     val averageMood: Float,
@@ -26,7 +26,7 @@ internal data class MoodData(
     )
 
     data class MoodDay(
-        val date: LocalDate,
+        val date: ZonedDateTime,
         val averageMood: Float,
     )
 }

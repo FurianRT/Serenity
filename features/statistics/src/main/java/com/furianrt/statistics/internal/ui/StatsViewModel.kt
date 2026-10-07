@@ -179,6 +179,7 @@ internal class StatsViewModel @Inject constructor(
                 },
                 notesCount = moodData.noteWithMood,
                 pieChartData = moodData.moods.map(MoodData.Mood::toUI),
+                chartData = moodData.moodDays.map(MoodData.MoodDay::toUI),
             ),
         ),
     )

@@ -6,16 +6,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import com.furianrt.statistics.R
+import java.time.ZonedDateTime
 
 @Immutable
 internal data class MoodStats(
     val notesCount: Int,
     val bestDaysOfWeek: List<String>,
     val pieChartData: List<Mood>,
+    val chartData: List<ChartEntry>,
 ) {
     data class Mood(
         val level: Level,
         val percent: Float,
+    )
+
+    @Immutable
+    data class ChartEntry(
+        val date: ZonedDateTime,
+        val averageMood: Float,
     )
 
     enum class Level {

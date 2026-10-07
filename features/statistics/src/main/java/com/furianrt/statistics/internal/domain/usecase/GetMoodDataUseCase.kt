@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 private data class MoodWithDate(
-    val date: LocalDate,
+    val date: ZonedDateTime,
     val level: MoodData.MoodLevel,
 )
 
@@ -54,7 +56,7 @@ internal class GetMoodDataUseCase @Inject constructor(
 
             val currentMoodDays = currentPeriodNotes.mapNotNull { note ->
                 MoodWithDate(
-                    date = note.date.toLocalDate(),
+                    date = note.date,
                     level = when (MoodHolder.findMood(note.moodId)?.level) {
                         Mood.Level.TERRIBLE -> MoodData.MoodLevel.TERRIBLE
                         Mood.Level.BAD -> MoodData.MoodLevel.BAD
@@ -73,11 +75,9 @@ internal class GetMoodDataUseCase @Inject constructor(
                 .toFloat()
                 .normalizeMood()
 
-            val averageMoods = currentMoodDays
+            val averageMoodsWithTime = currentMoodDays
                 .groupBy { it.date }
                 .mapValues { it.value.map { mood -> mood.level.toValue() }.average() }
-
-            val bestMood = averageMoods.maxOfOrNull { it.value }
 
             val moodPercents = currentMoodDays
                 .groupingBy { it.level }
@@ -113,20 +113,38 @@ internal class GetMoodDataUseCase @Inject constructor(
                         }
                     }
                 }.sortedByDescending { it.level.toValue() },
-                bestDays = averageMoods
-                    .filter { it.value == bestMood }
-                    .mapKeys { it.key.dayOfWeek }
-                    .keys,
-                moodDays = averageMoods.map { mood ->
-                    MoodData.MoodDay(
-                        date = mood.key,
-                        averageMood = mood.value.toFloat(),
-                    )
-                },
+                bestDays = currentMoodDays.findBestDaysOfWeek(),
+                moodDays = averageMoodsWithTime
+                    .map { mood ->
+                        MoodData.MoodDay(
+                            date = mood.key,
+                            averageMood = mood.value.toFloat(),
+                        )
+                    }
+                    .sortedBy { it.date },
             )
         }
         .distinctUntilChanged()
         .flowOn(dispatchers.default)
+}
+
+private fun List<MoodWithDate>.findBestDaysOfWeek(): Set<DayOfWeek> {
+    if (this.isEmpty()) return emptySet()
+
+    val statsByDay = this
+        .groupBy { it.date.dayOfWeek }
+        .mapValues { (_, moodDays) ->
+            val averageMood = moodDays.map { it.level.toValue() }.average()
+            val totalCount = moodDays.size
+            Pair(averageMood, totalCount)
+        }
+
+    val maxAverageMood = statsByDay.values.maxOf { it.first }
+    val daysWithBestMood = statsByDay.filter { it.value.first == maxAverageMood }
+    val maxCountAmongBest = daysWithBestMood.values.maxOf { it.second }
+    return daysWithBestMood
+        .filter { it.value.second == maxCountAmongBest }
+        .keys
 }
 
 private fun Float.normalizeMood(): Float = 1 + (this - 1) * 4 / 5f
