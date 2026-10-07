@@ -16,6 +16,10 @@
     <string name="stats_mood_block_title">Mood Insights</string>
     <string name="stats_mood_block_best_days_of_week_title">Best Days of Week:</string>
 
+    <string name="stats_mood_block_description_1">● Your Mood at a Glance</string>
+    <string name="stats_mood_block_description_2">● Mood Trends Over Time</string>
+    <string name="stats_mood_block_description_3">● Your Best Days</string>
+
     <plurals name="stats_days_count">
         <item quantity="one">day</item>
         <item quantity="other">days</item>

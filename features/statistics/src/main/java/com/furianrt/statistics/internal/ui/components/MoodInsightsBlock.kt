@@ -34,6 +34,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -52,9 +54,11 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.entities.MoodStats
+import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalIsLightTheme
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
@@ -77,79 +81,134 @@ import com.furianrt.uikit.R as uiR
 internal fun MoodInsightsBlock(
     stats: MoodStats,
     hazeState: HazeState,
+    onSerenityPlusClick: () -> Unit,
     modifier: Modifier = Modifier,
+    shape: RoundedCornerShape = RoundedCornerShape(16.dp),
 ) {
     val glassStyle = LocalGlassStyle.current
+    val hasSerenityPlus = LocalSerenityPlus.current
 
     Column(
         modifier = modifier
+            .clip(shape)
             .hazeGlass(
                 input = HazeInput.Sources(hazeState),
                 style = remember(glassStyle) {
                     glassStyle.then {
                         tint(Color.Transparent)
-                        shape(RoundedCornerShape(16.dp))
+                        shape(shape)
                         whitePoint(0.06f)
                     }
                 },
             )
             .padding(top = 12.dp)
-            .animateContentSize()
+            .animateContentSize(),
     ) {
         Title(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp),
         )
-        Spacer(Modifier.size(18.dp))
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PieChart(
-                moods = stats.pieChartData,
-                notesCount = stats.notesCount,
-            )
-            MoodLines(
-                modifier = Modifier.weight(1f),
-                moods = stats.pieChartData,
-            )
-        }
-        Spacer(Modifier.size(18.dp))
-        BestDaysOfWeek(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp),
-            days = stats.bestDaysOfWeek,
-        )
-        Spacer(Modifier.size(4.dp))
-        if (stats.chartData.isNotEmpty()) {
-            Box(
+        Box {
+            Column(
                 modifier = Modifier
-                    .height(2.dp)
                     .fillMaxWidth()
-                    .hazeBlur(
-                        input = HazeInput.Sources(hazeState),
-                        style = HazeBlurStyle {
-                            blurRadius(0.dp)
-                            noiseFactor(0f)
-                            colorEffects(
-                                listOf(HazeColorEffect.tint(Color.Transparent)),
-                            )
-                        },
+                    .applyIf(!hasSerenityPlus) {
+                        Modifier.blur(16.dp)
+                    },
+            ) {
+                Spacer(Modifier.size(16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(24.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    PieChart(
+                        moods = stats.pieChartData,
+                        notesCount = stats.notesCount,
                     )
-            )
-            Spacer(Modifier.size(10.dp))
-            MoodChart(
-                chartData = stats.chartData,
-            )
-            Spacer(Modifier.size(4.dp))
-        } else {
-            Spacer(Modifier.size(12.dp))
+                    MoodLines(
+                        modifier = Modifier.weight(1f),
+                        moods = stats.pieChartData,
+                    )
+                }
+                Spacer(Modifier.size(16.dp))
+                BestDaysOfWeek(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 12.dp),
+                    days = stats.bestDaysOfWeek,
+                )
+                Spacer(Modifier.size(4.dp))
+                if (stats.chartData.isNotEmpty()) {
+                    Box(
+                        modifier = Modifier
+                            .height(2.dp)
+                            .fillMaxWidth()
+                            .hazeBlur(
+                                input = HazeInput.Sources(hazeState),
+                                style = HazeBlurStyle {
+                                    blurRadius(0.dp)
+                                    noiseFactor(0f)
+                                    colorEffects(
+                                        listOf(HazeColorEffect.tint(Color.Transparent)),
+                                    )
+                                },
+                            )
+                    )
+                    Spacer(Modifier.size(10.dp))
+                    MoodChart(
+                        chartData = stats.chartData,
+                    )
+                    Spacer(Modifier.size(8.dp))
+                } else {
+                    Spacer(Modifier.size(12.dp))
+                }
+            }
+            if (!hasSerenityPlus) {
+                SerenityPlusOverlay(
+                    modifier = Modifier.matchParentSize(),
+                    onClick = onSerenityPlusClick,
+                )
+            }
         }
+    }
+}
+
+@OptIn(ExperimentalHazeApi::class)
+@Composable
+private fun SerenityPlusOverlay(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
+        ) {
+            Text(
+                text = stringResource(R.string.stats_mood_block_description_1),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = stringResource(R.string.stats_mood_block_description_2),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Text(
+                text = stringResource(R.string.stats_mood_block_description_3),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        SerenityPlusButton(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(uiR.string.title_serenity_plus),
+            onClick = onClick,
+        )
     }
 }
 
@@ -411,7 +470,7 @@ private fun MoodLine(
 private fun MoodChart(
     chartData: List<MoodStats.ChartEntry>,
     modifier: Modifier = Modifier,
-    minPixelDistance: Float = 25f
+    minPixelDistance: Float = 25f,
 ) {
     if (chartData.isEmpty()) return
 
@@ -445,7 +504,6 @@ private fun MoodChart(
         animateFloatAsState(
             targetValue = point.averageMood,
             animationSpec = tween(durationMillis = 500),
-            label = "MoodAnimation"
         ).value
     }
 
@@ -625,6 +683,7 @@ private fun Preview() {
                 },
             ),
             hazeState = rememberHazeState(),
+            onSerenityPlusClick = {},
         )
     }
 }

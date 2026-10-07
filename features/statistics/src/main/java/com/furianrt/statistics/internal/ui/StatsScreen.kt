@@ -59,6 +59,7 @@ internal fun StatsScreen(
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
     openGalleryRequest: (startDate: LocalDate?) -> Unit,
     openNoteSearchRequest: (startDate: LocalDate?, endDate: LocalDate?) -> Unit,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     val viewModel: StatsViewModel = hiltViewModel()
@@ -71,6 +72,7 @@ internal fun StatsScreen(
     val openCreateNoteRequestState by rememberUpdatedState(openCreateNoteRequest)
     val openGalleryRequestState by rememberUpdatedState(openGalleryRequest)
     val openNoteSearchRequestState by rememberUpdatedState(openNoteSearchRequest)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -80,6 +82,7 @@ internal fun StatsScreen(
                     is StatsEffect.CloseScreen -> onCloseRequestState()
                     is StatsEffect.OpenNoteCreateScreen -> openCreateNoteRequestState(effect.date)
                     is StatsEffect.OpenGalleryRequest -> openGalleryRequestState(effect.startDate)
+                    is StatsEffect.OpenBillingScreen -> openBillingScreenState()
                     is StatsEffect.OpenNoteSearchRequest -> {
                         openNoteSearchRequestState(effect.startDate, effect.endDate)
                     }
@@ -214,6 +217,7 @@ private fun SuccessContent(
                     .animateItem(),
                 stats = uiState.moodStats,
                 hazeState = hazeState,
+                onSerenityPlusClick = { onEvent(StatsEvent.OnSerenityPlusClick) },
             )
         }
     }

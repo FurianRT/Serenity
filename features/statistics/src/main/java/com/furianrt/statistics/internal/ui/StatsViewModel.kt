@@ -98,7 +98,12 @@ internal class StatsViewModel @Inject constructor(
             is StatsEvent.OnGalleryStatClick -> onGalleryStatClick()
             is StatsEvent.OnMoodStatClick -> onMoodStatClick()
             is StatsEvent.OnNotesStatClick -> onNotesStatClick()
+            is StatsEvent.OnSerenityPlusClick -> onSerenityPlusClick()
         }
+    }
+
+    private fun onSerenityPlusClick() {
+        _effect.tryEmit(StatsEffect.OpenBillingScreen)
     }
 
     private fun onPeriodSelected(period: TimePeriod) {

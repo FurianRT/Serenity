@@ -35,11 +35,13 @@ internal sealed interface StatsEvent {
     data object OnMoodStatClick : StatsEvent
     data class OnPeriodSelected(val period: TimePeriod) : StatsEvent
     data class OnStreakDayClick(val day: StreakDay) : StatsEvent
+    data object OnSerenityPlusClick : StatsEvent
 }
 
 internal sealed interface StatsEffect {
     data object CloseScreen : StatsEffect
     data object ScrollToMoodBlock : StatsEffect
+    data object OpenBillingScreen : StatsEffect
     data class OpenNoteCreateScreen(val date: ZonedDateTime) : StatsEffect
     data class OpenGalleryRequest(val startDate: LocalDate?) : StatsEffect
     data class OpenNoteSearchRequest(

@@ -1,6 +1,7 @@
 package com.furianrt.statistics.internal.domain.usecase
 
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.mood.api.MoodHolder
 import com.furianrt.mood.api.entities.Mood
@@ -8,9 +9,9 @@ import com.furianrt.statistics.internal.domain.entities.MoodData
 import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.domain.utils.filterByDate
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.ZonedDateTime
@@ -21,109 +22,94 @@ private data class MoodWithDate(
     val level: MoodData.MoodLevel,
 )
 
+private data class PremiumData(
+    val noteWithMood: Int,
+    val bestDays: Set<DayOfWeek>,
+    val moods: List<MoodData.Mood>,
+    val moodDays: List<MoodData.MoodDay>,
+)
+
 internal class GetMoodDataUseCase @Inject constructor(
     private val notesRepository: NotesRepository,
+    private val serenityPlusProvider: SerenityPlusProvider,
     private val dispatchers: DispatchersProvider,
 ) {
     operator fun invoke(
         period: TimePeriod,
-    ): Flow<MoodData> = notesRepository.getSimpleNotesWithMood()
-        .map { notes ->
-            val currentDate = LocalDate.now()
-            val prevPeriodNotes = if (period != TimePeriod.ALL_TIME) {
-                notes.filterByDate(
-                    start = currentDate.minusDays(period.days * 2L),
-                    end = currentDate.minusDays(period.days)
-                )
-            } else {
-                emptyList()
-            }
+    ): Flow<MoodData> = combine(
+        notesRepository.getSimpleNotesWithMood(),
+        serenityPlusProvider.hasSerenityPlus(),
+    ) { notes, hasSerenityPlus ->
+        val currentDate = LocalDate.now()
+        val prevPeriodNotes = if (period != TimePeriod.ALL_TIME) {
+            notes.filterByDate(
+                start = currentDate.minusDays(period.days * 2L),
+                end = currentDate.minusDays(period.days)
+            )
+        } else {
+            emptyList()
+        }
 
-            val currentPeriodNotes = if (period != TimePeriod.ALL_TIME) {
-                notes.filterByDate(
-                    start = currentDate.minusDays(period.days),
-                    end = null,
-                )
-            } else {
-                notes
-            }
+        val currentPeriodNotes = if (period != TimePeriod.ALL_TIME) {
+            notes.filterByDate(
+                start = currentDate.minusDays(period.days),
+                end = null,
+            )
+        } else {
+            notes
+        }
 
-            val prevAverageMood = prevPeriodNotes
-                .mapNotNull { MoodHolder.findMood(it.moodId)?.level?.toValue() }
-                .average()
-                .toFloat()
-                .normalizeMood()
+        val prevAverageMood = prevPeriodNotes
+            .mapNotNull { MoodHolder.findMood(it.moodId)?.level?.toValue() }
+            .average()
+            .toFloat()
+            .normalizeMood()
 
-            val currentMoodDays = currentPeriodNotes.mapNotNull { note ->
-                MoodWithDate(
-                    date = note.date,
-                    level = when (MoodHolder.findMood(note.moodId)?.level) {
-                        Mood.Level.TERRIBLE -> MoodData.MoodLevel.TERRIBLE
-                        Mood.Level.BAD -> MoodData.MoodLevel.BAD
-                        Mood.Level.SAD -> MoodData.MoodLevel.SAD
-                        Mood.Level.NORMAL -> MoodData.MoodLevel.NORMAL
-                        Mood.Level.GOOD -> MoodData.MoodLevel.GOOD
-                        Mood.Level.PERFECT -> MoodData.MoodLevel.PERFECT
-                        null -> return@mapNotNull null
-                    }
-                )
-            }
-
-            val currentAverageMood = currentMoodDays
-                .map { it.level.toValue() }
-                .average()
-                .toFloat()
-                .normalizeMood()
-
-            val averageMoodsWithTime = currentMoodDays
-                .groupBy { it.date }
-                .mapValues { it.value.map { mood -> mood.level.toValue() }.average() }
-
-            val moodPercents = currentMoodDays
-                .groupingBy { it.level }
-                .eachCount()
-                .map { (level, count) ->
-                    MoodData.Mood(
-                        level = level,
-                        percent = count.toFloat() / currentMoodDays.size,
-                    )
+        val currentMoodDays = currentPeriodNotes.mapNotNull { note ->
+            MoodWithDate(
+                date = note.date,
+                level = when (MoodHolder.findMood(note.moodId)?.level) {
+                    Mood.Level.TERRIBLE -> MoodData.MoodLevel.TERRIBLE
+                    Mood.Level.BAD -> MoodData.MoodLevel.BAD
+                    Mood.Level.SAD -> MoodData.MoodLevel.SAD
+                    Mood.Level.NORMAL -> MoodData.MoodLevel.NORMAL
+                    Mood.Level.GOOD -> MoodData.MoodLevel.GOOD
+                    Mood.Level.PERFECT -> MoodData.MoodLevel.PERFECT
+                    null -> return@mapNotNull null
                 }
-
-            MoodData(
-                averageMood = currentAverageMood,
-                change = when {
-                    period == TimePeriod.ALL_TIME -> 0f
-                    currentPeriodNotes.isNotEmpty() && prevPeriodNotes.isNotEmpty() -> {
-                        currentAverageMood - prevAverageMood
-                    }
-
-                    else -> 0f
-                },
-                noteWithMood = currentMoodDays.size,
-                moods = buildList {
-                    addAll(moodPercents)
-                    MoodData.MoodLevel.entries.forEach { entry ->
-                        if (moodPercents.none { it.level == entry }) {
-                            add(
-                                MoodData.Mood(
-                                    level = entry,
-                                    percent = 0f,
-                                )
-                            )
-                        }
-                    }
-                }.sortedByDescending { it.level.toValue() },
-                bestDays = currentMoodDays.findBestDaysOfWeek(),
-                moodDays = averageMoodsWithTime
-                    .map { mood ->
-                        MoodData.MoodDay(
-                            date = mood.key,
-                            averageMood = mood.value.toFloat(),
-                        )
-                    }
-                    .sortedBy { it.date },
             )
         }
+
+        val currentAverageMood = currentMoodDays
+            .map { it.level.toValue() }
+            .average()
+            .toFloat()
+            .normalizeMood()
+
+        val moodPremiumData = if (hasSerenityPlus) {
+            getPremiumData(
+                currentMoodDays = currentMoodDays,
+            )
+        } else {
+            getFakePremiumData()
+        }
+
+        MoodData(
+            averageMood = currentAverageMood,
+            change = when {
+                period == TimePeriod.ALL_TIME -> 0f
+                currentPeriodNotes.isNotEmpty() && prevPeriodNotes.isNotEmpty() -> {
+                    currentAverageMood - prevAverageMood
+                }
+
+                else -> 0f
+            },
+            noteWithMood = moodPremiumData.noteWithMood,
+            moods = moodPremiumData.moods,
+            bestDays = moodPremiumData.bestDays,
+            moodDays = moodPremiumData.moodDays,
+        )
+    }
         .distinctUntilChanged()
         .flowOn(dispatchers.default)
 }
@@ -165,4 +151,108 @@ private fun MoodData.MoodLevel.toValue(): Int = when (this) {
     MoodData.MoodLevel.NORMAL -> 4
     MoodData.MoodLevel.GOOD -> 5
     MoodData.MoodLevel.PERFECT -> 6
+}
+
+private fun getPremiumData(
+    currentMoodDays: List<MoodWithDate>,
+): PremiumData {
+    val averageMoodsWithTime = currentMoodDays
+        .groupBy { it.date }
+        .mapValues { it.value.map { mood -> mood.level.toValue() }.average() }
+
+    val moodPercents = currentMoodDays
+        .groupingBy { it.level }
+        .eachCount()
+        .map { (level, count) ->
+            MoodData.Mood(
+                level = level,
+                percent = count.toFloat() / currentMoodDays.size,
+            )
+        }
+
+    return PremiumData(
+        noteWithMood = currentMoodDays.size,
+        moods = buildList {
+            addAll(moodPercents)
+            MoodData.MoodLevel.entries.forEach { entry ->
+                if (moodPercents.none { it.level == entry }) {
+                    add(
+                        MoodData.Mood(
+                            level = entry,
+                            percent = 0f,
+                        )
+                    )
+                }
+            }
+        }.sortedByDescending { it.level.toValue() },
+        bestDays = currentMoodDays.findBestDaysOfWeek(),
+        moodDays = averageMoodsWithTime
+            .map { mood ->
+                MoodData.MoodDay(
+                    date = mood.key,
+                    averageMood = mood.value.toFloat(),
+                )
+            }
+            .sortedBy { it.date },
+    )
+}
+
+private fun getFakePremiumData(): PremiumData {
+    val currentDate = ZonedDateTime.now()
+    return PremiumData(
+        noteWithMood = 243,
+        bestDays = setOf(DayOfWeek.FRIDAY, DayOfWeek.SUNDAY),
+        moods = listOf(
+            MoodData.Mood(
+                level = MoodData.MoodLevel.PERFECT,
+                percent = 0.25f,
+            ),
+            MoodData.Mood(
+                level = MoodData.MoodLevel.GOOD,
+                percent = 0.1f,
+            ),
+            MoodData.Mood(
+                level = MoodData.MoodLevel.NORMAL,
+                percent = 0.05f,
+            ),
+            MoodData.Mood(
+                level = MoodData.MoodLevel.SAD,
+                percent = 0.15f,
+            ),
+            MoodData.Mood(
+                level = MoodData.MoodLevel.BAD,
+                percent = 0.35f,
+            ),
+            MoodData.Mood(
+                level = MoodData.MoodLevel.TERRIBLE,
+                percent = 0.1f,
+            ),
+        ),
+        moodDays = listOf(
+            MoodData.MoodDay(
+                date = currentDate.minusDays(5),
+                averageMood = 3f,
+            ),
+            MoodData.MoodDay(
+                date = currentDate.minusDays(4),
+                averageMood = 5f,
+            ),
+            MoodData.MoodDay(
+                date = currentDate.minusDays(3),
+                averageMood = 2f,
+            ),
+            MoodData.MoodDay(
+                date = currentDate.minusDays(2),
+                averageMood = 4f,
+            ),
+            MoodData.MoodDay(
+                date = currentDate.minusDays(1),
+                averageMood = 3f,
+            ),
+            MoodData.MoodDay(
+                date = currentDate,
+                averageMood = 5f,
+            ),
+        ),
+    )
 }

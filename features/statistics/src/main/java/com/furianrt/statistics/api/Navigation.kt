@@ -8,6 +8,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.furianrt.statistics.internal.ui.StatsScreen
+import com.furianrt.uikit.anim.defaultExitForBillingTransition
 import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import kotlinx.serialization.Serializable
@@ -24,17 +25,19 @@ fun NavController.navigateToStatistics(
 
 fun NavGraphBuilder.statisticsScreen(
     hasNoteCreateScreenRoute: (destination: NavDestination) -> Boolean,
+    hasBillingRoute: (destination: NavDestination) -> Boolean,
     openCreateNoteRequest: (date: ZonedDateTime) -> Unit,
     openGalleryRequest: (startDate: LocalDate?) -> Unit,
     openNoteSearchRequest: (startDate: LocalDate?, endDate: LocalDate?) -> Unit,
+    openBillingScreen: () -> Unit,
     onCloseRequest: () -> Unit,
 ) {
     composable<StatisticsRoute>(
         exitTransition = {
-            if ( hasNoteCreateScreenRoute(targetState.destination)) {
-                fadeOut(tween(250))
-            } else {
-                defaultExitTransition()
+            when {
+                hasNoteCreateScreenRoute(targetState.destination) ->  fadeOut(tween(250))
+                hasBillingRoute(targetState.destination) -> defaultExitForBillingTransition()
+                else -> defaultExitTransition()
             }
         },
         popExitTransition = { defaultPopExitTransition() },
@@ -43,6 +46,7 @@ fun NavGraphBuilder.statisticsScreen(
             openCreateNoteRequest = openCreateNoteRequest,
             openGalleryRequest = openGalleryRequest,
             openNoteSearchRequest = openNoteSearchRequest,
+            openBillingScreen = openBillingScreen,
             onCloseRequest = onCloseRequest,
         )
     }

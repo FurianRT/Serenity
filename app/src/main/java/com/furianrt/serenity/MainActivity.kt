@@ -435,6 +435,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                         )
                         statisticsScreen(
                             hasNoteCreateScreenRoute = { it.hasRoute<NoteCreateRoute>() },
+                            hasBillingRoute = { it.hasRoute<BillingRoute>() },
                             onCloseRequest = navController::navigateUp,
                             openGalleryRequest = { startDate ->
                                 navController.navigateToGallery(
@@ -456,6 +457,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                                     ),
                                 )
                             },
+                            openBillingScreen = navController::navigateToBilling,
                         )
                     }
                     AnimatedVisibility(
