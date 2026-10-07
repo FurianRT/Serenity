@@ -2,7 +2,6 @@ package com.furianrt.statistics.internal.ui.entities
 
 import com.furianrt.statistics.internal.domain.entities.MoodData
 import com.furianrt.statistics.internal.domain.entities.StreakData
-import kotlin.math.roundToInt
 
 internal fun StreakData.StreakDay.toUI() = StreakDay(
     hasNotes = hasNotes,
@@ -18,5 +17,5 @@ internal fun MoodData.Mood.toUI() = MoodStats.Mood(
         MoodData.MoodLevel.GOOD -> MoodStats.Level.GOOD
         MoodData.MoodLevel.PERFECT -> MoodStats.Level.PERFECT
     },
-    percent = (percent * 100).roundToInt(),
+    percent = (percent * 100f),
 )

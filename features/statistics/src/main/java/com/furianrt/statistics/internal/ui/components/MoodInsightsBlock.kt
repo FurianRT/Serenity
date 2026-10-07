@@ -4,7 +4,10 @@ import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,8 +21,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,14 +33,18 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
-import androidx.compose.ui.unit.IntSize.Companion
-import androidx.compose.ui.unit.coerceAtLeast
 import androidx.compose.ui.unit.dp
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.entities.MoodStats
@@ -54,6 +62,7 @@ import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.hazeGlass
 import dev.chrisbanes.haze.rememberHazeState
+import kotlin.math.min
 import com.furianrt.uikit.R as uiR
 
 @OptIn(ExperimentalHazeApi::class)
@@ -94,6 +103,7 @@ internal fun MoodInsightsBlock(
         ) {
             PieChart(
                 moods = stats.pieChartData,
+                notesCount = stats.notesCount,
             )
             MoodLines(
                 modifier = Modifier.weight(1f),
@@ -125,7 +135,7 @@ internal fun MoodInsightsBlock(
         )
         Spacer(Modifier.size(10.dp))
         Box(
-            Modifier.size(80.dp)
+            Modifier.size(100.dp)
         )
     }
 }
@@ -194,16 +204,104 @@ private fun BestDaysOfWeek(
 @Composable
 private fun PieChart(
     moods: List<MoodStats.Mood>,
+    notesCount: Int,
     modifier: Modifier = Modifier,
+    strokeWidth: Dp = 34.dp,
+    pieSize: Dp = 156.dp,
 ) {
-    Box(
-        modifier = modifier
-            .size(140.dp)
-            .background(
-                color = MaterialTheme.colorScheme.primaryContainer,
-                shape = CircleShape,
-            )
+    val colorScheme = MaterialTheme.colorScheme
+
+    val notesCountAnim by animateIntAsState(
+        targetValue = notesCount,
+        animationSpec = spring(
+            stiffness = Spring.StiffnessVeryLow,
+            visibilityThreshold = Int.VisibilityThreshold,
+        )
     )
+
+    val animatedAngles = moods.map { mood ->
+        animateFloatAsState(
+            targetValue = 360f * (mood.percent / 100f),
+            animationSpec = tween(
+                durationMillis = 800,
+            ),
+        ).value
+    }
+
+    Box(
+        modifier = modifier,
+        contentAlignment = Alignment.Center,
+    ) {
+        Canvas(modifier = Modifier.size(pieSize)) {
+            val stroke = strokeWidth.toPx()
+
+            val diameter = min(size.width, size.height) - stroke
+            val topLeft = Offset(
+                (size.width - diameter) / 2f,
+                (size.height - diameter) / 2f,
+            )
+
+            val arcSize = Size(diameter, diameter)
+
+            var startAngle = -90f
+
+            drawArc(
+                color = colorScheme.tertiary,
+                startAngle = startAngle,
+                sweepAngle = 360f,
+                useCenter = false,
+                topLeft = topLeft,
+                size = arcSize,
+                style = Stroke(
+                    width = stroke,
+                    cap = StrokeCap.Butt,
+                ),
+            )
+
+            animatedAngles.forEachIndexed { index, sweepAngle ->
+                if (sweepAngle > 0f) {
+                    drawArc(
+                        color = moods[index].level.color,
+                        startAngle = startAngle,
+                        sweepAngle = sweepAngle,
+                        useCenter = false,
+                        topLeft = topLeft,
+                        size = arcSize,
+                        style = Stroke(
+                            width = stroke,
+                            cap = StrokeCap.Butt,
+                        ),
+                    )
+                }
+
+                startAngle += sweepAngle
+            }
+        }
+
+        Column(
+            modifier = Modifier
+                .width(pieSize - strokeWidth * 2)
+                .padding(4.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = notesCountAnim.toString(),
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.ExtraBold,
+            )
+            BasicText(
+                text = pluralStringResource(R.plurals.stats_notes_count, notesCount),
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                color = MaterialTheme.colorScheme::onSurface,
+                autoSize = TextAutoSize.StepBased(
+                    minFontSize = MaterialTheme.typography.labelSmall.fontSize * 0.7f,
+                    maxFontSize = MaterialTheme.typography.labelSmall.fontSize,
+                ),
+            )
+        }
+    }
 }
 
 @Composable
@@ -220,7 +318,7 @@ private fun MoodLines(
                 MoodLine(
                     modifier = Modifier.fillMaxWidth(),
                     mood = mood,
-                    maxPercent = moods.maxBy { it.percent }.percent.takeIf { it > 0 } ?: 100,
+                    maxPercent = moods.maxBy { it.percent }.percent.takeIf { it > 0f } ?: 100f,
                 )
             }
         }
@@ -230,15 +328,15 @@ private fun MoodLines(
 @Composable
 private fun MoodLine(
     mood: MoodStats.Mood,
-    maxPercent: Int,
+    maxPercent: Float,
     modifier: Modifier = Modifier,
 ) {
     val percentAnim by animateFloatAsState(
-        targetValue = mood.percent.toFloat(),
+        targetValue = mood.percent,
         animationSpec = spring(stiffness = Spring.StiffnessLow),
     )
     val maxPercentAnim by animateFloatAsState(
-        targetValue = maxPercent.toFloat(),
+        targetValue = maxPercent,
         animationSpec = spring(stiffness = Spring.StiffnessLow),
     )
 
@@ -246,35 +344,37 @@ private fun MoodLine(
     val style = MaterialTheme.typography.labelSmall.copy(
         fontSize = MaterialTheme.typography.labelSmall.fontSize * 0.8f,
     )
-    val percentWidth = remember(percentAnim) {
+    val percentWidth = remember(mood.percent) {
         textMeasurer.measure(
-            text = "${percentAnim.toInt()}%",
+            text = "${mood.percent}%",
             style = style,
             maxLines = 1
         ).size.width
     }
 
+    val percentWidthAnim by animateFloatAsState(percentWidth.toFloat())
+
     BoxWithConstraints(
         modifier = modifier,
     ) {
-        val lineFullWidth = maxWidth - 32.dp - percentWidth.pxToDp()
+        val lineFullWidth = maxWidth - 32.dp - percentWidthAnim.pxToDp()
         val lineResultWidth = if (maxPercentAnim == 0f) {
-            4.dp
+            0.dp
         } else {
-            (lineFullWidth * (percentAnim / maxPercentAnim)).coerceAtLeast(4.dp)
+            (lineFullWidth * (percentAnim / maxPercentAnim))
         }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Icon(
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(18.dp),
                 painter = mood.level.icon,
                 tint = mood.level.color,
                 contentDescription = null,
             )
+            Spacer(Modifier.size(8.dp))
             Box(
                 modifier = Modifier
                     .height(8.dp)
@@ -284,6 +384,7 @@ private fun MoodLine(
                         shape = RoundedCornerShape(8.dp),
                     )
             )
+            Spacer(Modifier.size(4.dp))
             Text(
                 text = "${percentAnim.toInt()}%",
                 maxLines = 1,
@@ -304,27 +405,27 @@ private fun Preview() {
                 pieChartData = listOf(
                     MoodStats.Mood(
                         level = MoodStats.Level.TERRIBLE,
-                        percent = 0,
+                        percent = 0f,
                     ),
                     MoodStats.Mood(
                         level = MoodStats.Level.BAD,
-                        percent = 10,
+                        percent = 10f,
                     ),
                     MoodStats.Mood(
                         level = MoodStats.Level.SAD,
-                        percent = 15,
+                        percent = 15f,
                     ),
                     MoodStats.Mood(
                         level = MoodStats.Level.NORMAL,
-                        percent = 20,
+                        percent = 20f,
                     ),
                     MoodStats.Mood(
                         level = MoodStats.Level.GOOD,
-                        percent = 25,
+                        percent = 25f,
                     ),
                     MoodStats.Mood(
                         level = MoodStats.Level.PERFECT,
-                        percent = 25,
+                        percent = 25f,
                     ),
                 ),
             ),

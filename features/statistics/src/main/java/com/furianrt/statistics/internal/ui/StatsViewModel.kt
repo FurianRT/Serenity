@@ -11,18 +11,20 @@ import com.furianrt.statistics.internal.domain.entities.TimePeriod
 import com.furianrt.statistics.internal.domain.usecase.GetMediaDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetMoodDataUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetNotesDataUseCase
+import com.furianrt.statistics.internal.domain.usecase.GetSelectedTimePeriodUseCase
 import com.furianrt.statistics.internal.domain.usecase.GetStreakDataUseCase
+import com.furianrt.statistics.internal.domain.usecase.UpdateSelectedTimePeriodUseCase
 import com.furianrt.statistics.internal.ui.entities.GeneralStats
 import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.statistics.internal.ui.entities.toUI
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -31,7 +33,6 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.update
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.TextStyle
@@ -41,10 +42,12 @@ import javax.inject.Inject
 @HiltViewModel
 internal class StatsViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
+    getSelectedTimePeriodUseCase: GetSelectedTimePeriodUseCase,
     private val getMoodDataUseCase: GetMoodDataUseCase,
     private val getMediaDataUseCase: GetMediaDataUseCase,
     private val getNotesDataUseCase: GetNotesDataUseCase,
     private val getStreakDataUseCase: GetStreakDataUseCase,
+    private val updateSelectedTimePeriodUseCase: UpdateSelectedTimePeriodUseCase,
 ) : ViewModel() {
 
     private val periods = listOf(
@@ -55,10 +58,8 @@ internal class StatsViewModel @Inject constructor(
         TimePeriod.ALL_TIME,
     )
 
-    private val selectedPeriodState = MutableStateFlow(TimePeriod.SEVEN_DAYS)
-
     @OptIn(ExperimentalCoroutinesApi::class)
-    val state: StateFlow<StatsState> = selectedPeriodState.flatMapLatest { period ->
+    val state: StateFlow<StatsState> = getSelectedTimePeriodUseCase().flatMapLatest { period ->
         combine(
             getNotesDataUseCase(period),
             getMediaDataUseCase(period),
@@ -101,7 +102,9 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onPeriodSelected(period: TimePeriod) {
-        selectedPeriodState.update { period }
+        launch {
+            updateSelectedTimePeriodUseCase(period)
+        }
     }
 
     private fun onButtonBackClick() {
@@ -115,12 +118,14 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onGalleryStatClick() {
-        val startDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
-            null
-        } else {
-            LocalDate.now().minusDays(selectedPeriodState.value.days)
+        (state.value.content as? StatsState.Content.Success)?.let { successContent ->
+            val startDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
+                null
+            } else {
+                LocalDate.now().minusDays(successContent.selectedPeriod.days)
+            }
+            _effect.tryEmit(StatsEffect.OpenGalleryRequest(startDate))
         }
-        _effect.tryEmit(StatsEffect.OpenGalleryRequest(startDate))
     }
 
     private fun onMoodStatClick() {
@@ -128,17 +133,19 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onNotesStatClick() {
-        val startDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
-            null
-        } else {
-            LocalDate.now().minusDays(selectedPeriodState.value.days)
+        (state.value.content as? StatsState.Content.Success)?.let { successContent ->
+            val startDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
+                null
+            } else {
+                LocalDate.now().minusDays(successContent.selectedPeriod.days)
+            }
+            val endDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
+                null
+            } else {
+                LocalDate.now()
+            }
+            _effect.tryEmit(StatsEffect.OpenNoteSearchRequest(startDate, endDate))
         }
-        val endDate = if (selectedPeriodState.value == TimePeriod.ALL_TIME) {
-            null
-        } else {
-            LocalDate.now()
-        }
-        _effect.tryEmit(StatsEffect.OpenNoteSearchRequest(startDate, endDate))
     }
 
     private fun buildState(

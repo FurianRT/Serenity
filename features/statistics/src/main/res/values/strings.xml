@@ -20,4 +20,9 @@
         <item quantity="one">day</item>
         <item quantity="other">days</item>
     </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">note</item>
+        <item quantity="other">notes</item>
+    </plurals>
 </resources>

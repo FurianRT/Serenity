@@ -48,4 +48,6 @@ dependencies {
     implementation(libs.hazeGlassMaterials)
 
     implementation(libs.lottie)
+
+    implementation(libs.dataStore)
 }

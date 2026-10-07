@@ -266,27 +266,27 @@ private fun Preview() {
                         pieChartData = listOf(
                             MoodStats.Mood(
                                 level = MoodStats.Level.TERRIBLE,
-                                percent = 0,
+                                percent = 0f,
                             ),
                             MoodStats.Mood(
                                 level = MoodStats.Level.BAD,
-                                percent = 10,
+                                percent = 10f,
                             ),
                             MoodStats.Mood(
                                 level = MoodStats.Level.SAD,
-                                percent = 15,
+                                percent = 15f,
                             ),
                             MoodStats.Mood(
                                 level = MoodStats.Level.NORMAL,
-                                percent = 20,
+                                percent = 20f,
                             ),
                             MoodStats.Mood(
                                 level = MoodStats.Level.GOOD,
-                                percent = 25,
+                                percent = 25f,
                             ),
                             MoodStats.Mood(
                                 level = MoodStats.Level.PERFECT,
-                                percent = 25,
+                                percent = 25f,
                             ),
                         ),
                     ),

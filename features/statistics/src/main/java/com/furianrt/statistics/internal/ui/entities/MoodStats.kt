@@ -15,7 +15,7 @@ internal data class MoodStats(
 ) {
     data class Mood(
         val level: Level,
-        val percent: Int,
+        val percent: Float,
     )
 
     enum class Level {
@@ -37,13 +37,13 @@ internal data class MoodStats(
             }
 
         val color: Color
-            @Composable get() = when (this) {
-                TERRIBLE -> Color(0xFFE48F84)
-                BAD -> Color(0xFFE4B284)
-                SAD -> Color(0xFFAB93EC)
-                NORMAL -> Color(0xFF9FD3EF)
-                GOOD -> Color(0xFF83B3F5)
-                PERFECT -> Color(0xFF81C2AB)
+            get() = when (this) {
+                TERRIBLE -> Color(0xFFC76B83)
+                BAD -> Color(0xFFD58A72)
+                SAD -> Color(0xFF7D9FC1)
+                NORMAL -> Color(0xFFB39AC7)
+                GOOD -> Color(0xFF5FAF7A)
+                PERFECT -> Color(0xFFD6A85C)
             }
     }
 }
