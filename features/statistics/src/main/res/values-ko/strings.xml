@@ -1,0 +1,30 @@
+<resources>
+    <string name="stats_screen_title">통계</string>
+    <string name="stats_period_seven_days">7일</string>
+    <string name="stats_period_one_month">1개월</string>
+    <string name="stats_period_six_month">6개월</string>
+    <string name="stats_period_one_year">1년</string>
+    <string name="stats_period_all_time">전체</string>
+
+    <string name="stats_notes_title">기록</string>
+    <string name="stats_media_title">갤러리</string>
+    <string name="stats_mood_title">기분</string>
+
+    <string name="stats_current_streak_title">현재 연속 기록</string>
+    <string name="stats_longest_streak_title">최장 연속 기록</string>
+
+    <string name="stats_mood_block_title">기분 분석</string>
+    <string name="stats_mood_block_best_days_of_week_title">기분이 가장 좋은 요일:</string>
+
+    <string name="stats_mood_block_description_1">● 내 기분 한눈에 보기</string>
+    <string name="stats_mood_block_description_2">● 시간에 따른 기분 변화</string>
+    <string name="stats_mood_block_description_3">● 내가 가장 기분 좋은 날</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="other">일</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="other">기록</item>
+    </plurals>
+</resources>

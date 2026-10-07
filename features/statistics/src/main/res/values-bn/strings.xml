@@ -1,0 +1,32 @@
+<resources>
+    <string name="stats_screen_title">পরিসংখ্যান</string>
+    <string name="stats_period_seven_days">৭ দিন</string>
+    <string name="stats_period_one_month">১ মাস</string>
+    <string name="stats_period_six_month">৬ মাস</string>
+    <string name="stats_period_one_year">১ বছর</string>
+    <string name="stats_period_all_time">সব</string>
+
+    <string name="stats_notes_title">নোট</string>
+    <string name="stats_media_title">গ্যালারি</string>
+    <string name="stats_mood_title">মনের অবস্থা</string>
+
+    <string name="stats_current_streak_title">বর্তমান ধারাবাহিকতা</string>
+    <string name="stats_longest_streak_title">সবচেয়ে দীর্ঘ ধারাবাহিকতা</string>
+
+    <string name="stats_mood_block_title">মনের অবস্থার বিশ্লেষণ</string>
+    <string name="stats_mood_block_best_days_of_week_title">সপ্তাহের সেরা দিন:</string>
+
+    <string name="stats_mood_block_description_1">● আপনার মনের অবস্থার এক ঝলক</string>
+    <string name="stats_mood_block_description_2">● সময়ের সাথে মনের অবস্থার পরিবর্তন</string>
+    <string name="stats_mood_block_description_3">● আপনার সেরা দিনগুলো</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">দিন</item>
+        <item quantity="other">দিন</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">নোট</item>
+        <item quantity="other">নোট</item>
+    </plurals>
+</resources>

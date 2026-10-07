@@ -6,13 +6,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicText
-import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.ripple.RippleAlpha
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalRippleConfiguration
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RippleConfiguration
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
@@ -23,7 +22,6 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.furianrt.uikit.anim.shimmer
 import com.furianrt.uikit.utils.shiftToAccent
 import com.furianrt.uikit.R as uiR
@@ -62,7 +60,7 @@ internal fun SerenityPlusButton(
                     color = MaterialTheme.colorScheme.tertiaryContainer,
                 )
                 .clickable(onClick = onClick)
-                .padding(horizontal = 8.dp, vertical = 12.dp),
+                .padding(horizontal = 8.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -71,15 +69,9 @@ internal fun SerenityPlusButton(
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 contentDescription = null,
             )
-            BasicText(
+            Text(
                 text = text,
                 style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme::onPrimaryContainer,
-                autoSize = TextAutoSize.StepBased(
-                    minFontSize = 14.sp,
-                    maxFontSize = MaterialTheme.typography.titleMedium.fontSize,
-                ),
             )
         }
     }

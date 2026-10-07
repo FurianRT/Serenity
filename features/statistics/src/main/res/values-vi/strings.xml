@@ -1,0 +1,30 @@
+<resources>
+    <string name="stats_screen_title">Thống kê</string>
+    <string name="stats_period_seven_days">7N</string>
+    <string name="stats_period_one_month">1T</string>
+    <string name="stats_period_six_month">6T</string>
+    <string name="stats_period_one_year">1N</string>
+    <string name="stats_period_all_time">Tất cả</string>
+
+    <string name="stats_notes_title">Ghi chú</string>
+    <string name="stats_media_title">Thư viện</string>
+    <string name="stats_mood_title">Tâm trạng</string>
+
+    <string name="stats_current_streak_title">Chuỗi hiện tại</string>
+    <string name="stats_longest_streak_title">Chuỗi dài nhất</string>
+
+    <string name="stats_mood_block_title">Phân tích tâm trạng</string>
+    <string name="stats_mood_block_best_days_of_week_title">Ngày có tâm trạng tốt nhất trong tuần:</string>
+
+    <string name="stats_mood_block_description_1">● Tổng quan về tâm trạng</string>
+    <string name="stats_mood_block_description_2">● Tâm trạng thay đổi theo thời gian</string>
+    <string name="stats_mood_block_description_3">● Những ngày tuyệt vời nhất</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="other">ngày</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="other">ghi chú</item>
+    </plurals>
+</resources>

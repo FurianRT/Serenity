@@ -134,7 +134,7 @@ private fun Content(
                 uiState = uiState.content,
                 listState = listState,
                 contentPadding = PaddingValues(
-                    top = topPadding + 16.dp,
+                    top = topPadding + 12.dp,
                     bottom = bottomInsetPadding + 24.dp,
                     start = 16.dp,
                     end = 16.dp,

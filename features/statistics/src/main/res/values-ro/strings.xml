@@ -1,0 +1,34 @@
+<resources>
+    <string name="stats_screen_title">Statistici</string>
+    <string name="stats_period_seven_days">7Z</string>
+    <string name="stats_period_one_month">1L</string>
+    <string name="stats_period_six_month">6L</string>
+    <string name="stats_period_one_year">1A</string>
+    <string name="stats_period_all_time">Tot</string>
+
+    <string name="stats_notes_title">Notițe</string>
+    <string name="stats_media_title">Galerie</string>
+    <string name="stats_mood_title">Stare de spirit</string>
+
+    <string name="stats_current_streak_title">Serie curentă</string>
+    <string name="stats_longest_streak_title">Cea mai lungă serie</string>
+
+    <string name="stats_mood_block_title">Analiza stării de spirit</string>
+    <string name="stats_mood_block_best_days_of_week_title">Cele mai bune zile ale săptămânii:</string>
+
+    <string name="stats_mood_block_description_1">● Starea ta de spirit dintr-o privire</string>
+    <string name="stats_mood_block_description_2">● Evoluția stării tale de spirit</string>
+    <string name="stats_mood_block_description_3">● Zilele tale cele mai bune</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">zi</item>
+        <item quantity="few">zile</item>
+        <item quantity="other">zile</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">notiță</item>
+        <item quantity="few">notițe</item>
+        <item quantity="other">notițe</item>
+    </plurals>
+</resources>

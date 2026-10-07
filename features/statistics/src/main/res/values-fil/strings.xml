@@ -1,0 +1,32 @@
+<resources>
+    <string name="stats_screen_title">Mga Istatistika</string>
+    <string name="stats_period_seven_days">7A</string>
+    <string name="stats_period_one_month">1B</string>
+    <string name="stats_period_six_month">6B</string>
+    <string name="stats_period_one_year">1T</string>
+    <string name="stats_period_all_time">Lahat</string>
+
+    <string name="stats_notes_title">Mga Tala</string>
+    <string name="stats_media_title">Gallery</string>
+    <string name="stats_mood_title">Mood</string>
+
+    <string name="stats_current_streak_title">Kasalukuyang Streak</string>
+    <string name="stats_longest_streak_title">Pinakamahabang Streak</string>
+
+    <string name="stats_mood_block_title">Mga Insight sa Mood</string>
+    <string name="stats_mood_block_best_days_of_week_title">Pinakamagagandang Araw ng Linggo:</string>
+
+    <string name="stats_mood_block_description_1">● Pangkalahatang Tingnan ng Iyong Mood</string>
+    <string name="stats_mood_block_description_2">● Mga Pagbabago ng Iyong Mood</string>
+    <string name="stats_mood_block_description_3">● Iyong Pinakamagagandang Araw</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">araw</item>
+        <item quantity="other">araw</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">tala</item>
+        <item quantity="other">mga tala</item>
+    </plurals>
+</resources>

@@ -1,0 +1,32 @@
+<resources>
+    <string name="stats_screen_title">आँकड़े</string>
+    <string name="stats_period_seven_days">7 दिन</string>
+    <string name="stats_period_one_month">1 माह</string>
+    <string name="stats_period_six_month">6 माह</string>
+    <string name="stats_period_one_year">1 साल</string>
+    <string name="stats_period_all_time">सभी</string>
+
+    <string name="stats_notes_title">डायरी</string>
+    <string name="stats_media_title">गैलरी</string>
+    <string name="stats_mood_title">मूड</string>
+
+    <string name="stats_current_streak_title">वर्तमान सिलसिला</string>
+    <string name="stats_longest_streak_title">सबसे लंबा सिलसिला</string>
+
+    <string name="stats_mood_block_title">मूड की जानकारी</string>
+    <string name="stats_mood_block_best_days_of_week_title">हफ़्ते के सबसे अच्छे दिन:</string>
+
+    <string name="stats_mood_block_description_1">● आपके मूड की एक झलक</string>
+    <string name="stats_mood_block_description_2">● समय के साथ मूड में बदलाव</string>
+    <string name="stats_mood_block_description_3">● आपके सबसे अच्छे दिन</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">दिन</item>
+        <item quantity="other">दिन</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">डायरी प्रविष्टि</item>
+        <item quantity="other">डायरी प्रविष्टियाँ</item>
+    </plurals>
+</resources>

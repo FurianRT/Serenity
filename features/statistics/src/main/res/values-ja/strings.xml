@@ -1,0 +1,30 @@
+<resources>
+    <string name="stats_screen_title">統計</string>
+    <string name="stats_period_seven_days">7日</string>
+    <string name="stats_period_one_month">1か月</string>
+    <string name="stats_period_six_month">6か月</string>
+    <string name="stats_period_one_year">1年</string>
+    <string name="stats_period_all_time">すべて</string>
+
+    <string name="stats_notes_title">日記</string>
+    <string name="stats_media_title">ギャラリー</string>
+    <string name="stats_mood_title">気分</string>
+
+    <string name="stats_current_streak_title">現在の連続記録</string>
+    <string name="stats_longest_streak_title">最長記録</string>
+
+    <string name="stats_mood_block_title">気分の分析</string>
+    <string name="stats_mood_block_best_days_of_week_title">気分が良かった曜日:</string>
+
+    <string name="stats_mood_block_description_1">● 気分の全体像</string>
+    <string name="stats_mood_block_description_2">● 気分の変化をチェック</string>
+    <string name="stats_mood_block_description_3">● 調子の良かった日</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="other">日</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="other">日記</item>
+    </plurals>
+</resources>

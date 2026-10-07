@@ -1,0 +1,34 @@
+<resources>
+    <string name="stats_screen_title">Statistiques</string>
+    <string name="stats_period_seven_days">7J</string>
+    <string name="stats_period_one_month">1M</string>
+    <string name="stats_period_six_month">6M</string>
+    <string name="stats_period_one_year">1A</string>
+    <string name="stats_period_all_time">Tout</string>
+
+    <string name="stats_notes_title">Notes</string>
+    <string name="stats_media_title">Galerie</string>
+    <string name="stats_mood_title">Humeur</string>
+
+    <string name="stats_current_streak_title">Série actuelle</string>
+    <string name="stats_longest_streak_title">Plus longue série</string>
+
+    <string name="stats_mood_block_title">Analyse de l’humeur</string>
+    <string name="stats_mood_block_best_days_of_week_title">Meilleurs jours de la semaine :</string>
+
+    <string name="stats_mood_block_description_1">● Votre humeur en un coup d’œil</string>
+    <string name="stats_mood_block_description_2">● L’évolution de votre humeur</string>
+    <string name="stats_mood_block_description_3">● Vos meilleurs jours</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">jour</item>
+        <item quantity="many">jours</item>
+        <item quantity="other">jours</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">note</item>
+        <item quantity="many">notes</item>
+        <item quantity="other">notes</item>
+    </plurals>
+</resources>

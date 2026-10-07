@@ -1,0 +1,30 @@
+<resources>
+    <string name="stats_screen_title">สถิติ</string>
+    <string name="stats_period_seven_days">7 วัน</string>
+    <string name="stats_period_one_month">1 เดือน</string>
+    <string name="stats_period_six_month">6 เดือน</string>
+    <string name="stats_period_one_year">1 ปี</string>
+    <string name="stats_period_all_time">ทั้งหมด</string>
+
+    <string name="stats_notes_title">บันทึก</string>
+    <string name="stats_media_title">แกลเลอรี</string>
+    <string name="stats_mood_title">อารมณ์</string>
+
+    <string name="stats_current_streak_title">วันที่บันทึกต่อเนื่อง</string>
+    <string name="stats_longest_streak_title">สถิติต่อเนื่องที่ยาวที่สุด</string>
+
+    <string name="stats_mood_block_title">วิเคราะห์อารมณ์</string>
+    <string name="stats_mood_block_best_days_of_week_title">วันที่อารมณ์ดีที่สุดในสัปดาห์:</string>
+
+    <string name="stats_mood_block_description_1">● ดูภาพรวมอารมณ์ของคุณ</string>
+    <string name="stats_mood_block_description_2">● ดูการเปลี่ยนแปลงของอารมณ์</string>
+    <string name="stats_mood_block_description_3">● วันที่ดีที่สุดของคุณ</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="other">วัน</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="other">บันทึก</item>
+    </plurals>
+</resources>

@@ -1,0 +1,32 @@
+<resources>
+    <string name="stats_screen_title">Statistieken</string>
+    <string name="stats_period_seven_days">7D</string>
+    <string name="stats_period_one_month">1M</string>
+    <string name="stats_period_six_month">6M</string>
+    <string name="stats_period_one_year">1J</string>
+    <string name="stats_period_all_time">Alles</string>
+
+    <string name="stats_notes_title">Notities</string>
+    <string name="stats_media_title">Galerij</string>
+    <string name="stats_mood_title">Stemming</string>
+
+    <string name="stats_current_streak_title">Huidige reeks</string>
+    <string name="stats_longest_streak_title">Langste reeks</string>
+
+    <string name="stats_mood_block_title">Inzicht in je stemming</string>
+    <string name="stats_mood_block_best_days_of_week_title">Beste dagen van de week:</string>
+
+    <string name="stats_mood_block_description_1">● Je stemming in één oogopslag</string>
+    <string name="stats_mood_block_description_2">● Veranderingen in je stemming</string>
+    <string name="stats_mood_block_description_3">● Je beste dagen</string>
+
+    <plurals name="stats_days_count">
+        <item quantity="one">dag</item>
+        <item quantity="other">dagen</item>
+    </plurals>
+
+    <plurals name="stats_notes_count">
+        <item quantity="one">notitie</item>
+        <item quantity="other">notities</item>
+    </plurals>
+</resources>
