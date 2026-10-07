@@ -318,7 +318,7 @@ private fun StreakDayItem(
                 )
             } else {
                 Icon(
-                    modifier = Modifier.padding(4.dp),
+                    modifier = Modifier.padding(6.dp),
                     painter = painterResource(uiR.drawable.ic_add),
                     tint = MaterialTheme.colorScheme.primaryContainer,
                     contentDescription = null,

@@ -525,7 +525,7 @@ private fun MoodChart(
 
     val minMood = 0f
     val maxMood = 5f
-    val moodRange = maxMood - minMood // Равно 5f
+    val moodRange = maxMood - minMood
 
     Column(
         modifier = modifier,
