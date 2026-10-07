@@ -241,9 +241,13 @@ fun MovableToolbarScaffold(
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    var showBlur by rememberSaveable(listState.canScrollBackward) { mutableStateOf(showShadow) }
+    var showBlur by rememberSaveable { mutableStateOf(showShadow) }
 
     val colorScheme = MaterialTheme.colorScheme
+
+    LaunchedEffect(listState.canScrollBackward) {
+        showBlur = showShadow
+    }
 
     LaunchedEffect(listState) {
         snapshotFlow { toolbarOffset + totalScroll }

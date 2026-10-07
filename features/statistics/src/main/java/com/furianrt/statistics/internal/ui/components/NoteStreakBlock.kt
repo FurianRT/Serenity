@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -47,8 +48,11 @@ import com.furianrt.uikit.R as uiR
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.extensions.pxToDp
+import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import com.furianrt.uikit.utils.brighterBy
+import com.furianrt.uikit.utils.darkerBy
 import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazeState
@@ -241,19 +245,51 @@ private fun StreakDayItem(
 ) {
     val locale = LocalLocale.current.platformLocale
     val dayShape = RoundedCornerShape(8.dp)
+    val dateTextStyle = MaterialTheme.typography.titleSmall
+    val isLightTheme = LocalIsLightTheme.current
+
+    val currentDate = remember(item.date) {
+        LocalDate.now()
+    }
 
     Column(
         modifier = modifier
             .clip(dayShape)
             .clickable { onClick(item) }
-            .padding(5.dp),
+            .padding(6.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
             text = item.date.dayOfWeek.getDisplayName(TextStyle.SHORT_STANDALONE, locale),
             style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            color = if (currentDate == item.date) {
+                if (isLightTheme) {
+                    MaterialTheme.colorScheme.primaryContainer.darkerBy(0.12f)
+                } else {
+                    MaterialTheme.colorScheme.primaryContainer.brighterBy(0.12f)
+                }
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
         )
+        Spacer(Modifier.size(2.dp))
+        Text(
+            modifier = Modifier.padding(2.dp),
+            text = item.date.dayOfMonth.toString(),
+            style = dateTextStyle,
+            maxLines = 1,
+            color = if (currentDate == item.date) {
+                if (isLightTheme) {
+                    MaterialTheme.colorScheme.primaryContainer.darkerBy(0.12f)
+                } else {
+                    MaterialTheme.colorScheme.primaryContainer.brighterBy(0.12f)
+                }
+            } else {
+                MaterialTheme.colorScheme.onSurface
+            },
+        )
+        Spacer(Modifier.size(6.dp))
         Box(
             modifier = Modifier
                 .aspectRatio(1f)
@@ -281,17 +317,11 @@ private fun StreakDayItem(
                     contentDescription = null,
                 )
             } else {
-                val dateTextStyle = MaterialTheme.typography.titleSmall
-                BasicText(
-                    modifier = Modifier.padding(2.dp),
-                    text = item.date.dayOfMonth.toString(),
-                    style = dateTextStyle,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme::onSurface,
-                    autoSize = TextAutoSize.StepBased(
-                        minFontSize = dateTextStyle.fontSize * 0.5f,
-                        maxFontSize = dateTextStyle.fontSize,
-                    ),
+                Icon(
+                    modifier = Modifier.padding(4.dp),
+                    painter = painterResource(uiR.drawable.ic_add),
+                    tint = MaterialTheme.colorScheme.primaryContainer,
+                    contentDescription = null,
                 )
             }
         }

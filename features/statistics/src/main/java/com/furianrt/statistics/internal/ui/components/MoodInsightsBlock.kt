@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import com.furianrt.statistics.R
 import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.uikit.extensions.applyIf
+import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.LocalIsLightTheme
@@ -114,7 +115,9 @@ internal fun MoodInsightsBlock(
                 modifier = Modifier
                     .fillMaxWidth()
                     .applyIf(!hasSerenityPlus) {
-                        Modifier.blur(16.dp)
+                        Modifier
+                            .blur(12.dp)
+                            .clickableNoRipple(onClick = onSerenityPlusClick)
                     },
             ) {
                 Spacer(Modifier.size(16.dp))
@@ -184,28 +187,41 @@ private fun SerenityPlusOverlay(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+        modifier = modifier.clickableNoRipple(onClick = onClick),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Column(
+        Box(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
+            contentAlignment = Alignment.Center,
         ) {
-            Text(
-                text = stringResource(R.string.stats_mood_block_description_1),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = stringResource(R.string.stats_mood_block_description_2),
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Text(
-                text = stringResource(R.string.stats_mood_block_description_3),
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp, vertical = 16.dp)
+                    .background(
+                        color = MaterialTheme.colorScheme.background,
+                        shape = RoundedCornerShape(16.dp),
+                    )
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterVertically)
+            ) {
+                Text(
+                    text = stringResource(R.string.stats_mood_block_description_1),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(
+                    text = stringResource(R.string.stats_mood_block_description_2),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+                Text(
+                    text = stringResource(R.string.stats_mood_block_description_3),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
         }
         SerenityPlusButton(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .fillMaxWidth(),
             text = stringResource(uiR.string.title_serenity_plus),
             onClick = onClick,
         )

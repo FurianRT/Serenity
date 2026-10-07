@@ -11,6 +11,13 @@ fun Color.brighterBy(percent: Float): Color {
     return Color(ColorUtils.HSLToColor(hsl))
 }
 
+fun Color.darkerBy(percent: Float): Color {
+    val hsl = FloatArray(3)
+    ColorUtils.colorToHSL(this.toArgb(), hsl)
+    hsl[2] = (hsl[2] - percent).coerceIn(0f, 1f)
+    return Color(ColorUtils.HSLToColor(hsl))
+}
+
 fun Color.shiftToAccent(
     hueShift: Float = 26f,
     saturation: Float = 0.80f,
