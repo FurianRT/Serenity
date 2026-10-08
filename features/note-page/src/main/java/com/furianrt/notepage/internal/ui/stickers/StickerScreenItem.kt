@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.stickers
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -274,6 +275,7 @@ internal fun StickerScreenItem(
                             scaleY = scale
                         }
                         .offset { IntOffset(-offsetPx.toInt(), offsetPx.toInt()) },
+                    isLayerUp = item.state.overContent,
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
                         item.state.overContent = !item.state.overContent
@@ -381,19 +383,32 @@ private fun ButtonFlip(
 
 @Composable
 private fun ButtonLayer(
+    isLayerUp: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    AnimatedContent(
         modifier = modifier
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer)
             .clickable(onClick = onClick)
             .padding(4.dp),
-        painter = painterResource(R.drawable.ic_layer_sticker),
-        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-        contentDescription = null
-    )
+        targetState = isLayerUp,
+    ) { targetState ->
+        if (targetState) {
+            Icon(
+                painter = painterResource(R.drawable.ic_layer_down),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentDescription = null
+            )
+        } else {
+            Icon(
+                painter = painterResource(R.drawable.ic_layer_up),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                contentDescription = null
+            )
+        }
+    }
 }
 
 @Composable
