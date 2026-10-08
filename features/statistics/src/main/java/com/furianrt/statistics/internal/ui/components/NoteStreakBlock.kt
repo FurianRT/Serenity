@@ -302,7 +302,11 @@ private fun StreakDayItem(
                         )
                     } else {
                         Modifier.border(
-                            color = MaterialTheme.colorScheme.primaryContainer,
+                            color = if (isLightTheme) {
+                                MaterialTheme.colorScheme.primaryContainer
+                            } else {
+                                MaterialTheme.colorScheme.primaryContainer.brighterBy(0.12f)
+                            },
                             width = 1.dp,
                             shape = dayShape,
                         )
@@ -320,7 +324,11 @@ private fun StreakDayItem(
                 Icon(
                     modifier = Modifier.padding(6.dp),
                     painter = painterResource(uiR.drawable.ic_add),
-                    tint = MaterialTheme.colorScheme.primaryContainer,
+                    tint = if (isLightTheme) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.primaryContainer.brighterBy(0.12f)
+                    },
                     contentDescription = null,
                 )
             }
