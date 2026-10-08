@@ -8,8 +8,10 @@ import kotlin.collections.get
 object MoodHolder {
 
     internal val moodPacks: List<MoodPack> = listOf(
-        pack5(),
+        pack6(),
+        pack7(),
         pack4(),
+        pack5(),
         raccoonPack(),
         rabbitPack(),
         catPack(),
@@ -345,6 +347,78 @@ object MoodHolder {
                 id = "mood_pack_5_perfect",
                 level = Mood.Level.PERFECT,
                 icon = R.drawable.mood_pack_5_perfect,
+            ),
+        ),
+    )
+
+    private fun pack6() = MoodPack(
+        icon = R.drawable.mood_pack_6_default,
+        moods = listOf(
+            Mood(
+                id = "mood_pack_6_terrible",
+                level = Mood.Level.TERRIBLE,
+                icon = R.drawable.mood_pack_6_terrible,
+            ),
+            Mood(
+                id = "mood_pack_6_bad",
+                level = Mood.Level.BAD,
+                icon = R.drawable.mood_pack_6_bad,
+            ),
+            Mood(
+                id = "mood_pack_6_sad",
+                level = Mood.Level.SAD,
+                icon = R.drawable.mood_pack_6_sad,
+            ),
+            Mood(
+                id = "mood_pack_6_normal",
+                level = Mood.Level.NORMAL,
+                icon = R.drawable.mood_pack_6_normal,
+            ),
+            Mood(
+                id = "mood_pack_6_good",
+                level = Mood.Level.GOOD,
+                icon = R.drawable.mood_pack_6_good,
+            ),
+            Mood(
+                id = "mood_pack_6_perfect",
+                level = Mood.Level.PERFECT,
+                icon = R.drawable.mood_pack_6_perfect,
+            ),
+        ),
+    )
+
+    private fun pack7() = MoodPack(
+        icon = R.drawable.mood_pack_7_default,
+        moods = listOf(
+            Mood(
+                id = "mood_pack_7_terrible",
+                level = Mood.Level.TERRIBLE,
+                icon = R.drawable.mood_pack_7_terrible,
+            ),
+            Mood(
+                id = "mood_pack_7_bad",
+                level = Mood.Level.BAD,
+                icon = R.drawable.mood_pack_7_bad,
+            ),
+            Mood(
+                id = "mood_pack_7_sad",
+                level = Mood.Level.SAD,
+                icon = R.drawable.mood_pack_7_sad,
+            ),
+            Mood(
+                id = "mood_pack_7_normal",
+                level = Mood.Level.NORMAL,
+                icon = R.drawable.mood_pack_7_normal,
+            ),
+            Mood(
+                id = "mood_pack_7_good",
+                level = Mood.Level.GOOD,
+                icon = R.drawable.mood_pack_7_good,
+            ),
+            Mood(
+                id = "mood_pack_7_perfect",
+                level = Mood.Level.PERFECT,
+                icon = R.drawable.mood_pack_7_perfect,
             ),
         ),
     )
