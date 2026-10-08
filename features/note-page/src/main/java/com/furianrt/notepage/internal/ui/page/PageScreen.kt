@@ -889,8 +889,8 @@ private fun ContentItems(
                         if (uiState.showMood) {
                             MoodButton(
                                 modifier = Modifier
-                                    .padding(end = 12.dp, top = 6.dp)
-                                    .size(52.dp),
+                                    .padding(end = 12.dp, top = 4.dp)
+                                    .size(56.dp),
                                 moodId = uiState.moodId,
                                 defaultMoodId = uiState.defaultMoodId,
                                 hazeState = hazeState,
