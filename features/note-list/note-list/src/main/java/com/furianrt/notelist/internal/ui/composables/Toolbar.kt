@@ -8,15 +8,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.minimumInteractiveComponentSize
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,7 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
-import com.furianrt.uikit.extensions.clickableWithScaleAnim
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.ExperimentalHazeApi
@@ -34,6 +32,8 @@ import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.RefractionProfile
 import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
@@ -61,6 +61,7 @@ internal fun Toolbar(
             SelectedContent(
                 notesCount = notesCount,
                 selectedNotesCount = selectedNotesCount.coerceAtLeast(1),
+                hazeState = hazeState,
                 onDeleteClick = onDeleteClick,
                 onCloseSelectionClick = onCloseSelectionClick,
             )
@@ -79,6 +80,7 @@ internal fun Toolbar(
 private fun SelectedContent(
     notesCount: Int,
     selectedNotesCount: Int,
+    hazeState: HazeState,
     onDeleteClick: () -> Unit,
     onCloseSelectionClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -86,22 +88,28 @@ private fun SelectedContent(
     Row(
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 6.dp),
+            .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        ButtonWithScale(
+        ActionButton(
             icon = painterResource(uiR.drawable.ic_exit),
+            hazeState = hazeState,
             onClick = onCloseSelectionClick,
         )
-        Text(
+        Box(
             modifier = Modifier.weight(1f),
-            text = "$selectedNotesCount/$notesCount",
-            style = MaterialTheme.typography.titleMedium,
-            textAlign = TextAlign.Center,
-        )
-        ButtonWithScale(
+            contentAlignment = Alignment.Center,
+        ) {
+            NotesCounter(
+                total = notesCount,
+                selected = selectedNotesCount,
+                hazeState = hazeState,
+            )
+        }
+        ActionButton(
             icon = painterResource(uiR.drawable.ic_delete),
+            hazeState = hazeState,
             onClick = onDeleteClick,
         )
     }
@@ -122,7 +130,8 @@ private fun UnselectedContent(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        StatsButton(
+        ActionButton(
+            icon = painterResource(uiR.drawable.ic_pie_chart),
             hazeState = hazeState,
             onClick = onStatsClick,
         )
@@ -131,97 +140,88 @@ private fun UnselectedContent(
             hazeState = hazeState,
             onClick = onSearchClick,
         )
-        SettingsButton(
+        ActionButton(
+            icon = painterResource(uiR.drawable.ic_profile),
             hazeState = hazeState,
-            onClick = onSettingsClick
+            onClick = onSettingsClick,
         )
     }
 }
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
-private fun ButtonWithScale(
+private fun ActionButton(
     icon: Painter,
+    hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(
-        modifier = modifier
-            .minimumInteractiveComponentSize()
-            .clickableWithScaleAnim(
-                maxScale = 1.1f,
-                indication = ripple(bounded = false, radius = 20.dp),
-                onClick = onClick,
-            ),
-        contentAlignment = Alignment.Center,
+    val colorScheme = MaterialTheme.colorScheme
+    IconButton(
+        modifier = modifier,
+        colors = IconButtonDefaults.iconButtonColors(
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        onClick = onClick,
     ) {
         Icon(
+            modifier = Modifier
+                .hazeGlass(
+                    input = HazeInput.Sources(hazeState),
+                    performanceMode = HazePerformanceMode.Performance,
+                    style = LocalGlassStyle.current.then {
+                        shape(CircleShape)
+                        whitePoint(0.05f)
+                        tint(colorScheme.surface.copy(alpha = 0.4f))
+                        optics(
+                            GlassDefaults.optics.copy(
+                                depth = OpticalSizeValue.Fixed(1f),
+                                blurRadius = OpticalSizeValue.Fixed(0.dp),
+                            )
+                        )
+                    },
+                )
+                .padding(8.dp),
             painter = icon,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.primary,
         )
     }
 }
 
 @OptIn(ExperimentalHazeApi::class)
 @Composable
-private fun SettingsButton(
+private fun NotesCounter(
+    total: Int,
+    selected: Int,
     hazeState: HazeState,
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
 ) {
-    IconButton(
-        modifier = modifier,
-        colors = IconButtonDefaults.iconButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        onClick = onClick,
-    ) {
-        Icon(
-            modifier = Modifier
-                .hazeGlass(
-                    input = HazeInput.Sources(hazeState),
-                    performanceMode = HazePerformanceMode.Performance,
-                    style = LocalGlassStyle.current.then {
-                        shape(RoundedCornerShape(64.dp))
-                        whitePoint(0f)
-                    },
-                )
-                .padding(8.dp),
-            painter = painterResource(uiR.drawable.ic_profile),
-            contentDescription = null,
-        )
-    }
-}
-
-@OptIn(ExperimentalHazeApi::class)
-@Composable
-private fun StatsButton(
-    hazeState: HazeState,
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-) {
-    IconButton(
-        modifier = modifier,
-        colors = IconButtonDefaults.iconButtonColors(
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        ),
-        onClick = onClick,
-    ) {
-        Icon(
-            modifier = Modifier
-                .hazeGlass(
-                    input = HazeInput.Sources(hazeState),
-                    performanceMode = HazePerformanceMode.Performance,
-                    style = LocalGlassStyle.current.then {
-                        shape(RoundedCornerShape(64.dp))
-                        whitePoint(0f)
-                    },
-                )
-                .padding(8.dp),
-            painter = painterResource(uiR.drawable.ic_pie_chart),
-            contentDescription = null,
-        )
-    }
+    val colorScheme = MaterialTheme.colorScheme
+    Text(
+        modifier = modifier
+            .hazeGlass(
+                input = HazeInput.Sources(hazeState),
+                performanceMode = HazePerformanceMode.Performance,
+                style = LocalGlassStyle.current.then {
+                    shape(CircleShape)
+                    whitePoint(0.05f)
+                    tint(colorScheme.surface.copy(alpha = 0.4f))
+                    optics(
+                        GlassDefaults.optics.copy(
+                            refractionProfile = RefractionProfile.Edge(10.dp),
+                            refractionStrength = 0.65f,
+                            depth = OpticalSizeValue.Fixed(1f),
+                            blurRadius = OpticalSizeValue.Fixed(2.dp),
+                            refractionHeightFraction = 0.25f,
+                        )
+                    )
+                },
+            )
+            .padding(horizontal = 20.dp, vertical = 4.dp),
+        text = "$selected/$total",
+        style = MaterialTheme.typography.titleMedium,
+        textAlign = TextAlign.Center,
+    )
 }
 
 @PreviewWithBackground

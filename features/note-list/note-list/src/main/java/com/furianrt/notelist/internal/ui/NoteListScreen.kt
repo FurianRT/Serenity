@@ -207,8 +207,6 @@ private fun MainScreenContent(
         if (uiState.content.enableSelection) {
             screenState.toolbarState.expand()
         }
-        screenState.toolbarState.showBlur =
-            uiState.content.enableSelection || uiState.hasAutoBackupFailure
     }
 
     BackHandler(enabled = uiState.content.enableSelection) {
