@@ -6,7 +6,7 @@ import com.furianrt.gallery.internal.ui.entities.ListItem
 import com.furianrt.uikit.extensions.toDateString
 import java.time.ZonedDateTime
 
-private const val MAX_ROTATION = 3f
+private const val MAX_ROTATION = 4f
 
 internal fun List<NoteMedia>.toListItems(): List<ListItem> = groupBy { it.noteDate.toTitleItem() }
     .flatMap { (title, media) ->

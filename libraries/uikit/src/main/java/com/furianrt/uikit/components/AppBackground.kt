@@ -61,7 +61,10 @@ fun AppBackground(
                     .fillMaxSize()
                     .background(
                         brush = Brush.linearGradient(
-                            colors = listOf(targetState.surface, targetState.surface.brighterBy(0.1f)),
+                            colors = listOf(
+                                targetState.surface,
+                                targetState.surface.brighterBy(0.12f)
+                            ),
                             start = Offset.Zero,
                             end = Offset.Infinite
                         )

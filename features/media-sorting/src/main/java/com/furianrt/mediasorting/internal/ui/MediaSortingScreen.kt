@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -80,6 +81,7 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import sh.calvin.reorderable.ReorderableItem
 import sh.calvin.reorderable.rememberReorderableLazyGridState
 import java.time.ZonedDateTime
@@ -203,6 +205,7 @@ private fun Content(
     onEvent: (event: MediaSortingEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val scope = rememberCoroutineScope()
     val hazeState = rememberHazeState()
     val listState = rememberLazyGridState()
 
@@ -251,6 +254,7 @@ private fun Content(
         }
         DimSurfaceOverlay(
             visible = mediaSelectorState.isVisible,
+            onClick = { scope.launch { mediaSelectorState.collapse() } },
         )
         SnackbarHost(
             modifier = Modifier
@@ -402,6 +406,7 @@ private fun SuccessContent(
 @Composable
 private fun DimSurfaceOverlay(
     visible: Boolean,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     AnimatedVisibility(
@@ -414,7 +419,7 @@ private fun DimSurfaceOverlay(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.scrim)
-                .clickableNoRipple {},
+                .clickableNoRipple(onClick = onClick),
         )
     }
 }

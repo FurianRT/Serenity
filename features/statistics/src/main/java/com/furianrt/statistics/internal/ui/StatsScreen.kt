@@ -166,7 +166,7 @@ private fun SuccessContent(
         state = listState,
         contentPadding = contentPadding,
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         item(
             key = TIME_PERIOD_ITEM_KEY,

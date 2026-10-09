@@ -86,9 +86,6 @@ import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import com.furianrt.uikit.R as uiR
 
 private const val NOTE_BACKGROUND_TAG = "note_panel_custom_background"
@@ -230,7 +227,6 @@ private fun ListContent(
         }
     }
     val shadowColor = MaterialTheme.colorScheme.surfaceDim
-    val hazeState = rememberHazeState()
     val spanCount = 4
 
     var prevItemCount by remember { mutableIntStateOf(state.themes.size) }
@@ -244,7 +240,6 @@ private fun ListContent(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .hazeSource(hazeState)
             .clickableNoRipple {},
     ) {
         LazyVerticalGrid(
@@ -272,7 +267,6 @@ private fun ListContent(
                 ThemeItem(
                     modifier = Modifier.animateItem(),
                     theme = theme,
-                    hazeState = hazeState,
                     isSelected = index == state.selectedThemeIndex,
                     onClick = { onEvent(CustomBackgroundEvent.OnThemeSelected(it)) },
                     onDeleteClick = { onEvent(CustomBackgroundEvent.OnDeleteThemeClick(it)) },
@@ -296,7 +290,6 @@ private fun ListContent(
 private fun ThemeItem(
     theme: UiNoteTheme.Image.Picture,
     isSelected: Boolean,
-    hazeState: HazeState,
     onClick: (theme: UiNoteTheme.Image.Picture) -> Unit,
     onDeleteClick: (theme: UiNoteTheme.Image.Picture) -> Unit,
     modifier: Modifier = Modifier,
@@ -388,7 +381,6 @@ private fun ThemeItem(
         )
         PopUpMenu(
             expanded = showDropDown,
-            hazeState = hazeState,
             onDeleteClick = { onDeleteClick(theme) },
             onDismissRequest = { showDropDown = false },
         )

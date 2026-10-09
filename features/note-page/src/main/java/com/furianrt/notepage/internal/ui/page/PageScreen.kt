@@ -627,7 +627,7 @@ private fun NoteBackgroundImage(
                         brush = Brush.linearGradient(
                             colors = listOf(
                                 MaterialTheme.colorScheme.surface,
-                                MaterialTheme.colorScheme.surface.brighterBy(0.1f),
+                                MaterialTheme.colorScheme.surface.brighterBy(0.12f),
                             ),
                             start = Offset.Zero,
                             end = Offset.Infinite
@@ -642,7 +642,7 @@ private fun NoteBackgroundImage(
                         brush = Brush.linearGradient(
                             colors = listOf(
                                 targetState.color.colorScheme.surface,
-                                targetState.color.colorScheme.surface.brighterBy(0.1f),
+                                targetState.color.colorScheme.surface.brighterBy(0.12f),
                             ),
                             start = Offset.Zero,
                             end = Offset.Infinite

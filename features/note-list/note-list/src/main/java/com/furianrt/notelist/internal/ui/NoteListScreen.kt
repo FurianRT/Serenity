@@ -355,7 +355,7 @@ private fun SuccessContent(
             end = 8.dp,
             top = toolbarPadding + 8.dp,
             bottom = WindowInsets.navigationBars.asPaddingValues()
-                .calculateBottomPadding() + 16.dp,
+                .calculateBottomPadding() + 100.dp,
         ),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {

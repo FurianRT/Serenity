@@ -15,24 +15,17 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleStartEffect
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.utils.LocalAuth
-import dev.chrisbanes.haze.HazeInput
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
 import kotlinx.coroutines.launch
 import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun PopUpMenu(
     expanded: Boolean,
-    hazeState: HazeState,
     onDeleteClick: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val auth = LocalAuth.current
-    val colorScheme = MaterialTheme.colorScheme
 
     LifecycleStartEffect(Unit) {
         scope.launch {
@@ -44,15 +37,7 @@ internal fun PopUpMenu(
     }
     DropdownMenu(
         modifier = Modifier
-            .hazeBlur(
-                input = HazeInput.Sources(hazeState),
-                style = HazeBlurStyle {
-                    blurRadius(12.dp)
-                    colorEffects(
-                        listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))
-                    )
-                },
-            )
+            .background(MaterialTheme.colorScheme.surface)
             .background(MaterialTheme.colorScheme.background),
         containerColor = Color.Transparent,
         offset = DpOffset(x = 8.dp, y = -(8).dp),

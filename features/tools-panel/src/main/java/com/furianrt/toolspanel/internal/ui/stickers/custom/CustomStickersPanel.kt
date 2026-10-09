@@ -79,9 +79,6 @@ import com.furianrt.uikit.extensions.drawTopInnerShadow
 import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
-import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.hazeSource
-import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import com.furianrt.uikit.R as uiR
 
@@ -287,7 +284,6 @@ private fun ListContent(
     modifier: Modifier = Modifier,
 ) {
     val listState = rememberLazyGridState()
-    val hazeState = rememberHazeState()
     val showShadow by remember {
         derivedStateOf {
             listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
@@ -307,7 +303,6 @@ private fun ListContent(
     LazyVerticalGrid(
         modifier = modifier
             .fillMaxSize()
-            .hazeSource(hazeState)
             .drawBehind {
                 if (showShadow) {
                     drawTopInnerShadow(color = shadowColor)
@@ -334,7 +329,6 @@ private fun ListContent(
             StickerItem(
                 modifier = Modifier.animateItem(),
                 sticker = uiState.stickers[index],
-                hazeState = hazeState,
                 onClick = { onEvent(CustomStickersEvent.OnStickerSelected(it)) },
                 onDeleteClick = { onEvent(CustomStickersEvent.OnDeleteStickerClick(it)) },
             )
@@ -355,7 +349,6 @@ private fun ListContent(
 @Composable
 private fun StickerItem(
     sticker: Sticker,
-    hazeState: HazeState,
     onClick: (sticker: Sticker) -> Unit,
     onDeleteClick: (sticker: Sticker) -> Unit,
     modifier: Modifier = Modifier,
@@ -412,7 +405,6 @@ private fun StickerItem(
         )
         PopUpMenu(
             expanded = showDropDown,
-            hazeState = hazeState,
             onDeleteClick = { onDeleteClick(sticker) },
             onDismissRequest = { showDropDown = false },
         )

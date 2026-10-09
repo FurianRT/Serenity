@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -30,6 +31,7 @@ internal fun TimePicker(
     modifier: Modifier = Modifier,
 ) {
     val timeFormatter = timeFormatter(Locale.current)
+    val startTimeKotlin = remember(startTime) { startTime.toKotlinLocalTime() }
     Box(
         modifier = modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
@@ -39,7 +41,7 @@ internal fun TimePicker(
                 width = if (timeFormatter.timeFormat == TimeFormat.HOUR_24) 190.dp else 280.dp,
                 height = 200.dp,
             ),
-            startTime = startTime.toKotlinLocalTime(),
+            startTime = startTimeKotlin,
             textStyle = MaterialTheme.typography.titleLarge.copy(
                 fontSize = 38.sp,
                 fontWeight = FontWeight.SemiBold,
