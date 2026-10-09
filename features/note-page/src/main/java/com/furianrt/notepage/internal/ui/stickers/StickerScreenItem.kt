@@ -42,7 +42,6 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
@@ -58,6 +57,7 @@ import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
+import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
@@ -150,7 +150,7 @@ internal fun StickerScreenItem(
         Box {
             Sticker(
                 modifier = Modifier
-                    .padding(20.dp)
+                    .padding(22.dp)
                     .applyIf(item.state.isEditing && interactable) {
                         Modifier.dashedRoundedRectBorder(
                             color = MaterialTheme.colorScheme.primaryContainer,
@@ -169,7 +169,7 @@ internal fun StickerScreenItem(
             if (item.state.isEditing && interactable) {
                 val buttonSize = 26.dp
                 val scaledSize = buttonSize * item.state.scale
-                val offsetPx = with(LocalDensity.current) { (scaledSize - buttonSize).toPx() / 6 }
+                val offsetPx = (scaledSize - buttonSize).dpToPx() / 6f
 
                 ButtonClose(
                     modifier = Modifier
@@ -195,9 +195,6 @@ internal fun StickerScreenItem(
                             scaleY = scale
                         }
                         .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
-                        .onGloballyPositioned { coordinates ->
-                            childCoordinates = coordinates
-                        }
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = { offset ->
@@ -247,7 +244,10 @@ internal fun StickerScreenItem(
                                 )
                             }
                         }
-                        .padding(6.dp)
+                        .padding(8.dp)
+                        .onGloballyPositioned { coordinates ->
+                            childCoordinates = coordinates
+                        }
                         .systemGestureExclusion(),
                 ) {
                     ButtonResize(
@@ -349,7 +349,7 @@ private fun ButtonClose(
     Box(
         modifier = modifier
             .clickableNoRipple(onClick = onClick)
-            .padding(6.dp),
+            .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -390,7 +390,7 @@ private fun ButtonFlip(
     Box(
         modifier = modifier
             .clickableNoRipple(onClick = onClick)
-            .padding(6.dp),
+            .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
@@ -416,7 +416,7 @@ private fun ButtonLayer(
     Box(
         modifier = modifier
             .clickableNoRipple(onClick = onClick)
-            .padding(6.dp),
+            .padding(8.dp),
         contentAlignment = Alignment.Center,
     ) {
         AnimatedContent(
