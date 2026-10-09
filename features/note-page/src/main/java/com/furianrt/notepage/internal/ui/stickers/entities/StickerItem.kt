@@ -34,7 +34,7 @@ internal data class StickerItem(
         private val Y_OFFSET_DP = 20.dp
 
         val DEFAULT_SIZE = 120.dp
-        const val MIN_SIZE_PERCENT = 0.3f
+        const val MIN_SIZE_PERCENT = 0.35f
         const val MAX_SIZE_PERCENT = 2.5f
         const val MIN_ANGLE = 4f
 

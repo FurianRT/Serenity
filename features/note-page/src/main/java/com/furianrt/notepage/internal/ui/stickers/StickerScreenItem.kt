@@ -9,7 +9,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.scaleIn
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
@@ -46,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
@@ -150,7 +150,7 @@ internal fun StickerScreenItem(
         Box {
             Sticker(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(20.dp)
                     .applyIf(item.state.isEditing && interactable) {
                         Modifier.dashedRoundedRectBorder(
                             color = MaterialTheme.colorScheme.primaryContainer,
@@ -170,30 +170,31 @@ internal fun StickerScreenItem(
                 val buttonSize = 26.dp
                 val scaledSize = buttonSize * item.state.scale
                 val offsetPx = with(LocalDensity.current) { (scaledSize - buttonSize).toPx() / 6 }
-                val sizeModifier = Modifier.size(buttonSize)
 
                 ButtonClose(
-                    modifier = sizeModifier
+                    modifier = Modifier
                         .graphicsLayer {
                             val scale = 1f / item.state.scale
                             scaleX = scale
                             scaleY = scale
                         }
                         .offset { IntOffset(-offsetPx.toInt(), -offsetPx.toInt()) },
+                    iconSize = buttonSize,
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
                         onRemoveClick(item)
                     },
                 )
 
-                ButtonResize(
-                    modifier = sizeModifier
+                Box(
+                    modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .graphicsLayer {
                             val scale = 1f / item.state.scale
                             scaleX = scale
                             scaleY = scale
                         }
+                        .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
                         .onGloballyPositioned { coordinates ->
                             childCoordinates = coordinates
                         }
@@ -246,12 +247,16 @@ internal fun StickerScreenItem(
                                 )
                             }
                         }
-                        .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
+                        .padding(6.dp)
                         .systemGestureExclusion(),
-                )
+                ) {
+                    ButtonResize(
+                        iconSize = buttonSize,
+                    )
+                }
 
                 ButtonFlip(
-                    modifier = sizeModifier
+                    modifier = Modifier
                         .align(Alignment.TopEnd)
                         .graphicsLayer {
                             val scale = 1f / item.state.scale
@@ -264,10 +269,11 @@ internal fun StickerScreenItem(
                         item.state.isFlipped = !item.state.isFlipped
                         onTransformedState()
                     },
+                    iconSize = buttonSize,
                 )
 
                 ButtonLayer(
-                    modifier = sizeModifier
+                    modifier = Modifier
                         .align(Alignment.BottomStart)
                         .graphicsLayer {
                             val scale = 1f / item.state.scale
@@ -281,6 +287,7 @@ internal fun StickerScreenItem(
                         item.state.overContent = !item.state.overContent
                         onTransformedState()
                     },
+                    iconSize = buttonSize,
                 )
             }
         }
@@ -335,27 +342,37 @@ private fun Sticker(
 
 @Composable
 private fun ButtonClose(
+    iconSize: Dp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    Box(
         modifier = modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .clickable(onClick = onClick)
-            .padding(2.dp),
-        painter = painterResource(uiR.drawable.ic_exit),
-        tint = MaterialTheme.colorScheme.onErrorContainer,
-        contentDescription = null
-    )
+            .clickableNoRipple(onClick = onClick)
+            .padding(6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .size(iconSize)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.errorContainer)
+                .padding(2.dp),
+            painter = painterResource(uiR.drawable.ic_exit),
+            tint = MaterialTheme.colorScheme.onErrorContainer,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
 private fun ButtonResize(
+    iconSize: Dp,
     modifier: Modifier = Modifier,
 ) {
     Icon(
         modifier = modifier
+            .size(iconSize)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.primaryContainer),
         painter = painterResource(R.drawable.ic_expand_sticker),
@@ -366,47 +383,63 @@ private fun ButtonResize(
 
 @Composable
 private fun ButtonFlip(
+    iconSize: Dp,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Icon(
+    Box(
         modifier = modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable(onClick = onClick)
-            .padding(2.dp),
-        painter = painterResource(R.drawable.ic_flip_sticker),
-        tint = MaterialTheme.colorScheme.onPrimaryContainer,
-        contentDescription = null
-    )
+            .clickableNoRipple(onClick = onClick)
+            .padding(6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        Icon(
+            modifier = Modifier
+                .size(iconSize)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(2.dp),
+            painter = painterResource(R.drawable.ic_flip_sticker),
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            contentDescription = null
+        )
+    }
 }
 
 @Composable
 private fun ButtonLayer(
+    iconSize: Dp,
     isLayerUp: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    AnimatedContent(
+    Box(
         modifier = modifier
-            .clip(CircleShape)
-            .background(MaterialTheme.colorScheme.primaryContainer)
-            .clickable(onClick = onClick)
-            .padding(4.dp),
-        targetState = isLayerUp,
-    ) { targetState ->
-        if (targetState) {
-            Icon(
-                painter = painterResource(R.drawable.ic_layer_down),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                contentDescription = null
-            )
-        } else {
-            Icon(
-                painter = painterResource(R.drawable.ic_layer_up),
-                tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                contentDescription = null
-            )
+            .clickableNoRipple(onClick = onClick)
+            .padding(6.dp),
+        contentAlignment = Alignment.Center,
+    ) {
+        AnimatedContent(
+            modifier = Modifier
+                .size(iconSize)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primaryContainer)
+                .padding(4.dp),
+            targetState = isLayerUp,
+        ) { targetState ->
+            if (targetState) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_layer_down),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentDescription = null
+                )
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.ic_layer_up),
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                    contentDescription = null
+                )
+            }
         }
     }
 }
