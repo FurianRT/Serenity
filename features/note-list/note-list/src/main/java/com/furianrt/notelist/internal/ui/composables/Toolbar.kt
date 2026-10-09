@@ -1,14 +1,26 @@
 package com.furianrt.notelist.internal.ui.composables
 
-import androidx.compose.animation.Crossfade
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.VisibilityThreshold
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -16,14 +28,18 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.furianrt.notelist.R
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -31,12 +47,16 @@ import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.blur.HazeBlurStyle
+import dev.chrisbanes.haze.blur.HazeColorEffect
+import dev.chrisbanes.haze.blur.hazeBlur
 import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.OpticalSizeValue
 import dev.chrisbanes.haze.glass.RefractionProfile
 import dev.chrisbanes.haze.glass.hazeGlass
 import com.furianrt.uikit.R as uiR
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun Toolbar(
     notesCount: Int,
@@ -49,101 +69,113 @@ internal fun Toolbar(
     onDeleteClick: () -> Unit = {},
     onCloseSelectionClick: () -> Unit = {},
 ) {
-    Crossfade(
-        modifier = modifier
-            .height(ToolbarConstants.bigToolbarHeight)
-            .fillMaxWidth()
-            .clickableNoRipple {}
-            .systemGestureExclusion(),
-        targetState = selectedNotesCount > 0,
-    ) { targetState ->
-        if (targetState) {
-            SelectedContent(
-                notesCount = notesCount,
-                selectedNotesCount = selectedNotesCount.coerceAtLeast(1),
-                hazeState = hazeState,
-                onDeleteClick = onDeleteClick,
-                onCloseSelectionClick = onCloseSelectionClick,
-            )
-        } else {
-            UnselectedContent(
-                hazeState = hazeState,
-                onSettingsClick = onSettingsClick,
-                onStatsClick = onStatsClick,
-                onSearchClick = onSearchClick,
-            )
-        }
-    }
-}
+    val colorScheme = MaterialTheme.colorScheme
 
-@Composable
-private fun SelectedContent(
-    notesCount: Int,
-    selectedNotesCount: Int,
-    hazeState: HazeState,
-    onDeleteClick: () -> Unit,
-    onCloseSelectionClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+    val isSelectionActive = selectedNotesCount > 0
+
+    val colorAlphaAnim by animateFloatAsState(
+        targetValue = if (isSelectionActive) 0.4f else 1f,
+        animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
+    )
+
     Row(
         modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 4.dp),
+            .height(ToolbarConstants.bigToolbarHeight)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(4.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         ActionButton(
-            icon = painterResource(uiR.drawable.ic_exit),
+            modifier = Modifier.systemGestureExclusion(),
+            icon = if (isSelectionActive) uiR.drawable.ic_exit else uiR.drawable.ic_pie_chart,
             hazeState = hazeState,
-            onClick = onCloseSelectionClick,
+            onClick = if (isSelectionActive) onCloseSelectionClick else onStatsClick,
         )
         Box(
             modifier = Modifier.weight(1f),
             contentAlignment = Alignment.Center,
         ) {
-            NotesCounter(
-                total = notesCount,
-                selected = selectedNotesCount,
-                hazeState = hazeState,
-            )
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(32.dp))
+                    .then(
+                        if (isSelectionActive) {
+                            Modifier.hazeGlass(
+                                input = HazeInput.Sources(hazeState),
+                                performanceMode = HazePerformanceMode.Performance,
+                                style = LocalGlassStyle.current.then {
+                                    shape(CircleShape)
+                                    tint(colorScheme.surface.copy(alpha = 0.4f))
+                                    optics(
+                                        GlassDefaults.optics.copy(
+                                            refractionProfile = RefractionProfile.Edge(10.dp),
+                                            refractionStrength = 0.65f,
+                                            depth = OpticalSizeValue.Fixed(1f),
+                                            blurRadius = OpticalSizeValue.Fixed(2.dp),
+                                            refractionHeightFraction = 0.25f,
+                                        )
+                                    )
+                                },
+                            )
+                        } else {
+                            Modifier
+                                .hazeBlur(
+                                    input = HazeInput.Sources(hazeState),
+                                    performanceMode = HazePerformanceMode.Performance,
+                                    style = HazeBlurStyle {
+                                        blurRadius(8.dp)
+                                        noiseFactor(0f)
+                                        colorEffects(
+                                            listOf(
+                                                HazeColorEffect.tint(
+                                                    colorScheme.surface.copy(alpha = 0.4f),
+                                                ),
+                                            ),
+                                        )
+                                    },
+                                )
+                        }
+                    )
+                    .background(
+                        MaterialTheme.colorScheme.background.copy(
+                            alpha = MaterialTheme.colorScheme.background.alpha * colorAlphaAnim,
+                        )
+                    )
+                    .animateContentSize(
+                        alignment = Alignment.Center,
+                        animationSpec = spring(
+                            stiffness = 500f,
+                            visibilityThreshold = IntSize.VisibilityThreshold,
+                        ),
+                    ),
+                contentAlignment = Alignment.Center,
+            ) {
+                if (isSelectionActive) {
+                    Text(
+                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+                        text = "$selectedNotesCount/$notesCount",
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                    )
+                } else {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0.6f)
+                            .clickable(onClick = onSearchClick)
+                            .padding(vertical = 8.dp),
+                        text = stringResource(R.string.notes_list_search_bar_title),
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
         }
         ActionButton(
-            icon = painterResource(uiR.drawable.ic_delete),
+            modifier = Modifier.systemGestureExclusion(),
+            icon = if (isSelectionActive) uiR.drawable.ic_delete else uiR.drawable.ic_profile,
             hazeState = hazeState,
-            onClick = onDeleteClick,
-        )
-    }
-}
-
-@Composable
-private fun UnselectedContent(
-    hazeState: HazeState,
-    onSettingsClick: () -> Unit,
-    onStatsClick: () -> Unit,
-    onSearchClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 4.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        ActionButton(
-            icon = painterResource(uiR.drawable.ic_pie_chart),
-            hazeState = hazeState,
-            onClick = onStatsClick,
-        )
-        SearchBar(
-            modifier = Modifier.weight(1f),
-            hazeState = hazeState,
-            onClick = onSearchClick,
-        )
-        ActionButton(
-            icon = painterResource(uiR.drawable.ic_profile),
-            hazeState = hazeState,
-            onClick = onSettingsClick,
+            onClick = if (isSelectionActive) onDeleteClick else onSettingsClick,
         )
     }
 }
@@ -151,7 +183,7 @@ private fun UnselectedContent(
 @OptIn(ExperimentalHazeApi::class)
 @Composable
 private fun ActionButton(
-    icon: Painter,
+    @DrawableRes icon: Int,
     hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -164,7 +196,7 @@ private fun ActionButton(
         ),
         onClick = onClick,
     ) {
-        Icon(
+        AnimatedContent(
             modifier = Modifier
                 .hazeGlass(
                     input = HazeInput.Sources(hazeState),
@@ -182,46 +214,15 @@ private fun ActionButton(
                     },
                 )
                 .padding(8.dp),
-            painter = icon,
-            contentDescription = null,
-        )
-    }
-}
-
-@OptIn(ExperimentalHazeApi::class)
-@Composable
-private fun NotesCounter(
-    total: Int,
-    selected: Int,
-    hazeState: HazeState,
-    modifier: Modifier = Modifier,
-) {
-    val colorScheme = MaterialTheme.colorScheme
-    Text(
-        modifier = modifier
-            .hazeGlass(
-                input = HazeInput.Sources(hazeState),
-                performanceMode = HazePerformanceMode.Performance,
-                style = LocalGlassStyle.current.then {
-                    shape(CircleShape)
-                    whitePoint(0.05f)
-                    tint(colorScheme.surface.copy(alpha = 0.4f))
-                    optics(
-                        GlassDefaults.optics.copy(
-                            refractionProfile = RefractionProfile.Edge(10.dp),
-                            refractionStrength = 0.65f,
-                            depth = OpticalSizeValue.Fixed(1f),
-                            blurRadius = OpticalSizeValue.Fixed(2.dp),
-                            refractionHeightFraction = 0.25f,
-                        )
-                    )
-                },
+            targetState = icon,
+            transitionSpec = { scaleIn().togetherWith(scaleOut() + fadeOut()) },
+        ) { targetState ->
+            Icon(
+                painter = painterResource(targetState),
+                contentDescription = null,
             )
-            .padding(horizontal = 20.dp, vertical = 4.dp),
-        text = "$selected/$total",
-        style = MaterialTheme.typography.titleMedium,
-        textAlign = TextAlign.Center,
-    )
+        }
+    }
 }
 
 @PreviewWithBackground
