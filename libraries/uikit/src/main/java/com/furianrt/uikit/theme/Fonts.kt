@@ -144,4 +144,9 @@ sealed class NoteFont(
     data object DeathNote : NoteFont(
         regular = FontFamily(Font(R.font.death_note_regular)),
     )
+
+    @Immutable
+    data object NewRocker : NoteFont(
+        regular = FontFamily(Font(R.font.new_rocker_regular)),
+    )
 }

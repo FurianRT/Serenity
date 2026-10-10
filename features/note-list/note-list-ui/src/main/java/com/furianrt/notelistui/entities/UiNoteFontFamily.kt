@@ -166,4 +166,12 @@ sealed class UiNoteFontFamily(
         regular = NoteFont.DeathNote.regular,
         bold = NoteFont.DeathNote.bold,
     )
+
+    @Immutable
+    data object NewRocker : UiNoteFontFamily(
+        name = "New Rocker",
+        light = NoteFont.NewRocker.light,
+        regular = NoteFont.NewRocker.regular,
+        bold = NoteFont.NewRocker.bold,
+    )
 }

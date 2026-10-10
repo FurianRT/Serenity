@@ -14,6 +14,7 @@ enum class NoteFontFamily {
     MONSERRAT_ALTERNATES,
     TEKTUR,
     DEATH_NOTE,
+    NEW_ROCKER,
     DOTO,
     PLAY_WRITE_MODERN,
     TILLANA,

@@ -235,6 +235,7 @@ fun NoteFontFamily.toUiNoteFontFamily(): UiNoteFontFamily = when (this) {
     NoteFontFamily.CORMORANT_GARAMOND -> UiNoteFontFamily.CormorantGaramond
     NoteFontFamily.ROBOTO_CONDENSED -> UiNoteFontFamily.RobotoCondensed
     NoteFontFamily.DEATH_NOTE -> UiNoteFontFamily.DeathNote
+    NoteFontFamily.NEW_ROCKER -> UiNoteFontFamily.NewRocker
 }
 
 fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
@@ -257,6 +258,7 @@ fun UiNoteFontFamily.toNoteFontFamily(): NoteFontFamily = when (this) {
     UiNoteFontFamily.CormorantGaramond -> NoteFontFamily.CORMORANT_GARAMOND
     UiNoteFontFamily.RobotoCondensed -> NoteFontFamily.ROBOTO_CONDENSED
     UiNoteFontFamily.DeathNote -> NoteFontFamily.DEATH_NOTE
+    UiNoteFontFamily.NewRocker -> NoteFontFamily.NEW_ROCKER
 }
 
 fun NoteFontColor.toUiNoteFontColor(): UiNoteFontColor = when (this) {
@@ -390,6 +392,7 @@ fun NoteFontFamily.toNoteFont() = when (this) {
     NoteFontFamily.CORMORANT_GARAMOND -> NoteFont.CormorantGaramond
     NoteFontFamily.ROBOTO_CONDENSED -> NoteFont.RobotoCondensed
     NoteFontFamily.DEATH_NOTE -> NoteFont.DeathNote
+    NoteFontFamily.NEW_ROCKER -> NoteFont.NewRocker
 }
 
 private fun AnnotatedString.Range<SpanStyle>.toNoteTextSpan(
