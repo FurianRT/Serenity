@@ -3,6 +3,7 @@ package com.furianrt.statistics.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.statistics.internal.domain.entities.MediaData
 import com.furianrt.statistics.internal.domain.entities.MoodData
 import com.furianrt.statistics.internal.domain.entities.NotesData
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
@@ -43,6 +45,7 @@ import javax.inject.Inject
 internal class StatsViewModel @Inject constructor(
     appearanceRepository: AppearanceRepository,
     getSelectedTimePeriodUseCase: GetSelectedTimePeriodUseCase,
+    private val notesRepository: NotesRepository,
     private val getMoodDataUseCase: GetMoodDataUseCase,
     private val getMediaDataUseCase: GetMediaDataUseCase,
     private val getNotesDataUseCase: GetNotesDataUseCase,
@@ -138,18 +141,17 @@ internal class StatsViewModel @Inject constructor(
     }
 
     private fun onNotesStatClick() {
-        (state.value.content as? StatsState.Content.Success)?.let { successContent ->
-            val startDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
-                null
-            } else {
-                LocalDate.now().minusDays(successContent.selectedPeriod.days)
+        launch {
+            (state.value.content as? StatsState.Content.Success)?.let { successContent ->
+                val startDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
+                    val allNotes = notesRepository.getAllSimpleNotes().first()
+                    allNotes.lastOrNull()?.date?.toLocalDate()
+                } else {
+                    LocalDate.now().minusDays(successContent.selectedPeriod.days)
+                }
+                val endDate = LocalDate.now()
+                _effect.tryEmit(StatsEffect.OpenNoteSearchRequest(startDate, endDate))
             }
-            val endDate = if (successContent.selectedPeriod == TimePeriod.ALL_TIME) {
-                null
-            } else {
-                LocalDate.now()
-            }
-            _effect.tryEmit(StatsEffect.OpenNoteSearchRequest(startDate, endDate))
         }
     }
 

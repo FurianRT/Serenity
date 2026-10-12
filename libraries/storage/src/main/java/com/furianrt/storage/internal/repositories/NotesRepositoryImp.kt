@@ -169,6 +169,7 @@ internal class NotesRepositoryImp @Inject constructor(
 
     override fun getAllSimpleNotes(): Flow<List<SimpleNote>> = noteDao.getAllSimpleNotes()
         .deepMap(EntryNote::toSimpleNote)
+        .map { it.sortedByDescending(SimpleNote::date) }
         .flowOn(dispatchers.default)
 
     override fun getNote(noteId: String): Flow<LocalNote?> =
