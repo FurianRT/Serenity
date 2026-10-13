@@ -15,8 +15,10 @@ import com.furianrt.search.internal.ui.entities.SearchListItem.TagsList
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeState
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 internal fun AllTagsList(
     tags: List<TagsList.Tag>,
