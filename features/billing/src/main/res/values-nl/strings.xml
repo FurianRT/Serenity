@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Inzicht in je stemming</string>
     <string name="billing_benefit_mood_insights_body">Zie hoe je stemming verandert en ontdek je gelukkigste dagen</string>
+
+    <string name="billing_unavailable_title">Aankopen niet beschikbaar</string>
+    <string name="billing_unavailable_message">Controleer of je bent ingelogd op je Google-account</string>
+    <string name="billing_retry_button">Opnieuw proberen</string>
 </resources>

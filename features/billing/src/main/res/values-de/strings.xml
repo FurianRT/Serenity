@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Stimmungsanalyse</string>
     <string name="billing_benefit_mood_insights_body">Sieh, wie sich deine Stimmung verändert, und entdecke deine glücklichsten Tage</string>
+
+    <string name="billing_unavailable_title">Käufe nicht verfügbar</string>
+    <string name="billing_unavailable_message">Bitte stelle sicher, dass du in deinem Google-Konto angemeldet bist</string>
+    <string name="billing_retry_button">Erneut versuchen</string>
 </resources>

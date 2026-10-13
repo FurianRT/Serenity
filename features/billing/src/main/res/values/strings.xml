@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_future_features_title">More to Come</string>
     <string name="billing_benefit_future_features_body">Discover new ways to personalize your diary as Serenity continues to grow</string>
+
+    <string name="billing_unavailable_title">Purchases Unavailable</string>
+    <string name="billing_unavailable_message">Please make sure you are signed into your Google account</string>
+    <string name="billing_retry_button">Try Again</string>
 </resources>

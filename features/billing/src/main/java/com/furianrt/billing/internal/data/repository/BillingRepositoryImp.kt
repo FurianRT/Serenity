@@ -20,6 +20,8 @@ import com.furianrt.billing.internal.data.mappers.toDomain
 import com.furianrt.billing.internal.data.mappers.toEntryBillingPlans
 import com.furianrt.billing.internal.data.sources.BillingDataStore
 import com.furianrt.billing.internal.domain.entities.SerenityPlusPlan
+import com.furianrt.billing.internal.domain.entities.SyncResult
+import com.furianrt.billing.internal.domain.entities.isFailure
 import com.furianrt.billing.internal.domain.repository.BillingRepository
 import com.furianrt.billing.internal.workers.AcknowledgePurchaseWorker
 import com.furianrt.common.ActivityChecker
@@ -48,7 +50,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 private class BillingException(
-    code: Int,
+    val code: Int,
     message: String,
 ) : Exception("Code: $code message: $message")
 
@@ -81,16 +83,17 @@ internal class BillingRepositoryImp @Inject constructor(
         (applicationContext as Application).registerActivityLifecycleCallbacks(activityCallbacks)
     }
 
-    override suspend fun sync() {
+    override suspend fun sync(): SyncResult {
         val connectionResult = startConnection()
+
         if (connectionResult.isFailure) {
-            return
+            return connectionResult
         }
 
         acknowledgePurchases()
 
         if (billingDataStore.isSerenityPlusAvailable().first()) {
-            return
+            return SyncResult.Ok
         }
 
         val deferredSubs = scope.async {
@@ -105,13 +108,21 @@ internal class BillingRepositoryImp @Inject constructor(
                 productType = BillingClient.ProductType.INAPP,
             )
         }
-        try {
+        return try {
             val subsList = deferredSubs.await()
             val inAppsList = deferredInApps.await()
             val allPlans = subsList + inAppsList
             billingPlanDao.clearAndInsert(allPlans.toEntryBillingPlans())
+            SyncResult.Ok
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)
+            if (e is BillingException &&
+                e.code == BillingClient.BillingResponseCode.BILLING_UNAVAILABLE
+            ) {
+                SyncResult.BillingUnavailable(e)
+            } else {
+                SyncResult.Other(e)
+            }
         }
     }
 
@@ -250,9 +261,10 @@ internal class BillingRepositoryImp @Inject constructor(
         val activity = activityCallbacks.currentActivity
             ?: return Result.failure(IllegalStateException())
 
-        val connectionResult = startConnection()
-        if (connectionResult.isFailure) {
-            return connectionResult
+        when (val connectionResult = startConnection()) {
+            is SyncResult.Ok -> Unit
+            is SyncResult.BillingUnavailable -> return Result.failure(connectionResult.error)
+            is SyncResult.Other -> return Result.failure(connectionResult.error)
         }
 
         val billingFlowParams = if (productId == SerenityProductId.PERMANENT_ID) {
@@ -368,9 +380,9 @@ internal class BillingRepositoryImp @Inject constructor(
         }
     }
 
-    private suspend fun startConnection(): Result<Unit> = mutex.withLock {
+    private suspend fun startConnection(): SyncResult = mutex.withLock {
         if (billingClient.isReady) {
-            return Result.success(Unit)
+            return SyncResult.Ok
         }
 
         return suspendCancellableCoroutine { continuation ->
@@ -380,30 +392,39 @@ internal class BillingRepositoryImp @Inject constructor(
                 override fun onBillingSetupFinished(billingResult: BillingResult) {
                     if (!continuation.isActive || !isListenerActive) return
 
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                        continuation.resume(Result.success(Unit))
-                    } else {
-                        continuation.resume(
-                            Result.failure(
-                                BillingException(
-                                    code = billingResult.responseCode,
-                                    message = billingResult.debugMessage,
-                                )
+                    when (billingResult.responseCode) {
+                        BillingClient.BillingResponseCode.OK -> {
+                            continuation.resume(SyncResult.Ok)
+                        }
+
+                        BillingClient.BillingResponseCode.BILLING_UNAVAILABLE -> {
+                            val error = BillingException(
+                                code = billingResult.responseCode,
+                                message = billingResult.debugMessage,
                             )
-                        )
+                            errorTracker.trackNonFatalError(error)
+                            continuation.resume(SyncResult.BillingUnavailable(error))
+                        }
+
+                        else -> {
+                            val error = BillingException(
+                                code = billingResult.responseCode,
+                                message = billingResult.debugMessage,
+                            )
+                            errorTracker.trackNonFatalError(error)
+                            continuation.resume(SyncResult.Other(error))
+                        }
                     }
                 }
 
                 override fun onBillingServiceDisconnected() {
                     if (continuation.isActive && isListenerActive) {
-                        continuation.resume(
-                            Result.failure(
-                                BillingException(
-                                    code = BillingClient.BillingResponseCode.SERVICE_DISCONNECTED,
-                                    message = "Billing service disconnected during setup",
-                                )
-                            )
+                        val error = BillingException(
+                            code = BillingClient.BillingResponseCode.SERVICE_DISCONNECTED,
+                            message = "Billing service disconnected during setup",
                         )
+                        errorTracker.trackNonFatalError(error)
+                        continuation.resume(SyncResult.Other(error))
                     }
                 }
             }
@@ -422,7 +443,7 @@ internal class BillingRepositoryImp @Inject constructor(
                 billingClient.startConnection(listener)
             } catch (e: Exception) {
                 if (continuation.isActive) {
-                    continuation.resume(Result.failure(e))
+                    continuation.resume(SyncResult.Other(e))
                 }
             }
         }

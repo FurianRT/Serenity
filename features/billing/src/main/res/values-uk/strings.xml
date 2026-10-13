@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Аналіз настрою</string>
     <string name="billing_benefit_mood_insights_body">Дивіться, як змінюється настрій, і знаходьте свої найщасливіші дні</string>
+
+    <string name="billing_unavailable_title">Покупки недоступні</string>
+    <string name="billing_unavailable_message">Переконайтеся, що ви ввійшли у свій обліковий запис Google</string>
+    <string name="billing_retry_button">Повторити спробу</string>
 </resources>

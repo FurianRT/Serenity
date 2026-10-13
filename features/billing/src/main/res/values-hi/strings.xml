@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">मूड इनसाइट्स</string>
     <string name="billing_benefit_mood_insights_body">देखें आपका मूड कैसे बदलता है और अपने सबसे खुशहाल दिन खोजें</string>
+
+    <string name="billing_unavailable_title">खरीदारी उपलब्ध नहीं है</string>
+    <string name="billing_unavailable_message">कृपया सुनिश्चित करें कि आपने अपने Google खाते में साइन इन किया है</string>
+    <string name="billing_retry_button">फिर से कोशिश करें</string>
 </resources>

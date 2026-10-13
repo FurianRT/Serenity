@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Analiza stării de spirit</string>
     <string name="billing_benefit_mood_insights_body">Vezi cum se schimbă starea ta de spirit și descoperă cele mai fericite zile</string>
+
+    <string name="billing_unavailable_title">Achiziții indisponibile</string>
+    <string name="billing_unavailable_message">Asigură-te că ești conectat la contul tău Google</string>
+    <string name="billing_retry_button">Încearcă din nou</string>
 </resources>

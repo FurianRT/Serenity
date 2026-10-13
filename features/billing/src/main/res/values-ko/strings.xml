@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">기분 분석</string>
     <string name="billing_benefit_mood_insights_body">기분이 어떻게 변하는지 살펴보고 가장 행복했던 날을 찾아보세요</string>
+
+    <string name="billing_unavailable_title">구매할 수 없음</string>
+    <string name="billing_unavailable_message">Google 계정에 로그인되어 있는지 확인해 주세요</string>
+    <string name="billing_retry_button">다시 시도</string>
 </resources>

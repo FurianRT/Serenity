@@ -29,4 +29,8 @@
     
     <string name="billing_benefit_mood_insights_title">Análisis del ánimo</string>
     <string name="billing_benefit_mood_insights_body">Descubre cómo cambia tu ánimo y encuentra tus días más felices</string>
+
+    <string name="billing_unavailable_title">Compras no disponibles</string>
+    <string name="billing_unavailable_message">Asegúrate de haber iniciado sesión en tu cuenta de Google</string>
+    <string name="billing_retry_button">Reintentar</string>
 </resources>

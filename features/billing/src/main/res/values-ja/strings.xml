@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">気分の分析</string>
     <string name="billing_benefit_mood_insights_body">気分の変化を見て、いちばん幸せな日を見つけよう</string>
+
+    <string name="billing_unavailable_title">購入できません</string>
+    <string name="billing_unavailable_message">Google アカウントにログインしていることを確認してください</string>
+    <string name="billing_retry_button">再試行</string>
 </resources>

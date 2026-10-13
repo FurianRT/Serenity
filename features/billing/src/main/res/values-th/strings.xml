@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">วิเคราะห์อารมณ์</string>
     <string name="billing_benefit_mood_insights_body">ดูว่าอารมณ์ของคุณเปลี่ยนแปลงอย่างไร และค้นหาวันที่มีความสุขที่สุดของคุณ</string>
+
+    <string name="billing_unavailable_title">ไม่สามารถซื้อได้</string>
+    <string name="billing_unavailable_message">โปรดตรวจสอบว่าคุณลงชื่อเข้าใช้บัญชี Google แล้ว</string>
+    <string name="billing_retry_button">ลองอีกครั้ง</string>
 </resources>

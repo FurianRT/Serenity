@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Analisi dell’umore</string>
     <string name="billing_benefit_mood_insights_body">Scopri come cambia il tuo umore e trova i tuoi giorni più felici</string>
+
+    <string name="billing_unavailable_title">Acquisti non disponibili</string>
+    <string name="billing_unavailable_message">Assicurati di aver effettuato l\'accesso al tuo account Google</string>
+    <string name="billing_retry_button">Riprova</string>
 </resources>

@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Mga Insight sa Mood</string>
     <string name="billing_benefit_mood_insights_body">Tingnan kung paano nagbabago ang mood mo at tuklasin ang mga araw na pinakamasaya ka</string>
+
+    <string name="billing_unavailable_title">Hindi Available ang Mga Pagbili</string>
+    <string name="billing_unavailable_message">Tiyaking naka-sign in ka sa iyong Google account</string>
+    <string name="billing_retry_button">Subukan Muli</string>
 </resources>

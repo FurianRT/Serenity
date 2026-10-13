@@ -43,6 +43,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.billing.internal.ui.components.Benefit
 import com.furianrt.billing.internal.ui.components.ButtonClose
 import com.furianrt.billing.internal.ui.components.ButtonSubscribe
+import com.furianrt.billing.internal.ui.components.ErrorMessageCart
 import com.furianrt.billing.internal.ui.components.Logo
 import com.furianrt.billing.internal.ui.components.SubscriptionOption
 import com.furianrt.billing.internal.ui.components.SubscriptionOptionSkeleton
@@ -63,6 +64,7 @@ import com.furianrt.uikit.R as uiR
 private const val KEY_LOGO = "logo"
 private const val KEY_PLAN_SKELETON = "plan_skeleton"
 private const val KEY_TERMS = "terms"
+private const val KEY_ERROR_MESSAGE = "error_message"
 private const val SKELETONS_COUNT = 3
 
 @Composable
@@ -173,6 +175,20 @@ private fun Content(
                     }
                 }
 
+                is BillingState.Content.Failure -> item(
+                    key = KEY_ERROR_MESSAGE,
+                    contentType = KEY_ERROR_MESSAGE,
+                ) {
+                    ErrorMessageCart(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp, bottom = 32.dp),
+                        errorMessageType = uiState.content.errorMessageType,
+                        hazeState = hazeState,
+                        onRetryClick = { onEvent(BillingEvent.OnRetryClick) },
+                    )
+                }
+
                 is BillingState.Content.Success -> itemsIndexed(
                     items = uiState.content.plans,
                     key = { _, plan -> plan.id },
@@ -246,19 +262,21 @@ private fun Content(
                 .padding(4.dp)
                 .windowInsetsTopHeight(WindowInsets.statusBars),
         )
-        ButtonSubscribe(
-            modifier = Modifier
-                .padding(start = 24.dp, end = 24.dp, bottom = 8.dp)
-                .navigationBarsPadding()
-                .fillMaxWidth()
-                .onSizeChanged { subscribeButtonHeight = it.height }
-                .align(Alignment.BottomCenter),
-            text = when (uiState.content) {
-                is BillingState.Content.Loading -> ""
-                is BillingState.Content.Success -> uiState.content.buttonTitle
-            },
-            showProgress = uiState.showButtonProgress,
-            onClick = { onEvent(BillingEvent.OnSubscribeClick) },
-        )
+        if (uiState.content !is BillingState.Content.Failure) {
+            ButtonSubscribe(
+                modifier = Modifier
+                    .padding(start = 24.dp, end = 24.dp, bottom = 8.dp)
+                    .navigationBarsPadding()
+                    .fillMaxWidth()
+                    .onSizeChanged { subscribeButtonHeight = it.height }
+                    .align(Alignment.BottomCenter),
+                text = when (uiState.content) {
+                    is BillingState.Content.Loading -> ""
+                    is BillingState.Content.Success -> uiState.content.buttonTitle
+                },
+                showProgress = uiState.showButtonProgress,
+                onClick = { onEvent(BillingEvent.OnSubscribeClick) },
+            )
+        }
     }
 }

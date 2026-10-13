@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Phân tích tâm trạng</string>
     <string name="billing_benefit_mood_insights_body">Xem tâm trạng của bạn thay đổi thế nào và tìm ra những ngày vui nhất</string>
+
+    <string name="billing_unavailable_title">Không thể mua hàng</string>
+    <string name="billing_unavailable_message">Vui lòng đảm bảo bạn đã đăng nhập vào tài khoản Google của mình</string>
+    <string name="billing_retry_button">Thử lại</string>
 </resources>

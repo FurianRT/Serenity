@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">মনের অবস্থার বিশ্লেষণ</string>
     <string name="billing_benefit_mood_insights_body">আপনার মনের অবস্থার পরিবর্তন দেখুন এবং আপনার সবচেয়ে আনন্দের দিনগুলো খুঁজে নিন</string>
+
+    <string name="billing_unavailable_title">কেনাকাটা উপলভ্য নয়</string>
+    <string name="billing_unavailable_message">আপনি আপনার Google অ্যাকাউন্টে সাইন ইন করেছেন কিনা তা নিশ্চিত করুন</string>
+    <string name="billing_retry_button">আবার চেষ্টা করুন</string>
 </resources>

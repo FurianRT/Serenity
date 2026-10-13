@@ -2,6 +2,7 @@ package com.furianrt.billing.internal.ui
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.billing.internal.ui.entities.BenefitItem
+import com.furianrt.billing.internal.ui.entities.ErrorMessageType
 import com.furianrt.billing.internal.ui.entities.SubscriptionPlan
 import com.furianrt.uikit.entities.UiThemeColor
 
@@ -14,6 +15,9 @@ internal data class BillingState(
 ) {
     sealed interface Content {
         data object Loading : Content
+        data class Failure(
+            val errorMessageType: ErrorMessageType,
+        ) : Content
 
         @Immutable
         data class Success(
@@ -29,6 +33,7 @@ internal sealed interface BillingEvent {
     data object OnSubscribeClick : BillingEvent
     data object OnPrivacyPolicyClick : BillingEvent
     data object OnTermsClick : BillingEvent
+    data object OnRetryClick : BillingEvent
     data class OnPlanSelected(val id: String) : BillingEvent
 }
 

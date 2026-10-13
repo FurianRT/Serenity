@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Analyse de l’humeur</string>
     <string name="billing_benefit_mood_insights_body">Voyez comment votre humeur évolue et découvrez vos journées les plus heureuses</string>
+
+    <string name="billing_unavailable_title">Achats indisponibles</string>
+    <string name="billing_unavailable_message">Veuillez vérifier que vous êtes connecté à votre compte Google</string>
+    <string name="billing_retry_button">Réessayer</string>
 </resources>

@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Insight Suasana Hati</string>
     <string name="billing_benefit_mood_insights_body">Lihat bagaimana suasana hatimu berubah dan temukan hari-hari terbaikmu</string>
+
+    <string name="billing_unavailable_title">Pembelian Tidak Tersedia</string>
+    <string name="billing_unavailable_message">Pastikan Anda sudah masuk ke akun Google Anda</string>
+    <string name="billing_retry_button">Coba Lagi</string>
 </resources>

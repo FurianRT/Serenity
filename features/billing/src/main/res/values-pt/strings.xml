@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Análise do humor</string>
     <string name="billing_benefit_mood_insights_body">Veja como seu humor muda e descubra seus dias mais felizes</string>
+
+    <string name="billing_unavailable_title">Compras indisponíveis</string>
+    <string name="billing_unavailable_message">Certifique-se de que iniciou sessão na sua conta Google</string>
+    <string name="billing_retry_button">Tentar novamente</string>
 </resources>

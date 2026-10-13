@@ -29,4 +29,8 @@
 
     <string name="billing_benefit_mood_insights_title">Ruh Hali Analizi</string>
     <string name="billing_benefit_mood_insights_body">Ruh halinin nasıl değiştiğini gör ve en mutlu günlerini keşfet</string>
+
+    <string name="billing_unavailable_title">Satın alma işlemleri kullanılamıyor</string>
+    <string name="billing_unavailable_message">Lütfen Google hesabınızda oturum açtığınızdan emin olun</string>
+    <string name="billing_retry_button">Tekrar Dene</string>
 </resources>
