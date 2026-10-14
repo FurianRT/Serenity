@@ -46,13 +46,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.furianrt.notesearch.R
 import com.furianrt.search.internal.ui.entities.SelectedFilter
+import com.furianrt.search.internal.ui.extensions.toFilterString
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.components.OneTimeEffect
 import com.furianrt.uikit.components.TagItem
 import com.furianrt.uikit.constants.ToolbarConstants
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.clickableWithScaleAnim
-import com.furianrt.uikit.extensions.toDateString
 import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -66,8 +66,6 @@ import dev.chrisbanes.haze.glass.LocalGlassStyle
 import dev.chrisbanes.haze.glass.OpticalSizeValue
 import java.time.LocalDate
 import com.furianrt.uikit.R as uiR
-
-private const val DATE_PATTERN = "dd.MM.yy"
 
 @Composable
 internal fun Toolbar(
@@ -390,12 +388,7 @@ private fun SelectedFiltersList(
 
                 is SelectedFilter.DateRange -> TagItem(
                     modifier = Modifier.animateItem(),
-                    title = if (filter.end != null) {
-                        filter.start.toDateString(DATE_PATTERN) +
-                                " - " + filter.end.toDateString(DATE_PATTERN)
-                    } else {
-                        filter.start.toDateString()
-                    },
+                    title = remember(filter) { filter.toFilterString() },
                     isRemovable = true,
                     hazeState = hazeState,
                     hazeStyle = LocalGlassStyle.current.then {

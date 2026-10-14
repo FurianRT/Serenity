@@ -4,6 +4,7 @@ import com.furianrt.domain.entities.NoteMedia
 import com.furianrt.gallery.internal.ui.entities.DateFilter
 import com.furianrt.gallery.internal.ui.entities.ListItem
 import com.furianrt.uikit.extensions.toDateString
+import java.time.LocalDate
 import java.time.ZonedDateTime
 
 private const val MAX_ROTATION = 4f
@@ -17,9 +18,15 @@ internal fun List<NoteMedia>.toListItems(): List<ListItem> = groupBy { it.noteDa
     }
 
 internal fun DateFilter.toDateString(): String = if (end != null) {
-    start.toDateString(pattern = "d MMM yyyy") + " - " + end.toDateString(pattern = "d MMM yyyy")
+    start.formatDate() + " - " + end.formatDate()
 } else {
-    start.toDateString(pattern = "d MMM yyyy")
+    start.formatDate()
+}
+
+private fun LocalDate.formatDate(): String = if (LocalDate.now().year == year) {
+    toDateString(pattern = "d MMM")
+} else {
+    toDateString(pattern = "d MMM yyyy")
 }
 
 private fun NoteMedia.toPhotoItem() = ListItem.Photo(

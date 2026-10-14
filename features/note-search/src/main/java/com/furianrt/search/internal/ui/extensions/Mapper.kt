@@ -55,6 +55,18 @@ internal fun LocalTag.toSelectedTag(isSelected: Boolean = false) = SelectedFilte
     isSelected = isSelected,
 )
 
+internal fun SelectedFilter.DateRange.toFilterString(): String = if (end != null) {
+    start.formatDate() + " - " + end.formatDate()
+} else {
+    start.formatDate()
+}
+
+private fun LocalDate.formatDate(): String = if (LocalDate.now().year == year) {
+    toDateString(pattern = "d MMM")
+} else {
+    toDateString(pattern = "d MMM yyyy")
+}
+
 private fun LocalTag.toTagsListItem() = SearchListItem.TagsList.Tag(
     title = title,
     count = noteIds.count(),
