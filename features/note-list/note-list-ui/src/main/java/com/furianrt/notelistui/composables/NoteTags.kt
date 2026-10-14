@@ -3,7 +3,6 @@ package com.furianrt.notelistui.composables
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -169,8 +168,11 @@ fun NoteTags(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, FlowPreview::class, ExperimentalMaterial3Api::class,
-    ExperimentalHazeApi::class
+@OptIn(
+    ExperimentalLayoutApi::class,
+    FlowPreview::class,
+    ExperimentalMaterial3Api::class,
+    ExperimentalHazeApi::class,
 )
 @Composable
 private fun TemplateNoteTagItem(
@@ -289,7 +291,7 @@ private fun TemplateNoteTagItem(
                     } else {
                         Modifier
                     }
-                 )
+                )
                 .dashedRoundedRectBorder(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
                 )
@@ -335,28 +337,22 @@ private fun TemplateNoteTagItem(
                 .widthIn(min = 56.dp, max = 200.dp)
                 .then(
                     if (hazeState != null) {
-                        Modifier.hazeGlass(
-                            input = HazeInput.Sources(hazeState),
-                            performanceMode = HazePerformanceMode.Performance,
-                            style = LocalGlassStyle.current.then {
-                                shape(shape)
-                                whitePoint(0f)
-                            },
-                        )
                         Modifier.hazeBlur(
                             input = HazeInput.Sources(hazeState),
                             style = HazeBlurStyle {
                                 blurRadius(12.dp)
                                 colorEffects(
-                                    listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))
+                                    listOf(
+                                        HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.6f)),
+                                        HazeColorEffect.tint(colorScheme.background),
+                                    ),
                                 )
                             },
                         )
                     } else {
                         Modifier
                     }
-                )
-                .background(MaterialTheme.colorScheme.background),
+                ),
             expanded = showTagSuggests,
             containerColor = Color.Transparent,
             shape = RoundedCornerShape(16.dp),
