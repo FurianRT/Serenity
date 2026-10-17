@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.sp
 import com.furianrt.core.orFalse
@@ -42,8 +43,11 @@ private enum class PanelState {
 @Composable
 internal fun SelectedPanel(
     titleState: NoteTitleState?,
+    showKeyboardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onFontFillCustomColorClick: () -> Unit,
     onFontCustomColorClick: () -> Unit,
+    onCloseColorClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
@@ -65,14 +69,24 @@ internal fun SelectedPanel(
 
             PanelState.FONT_COLOR -> FontColorsStateContent(
                 titleState = titleState,
+                showKeyboardButton = showKeyboardButton,
                 onCustomColorClick = onFontCustomColorClick,
-                onCloseClick = { panelState = PanelState.DEFAULT },
+                requestTitleFocus = requestTitleFocus,
+                onCloseClick = {
+                    onCloseColorClick()
+                    panelState = PanelState.DEFAULT
+                },
             )
 
             PanelState.FILL_COLOR -> FillColorsStateContent(
                 titleState = titleState,
                 onCustomColorClick = onFontFillCustomColorClick,
-                onCloseClick = { panelState = PanelState.DEFAULT },
+                showKeyboardButton = showKeyboardButton,
+                requestTitleFocus = requestTitleFocus,
+                onCloseClick = {
+                    onCloseColorClick()
+                    panelState = PanelState.DEFAULT
+                },
             )
 
             PanelState.FONT_SIZE -> SizeSelectorStateContent(
@@ -326,10 +340,13 @@ private fun SelectedStateContent(
 @Composable
 private fun FontColorsStateContent(
     titleState: NoteTitleState?,
+    showKeyboardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onCustomColorClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val colors = remember { UiNoteFontColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
         titleState
@@ -347,8 +364,13 @@ private fun FontColorsStateContent(
         modifier = modifier,
         colors = colors,
         selectedColor = selectedColor,
+        showKeyboardButton = showKeyboardButton,
         onCloseClick = onCloseClick,
         onCustomColorClick = onCustomColorClick,
+        onKeyboardClickClick = {
+            requestTitleFocus()
+            keyboardController?.show()
+        },
         onColorSelected = { color ->
             if (color == null) {
                 titleState?.removeSpan(
@@ -370,10 +392,13 @@ private fun FontColorsStateContent(
 @Composable
 private fun FillColorsStateContent(
     titleState: NoteTitleState?,
+    showKeyboardButton: Boolean,
+    requestTitleFocus: () -> Unit,
     onCustomColorClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     val colors = remember { UiNoteFontBackgroundColor.entries.map { it.value } }
     val selectedColor = remember(titleState?.annotatedString, titleState?.selection) {
         titleState
@@ -391,8 +416,14 @@ private fun FillColorsStateContent(
         modifier = modifier,
         colors = colors,
         selectedColor = selectedColor,
+        showKeyboardButton = showKeyboardButton,
         onCloseClick = onCloseClick,
         onCustomColorClick = onCustomColorClick,
+        onKeyboardClickClick = {
+            requestTitleFocus()
+            keyboardController?.show()
+
+        },
         onColorSelected = { color ->
             if (color == null) {
                 titleState?.removeSpan(
@@ -448,8 +479,11 @@ private fun SelectedPanelPreview() {
                 fontFamily = UiNoteFontFamily.NotoSans,
                 fontSize = 16.sp,
             ),
+            showKeyboardButton = false,
             onFontFillCustomColorClick = {},
             onFontCustomColorClick = {},
+            onCloseColorClick = {},
+            requestTitleFocus = {},
         )
     }
 }

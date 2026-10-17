@@ -279,6 +279,8 @@ fun ActionsPanel(
 
                     PanelMode.FORMATTING -> SelectedPanel(
                         titleState = titleState,
+                        showKeyboardButton = isColorPickerPanelVisible,
+                        requestTitleFocus = requestTitleFocus,
                         onFontCustomColorClick = {
                             keyboardController?.hide()
                             isColorPickerPanelVisible = true
@@ -289,6 +291,7 @@ fun ActionsPanel(
                             isColorPickerPanelVisible = true
                             colorPickerMode = ColorPickerMode.FONT_FILL_COLOR
                         },
+                        onCloseColorClick = { isColorPickerPanelVisible = false },
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(

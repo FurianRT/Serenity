@@ -9,16 +9,17 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imeAnimationSource
 import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.systemGestureExclusion
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,17 +30,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import codes.side.color.Hsv
-import codes.side.colorpicker.material3.AlphaSlider
-import codes.side.colorpicker.material3.ChannelSlider
-import codes.side.colorpicker.material3.ColorPickerDefaults
-import codes.side.colorpicker.state.ColorPickerState
-import codes.side.colorpicker.state.rememberColorPickerState
 import com.furianrt.notelistui.composables.title.NoteTitleState
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.kborowy.colorpicker.KolorPicker
+import com.kborowy.colorpicker.config.PickerConfig
+import com.kborowy.colorpicker.config.TrackConfig
 import kotlinx.coroutines.flow.drop
 import kotlin.math.max
+
+internal data class ColorPickerState(
+    val color: MutableState<Color>,
+)
 
 internal enum class ColorPickerMode {
     FONT_COLOR,
@@ -87,10 +89,10 @@ internal fun ColorPickerPanel(
                 shrinkVertically(shrinkTowards = Alignment.Top)
             },
         ) {
-            val colorPickerState = rememberColorPickerState(Color.White)
+            val colorPickerState = remember { ColorPickerState(mutableStateOf(Color.Cyan)) }
 
             LaunchedEffect(mode, titleState, colorPickerState) {
-                snapshotFlow { colorPickerState.color }
+                snapshotFlow { colorPickerState.color.value }
                     .drop(1)
                     .collect { color ->
                         titleState?.removeSpan(
@@ -122,9 +124,7 @@ internal fun ColorPickerPanel(
                     }
             }
             ColorPickerPanelContent(
-                modifier = Modifier
-                    .height(contentHeight)
-                    .clickableNoRipple(onClick = {}),
+                modifier = Modifier.height(contentHeight),
                 state = colorPickerState,
             )
         }
@@ -137,55 +137,22 @@ internal fun ColorPickerPanelContent(
     modifier: Modifier = Modifier,
 ) {
     Column(
-        modifier = modifier.padding(start = 32.dp, end = 32.dp, top = 32.dp, bottom = 16.dp),
+        modifier = modifier
+            .clickableNoRipple {}
+            .padding(start = 32.dp, end = 32.dp, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
-        ChannelSlider(
-            modifier = Modifier.fillMaxWidth(),
-            state = state,
-            channel = Hsv.H,
-            label = null,
-            valueLabel = null,
-            semanticLabel = null,
-            semanticValueText = null,
-            thumb = {
-                ColorPickerDefaults.SliderThumb(
-                    modifier = Modifier.systemGestureExclusion(),
-                    interactionSource = interactionSource,
-                    color = thumbColor,
-                )
-            },
-        )
-        ChannelSlider(
-            modifier = Modifier.fillMaxWidth(),
-            state = state,
-            channel = Hsv.V,
-            label = null,
-            valueLabel = null,
-            semanticLabel = null,
-            semanticValueText = null,
-            thumb = {
-                ColorPickerDefaults.SliderThumb(
-                    modifier = Modifier.systemGestureExclusion(),
-                    interactionSource = interactionSource,
-                    color = thumbColor,
-                )
-            },
-        )
-        AlphaSlider(
-            modifier = Modifier.fillMaxWidth(),
-            state = state,
-            label = null,
-            valueLabel = null,
-            semanticLabel = null,
-            semanticValueText = null,
-            thumb = {
-                ColorPickerDefaults.SliderThumb(
-                    modifier = Modifier.systemGestureExclusion(),
-                    interactionSource = interactionSource,
-                    color = thumbColor,
-                )
-            },
+        KolorPicker(
+            modifier = Modifier.fillMaxSize(),
+            initialColor = state.color.value,
+            onColorSelected = { state.color.value = it },
+            alphaTrackVisible = false,
+            pickerConfig =  PickerConfig.Default.copy(
+                thumbColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
+            hueTrackConfig = TrackConfig.Default.copy(
+                thumbColor = MaterialTheme.colorScheme.primaryContainer,
+            ),
         )
     }
 }

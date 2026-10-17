@@ -1,10 +1,10 @@
 package com.furianrt.toolspanel.internal.ui.font
 
 import androidx.compose.runtime.Immutable
-import codes.side.colorpicker.state.ColorPickerState
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
+import com.furianrt.toolspanel.internal.ui.color.ColorPickerState
 
 internal data class FontPanelUiState(
     val content: Content,

@@ -1,9 +1,9 @@
 package com.furianrt.toolspanel.internal.ui.font
 
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import codes.side.colorpicker.state.ColorPickerState
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.combine
 import com.furianrt.domain.entities.NoteFontColor
@@ -19,6 +19,7 @@ import com.furianrt.notelistui.extensions.toUiNoteFontColor
 import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.toolspanel.BuildConfig
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.internal.ui.color.ColorPickerState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -52,8 +53,9 @@ internal class FontViewModel @AssistedInject constructor(
 
     private val selectedTextAlignment = MutableStateFlow(initialTextAlignment)
 
-    private val pickerState =
-        ColorPickerState(initialCustomFontColor?.let { Color(it) } ?: Color.White)
+    private val pickerState = ColorPickerState(
+        color = mutableStateOf(initialCustomFontColor?.let { Color(it) } ?: Color.White),
+    )
     private val showCustomColorSelectorState = MutableStateFlow(false)
     private val selectedFontColorState = MutableStateFlow(
         when {

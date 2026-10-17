@@ -81,7 +81,7 @@ kotlinDatetime = "0.8.0"
 
 billing = "9.1.0"
 
-colorPicker = "2.0.0"
+colorPicker = "2.1.0"
 
 [libraries]
 
@@ -183,7 +183,7 @@ kotlinDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.re
 
 billing = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 
-colorPicker = { module = "codes.side:colorpicker-material3", version.ref = "colorPicker" }
+colorPicker = { module = "com.kborowy:kolor-picker", version.ref = "colorPicker" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

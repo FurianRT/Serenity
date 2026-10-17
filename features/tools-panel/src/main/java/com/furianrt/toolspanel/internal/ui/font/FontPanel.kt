@@ -395,7 +395,7 @@ internal fun FontContent(
 
                     is FontPanelUiState.Content.ColorPicker -> {
                         LaunchedEffect(targetState.pickerState) {
-                            snapshotFlow { targetState.pickerState.color }
+                            snapshotFlow { targetState.pickerState.color.value }
                                 .drop(1)
                                 .collect(onCustomFontColorSelected)
                         }
