@@ -61,6 +61,7 @@ import com.furianrt.toolspanel.internal.ui.voice.VoiceButtonDone
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
+import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.HazeInput
@@ -120,6 +121,7 @@ fun ActionsPanel(
     requestTitleFocus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val hasSerenityPlus = LocalSerenityPlus.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val context = LocalContext.current
     val hasMultiSelection by remember(titleState) {
@@ -283,13 +285,21 @@ fun ActionsPanel(
                         requestTitleFocus = requestTitleFocus,
                         onFontCustomColorClick = {
                             keyboardController?.hide()
-                            isColorPickerPanelVisible = true
-                            colorPickerMode = ColorPickerMode.FONT_COLOR
+                            if (hasSerenityPlus) {
+                                isColorPickerPanelVisible = true
+                                colorPickerMode = ColorPickerMode.FONT_COLOR
+                            } else {
+                                openBillingScreen()
+                            }
                         },
                         onFontFillCustomColorClick = {
                             keyboardController?.hide()
-                            isColorPickerPanelVisible = true
-                            colorPickerMode = ColorPickerMode.FONT_FILL_COLOR
+                            if (hasSerenityPlus) {
+                                isColorPickerPanelVisible = true
+                                colorPickerMode = ColorPickerMode.FONT_FILL_COLOR
+                            } else {
+                                openBillingScreen()
+                            }
                         },
                         onCloseColorClick = { isColorPickerPanelVisible = false },
                     )
@@ -352,6 +362,7 @@ fun ActionsPanel(
                 onTextAlignmentSelected = onTextAlignmentSelected,
                 onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
                 onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
+                openBillingScreen = openBillingScreen,
             )
 
             StickersContent(

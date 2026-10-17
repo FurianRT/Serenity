@@ -10,6 +10,7 @@ import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.managers.ResourcesManager
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.notelistui.entities.UiNoteFontColor
@@ -20,6 +21,7 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.toolspanel.BuildConfig
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.ui.color.ColorPickerState
+import com.furianrt.uikit.extensions.launch
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,6 +32,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -40,6 +43,7 @@ internal class FontViewModel @AssistedInject constructor(
     private val appearanceRepository: AppearanceRepository,
     private val resourcesManager: ResourcesManager,
     private val deviceInfoRepository: DeviceInfoRepository,
+    private val serenityPlusProvider: SerenityPlusProvider,
     @Assisted private val initialFontFamily: UiNoteFontFamily?,
     @Assisted private val initialFontColor: UiNoteFontColor?,
     @Assisted("initialCustomFontColor") private val initialCustomFontColor: Int?,
@@ -121,7 +125,13 @@ internal class FontViewModel @AssistedInject constructor(
     }
 
     private fun onCustomFontColorClick() {
-        showCustomColorSelectorState.update { true }
+        launch {
+            if (serenityPlusProvider.hasSerenityPlus().first()) {
+                showCustomColorSelectorState.update { true }
+            } else {
+                _effect.tryEmit(FontPanelEffect.OpenBillingScreen)
+            }
+        }
     }
 
     private fun onCloseCustomFontSelectorClick() {

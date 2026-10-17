@@ -149,9 +149,11 @@ internal fun ColorPickerPanelContent(
             alphaTrackVisible = false,
             pickerConfig =  PickerConfig.Default.copy(
                 thumbColor = MaterialTheme.colorScheme.primaryContainer,
+                pickerRadius = 16.dp,
             ),
             hueTrackConfig = TrackConfig.Default.copy(
                 thumbColor = MaterialTheme.colorScheme.primaryContainer,
+                trackBorderRadius = 8.dp,
             ),
         )
     }

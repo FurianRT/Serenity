@@ -66,6 +66,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
@@ -248,6 +249,7 @@ internal fun FontContent(
     onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
     onIncreaseLineSpacingClick: () -> Unit,
     onDecreaseLineSpacingClick: () -> Unit,
+    openBillingScreen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val viewModel = hiltViewModel<FontViewModel, FontViewModel.Factory>(
@@ -268,6 +270,8 @@ internal fun FontContent(
     val density = LocalDensity.current
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current
+
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     val emailErrorMessage = stringResource(uiR.string.send_email_error)
 
@@ -294,6 +298,8 @@ internal fun FontContent(
                     is FontPanelEffect.SendAlignmentChangeAction -> {
                         onTextAlignmentSelected(effect.alignment)
                     }
+
+                    is FontPanelEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }
@@ -471,7 +477,9 @@ private fun MainContent(
                     key = "custom_color",
                 ) {
                     CustomColorItem(
-                        modifier = Modifier.size(40.dp),
+                        modifier = Modifier
+                            .padding(end = 4.dp)
+                            .size(40.dp),
                         onClick = { onEvent(FontPanelEvent.OnCustomFontColorClick) },
                     )
                 }

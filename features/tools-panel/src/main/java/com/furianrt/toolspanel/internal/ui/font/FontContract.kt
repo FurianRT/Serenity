@@ -58,4 +58,5 @@ internal sealed interface FontPanelEffect {
     ) : FontPanelEffect
 
     data class SendAlignmentChangeAction(val alignment: NoteTextAlignment) : FontPanelEffect
+    data object OpenBillingScreen : FontPanelEffect
 }
