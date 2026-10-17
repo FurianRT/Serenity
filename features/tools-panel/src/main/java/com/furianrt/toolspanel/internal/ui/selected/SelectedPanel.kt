@@ -42,6 +42,8 @@ private enum class PanelState {
 @Composable
 internal fun SelectedPanel(
     titleState: NoteTitleState?,
+    onFontFillCustomColorClick: () -> Unit,
+    onFontCustomColorClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
@@ -63,11 +65,13 @@ internal fun SelectedPanel(
 
             PanelState.FONT_COLOR -> FontColorsStateContent(
                 titleState = titleState,
+                onCustomColorClick = onFontCustomColorClick,
                 onCloseClick = { panelState = PanelState.DEFAULT },
             )
 
             PanelState.FILL_COLOR -> FillColorsStateContent(
                 titleState = titleState,
+                onCustomColorClick = onFontFillCustomColorClick,
                 onCloseClick = { panelState = PanelState.DEFAULT },
             )
 
@@ -322,6 +326,7 @@ private fun SelectedStateContent(
 @Composable
 private fun FontColorsStateContent(
     titleState: NoteTitleState?,
+    onCustomColorClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -334,8 +339,8 @@ private fun FontColorsStateContent(
                 spanType = NoteTitleState.SpanType.FontColor(),
             )
             ?.filterIsInstance<NoteTitleState.SpanType.FontColor>()
-            ?.map { UiNoteFontColor.fromColor(it.color).value }
-            ?.takeIf { it.count() == 1 }
+            ?.mapNotNull { UiNoteFontColor.fromColor(it.color)?.value }
+            ?.takeIf { it.size == 1 }
             ?.firstOrNull()
     }
     ColorsPanel(
@@ -343,6 +348,7 @@ private fun FontColorsStateContent(
         colors = colors,
         selectedColor = selectedColor,
         onCloseClick = onCloseClick,
+        onCustomColorClick = onCustomColorClick,
         onColorSelected = { color ->
             if (color == null) {
                 titleState?.removeSpan(
@@ -364,6 +370,7 @@ private fun FontColorsStateContent(
 @Composable
 private fun FillColorsStateContent(
     titleState: NoteTitleState?,
+    onCustomColorClick: () -> Unit,
     onCloseClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -376,8 +383,8 @@ private fun FillColorsStateContent(
                 spanType = NoteTitleState.SpanType.FillColor(),
             )
             ?.filterIsInstance<NoteTitleState.SpanType.FillColor>()
-            ?.map { UiNoteFontBackgroundColor.fromColor(it.color)?.value }
-            ?.takeIf { it.count() == 1 }
+            ?.mapNotNull { UiNoteFontBackgroundColor.fromColor(it.color)?.value }
+            ?.takeIf { it.size == 1 }
             ?.firstOrNull()
     }
     ColorsPanel(
@@ -385,6 +392,7 @@ private fun FillColorsStateContent(
         colors = colors,
         selectedColor = selectedColor,
         onCloseClick = onCloseClick,
+        onCustomColorClick = onCustomColorClick,
         onColorSelected = { color ->
             if (color == null) {
                 titleState?.removeSpan(
@@ -440,6 +448,8 @@ private fun SelectedPanelPreview() {
                 fontFamily = UiNoteFontFamily.NotoSans,
                 fontSize = 16.sp,
             ),
+            onFontFillCustomColorClick = {},
+            onFontCustomColorClick = {},
         )
     }
 }

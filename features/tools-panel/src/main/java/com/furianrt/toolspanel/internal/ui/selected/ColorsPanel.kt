@@ -21,6 +21,7 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
+import com.furianrt.toolspanel.internal.ui.common.CustomColorItem
 import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -32,6 +33,7 @@ internal fun ColorsPanel(
     selectedColor: Color?,
     modifier: Modifier = Modifier,
     onColorSelected: (color: Color?) -> Unit = {},
+    onCustomColorClick: () -> Unit = {},
     onCloseClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
@@ -44,8 +46,15 @@ internal fun ColorsPanel(
             modifier = Modifier.weight(1f),
             state = listState,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
             contentPadding = PaddingValues(horizontal = 12.dp)
         ) {
+            item {
+                CustomColorItem(
+                    modifier = Modifier.size(30.dp),
+                    onClick = onCustomColorClick,
+                )
+            }
             itemsIndexed(items = colors) { _, item ->
                 ColorItem(
                     modifier = Modifier.size(32.dp),

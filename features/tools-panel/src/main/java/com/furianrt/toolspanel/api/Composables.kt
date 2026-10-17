@@ -49,6 +49,8 @@ import com.furianrt.toolspanel.internal.ui.background.container.BackgroundConten
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundTitleBar
 import com.furianrt.toolspanel.internal.ui.bullet.BulletContent
 import com.furianrt.toolspanel.internal.ui.bullet.BulletTitleBar
+import com.furianrt.toolspanel.internal.ui.color.ColorPickerMode
+import com.furianrt.toolspanel.internal.ui.color.ColorPickerPanel
 import com.furianrt.toolspanel.internal.ui.font.FontContent
 import com.furianrt.toolspanel.internal.ui.font.FontTitleBar
 import com.furianrt.toolspanel.internal.ui.regular.RegularPanel
@@ -131,6 +133,9 @@ fun ActionsPanel(
     var isBulletPanelVisible by rememberSaveable { mutableStateOf(false) }
     var showAudioRecordPermissionDialog by rememberSaveable { mutableStateOf(false) }
     var isBackgroundsPanelVisible by rememberSaveable { mutableStateOf(false) }
+    var isColorPickerPanelVisible by rememberSaveable { mutableStateOf(false) }
+
+    var colorPickerMode by remember { mutableStateOf(ColorPickerMode.FONT_COLOR) }
 
     val regularPanelScrollState = rememberScrollState()
 
@@ -184,6 +189,7 @@ fun ActionsPanel(
             isStickersPanelVisible = false
             isBulletPanelVisible = false
             isBackgroundsPanelVisible = false
+            isColorPickerPanelVisible = false
         }
     }
 
@@ -192,12 +198,14 @@ fun ActionsPanel(
         isStickersPanelVisible,
         isBulletPanelVisible,
         isBackgroundsPanelVisible,
+        isColorPickerPanelVisible,
     ) {
         onMenuVisibilityChange(
             isFontPanelVisible ||
                     isStickersPanelVisible ||
                     isBulletPanelVisible ||
-                    isBackgroundsPanelVisible
+                    isBackgroundsPanelVisible ||
+                    isColorPickerPanelVisible
         )
     }
     Box(modifier = modifier) {
@@ -207,7 +215,8 @@ fun ActionsPanel(
                     !isFontPanelVisible &&
                             !isStickersPanelVisible &&
                             !isBulletPanelVisible &&
-                            !isBackgroundsPanelVisible
+                            !isBackgroundsPanelVisible &&
+                            !isColorPickerPanelVisible
                 ) {
                     Modifier.imePadding()
                 }
@@ -270,6 +279,16 @@ fun ActionsPanel(
 
                     PanelMode.FORMATTING -> SelectedPanel(
                         titleState = titleState,
+                        onFontCustomColorClick = {
+                            keyboardController?.hide()
+                            isColorPickerPanelVisible = true
+                            colorPickerMode = ColorPickerMode.FONT_COLOR
+                        },
+                        onFontFillCustomColorClick = {
+                            keyboardController?.hide()
+                            isColorPickerPanelVisible = true
+                            colorPickerMode = ColorPickerMode.FONT_FILL_COLOR
+                        },
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(
@@ -352,6 +371,11 @@ fun ActionsPanel(
                 onThemeSelected = onThemeSelected,
                 openMediaSelector = openMediaSelector,
                 openBillingScreen = openBillingScreen,
+            )
+            ColorPickerPanel(
+                titleState = titleState,
+                mode = colorPickerMode,
+                visible = isColorPickerPanelVisible,
             )
         }
         AnimatedVisibility(

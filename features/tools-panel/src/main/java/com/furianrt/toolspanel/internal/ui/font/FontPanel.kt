@@ -117,6 +117,7 @@ import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.drop
 import kotlin.math.max
 import com.furianrt.uikit.R as uiR
 
@@ -395,6 +396,7 @@ internal fun FontContent(
                     is FontPanelUiState.Content.ColorPicker -> {
                         LaunchedEffect(targetState.pickerState) {
                             snapshotFlow { targetState.pickerState.color }
+                                .drop(1)
                                 .collect(onCustomFontColorSelected)
                         }
                         ColorPickerPanelContent(

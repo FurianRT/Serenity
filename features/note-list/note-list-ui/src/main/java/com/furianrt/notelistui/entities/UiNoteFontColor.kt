@@ -57,8 +57,8 @@ enum class UiNoteFontColor(val value: Color) {
 
 
     companion object {
-        fun fromColor(color: Color): UiNoteFontColor {
-            return entries.find { it.value == color } ?: WHITE
+        fun fromColor(color: Color): UiNoteFontColor? {
+            return entries.find { it.value == color }
         }
     }
 }
