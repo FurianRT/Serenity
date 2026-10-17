@@ -1,12 +1,23 @@
 package com.furianrt.toolspanel.internal.ui.font
 
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,12 +67,15 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
@@ -87,12 +101,16 @@ import com.furianrt.notelistui.entities.UiNoteFontColor
 import com.furianrt.notelistui.entities.UiNoteFontFamily
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.api.ToolsPanelConstants
+import com.furianrt.toolspanel.internal.ui.color.ColorPickerPanelContent
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
+import com.furianrt.toolspanel.internal.ui.common.CustomColorItem
+import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawTopInnerShadow
+import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -108,11 +126,52 @@ private val thumpSize = 14.dp
 
 @Composable
 internal fun FontTitleBar(
+    noteId: String,
+    fontFamily: UiNoteFontFamily?,
+    fontColor: UiNoteFontColor?,
+    fontSize: Int,
+    textAlignment: NoteTextAlignment,
+    requestTitleFocus: () -> Unit,
+    onDoneClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val viewModel = hiltViewModel<FontViewModel, FontViewModel.Factory>(
+        key = FONT_CONTENT_TAG + noteId,
+        creationCallback = { factory ->
+            factory.create(
+                initialFontColor = fontColor,
+                initialFontFamily = fontFamily,
+                initialFontSize = fontSize,
+                initialTextAlignment = textAlignment,
+            )
+        },
+    )
+
+    val uiState by viewModel.state.collectAsStateWithLifecycle()
+
+    FontTitleBarContent(
+        modifier = modifier,
+        showBackButton = uiState.content is FontPanelUiState.Content.ColorPicker,
+        onEvent = viewModel::onEvent,
+        requestTitleFocus = requestTitleFocus,
+        onDoneClick = onDoneClick,
+    )
+}
+
+@Composable
+private fun FontTitleBarContent(
+    showBackButton: Boolean,
+    onEvent: (event: FontPanelEvent) -> Unit,
     requestTitleFocus: () -> Unit,
     onDoneClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    val rotation by animateFloatAsState(
+        targetValue = if (showBackButton) 180f else 0f,
+        animationSpec = spring(stiffness = Spring.StiffnessMedium),
+    )
 
     Box(
         modifier = modifier
@@ -120,15 +179,29 @@ internal fun FontTitleBar(
             .clickableNoRipple {},
         contentAlignment = Alignment.Center,
     ) {
-        ButtonKeyboard(
+        Crossfade(
             modifier = Modifier
                 .padding(start = 4.dp)
-                .align(Alignment.CenterStart),
-            onClick = {
-                requestTitleFocus()
-                keyboardController?.show()
-            },
-        )
+                .align(Alignment.CenterStart)
+                .graphicsLayer {
+                    rotationZ = rotation
+                },
+            targetState = showBackButton,
+        ) { targetState ->
+            if (targetState) {
+                ButtonBack(
+                    modifier = Modifier.rotate(180f),
+                    onClick = { onEvent(FontPanelEvent.OnCloseCustomFontSelectorClick) },
+                )
+            } else {
+                ButtonKeyboard(
+                    onClick = {
+                        requestTitleFocus()
+                        keyboardController?.show()
+                    },
+                )
+            }
+        }
         Text(
             modifier = Modifier.padding(horizontal = 40.dp),
             text = stringResource(R.string.font_panel_title),
@@ -231,7 +304,7 @@ internal fun FontContent(
     LaunchedEffect(imeTarget, imeSource) {
         val imeMaxHeight = max(imeTarget, imeSource)
         if (imeMaxHeight > 0) {
-            imeHeight = density.run { imeMaxHeight.toDp() }
+            imeHeight = imeMaxHeight.pxToDp(density)
             cachedImeHeight = imeHeight
         }
     }
@@ -240,11 +313,17 @@ internal fun FontContent(
         if (visible) {
             val itemHalfSize = colorsListState.layoutInfo.visibleItemsInfo
                 .firstOrNull()?.size?.div(-2) ?: 0
-            colorsListState.requestScrollToItem(
-                index = uiState.fontColors.indexOf(uiState.selectedFontColor).coerceAtLeast(0),
-                scrollOffset = itemHalfSize,
-            )
-            listState.requestScrollToItem(0)
+            (uiState.content as? FontPanelUiState.Content.Main)?.let { mainContent ->
+                colorsListState.requestScrollToItem(
+                    index = mainContent.fontColors
+                        .indexOf(mainContent.selectedFontColor.predefinedColor)
+                        .coerceAtLeast(0),
+                    scrollOffset = itemHalfSize,
+                )
+                listState.requestScrollToItem(0)
+            }
+        } else {
+            viewModel.onEvent(FontPanelEvent.OnPanelClosed)
         }
     }
 
@@ -263,25 +342,63 @@ internal fun FontContent(
                 shrinkVertically(shrinkTowards = Alignment.Top)
             },
         ) {
-            Content(
+            AnimatedContent(
                 modifier = Modifier.height(contentHeight),
-                uiState = uiState,
-                onEvent = viewModel::onEvent,
-                onFontFamilySelected = onFontFamilySelected,
-                onFontColorSelected = onFontColorSelected,
-                onFontSizeSelected = onFontSizeSelected,
-                onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
-                onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
-                listState = listState,
-                colorsListState = colorsListState,
-            )
+                targetState = uiState.content,
+                contentKey = { it::class.simpleName },
+                transitionSpec = {
+                    if (uiState.content is FontPanelUiState.Content.Main) {
+                        (fadeIn() + scaleIn(
+                            initialScale = 0.98f,
+                            transformOrigin = TransformOrigin(0.5f, 0f),
+                        )).togetherWith(
+                            slideOutOfContainer(
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down,
+                            ) + fadeOut(
+                                animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            ),
+                        )
+                    } else {
+                        (slideIntoContainer(
+                            towards = AnimatedContentTransitionScope.SlideDirection.Up,
+                        ) + fadeIn()).togetherWith(
+                            fadeOut(
+                                animationSpec = spring(stiffness = Spring.StiffnessMedium),
+                            ) + scaleOut(
+                                targetScale = 0.98f,
+                                transformOrigin = TransformOrigin(0.5f, 0f),
+                            ),
+                        )
+                    }
+                },
+            ) { targetState ->
+                when (targetState) {
+                    is FontPanelUiState.Content.Main -> MainContent(
+                        uiState = targetState,
+                        onEvent = viewModel::onEvent,
+                        onFontFamilySelected = onFontFamilySelected,
+                        onFontColorSelected = onFontColorSelected,
+                        onFontSizeSelected = onFontSizeSelected,
+                        onIncreaseLineSpacingClick = onIncreaseLineSpacingClick,
+                        onDecreaseLineSpacingClick = onDecreaseLineSpacingClick,
+                        listState = listState,
+                        colorsListState = colorsListState,
+                    )
+
+                    is FontPanelUiState.Content.ColorPicker -> {
+                        ColorPickerPanelContent(
+                            state = targetState.pickerState,
+                        )
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
-private fun Content(
-    uiState: FontPanelUiState,
+private fun MainContent(
+    uiState: FontPanelUiState.Content.Main,
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
@@ -337,6 +454,14 @@ private fun Content(
                     bottom = 24.dp,
                 ),
             ) {
+                item(
+                    key = "custom_color",
+                ) {
+                    CustomColorItem(
+                        modifier = Modifier.size(40.dp),
+                        onClick = { onEvent(FontPanelEvent.OnCustomFontColorClick) },
+                    )
+                }
                 items(
                     count = uiState.fontColors.count(),
                     key = { uiState.fontColors[it] },
@@ -345,7 +470,7 @@ private fun Content(
                     ColorItem(
                         modifier = Modifier.size(40.dp),
                         color = item.value,
-                        isSelected = item == uiState.selectedFontColor,
+                        isSelected = item == uiState.selectedFontColor.predefinedColor,
                         onClick = { color ->
                             val uiColor = color?.let(UiNoteFontColor::fromColor)
                             onFontColorSelected(uiColor)
@@ -627,8 +752,10 @@ private fun MissingFontMessage(
 @PreviewWithBackground
 private fun PanelPreview() {
     SerenityTheme {
-        FontTitleBar(
+        FontTitleBarContent(
             modifier = Modifier.height(ToolsPanelConstants.PANEL_HEIGHT),
+            showBackButton = false,
+            onEvent = {},
             onDoneClick = {},
             requestTitleFocus = {},
         )
@@ -639,9 +766,10 @@ private fun PanelPreview() {
 @PreviewWithBackground
 private fun ContentPreview() {
     SerenityTheme {
-        Content(
-            uiState = FontPanelUiState(
-                selectedFontColor = UiNoteFontColor.WHITE,
+        MainContent(
+            uiState = FontPanelUiState.Content.Main(
+                selectedFontColor =
+                    FontPanelUiState.SelectedFontColor.Predefined(UiNoteFontColor.WHITE),
                 selectedFontFamily = UiNoteFontFamily.NotoSans,
                 selectedFontSize = 16,
                 fontFamilies = listOf(UiNoteFontFamily.NotoSans),

@@ -80,7 +80,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 13
+        private const val VERSION = 14
 
         fun create(
             context: Context,
@@ -107,6 +107,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_10_11,
                 MIGRATION_11_12,
                 MIGRATION_12_13,
+                MIGRATION_13_14,
             )
             .build()
     }
@@ -232,6 +233,7 @@ private val MIGRATION_10_11 = object : Migration(10, 11) {
                         textSpans = emptyList(),
                         font = null,
                         fontColor = null,
+                        customFontColor = null,
                         fontSize = 12,
                         textAlignment = null,
                         lineHeightMultiplier = null,
@@ -288,5 +290,11 @@ private val MIGRATION_12_13 = object : Migration(12, 13) {
         connection.execSQL(
             "ALTER TABLE Stickers ADD COLUMN over_content INTEGER NOT NULL DEFAULT 1",
         )
+    }
+}
+
+private val MIGRATION_13_14 = object : Migration(13, 14) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("ALTER TABLE Notes ADD COLUMN custom_font_color INTEGER")
     }
 }

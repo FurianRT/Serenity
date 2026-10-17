@@ -26,6 +26,9 @@ internal class EntryNote(
     @ColumnInfo(name = FIELD_FONT_COLOR)
     val fontColor: NoteFontColor?,
 
+    @ColumnInfo(name = FIELD_CUSTOM_FONT_COLOR)
+    val customFontColor: Int?,
+
     @ColumnInfo(name = FIELD_FONT_SIZE)
     val fontSize: Int,
 
@@ -78,6 +81,7 @@ internal class EntryNote(
         const val FIELD_TEXT_SPANS = "text_spans"
         const val FIELD_FONT = "font"
         const val FIELD_FONT_COLOR = "font_color"
+        const val FIELD_CUSTOM_FONT_COLOR = "custom_font_color"
         const val FIELD_FONT_SIZE = "font_size"
         const val FIELD_TEXT_ALIGNMENT = "text_alignment"
         const val FIELD_LINE_HEIGHT_MULTIPLIER = "line_height_multiplier"
@@ -131,6 +135,9 @@ internal class PartNoteFont(
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_COLOR)
     val fontColor: NoteFontColor?,
+
+    @ColumnInfo(name = EntryNote.FIELD_CUSTOM_FONT_COLOR)
+    val customFontColor: Int?,
 
     @ColumnInfo(name = EntryNote.FIELD_FONT_SIZE)
     val fontSize: Int,

@@ -1146,6 +1146,7 @@ internal class PageViewModel @AssistedInject constructor(
                 stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
                 fontFamily = fontFamily,
                 fontColor = fontColor,
+                customFontColor = 0,
                 fontSize = fontSize,
                 textAlignment = state.textAlignment,
                 lineHeightMultiplier = state.lineHeightMultiplier,

@@ -284,6 +284,11 @@ fun ActionsPanel(
 
                     PanelMode.FONT -> FontTitleBar(
                         requestTitleFocus = requestTitleFocus,
+                        noteId = noteId,
+                        fontColor = fontColor,
+                        fontFamily = fontFamily,
+                        fontSize = fontSize,
+                        textAlignment = textAlignment,
                         onDoneClick = { isFontPanelVisible = false },
                     )
 

@@ -6,6 +6,7 @@ data class SimpleNote(
     val id: String,
     val font: NoteFontFamily?,
     val fontColor: NoteFontColor?,
+    val customFontColor: Int?,
     val fontSize: Int,
     val textAlignment: NoteTextAlignment?,
     val lineHeightMultiplier: Float?,

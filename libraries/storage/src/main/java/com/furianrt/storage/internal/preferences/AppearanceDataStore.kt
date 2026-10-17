@@ -25,6 +25,7 @@ private val KEY_THEME_COLOR = stringPreferencesKey("theme_color")
 private val KEY_DEFAULT_NOTE_FONT = stringPreferencesKey("default_note_font")
 private val KEY_APP_FONT = stringPreferencesKey("app_font")
 private val KEY_DEFAULT_NOTE_FONT_COLOR = stringPreferencesKey("default_note_font_color")
+private val KEY_DEFAULT_NOTE_CUSTOM_FONT_COLOR = intPreferencesKey("default_note_custom_font_color")
 private val KEY_DEFAULT_NOTE_FONT_SIZE = intPreferencesKey("default_note_font_size")
 private val KEY_DEFAULT_NOTE_MOOD_ID = stringPreferencesKey("default_note_mood_id")
 private val KEY_DEFAULT_NOTE_BACKGROUND_COLOR_ID =
@@ -89,6 +90,19 @@ internal class AppearanceDataStore @Inject constructor(
                 prefs.remove(KEY_DEFAULT_NOTE_FONT_COLOR)
             } else {
                 prefs[KEY_DEFAULT_NOTE_FONT_COLOR] = color.name
+            }
+        }
+    }
+
+    fun getDefaultNoteCustomFontColor(): Flow<Int?> = dataStore.data
+        .map { prefs -> prefs[KEY_DEFAULT_NOTE_CUSTOM_FONT_COLOR] }
+
+    suspend fun setDefaultNoteCustomFontColor(color: Int?) {
+        dataStore.edit { prefs ->
+            if (color == null) {
+                prefs.remove(KEY_DEFAULT_NOTE_CUSTOM_FONT_COLOR)
+            } else {
+                prefs[KEY_DEFAULT_NOTE_CUSTOM_FONT_COLOR] = color
             }
         }
     }

@@ -81,6 +81,8 @@ kotlinDatetime = "0.8.0"
 
 billing = "9.1.0"
 
+colorPicker = "2.0.0"
+
 [libraries]
 
 coreKtx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -180,6 +182,8 @@ timePicker = { module = "io.github.darkokoa:datetime-wheel-picker", version.ref 
 kotlinDatetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinDatetime" }
 
 billing = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
+
+colorPicker = { module = "codes.side:colorpicker-material3", version.ref = "colorPicker" }
 
 android-gradlePlugin = { module = "com.android.tools.build:gradle", version.ref = "agp" }
 kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }

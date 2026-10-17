@@ -45,6 +45,10 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appearanceDataStore.setDefaultNoteFontColor(color)
     }
 
+    override suspend fun setDefaultNoteCustomFontColor(color: Int?) {
+        appearanceDataStore.setDefaultNoteCustomFontColor(color)
+    }
+
     override suspend fun setDefaultNoteFontSize(size: Int) {
         appearanceDataStore.setDefaultNoteFontSize(size)
     }

@@ -50,4 +50,6 @@ dependencies {
     implementation(libs.hazeMaterials)
     implementation(libs.hazeGlass)
     implementation(libs.hazeGlassMaterials)
+
+    implementation(libs.colorPicker)
 }

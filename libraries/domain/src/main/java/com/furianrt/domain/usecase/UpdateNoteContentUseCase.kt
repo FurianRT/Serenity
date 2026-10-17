@@ -29,6 +29,7 @@ class UpdateNoteContentUseCase @Inject constructor(
         stickers: List<LocalNote.Sticker>,
         fontFamily: NoteFontFamily?,
         fontColor: NoteFontColor?,
+        customFontColor: Int?,
         fontSize: Int,
         textAlignment: NoteTextAlignment?,
         lineHeightMultiplier: Float?,
@@ -85,7 +86,13 @@ class UpdateNoteContentUseCase @Inject constructor(
             }
 
             notesRepository.updateNoteText(noteId, content)
-            notesRepository.updateNoteFont(noteId, fontColor, fontFamily, fontSize)
+            notesRepository.updateNoteFont(
+                noteId = noteId,
+                color = fontColor,
+                customColor = customFontColor,
+                family = fontFamily,
+                size = fontSize,
+            )
 
             notesRepository.updateNoteTextAlign(noteId, textAlignment)
             notesRepository.updateNoteLineHeight(noteId, lineHeightMultiplier)

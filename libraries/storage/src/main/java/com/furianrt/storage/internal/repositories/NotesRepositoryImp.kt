@@ -99,10 +99,19 @@ internal class NotesRepositoryImp @Inject constructor(
     override suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor?,
+        customColor: Int?,
         family: NoteFontFamily?,
         size: Int,
     ) {
-        noteDao.update(PartNoteFont(id = noteId, font = family, fontColor = color, fontSize = size))
+        noteDao.update(
+            PartNoteFont(
+                id = noteId,
+                font = family,
+                fontColor = color,
+                customFontColor = customColor,
+                fontSize = size,
+            )
+        )
     }
 
     override suspend fun updateNoteTextAlign(
@@ -192,6 +201,7 @@ internal class NotesRepositoryImp @Inject constructor(
                 textSpans = emptyList(),
                 font = appearanceDataStore.getDefaultNoteFont().first(),
                 fontColor = appearanceDataStore.getDefaultNoteFontColor().first(),
+                customFontColor = appearanceDataStore.getDefaultNoteCustomFontColor().first(),
                 fontSize = appearanceDataStore.getDefaultNoteFontSize().first(),
                 textAlignment = if (appearanceDataStore.isKeepPrevTextAlignEnabled().first()) {
                     appearanceDataStore.getDefaultNoteTextAlign().first()

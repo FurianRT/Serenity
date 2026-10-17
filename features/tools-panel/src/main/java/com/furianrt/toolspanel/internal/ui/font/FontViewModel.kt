@@ -1,8 +1,11 @@
 package com.furianrt.toolspanel.internal.ui.font
 
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import codes.side.colorpicker.state.ColorPickerState
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.core.combine
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -26,7 +29,6 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -44,15 +46,29 @@ internal class FontViewModel @AssistedInject constructor(
 ) : ViewModel() {
 
     private val selectedFontFamily = MutableStateFlow(initialFontFamily)
-    private val selectedFontColor = MutableStateFlow(initialFontColor)
+
     private val selectedFontSize = MutableStateFlow(initialFontSize)
+
     private val selectedTextAlignment = MutableStateFlow(initialTextAlignment)
+
+    private val pickerState = ColorPickerState(Color.White)
+    private val showCustomColorSelectorState = MutableStateFlow(false)
+    private val selectedFontColorState = MutableStateFlow(
+        when {
+            initialFontColor != null -> FontPanelUiState.SelectedFontColor.Predefined(
+                fontColor = initialFontColor,
+            )
+
+            else -> FontPanelUiState.SelectedFontColor.None
+        }
+    )
 
     val state: StateFlow<FontPanelUiState> = combine(
         selectedFontFamily,
-        selectedFontColor,
+        selectedFontColorState,
         selectedFontSize,
         selectedTextAlignment,
+        showCustomColorSelectorState,
         appearanceRepository.getAppFont(),
         ::buildState,
     ).flowOn(
@@ -61,8 +77,9 @@ internal class FontViewModel @AssistedInject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = buildState(
+            showCustomColorSelector = showCustomColorSelectorState.value,
+            fontColor = selectedFontColorState.value,
             fontFamily = initialFontFamily,
-            fontColor = initialFontColor,
             fontSize = initialFontSize,
             textAlignment = initialTextAlignment,
             appFontFamily = initialFontFamily?.toNoteFontFamily(),
@@ -74,22 +91,57 @@ internal class FontViewModel @AssistedInject constructor(
 
     fun onEvent(event: FontPanelEvent) {
         when (event) {
-            is FontPanelEvent.OnFontFamilySelected -> selectedFontFamily.update { event.family }
-            is FontPanelEvent.OnFontColorSelected -> selectedFontColor.update { event.color }
-            is FontPanelEvent.OnFontSizeSelected -> selectedFontSize.update { event.size }
+            is FontPanelEvent.OnFontFamilySelected -> onFontFamilySelected(event.family)
+            is FontPanelEvent.OnFontColorSelected -> onFontColorSelected(event.color)
+            is FontPanelEvent.OnCustomFontColorClick -> onCustomFontColorClick()
+            is FontPanelEvent.OnCloseCustomFontSelectorClick -> onCloseCustomFontSelectorClick()
+            is FontPanelEvent.OnFontSizeSelected -> onFontSizeSelected(event.size)
             is FontPanelEvent.OnFontSendFeedbackClick -> sendFontFeedback()
             is FontPanelEvent.OnTextAlignmentClick -> onTextAlignmentClick()
+            is FontPanelEvent.OnPanelClosed -> onPanelClosed()
         }
     }
 
-    private fun onTextAlignmentClick() {
-        val newAlignment = when (state.value.textAlignment) {
-            NoteTextAlignment.START -> NoteTextAlignment.CENTER
-            NoteTextAlignment.CENTER -> NoteTextAlignment.END
-            NoteTextAlignment.END -> NoteTextAlignment.START
+    private fun onPanelClosed() {
+        showCustomColorSelectorState.update { false }
+    }
+
+    private fun onFontColorSelected(color: UiNoteFontColor?) {
+        selectedFontColorState.update {
+            if (color != null) {
+                FontPanelUiState.SelectedFontColor.Predefined(fontColor = color)
+            } else {
+                FontPanelUiState.SelectedFontColor.None
+            }
         }
-        selectedTextAlignment.update { newAlignment }
-        _effect.tryEmit(FontPanelEffect.SendAlignmentChangeAction(newAlignment))
+    }
+
+    private fun onCustomFontColorClick() {
+        showCustomColorSelectorState.update { true }
+    }
+
+    private fun onCloseCustomFontSelectorClick() {
+        showCustomColorSelectorState.update { false }
+    }
+
+    private fun onFontFamilySelected(family: UiNoteFontFamily?) {
+        selectedFontFamily.update { family }
+    }
+
+    private fun onFontSizeSelected(size: Int) {
+        selectedFontSize.update { size }
+    }
+
+    private fun onTextAlignmentClick() {
+        (state.value.content as? FontPanelUiState.Content.Main)?.let { mainContent ->
+            val newAlignment = when (mainContent.textAlignment) {
+                NoteTextAlignment.START -> NoteTextAlignment.CENTER
+                NoteTextAlignment.CENTER -> NoteTextAlignment.END
+                NoteTextAlignment.END -> NoteTextAlignment.START
+            }
+            selectedTextAlignment.update { newAlignment }
+            _effect.tryEmit(FontPanelEffect.SendAlignmentChangeAction(newAlignment))
+        }
     }
 
     private fun sendFontFeedback() {
@@ -106,20 +158,29 @@ internal class FontViewModel @AssistedInject constructor(
 
     private fun buildState(
         fontFamily: UiNoteFontFamily?,
-        fontColor: UiNoteFontColor?,
+        fontColor: FontPanelUiState.SelectedFontColor,
         fontSize: Int,
         textAlignment: NoteTextAlignment,
+        showCustomColorSelector: Boolean,
         appFontFamily: NoteFontFamily?,
     ) = FontPanelUiState(
-        selectedFontFamily = fontFamily,
-        selectedFontColor = fontColor,
-        selectedFontSize = fontSize,
-        fontFamilies = appearanceRepository.getNoteFontsList()
-            .map(NoteFontFamily::toUiNoteFontFamily),
-        fontColors = appearanceRepository.getNoteFontColorsList()
-            .map(NoteFontColor::toUiNoteFontColor),
-        defaultFontFamily = appFontFamily?.toUiNoteFontFamily(),
-        textAlignment = textAlignment,
+        content = if (showCustomColorSelector) {
+            FontPanelUiState.Content.ColorPicker(
+                pickerState = pickerState,
+            )
+        } else {
+            FontPanelUiState.Content.Main(
+                selectedFontFamily = fontFamily,
+                selectedFontColor = fontColor,
+                selectedFontSize = fontSize,
+                fontFamilies = appearanceRepository.getNoteFontsList()
+                    .map(NoteFontFamily::toUiNoteFontFamily),
+                fontColors = appearanceRepository.getNoteFontColorsList()
+                    .map(NoteFontColor::toUiNoteFontColor),
+                defaultFontFamily = appFontFamily?.toUiNoteFontFamily(),
+                textAlignment = textAlignment,
+            )
+        },
     )
 
     @AssistedFactory

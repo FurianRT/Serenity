@@ -26,6 +26,7 @@ interface NotesRepository {
     suspend fun updateNoteFont(
         noteId: String,
         color: NoteFontColor?,
+        customColor: Int?,
         family: NoteFontFamily?,
         size: Int,
     )

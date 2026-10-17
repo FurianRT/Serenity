@@ -19,6 +19,7 @@ interface AppearanceRepository {
 
     fun getDefaultNoteFontColor(): Flow<NoteFontColor?>
     suspend fun setDefaultNoteFontColor(color: NoteFontColor?)
+    suspend fun setDefaultNoteCustomFontColor(color: Int?)
 
     suspend fun setDefaultNoteFontSize(size: Int)
 
