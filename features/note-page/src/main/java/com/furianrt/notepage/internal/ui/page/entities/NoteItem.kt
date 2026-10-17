@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.page.entities
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import com.furianrt.domain.entities.NoteLocation
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.notelistui.entities.UiNoteContent
@@ -18,6 +19,7 @@ internal data class NoteItem(
     val content: List<UiNoteContent>,
     val fontFamily: UiNoteFontFamily?,
     val fontColor: UiNoteFontColor?,
+    val customFontColor: Color?,
     val fontSize: Int,
     val textAlignment: NoteTextAlignment,
     val lineHeightMultiplier: Float,

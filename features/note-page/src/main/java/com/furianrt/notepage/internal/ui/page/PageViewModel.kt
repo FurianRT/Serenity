@@ -1,5 +1,7 @@
 package com.furianrt.notepage.internal.ui.page
 
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.coerceIn
@@ -68,6 +70,7 @@ import com.furianrt.notepage.internal.ui.page.PageEvent.OnCancelLocationClick
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCheckedListChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnClickOutside
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnCustomBackgroundSelectRequest
+import com.furianrt.notepage.internal.ui.page.PageEvent.OnCustomFontColorSelected
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnEditModeStateChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFocusedTitleSelectionChange
 import com.furianrt.notepage.internal.ui.page.PageEvent.OnFontColorSelected
@@ -287,6 +290,7 @@ internal class PageViewModel @AssistedInject constructor(
             is OnSelectFontClick -> resetStickersEditing()
             is OnFontFamilySelected -> updateFontFamily(event.family)
             is OnFontColorSelected -> updateFontColor(event.color)
+            is OnCustomFontColorSelected -> updateCustomFontColor(event.color)
             is OnFontSizeSelected -> updateFontSize(event.size)
             is OnVoiceStarted -> resetStickersEditing()
             is OnVoicePlayClick -> {
@@ -1089,6 +1093,7 @@ internal class PageViewModel @AssistedInject constructor(
                         fontFamily = note.fontFamily,
                         appFontFamily = appFont,
                         fontColor = note.fontColor,
+                        customFontColor = note.customFontColor,
                         fontSize = note.fontSize,
                         textAlignment = note.textAlignment,
                         lineHeightMultiplier = note.lineHeightMultiplier,
@@ -1134,9 +1139,6 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private suspend fun saveNoteContent(state: PageUiState.Success) {
-        val fontFamily = state.fontFamily?.toNoteFontFamily()
-        val fontColor = state.fontColor?.toNoteFontColor()
-        val fontSize = state.fontSize
         val note = notesRepository.getNote(noteId).first()
         if (note != null) {
             updateNoteContentUseCase(
@@ -1144,10 +1146,10 @@ internal class PageViewModel @AssistedInject constructor(
                 content = state.content.map(UiNoteContent::toLocalNoteContent),
                 tags = state.tags.map(UiNoteTag::toLocalNoteTag).filter { it.title.isNotBlank() },
                 stickers = state.stickers.map(StickerItem::toLocalNoteSticker),
-                fontFamily = fontFamily,
-                fontColor = fontColor,
-                customFontColor = 0,
-                fontSize = fontSize,
+                fontFamily = state.fontFamily?.toNoteFontFamily(),
+                fontColor = state.fontColor?.toNoteFontColor(),
+                customFontColor = state.customFontColor?.toArgb(),
+                fontSize = state.fontSize,
                 textAlignment = state.textAlignment,
                 lineHeightMultiplier = state.lineHeightMultiplier,
                 backgroundId = state.noteTheme.takeIf { it?.isAppTheme == false }?.colorId,
@@ -1165,6 +1167,7 @@ internal class PageViewModel @AssistedInject constructor(
     private suspend fun saveDefaultFontData(state: PageUiState.Success) {
         appearanceRepository.setDefaultNoteFont(state.fontFamily?.toNoteFontFamily())
         appearanceRepository.setDefaultNoteFontColor(state.fontColor?.toNoteFontColor())
+        appearanceRepository.setDefaultNoteCustomFontColor(state.customFontColor?.toArgb())
         appearanceRepository.setDefaultNoteFontSize(state.fontSize)
         appearanceRepository.setDefaultNoteBackgroundColorId(state.noteTheme?.colorId)
         appearanceRepository.setDefaultNoteBackgroundImageId(state.noteTheme?.imageId)
@@ -1190,7 +1193,22 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun updateFontColor(color: UiNoteFontColor?) {
         hasContentChanged = true
-        _state.updateState<PageUiState.Success> { it.copy(fontColor = color) }
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(
+                fontColor = color,
+                customFontColor = null,
+            )
+        }
+    }
+
+    private fun updateCustomFontColor(color: Color) {
+        hasContentChanged = true
+        _state.updateState<PageUiState.Success> { successState ->
+            successState.copy(
+                fontColor = null,
+                customFontColor = color
+            )
+        }
     }
 
     private fun updateFontSize(size: Int) {

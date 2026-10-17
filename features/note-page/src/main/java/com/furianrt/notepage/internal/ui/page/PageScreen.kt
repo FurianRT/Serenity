@@ -51,6 +51,7 @@ import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
@@ -543,6 +544,7 @@ private fun SuccessScreen(
             onVoiceRecordCancel = { state.isVoiceRecordActive = false },
             onFontFamilySelected = { onEvent(PageEvent.OnFontFamilySelected(it)) },
             onFontColorSelected = { onEvent(PageEvent.OnFontColorSelected(it)) },
+            onCustomFontColorSelected = { onEvent(PageEvent.OnCustomFontColorSelected(it)) },
             onFontSizeSelected = { onEvent(PageEvent.OnFontSizeSelected(it)) },
             onFontStyleClick = { onEvent(PageEvent.OnSelectFontClick) },
             onTextAlignmentSelected = { onEvent(PageEvent.OnChangeTextAlightClickClick(it)) },
@@ -793,7 +795,7 @@ private fun ContentItems(
                                     }
                                     .animatePlacementInScope(this@LookaheadScope),
                                 title = item,
-                                color = uiState.fontColor?.value,
+                                color = uiState.fontColor?.value ?: uiState.customFontColor,
                                 fontFamily = uiState.fontFamily?.regular,
                                 fontSizeMultiplier = (uiState.fontFamily ?: uiState.appFontFamily)
                                     .sizeMultiplier,
@@ -953,6 +955,7 @@ private fun Panel(
     onVoiceRecordCancel: () -> Unit,
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
+    onCustomFontColorSelected: (color: Color) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
     onIncreaseLineSpacingClick: () -> Unit,
@@ -984,6 +987,9 @@ private fun Panel(
                     noteId = uiState.noteId,
                     fontFamily = uiState.fontFamily,
                     fontColor = uiState.fontColor,
+                    customFontColor = uiState.fontColor?.value ?: uiState.customFontColor
+                    ?: uiState.noteTheme?.colorTheme?.primary
+                    ?: uiState.appTheme.colorTheme?.primary,
                     fontSize = uiState.fontSize,
                     textAlignment = uiState.textAlignment,
                     noteTheme = uiState.noteTheme,
@@ -999,6 +1005,7 @@ private fun Panel(
                     onVoiceRecordCancel = onVoiceRecordCancel,
                     onFontFamilySelected = onFontFamilySelected,
                     onFontColorSelected = onFontColorSelected,
+                    onCustomFontColorSelected = onCustomFontColorSelected,
                     onFontSizeSelected = onFontSizeSelected,
                     onFontStyleClick = onFontStyleClick,
                     onTextAlignmentSelected = onTextAlignmentSelected,

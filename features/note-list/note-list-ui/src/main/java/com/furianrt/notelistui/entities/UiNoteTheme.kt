@@ -1,5 +1,7 @@
 package com.furianrt.notelistui.entities
 
+import androidx.compose.material3.ColorScheme
+
 sealed class UiNoteTheme(
     open val isAppTheme: Boolean,
 ) {
@@ -37,5 +39,11 @@ sealed class UiNoteTheme(
         get() = when (this) {
             is Solid -> null
             is Image -> image.id
+        }
+
+    val colorTheme: ColorScheme?
+        get() = when (this) {
+            is Image -> color?.colorScheme
+            is Solid -> color.colorScheme
         }
 }

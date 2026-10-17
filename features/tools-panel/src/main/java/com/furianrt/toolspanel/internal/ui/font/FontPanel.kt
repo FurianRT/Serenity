@@ -75,9 +75,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.onLayoutRectChanged
 import androidx.compose.ui.platform.LocalContext
@@ -129,6 +131,7 @@ internal fun FontTitleBar(
     noteId: String,
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
+    customFontColor: Color?,
     fontSize: Int,
     textAlignment: NoteTextAlignment,
     requestTitleFocus: () -> Unit,
@@ -140,6 +143,7 @@ internal fun FontTitleBar(
         creationCallback = { factory ->
             factory.create(
                 initialFontColor = fontColor,
+                initialCustomFontColor = customFontColor?.toArgb(),
                 initialFontFamily = fontFamily,
                 initialFontSize = fontSize,
                 initialTextAlignment = textAlignment,
@@ -232,11 +236,13 @@ internal fun FontContent(
     noteId: String,
     fontFamily: UiNoteFontFamily?,
     fontColor: UiNoteFontColor?,
+    customFontColor: Color?,
     fontSize: Int,
     textAlignment: NoteTextAlignment,
     visible: Boolean,
     onFontFamilySelected: (family: UiNoteFontFamily?) -> Unit,
     onFontColorSelected: (color: UiNoteFontColor?) -> Unit,
+    onCustomFontColorSelected: (color: Color) -> Unit,
     onFontSizeSelected: (size: Int) -> Unit,
     onTextAlignmentSelected: (alignment: NoteTextAlignment) -> Unit,
     onIncreaseLineSpacingClick: () -> Unit,
@@ -248,6 +254,7 @@ internal fun FontContent(
         creationCallback = { factory ->
             factory.create(
                 initialFontColor = fontColor,
+                initialCustomFontColor = customFontColor?.toArgb(),
                 initialFontFamily = fontFamily,
                 initialFontSize = fontSize,
                 initialTextAlignment = textAlignment,
@@ -386,6 +393,10 @@ internal fun FontContent(
                     )
 
                     is FontPanelUiState.Content.ColorPicker -> {
+                        LaunchedEffect(targetState.pickerState) {
+                            snapshotFlow { targetState.pickerState.color }
+                                .collect(onCustomFontColorSelected)
+                        }
                         ColorPickerPanelContent(
                             state = targetState.pickerState,
                         )

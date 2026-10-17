@@ -41,6 +41,7 @@ internal class FontViewModel @AssistedInject constructor(
     private val deviceInfoRepository: DeviceInfoRepository,
     @Assisted private val initialFontFamily: UiNoteFontFamily?,
     @Assisted private val initialFontColor: UiNoteFontColor?,
+    @Assisted("initialCustomFontColor") private val initialCustomFontColor: Int?,
     @Assisted private val initialFontSize: Int,
     @Assisted private val initialTextAlignment: NoteTextAlignment,
 ) : ViewModel() {
@@ -51,7 +52,8 @@ internal class FontViewModel @AssistedInject constructor(
 
     private val selectedTextAlignment = MutableStateFlow(initialTextAlignment)
 
-    private val pickerState = ColorPickerState(Color.White)
+    private val pickerState =
+        ColorPickerState(initialCustomFontColor?.let { Color(it) } ?: Color.White)
     private val showCustomColorSelectorState = MutableStateFlow(false)
     private val selectedFontColorState = MutableStateFlow(
         when {
@@ -188,6 +190,7 @@ internal class FontViewModel @AssistedInject constructor(
         fun create(
             initialFontFamily: UiNoteFontFamily?,
             initialFontColor: UiNoteFontColor?,
+            @Assisted("initialCustomFontColor") initialCustomFontColor: Int?,
             initialFontSize: Int,
             initialTextAlignment: NoteTextAlignment,
         ): FontViewModel

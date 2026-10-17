@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.page
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Color
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.mediaselector.api.MediaSelectorState
@@ -29,6 +30,7 @@ internal sealed interface PageUiState {
         val fontFamily: UiNoteFontFamily?,
         val appFontFamily: UiNoteFontFamily,
         val fontColor: UiNoteFontColor?,
+        val customFontColor: Color?,
         val fontSize: Int,
         val textAlignment: NoteTextAlignment,
         val lineHeightMultiplier: Float,
@@ -84,6 +86,7 @@ internal sealed interface PageEvent {
     data class OnTitleTextChange(val id: String) : PageEvent
     data class OnFontFamilySelected(val family: UiNoteFontFamily?) : PageEvent
     data class OnFontColorSelected(val color: UiNoteFontColor?) : PageEvent
+    data class OnCustomFontColorSelected(val color: Color) : PageEvent
     data class OnFontSizeSelected(val size: Int) : PageEvent
     data class OnVoiceRemoveClick(val voice: UiNoteContent.Voice) : PageEvent
     data class OnVoicePlayClick(val voice: UiNoteContent.Voice) : PageEvent

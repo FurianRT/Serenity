@@ -1,5 +1,6 @@
 package com.furianrt.notepage.internal.ui.extensions
 
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.furianrt.domain.entities.LocalNote
@@ -43,6 +44,7 @@ internal suspend fun LocalNote.toNoteItem(
         )
     },
     fontColor = fontColor?.toUiNoteFontColor(),
+    customFontColor = customFontColor?.let { Color(it) },
     fontFamily = fontFamily?.toUiNoteFontFamily(),
     fontSize = fontSize,
     lineHeightMultiplier = lineHeightMultiplier ?: 1f,
