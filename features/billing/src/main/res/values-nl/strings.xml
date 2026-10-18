@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Aankopen niet beschikbaar</string>
     <string name="billing_unavailable_message">Controleer of je bent ingelogd op je Google-account</string>
     <string name="billing_retry_button">Opnieuw proberen</string>
+
+    <string name="billing_benefit_custom_font_color_title">Eigen tekstkleur</string>
+    <string name="billing_benefit_custom_font_color_body">Geef je notities een persoonlijk tintje met je favoriete kleuren</string>
 </resources>

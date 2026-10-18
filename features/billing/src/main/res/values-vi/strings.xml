@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Không thể mua hàng</string>
     <string name="billing_unavailable_message">Vui lòng đảm bảo bạn đã đăng nhập vào tài khoản Google của mình</string>
     <string name="billing_retry_button">Thử lại</string>
+
+    <string name="billing_benefit_custom_font_color_title">Màu chữ tùy chỉnh</string>
+    <string name="billing_benefit_custom_font_color_body">Thêm dấu ấn riêng với những màu sắc yêu thích</string>
 </resources>

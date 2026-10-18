@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">खरीदारी उपलब्ध नहीं है</string>
     <string name="billing_unavailable_message">कृपया सुनिश्चित करें कि आपने अपने Google खाते में साइन इन किया है</string>
     <string name="billing_retry_button">फिर से कोशिश करें</string>
+
+    <string name="billing_benefit_custom_font_color_title">कस्टम टेक्स्ट रंग</string>
+    <string name="billing_benefit_custom_font_color_body">अपने पसंदीदा रंगों से अपने नोट्स को खास बनाएं</string>
 </resources>

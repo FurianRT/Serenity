@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Hindi Available ang Mga Pagbili</string>
     <string name="billing_unavailable_message">Tiyaking naka-sign in ka sa iyong Google account</string>
     <string name="billing_retry_button">Subukan Muli</string>
+
+    <string name="billing_benefit_custom_font_color_title">Sariling Kulay ng Teksto</string>
+    <string name="billing_benefit_custom_font_color_body">Magdagdag ng personal na dating gamit ang mga paborito mong kulay</string>
 </resources>

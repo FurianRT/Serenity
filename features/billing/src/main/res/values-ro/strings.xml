@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Achiziții indisponibile</string>
     <string name="billing_unavailable_message">Asigură-te că ești conectat la contul tău Google</string>
     <string name="billing_retry_button">Încearcă din nou</string>
+
+    <string name="billing_benefit_custom_font_color_title">Culoare personalizată a textului</string>
+    <string name="billing_benefit_custom_font_color_body">Adaugă o notă personală cu nuanțele tale preferate</string>
 </resources>

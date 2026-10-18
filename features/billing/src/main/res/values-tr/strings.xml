@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Satın alma işlemleri kullanılamıyor</string>
     <string name="billing_unavailable_message">Lütfen Google hesabınızda oturum açtığınızdan emin olun</string>
     <string name="billing_retry_button">Tekrar Dene</string>
+
+    <string name="billing_benefit_custom_font_color_title">Özel Yazı Rengi</string>
+    <string name="billing_benefit_custom_font_color_body">Favori renklerinle kişisel bir dokunuş kat</string>
 </resources>

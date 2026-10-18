@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">購入できません</string>
     <string name="billing_unavailable_message">Google アカウントにログインしていることを確認してください</string>
     <string name="billing_retry_button">再試行</string>
+
+    <string name="billing_benefit_custom_font_color_title">文字色のカスタマイズ</string>
+    <string name="billing_benefit_custom_font_color_body">お気に入りの色で自分らしさをプラス</string>
 </resources>

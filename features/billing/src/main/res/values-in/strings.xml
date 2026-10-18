@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Pembelian Tidak Tersedia</string>
     <string name="billing_unavailable_message">Pastikan Anda sudah masuk ke akun Google Anda</string>
     <string name="billing_retry_button">Coba Lagi</string>
+
+    <string name="billing_benefit_custom_font_color_title">Warna Teks Kustom</string>
+    <string name="billing_benefit_custom_font_color_body">Beri sentuhan pribadi dengan warna favoritmu</string>
 </resources>

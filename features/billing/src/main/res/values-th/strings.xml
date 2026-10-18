@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">ไม่สามารถซื้อได้</string>
     <string name="billing_unavailable_message">โปรดตรวจสอบว่าคุณลงชื่อเข้าใช้บัญชี Google แล้ว</string>
     <string name="billing_retry_button">ลองอีกครั้ง</string>
+
+    <string name="billing_benefit_custom_font_color_title">สีข้อความที่กำหนดเอง</string>
+    <string name="billing_benefit_custom_font_color_body">เติมความเป็นตัวเองด้วยสีโปรดของคุณ</string>
 </resources>

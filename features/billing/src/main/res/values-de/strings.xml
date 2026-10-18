@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Käufe nicht verfügbar</string>
     <string name="billing_unavailable_message">Bitte stelle sicher, dass du in deinem Google-Konto angemeldet bist</string>
     <string name="billing_retry_button">Erneut versuchen</string>
+
+    <string name="billing_benefit_custom_font_color_title">Eigene Textfarben</string>
+    <string name="billing_benefit_custom_font_color_body">Verleihe deinen Notizen mit deinen Lieblingsfarben eine persönliche Note</string>
 </resources>

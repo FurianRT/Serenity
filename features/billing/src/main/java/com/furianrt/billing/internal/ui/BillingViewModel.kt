@@ -44,6 +44,7 @@ internal class BillingViewModel @Inject constructor(
     private val benefits = listOf(
         BenefitItem.CUSTOM_STICKERS,
         BenefitItem.CUSTOM_BACKGROUNDS,
+        BenefitItem.CUSTOM_FONT_COLOR,
         BenefitItem.MOOD_INSIGHTS,
         BenefitItem.EXPORT_PDF,
         BenefitItem.MORE_FEATURES,

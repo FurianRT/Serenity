@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">Покупки недоступні</string>
     <string name="billing_unavailable_message">Переконайтеся, що ви ввійшли у свій обліковий запис Google</string>
     <string name="billing_retry_button">Повторити спробу</string>
+
+    <string name="billing_benefit_custom_font_color_title">Власний колір тексту</string>
+    <string name="billing_benefit_custom_font_color_body">Додайте індивідуальності за допомогою улюблених кольорів</string>
 </resources>

@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">কেনাকাটা উপলভ্য নয়</string>
     <string name="billing_unavailable_message">আপনি আপনার Google অ্যাকাউন্টে সাইন ইন করেছেন কিনা তা নিশ্চিত করুন</string>
     <string name="billing_retry_button">আবার চেষ্টা করুন</string>
+
+    <string name="billing_benefit_custom_font_color_title">কাস্টম লেখার রং</string>
+    <string name="billing_benefit_custom_font_color_body">আপনার পছন্দের রং দিয়ে নিজের মতো করে সাজিয়ে তুলুন</string>
 </resources>

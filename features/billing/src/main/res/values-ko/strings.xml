@@ -33,4 +33,7 @@
     <string name="billing_unavailable_title">구매할 수 없음</string>
     <string name="billing_unavailable_message">Google 계정에 로그인되어 있는지 확인해 주세요</string>
     <string name="billing_retry_button">다시 시도</string>
+
+    <string name="billing_benefit_custom_font_color_title">글자 색상 설정</string>
+    <string name="billing_benefit_custom_font_color_body">좋아하는 색으로 나만의 개성을 더해 보세요</string>
 </resources>
