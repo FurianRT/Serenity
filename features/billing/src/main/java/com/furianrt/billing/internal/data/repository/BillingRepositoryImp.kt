@@ -381,7 +381,7 @@ internal class BillingRepositoryImp @Inject constructor(
     }
 
     private suspend fun startConnection(): SyncResult = mutex.withLock {
-        if (billingClient.isReady) {
+        if (billingClient.connectionState == BillingClient.ConnectionState.CONNECTED) {
             return SyncResult.Ok
         }
 
