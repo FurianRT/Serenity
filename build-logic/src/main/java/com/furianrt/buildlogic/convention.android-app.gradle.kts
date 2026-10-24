@@ -31,8 +31,8 @@ android {
         applicationId = "com.furianrt.serenity"
         minSdk = 33
         targetSdk = 37
-        versionCode = 89
-        versionName = "3.2.0"
+        versionCode = 90
+        versionName = "3.3.0"
     }
 
     buildFeatures {
