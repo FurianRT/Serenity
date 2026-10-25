@@ -2,6 +2,7 @@ package com.furianrt.toolspanel.api
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -89,7 +90,11 @@ private enum class PanelMode {
     BACKGROUNDS,
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class, ExperimentalHazeApi::class)
+@OptIn(
+    ExperimentalPermissionsApi::class,
+    ExperimentalLayoutApi::class,
+    ExperimentalHazeApi::class,
+)
 @Composable
 fun ActionsPanel(
     titleState: NoteTitleState?,
@@ -173,8 +178,22 @@ fun ActionsPanel(
         else -> PanelMode.REGULAR
     }
 
+    val isExpanded = panelMode == PanelMode.FONT ||
+            panelMode == PanelMode.BULLET ||
+            panelMode == PanelMode.STICKERS ||
+            panelMode == PanelMode.BACKGROUNDS ||
+            isColorPickerPanelVisible
+
+    val cornersAnim = remember { Animatable(1f) }
+
     fun startVoiceRecord() {
         audioRecordPermissionsState.launchPermissionRequest()
+    }
+
+    LaunchedEffect(imeTarget, isExpanded) {
+        if (imeTarget != 0 && isExpanded) {
+            cornersAnim.animateTo(0f)
+        }
     }
 
     LaunchedEffect(voiceRecordFlow) {
@@ -196,23 +215,12 @@ fun ActionsPanel(
             isBulletPanelVisible = false
             isBackgroundsPanelVisible = false
             isColorPickerPanelVisible = false
+            cornersAnim.animateTo(1f)
         }
     }
 
-    LaunchedEffect(
-        isFontPanelVisible,
-        isStickersPanelVisible,
-        isBulletPanelVisible,
-        isBackgroundsPanelVisible,
-        isColorPickerPanelVisible,
-    ) {
-        onMenuVisibilityChange(
-            isFontPanelVisible ||
-                    isStickersPanelVisible ||
-                    isBulletPanelVisible ||
-                    isBackgroundsPanelVisible ||
-                    isColorPickerPanelVisible
-        )
+    LaunchedEffect(isExpanded) {
+        onMenuVisibilityChange(isExpanded)
     }
     Box(modifier = modifier) {
         Column(
@@ -229,12 +237,26 @@ fun ActionsPanel(
                 .fillMaxWidth()
                 .padding(bottom = 4.dp, start = 4.dp, end = 4.dp)
                 .navigationBarsPadding()
-                .clip(RoundedCornerShape(20.dp))
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomStart = 20.dp * cornersAnim.value,
+                        bottomEnd = 20.dp * cornersAnim.value,
+                    ),
+                )
                 .hazeGlass(
                     input = HazeInput.Sources(hazeState),
                     performanceMode = HazePerformanceMode.Performance,
                     style = LocalGlassStyle.current.then {
-                        shape(RoundedCornerShape(20.dp))
+                        shape(
+                            RoundedCornerShape(
+                                topStart = 20.dp,
+                                topEnd = 20.dp,
+                                bottomStart = 20.dp * cornersAnim.value,
+                                bottomEnd = 20.dp * cornersAnim.value,
+                            ),
+                        )
                         tint(background.copy(alpha = 0.4f))
                         optics(
                             GlassDefaults.optics.copy(
