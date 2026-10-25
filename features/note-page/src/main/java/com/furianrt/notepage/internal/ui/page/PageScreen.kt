@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.visible
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -888,17 +889,16 @@ private fun ContentItems(
                             onTextCleared = { onEvent(PageEvent.OnTagTextCleared) },
                             onFocusChanged = { onEvent(PageEvent.OnTagFocusChanged) },
                         )
-                        if (uiState.showMood) {
-                            MoodButton(
-                                modifier = Modifier
-                                    .padding(end = 12.dp, top = 4.dp)
-                                    .size(56.dp),
-                                moodId = uiState.moodId,
-                                defaultMoodId = uiState.defaultMoodId,
-                                hazeState = hazeState,
-                                onClick = { onEvent(PageEvent.OnMoodClick) },
-                            )
-                        }
+                        MoodButton(
+                            modifier = Modifier
+                                .padding(end = 12.dp, top = 4.dp)
+                                .size(56.dp)
+                                .visible(uiState.showMood),
+                            moodId = uiState.moodId,
+                            defaultMoodId = uiState.defaultMoodId,
+                            hazeState = hazeState,
+                            onClick = { onEvent(PageEvent.OnMoodClick) },
+                        )
                     }
                     if (uiState.showLocationDivider) {
                         HorizontalDivider(
