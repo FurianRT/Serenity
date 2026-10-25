@@ -3,10 +3,12 @@ package com.furianrt.notelist.internal.ui.composables
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -33,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -77,10 +80,27 @@ internal fun Toolbar(
         targetValue = if (isSelectionActive) 0.4f else 1f,
         animationSpec = spring(stiffness = Spring.StiffnessMediumLow),
     )
+    
+    val counterAlpha by animateFloatAsState(
+        targetValue = if (isSelectionActive) 1f else 0f,
+        animationSpec = tween(
+            durationMillis = 250,
+            easing = LinearEasing,
+        ),
+    )
+
+    val labelAlpha by animateFloatAsState(
+        targetValue = if (isSelectionActive) 0f else 1f,
+        animationSpec = tween(
+            durationMillis = 250,
+            easing = LinearEasing,
+        ),
+    )
 
     Row(
         modifier = modifier
             .height(ToolbarConstants.bigToolbarHeight)
+            .padding(horizontal = 8.dp)
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -152,7 +172,9 @@ internal fun Toolbar(
             ) {
                 if (isSelectionActive) {
                     Text(
-                        modifier = Modifier.padding(horizontal = 20.dp, vertical = 4.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 20.dp, vertical = 4.dp)
+                            .graphicsLayer { alpha = counterAlpha },
                         text = "$selectedNotesCount/$notesCount",
                         style = MaterialTheme.typography.titleMedium,
                         textAlign = TextAlign.Center,
@@ -163,7 +185,8 @@ internal fun Toolbar(
                             .fillMaxWidth()
                             .alpha(0.6f)
                             .clickable(onClick = onSearchClick)
-                            .padding(vertical = 8.dp),
+                            .padding(vertical = 8.dp)
+                            .graphicsLayer { alpha = labelAlpha },
                         text = stringResource(R.string.notes_list_search_bar_title),
                         style = MaterialTheme.typography.labelMedium,
                         textAlign = TextAlign.Center,
