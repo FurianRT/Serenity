@@ -331,7 +331,6 @@ fun ActionsPanel(
                                 openBillingScreen()
                             }
                         },
-                        onCloseColorClick = { isColorPickerPanelVisible = false },
                     )
 
                     PanelMode.VOICE_RECORD -> VoicePanel(

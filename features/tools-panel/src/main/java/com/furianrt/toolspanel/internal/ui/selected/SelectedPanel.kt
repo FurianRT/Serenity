@@ -47,7 +47,6 @@ internal fun SelectedPanel(
     requestTitleFocus: () -> Unit,
     onFontFillCustomColorClick: () -> Unit,
     onFontCustomColorClick: () -> Unit,
-    onCloseColorClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var panelState by remember { mutableStateOf(PanelState.DEFAULT) }
@@ -72,10 +71,7 @@ internal fun SelectedPanel(
                 showKeyboardButton = showKeyboardButton,
                 onCustomColorClick = onFontCustomColorClick,
                 requestTitleFocus = requestTitleFocus,
-                onCloseClick = {
-                    onCloseColorClick()
-                    panelState = PanelState.DEFAULT
-                },
+                onCloseClick = { panelState = PanelState.DEFAULT },
             )
 
             PanelState.FILL_COLOR -> FillColorsStateContent(
@@ -83,10 +79,7 @@ internal fun SelectedPanel(
                 onCustomColorClick = onFontFillCustomColorClick,
                 showKeyboardButton = showKeyboardButton,
                 requestTitleFocus = requestTitleFocus,
-                onCloseClick = {
-                    onCloseColorClick()
-                    panelState = PanelState.DEFAULT
-                },
+                onCloseClick = { panelState = PanelState.DEFAULT },
             )
 
             PanelState.FONT_SIZE -> SizeSelectorStateContent(
@@ -365,12 +358,20 @@ private fun FontColorsStateContent(
         modifier = modifier,
         colors = colors,
         selectedColor = selectedColor,
-        showKeyboardButton = showKeyboardButton,
-        onCloseClick = onCloseClick,
-        onCustomColorClick = onCustomColorClick,
-        onKeyboardClickClick = {
-            requestTitleFocus()
-            keyboardController?.show()
+        onCloseClick = {
+            onCloseClick()
+            if (showKeyboardButton) {
+                requestTitleFocus()
+                keyboardController?.show()
+            }
+        },
+        onCustomColorClick = {
+            if (showKeyboardButton) {
+                requestTitleFocus()
+                keyboardController?.show()
+            } else {
+                onCustomColorClick()
+            }
         },
         onColorSelected = { color ->
             if (color == null) {
@@ -417,13 +418,18 @@ private fun FillColorsStateContent(
         modifier = modifier,
         colors = colors,
         selectedColor = selectedColor,
-        showKeyboardButton = showKeyboardButton,
-        onCloseClick = onCloseClick,
-        onCustomColorClick = onCustomColorClick,
-        onKeyboardClickClick = {
+        onCloseClick = {
+            onCloseClick()
             requestTitleFocus()
             keyboardController?.show()
-
+        },
+        onCustomColorClick = {
+            if (showKeyboardButton) {
+                requestTitleFocus()
+                keyboardController?.show()
+            } else {
+                onCustomColorClick()
+            }
         },
         onColorSelected = { color ->
             if (color == null) {
@@ -483,7 +489,6 @@ private fun SelectedPanelPreview() {
             showKeyboardButton = false,
             onFontFillCustomColorClick = {},
             onFontCustomColorClick = {},
-            onCloseColorClick = {},
             requestTitleFocus = {},
         )
     }
