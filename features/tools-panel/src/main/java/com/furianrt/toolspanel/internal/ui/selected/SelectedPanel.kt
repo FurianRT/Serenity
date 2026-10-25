@@ -5,17 +5,14 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -156,21 +153,9 @@ private fun SelectedStateContent(
         ).orFalse()
     }
 
-    val scrollState = rememberScrollState()
-
-    val isContentWidthFit by remember {
-        derivedStateOf { !scrollState.canScrollForward && !scrollState.canScrollBackward }
-    }
-
     Row(
-        modifier = modifier
-            .fillMaxSize()
-            .horizontalScroll(scrollState),
-        horizontalArrangement = if (isContentWidthFit) {
-            Arrangement.SpaceEvenly
-        } else {
-            Arrangement.Start
-        },
+        modifier = modifier.fillMaxSize(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(

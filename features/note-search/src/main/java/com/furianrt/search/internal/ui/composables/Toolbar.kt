@@ -15,8 +15,10 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.systemGestureExclusion
+import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.foundation.text.input.TextFieldLineLimits
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.Icon
@@ -303,10 +305,18 @@ private fun SearchBar(
             ),
             decorator = { innerTextField ->
                 if (!showCloseButton) {
-                    Text(
-                        modifier = Modifier.alpha(0.5f),
+                    BasicText(
+                        modifier = Modifier
+                            .padding(start = 4.dp)
+                            .alpha(0.5f),
                         text = stringResource(R.string.notes_search_bar_title),
+                        color = MaterialTheme.colorScheme::onSurface,
                         style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        autoSize = TextAutoSize.StepBased(
+                            minFontSize = MaterialTheme.typography.labelMedium.fontSize * 0.5f,
+                            maxFontSize = MaterialTheme.typography.labelMedium.fontSize,
+                        ),
                     )
                 }
                 innerTextField()
