@@ -49,7 +49,7 @@ internal fun RegularPanel(
     val isContentWidthFit by remember {
         derivedStateOf { !scrollState.canScrollForward && !scrollState.canScrollBackward }
     }
-    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 46.dp) {
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 44.dp) {
         Row(
             modifier = modifier
                 .fillMaxSize()
