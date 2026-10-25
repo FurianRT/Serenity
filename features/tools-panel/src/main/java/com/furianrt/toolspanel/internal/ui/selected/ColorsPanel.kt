@@ -6,7 +6,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,12 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
@@ -30,7 +27,6 @@ import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.toolspanel.internal.ui.common.CustomColorItem
-import com.furianrt.uikit.extensions.drawLeftShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.R as uiR
@@ -47,62 +43,54 @@ internal fun ColorsPanel(
     onCloseClick: () -> Unit = {},
 ) {
     val listState = rememberLazyListState()
-    val shadowColor = MaterialTheme.colorScheme.surfaceDim
 
     val rotation by animateFloatAsState(
         targetValue = if (showKeyboardButton) 180f else 0f,
         animationSpec = spring(stiffness = Spring.StiffnessMedium),
     )
 
-    Row(
+    LazyRow(
         modifier = modifier.fillMaxSize(),
+        state = listState,
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
+        contentPadding = PaddingValues(horizontal = 10.dp)
     ) {
-        LazyRow(
-            modifier = Modifier.weight(1f),
-            state = listState,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            contentPadding = PaddingValues(horizontal = 12.dp)
-        ) {
-            item {
-                Crossfade(
-                    modifier = Modifier
-                        .padding(end = 4.dp)
-                        .graphicsLayer { rotationZ = rotation },
-                    targetState = showKeyboardButton,
-                ) { targetState ->
-                    if (targetState) {
-                        ButtonKeyboard(
-                            modifier = Modifier.size(30.dp),
-                            onClick = onKeyboardClickClick,
-                        )
-                    } else {
-                        CustomColorItem(
-                            modifier = Modifier.size(30.dp),
-                            onClick = onCustomColorClick,
-                        )
-                    }
+        item {
+            ButtonClose(
+                modifier = Modifier
+                    .padding(end = 2.dp)
+                    .size(30.dp),
+                painter = painterResource(uiR.drawable.ic_arrow_back),
+                onClick = onCloseClick,
+            )
+        }
+        item {
+            Crossfade(
+                modifier = Modifier.graphicsLayer { rotationZ = rotation },
+                targetState = showKeyboardButton,
+            ) { targetState ->
+                if (targetState) {
+                    ButtonKeyboard(
+                        modifier = Modifier.size(30.dp),
+                        onClick = onKeyboardClickClick,
+                    )
+                } else {
+                    CustomColorItem(
+                        modifier = Modifier.size(30.dp),
+                        onClick = onCustomColorClick,
+                    )
                 }
-            }
-            itemsIndexed(items = colors) { _, item ->
-                ColorItem(
-                    modifier = Modifier.size(32.dp),
-                    color = item,
-                    isSelected = item == selectedColor,
-                    onClick = { color -> onColorSelected(color.takeIf { selectedColor != it }) },
-                )
             }
         }
-        ButtonClose(
-            modifier = Modifier.drawBehind {
-                if (listState.canScrollForward) {
-                    drawLeftShadow(color = shadowColor)
-                }
-            },
-            painter = painterResource(uiR.drawable.ic_action_done),
-            onClick = onCloseClick,
-        )
+        itemsIndexed(items = colors) { _, item ->
+            ColorItem(
+                modifier = Modifier.size(32.dp),
+                color = item,
+                isSelected = item == selectedColor,
+                onClick = { color -> onColorSelected(color.takeIf { selectedColor != it }) },
+            )
+        }
     }
 }
 

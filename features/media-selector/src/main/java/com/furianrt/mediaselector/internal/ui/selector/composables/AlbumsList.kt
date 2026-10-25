@@ -74,6 +74,7 @@ internal fun AlbumsList(
             .hazeBlur(
                 input = HazeInput.Sources(dropDownHazeState),
                 style = HazeBlurStyle {
+                    backgroundColor(colorScheme.surface)
                     blurRadius(12.dp)
                     colorEffects(
                         listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.7f)))

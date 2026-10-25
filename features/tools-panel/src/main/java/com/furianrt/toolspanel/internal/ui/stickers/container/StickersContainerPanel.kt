@@ -70,7 +70,6 @@ import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.api.entities.Sticker
 import com.furianrt.toolspanel.internal.domain.StickersHolder
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
-import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.toolspanel.internal.ui.stickers.custom.CustomStickersPanel
 import com.furianrt.toolspanel.internal.ui.stickers.extensions.toContainerPack
@@ -78,7 +77,6 @@ import com.furianrt.toolspanel.internal.ui.stickers.regular.RegularStickersPanel
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
-import com.furianrt.uikit.extensions.drawRightShadow
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.flow.collectLatest
@@ -156,18 +154,6 @@ private fun TitleContent(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            ButtonKeyboard(
-                modifier = Modifier.drawBehind {
-                    if (pagerState.canScrollBackward) {
-                        drawRightShadow(
-                            color = shadowColor,
-                            elevation = 1.dp,
-                        )
-                    }
-                },
-                onClick = { onEvent(StickersContainerEvent.OnKeyboardClick) },
-            )
-
             HorizontalPager(
                 modifier = Modifier.weight(1f),
                 state = pagerState,
@@ -179,7 +165,8 @@ private fun TitleContent(
                     pagerSnapDistance = PagerSnapDistance.atMost(5),
                 ),
                 contentPadding = PaddingValues(
-                    horizontal = 4.dp,
+                    start = 10.dp,
+                    end = 4.dp,
                 )
             ) { page ->
                 TitleItem(

@@ -196,6 +196,7 @@ private fun Thumb(
     onVerticalDrag: (change: PointerInputChange, dragAmount: Float) -> Unit,
 ) {
     val density = LocalDensity.current
+    val colorScheme = MaterialTheme.colorScheme
 
     var isDragging by remember { mutableStateOf(false) }
     var showThumb by remember { mutableStateOf(false) }
@@ -256,7 +257,8 @@ private fun Thumb(
                         input = HazeInput.Sources(hazeState),
                         performanceMode = HazePerformanceMode.Performance,
                         style = HazeBlurStyle {
-                            blurRadius(16.dp)
+                            backgroundColor(colorScheme.surface)
+                            blurRadius(12.dp)
                             colorEffects(
                                 listOf(HazeColorEffect.tint(Color.Black.copy(alpha = 0.4f)))
                             )
@@ -284,7 +286,10 @@ private fun DateLabel(
     hazeState: HazeState,
     modifier: Modifier = Modifier,
 ) {
+    val colorScheme = MaterialTheme.colorScheme
+
     val animaDuration = 100
+
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
@@ -292,7 +297,8 @@ private fun DateLabel(
                 input = HazeInput.Sources(hazeState),
                 performanceMode = HazePerformanceMode.Performance,
                 style = HazeBlurStyle {
-                    blurRadius(16.dp)
+                    backgroundColor(colorScheme.surface)
+                    blurRadius(12.dp)
                     colorEffects(
                         listOf(HazeColorEffect.tint(Color.Black.copy(alpha = 0.4f)))
                     )
