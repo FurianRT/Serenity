@@ -106,7 +106,9 @@ internal fun MediaSelectorBottomSheetInternal(
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.(PaddingValues) -> Unit,
 ) {
-    val viewModel = hiltViewModel<MediaSelectorViewModel>()
+    val viewModel = hiltViewModel<MediaSelectorViewModel>(
+        key = state.hashCode().toString(),
+    )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val context = LocalContext.current

@@ -21,6 +21,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -127,6 +132,14 @@ private fun AlbumsButton(
     onAlbumsDismissed: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var prevAlbumsDialogState: List<MediaAlbumItem> by remember { mutableStateOf(emptyList()) }
+
+    LaunchedEffect(albumsDialogState) {
+        if (albumsDialogState != null) {
+            prevAlbumsDialogState = albumsDialogState
+        }
+    }
+
     Box(
         modifier = modifier,
         contentAlignment = Alignment.Center,
@@ -155,15 +168,13 @@ private fun AlbumsButton(
                 )
             }
         }
-        if (albumsDialogState != null) {
-            AlbumsList(
-                albums = albumsDialogState,
-                dropDownHazeState = hazeState,
-                expanded = true,
-                onAlbumClick = onAlbumSelected,
-                onDismissRequest = onAlbumsDismissed,
-            )
-        }
+        AlbumsList(
+            albums = prevAlbumsDialogState,
+            dropDownHazeState = hazeState,
+            expanded = albumsDialogState != null,
+            onAlbumClick = onAlbumSelected,
+            onDismissRequest = onAlbumsDismissed,
+        )
     }
 }
 
