@@ -447,6 +447,7 @@ private fun SuccessScreen(
     MediaSelectorBottomSheet(
         modifier = modifier.fillMaxSize(),
         state = state.mediaSelectorState,
+        instanceId = uiState.noteId,
         openMediaViewer = { route ->
             if (isSelected) {
                 onEvent(PageEvent.OnOpenMediaViewerRequest(route))
@@ -464,8 +465,7 @@ private fun SuccessScreen(
                 .hazeSource(hazeState, zIndex = 2f)
                 .verticalScroll(state.listState)
                 .clickableNoRipple { onEvent(PageEvent.OnClickOutside) }
-                .padding(top = toolbarMargin)
-                .padding(bottom = listPanelPaddingAnim + navBarPadding)
+                .padding(top = toolbarMargin, bottom = listPanelPaddingAnim + navBarPadding)
                 .imePadding(),
         ) {
             if (uiState.stickers.isNotEmpty()) {

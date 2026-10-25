@@ -91,6 +91,7 @@ import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 import com.furianrt.uikit.R as uiR
 
+private const val CONTENT_TAG = "media_selector_content"
 private const val CONTENT_ANIM_DURATION = 300
 private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 
@@ -102,12 +103,13 @@ private val PREDICTIVE_BACK_TRANSLATION = 100.dp
 @Composable
 internal fun MediaSelectorBottomSheetInternal(
     state: MediaSelectorState,
+    instanceId: String?,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
     content: @Composable BoxScope.(PaddingValues) -> Unit,
 ) {
     val viewModel = hiltViewModel<MediaSelectorViewModel>(
-        key = state.hashCode().toString(),
+        key = CONTENT_TAG + instanceId,
     )
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
     val lifecycle = LocalLifecycleOwner.current.lifecycle

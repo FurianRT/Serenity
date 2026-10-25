@@ -95,10 +95,12 @@ fun MediaSelectorBottomSheet(
     state: MediaSelectorState,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
     modifier: Modifier = Modifier,
+    instanceId: String? = null,
     content: @Composable BoxScope.(PaddingValues) -> Unit,
 ) {
     MediaSelectorBottomSheetInternal(
         state = state,
+        instanceId = instanceId,
         openMediaViewer = openMediaViewer,
         modifier = modifier,
         content = content,
