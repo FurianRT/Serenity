@@ -55,7 +55,7 @@ import kotlinx.coroutines.flow.collectLatest
 import java.time.LocalDate
 import kotlin.time.Duration.Companion.milliseconds
 
-private const val BOTTOM_PANEL_SHOW_DELAY = 1500L
+private const val BOTTOM_PANEL_SHOW_DELAY = 1000L
 
 private const val CAMERA_ITEM_KEY = "camera_item"
 
