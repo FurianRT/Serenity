@@ -173,12 +173,6 @@ fun ActionsPanel(
         else -> PanelMode.REGULAR
     }
 
-    val isExpanded = panelMode == PanelMode.FONT ||
-            panelMode == PanelMode.BULLET ||
-            panelMode == PanelMode.STICKERS ||
-            panelMode == PanelMode.BACKGROUNDS ||
-            isColorPickerPanelVisible
-
     fun startVoiceRecord() {
         audioRecordPermissionsState.launchPermissionRequest()
     }
@@ -233,30 +227,14 @@ fun ActionsPanel(
                     Modifier.imePadding()
                 }
                 .fillMaxWidth()
-                .padding(bottom = if (isExpanded) 0.dp else 4.dp, start = 4.dp, end = 4.dp)
-                .applyIf(!isExpanded) {
-                    Modifier.navigationBarsPadding()
-                }
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = if (isExpanded) 0.dp else 20.dp,
-                        bottomEnd = if (isExpanded) 0.dp else 20.dp,
-                    )
-                )
+                .padding(bottom = 4.dp, start = 4.dp, end = 4.dp)
+                .navigationBarsPadding()
+                .clip(RoundedCornerShape(20.dp))
                 .hazeGlass(
                     input = HazeInput.Sources(hazeState),
                     performanceMode = HazePerformanceMode.Performance,
                     style = LocalGlassStyle.current.then {
-                        shape(
-                            RoundedCornerShape(
-                                topStart = 20.dp,
-                                topEnd = 20.dp,
-                                bottomStart = if (isExpanded) 0.dp else 20.dp,
-                                bottomEnd = if (isExpanded) 0.dp else 20.dp,
-                            )
-                        )
+                        shape(RoundedCornerShape(20.dp))
                         tint(background.copy(alpha = 0.4f))
                         optics(
                             GlassDefaults.optics.copy(
@@ -267,10 +245,6 @@ fun ActionsPanel(
                     },
                 )
                 .background(MaterialTheme.colorScheme.background)
-                .padding(bottom = if (isExpanded) 4.dp else 0.dp)
-                .applyIf(isExpanded) {
-                    Modifier.navigationBarsPadding()
-                }
                 .align(Alignment.BottomCenter),
         ) {
             AnimatedContent(
