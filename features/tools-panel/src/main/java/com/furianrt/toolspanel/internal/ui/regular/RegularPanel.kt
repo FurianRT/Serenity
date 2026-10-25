@@ -12,8 +12,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,104 +49,106 @@ internal fun RegularPanel(
     val isContentWidthFit by remember {
         derivedStateOf { !scrollState.canScrollForward && !scrollState.canScrollBackward }
     }
-    Row(
-        modifier = modifier
-            .fillMaxSize()
-            .horizontalScroll(scrollState)
-            .clickableNoRipple {},
-        horizontalArrangement = if (isContentWidthFit) {
-            Arrangement.SpaceEvenly
-        } else {
-            Arrangement.Start
-        },
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        IconButton(
-            enabled = titleState?.canUndo.orFalse(),
-            onClick = { titleState?.undo() },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            )
+    CompositionLocalProvider(LocalMinimumInteractiveComponentSize provides 46.dp) {
+        Row(
+            modifier = modifier
+                .fillMaxSize()
+                .horizontalScroll(scrollState)
+                .clickableNoRipple {},
+            horizontalArrangement = if (isContentWidthFit) {
+                Arrangement.SpaceEvenly
+            } else {
+                Arrangement.Start
+            },
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_panel_undo),
-                contentDescription = null,
-            )
-        }
-        IconButton(
-            onClick = onFontStyleClick,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_panel_font),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
-            onClick = onBackgroundClick,
-        ) {
-            Icon(
-                modifier = Modifier
-                    .size(24.dp)
-                    .padding(1.dp),
-                painter = painterResource(R.drawable.ic_panel_background),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
-            onClick = onSelectMediaClick,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_camera),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
-            onClick = onRecordVoiceClick,
-        ) {
-            Icon(
-                painter = painterResource(uiR.drawable.ic_microphone),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
-            onClick = onStickersClick,
-        ) {
-            Icon(
-                painter = painterResource(id = uiR.drawable.ic_stickers),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
-        }
-        IconButton(
-            onClick = onBulletListClick,
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_panel_bullet_list),
-                contentDescription = null,
-                tint = if (titleState == null) {
-                    MaterialTheme.colorScheme.surfaceContainerLow
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-            )
-        }
-        IconButton(
-            enabled = titleState?.canRedo.orFalse(),
-            onClick = { titleState?.redo() },
-            colors = IconButtonDefaults.iconButtonColors(
-                contentColor = MaterialTheme.colorScheme.onSurface,
-                disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            )
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_panel_redo),
-                contentDescription = null,
-            )
+            IconButton(
+                enabled = titleState?.canUndo.orFalse(),
+                onClick = { titleState?.undo() },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_panel_undo),
+                    contentDescription = null,
+                )
+            }
+            IconButton(
+                onClick = onFontStyleClick,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_panel_font),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onBackgroundClick,
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .size(24.dp)
+                        .padding(1.dp),
+                    painter = painterResource(R.drawable.ic_panel_background),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onSelectMediaClick,
+            ) {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_camera),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onRecordVoiceClick,
+            ) {
+                Icon(
+                    painter = painterResource(uiR.drawable.ic_microphone),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onStickersClick,
+            ) {
+                Icon(
+                    painter = painterResource(id = uiR.drawable.ic_stickers),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+            IconButton(
+                onClick = onBulletListClick,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_panel_bullet_list),
+                    contentDescription = null,
+                    tint = if (titleState == null) {
+                        MaterialTheme.colorScheme.surfaceContainerLow
+                    } else {
+                        MaterialTheme.colorScheme.onSurface
+                    },
+                )
+            }
+            IconButton(
+                enabled = titleState?.canRedo.orFalse(),
+                onClick = { titleState?.redo() },
+                colors = IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.onSurface,
+                    disabledContentColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                )
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_panel_redo),
+                    contentDescription = null,
+                )
+            }
         }
     }
 }

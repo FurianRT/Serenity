@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -18,7 +19,9 @@ import androidx.compose.foundation.layout.imeAnimationTarget
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,6 +33,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
@@ -61,15 +65,17 @@ import com.furianrt.toolspanel.internal.ui.voice.VoiceButtonDone
 import com.furianrt.toolspanel.internal.ui.voice.VoicePanel
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.rememberKeyboardOffsetState
+import com.furianrt.uikit.theme.GlassDefaults
 import com.furianrt.uikit.theme.LocalSerenityPlus
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberPermissionState
+import dev.chrisbanes.haze.ExperimentalHazeApi
 import dev.chrisbanes.haze.HazeInput
 import dev.chrisbanes.haze.HazePerformanceMode
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.blur.HazeBlurStyle
-import dev.chrisbanes.haze.blur.HazeColorEffect
-import dev.chrisbanes.haze.blur.hazeBlur
+import dev.chrisbanes.haze.glass.LocalGlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.hazeGlass
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 
@@ -83,7 +89,7 @@ private enum class PanelMode {
     BACKGROUNDS,
 }
 
-@OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalLayoutApi::class, ExperimentalHazeApi::class)
 @Composable
 fun ActionsPanel(
     titleState: NoteTitleState?,
@@ -167,7 +173,11 @@ fun ActionsPanel(
         else -> PanelMode.REGULAR
     }
 
-    val colorScheme = MaterialTheme.colorScheme
+    val isExpanded = panelMode == PanelMode.FONT ||
+            panelMode == PanelMode.BULLET ||
+            panelMode == PanelMode.STICKERS ||
+            panelMode == PanelMode.BACKGROUNDS ||
+            isColorPickerPanelVisible
 
     fun startVoiceRecord() {
         audioRecordPermissionsState.launchPermissionRequest()
@@ -223,20 +233,44 @@ fun ActionsPanel(
                     Modifier.imePadding()
                 }
                 .fillMaxWidth()
-                .hazeBlur(
+                .padding(bottom = if (isExpanded) 0.dp else 4.dp, start = 4.dp, end = 4.dp)
+                .applyIf(!isExpanded) {
+                    Modifier.navigationBarsPadding()
+                }
+                .clip(
+                    RoundedCornerShape(
+                        topStart = 20.dp,
+                        topEnd = 20.dp,
+                        bottomStart = if (isExpanded) 0.dp else 20.dp,
+                        bottomEnd = if (isExpanded) 0.dp else 20.dp,
+                    )
+                )
+                .hazeGlass(
                     input = HazeInput.Sources(hazeState),
                     performanceMode = HazePerformanceMode.Performance,
-                    style = HazeBlurStyle {
-                        blurRadius(12.dp)
-                        colorEffects(
-                            listOf(
-                                HazeColorEffect.tint(background.copy(alpha = 0.7f)),
-                                HazeColorEffect.tint(colorScheme.background),
-                            ),
+                    style = LocalGlassStyle.current.then {
+                        shape(
+                            RoundedCornerShape(
+                                topStart = 20.dp,
+                                topEnd = 20.dp,
+                                bottomStart = if (isExpanded) 0.dp else 20.dp,
+                                bottomEnd = if (isExpanded) 0.dp else 20.dp,
+                            )
+                        )
+                        tint(background.copy(alpha = 0.4f))
+                        optics(
+                            GlassDefaults.optics.copy(
+                                depth = OpticalSizeValue.Fixed(0.9f),
+                                blurRadius = OpticalSizeValue.Fixed(12.dp),
+                            )
                         )
                     },
                 )
-                .navigationBarsPadding()
+                .background(MaterialTheme.colorScheme.background)
+                .padding(bottom = if (isExpanded) 4.dp else 0.dp)
+                .applyIf(isExpanded) {
+                    Modifier.navigationBarsPadding()
+                }
                 .align(Alignment.BottomCenter),
         ) {
             AnimatedContent(
