@@ -87,7 +87,7 @@ internal fun BottomPanel(
                             )
                         },
                     )
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .padding(start = 16.dp, top = 4.dp)
                     .navigationBarsPadding(),
                 hazeState = hazeState,
                 selectedAlbumName = selectedAlbumName,
@@ -113,7 +113,7 @@ internal fun BottomPanel(
             )
         ) {
             ButtonSend(
-                modifier = Modifier.padding(end = 8.dp, bottom = 12.dp),
+                modifier = Modifier.padding(end = 8.dp, bottom = 8.dp),
                 selectedCount = selectedCount,
                 hazeState = hazeState,
                 onClick = onSendClick,
