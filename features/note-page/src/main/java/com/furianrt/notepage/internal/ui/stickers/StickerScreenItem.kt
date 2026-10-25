@@ -12,7 +12,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -45,7 +44,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.CachePolicy
@@ -57,7 +55,6 @@ import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dashedRoundedRectBorder
-import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import kotlinx.coroutines.FlowPreview
@@ -168,17 +165,13 @@ internal fun StickerScreenItem(
 
             if (item.state.isEditing && interactable) {
                 val buttonSize = 26.dp
-                val scaledSize = buttonSize * item.state.scale
-                val offsetPx = (scaledSize - buttonSize).dpToPx() / 6f
 
                 ButtonClose(
-                    modifier = Modifier
-                        .graphicsLayer {
-                            val scale = 1f / item.state.scale
-                            scaleX = scale
-                            scaleY = scale
-                        }
-                        .offset { IntOffset(-offsetPx.toInt(), -offsetPx.toInt()) },
+                    modifier = Modifier.graphicsLayer {
+                        val scale = 1f / item.state.scale
+                        scaleX = scale
+                        scaleY = scale
+                    },
                     iconSize = buttonSize,
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
@@ -194,7 +187,9 @@ internal fun StickerScreenItem(
                             scaleX = scale
                             scaleY = scale
                         }
-                        .offset { IntOffset(offsetPx.toInt(), offsetPx.toInt()) }
+                        .onGloballyPositioned { coordinates ->
+                            childCoordinates = coordinates
+                        }
                         .pointerInput(Unit) {
                             detectDragGestures(
                                 onDragStart = { offset ->
@@ -245,9 +240,6 @@ internal fun StickerScreenItem(
                             }
                         }
                         .padding(8.dp)
-                        .onGloballyPositioned { coordinates ->
-                            childCoordinates = coordinates
-                        }
                         .systemGestureExclusion(),
                 ) {
                     ButtonResize(
@@ -262,8 +254,7 @@ internal fun StickerScreenItem(
                             val scale = 1f / item.state.scale
                             scaleX = scale
                             scaleY = scale
-                        }
-                        .offset { IntOffset(offsetPx.toInt(), -offsetPx.toInt()) },
+                        },
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
                         item.state.isFlipped = !item.state.isFlipped
@@ -279,8 +270,7 @@ internal fun StickerScreenItem(
                             val scale = 1f / item.state.scale
                             scaleX = scale
                             scaleY = scale
-                        }
-                        .offset { IntOffset(-offsetPx.toInt(), offsetPx.toInt()) },
+                        },
                     isLayerUp = item.state.overContent,
                     onClick = {
                         hapticFeedback.performHapticFeedback(HapticFeedbackType.KeyboardTap)
