@@ -27,9 +27,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -105,7 +108,7 @@ internal fun Toolbar(
         if (targetState) {
             SelectedContent(
                 notesCount = notesCount,
-                selectedNotesCount = selectedNotesCount.coerceAtLeast(1),
+                selectedNotesCount = selectedNotesCount,
                 onDeleteClick = onDeleteClick,
                 onCloseSelectionClick = onCloseSelectionClick,
             )
@@ -134,6 +137,12 @@ private fun SelectedContent(
     onCloseSelectionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    var prevSelectedNotesCount by remember { mutableIntStateOf(selectedNotesCount) }
+    LaunchedEffect(selectedNotesCount) {
+        if (selectedNotesCount != 0) {
+            prevSelectedNotesCount = selectedNotesCount
+        }
+    }
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -160,7 +169,7 @@ private fun SelectedContent(
         }
         Text(
             modifier = Modifier.weight(1f),
-            text = "$selectedNotesCount/$notesCount",
+            text = "$prevSelectedNotesCount/$notesCount",
             style = MaterialTheme.typography.titleMedium,
             textAlign = TextAlign.Center,
         )
