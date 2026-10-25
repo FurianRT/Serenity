@@ -117,7 +117,12 @@ private fun Content(
         columns = GridCells.Fixed(4),
         verticalArrangement = Arrangement.spacedBy(6.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
+        contentPadding = PaddingValues(
+            start = 8.dp,
+            end = 8.dp,
+            top = 12.dp,
+            bottom = 8.dp,
+        ),
     ) {
         itemsIndexed(items = uiState.themes) { index, theme ->
             ThemeItem(

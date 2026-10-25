@@ -23,7 +23,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -252,7 +251,12 @@ private fun ListContent(
             columns = GridCells.Fixed(spanCount),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             horizontalArrangement = Arrangement.spacedBy(6.dp),
-            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
+            contentPadding = PaddingValues(
+                start = 8.dp,
+                end = 8.dp,
+                top = 12.dp,
+                bottom = 8.dp,
+            ),
         ) {
             item(key = ADD_BUTTON_ITEM_KEY) {
                 AddBackgroundItem(
@@ -412,14 +416,6 @@ private fun AddBackgroundItem(
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
-        if (!LocalSerenityPlus.current) {
-            SerenityPlusIcon(
-                modifier = Modifier
-                    .padding(top = 8.dp, end = 8.dp)
-                    .size(20.dp)
-                    .align(Alignment.TopEnd)
-            )
-        }
     }
 }
 

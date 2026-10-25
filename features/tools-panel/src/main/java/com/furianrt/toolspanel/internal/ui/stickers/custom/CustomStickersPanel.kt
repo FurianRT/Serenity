@@ -266,14 +266,6 @@ private fun AddStickerItem(
             tint = MaterialTheme.colorScheme.onSurface,
             contentDescription = null,
         )
-        if (!LocalSerenityPlus.current) {
-            SerenityPlusIcon(
-                modifier = Modifier
-                    .padding(top = 6.dp, end = 6.dp)
-                    .size(18.dp)
-                    .align(Alignment.TopEnd)
-            )
-        }
     }
 }
 
