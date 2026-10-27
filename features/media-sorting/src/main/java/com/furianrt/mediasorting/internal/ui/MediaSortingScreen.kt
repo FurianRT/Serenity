@@ -1,7 +1,6 @@
 package com.furianrt.mediasorting.internal.ui
 
 import android.net.Uri
-import android.view.animation.OvershootInterpolator
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
@@ -67,6 +66,7 @@ import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.extensions.openAppSettingsScreen
 import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
@@ -320,13 +320,12 @@ private fun SuccessContent(
             ) {
                 var isDragging by remember { mutableStateOf(false) }
 
-                val overshootInterpolator = remember { OvershootInterpolator(3.5f) }
                 val scale by animateFloatAsState(
                     targetValue = if (isDragging) 1.1f else 1f,
                     animationSpec = if (isDragging) {
                         tween(
                             durationMillis = 250,
-                            easing = { overshootInterpolator.getInterpolation(it) },
+                            easing = rememberOvershootEasing(tension = 3.5f),
                         )
                     } else {
                         tween(durationMillis = 400)

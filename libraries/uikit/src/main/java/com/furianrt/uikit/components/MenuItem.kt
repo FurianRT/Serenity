@@ -1,6 +1,5 @@
 package com.furianrt.uikit.components
 
-import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
@@ -16,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.LocalInspectionMode
+import com.furianrt.uikit.anim.rememberOvershootEasing
 
 private const val ANIM_DURATION = 300
 private const val INITIAL_SALE = 0.2f
@@ -42,14 +42,14 @@ fun MenuItem(
 ) {
     val isInspectionMode = LocalInspectionMode.current
     val scale = remember { Animatable(if (animate) INITIAL_SALE else 1f) }
-    val interpolator = remember { OvershootInterpolator() }
+    val easing = rememberOvershootEasing(tension = 2f)
     if (animate) {
         LaunchedEffect(Unit) {
             scale.animateTo(
                 targetValue = 1f,
                 animationSpec = tween(
                     durationMillis = ANIM_DURATION,
-                    easing = { interpolator.getInterpolation(it) },
+                    easing = easing,
                 ),
             )
         }

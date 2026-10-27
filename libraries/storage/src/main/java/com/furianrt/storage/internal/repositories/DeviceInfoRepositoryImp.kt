@@ -11,16 +11,19 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.PowerManager
 import androidx.annotation.RequiresPermission
+import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
 internal class DeviceInfoRepositoryImp @Inject constructor(
     @param:ApplicationContext private val context: Context,
+    private val dispatchers: DispatchersProvider,
 ) : DeviceInfoRepository {
 
     private val powerSaveModeState by lazy { MutableStateFlow(detectPowerSaveMode(context)) }
@@ -68,12 +71,12 @@ internal class DeviceInfoRepositoryImp @Inject constructor(
     override fun getDeviceModel(): String = Build.MODEL
     override fun getMarketUrl(): String = "market://details?id=${context.packageName}"
 
-    override fun getAppVersionName(): String {
+    override suspend fun getAppVersionName(): String = withContext(dispatchers.io) {
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        return packageInfo.versionName.orEmpty()
+        packageInfo.versionName.orEmpty()
     }
 
-    override fun getDeviceInfoText(): String =
+    override suspend fun getDeviceInfoText(): String =
         "${getDeviceModel()} ${getAndroidVersion()} ${getDeviceLanguage()} ${getAppVersionName()}"
 
     override fun isPowerSaveModeEnabled(): StateFlow<Boolean> = powerSaveModeState

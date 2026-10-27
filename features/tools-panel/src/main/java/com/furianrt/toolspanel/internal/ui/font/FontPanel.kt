@@ -11,6 +11,7 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -109,6 +110,7 @@ import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.common.ColorItem
 import com.furianrt.toolspanel.internal.ui.common.CustomColorItem
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.ButtonBack
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
@@ -348,7 +350,13 @@ internal fun FontContent(
             enter = if (isImeVisible) {
                 EnterTransition.None
             } else {
-                expandVertically(expandFrom = Alignment.Top)
+                expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(
+                        durationMillis = ToolsPanelConstants.EXPAND_DURATION,
+                        easing = rememberOvershootEasing(tension = 1.1f),
+                    ),
+                )
             },
             exit = if (isImeVisible) {
                 ExitTransition.None

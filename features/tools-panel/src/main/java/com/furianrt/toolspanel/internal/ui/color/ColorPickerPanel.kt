@@ -3,6 +3,7 @@ package com.furianrt.toolspanel.internal.ui.color
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +32,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import com.furianrt.notelistui.composables.title.NoteTitleState
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.kborowy.colorpicker.KolorPicker
 import com.kborowy.colorpicker.config.PickerConfig
@@ -81,7 +84,13 @@ internal fun ColorPickerPanel(
             enter = if (isImeVisible) {
                 EnterTransition.None
             } else {
-                expandVertically(expandFrom = Alignment.Top)
+                expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(
+                        durationMillis = ToolsPanelConstants.EXPAND_DURATION,
+                        easing = rememberOvershootEasing(tension = 1.1f),
+                    ),
+                )
             },
             exit = if (isImeVisible) {
                 ExitTransition.None

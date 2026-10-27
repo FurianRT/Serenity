@@ -159,15 +159,17 @@ internal class FontViewModel @AssistedInject constructor(
     }
 
     private fun sendFontFeedback() {
-        _effect.tryEmit(
-            FontPanelEffect.SendFeedbackEmail(
-                supportEmail = BuildConfig.SUPPORT_EMAIL,
-                text = resourcesManager.getString(
-                    R.string.font_feedback_email_subject,
-                    deviceInfoRepository.getDeviceInfoText(),
+        launch {
+            _effect.tryEmit(
+                FontPanelEffect.SendFeedbackEmail(
+                    supportEmail = BuildConfig.SUPPORT_EMAIL,
+                    text = resourcesManager.getString(
+                        R.string.font_feedback_email_subject,
+                        deviceInfoRepository.getDeviceInfoText(),
+                    )
                 )
             )
-        )
+        }
     }
 
     private fun buildState(

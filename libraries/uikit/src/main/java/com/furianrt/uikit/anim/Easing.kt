@@ -6,9 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 
 @Composable
-fun rememberOvershootEasing(tension: Float): Easing {
-    return remember(tension) {
-        val interpolator = OvershootInterpolator(tension)
-        Easing { interpolator.getInterpolation(it) }
-    }
+fun rememberOvershootEasing(tension: Float): Easing = remember(tension) {
+    val interpolator = OvershootInterpolator(tension)
+    Easing { interpolator.getInterpolation(it) }
 }

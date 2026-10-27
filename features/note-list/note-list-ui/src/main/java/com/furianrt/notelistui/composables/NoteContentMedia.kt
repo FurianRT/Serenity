@@ -1,9 +1,7 @@
 package com.furianrt.notelistui.composables
 
 import android.net.Uri
-import android.view.animation.OvershootInterpolator
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.Easing
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -61,6 +59,7 @@ import coil3.video.VideoFrameDecoder
 import com.furianrt.notelistui.R
 import com.furianrt.notelistui.entities.UiNoteContent.MediaBlock
 import com.furianrt.notelistui.entities.contentHeight
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.DurationBadge
 import com.furianrt.uikit.components.MenuItem
 import com.furianrt.uikit.extensions.applyIf
@@ -184,14 +183,13 @@ private fun OneMediaHolder(
             onRemoveClick = onRemoveClick,
         )
     } else {
-        val interpolator = remember { OvershootInterpolator(5.0f) }
         var showDropDownMenu by remember { mutableStateOf(false) }
         val longClickScale by animateFloatAsState(
             targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
             animationSpec = tween(
                 durationMillis = LONG_CLICK_SCALE_DURATION,
                 easing = if (showDropDownMenu) {
-                    Easing { interpolator.getInterpolation(it) }
+                    rememberOvershootEasing(tension = 5f)
                 } else {
                     FastOutSlowInEasing
                 }
@@ -401,13 +399,12 @@ private fun MediaItem(
 ) {
     var showDropDownMenu by remember { mutableStateOf(false) }
     val dimColor = MaterialTheme.colorScheme.scrim
-    val interpolator = remember { OvershootInterpolator(5.0f) }
     val longClickScale by animateFloatAsState(
         targetValue = if (showDropDownMenu) LONG_CLICK_SCALE else 1f,
         animationSpec = tween(
             durationMillis = LONG_CLICK_SCALE_DURATION,
             easing = if (showDropDownMenu) {
-                Easing { interpolator.getInterpolation(it) }
+                rememberOvershootEasing(tension = 5f)
             } else {
                 FastOutSlowInEasing
             }

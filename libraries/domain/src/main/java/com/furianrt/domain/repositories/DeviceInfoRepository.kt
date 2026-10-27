@@ -8,8 +8,8 @@ interface DeviceInfoRepository {
     fun getDeviceLanguage(): String
     fun getAndroidVersion(): String
     fun getMarketUrl(): String
-    fun getAppVersionName(): String
-    fun getDeviceInfoText(): String
+    suspend fun getAppVersionName(): String
+    suspend fun getDeviceInfoText(): String
     fun isPowerSaveModeEnabled(): StateFlow<Boolean>
     fun isDndModeEnabled(): StateFlow<Boolean>
 }

@@ -3,6 +3,7 @@ package com.furianrt.toolspanel.internal.ui.background.container
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
@@ -56,6 +57,7 @@ import androidx.lifecycle.flowWithLifecycle
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.R
+import com.furianrt.toolspanel.api.ToolsPanelConstants
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnCloseClick
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnContentPageChange
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundContainerEvent.OnKeyboardClick
@@ -70,6 +72,7 @@ import com.furianrt.toolspanel.internal.ui.background.solid.SolidBackgroundConte
 import com.furianrt.toolspanel.internal.ui.common.ButtonClose
 import com.furianrt.toolspanel.internal.ui.common.ButtonKeyboard
 import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
@@ -353,7 +356,13 @@ internal fun BackgroundContent(
             enter = if (isImeVisible) {
                 EnterTransition.None
             } else {
-                expandVertically(expandFrom = Alignment.Top)
+                expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(
+                        durationMillis = ToolsPanelConstants.EXPAND_DURATION,
+                        easing = rememberOvershootEasing(tension = 1.1f),
+                    ),
+                )
             },
             exit = if (isImeVisible) {
                 ExitTransition.None

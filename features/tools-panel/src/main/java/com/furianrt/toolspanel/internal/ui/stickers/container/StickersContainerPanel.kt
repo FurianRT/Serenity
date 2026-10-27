@@ -5,6 +5,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.gestures.snapping.SnapPosition
@@ -74,6 +75,7 @@ import com.furianrt.toolspanel.internal.ui.font.cachedImeHeight
 import com.furianrt.toolspanel.internal.ui.stickers.custom.CustomStickersPanel
 import com.furianrt.toolspanel.internal.ui.stickers.extensions.toContainerPack
 import com.furianrt.toolspanel.internal.ui.stickers.regular.RegularStickersPanel
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.drawLeftShadow
@@ -306,7 +308,13 @@ internal fun StickersContent(
             enter = if (isImeVisible) {
                 EnterTransition.None
             } else {
-                expandVertically(expandFrom = Alignment.Top)
+                expandVertically(
+                    expandFrom = Alignment.Top,
+                    animationSpec = tween(
+                        durationMillis = ToolsPanelConstants.EXPAND_DURATION,
+                        easing = rememberOvershootEasing(tension = 1.1f),
+                    ),
+                )
             },
             exit = if (isImeVisible) {
                 ExitTransition.None

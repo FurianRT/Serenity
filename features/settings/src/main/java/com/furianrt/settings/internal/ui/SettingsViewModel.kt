@@ -149,27 +149,31 @@ internal class SettingsViewModel @Inject constructor(
     }
 
     private fun sendFeedback() {
-        _effect.tryEmit(
-            SettingsEffect.SendFeedbackEmail(
-                supportEmail = BuildConfig.SUPPORT_EMAIL,
-                text = resourcesManager.getString(
-                    R.string.settings_feedback_email_subject,
-                    deviceInfoRepository.getDeviceInfoText(),
+        launch {
+            _effect.tryEmit(
+                SettingsEffect.SendFeedbackEmail(
+                    supportEmail = BuildConfig.SUPPORT_EMAIL,
+                    text = resourcesManager.getString(
+                        R.string.settings_feedback_email_subject,
+                        deviceInfoRepository.getDeviceInfoText(),
+                    )
                 )
             )
-        )
+        }
     }
 
     private fun sendIssueFeedback() {
-        _effect.tryEmit(
-            SettingsEffect.SendFeedbackEmail(
-                supportEmail = BuildConfig.SUPPORT_EMAIL,
-                text = resourcesManager.getString(
-                    R.string.settings_feedback_issue_email_subject,
-                    deviceInfoRepository.getDeviceInfoText(),
+        launch {
+            _effect.tryEmit(
+                SettingsEffect.SendFeedbackEmail(
+                    supportEmail = BuildConfig.SUPPORT_EMAIL,
+                    text = resourcesManager.getString(
+                        R.string.settings_feedback_issue_email_subject,
+                        deviceInfoRepository.getDeviceInfoText(),
+                    )
                 )
             )
-        )
+        }
     }
 
     private suspend fun showFontDialog() {
