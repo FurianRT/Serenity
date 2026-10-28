@@ -10,7 +10,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val PROGRESS_LOOP_STEP = 50L
 
@@ -21,7 +23,7 @@ internal interface AudioPlayerListener {
 
 internal class AudioPlayer @Inject constructor(
     @param:ApplicationContext private val context: Context,
-    dispatchers: DispatchersProvider,
+    private val dispatchers: DispatchersProvider,
 ) {
     private val scope = CoroutineScope(dispatchers.main + SupervisorJob())
 
@@ -33,11 +35,18 @@ internal class AudioPlayer @Inject constructor(
         progressListener?.onAudioPlayComplete()
     }
 
-    fun play(uri: Uri, progress: Float) {
-        player = MediaPlayer.create(context, uri).apply {
-            setProgress(progress)
-            setOnCompletionListener(onCompletionListener)
-            start()
+    suspend fun play(
+        uri: Uri,
+        progress: Float,
+    ) {
+        stop()
+        withContext(dispatchers.io) {
+            val newPlayer = MediaPlayer.create(context, uri).apply {
+                setProgress(progress)
+                setOnCompletionListener(onCompletionListener)
+            }
+            player = newPlayer
+            newPlayer.start()
         }
         startProgressLoop()
     }
@@ -69,9 +78,10 @@ internal class AudioPlayer @Inject constructor(
         if (progressJob == null) {
             progressJob = scope.launch {
                 while (true) {
-                    delay(PROGRESS_LOOP_STEP)
-                    val currentPosition = player?.currentPosition
-                    val duration = player?.duration
+                    delay(PROGRESS_LOOP_STEP.milliseconds)
+                    val currentPlayer = player
+                    val currentPosition = currentPlayer?.currentPosition
+                    val duration = currentPlayer?.duration
                     if (currentPosition != null && duration != null) {
                         val progress = if (duration == 0) {
                             0f

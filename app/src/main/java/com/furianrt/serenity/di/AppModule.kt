@@ -17,16 +17,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 internal object AppModule {
-
-    @Singleton
-    @Provides
-    fun provideFirebaseCrashlytics(): FirebaseCrashlytics = FirebaseCrashlytics.getInstance()
 
     @Singleton
     @Provides
@@ -36,6 +36,20 @@ internal object AppModule {
         override val io: CoroutineDispatcher = Dispatchers.IO
         override val default: CoroutineDispatcher = Dispatchers.Default
         override val unconfined: CoroutineDispatcher = Dispatchers.Unconfined
+    }
+
+    @OptIn(DelicateCoroutinesApi::class)
+    @Singleton
+    @Provides
+    fun provideErrorTracker(dispatchers: DispatchersProvider) = object : ErrorTracker {
+        override fun trackNonFatalError(error: Throwable) {
+            ErrorTracker.printStackTrace(error)
+            GlobalScope.launch {
+                withContext(dispatchers.io) {
+                    FirebaseCrashlytics.getInstance().recordException(error)
+                }
+            }
+        }
     }
 
     @Singleton
@@ -52,22 +66,13 @@ internal object AppModule {
 
     @Singleton
     @Provides
-    fun provideErrorTracker(crashlytics: FirebaseCrashlytics) = object : ErrorTracker {
-        override fun trackNonFatalError(error: Throwable) {
-            ErrorTracker.printStackTrace(error)
-            crashlytics.recordException(error)
-        }
+    fun provideActivityChecker(): ActivityChecker = object : ActivityChecker {
+        override fun isMainActivity(activity: Activity): Boolean = activity is MainActivity
     }
 
     @Singleton
     @Provides
     fun provideBuildInfoProvider(): BuildInfoProvider = object : BuildInfoProvider {
         override fun getAppVersionName(): String = BuildConfig.VERSION_NAME
-    }
-
-    @Singleton
-    @Provides
-    fun provideActivityChecker(): ActivityChecker = object : ActivityChecker {
-        override fun isMainActivity(activity: Activity): Boolean = activity is MainActivity
     }
 }

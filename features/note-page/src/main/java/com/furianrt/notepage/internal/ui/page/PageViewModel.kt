@@ -883,26 +883,20 @@ internal class PageViewModel @AssistedInject constructor(
 
     private fun onVoicePlayClick(voice: UiNoteContent.Voice) {
         _state.doWithState<PageUiState.Success> { currentState ->
-            when (currentState.playingVoiceId) {
-                voice.id -> stopCurrentVoicePlaying()
-                null -> playVoice(voice)
-                else -> playNextVoice(voice)
+            if (currentState.playingVoiceId == voice.id) {
+                stopCurrentVoicePlaying()
+            } else {
+                playVoice(voice)
             }
         }
     }
 
     private fun playVoice(voice: UiNoteContent.Voice) {
-        _state.updateState<PageUiState.Success> { currentState ->
-            audioPlayer.play(voice.uri, voice.progressState.progress.floatValue)
-            currentState.copy(playingVoiceId = voice.id)
-        }
-    }
-
-    private fun playNextVoice(voice: UiNoteContent.Voice) {
-        _state.updateState<PageUiState.Success> { currentState ->
-            audioPlayer.stop()
-            audioPlayer.play(voice.uri, voice.progressState.progress.floatValue)
-            currentState.copy(playingVoiceId = voice.id)
+        launch {
+            _state.updateState<PageUiState.Success> { currentState ->
+                audioPlayer.play(voice.uri, voice.progressState.progress.floatValue)
+                currentState.copy(playingVoiceId = voice.id)
+            }
         }
     }
 

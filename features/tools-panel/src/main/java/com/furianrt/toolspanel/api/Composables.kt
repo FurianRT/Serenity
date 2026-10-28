@@ -186,6 +186,13 @@ fun ActionsPanel(
 
     val cornersAnim = remember { Animatable(1f) }
 
+    val shape = RoundedCornerShape(
+        topStart = 20.dp,
+        topEnd = 20.dp,
+        bottomStart = 20.dp * cornersAnim.value,
+        bottomEnd = 20.dp * cornersAnim.value,
+    )
+
     fun startVoiceRecord() {
         audioRecordPermissionsState.launchPermissionRequest()
     }
@@ -237,26 +244,12 @@ fun ActionsPanel(
                 .fillMaxWidth()
                 .padding(bottom = 4.dp, start = 4.dp, end = 4.dp)
                 .navigationBarsPadding()
-                .clip(
-                    RoundedCornerShape(
-                        topStart = 20.dp,
-                        topEnd = 20.dp,
-                        bottomStart = 20.dp * cornersAnim.value,
-                        bottomEnd = 20.dp * cornersAnim.value,
-                    ),
-                )
+                .clip(shape)
                 .hazeGlass(
                     input = HazeInput.Sources(hazeState),
                     performanceMode = HazePerformanceMode.Performance,
                     style = LocalGlassStyle.current.then {
-                        shape(
-                            RoundedCornerShape(
-                                topStart = 20.dp,
-                                topEnd = 20.dp,
-                                bottomStart = 20.dp * cornersAnim.value,
-                                bottomEnd = 20.dp * cornersAnim.value,
-                            ),
-                        )
+                        shape(shape)
                         tint(background.copy(alpha = 0.4f))
                         optics(
                             GlassDefaults.optics.copy(
