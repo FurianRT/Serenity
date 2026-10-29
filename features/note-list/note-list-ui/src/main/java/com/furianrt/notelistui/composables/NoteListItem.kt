@@ -99,7 +99,7 @@ fun NoteListItem(
 
     val shape = remember { RoundedCornerShape(8.dp) }
     val glassStyle = LocalGlassStyle.current
-    val updatedGlassStyle = remember {
+    val updatedGlassStyle = remember(backgroundColor) {
         glassStyle.then {
             tint(backgroundColor)
             shape(shape)
