@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -111,14 +110,20 @@ private fun ButtonScrollToTop(
     ) {
         Box(
             modifier = Modifier
-                .shadow(elevation = 6.dp, shape = CircleShape)
+                .shadow(
+                    elevation = 6.dp,
+                    shape = CircleShape,
+                    ambientColor = colorScheme.surfaceDim,
+                    spotColor = colorScheme.surfaceDim,
+                )
                 .clip(CircleShape)
                 .hazeGlass(
                     input = HazeInput.Sources(hazeState),
                     performanceMode = HazePerformanceMode.Performance,
                     style = LocalGlassStyle.current.then {
+                        backgroundColor(colorScheme.surface)
                         tint(colorScheme.primaryContainer.copy(alpha = 0.8f))
-                        shape(RoundedCornerShape(100.dp))
+                        shape(CircleShape)
                         whitePoint(0f)
                         optics(
                             GlassDefaults.optics.copy(
@@ -171,13 +176,20 @@ private fun ButtonCreateNote(
                 scaleY = scale
             }
             .size(60.dp)
+            .shadow(
+                elevation = 6.dp,
+                shape = CircleShape,
+                ambientColor = colorScheme.surfaceDim,
+                spotColor = colorScheme.surfaceDim,
+            )
             .clip(CircleShape)
             .hazeGlass(
                 input = HazeInput.Sources(hazeState),
                 performanceMode = HazePerformanceMode.Performance,
                 style = LocalGlassStyle.current.then {
+                    backgroundColor(colorScheme.surface)
                     tint(colorScheme.primaryContainer.copy(alpha = 0.8f))
-                    shape(RoundedCornerShape(100.dp))
+                    shape(CircleShape)
                     whitePoint(0f)
                     optics(
                         GlassDefaults.optics.copy(

@@ -113,7 +113,7 @@ internal fun BottomPanel(
             )
         ) {
             ButtonSend(
-                modifier = Modifier.padding(end = 8.dp, bottom = 8.dp),
+                modifier = Modifier.padding(end = 8.dp, bottom = 12.dp),
                 selectedCount = selectedCount,
                 hazeState = hazeState,
                 onClick = onSendClick,
