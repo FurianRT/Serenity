@@ -26,8 +26,10 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 
 private const val PIN_CHECK_DELAY = 100L
+private const val BIOMETRIC_SHOW_DELAY = 250L
 
 @HiltViewModel
 internal class CheckPinViewModel @Inject constructor(
@@ -99,13 +101,13 @@ internal class CheckPinViewModel @Inject constructor(
             currentPin.value.length == PinConstants.MAX_PIN_LENGTH - 1 -> {
                 updateCurrentPin(key)
                 checkPinJob = launch {
-                    delay(PIN_CHECK_DELAY)
+                    delay(PIN_CHECK_DELAY.milliseconds)
                     if (checkPinUseCase(currentPin.value)) {
                         _effect.tryEmit(CheckPinEffect.ShowPinSuccess)
                     } else {
                         _effect.tryEmit(CheckPinEffect.ShowWrongPinError)
                     }
-                    delay(PIN_CHECK_DELAY)
+                    delay(PIN_CHECK_DELAY.milliseconds)
                     resetPin()
                 }
             }
@@ -118,6 +120,7 @@ internal class CheckPinViewModel @Inject constructor(
         val isFingerprintEnabled = securityRepository.isBiometricAvailable() &&
                 securityRepository.isFingerprintEnabled().first()
         if (isFingerprintEnabled) {
+            delay(BIOMETRIC_SHOW_DELAY.milliseconds)
             _effect.emit(CheckPinEffect.ShowBiometricScanner)
         }
     }

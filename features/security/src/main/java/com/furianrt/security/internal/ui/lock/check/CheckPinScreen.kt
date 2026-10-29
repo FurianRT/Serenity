@@ -97,19 +97,6 @@ internal fun CheckPinScreenInternal(
 
     var recoveryDialogState: String? by remember { mutableStateOf(null) }
 
-    val biometricPrompt = remember {
-        activity?.let {
-            BiometricPrompt.Builder(activity)
-                .setTitle(activity.getString(R.string.lock_fingerprint_title))
-                .setNegativeButton(
-                    activity.getString(R.string.lock_use_pin_title),
-                    Executors.newSingleThreadExecutor(),
-                    { _, _ -> },
-                )
-                .build()
-        }
-    }
-
     LifecycleStartEffect(Unit) {
         viewModel.onEvent(CheckPinEvent.OnScreenStarted)
         onStopOrDispose {}
@@ -143,17 +130,28 @@ internal fun CheckPinScreenInternal(
                         shakeState.shake(25)
                     }
 
-                    is CheckPinEffect.ShowBiometricScanner -> biometricPrompt?.authenticate(
-                        CancellationSignal(),
-                        Executors.newSingleThreadExecutor(),
-                        object : BiometricPrompt.AuthenticationCallback() {
-                            override fun onAuthenticationSucceeded(
-                                result: BiometricPrompt.AuthenticationResult?,
-                            ) {
-                                viewModel.onEvent(CheckPinEvent.OnBiometricSucceeded)
+                    is CheckPinEffect.ShowBiometricScanner -> {
+                        activity?.let {
+                            BiometricPrompt.Builder(activity)
+                                .setTitle(activity.getString(R.string.lock_fingerprint_title))
+                                .setNegativeButton(
+                                    activity.getString(R.string.lock_use_pin_title),
+                                    Executors.newSingleThreadExecutor(),
+                                    { _, _ -> },
+                                )
+                                .build()
+                        }?.authenticate(
+                            CancellationSignal(),
+                            Executors.newSingleThreadExecutor(),
+                            object : BiometricPrompt.AuthenticationCallback() {
+                                override fun onAuthenticationSucceeded(
+                                    result: BiometricPrompt.AuthenticationResult?,
+                                ) {
+                                    viewModel.onEvent(CheckPinEvent.OnBiometricSucceeded)
+                                }
                             }
-                        }
-                    )
+                        )
+                    }
 
                     is CheckPinEffect.ShowSendEmailFailure -> snackBarHostState.showSnackbar(
                         message = emailFailureText,
