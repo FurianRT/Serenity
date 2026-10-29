@@ -5,10 +5,8 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
@@ -21,7 +19,7 @@ import com.furianrt.uikit.extensions.pxToDp
 internal fun StickersBox(
     stickers: List<StickerItem>,
     interactable: Boolean,
-    emptyTitleHeight: () -> Float,
+    emptyTitleHeight: Float,
     onStickerClick: (sticker: StickerItem) -> Unit,
     onRemoveStickerClick: (sticker: StickerItem) -> Unit,
     onStickerChanged: (sticker: StickerItem) -> Unit,
@@ -49,7 +47,7 @@ internal fun StickersBox(
 private fun StickerElement(
     sticker: StickerItem,
     interactable: Boolean,
-    emptyTitleHeight: () -> Float,
+    emptyTitleHeight: Float,
     containerWidth: Float,
     containerHeight: Float,
     onStickerChanged: (sticker: StickerItem) -> Unit,
@@ -59,23 +57,16 @@ private fun StickerElement(
 ) {
     val density = LocalDensity.current
     val addOffset by animateFloatAsState(
-        targetValue = emptyTitleHeight(),
+        targetValue = emptyTitleHeight,
         animationSpec = tween(250),
     )
-    LaunchedEffect(Unit) {
-        var prevOffset = addOffset
-        snapshotFlow { addOffset }
-            .collect { offset ->
-                sticker.state.dpOffsetY += (offset - prevOffset).pxToDp(density)
-                prevOffset = offset
-            }
-    }
+
     StickerScreenItem(
         modifier = modifier.offset {
             val stickerSize = StickerItem.DEFAULT_SIZE.toPx()
             IntOffset(
                 x = (containerWidth * sticker.state.biasX - stickerSize / 2f).toInt(),
-                y = (sticker.state.dpOffsetY.toPx() - stickerSize / 2f).toInt(),
+                y = (sticker.state.dpOffsetY.toPx() + addOffset - stickerSize / 2f).toInt(),
             )
         },
         item = sticker,

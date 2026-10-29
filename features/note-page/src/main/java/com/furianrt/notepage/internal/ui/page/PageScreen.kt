@@ -436,6 +436,10 @@ private fun SuccessScreen(
     )
 
     var topEmptyTitleHeight by rememberSaveable { mutableFloatStateOf(0f) }
+    val firstTitle = uiState.content.firstOrNull() as? UiNoteContent.Title
+    val hasTopEmptyTitle by remember(firstTitle) {
+        derivedStateOf { firstTitle?.state?.text?.isEmpty() == true }
+    }
 
     LaunchedEffect(focusedTitleId) {
         val title = uiState.content.findInstance<UiNoteContent.Title> { it.id == focusedTitleId }
@@ -478,7 +482,7 @@ private fun SuccessScreen(
                         .matchParentSize(),
                     stickers = uiState.stickers,
                     interactable = false,
-                    emptyTitleHeight = { if (uiState.hasTopTitle) topEmptyTitleHeight else 0f },
+                    emptyTitleHeight = if (hasTopEmptyTitle) topEmptyTitleHeight else 0f,
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
                     onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
@@ -511,7 +515,7 @@ private fun SuccessScreen(
                         .matchParentSize(),
                     stickers = uiState.stickers,
                     interactable = true,
-                    emptyTitleHeight = { if (uiState.hasTopTitle) topEmptyTitleHeight else 0f },
+                    emptyTitleHeight = if (hasTopEmptyTitle) topEmptyTitleHeight else 0f,
                     onStickerClick = { onEvent(PageEvent.OnStickerClick(it)) },
                     onRemoveStickerClick = { onEvent(PageEvent.OnRemoveStickerClick(it)) },
                     onStickerChanged = { onEvent(PageEvent.OnStickerChanged(it)) },
