@@ -44,18 +44,63 @@ import com.furianrt.uikit.R
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.toTimeString
 import com.furianrt.uikit.theme.SerenityTheme
+import dev.chrisbanes.haze.ExperimentalHazeApi
+import dev.chrisbanes.haze.HazeInput
+import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.glass.ChromaticAberrationMode
+import dev.chrisbanes.haze.glass.GlassOptics
+import dev.chrisbanes.haze.glass.GlassStyle
+import dev.chrisbanes.haze.glass.OpticalSizeValue
+import dev.chrisbanes.haze.glass.RefractionProfile
+import dev.chrisbanes.haze.glass.SurfaceProfile
+import dev.chrisbanes.haze.glass.hazeGlass
+import dev.chrisbanes.haze.rememberHazeState
 
+@OptIn(ExperimentalHazeApi::class)
 @Composable
 fun ButtonPlayPause(
     isPlay: Boolean,
+    hazeState: HazeState,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val glassStyle = remember {
+        GlassStyle {
+            optics(
+                GlassOptics(
+                    refractionStrength = 0.75f,
+                    refractionHeightFraction = 0.35f,
+                    refractionDisplacement = 56.dp,
+                    refractionProfile = RefractionProfile.Edge(28.dp),
+                    depth = OpticalSizeValue.Fixed(1f),
+                    blurRadius = OpticalSizeValue.Fixed(0.dp),
+                    refractionDetailIntensity = 0.76f,
+                )
+            )
+            shape(CircleShape)
+            edgeShadow(Color.Transparent)
+            ambientResponse(0.42f)
+            edgeSoftness(0.dp)
+            chromaticAberrationStrength(0.04f)
+            surfaceProfile(SurfaceProfile.Circle)
+            chromaticAberrationMode(ChromaticAberrationMode.Full)
+            contrast(0f)
+            whitePoint(0f)
+            chromaMultiplier(1.05f)
+            contentNormalBlend(0.1f)
+            fresnelExponent(2.5f)
+            tint(Color.Black.copy(alpha = 0.4f))
+            specularExponent(0f)
+            specularIntensity(0f)
+        }
+    }
     Box(
         modifier = modifier
             .size(64.dp)
-            .clip(CircleShape)
-            .background(Color.Black.copy(alpha = 0.5f))
+            .hazeGlass(
+                input = HazeInput.Sources(hazeState),
+                style = glassStyle,
+            )
             .clickableNoRipple(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
@@ -197,6 +242,7 @@ private fun ButtonPlayPausePreview() {
     SerenityTheme {
         ButtonPlayPause(
             isPlay = true,
+            hazeState = rememberHazeState(),
             onClick = {},
         )
     }

@@ -98,6 +98,13 @@ fun NoteListItem(
     val showLocation = hasLocation && !showMood && content.isEmpty()
 
     val shape = remember { RoundedCornerShape(8.dp) }
+    val glassStyle = LocalGlassStyle.current
+    val updatedGlassStyle = remember {
+        glassStyle.then {
+            tint(backgroundColor)
+            shape(shape)
+        }
+    }
 
     Box(
         modifier = modifier
@@ -110,10 +117,7 @@ fun NoteListItem(
             .hazeGlass(
                 input = HazeInput.Sources(hazeState),
                 performanceMode = HazePerformanceMode.Performance,
-                style = LocalGlassStyle.current.then {
-                    tint(backgroundColor)
-                    shape(shape)
-                },
+                style = updatedGlassStyle,
             )
             .then(
                 if (isPinned) {

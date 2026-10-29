@@ -62,7 +62,10 @@ import com.github.panpf.zoomimage.compose.zoom.rememberZoomableState
 import com.github.panpf.zoomimage.compose.zoom.zoom
 import com.github.panpf.zoomimage.rememberCoilZoomState
 import com.github.panpf.zoomimage.zoom.ScalesCalculator
+import dev.chrisbanes.haze.hazeSource
+import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.delay
+import kotlin.time.Duration.Companion.milliseconds
 import androidx.media3.common.MediaItem as ExoMediaItem
 import com.furianrt.uikit.R as uiR
 
@@ -219,6 +222,7 @@ internal fun VideoPage(
     val context = LocalContext.current
     val configuration = LocalConfiguration.current
     val hapticFeedback = LocalHapticFeedback.current
+    val hazeState = rememberHazeState()
 
     val exoPlayer = remember(item.id) {
         ExoPlayer.Builder(context)
@@ -297,7 +301,7 @@ internal fun VideoPage(
     LaunchedEffect(playing, isThumbDragging) {
         while (playing && !isThumbDragging) {
             currentPosition = exoPlayer.currentPosition
-            delay(SLIDER_UPDATE_INTERVAL)
+            delay(SLIDER_UPDATE_INTERVAL.milliseconds)
         }
     }
 
@@ -340,6 +344,7 @@ internal fun VideoPage(
             AndroidView(
                 modifier = Modifier
                     .fillMaxSize()
+                    .hazeSource(hazeState)
                     .zoom(zoomable = zoomableState, onTap = { onClick() })
                     .draggable(
                         state = dragState,
@@ -382,6 +387,7 @@ internal fun VideoPage(
             ) {
                 ButtonPlayPause(
                     isPlay = !playing || isEnded,
+                    hazeState = hazeState,
                     onClick = {
                         if (isEnded) {
                             exoPlayer.seekTo(0)

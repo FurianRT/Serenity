@@ -200,10 +200,10 @@ fun List<LocalNote.Content>.getShortUiContent(
             ),
         )
     }
-    if (mediaBlock == null && withMedia) {
+    if (mediaBlock == null) {
         val voices = this@getShortUiContent
             .filterIsInstance<LocalNote.Content.Voice>()
-            .take(2)
+            .take(1)
             .map(LocalNote.Content.Voice::toUiVoice)
         addAll(voices)
     }

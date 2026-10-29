@@ -80,7 +80,7 @@ internal fun BottomPanel(
                     .hazeBlur(
                         input = HazeInput.Sources(hazeState),
                         style = HazeBlurStyle {
-                            backgroundColor(colorScheme.outlineVariant)
+                            backgroundColor(colorScheme.surface)
                             blurRadius(20.dp)
                             colorEffects(
                                 listOf(HazeColorEffect.tint(colorScheme.surface.copy(alpha = 0.6f)))
