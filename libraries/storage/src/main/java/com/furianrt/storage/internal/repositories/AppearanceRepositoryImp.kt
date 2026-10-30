@@ -1,18 +1,25 @@
 package com.furianrt.storage.internal.repositories
 
+import android.content.Context
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.deepMap
 import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.AppTheme
-import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
+import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.storage.internal.database.notes.dao.AppCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.entities.EntryAppCustomBackground
+import com.furianrt.storage.internal.database.notes.entities.PartAppCustomBackgroundId
 import com.furianrt.storage.internal.database.notes.mappers.toAppCustomBackground
+import com.furianrt.storage.internal.database.notes.mappers.toEntry
 import com.furianrt.storage.internal.database.notes.mappers.toEntryTextAlignment
+import com.furianrt.storage.internal.device.AppMediaSource
+import com.furianrt.storage.internal.managers.MediaSaver
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
+import com.furianrt.storage.internal.workers.SaveMediaWorker
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
@@ -20,12 +27,16 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 internal class AppearanceRepositoryImp @Inject constructor(
+    @param:ApplicationContext private val context: Context,
     private val appearanceDataStore: AppearanceDataStore,
     private val appCustomBackgroundDao: AppCustomBackgroundDao,
+    private val appMediaSource: AppMediaSource,
+    private val mediaSaver: MediaSaver,
     private val dispatchers: DispatchersProvider,
 ) : AppearanceRepository {
 
@@ -57,8 +68,25 @@ internal class AppearanceRepositoryImp @Inject constructor(
 
     override fun getAppCustomBackgrounds(): Flow<List<AppCustomBackground>> =
         appCustomBackgroundDao.getAllBackgrounds()
+            .map { backgrounds -> backgrounds.sortedByDescending { it.addedDate } }
             .deepMap(EntryAppCustomBackground::toAppCustomBackground)
             .flowOn(dispatchers.io)
+
+    override suspend fun upsertAppCustomBackground(
+        background: AppCustomBackground,
+        updateFile: Boolean,
+    ) {
+        appCustomBackgroundDao.upsert(background.toEntry(isSaved = !updateFile))
+        if (updateFile) {
+            SaveMediaWorker.enqueueOneTime(context)
+        }
+    }
+
+    override suspend fun deleteAppCustomBackground(background: AppCustomBackground) {
+        mediaSaver.cancel(background)
+        appCustomBackgroundDao.delete(PartAppCustomBackgroundId(id = background.id))
+        appMediaSource.deleteAppBackgroundFile(background)
+    }
 
     override fun getNoteFontColorsList(): List<NoteFontColor> = NoteFontColor.entries
 

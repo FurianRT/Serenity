@@ -9,6 +9,7 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
@@ -24,6 +25,7 @@ import javax.inject.Singleton
 private const val MEDIA_FOLDER = "media"
 private const val VOICE_FOLDER = "voice"
 private const val NOTE_BACKGROUND_FOLDER = "note_backgrounds"
+private const val APP_BACKGROUND_FOLDER = "app_backgrounds"
 private const val STICKERS_FOLDER = "stickers"
 private const val EXPORT_FOLDER = "export"
 private const val TEMP_MEDIA_FOLDER = "temp_media"
@@ -95,6 +97,11 @@ internal class AppMediaSource @Inject constructor(
         id: String,
         name: String,
     ): File? = createFile(folder = "$NOTE_BACKGROUND_FOLDER/$id$name")
+
+    suspend fun createAppBackgroundFile(
+        id: String,
+        name: String,
+    ): File? = createFile(folder = "$APP_BACKGROUND_FOLDER/$id$name")
 
     suspend fun createCustomStickerFile(
         id: String,
@@ -207,6 +214,65 @@ internal class AppMediaSource @Inject constructor(
             File(
                 context.filesDir,
                 "$NOTE_BACKGROUND_FOLDER/${background.id}${background.name}"
+            ).delete()
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+            false
+        }
+    }
+
+    suspend fun saveAppBackground(
+        background: AppCustomBackground,
+    ): SavedMediaData? = withContext(dispatchers.io) {
+        val inputStream = context.contentResolver.openInputStream(background.uri)
+            ?: return@withContext null
+
+        val bitmap = withContext(dispatchers.default) {
+            inputStream.use(BitmapFactory::decodeStream)
+        } ?: return@withContext null
+
+        val extension = ".webp"
+        val destFile = createAppBackgroundFile(
+            id = background.id,
+            name = extension,
+        ) ?: return@withContext null
+
+        withContext(dispatchers.default) {
+            destFile.outputStream().use { outputStream ->
+                bitmap.compress(
+                    Bitmap.CompressFormat.WEBP_LOSSY,
+                    BACKGROUND_COMPRESS_AMOUNT,
+                    outputStream,
+                )
+            }
+        }
+
+        try {
+            getExifInterface(background.uri)?.let { sourceExif ->
+                val destExif = ExifInterface(destFile)
+                destExif.setAttribute(
+                    ExifInterface.TAG_ORIENTATION,
+                    sourceExif.getAttribute(ExifInterface.TAG_ORIENTATION),
+                )
+                destExif.saveAttributes()
+            }
+        } catch (e: Exception) {
+            errorTracker.trackNonFatalError(e)
+        }
+
+        return@withContext SavedMediaData(
+            name = extension,
+            uri = getRelativeUri(destFile),
+        )
+    }
+
+    suspend fun deleteAppBackgroundFile(
+        background: AppCustomBackground,
+    ): Boolean = withContext(dispatchers.io) {
+        return@withContext try {
+            File(
+                context.filesDir,
+                "$APP_BACKGROUND_FOLDER/${background.id}${background.name}"
             ).delete()
         } catch (e: Exception) {
             errorTracker.trackNonFatalError(e)

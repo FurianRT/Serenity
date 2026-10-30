@@ -1,13 +1,16 @@
 package com.furianrt.storage.internal.managers
 
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
+import com.furianrt.storage.internal.database.notes.dao.AppCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.NoteCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
+import com.furianrt.storage.internal.database.notes.entities.PartAppCustomBackgroundUri
 import com.furianrt.storage.internal.database.notes.entities.PartCustomStickerUri
 import com.furianrt.storage.internal.database.notes.entities.PartImageUri
 import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackgroundUri
@@ -28,6 +31,7 @@ internal class MediaSaver @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
     private val noteCustomBackgroundDao: NoteCustomBackgroundDao,
+    private val appCustomBackgroundDao: AppCustomBackgroundDao,
     private val customStickerDao: CustomStickerDao,
     private val appMediaSource: AppMediaSource,
 ) {
@@ -37,6 +41,10 @@ internal class MediaSaver @Inject constructor(
     suspend fun saveAll() {
         noteCustomBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
             saveNoteBackground(entry.toDomain())
+        }
+
+        appCustomBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
+            saveAppBackground(entry.toDomain())
         }
 
         customStickerDao.getUnsavedStickers().first().forEach { entry ->
@@ -64,6 +72,12 @@ internal class MediaSaver @Inject constructor(
 
     suspend fun cancel(background: NoteCustomBackground) {
         if (!isBackgroundSaved(background.id)) {
+            addCanceledEntry(background.id)
+        }
+    }
+
+    suspend fun cancel(background: AppCustomBackground) {
+        if (!isAppBackgroundSaved(background.id)) {
             addCanceledEntry(background.id)
         }
     }
@@ -154,6 +168,40 @@ internal class MediaSaver @Inject constructor(
         )
     }
 
+    private suspend fun saveAppBackground(
+        background: AppCustomBackground,
+    ) = mutex.withLock {
+        if (isAppBackgroundSaved(background.id)) {
+            return@withLock
+        }
+        if (isEntryCanceled(background.id)) {
+            removeCanceledEntry(background.id)
+            return@withLock
+        }
+
+        val savedBackgroundData = appMediaSource.saveAppBackground(background) ?: return@withLock
+
+        if (background.uri.host == BuildConfig.FILE_PROVIDER_AUTHORITY) {
+            appMediaSource.deleteFile(background.uri)
+            appMediaSource.deleteTempMediaFile(background.uri.toString().split("/").last())
+        }
+
+        if (isEntryCanceled(background.id)) {
+            removeCanceledEntry(background.id)
+            appMediaSource.deleteAppBackgroundFile(background)
+            return@withLock
+        }
+
+        appCustomBackgroundDao.update(
+            PartAppCustomBackgroundUri(
+                id = background.id,
+                name = savedBackgroundData.name,
+                uri = savedBackgroundData.uri,
+                isSaved = true,
+            ),
+        )
+    }
+
     private suspend fun saveSticker(
         sticker: CustomSticker,
     ) = mutex.withLock {
@@ -194,6 +242,10 @@ internal class MediaSaver @Inject constructor(
     }
 
     private suspend fun isBackgroundSaved(id: String): Boolean = noteCustomBackgroundDao.isSaved(id)
+
+    private suspend fun isAppBackgroundSaved(
+        id: String,
+    ): Boolean = noteCustomBackgroundDao.isSaved(id)
 
     private suspend fun isStickerSaved(id: String): Boolean = customStickerDao.isSaved(id)
 
