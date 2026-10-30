@@ -300,6 +300,7 @@ fun MovableToolbarScaffold(
                                 input = HazeInput.Sources(hazeState),
                                 performanceMode = HazePerformanceMode.Performance,
                                 style = LocalGlassStyle.current.then {
+                                    backgroundColor(colorScheme.surface)
                                     tint(colorScheme.surface.copy(alpha = blurAlpha))
                                     shape(RoundedCornerShape(0.dp))
                                     optics(
