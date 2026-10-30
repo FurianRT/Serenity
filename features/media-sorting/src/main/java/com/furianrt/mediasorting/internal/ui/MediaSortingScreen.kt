@@ -219,9 +219,7 @@ private fun Content(
         openMediaViewer = { onEvent(MediaSortingEvent.OnOpenMediaViewerRequest(it)) },
     ) {
         MovableToolbarScaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surface),
+            modifier = Modifier.fillMaxSize(),
             listState = listState,
             enabled = false,
             toolbar = {

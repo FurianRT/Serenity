@@ -355,6 +355,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             hasBillingRoute = { it.hasRoute<BillingRoute>() },
                             openGalleryScreen = navController::navigateToGallery,
                             openBillingScreen = navController::navigateToBilling,
+                            openMediaViewer = navController::navigateToMediaViewer,
                         )
                         mediaViewScreen(
                             onCloseRequest = navController::navigateUp,

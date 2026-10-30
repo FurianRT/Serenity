@@ -1,0 +1,71 @@
+package com.furianrt.apptheme.internal.ui.composables
+
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.systemGestureExclusion
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.R as uiR
+import com.furianrt.uikit.components.ButtonBack
+import com.furianrt.uikit.constants.ToolbarConstants
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
+
+@Composable
+internal fun Toolbar(
+    onAddClick: () -> Unit,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .padding(horizontal = 4.dp)
+            .fillMaxWidth()
+            .height(ToolbarConstants.toolbarHeight),
+    ) {
+        ButtonBack(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .systemGestureExclusion(),
+            onClick = onBackClick,
+        )
+        Text(
+            modifier = Modifier.align(Alignment.Center),
+            text = stringResource(uiR.string.title_theme),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .systemGestureExclusion(),
+            onClick = onAddClick,
+        ) {
+            Icon(
+                painter = painterResource(uiR.drawable.ic_add),
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
+@PreviewWithBackground
+@Composable
+private fun Preview() {
+    SerenityTheme {
+        Toolbar(
+            onAddClick = {},
+            onBackClick = {},
+        )
+    }
+}

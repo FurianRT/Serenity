@@ -40,7 +40,7 @@ internal class AppearanceRepositoryImp @Inject constructor(
     private val dispatchers: DispatchersProvider,
 ) : AppearanceRepository {
 
-    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
+    private val scope = CoroutineScope(dispatchers.main + SupervisorJob())
 
     private val appTheme: StateFlow<AppTheme> = combine(
         appearanceDataStore.getAppThemeId(),
@@ -70,7 +70,7 @@ internal class AppearanceRepositoryImp @Inject constructor(
         appCustomBackgroundDao.getAllBackgrounds()
             .map { backgrounds -> backgrounds.sortedByDescending { it.addedDate } }
             .deepMap(EntryAppCustomBackground::toAppCustomBackground)
-            .flowOn(dispatchers.io)
+            .flowOn(dispatchers.default)
 
     override suspend fun upsertAppCustomBackground(
         background: AppCustomBackground,

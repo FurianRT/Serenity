@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.mediaselector.api.MediaResult
+import com.furianrt.mediaselector.api.MediaViewerRoute
+import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.toUiAppTheme
@@ -24,6 +27,7 @@ import javax.inject.Inject
 internal class AppThemeViewModel @Inject constructor(
     dispatchers: DispatchersProvider,
     private val appearanceRepository: AppearanceRepository,
+    private val permissionsUtils: PermissionsUtils,
 ) : ViewModel() {
 
     private val themes by lazy {
@@ -55,7 +59,14 @@ internal class AppThemeViewModel @Inject constructor(
         when (event) {
             is AppThemeEvent.OnThemeClick -> onThemeClick(event.theme)
             is AppThemeEvent.OnBackClick -> onBackClick()
+            is AppThemeEvent.OnAddClick -> tryRequestMediaPermissions()
+            is AppThemeEvent.OnMediaPermissionsSelected -> tryOpenMediaSelector()
+            is AppThemeEvent.OnOpenMediaViewerRequest -> onOpenMediaViewerRequest(event.route)
         }
+    }
+
+    private fun onOpenMediaViewerRequest(route: MediaViewerRoute) {
+        _effect.tryEmit(AppThemeEffect.OpenMediaViewer(route))
     }
 
     private fun onThemeClick(theme: UiAppTheme) {
@@ -66,6 +77,30 @@ internal class AppThemeViewModel @Inject constructor(
 
     private fun onBackClick() {
         _effect.tryEmit(AppThemeEffect.CloseScreen)
+    }
+
+    private fun tryRequestMediaPermissions() {
+        if (permissionsUtils.mediaAccessDenied()) {
+            _effect.tryEmit(AppThemeEffect.RequestStoragePermissions)
+        } else {
+            _effect.tryEmit(
+                AppThemeEffect.OpenMediaSelector(onMediaSelected = { addCustomBackground(it) })
+            )
+        }
+    }
+
+    private fun tryOpenMediaSelector() {
+        if (permissionsUtils.mediaAccessDenied()) {
+            _effect.tryEmit(AppThemeEffect.ShowPermissionsDeniedDialog)
+        } else {
+            _effect.tryEmit(
+                AppThemeEffect.OpenMediaSelector(onMediaSelected = { addCustomBackground(it) })
+            )
+        }
+    }
+
+    private fun addCustomBackground(result: MediaResult) {
+
     }
 
     private fun buildState(

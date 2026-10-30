@@ -17,6 +17,7 @@ dependencies {
     implementation(projects.features.appTheme)
     implementation(projects.features.reminders)
     implementation(projects.features.widgets)
+    implementation(projects.features.mediaSelector)
 
     implementation(projects.libraries.core)
     implementation(projects.libraries.uikit)

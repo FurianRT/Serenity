@@ -10,6 +10,7 @@ import com.furianrt.apptheme.api.appThemeScreen
 import com.furianrt.apptheme.api.navigateToAppTheme
 import com.furianrt.backup.api.backupScreen
 import com.furianrt.backup.api.navigateToBackup
+import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.reminders.api.navigateToReminders
 import com.furianrt.reminders.api.remindersNavigation
 import com.furianrt.security.api.changeEmailScreen
@@ -42,6 +43,7 @@ fun NavGraphBuilder.settingsNavigation(
     hasBillingRoute: (destination: NavDestination) -> Boolean,
     openGalleryScreen: () -> Unit,
     openBillingScreen: () -> Unit,
+    openMediaViewer: (route: MediaViewerRoute) -> Unit,
 ) {
     navigation<SettingsRoute>(
         startDestination = MainRoute,
@@ -87,6 +89,7 @@ fun NavGraphBuilder.settingsNavigation(
         )
         appThemeScreen(
             onCloseRequest = navController::navigateUp,
+            openMediaViewer = openMediaViewer,
         )
         remindersNavigation(
             navController = navController,
