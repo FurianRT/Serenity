@@ -57,7 +57,7 @@ import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.R
 import com.furianrt.toolspanel.internal.domain.NoteThemesHolder
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelectedThemeProvider
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dpToPx
@@ -179,7 +179,7 @@ private fun SuccessContent(
 private fun ImageItem(
     image: UiNoteBackgroundImage,
     color: UiNoteBackground?,
-    appThemeColor: UiThemeColor,
+    appThemeColor: UiAppTheme,
     isSelected: Boolean,
     hasSelectedImage: Boolean,
     onClick: (image: UiNoteBackgroundImage) -> Unit,
@@ -195,10 +195,10 @@ private fun ImageItem(
     } else {
         val surface = color?.colorScheme?.surface
         val noteTheme = MaterialTheme.colorScheme.surface
-        surface ?: if (appThemeColor.surface == noteTheme) {
+        surface ?: if (appThemeColor.colorScheme.surface == noteTheme) {
             noteTheme
         } else {
-            appThemeColor.surface
+            appThemeColor.colorScheme.surface
         }
     }
 
@@ -210,10 +210,10 @@ private fun ImageItem(
     } else {
         val onSurface = color?.colorScheme?.onSurface
         val noteTheme = MaterialTheme.colorScheme.onSurface
-        onSurface ?: if (appThemeColor.onSurface == noteTheme) {
+        onSurface ?: if (appThemeColor.colorScheme.onSurface == noteTheme) {
             noteTheme
         } else {
-            appThemeColor.onSurface
+            appThemeColor.colorScheme.onSurface
         }
     }
 
@@ -310,7 +310,7 @@ private fun Preview() {
                 colors = NoteThemesHolder.solidThemes().map { it.color },
                 selectedColorIndex = 1,
                 selectedImageIndex = 0,
-                appTheme = UiThemeColor.fromId(null),
+                appTheme = UiAppTheme.defaultTheme,
             ),
             onEvent = {},
         )

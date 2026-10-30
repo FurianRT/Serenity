@@ -40,7 +40,7 @@ import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -242,7 +242,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = StatsState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = StatsState.Content.Success(
                     periods = TimePeriod.entries.toList(),
                     selectedPeriod = TimePeriod.ONE_MONTH,

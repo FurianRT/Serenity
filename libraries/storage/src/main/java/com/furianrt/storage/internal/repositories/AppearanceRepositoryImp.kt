@@ -1,24 +1,64 @@
 package com.furianrt.storage.internal.repositories
 
+import com.furianrt.core.DispatchersProvider
+import com.furianrt.core.deepMap
+import com.furianrt.domain.entities.AppCustomBackground
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteTextAlignment
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.storage.internal.database.notes.dao.AppCustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.entities.EntryAppCustomBackground
+import com.furianrt.storage.internal.database.notes.mappers.toAppCustomBackground
 import com.furianrt.storage.internal.database.notes.mappers.toEntryTextAlignment
 import com.furianrt.storage.internal.preferences.AppearanceDataStore
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 internal class AppearanceRepositoryImp @Inject constructor(
     private val appearanceDataStore: AppearanceDataStore,
+    private val appCustomBackgroundDao: AppCustomBackgroundDao,
+    private val dispatchers: DispatchersProvider,
 ) : AppearanceRepository {
 
-    override suspend fun updateAppThemeColor(colorId: String) {
-        appearanceDataStore.updateAppThemeColor(colorId)
+    private val scope = CoroutineScope(dispatchers.io + SupervisorJob())
+
+    private val appTheme: StateFlow<AppTheme> = combine(
+        appearanceDataStore.getAppThemeId(),
+        getAppCustomBackgrounds(),
+    ) { themeId, customBackgrounds ->
+        val custom = customBackgrounds.find { it.id == themeId }
+        if (custom != null) {
+            AppTheme.Custom(background = custom)
+        } else {
+            AppTheme.Regular(id = themeId)
+        }
+    }.flowOn(
+        context = dispatchers.io,
+    ).stateIn(
+        scope = scope,
+        started = SharingStarted.Lazily,
+        initialValue = AppTheme.Regular(id = null),
+    )
+
+    override suspend fun updateAppTheme(id: String) {
+        appearanceDataStore.updateAppThemeColor(id)
     }
 
-    override fun getAppThemeColorId(): StateFlow<String?> = appearanceDataStore.appThemeColorId
+    override fun getAppTheme(): StateFlow<AppTheme> = appTheme
+
+    override fun getAppCustomBackgrounds(): Flow<List<AppCustomBackground>> =
+        appCustomBackgroundDao.getAllBackgrounds()
+            .deepMap(EntryAppCustomBackground::toAppCustomBackground)
+            .flowOn(dispatchers.io)
 
     override fun getNoteFontColorsList(): List<NoteFontColor> = NoteFontColor.entries
 

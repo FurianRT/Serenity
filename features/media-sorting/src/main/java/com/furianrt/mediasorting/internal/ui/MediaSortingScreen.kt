@@ -70,7 +70,7 @@ import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -429,7 +429,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = MediaSortingUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 hasContentChanged = false,
                 content = MediaSortingUiState.Content.Success(
                     media = buildList {

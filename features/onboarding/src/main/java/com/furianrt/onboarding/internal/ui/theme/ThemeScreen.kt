@@ -33,6 +33,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.furianrt.onboarding.R
 import com.furianrt.onboarding.internal.ui.container.LocalHazeState
 import com.furianrt.onboarding.internal.ui.theme.elements.ThemePreviewPage
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -150,7 +151,7 @@ private fun Preview() {
             ),
             uiState = ThemeState.Content.Success(
                 initialPageIndex = 1,
-                themes = UiThemeColor.getDarkThemesList() + UiThemeColor.getLightThemesList(),
+                themes = UiThemeColor.getDarkThemesList().map { UiAppTheme.Regular(it) },
             ),
         )
     }

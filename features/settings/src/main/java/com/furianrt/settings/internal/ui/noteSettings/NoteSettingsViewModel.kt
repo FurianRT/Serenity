@@ -3,8 +3,9 @@ package com.furianrt.settings.internal.ui.noteSettings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.combine
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,13 +27,13 @@ internal class NoteSettingsViewModel @Inject constructor(
         appearanceRepository.isKeepPrevBackgroundEnabled(),
         appearanceRepository.isKeepPrevLineHeightEnabled(),
         appearanceRepository.isKeepPrevTextAlignEnabled(),
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = NoteSettingsState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = NoteSettingsState.Content.Loading,
         ),
     )
@@ -74,9 +75,9 @@ internal class NoteSettingsViewModel @Inject constructor(
         isKeepPrevBackgroundEnabled: Boolean,
         isKeepPrevLineHeightEnabled: Boolean,
         isKeepPrevTextAlignEnabled: Boolean,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ): NoteSettingsState = NoteSettingsState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = NoteSettingsState.Content.Success(
             isAutoDetectLocationEnabled = isAutoDetectLocationEnabled,
             isMinimalisticHomeScreenEnabled = isMinimalisticHomeScreenEnabled,

@@ -23,14 +23,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
+import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.toContentAlignment
 import com.furianrt.uikit.entities.toContentScale
 import com.furianrt.uikit.utils.brighterBy
 
 @Composable
 fun AppBackground(
-    theme: UiThemeColor,
+    theme: UiAppTheme,
     modifier: Modifier = Modifier,
     ignoreImage: Boolean = false,
 ) {
@@ -38,21 +39,27 @@ fun AppBackground(
         modifier = modifier,
         targetState = theme,
     ) { targetState ->
-        if (!ignoreImage && targetState.image != null) {
+        val image = targetState.image
+        if (!ignoreImage && image != null) {
             val context = LocalContext.current
-            val request = remember(context, targetState.image.resId) {
+            val request = remember(context, image.source) {
                 ImageRequest.Builder(context)
-                    .data(targetState.image.resId)
-                    .memoryCacheKey(targetState.image.resId.toString())
+                    .data(
+                        when (image.source) {
+                            is UiThemeImage.Source.Link -> image.source.uri
+                            is UiThemeImage.Source.ResId -> image.source.resId
+                        },
+                    )
+                    .memoryCacheKey(image.source.id)
                     .build()
             }
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(targetState.surface),
+                    .background(targetState.colorScheme.surface),
                 model = request,
-                contentScale = targetState.image.scaleType.toContentScale(),
-                alignment = targetState.image.scaleType.toContentAlignment(),
+                contentScale = image.scaleType.toContentScale(),
+                alignment = image.scaleType.toContentAlignment(),
                 contentDescription = null,
             )
         } else {
@@ -62,8 +69,8 @@ fun AppBackground(
                     .background(
                         brush = Brush.linearGradient(
                             colors = listOf(
-                                targetState.surface,
-                                targetState.surface.brighterBy(0.12f)
+                                targetState.colorScheme.surface,
+                                targetState.colorScheme.surface.brighterBy(0.12f)
                             ),
                             start = Offset.Zero,
                             end = Offset.Infinite
@@ -76,7 +83,7 @@ fun AppBackground(
 
 @Composable
 fun AppBackgroundWithStars(
-    theme: UiThemeColor,
+    theme: UiAppTheme,
     modifier: Modifier = Modifier,
 ) {
     val infiniteTransition = rememberInfiniteTransition()

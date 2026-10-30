@@ -2,11 +2,11 @@ package com.furianrt.reminders.internal.ui.details
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.reminders.internal.ui.entities.DayItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import java.time.LocalTime
 
 internal data class RemindersDetailsUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     internal sealed interface Content {

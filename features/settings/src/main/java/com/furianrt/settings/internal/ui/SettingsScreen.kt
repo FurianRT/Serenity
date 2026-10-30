@@ -77,7 +77,7 @@ import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.IntentCreator
@@ -602,7 +602,7 @@ private fun ScreenContentPreview() {
         ScreenContent(
             snackBarHostState = SnackbarHostState(),
             uiState = SettingsUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = SettingsUiState.Content.Success(
                     rating = 4,
                     appVersion = "1.0",

@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.findInstance
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.LocalTag
 import com.furianrt.domain.entities.NoteFontFamily
@@ -26,7 +27,7 @@ import com.furianrt.search.internal.ui.entities.SelectedFilter
 import com.furianrt.search.internal.ui.extensions.toNoteItem
 import com.furianrt.search.internal.ui.extensions.toSelectedTag
 import com.furianrt.search.internal.ui.extensions.toTagsList
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
@@ -130,15 +131,15 @@ internal class SearchViewModel @Inject constructor(
                 endDate = dateFilter?.end,
             ),
             appearanceRepository.getAppFont(),
-            appearanceRepository.getAppThemeColorId(),
+            appearanceRepository.getAppTheme(),
             appearanceRepository.isMinimalisticHomeScreenEnabled(),
-        ) { selectedNotes, notes, appFont, appThemeColorId, compactHomeScreen ->
+        ) { selectedNotes, notes, appFont, appTheme, compactHomeScreen ->
             buildState(
                 notes = notes,
                 data = data,
                 selectedNotes = selectedNotes,
                 appFontFamily = appFont,
-                appThemeColorId = appThemeColorId,
+                appTheme = appTheme,
                 isMinimalisticHomeScreenEnabled = compactHomeScreen,
             )
         }
@@ -150,7 +151,7 @@ internal class SearchViewModel @Inject constructor(
         initialValue = SearchUiState(
             searchQuery = queryState,
             selectedFilters = selectedFiltersFlow.value,
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
         ),
     )
 
@@ -323,7 +324,7 @@ internal class SearchViewModel @Inject constructor(
         selectedNotes: Set<String>,
         data: SearchData,
         appFontFamily: NoteFontFamily,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
         isMinimalisticHomeScreenEnabled: Boolean,
     ): SearchUiState {
         val hasFilters = data.selectedFilters.isNotEmpty()
@@ -365,7 +366,7 @@ internal class SearchViewModel @Inject constructor(
             searchQuery = queryState,
             selectedFilters = data.selectedFilters.toMutableList().apply { addAll(unselectedTags) },
             state = state,
-            theme = UiThemeColor.fromId(appThemeColorId),
+            theme = appTheme.toUiAppTheme(),
         )
     }
 }

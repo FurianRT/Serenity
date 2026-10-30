@@ -37,12 +37,13 @@ import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgres
 import com.furianrt.backup.internal.ui.entities.Question
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.TimeFormat
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.LocaleRepository
 import com.furianrt.domain.repositories.NotesRepository
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.extensions.toDateString
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -153,7 +154,7 @@ internal class BackupViewModel @Inject constructor(
         backupRepository.getAutoBackupPeriod(),
         backupRepository.getLastSyncDate(),
         syncProgressState,
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -161,7 +162,7 @@ internal class BackupViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = BackupUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = Content.Loading,
         ),
     )
@@ -358,9 +359,9 @@ internal class BackupViewModel @Inject constructor(
         backupPeriod: BackupPeriod,
         lastSyncDate: ZonedDateTime?,
         syncProgress: SyncProgress,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = BackupUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = Content.Success(
             isAutoBackupEnabled = isAutoBackupEnabled,
             backupPeriod = backupPeriod,

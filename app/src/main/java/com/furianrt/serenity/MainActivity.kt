@@ -78,7 +78,6 @@ import com.furianrt.uikit.anim.defaultExitTransition
 import com.furianrt.uikit.anim.defaultPopEnterTransition
 import com.furianrt.uikit.anim.defaultPopExitTransition
 import com.furianrt.uikit.constants.SystemBarsConstants
-import com.furianrt.uikit.entities.colorScheme
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.isTablet
 import com.furianrt.uikit.theme.LocalHasMediaRoute
@@ -186,7 +185,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
             }
         }
 
-        LaunchedEffect(uiState.appColor.isLight) {
+        LaunchedEffect(uiState.appTheme.isLight) {
             navController.currentBackStackEntryFlow
                 .filter { entry ->
                     val hasNoteViewRoute = entry.destination.hasRoute<NoteViewRoute>()
@@ -204,7 +203,7 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
                             navigationBarStyle = SystemBarStyle.dark(Color.Transparent.toArgb()),
                         )
 
-                        uiState.appColor.isLight -> activity?.enableEdgeToEdge(
+                        uiState.appTheme.isLight -> activity?.enableEdgeToEdge(
                             statusBarStyle = SystemBarStyle.light(statusBarColor, statusBarColor),
                             navigationBarStyle = SystemBarStyle.light(
                                 scrim = navigationBarColor,
@@ -221,9 +220,9 @@ internal class MainActivity : ComponentActivity(), IsAuthorizedProvider {
         }
 
         SerenityTheme(
-            colorScheme = uiState.appColor.colorScheme,
+            colorScheme = uiState.appTheme.colorScheme,
             font = uiState.appFont,
-            isLightTheme = uiState.appColor.isLight,
+            isLightTheme = uiState.appTheme.isLight,
         ) {
             CompositionLocalProvider(
                 LocalAuth provides this,

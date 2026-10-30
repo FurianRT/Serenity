@@ -4,13 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteTheme
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.toolspanel.internal.ui.background.container.BackgroundSelectedThemeProvider
 import com.furianrt.toolspanel.internal.ui.background.pattern.PatternBackgroundEffect.*
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -47,7 +48,7 @@ internal class PatternBackgroundViewModel @AssistedInject constructor(
         selectedThemeProvider.selectedThemeState.onEach { theme ->
             selectedColorState.update { colors.find { it.id == theme?.colorId } }
         },
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -106,13 +107,13 @@ internal class PatternBackgroundViewModel @AssistedInject constructor(
     private fun buildState(
         selectedColor: UiNoteBackground?,
         selectedTheme: UiNoteTheme?,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = PatternBackgroundUiState.Success(
         images = images,
         colors = colors,
         selectedImageIndex = images.indexOfFirstOrNull { it.id == selectedTheme?.imageId },
         selectedColorIndex = colors.indexOfFirstOrNull { it.id == selectedColor?.id },
-        appTheme = UiThemeColor.fromId(appThemeColorId),
+        appTheme = appTheme.toUiAppTheme(),
     )
 
     @AssistedFactory

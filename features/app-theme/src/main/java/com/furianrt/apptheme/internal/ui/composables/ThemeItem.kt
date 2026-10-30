@@ -25,8 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.components.AppBackground
-import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.applyIf
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
@@ -41,9 +40,9 @@ import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ThemeItem(
-    theme: UiThemeColor,
+    theme: UiAppTheme,
     isSelected: Boolean,
-    onClick: (theme: UiThemeColor) -> Unit,
+    onClick: (theme: UiAppTheme) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val hazeState = rememberHazeState()
@@ -199,7 +198,7 @@ private fun ActionButton(
 private fun Preview() {
     ThemeItem(
         modifier = Modifier.width(120.dp),
-        theme = UiThemeColor.DISTANT_CASTLE_GREEN,
+        theme = UiAppTheme.defaultTheme,
         isSelected = true,
         onClick = {},
     )

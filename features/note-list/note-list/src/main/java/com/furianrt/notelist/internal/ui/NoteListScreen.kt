@@ -87,7 +87,7 @@ import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.constants.ToolbarConstants
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.theme.NoteFont
@@ -492,7 +492,7 @@ private fun SuccessPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = false),
@@ -513,7 +513,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Empty,
             ),
@@ -529,7 +529,7 @@ private fun SuccessWithSelectedPreview() {
     SerenityTheme {
         MainScreenContent(
             uiState = NoteListUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 hasAutoBackupFailure = true,
                 content = NoteListUiState.Content.Success(
                     notes = generatePreviewNotes(withSelected = true),

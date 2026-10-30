@@ -14,9 +14,10 @@ import com.furianrt.billing.internal.ui.mappers.SubscriptionPlanMapper
 import com.furianrt.common.ErrorTracker
 import com.furianrt.common.SerenityTermsLink
 import com.furianrt.core.combine
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -66,14 +67,14 @@ internal class BillingViewModel @Inject constructor(
         selectedPlanIdState,
         showButtonProgressState,
         errorMessageState,
-        appearanceRepository.getAppThemeColorId(),
-    ) { _, plans, selectedPlanId, showButtonProgress, errorMessage, appThemeColorId ->
+        appearanceRepository.getAppTheme(),
+    ) { _, plans, selectedPlanId, showButtonProgress, errorMessage, appTheme ->
         buildState(
             plans = plans,
             selectedPlanId = selectedPlanId,
             showButtonProgress = showButtonProgress,
             errorMessage = errorMessage,
-            appThemeColorId = appThemeColorId,
+            appTheme = appTheme,
         )
     }.flowOn(
         context = Dispatchers.Default,
@@ -85,7 +86,7 @@ internal class BillingViewModel @Inject constructor(
             selectedPlanId = selectedPlanIdState.value,
             showButtonProgress = showButtonProgressState.value,
             errorMessage = errorMessageState.value,
-            appThemeColorId = appearanceRepository.getAppThemeColorId().value,
+            appTheme = appearanceRepository.getAppTheme().value,
         )
     )
 
@@ -157,11 +158,11 @@ internal class BillingViewModel @Inject constructor(
         selectedPlanId: String,
         showButtonProgress: Boolean,
         errorMessage: ErrorMessageType?,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = BillingState(
         benefits = benefits,
         showButtonProgress = showButtonProgress || plans.isEmpty(),
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = when {
             errorMessage != null -> BillingState.Content.Failure(errorMessage)
             plans.isEmpty() -> BillingState.Content.Loading

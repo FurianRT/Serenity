@@ -6,6 +6,7 @@ import com.furianrt.common.BuildInfoProvider
 import com.furianrt.common.ErrorTracker
 import com.furianrt.common.SerenityTermsLink
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.managers.SerenityPlusProvider
@@ -17,7 +18,7 @@ import com.furianrt.notelistui.extensions.toUiNoteFontFamily
 import com.furianrt.settings.BuildConfig
 import com.furianrt.settings.R
 import com.furianrt.settings.internal.domain.SettingsRepository
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
@@ -53,7 +54,7 @@ internal class SettingsViewModel @Inject constructor(
     val state: StateFlow<SettingsUiState> = combine(
         serenityPlusProvider.hasSerenityPlus(),
         settingsRepository.getAppRating(),
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -61,7 +62,7 @@ internal class SettingsViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SettingsUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = SettingsUiState.Content.Loading,
         ),
     )
@@ -191,9 +192,9 @@ internal class SettingsViewModel @Inject constructor(
     private fun buildState(
         hasSerenityPlus: Boolean,
         rating: Int,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ): SettingsUiState = SettingsUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = SettingsUiState.Content.Success(
             rating = rating,
             appVersion = buildInfoProvider.getAppVersionName(),

@@ -30,7 +30,7 @@ import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.hazeSource
@@ -204,7 +204,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = NoteSettingsState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = NoteSettingsState.Content.Success(
                     isAutoDetectLocationEnabled = true,
                     isMinimalisticHomeScreenEnabled = false,

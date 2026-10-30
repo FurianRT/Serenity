@@ -6,12 +6,12 @@ import com.furianrt.statistics.internal.ui.entities.GeneralStats
 import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import java.time.LocalDate
 import java.time.ZonedDateTime
 
 internal data class StatsState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

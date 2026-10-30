@@ -16,7 +16,8 @@ import com.furianrt.domain.repositories.TagsRepository
 import com.furianrt.storage.internal.database.SerenityDatabase
 import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.billing.dao.BillingPlanDao
-import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.AppCustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.NoteCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
@@ -147,9 +148,15 @@ internal interface DatabaseModule {
 
         @Provides
         @Singleton
-        fun customBackgroundDao(
+        fun noteCustomBackgroundDao(
             database: SerenityDatabase,
-        ): CustomBackgroundDao = database.customBackgroundDao()
+        ): NoteCustomBackgroundDao = database.noteCustomBackgroundDao()
+
+        @Provides
+        @Singleton
+        fun appCustomBackgroundDao(
+            database: SerenityDatabase,
+        ): AppCustomBackgroundDao = database.appCustomBackgroundDao()
 
         @Provides
         @Singleton

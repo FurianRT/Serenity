@@ -4,7 +4,7 @@ import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.storage.BuildConfig
-import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.NoteCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
@@ -27,7 +27,7 @@ import javax.inject.Singleton
 internal class MediaSaver @Inject constructor(
     private val imageDao: ImageDao,
     private val videoDao: VideoDao,
-    private val customBackgroundDao: CustomBackgroundDao,
+    private val noteCustomBackgroundDao: NoteCustomBackgroundDao,
     private val customStickerDao: CustomStickerDao,
     private val appMediaSource: AppMediaSource,
 ) {
@@ -35,7 +35,7 @@ internal class MediaSaver @Inject constructor(
     private val mutex = Mutex()
 
     suspend fun saveAll() {
-        customBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
+        noteCustomBackgroundDao.getUnsavedBackgrounds().first().forEach { entry ->
             saveNoteBackground(entry.toDomain())
         }
 
@@ -144,7 +144,7 @@ internal class MediaSaver @Inject constructor(
             return@withLock
         }
 
-        customBackgroundDao.update(
+        noteCustomBackgroundDao.update(
             PartNoteCustomBackgroundUri(
                 id = background.id,
                 name = savedBackgroundData.name,
@@ -193,7 +193,7 @@ internal class MediaSaver @Inject constructor(
         is LocalNote.Content.Video -> videoDao.isSaved(media.id)
     }
 
-    private suspend fun isBackgroundSaved(id: String): Boolean = customBackgroundDao.isSaved(id)
+    private suspend fun isBackgroundSaved(id: String): Boolean = noteCustomBackgroundDao.isSaved(id)
 
     private suspend fun isStickerSaved(id: String): Boolean = customStickerDao.isSaved(id)
 

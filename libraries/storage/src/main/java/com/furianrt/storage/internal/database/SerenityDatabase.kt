@@ -16,7 +16,8 @@ import com.furianrt.storage.internal.database.auth.dao.BackupProfileDao
 import com.furianrt.storage.internal.database.auth.entities.EntryBackupProfile
 import com.furianrt.storage.internal.database.billing.dao.BillingPlanDao
 import com.furianrt.storage.internal.database.billing.entities.EntryBillingPlan
-import com.furianrt.storage.internal.database.notes.dao.CustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.AppCustomBackgroundDao
+import com.furianrt.storage.internal.database.notes.dao.NoteCustomBackgroundDao
 import com.furianrt.storage.internal.database.notes.dao.CustomStickerDao
 import com.furianrt.storage.internal.database.notes.dao.ImageDao
 import com.furianrt.storage.internal.database.notes.dao.LocationDao
@@ -26,6 +27,7 @@ import com.furianrt.storage.internal.database.notes.dao.StickerDao
 import com.furianrt.storage.internal.database.notes.dao.TagDao
 import com.furianrt.storage.internal.database.notes.dao.VideoDao
 import com.furianrt.storage.internal.database.notes.dao.VoiceDao
+import com.furianrt.storage.internal.database.notes.entities.EntryAppCustomBackground
 import com.furianrt.storage.internal.database.notes.entities.EntryCustomSticker
 import com.furianrt.storage.internal.database.notes.entities.EntryNote
 import com.furianrt.storage.internal.database.notes.entities.EntryNoteCustomBackground
@@ -57,6 +59,7 @@ import java.time.ZonedDateTime
         EntryCustomSticker::class,
         EntryReminder::class,
         EntryBillingPlan::class,
+        EntryAppCustomBackground::class,
     ],
     version = VERSION,
     exportSchema = false,
@@ -73,14 +76,15 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
     abstract fun stickerDao(): StickerDao
     abstract fun backupProfileDao(): BackupProfileDao
     abstract fun locationDao(): LocationDao
-    abstract fun customBackgroundDao(): CustomBackgroundDao
+    abstract fun noteCustomBackgroundDao(): NoteCustomBackgroundDao
+    abstract fun appCustomBackgroundDao(): AppCustomBackgroundDao
     abstract fun customStickerDao(): CustomStickerDao
     abstract fun remindersDao(): RemindersDao
     abstract fun billingPlanDao(): BillingPlanDao
 
     companion object {
         private const val NAME = "Serenity.db"
-        private const val VERSION = 14
+        private const val VERSION = 15
 
         fun create(
             context: Context,
@@ -108,6 +112,7 @@ internal abstract class SerenityDatabase : RoomDatabase(), TransactionsHelper {
                 MIGRATION_11_12,
                 MIGRATION_12_13,
                 MIGRATION_13_14,
+                MIGRATION_14_15,
             )
             .build()
     }
@@ -296,5 +301,24 @@ private val MIGRATION_12_13 = object : Migration(12, 13) {
 private val MIGRATION_13_14 = object : Migration(13, 14) {
     override suspend fun migrate(connection: SQLiteConnection) {
         connection.execSQL("ALTER TABLE Notes ADD COLUMN custom_font_color INTEGER")
+    }
+}
+
+private val MIGRATION_14_15 = object : Migration(14, 15) {
+    override suspend fun migrate(connection: SQLiteConnection) {
+        connection.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS AppCustomBackgrounds (
+                id TEXT NOT NULL PRIMARY KEY,
+                name TEXT NOT NULL,
+                uri TEXT NOT NULL,
+                primary_color INTEGER NOT NULL,
+                accent_color INTEGER NOT NULL,
+                is_light INTEGER NOT NULL,
+                added_date TEXT NOT NULL,
+                is_saved INTEGER NOT NULL
+            )
+            """.trimIndent(),
+        )
     }
 }

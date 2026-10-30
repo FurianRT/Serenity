@@ -2,6 +2,7 @@ package com.furianrt.statistics.internal.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.statistics.internal.domain.entities.MediaData
@@ -20,7 +21,7 @@ import com.furianrt.statistics.internal.ui.entities.MoodStats
 import com.furianrt.statistics.internal.ui.entities.StreakDay
 import com.furianrt.statistics.internal.ui.entities.StreakStats
 import com.furianrt.statistics.internal.ui.entities.toUI
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -68,15 +69,15 @@ internal class StatsViewModel @Inject constructor(
             getMediaDataUseCase(period),
             getMoodDataUseCase(period),
             getStreakDataUseCase(),
-            appearanceRepository.getAppThemeColorId(),
-        ) { notesData, mediaData, moodData, streakData, appThemeId ->
+            appearanceRepository.getAppTheme(),
+        ) { notesData, mediaData, moodData, streakData, appTheme ->
             buildState(
                 selectedPeriod = period,
                 notesData = notesData,
                 mediaData = mediaData,
                 moodData = moodData,
                 streakData = streakData,
-                appThemeColorId = appThemeId,
+                appTheme = appTheme,
             )
         }
     }.flowOn(
@@ -85,7 +86,7 @@ internal class StatsViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = StatsState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = StatsState.Content.Loading,
         )
     )
@@ -161,9 +162,9 @@ internal class StatsViewModel @Inject constructor(
         mediaData: MediaData,
         moodData: MoodData,
         streakData: StreakData,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = StatsState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = StatsState.Content.Success(
             periods = periods,
             selectedPeriod = selectedPeriod,

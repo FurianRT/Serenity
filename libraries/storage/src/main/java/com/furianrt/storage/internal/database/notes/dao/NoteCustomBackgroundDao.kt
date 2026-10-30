@@ -13,7 +13,7 @@ import com.furianrt.storage.internal.database.notes.entities.PartNoteCustomBackg
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-internal interface CustomBackgroundDao {
+internal interface NoteCustomBackgroundDao {
 
     @Upsert
     suspend fun upsert(background: EntryNoteCustomBackground)

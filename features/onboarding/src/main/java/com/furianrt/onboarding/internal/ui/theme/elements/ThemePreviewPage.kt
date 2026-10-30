@@ -27,8 +27,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.furianrt.uikit.components.AppBackground
-import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import dev.chrisbanes.haze.HazeInput
@@ -42,7 +41,7 @@ import com.furianrt.uikit.R as uiR
 
 @Composable
 internal fun ThemePreviewPage(
-    color: UiThemeColor,
+    color: UiAppTheme,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -267,7 +266,7 @@ private fun SkeletonItem2(
 private fun Preview() {
     ThemePreviewPage(
         modifier = Modifier.width(200.dp),
-        color = UiThemeColor.DISTANT_CASTLE_GREEN,
+        color = UiAppTheme.defaultTheme,
         onClick = {},
     )
 }

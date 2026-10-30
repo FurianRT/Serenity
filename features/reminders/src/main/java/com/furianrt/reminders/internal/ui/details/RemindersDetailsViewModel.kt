@@ -5,13 +5,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.reminders.internal.domain.CreateReminderUseCase
 import com.furianrt.reminders.internal.domain.GetReminderUseCase
 import com.furianrt.reminders.internal.domain.UpdateReminderUseCase
 import com.furianrt.reminders.internal.ui.entities.DayItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.kizitonwose.calendar.core.daysOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,7 +74,7 @@ internal class RemindersDetailsViewModel @Inject constructor(
         reminderFlow,
         selectedDaysState,
         notificationTextState,
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -81,7 +82,7 @@ internal class RemindersDetailsViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = RemindersDetailsUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = RemindersDetailsUiState.Content.Loading,
         ),
     )
@@ -170,9 +171,9 @@ internal class RemindersDetailsViewModel @Inject constructor(
         reminder: Reminder?,
         selectedDays: Set<DayOfWeek>,
         notificationText: String,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = RemindersDetailsUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = RemindersDetailsUiState.Content.Success(
             initialTime = reminder?.time ?: selectedTime,
             notificationText = notificationText,

@@ -21,13 +21,12 @@ import com.furianrt.notepage.internal.ui.stickers.StickerState
 import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.toolspanel.api.VoiceRecord
 import com.furianrt.toolspanel.api.entities.Sticker
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.colorScheme
 import java.time.ZonedDateTime
 import java.util.UUID
-
-private const val APP_THEME_POSTFIX = "app_theme"
 
 internal suspend fun LocalNote.toNoteItem(
     appFont: NoteFontFamily,
@@ -79,17 +78,33 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     editTime = state.editTime,
 )
 
-internal fun UiThemeColor.toNoteTheme(): UiNoteTheme = if (image != null) {
-    UiNoteTheme.Image.Picture(
-        isAppTheme = true,
+internal fun UiAppTheme.toNoteTheme(): UiNoteTheme = when (this) {
+    is UiAppTheme.Regular -> color.toNoteTheme()
+    is UiAppTheme.Custom -> UiNoteTheme.Image.Picture(
         color = UiNoteBackground(
-            id = id + APP_THEME_POSTFIX,
+            id = id,
             isLight = isLight,
             colorScheme = colorScheme,
         ),
         image = UiNoteBackgroundImage(
-            id = id + APP_THEME_POSTFIX,
-            source = UiNoteBackgroundImage.Source.Resource(image!!.resId),
+            id = id,
+            source = image.source.toUiNoteBackgroundImageSource(),
+            scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
+        ),
+    )
+}
+
+private fun UiThemeColor.toNoteTheme(): UiNoteTheme = if (image != null) {
+    UiNoteTheme.Image.Picture(
+        isAppTheme = true,
+        color = UiNoteBackground(
+            id = id,
+            isLight = isLight,
+            colorScheme = colorScheme,
+        ),
+        image = UiNoteBackgroundImage(
+            id = id,
+            source = image!!.source.toUiNoteBackgroundImageSource(),
             scaleType = image!!.scaleType.toNoteThemeScaleType(),
         ),
     )
@@ -97,10 +112,20 @@ internal fun UiThemeColor.toNoteTheme(): UiNoteTheme = if (image != null) {
     UiNoteTheme.Solid(
         isAppTheme = true,
         color = UiNoteBackground(
-            id = id + APP_THEME_POSTFIX,
+            id = id,
             isLight = isLight,
             colorScheme = colorScheme,
         ),
+    )
+}
+
+private fun UiThemeImage.Source.toUiNoteBackgroundImageSource() = when (this) {
+    is UiThemeImage.Source.Link -> UiNoteBackgroundImage.Source.Storage(
+        uri = uri,
+    )
+
+    is UiThemeImage.Source.ResId -> UiNoteBackgroundImage.Source.Resource(
+        resId = resId,
     )
 }
 

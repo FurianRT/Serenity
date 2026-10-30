@@ -42,7 +42,7 @@ import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.RegularButton
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -206,7 +206,7 @@ private fun Preview() {
     SerenityTheme {
         Content(
             uiState = RemindersDetailsUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = RemindersDetailsUiState.Content.Success(
                     initialTime = LocalTime.now(),
                     notificationText = "How was your day?",

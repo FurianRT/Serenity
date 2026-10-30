@@ -7,10 +7,10 @@ import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.exceptions.AuthException
 import com.furianrt.backup.internal.ui.BackupUiState.Content.Success.SyncProgress.*
 import com.furianrt.backup.internal.ui.entities.Question
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal data class BackupUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

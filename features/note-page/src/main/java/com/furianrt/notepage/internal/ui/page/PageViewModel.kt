@@ -117,7 +117,7 @@ import com.furianrt.notepage.internal.ui.stickers.entities.StickerItem
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.toolspanel.api.NoteThemeProvider
 import com.furianrt.toolspanel.api.StickerIconProvider
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -1092,9 +1092,9 @@ internal class PageViewModel @AssistedInject constructor(
                         textAlignment = note.textAlignment,
                         lineHeightMultiplier = note.lineHeightMultiplier,
                         noteTheme = note.theme,
-                        appTheme = UiThemeColor.fromId(
-                            appearanceRepository.getAppThemeColorId().first(),
-                        ).toNoteTheme(),
+                        appTheme = appearanceRepository.getAppTheme().first()
+                            .toUiAppTheme()
+                            .toNoteTheme(),
                         moodId = note.moodId,
                         defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
@@ -1227,9 +1227,9 @@ internal class PageViewModel @AssistedInject constructor(
             )
             _state.updateState<PageUiState.Success> { successState ->
                 successState.copy(
-                    noteTheme = theme ?: UiThemeColor.fromId(
-                        appearanceRepository.getAppThemeColorId().first(),
-                    ).toNoteTheme()
+                    noteTheme = theme ?: appearanceRepository.getAppTheme().first()
+                        .toUiAppTheme()
+                        .toNoteTheme(),
                 )
             }
         }

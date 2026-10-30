@@ -52,8 +52,7 @@ import com.furianrt.permissions.ui.NotificationsPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.AppBackgroundWithStars
 import com.furianrt.uikit.components.RegularButton
-import com.furianrt.uikit.entities.UiThemeColor
-import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.clickableNoRipple
 import com.furianrt.uikit.theme.SerenityTheme
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
@@ -131,7 +130,7 @@ private fun SuccessContent(
     onEvent: (event: ContainerEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val themeScreenState = remember { ThemeScreenState(uiState.appThemeColor) }
+    val themeScreenState = remember { ThemeScreenState(uiState.appTheme) }
     val hazeState = rememberHazeState()
 
     SerenityTheme(
@@ -267,7 +266,7 @@ private fun Preview() {
                     ),
                 )
             ),
-            appThemeColor = UiThemeColor.defaultTheme,
+            appTheme = UiAppTheme.defaultTheme,
         ),
         onEvent = {},
     )

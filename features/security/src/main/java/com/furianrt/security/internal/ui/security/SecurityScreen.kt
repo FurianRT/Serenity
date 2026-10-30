@@ -31,7 +31,7 @@ import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.GeneralButton
 import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import dev.chrisbanes.haze.HazeState
@@ -215,7 +215,7 @@ private fun Preview() {
     SerenityTheme {
         ScreenContent(
             uiState = SecurityUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = Content.Success(
                     isPinEnabled = true,
                     isFingerprintEnabled = false,

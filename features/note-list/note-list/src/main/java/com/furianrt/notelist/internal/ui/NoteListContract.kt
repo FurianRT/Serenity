@@ -2,12 +2,12 @@ package com.furianrt.notelist.internal.ui
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.notelist.internal.ui.entities.NoteListScreenNote
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.NoteFont
 import com.furianrt.uikit.utils.DialogIdentifier
 
 internal data class NoteListUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val hasAutoBackupFailure: Boolean,
     val content: Content,
 ) {

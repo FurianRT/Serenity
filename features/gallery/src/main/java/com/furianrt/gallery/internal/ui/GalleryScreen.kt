@@ -63,7 +63,7 @@ import com.furianrt.uikit.components.MultiChoiceCalendar
 import com.furianrt.uikit.components.RegularButton
 import com.furianrt.uikit.components.SelectedDate
 import com.furianrt.uikit.components.SkipFirstEffect
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
 import com.furianrt.uikit.utils.brighterBy
@@ -362,7 +362,7 @@ private fun SuccessPreview() {
     SerenityTheme {
         ScreenContent(
             uiState = GalleryState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 dateFilter = "30 Sep 1992",
                 content = GalleryState.Content.Success(
                     items = buildList {
@@ -396,7 +396,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         ScreenContent(
             uiState = GalleryState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 dateFilter = "30 Sep 1992",
                 content = GalleryState.Content.Empty,
             ),

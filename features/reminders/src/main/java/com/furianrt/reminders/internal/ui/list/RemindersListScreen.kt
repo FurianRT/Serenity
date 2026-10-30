@@ -67,7 +67,7 @@ import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.DefaultToolbar
 import com.furianrt.uikit.components.MovableToolbarScaffold
 import com.furianrt.uikit.components.RegularButton
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.theme.LocalIsLightTheme
 import com.furianrt.uikit.theme.SerenityTheme
 import com.furianrt.uikit.utils.PreviewWithBackground
@@ -338,7 +338,7 @@ private fun EmptyPreview() {
     SerenityTheme {
         Content(
             uiState = RemindersListUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = RemindersListUiState.Content.Empty,
             ),
             listState = rememberLazyListState(),
@@ -353,7 +353,7 @@ private fun SuccessPreview() {
     SerenityTheme {
         Content(
             uiState = RemindersListUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = RemindersListUiState.Content.Success(
                     reminders = listOf(
                         ReminderItem(

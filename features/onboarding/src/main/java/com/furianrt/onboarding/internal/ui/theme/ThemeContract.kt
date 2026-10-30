@@ -1,10 +1,10 @@
 package com.furianrt.onboarding.internal.ui.theme
 
 import androidx.compose.runtime.Immutable
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal data class ThemeState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {
@@ -13,7 +13,7 @@ internal data class ThemeState(
         @Immutable
         data class Success(
             val initialPageIndex: Int,
-            val themes: List<UiThemeColor>,
+            val themes: List<UiAppTheme>,
         ) : Content
     }
 }

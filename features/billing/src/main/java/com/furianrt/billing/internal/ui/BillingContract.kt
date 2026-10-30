@@ -4,13 +4,13 @@ import androidx.compose.runtime.Immutable
 import com.furianrt.billing.internal.ui.entities.BenefitItem
 import com.furianrt.billing.internal.ui.entities.ErrorMessageType
 import com.furianrt.billing.internal.ui.entities.SubscriptionPlan
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 @Immutable
 internal data class BillingState(
     val benefits: List<BenefitItem>,
     val showButtonProgress: Boolean,
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

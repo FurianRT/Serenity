@@ -1,9 +1,9 @@
 package com.furianrt.security.internal.ui.security
 
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal data class SecurityUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

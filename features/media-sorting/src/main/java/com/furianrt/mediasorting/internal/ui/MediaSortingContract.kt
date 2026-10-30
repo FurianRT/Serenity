@@ -5,12 +5,12 @@ import androidx.compose.runtime.Immutable
 import com.furianrt.mediaselector.api.MediaResult
 import com.furianrt.mediaselector.api.MediaViewerRoute
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.utils.DialogIdentifier
 
 @Immutable
 internal data class MediaSortingUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
     val hasContentChanged: Boolean,
 ) {

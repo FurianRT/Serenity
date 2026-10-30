@@ -2,12 +2,13 @@ package com.furianrt.serenity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.LockAuthorizer
 import com.furianrt.domain.repositories.AppInfoRepository
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.notelistui.extensions.toNoteFont
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,7 +25,7 @@ internal class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     val state: StateFlow<MainState> = combine(
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         appearanceRepository.getAppFont(),
         lockAuthorizer.isAuthorized(),
         appInfoRepository.isOnboardingShown(),
@@ -45,12 +46,12 @@ internal class MainViewModel @Inject constructor(
     }
 
     private fun buildState(
-        appColorId: String?,
+        appTheme: AppTheme,
         appFont: NoteFontFamily,
         isAuthorized: Boolean,
         isOnboardingShown: Boolean,
     ) = MainState(
-        appColor = UiThemeColor.fromId(appColorId),
+        appTheme = appTheme.toUiAppTheme(),
         appFont = appFont.toNoteFont(),
         isScreenLocked = !isAuthorized,
         isOnboardingNeeded = !isOnboardingShown,

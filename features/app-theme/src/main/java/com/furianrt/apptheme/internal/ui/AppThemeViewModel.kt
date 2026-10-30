@@ -3,8 +3,11 @@ package com.furianrt.apptheme.internal.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,19 +27,23 @@ internal class AppThemeViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val themes by lazy {
-        UiThemeColor.getPictureThemes() +
+        (UiThemeColor.getPictureThemes() +
                 UiThemeColor.getDarkThemesList() +
-                UiThemeColor.getLightThemesList()
+                UiThemeColor.getLightThemesList()).map { theme ->
+            UiAppTheme.Regular(
+                color = theme,
+            )
+        }
     }
 
-    val state: StateFlow<AppThemeState> = appearanceRepository.getAppThemeColorId()
+    val state: StateFlow<AppThemeState> = appearanceRepository.getAppTheme()
         .map(::buildState)
         .flowOn(dispatchers.default)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = AppThemeState(
-                theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+                theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
                 content = AppThemeState.Content.Loading,
             ),
         )
@@ -51,9 +58,9 @@ internal class AppThemeViewModel @Inject constructor(
         }
     }
 
-    private fun onThemeClick(theme: UiThemeColor) {
+    private fun onThemeClick(theme: UiAppTheme) {
         launch {
-            appearanceRepository.updateAppThemeColor(theme.id)
+            appearanceRepository.updateAppTheme(theme.id)
         }
     }
 
@@ -62,9 +69,9 @@ internal class AppThemeViewModel @Inject constructor(
     }
 
     private fun buildState(
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ): AppThemeState {
-        val theme = UiThemeColor.fromId(appThemeColorId)
+        val theme = appTheme.toUiAppTheme()
         return AppThemeState(
             theme = theme,
             content = AppThemeState.Content.Success(

@@ -3,6 +3,7 @@ package com.furianrt.reminders.internal.ui.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.Reminder
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.permissions.utils.PermissionsUtils
@@ -11,7 +12,7 @@ import com.furianrt.reminders.internal.domain.GetAllRemindersUseCase
 import com.furianrt.reminders.internal.schedulers.ReminderScheduler
 import com.furianrt.reminders.internal.ui.list.entities.ReminderItem
 import com.furianrt.reminders.internal.ui.list.extensions.toReminderItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.kizitonwose.calendar.core.daysOfWeek
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -26,7 +27,6 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
 import javax.inject.Inject
-import kotlin.collections.map
 
 @HiltViewModel
 internal class RemindersListViewModel @Inject constructor(
@@ -45,7 +45,7 @@ internal class RemindersListViewModel @Inject constructor(
 
     val state: StateFlow<RemindersListUiState> = combine(
         getAllRemindersUseCase(),
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -53,7 +53,7 @@ internal class RemindersListViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = RemindersListUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = RemindersListUiState.Content.Loading,
         ),
     )
@@ -108,9 +108,9 @@ internal class RemindersListViewModel @Inject constructor(
 
     private fun buildState(
         reminders: List<Reminder>,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = RemindersListUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = if (reminders.isEmpty()) {
             RemindersListUiState.Content.Empty
         } else {

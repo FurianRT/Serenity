@@ -82,7 +82,7 @@ import com.furianrt.uikit.components.OptionButtonWrapper
 import com.furianrt.uikit.components.SkipFirstEffect
 import com.furianrt.uikit.components.SnackBar
 import com.furianrt.uikit.components.SwitchWithLabel
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.dpToPx
 import com.furianrt.uikit.extensions.pxToDp
 import com.furianrt.uikit.theme.SerenityTheme
@@ -468,7 +468,7 @@ private fun PreviewSignedIn() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
@@ -491,7 +491,7 @@ private fun PreviewSignedOut() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = true,
                     backupPeriod = BackupPeriod.TreeDays,
@@ -511,7 +511,7 @@ private fun PreviewLoading() {
     SerenityTheme {
         ScreenContent(
             uiState = BackupUiState(
-                theme = UiThemeColor.defaultTheme,
+                theme = UiAppTheme.defaultTheme,
                 content = Content.Success(
                     isAutoBackupEnabled = false,
                     backupPeriod = BackupPeriod.TreeDays,

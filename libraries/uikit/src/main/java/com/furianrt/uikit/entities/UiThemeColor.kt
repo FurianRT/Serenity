@@ -1,5 +1,6 @@
 package com.furianrt.uikit.entities
 
+import android.net.Uri
 import androidx.annotation.DrawableRes
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.Alignment
@@ -18,9 +19,25 @@ import com.furianrt.uikit.theme.getDefaultDarkColorScheme
 import com.furianrt.uikit.theme.getDefaultLightColorScheme
 
 data class UiThemeImage(
-    @get:DrawableRes val resId: Int,
+    val source: Source,
     val scaleType: ScaleType = FILL,
 ) {
+    sealed interface Source {
+        data class ResId(
+            @get:DrawableRes val resId: Int,
+        ) : Source
+
+        data class Link(
+            val uri: Uri,
+        ) : Source
+
+        val id: String
+            get() = when (this) {
+                is ResId -> resId.toString()
+                is Link -> uri.toString()
+            }
+    }
+
     enum class ScaleType {
         REPEAT,
         FILL,
@@ -216,7 +233,7 @@ enum class UiThemeColor(
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_0,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_0),
             scaleType = CROP_ALIGN_CENTER,
         ),
     ),
@@ -227,7 +244,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Blue1.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue4,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_1,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_1),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -240,7 +257,7 @@ enum class UiThemeColor(
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_2,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_2),
             scaleType = FILL,
         ),
     ),
@@ -251,7 +268,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Blue3.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_3,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_3),
             scaleType = FILL,
         ),
     ),
@@ -264,7 +281,7 @@ enum class UiThemeColor(
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_4,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_4),
             scaleType = CROP_ALIGN_TOP,
         ),
     ),
@@ -275,7 +292,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_5,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_5),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -307,7 +324,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_6,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_6),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -318,7 +335,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_7,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_7),
             scaleType = CROP_ALIGN_CENTER,
         ),
     ),
@@ -329,7 +346,7 @@ enum class UiThemeColor(
         inverseSurface = EUPHORIA_VIOLET.surface.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Pink4,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_9,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_9),
             scaleType = CROP_ALIGN_CENTER,
         ),
     ),
@@ -342,7 +359,7 @@ enum class UiThemeColor(
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.3f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_21,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_21),
             scaleType = CENTER_ALIGN_END,
         ),
     ),
@@ -355,7 +372,7 @@ enum class UiThemeColor(
         surfaceTint = Color.White.copy(alpha = 0.1f),
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.4f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_10,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_10),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -366,7 +383,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.AvatarBlue.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.AvatarPurple,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_11,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_11),
             scaleType = FILL,
         ),
     ),
@@ -377,7 +394,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Blue4.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Blue5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_8,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_8),
             scaleType = CROP_ALIGN_CENTER,
         ),
     ),
@@ -409,7 +426,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_12,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_12),
             scaleType = FILL,
         ),
     ),
@@ -441,7 +458,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_13,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_13),
             scaleType = FILL,
         ),
     ),
@@ -452,7 +469,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.PurpleDark.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Pink5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_14,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_14),
             scaleType = FILL,
         ),
     ),
@@ -464,7 +481,7 @@ enum class UiThemeColor(
         primaryContainer = Colors.Accent.Purple2,
         surfaceDim = Colors.Common.DarkGray.copy(alpha = 0.3f),
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_15,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_15),
             scaleType = FILL,
         ),
     ),
@@ -475,7 +492,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Brawn1.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Orange,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_16,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_16),
             scaleType = FILL,
         ),
     ),
@@ -486,7 +503,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Dark2.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Orange,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_17,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_17),
             scaleType = FILL,
         ),
     ),
@@ -497,7 +514,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Green2.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Green2,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_19,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_19),
             scaleType = FILL,
         ),
     ),
@@ -508,7 +525,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.PurpleDark2.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Pink5,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_20,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_20),
             scaleType = FILL,
         ),
     ),
@@ -736,7 +753,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_6,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_6),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -747,7 +764,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Green3.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Orange3,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_22,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_22),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -779,7 +796,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_23,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_23),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -811,7 +828,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_24,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_24),
             scaleType = CROP_ALIGN_BOTTOM,
         ),
     ),
@@ -843,7 +860,7 @@ enum class UiThemeColor(
         surfaceContainerLowest = Color.Black.copy(alpha = 0.3f),
         isLight = true,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_25,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_25),
             scaleType = FILL,
         ),
     ),
@@ -854,7 +871,7 @@ enum class UiThemeColor(
         inverseSurface = Colors.Primary.Orange.copy(alpha = 0.9f),
         primaryContainer = Colors.Accent.Orange4,
         image = UiThemeImage(
-            resId = R.drawable.app_background_picture_26,
+            source = UiThemeImage.Source.ResId(R.drawable.app_background_picture_26),
             scaleType = FILL,
         ),
     );

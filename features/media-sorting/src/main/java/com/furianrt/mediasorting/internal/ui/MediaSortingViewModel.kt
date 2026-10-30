@@ -15,7 +15,7 @@ import com.furianrt.mediasorting.internal.extensions.toMediaItem
 import com.furianrt.mediasorting.internal.extensions.toMediaItems
 import com.furianrt.mediasorting.internal.ui.entities.MediaItem
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -219,7 +219,7 @@ internal class MediaSortingViewModel @Inject constructor(
     }
 
     private fun buildInitialState() = MediaSortingUiState(
-        theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+        theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
         content = MediaSortingUiState.Content.Loading,
         hasContentChanged = false,
     )

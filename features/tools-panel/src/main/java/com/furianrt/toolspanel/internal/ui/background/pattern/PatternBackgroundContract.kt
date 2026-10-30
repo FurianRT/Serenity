@@ -3,7 +3,7 @@ package com.furianrt.toolspanel.internal.ui.background.pattern
 import com.furianrt.notelistui.entities.UiNoteBackground
 import com.furianrt.notelistui.entities.UiNoteBackgroundImage
 import com.furianrt.notelistui.entities.UiNoteTheme
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal sealed interface PatternBackgroundUiState {
     data class Success(
@@ -11,7 +11,7 @@ internal sealed interface PatternBackgroundUiState {
         val colors: List<UiNoteBackground>,
         val selectedImageIndex: Int?,
         val selectedColorIndex: Int?,
-        val appTheme: UiThemeColor,
+        val appTheme: UiAppTheme,
     ) : PatternBackgroundUiState
 
     data object Loading : PatternBackgroundUiState

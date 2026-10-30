@@ -3,10 +3,10 @@ package com.furianrt.settings.internal.ui
 import androidx.annotation.IntRange
 import com.furianrt.domain.entities.AppLocale
 import com.furianrt.notelistui.entities.UiNoteFontFamily
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal data class SettingsUiState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

@@ -2,13 +2,15 @@ package com.furianrt.onboarding.internal.ui.container
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.managers.ResourcesManager
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.onboarding.R
 import com.furianrt.onboarding.internal.ui.container.model.OnboardingButtonState
 import com.furianrt.onboarding.internal.ui.container.model.OnboardingPage
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.milliseconds
 import com.furianrt.uikit.R as uiR
 
 private const val MAIN_CLICK_DEBOUNCE = 350L
@@ -49,7 +52,7 @@ internal class ContainerViewModel @Inject constructor(
 
     val state: StateFlow<ContainerState> = combine(
         selectedPageState,
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).stateIn(
         scope = viewModelScope,
@@ -64,22 +67,22 @@ internal class ContainerViewModel @Inject constructor(
 
     fun onEvent(event: ContainerEvent) {
         when (event) {
-            is ContainerEvent.OnMainButtonClick -> onMainButtonClick(event.selectedThemeColor)
+            is ContainerEvent.OnMainButtonClick -> onMainButtonClick(event.selectedTheme)
             is ContainerEvent.OnSkipButtonClick -> onSkipButtonClick()
             is ContainerEvent.OnNotificationsPermissionSelected -> checkNotificationsPermission()
         }
     }
 
-    private fun onMainButtonClick(selectedThemeColor: UiThemeColor) {
+    private fun onMainButtonClick(selectedTheme: UiAppTheme) {
         if (mainCLickJob?.isCompleted != false) {
             mainCLickJob = launch {
                 when (selectedPageState.value) {
                     is OnboardingPage.Greeting -> onGreetingMainButtonClick()
-                    is OnboardingPage.Theme -> onThemeMainButtonClick(selectedThemeColor)
+                    is OnboardingPage.Theme -> onThemeMainButtonClick(selectedTheme)
                     is OnboardingPage.Notification -> onNotificationsMainButtonClick()
                     is OnboardingPage.Complete -> onCompleteMainButtonClick()
                 }
-                delay(MAIN_CLICK_DEBOUNCE)
+                delay(MAIN_CLICK_DEBOUNCE.milliseconds)
             }
         }
     }
@@ -88,9 +91,9 @@ internal class ContainerViewModel @Inject constructor(
         showThemePage()
     }
 
-    private fun onThemeMainButtonClick(selectedThemeColor: UiThemeColor) {
+    private fun onThemeMainButtonClick(selectedTheme: UiAppTheme) {
         launch {
-            appearanceRepository.updateAppThemeColor(selectedThemeColor.id)
+            appearanceRepository.updateAppTheme(selectedTheme.id)
             showNotificationsPage()
         }
     }
@@ -158,9 +161,9 @@ internal class ContainerViewModel @Inject constructor(
 
     private fun buildState(
         selectedPage: OnboardingPage,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ): ContainerState = ContainerState.Success(
         page = selectedPage,
-        appThemeColor = UiThemeColor.fromId(appThemeColorId),
+        appTheme = appTheme.toUiAppTheme(),
     )
 }

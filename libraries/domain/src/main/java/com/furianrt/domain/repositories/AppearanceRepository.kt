@@ -1,5 +1,7 @@
 package com.furianrt.domain.repositories
 
+import com.furianrt.domain.entities.AppCustomBackground
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteFontColor
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -7,8 +9,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 interface AppearanceRepository {
-    suspend fun updateAppThemeColor(colorId: String)
-    fun getAppThemeColorId(): StateFlow<String?>
+    suspend fun updateAppTheme(id: String)
+    fun getAppTheme(): StateFlow<AppTheme>
+    fun getAppCustomBackgrounds(): Flow<List<AppCustomBackground>>
 
     fun getNoteFontColorsList(): List<NoteFontColor>
     fun getNoteFontsList(): List<NoteFontFamily>

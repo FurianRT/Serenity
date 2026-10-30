@@ -1,9 +1,9 @@
 package com.furianrt.settings.internal.ui.noteSettings
 
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 
 internal data class NoteSettingsState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val content: Content,
 ) {
     sealed interface Content {

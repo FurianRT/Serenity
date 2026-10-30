@@ -2,11 +2,11 @@ package com.furianrt.gallery.internal.ui
 
 import androidx.compose.runtime.Immutable
 import com.furianrt.gallery.internal.ui.entities.ListItem
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.UiAppTheme
 import java.time.LocalDate
 
 internal data class GalleryState(
-    val theme: UiThemeColor,
+    val theme: UiAppTheme,
     val dateFilter: String?,
     val content: Content,
 ) {

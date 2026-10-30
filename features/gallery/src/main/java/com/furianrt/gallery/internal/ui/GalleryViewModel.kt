@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.NoteMedia
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.gallery.api.GalleryRoute
@@ -14,7 +15,7 @@ import com.furianrt.gallery.internal.ui.entities.DateFilter
 import com.furianrt.gallery.internal.ui.entities.ListItem
 import com.furianrt.gallery.internal.ui.mappers.toDateString
 import com.furianrt.gallery.internal.ui.mappers.toListItems
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -60,14 +61,14 @@ internal class GalleryViewModel @Inject constructor(
     val state: StateFlow<GalleryState> = dateFilterState
         .flatMapLatest { filter ->
             combine(
-                appearanceRepository.getAppThemeColorId(),
+                appearanceRepository.getAppTheme(),
                 getNoteMediaUseCase(
                     startDate = filter?.start,
                     endDate = filter?.end,
                 ),
-            ) { appThemeColorId, media ->
+            ) { appTheme, media ->
                 buildState(
-                    appThemeColorId = appThemeColorId,
+                    appTheme = appTheme,
                     media = media,
                     dateFilter = filter,
                 )
@@ -78,7 +79,7 @@ internal class GalleryViewModel @Inject constructor(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = GalleryState(
-                theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+                theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
                 dateFilter = dateFilterState.value?.toDateString(),
                 content = GalleryState.Content.Loading,
             ),
@@ -146,11 +147,11 @@ internal class GalleryViewModel @Inject constructor(
     }
 
     private fun buildState(
-        appThemeColorId: String?,
+        appTheme: AppTheme,
         media: List<NoteMedia>,
         dateFilter: DateFilter?,
     ) = GalleryState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         dateFilter = dateFilter?.toDateString(),
         content = if (media.isEmpty()) {
             GalleryState.Content.Empty

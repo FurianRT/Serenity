@@ -3,10 +3,11 @@ package com.furianrt.security.internal.ui.security
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.security.internal.domain.repositories.SecurityRepository
 import com.furianrt.security.internal.ui.security.SecurityEvent.*
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -31,7 +32,7 @@ internal class SecurityViewModel @Inject constructor(
         securityRepository.getPinRecoveryEmail(),
         securityRepository.getPinRequestDelay(),
         securityRepository.isFingerprintEnabled(),
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         ::buildState,
     ).flowOn(
         context = dispatchers.default,
@@ -39,7 +40,7 @@ internal class SecurityViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = SecurityUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             content = SecurityUiState.Content.Loading,
         ),
     )
@@ -90,9 +91,9 @@ internal class SecurityViewModel @Inject constructor(
         recoveryEmail: String?,
         requestDelay: Int,
         isFingerprintEnabled: Boolean,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
     ) = SecurityUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         content = SecurityUiState.Content.Success(
             isPinEnabled = pin != null,
             isFingerprintEnabled = isFingerprintEnabled,

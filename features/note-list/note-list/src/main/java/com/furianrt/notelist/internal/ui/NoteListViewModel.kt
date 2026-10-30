@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.core.combine
 import com.furianrt.core.indexOfFirstOrNull
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.managers.ResourcesManager
@@ -14,7 +15,7 @@ import com.furianrt.domain.repositories.NotesRepository
 import com.furianrt.domain.usecase.DeleteNoteUseCase
 import com.furianrt.notelist.internal.ui.extensions.toMainScreenNotes
 import com.furianrt.notelistui.extensions.toNoteFont
-import com.furianrt.uikit.entities.UiThemeColor
+import com.furianrt.uikit.entities.toUiAppTheme
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogIdentifier
 import com.furianrt.uikit.utils.DialogResult
@@ -57,7 +58,7 @@ internal class NoteListViewModel @Inject constructor(
         scrollToNoteState,
         selectedNotesState,
         appearanceRepository.getAppFont(),
-        appearanceRepository.getAppThemeColorId(),
+        appearanceRepository.getAppTheme(),
         appearanceRepository.isMinimalisticHomeScreenEnabled(),
         syncManager.hasAutoBackupFailure(),
         ::buildState,
@@ -67,7 +68,7 @@ internal class NoteListViewModel @Inject constructor(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5_000),
         initialValue = NoteListUiState(
-            theme = UiThemeColor.fromId(appearanceRepository.getAppThemeColorId().value),
+            theme = appearanceRepository.getAppTheme().value.toUiAppTheme(),
             hasAutoBackupFailure = false,
             content = NoteListUiState.Content.Loading,
         ),
@@ -225,11 +226,11 @@ internal class NoteListViewModel @Inject constructor(
         noteId: String?,
         selectedNotes: Set<String>,
         appFont: NoteFontFamily,
-        appThemeColorId: String?,
+        appTheme: AppTheme,
         compactHomeScreen: Boolean,
         hasAutoBackupFailure: Boolean,
     ) = NoteListUiState(
-        theme = UiThemeColor.fromId(appThemeColorId),
+        theme = appTheme.toUiAppTheme(),
         hasAutoBackupFailure = hasAutoBackupFailure,
         content = if (notes.isEmpty()) {
             NoteListUiState.Content.Empty
