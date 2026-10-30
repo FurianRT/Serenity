@@ -3,6 +3,7 @@ package com.furianrt.backup.internal.domain.repositories
 import android.content.Intent
 import com.furianrt.backup.internal.domain.entities.BackupPeriod
 import com.furianrt.backup.internal.domain.entities.RemoteFile
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
@@ -49,6 +50,10 @@ internal interface BackupRepository {
     suspend fun uploadNoteBackgroundsData(backgrounds: List<NoteCustomBackground>): Result<Unit>
     suspend fun uploadNoteBackground(background: NoteCustomBackground): Result<Unit>
     suspend fun getRemoteNoteBackgrounds(fileId: String): Result<List<NoteCustomBackground>>
+
+    suspend fun uploadAppBackgroundsData(backgrounds: List<AppCustomBackground>): Result<Unit>
+    suspend fun uploadAppBackground(background: AppCustomBackground): Result<Unit>
+    suspend fun getRemoteAppBackgrounds(fileId: String): Result<List<AppCustomBackground>>
 
     suspend fun uploadCustomStickersData(stickers: List<CustomSticker>): Result<Unit>
     suspend fun uploadCustomSticker(sticker: CustomSticker): Result<Unit>

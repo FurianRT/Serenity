@@ -4,10 +4,12 @@ import com.furianrt.backup.internal.domain.entities.RemoteFile
 import com.furianrt.backup.internal.domain.entities.SyncState
 import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
 import com.furianrt.domain.entities.SimpleNote
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -21,6 +23,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.filter
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 internal class RestoreDataManager @Inject constructor(
@@ -28,6 +31,7 @@ internal class RestoreDataManager @Inject constructor(
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
     private val stickersRepository: StickersRepository,
+    private val appearanceRepository: AppearanceRepository,
     private val updateNoteContentUseCase: UpdateNoteContentUseCase,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val errorTracker: ErrorTracker,
@@ -104,8 +108,13 @@ internal class RestoreDataManager @Inject constructor(
 
         saveNotesData(remoteNotes)
 
+        if (!syncAppBackgrounds(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return
+        }
+
         progressState.update { SyncState.Success }
-        delay(500)
+        delay(500.milliseconds)
         progressState.update { SyncState.Idle }
     }
 
@@ -238,6 +247,36 @@ internal class RestoreDataManager @Inject constructor(
         return true
     }
 
+    private suspend fun syncAppBackgrounds(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val backgroundsData = remoteFiles
+            .filterIsInstance<RemoteFile.AppBackgroundsData>()
+            .maxByOrNull(RemoteFile.AppBackgroundsData::createdAt) ?: return true
+
+        val remoteBackgrounds = backupRepository.getRemoteAppBackgrounds(backgroundsData.id)
+            .onFailure(errorTracker::trackNonFatalError)
+            .getOrNull()
+
+        if (remoteBackgrounds == null) {
+            return false
+        }
+
+        val localBackgrounds = appearanceRepository.getAppCustomBackgrounds().first()
+
+        val backgroundsToSave = remoteBackgrounds
+            .filter { remote -> localBackgrounds.none { it.id == remote.id } }
+
+        backgroundsToSave.forEach { background ->
+            if (!syncAppBackgroundFile(remoteFiles, background)) {
+                return false
+            }
+            appearanceRepository.upsertAppCustomBackground(background, updateFile = false)
+        }
+
+        return true
+    }
+
     private suspend fun syncCustomStickers(
         remoteFiles: List<RemoteFile>,
     ): Boolean {
@@ -274,6 +313,25 @@ internal class RestoreDataManager @Inject constructor(
     ): Boolean {
         val remoteFileId = remoteFiles.find { it.name == background.id }?.id ?: return true
         val localFile = mediaRepository.createNoteBackgroundDestinationFile(
+            id = background.id,
+            name = background.name,
+        )
+        return if (localFile == null) {
+            false
+        } else {
+            backupRepository.loadRemoteLocalToFile(remoteFileId, localFile)
+                .onFailure(errorTracker::trackNonFatalError)
+                .map { true }
+                .getOrDefault(false)
+        }
+    }
+
+    private suspend fun syncAppBackgroundFile(
+        remoteFiles: List<RemoteFile>,
+        background: AppCustomBackground,
+    ): Boolean {
+        val remoteFileId = remoteFiles.find { it.name == background.id }?.id ?: return true
+        val localFile = mediaRepository.createAppBackgroundDestinationFile(
             id = background.id,
             name = background.name,
         )

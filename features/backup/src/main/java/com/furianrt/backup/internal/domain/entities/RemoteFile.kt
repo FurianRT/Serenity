@@ -40,6 +40,15 @@ internal sealed class RemoteFile(
         }
     }
 
+    class AppBackgroundsData(
+        override val id: String,
+        val createdAt: Instant,
+    ) : RemoteFile(id, FILE_NAME) {
+        companion object {
+            const val FILE_NAME = "AppCustomBackgrounds"
+        }
+    }
+
     class CustomStickersData(
         override val id: String,
         val createdAt: Instant,

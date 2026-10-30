@@ -7,6 +7,7 @@ import com.furianrt.backup.internal.domain.repositories.BackupRepository
 import com.furianrt.common.ErrorTracker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
+import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.DeviceInfoRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.domain.repositories.NotesRepository
@@ -21,12 +22,14 @@ import kotlinx.coroutines.flow.update
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.time.Duration.Companion.milliseconds
 
 @Singleton
 internal class BackupDataManager @Inject constructor(
     private val notesRepository: NotesRepository,
     private val backupRepository: BackupRepository,
     private val mediaRepository: MediaRepository,
+    private val appearanceRepository: AppearanceRepository,
     private val stickersRepository: StickersRepository,
     private val deviceInfoRepository: DeviceInfoRepository,
     private val deleteUnusedDataUseCase: DeleteUnusedDataUseCase,
@@ -96,6 +99,11 @@ internal class BackupDataManager @Inject constructor(
             return false
         }
 
+        if (!uploadAppBackgrounds(remoteFiles)) {
+            progressState.update { SyncState.Failure }
+            return false
+        }
+
         if (!deleteUnusedMediaFiles(remoteFiles)) {
             progressState.update { SyncState.Failure }
             return false
@@ -104,7 +112,7 @@ internal class BackupDataManager @Inject constructor(
         backupRepository.setLastSyncDate(ZonedDateTime.now())
 
         progressState.update { SyncState.Success }
-        delay(500)
+        delay(500.milliseconds)
         progressState.update { SyncState.Idle }
 
         return true
@@ -230,6 +238,29 @@ internal class BackupDataManager @Inject constructor(
                 errorTracker.trackNonFatalError(error)
                 return false
             }
+        val oldBackgroundsData = remoteFiles.filterIsInstance<RemoteFile.NoteBackgroundsData>()
+        backupRepository.deleteFiles(oldBackgroundsData)
+            .onFailure(errorTracker::trackNonFatalError)
+
+        return true
+    }
+
+    private suspend fun uploadAppBackgrounds(
+        remoteFiles: List<RemoteFile>,
+    ): Boolean {
+        val localBackgrounds = appearanceRepository.getAppCustomBackgrounds().first()
+        localBackgrounds.forEach { background ->
+            if (remoteFiles.none { it.name == background.id }) {
+                backupRepository.uploadAppBackground(background).onFailure { error ->
+                    errorTracker.trackNonFatalError(error)
+                    return false
+                }
+            }
+        }
+        backupRepository.uploadAppBackgroundsData(localBackgrounds).onFailure { error ->
+            errorTracker.trackNonFatalError(error)
+            return false
+        }
         val oldBackgroundsData = remoteFiles.filterIsInstance<RemoteFile.NoteBackgroundsData>()
         backupRepository.deleteFiles(oldBackgroundsData)
             .onFailure(errorTracker::trackNonFatalError)

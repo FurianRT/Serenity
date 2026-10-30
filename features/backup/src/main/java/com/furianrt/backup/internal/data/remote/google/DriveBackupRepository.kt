@@ -18,6 +18,7 @@ import com.furianrt.backup.internal.extensions.toRemoteFile
 import com.furianrt.backup.internal.workers.AutoBackupWorker
 import com.furianrt.common.ErrorTracker
 import com.furianrt.core.DispatchersProvider
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.CustomSticker
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteCustomBackground
@@ -131,7 +132,7 @@ internal class DriveBackupRepository @Inject constructor(
         credentialManager.clearCredentialState(ClearCredentialStateRequest())
         (accessToken ?: getAccessToken().first())?.let { clearToken(it) }
         Result.success(Unit)
-    } catch (e: Exception) {
+    } catch (_: Exception) {
         Result.failure(AuthException.ClearCredentialException())
     }
 
@@ -295,6 +296,51 @@ internal class DriveBackupRepository @Inject constructor(
         }
     }
 
+    override suspend fun uploadAppBackgroundsData(
+        backgrounds: List<AppCustomBackground>,
+    ): Result<Unit> = withContext(dispatchers.io) {
+        runCatching {
+            val metadataJson = buildJsonObject {
+                put("name", RemoteFile.AppBackgroundsData.FILE_NAME)
+                put("mimeType", ACCEPT_JSON_VALUE)
+                putJsonArray("parents") { add(APP_FOLDER_NAME) }
+            }
+
+            val metadataRequestBody = metadataJson
+                .toString()
+                .toRequestBody("$ACCEPT_JSON_VALUE; $UTF8_DIRECTIVE".toMediaType())
+
+            val jsonString = Json.encodeToString(backgrounds)
+            val filePart = MultipartBody.Part.createFormData(
+                name = "file",
+                filename = "${RemoteFile.AppBackgroundsData.FILE_NAME}.json",
+                body = jsonString.toRequestBody(ACCEPT_JSON_VALUE.toMediaType()),
+            )
+
+            driveApiService.uploadFile(metadataRequestBody, filePart)
+        }
+    }
+
+    override suspend fun uploadAppBackground(
+        background: AppCustomBackground,
+    ): Result<Unit> = uploadFile(
+        name = background.id,
+        fileUri = background.uri,
+        mimeType = MIME_TYPE_IMAGE,
+    )
+
+    @OptIn(ExperimentalSerializationApi::class)
+    override suspend fun getRemoteAppBackgrounds(
+        fileId: String,
+    ): Result<List<AppCustomBackground>> = withContext(dispatchers.io) {
+        runCatching {
+            val responseBody = driveApiService.downloadFile(fileId)
+            responseBody.byteStream().buffered().use { input ->
+                Json.decodeFromStream<List<AppCustomBackground>>(input)
+            }
+        }
+    }
+
     override suspend fun uploadCustomSticker(
         sticker: CustomSticker,
     ): Result<Unit> = uploadFile(
@@ -317,7 +363,7 @@ internal class DriveBackupRepository @Inject constructor(
 
     override suspend fun uploadCustomStickersData(
         stickers: List<CustomSticker>,
-    ): Result<Unit>  = withContext(dispatchers.io) {
+    ): Result<Unit> = withContext(dispatchers.io) {
         runCatching {
             val metadataJson = buildJsonObject {
                 put("name", RemoteFile.CustomStickersData.FILE_NAME)

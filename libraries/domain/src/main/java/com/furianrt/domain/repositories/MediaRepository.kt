@@ -51,6 +51,11 @@ interface MediaRepository {
         name: String,
     ): File?
 
+    suspend fun createAppBackgroundDestinationFile(
+        id: String,
+        name: String,
+    ): File?
+
     suspend fun createCustomStickerDestinationFile(
         id: String,
         name: String,

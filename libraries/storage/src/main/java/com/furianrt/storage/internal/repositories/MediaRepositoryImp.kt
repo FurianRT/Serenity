@@ -195,6 +195,11 @@ internal class MediaRepositoryImp @Inject constructor(
         name: String,
     ): File? = appMediaSource.createNoteBackgroundFile(id, name)
 
+    override suspend fun createAppBackgroundDestinationFile(
+        id: String,
+        name: String,
+    ): File? = appMediaSource.createAppBackgroundFile(id, name)
+
     override suspend fun createCustomStickerDestinationFile(
         id: String,
         name: String,
