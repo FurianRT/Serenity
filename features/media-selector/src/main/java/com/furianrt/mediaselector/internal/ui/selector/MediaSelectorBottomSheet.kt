@@ -86,7 +86,6 @@ import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import com.google.accompanist.permissions.rememberPermissionState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 import com.furianrt.uikit.R as uiR
@@ -154,7 +153,7 @@ internal fun MediaSelectorBottomSheetInternal(
     LaunchedEffect(Unit) {
         viewModel.effect
             .flowWithLifecycle(lifecycle, Lifecycle.State.STARTED)
-            .collectLatest { effect ->
+            .collect { effect ->
                 when (effect) {
                     is MediaSelectorEffect.CloseScreen -> {
                         state.blockHiddenState(false)

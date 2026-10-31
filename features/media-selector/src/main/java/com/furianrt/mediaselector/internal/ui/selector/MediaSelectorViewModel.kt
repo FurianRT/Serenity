@@ -2,8 +2,8 @@ package com.furianrt.mediaselector.internal.ui.selector
 
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
-import androidx.exifinterface.media.ExifInterface
 import android.net.Uri
+import androidx.exifinterface.media.ExifInterface
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
@@ -34,9 +34,9 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEffect.Reque
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumSelected
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnAlbumsDismissed
-import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraPhotoItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraNotFoundError
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraPermissionSelected
+import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraPhotoItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCameraVideoItemClick
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnCloseScreenRequest
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnExpanded
@@ -50,21 +50,22 @@ import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnSend
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnTakePictureResult
 import com.furianrt.mediaselector.internal.ui.selector.MediaSelectorEvent.OnTakeVideoResult
 import com.furianrt.permissions.utils.PermissionsUtils
-import com.furianrt.uikit.R as uiR
 import com.furianrt.uikit.extensions.launch
 import com.furianrt.uikit.utils.DialogResult
 import com.furianrt.uikit.utils.DialogResultCoordinator
 import com.furianrt.uikit.utils.DialogResultListener
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import java.io.File
 import java.time.LocalDate
 import java.util.UUID
 import javax.inject.Inject
+import com.furianrt.uikit.R as uiR
 
 private const val TAG = "MediaSelectorViewModel"
 private const val MEDIA_VIEWER_DIALOG_ID = 1
@@ -91,8 +92,8 @@ internal class MediaSelectorViewModel @Inject constructor(
     private val _state = MutableStateFlow<MediaSelectorUiState>(MediaSelectorUiState.Hidden)
     val state = _state.asStateFlow()
 
-    private val _effect = MutableSharedFlow<MediaSelectorEffect>(extraBufferCapacity = 10)
-    val effect = _effect.asSharedFlow()
+    private val _effect = Channel<MediaSelectorEffect>(Channel.BUFFERED)
+    val effect: Flow<MediaSelectorEffect> = _effect.receiveAsFlow()
 
     private var isDataLoaded = false
     private var allowVideo = true
@@ -138,7 +139,7 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     fun onEvent(event: MediaSelectorEvent) {
         when (event) {
-            is OnPartialAccessMessageClick -> _effect.tryEmit(RequestMediaPermissions)
+            is OnPartialAccessMessageClick -> _effect.trySend(RequestMediaPermissions)
             is OnMediaPermissionsSelected -> launch {
                 loadMediaItems(
                     selectedAlbumId = MediaAlbumItem.ALL_MEDIA_ALBUM_ID,
@@ -147,7 +148,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
 
             is OnSelectItemClick -> toggleItemSelection(event.item)
-            is OnMediaClick -> _effect.tryEmit(
+            is OnMediaClick -> _effect.trySend(
                 OpenMediaViewer(
                     dialogId = MEDIA_VIEWER_DIALOG_ID,
                     requestId = TAG,
@@ -161,7 +162,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             )
 
             is OnSendClick -> launch { onSendClick() }
-            is OnCloseScreenRequest -> _effect.tryEmit(CloseScreen)
+            is OnCloseScreenRequest -> _effect.trySend(CloseScreen)
             is OnScreenClosed -> {
                 mediaCoordinator.unselectAllMedia()
                 tempMediaHolder.clear()
@@ -214,7 +215,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                     .map(DeviceAlbum::toMediaAlbumItem)
                     .toMutableList()
                     .apply { add(0, allMediaAlbum) }
-                _effect.tryEmit(MediaSelectorEffect.ShowAlbumsList(albumsItems))
+                _effect.trySend(MediaSelectorEffect.ShowAlbumsList(albumsItems))
             }
 
             is OnAlbumSelected -> when (val currentState = _state.value) {
@@ -231,13 +232,13 @@ internal class MediaSelectorViewModel @Inject constructor(
                 }
             }
 
-            is OnAlbumsDismissed -> _effect.tryEmit(MediaSelectorEffect.HideAlbumsList)
+            is OnAlbumsDismissed -> _effect.trySend(MediaSelectorEffect.HideAlbumsList)
             is OnCameraPhotoItemClick -> tryRequestCameraPermissions(forVideo = false)
             is OnCameraVideoItemClick -> tryRequestCameraPermissions(forVideo = true)
             is OnCameraPermissionSelected -> tryOpenCamera()
             is OnTakePictureResult -> onTakePictureResult(event.isSuccess)
             is OnTakeVideoResult -> onTakePictureResult(event.isSuccess)
-            is OnCameraNotFoundError -> _effect.tryEmit(
+            is OnCameraNotFoundError -> _effect.trySend(
                 MediaSelectorEffect.ShowMessage(
                     text = resourcesManager.getString(uiR.string.error_camera_not_found),
                 )
@@ -247,7 +248,7 @@ internal class MediaSelectorViewModel @Inject constructor(
 
     private suspend fun onSendClick() {
         onMediaSelected(mediaCoordinator.getSelectedMedia().toMediaSelectorResult())
-        _effect.tryEmit(CloseScreen)
+        _effect.trySend(CloseScreen)
         mediaCoordinator.unselectAllMedia()
         tempMediaHolder.clear()
         _state.updateState<MediaSelectorUiState.Success> { currentState ->
@@ -263,7 +264,7 @@ internal class MediaSelectorViewModel @Inject constructor(
         selectedAlbumName: String?,
     ) {
         if (permissionsUtils.mediaAccessDenied()) {
-            _effect.tryEmit(CloseScreen)
+            _effect.trySend(CloseScreen)
             mediaCoordinator.unselectAllMedia()
             _state.updateState<MediaSelectorUiState.Success> { currentState ->
                 currentState.setSelectedItems(
@@ -366,7 +367,7 @@ internal class MediaSelectorViewModel @Inject constructor(
             }
         } else {
             hasPendingVideoPermissionRequest = forVideo
-            _effect.tryEmit(MediaSelectorEffect.RequestCameraPermission)
+            _effect.trySend(MediaSelectorEffect.RequestCameraPermission)
         }
     }
 
@@ -380,7 +381,7 @@ internal class MediaSelectorViewModel @Inject constructor(
                 }
             }
         } else {
-            _effect.tryEmit(MediaSelectorEffect.ShowCameraPermissionsDeniedDialog)
+            _effect.trySend(MediaSelectorEffect.ShowCameraPermissionsDeniedDialog)
         }
     }
 
@@ -388,9 +389,9 @@ internal class MediaSelectorViewModel @Inject constructor(
         val uri = createPhotoFile()
         if (uri != null) {
             lockAuthorizer.skipNextLock()
-            _effect.tryEmit(MediaSelectorEffect.TakePicture(uri))
+            _effect.trySend(MediaSelectorEffect.TakePicture(uri))
         } else {
-            _effect.tryEmit(
+            _effect.trySend(
                 MediaSelectorEffect.ShowMessage(
                     resourcesManager.getString(uiR.string.general_error)
                 ),
@@ -402,9 +403,9 @@ internal class MediaSelectorViewModel @Inject constructor(
         val uri = createVideoFile()
         if (uri != null) {
             lockAuthorizer.skipNextLock()
-            _effect.tryEmit(MediaSelectorEffect.TakeVideo(uri))
+            _effect.trySend(MediaSelectorEffect.TakeVideo(uri))
         } else {
-            _effect.tryEmit(
+            _effect.trySend(
                 MediaSelectorEffect.ShowMessage(
                     resourcesManager.getString(uiR.string.general_error)
                 ),
