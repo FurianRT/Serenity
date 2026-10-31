@@ -38,4 +38,5 @@ internal sealed interface AppThemeEffect {
 
     data object ShowPermissionsDeniedDialog : AppThemeEffect
     data class OpenMediaViewer(val route: MediaViewerRoute) : AppThemeEffect
+    data object OpenBillingScreen : AppThemeEffect
 }

@@ -8,6 +8,7 @@ import com.furianrt.apptheme.internal.ui.extensions.toAppCustomBackground
 import com.furianrt.core.DispatchersProvider
 import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.AppTheme
+import com.furianrt.domain.managers.SerenityPlusProvider
 import com.furianrt.domain.repositories.AppearanceRepository
 import com.furianrt.domain.repositories.MediaRepository
 import com.furianrt.mediaselector.api.MediaResult
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
@@ -35,6 +37,7 @@ internal class AppThemeViewModel @Inject constructor(
     private val appearanceRepository: AppearanceRepository,
     private val mediaRepository: MediaRepository,
     private val permissionsUtils: PermissionsUtils,
+    private val serenityPlusProvider: SerenityPlusProvider,
 ) : ViewModel() {
 
     private val regularThemes by lazy {
@@ -71,7 +74,7 @@ internal class AppThemeViewModel @Inject constructor(
         when (event) {
             is AppThemeEvent.OnThemeClick -> onThemeClick(event.theme)
             is AppThemeEvent.OnBackClick -> onBackClick()
-            is AppThemeEvent.OnAddClick -> tryRequestMediaPermissions()
+            is AppThemeEvent.OnAddClick -> onAddClick()
             is AppThemeEvent.OnMediaPermissionsSelected -> tryOpenMediaSelector()
             is AppThemeEvent.OnOpenMediaViewerRequest -> onOpenMediaViewerRequest(event.route)
             is AppThemeEvent.OnDeleteBackgroundClick -> onDeleteBackgroundClick(event.id)
@@ -89,6 +92,16 @@ internal class AppThemeViewModel @Inject constructor(
     private fun onThemeClick(theme: UiAppTheme) {
         launch {
             appearanceRepository.updateAppTheme(theme.id)
+        }
+    }
+
+    private fun onAddClick() {
+        launch {
+            if (serenityPlusProvider.hasSerenityPlus().first()) {
+                tryRequestMediaPermissions()
+            } else {
+                _effect.tryEmit(AppThemeEffect.OpenBillingScreen)
+            }
         }
     }
 

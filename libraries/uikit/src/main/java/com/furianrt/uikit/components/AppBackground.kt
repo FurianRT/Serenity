@@ -26,7 +26,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.toContentAlignment

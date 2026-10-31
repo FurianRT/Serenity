@@ -71,6 +71,7 @@ import kotlin.collections.map
 internal fun AppThemeScreen(
     onCloseRequest: () -> Unit,
     openMediaViewer: (route: MediaViewerRoute) -> Unit,
+    openBillingScreen: () -> Unit,
 ) {
     val viewModel: AppThemeViewModel = hiltViewModel()
     val uiState = viewModel.state.collectAsStateWithLifecycle().value
@@ -89,6 +90,7 @@ internal fun AppThemeScreen(
 
     val onCloseRequestState by rememberUpdatedState(onCloseRequest)
     val openMediaViewerState by rememberUpdatedState(openMediaViewer)
+    val openBillingScreenState by rememberUpdatedState(openBillingScreen)
 
     LaunchedEffect(Unit) {
         viewModel.effect
@@ -113,6 +115,7 @@ internal fun AppThemeScreen(
                     }
 
                     is AppThemeEffect.OpenMediaViewer -> openMediaViewerState(effect.route)
+                    is AppThemeEffect.OpenBillingScreen -> openBillingScreenState()
                 }
             }
     }

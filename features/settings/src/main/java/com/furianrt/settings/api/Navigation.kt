@@ -90,6 +90,8 @@ fun NavGraphBuilder.settingsNavigation(
         appThemeScreen(
             onCloseRequest = navController::navigateUp,
             openMediaViewer = openMediaViewer,
+            openBillingScreen = openBillingScreen,
+            hasBillingRoute = hasBillingRoute,
         )
         remindersNavigation(
             navController = navController,
