@@ -1,6 +1,7 @@
 package com.furianrt.notepage.internal.ui.page
 
-import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.State
 import androidx.compose.ui.graphics.Color
 import com.furianrt.core.findInstance
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -20,7 +21,7 @@ internal sealed interface PageUiState {
     data object Loading : PageUiState
     data object Empty : PageUiState
 
-    @Immutable
+    @Stable
     data class Success(
         val noteId: String,
         val content: List<UiNoteContent>,
@@ -38,12 +39,12 @@ internal sealed interface PageUiState {
         val appTheme: UiNoteTheme,
         val moodId: String?,
         val defaultMoodId: String?,
-        val locationState: LocationState,
+        val locationState: State<LocationState>,
         val isInEditMode: Boolean,
     ) : PageUiState {
 
         val showLocation: Boolean
-            get() = isInEditMode || locationState !is LocationState.Empty
+            get() = isInEditMode || locationState.value !is LocationState.Empty
 
         val showLocationDivider: Boolean
             get() = showLocation && !showMood && tags.isEmpty()

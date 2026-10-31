@@ -1,5 +1,7 @@
 package com.furianrt.notepage.internal.ui.page
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.AnnotatedString
@@ -176,6 +178,8 @@ internal class PageViewModel @AssistedInject constructor(
     @Assisted private val isNoteCreationMode: Boolean,
     @Assisted private val action: NotePageAction,
 ) : ViewModel(), DialogResultListener, AudioPlayerListener {
+
+    private var locationState: MutableState<LocationState> = mutableStateOf(LocationState.Empty)
 
     private val _state = MutableStateFlow<PageUiState>(PageUiState.Loading)
     val state: StateFlow<PageUiState> = _state.asStateFlow()
@@ -707,9 +711,7 @@ internal class PageViewModel @AssistedInject constructor(
     }
 
     private fun deleteLocation() {
-        _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(locationState = LocationState.Empty)
-        }
+        locationState.value = LocationState.Empty
         launch {
             locationRepository.delete(noteId)
         }
@@ -718,9 +720,7 @@ internal class PageViewModel @AssistedInject constructor(
     private fun cancelLocation() {
         locationJob?.cancel()
         locationJob = null
-        _state.updateState<PageUiState.Success> { currentState ->
-            currentState.copy(locationState = LocationState.Empty)
-        }
+        locationState.value = LocationState.Empty
     }
 
     private fun tryOpenMediaSelector(params: MediaSelectorState.Params) {
@@ -1065,6 +1065,7 @@ internal class PageViewModel @AssistedInject constructor(
             when (localState) {
                 is PageUiState.Empty, PageUiState.Loading -> {
                     val appFont = appearanceRepository.getAppFont().first().toUiNoteFontFamily()
+                    locationState.value = note.location?.toLocationState() ?: locationState.value
                     PageUiState.Success(
                         noteId = note.id,
                         content = note.content.refreshTitleTemplates(
@@ -1095,7 +1096,7 @@ internal class PageViewModel @AssistedInject constructor(
                         moodId = note.moodId,
                         defaultMoodId = appearanceRepository.getDefaultNoteMoodId().first(),
                         isInEditMode = isNoteCreationMode,
-                        locationState = note.location?.toLocationState() ?: LocationState.Empty,
+                        locationState = locationState,
                     ).also {
                         tryFocusFirstTitle()
                         tryAutoDetectLocation()
@@ -1146,7 +1147,7 @@ internal class PageViewModel @AssistedInject constructor(
                 backgroundId = state.noteTheme.takeIf { it?.isAppTheme == false }?.colorId,
                 backgroundImageId = state.noteTheme.takeIf { it?.isAppTheme == false }?.imageId,
                 moodId = state.moodId,
-                noteLocation = state.locationState.toNoteLocation(),
+                noteLocation = state.locationState.value.toNoteLocation(),
             )
             if (isNoteCreationMode) {
                 saveDefaultFontData(state)
@@ -1264,9 +1265,7 @@ internal class PageViewModel @AssistedInject constructor(
         saveContent: Boolean = true,
         skipError: Boolean = false,
     ) {
-        _state.updateState<PageUiState.Success> { successState ->
-            successState.copy(locationState = LocationState.Loading)
-        }
+        locationState.value = LocationState.Loading
         val location = locationRepository.detectLocation()
         if (location == null) {
             if (!skipError) {
@@ -1278,14 +1277,10 @@ internal class PageViewModel @AssistedInject constructor(
                     )
                 )
             }
-            _state.updateState<PageUiState.Success> { successState ->
-                successState.copy(locationState = LocationState.Empty)
-            }
+            locationState.value = LocationState.Empty
         } else {
             hasContentChanged = hasContentChanged || saveContent
-            _state.updateState<PageUiState.Success> { successState ->
-                successState.copy(locationState = location.toLocationState())
-            }
+            locationState.value = location.toLocationState()
             val showDialog = !appearanceRepository.isAutoDetectLocationAsked().first() &&
                     !appearanceRepository.isAutoDetectLocationEnabled().first()
 

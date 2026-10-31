@@ -919,7 +919,7 @@ private fun ContentItems(
                         modifier = Modifier
                             .padding(start = 4.dp, end = 4.dp, top = 16.dp)
                             .animatePlacementInScope(this@LookaheadScope),
-                        state = uiState.locationState,
+                        state = uiState.locationState.value,
                         isRemovable = uiState.isInEditMode,
                         hazeState = hazeState,
                         onAddLocationClick = {
