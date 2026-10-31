@@ -1,6 +1,5 @@
 package com.furianrt.mediasorting.internal.ui.composables
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -47,7 +46,7 @@ internal fun VideoItem(
             modifier = Modifier
                 .padding(top = 4.dp, end = 4.dp)
                 .clip(RoundedCornerShape(16.dp))
-                .clickable { onClick(item) }
+                //.clickable { onClick(item) }
                 .fillMaxSize(),
             model = request,
             contentScale = ContentScale.Crop,
