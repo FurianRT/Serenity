@@ -2,6 +2,7 @@ package com.furianrt.uikit.entities
 
 import androidx.compose.material3.ColorScheme
 import androidx.compose.ui.graphics.Color
+import com.furianrt.domain.entities.AppCustomBackground
 import com.furianrt.domain.entities.AppTheme
 import com.furianrt.uikit.theme.getDefaultDarkColorScheme
 import com.furianrt.uikit.theme.getDefaultLightColorScheme
@@ -41,29 +42,28 @@ sealed class UiAppTheme(
 }
 
 fun AppTheme.toUiAppTheme() = when (this) {
-    is AppTheme.Regular -> UiAppTheme.Regular(
-        color = UiThemeColor.fromId(id),
-    )
-
-    is AppTheme.Custom -> UiAppTheme.Custom(
-        id = background.id,
-        image = UiThemeImage(
-            source = UiThemeImage.Source.Link(
-                uri = background.uri,
-            ),
-            scaleType = UiThemeImage.ScaleType.CROP_ALIGN_CENTER,
-        ),
-        colorScheme = if (background.isLight) {
-            getDefaultLightColorScheme(
-                surface = Color(background.primaryColor),
-                primaryContainer = Color(background.accentColor),
-            )
-        } else {
-            getDefaultDarkColorScheme(
-                surface = Color(background.primaryColor),
-                primaryContainer = Color(background.accentColor),
-            )
-        },
-        isLight = background.isLight,
-    )
+    is AppTheme.Regular -> UiAppTheme.Regular(color = UiThemeColor.fromId(id))
+    is AppTheme.Custom -> background.toUiAppTheme()
 }
+
+fun AppCustomBackground.toUiAppTheme() = UiAppTheme.Custom(
+    id = id,
+    image = UiThemeImage(
+        source = UiThemeImage.Source.Link(
+            uri = uri,
+        ),
+        scaleType = UiThemeImage.ScaleType.CROP_ALIGN_CENTER,
+    ),
+    colorScheme = if (isLight) {
+        getDefaultLightColorScheme(
+            surface = Color(primaryColor),
+            primaryContainer = Color(accentColor),
+        )
+    } else {
+        getDefaultDarkColorScheme(
+            surface = Color(primaryColor),
+            primaryContainer = Color(accentColor),
+        )
+    },
+    isLight = isLight,
+)

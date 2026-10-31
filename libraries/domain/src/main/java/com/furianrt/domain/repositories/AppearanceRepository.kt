@@ -12,12 +12,12 @@ interface AppearanceRepository {
     suspend fun updateAppTheme(id: String)
     fun getAppTheme(): StateFlow<AppTheme>
     fun getAppCustomBackgrounds(): Flow<List<AppCustomBackground>>
+    suspend fun deleteAppCustomBackground(background: AppCustomBackground)
+    suspend fun deleteAppCustomBackground(id: String)
     suspend fun upsertAppCustomBackground(
         background: AppCustomBackground,
         updateFile: Boolean = true,
     )
-
-    suspend fun deleteAppCustomBackground(background: AppCustomBackground)
 
     fun getNoteFontColorsList(): List<NoteFontColor>
     fun getNoteFontsList(): List<NoteFontFamily>

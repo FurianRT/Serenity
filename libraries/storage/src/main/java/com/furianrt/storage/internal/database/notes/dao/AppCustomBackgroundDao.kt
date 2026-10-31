@@ -42,6 +42,15 @@ internal interface AppCustomBackgroundDao {
 
     @Query(
         """
+    SELECT *
+    FROM ${EntryAppCustomBackground.TABLE_NAME}
+    WHERE ${EntryAppCustomBackground.FIELD_ID} = :backgroundId
+    """
+    )
+    fun getBackground(backgroundId: String): Flow<EntryAppCustomBackground?>
+
+    @Query(
+        """
     SELECT EXISTS(
         SELECT *
         FROM ${EntryAppCustomBackground.TABLE_NAME}

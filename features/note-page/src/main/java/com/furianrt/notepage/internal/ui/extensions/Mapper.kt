@@ -3,6 +3,7 @@ package com.furianrt.notepage.internal.ui.extensions
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.furianrt.domain.entities.AppTheme
 import com.furianrt.domain.entities.LocalNote
 import com.furianrt.domain.entities.NoteFontFamily
 import com.furianrt.domain.entities.NoteTextAlignment
@@ -25,6 +26,7 @@ import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.colorScheme
+import com.furianrt.uikit.entities.toUiAppTheme
 import java.time.ZonedDateTime
 import java.util.UUID
 
@@ -78,17 +80,17 @@ internal fun StickerItem.toLocalNoteSticker() = LocalNote.Sticker(
     editTime = state.editTime,
 )
 
-internal fun UiAppTheme.toNoteTheme(): UiNoteTheme = when (this) {
-    is UiAppTheme.Regular -> color.toNoteTheme()
+internal fun AppTheme.toNoteTheme(): UiNoteTheme = when (val theme = this.toUiAppTheme()) {
+    is UiAppTheme.Regular -> theme.color.toNoteTheme()
     is UiAppTheme.Custom -> UiNoteTheme.Image.Picture(
         color = UiNoteBackground(
-            id = id,
-            isLight = isLight,
-            colorScheme = colorScheme,
+            id = theme.id,
+            isLight = theme.isLight,
+            colorScheme = theme.colorScheme,
         ),
         image = UiNoteBackgroundImage(
-            id = id,
-            source = image.source.toUiNoteBackgroundImageSource(),
+            id = theme.id,
+            source = theme.image.source.toUiNoteBackgroundImageSource(),
             scaleType = UiNoteBackgroundImage.ScaleType.CROP_ALIGN_CENTER,
         ),
     )

@@ -1,7 +1,6 @@
 package com.furianrt.apptheme.internal.ui
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -11,9 +10,12 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -22,6 +24,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -36,8 +39,10 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.flowWithLifecycle
+import com.furianrt.apptheme.internal.ui.composables.Hint
 import com.furianrt.apptheme.internal.ui.composables.ThemeItem
 import com.furianrt.apptheme.internal.ui.composables.Toolbar
+import com.furianrt.apptheme.internal.ui.entities.ThemeListItem
 import com.furianrt.mediaselector.api.MediaSelectorBottomSheet
 import com.furianrt.mediaselector.api.MediaSelectorState
 import com.furianrt.mediaselector.api.MediaSelectorState.*
@@ -48,13 +53,18 @@ import com.furianrt.permissions.ui.MediaPermissionDialog
 import com.furianrt.permissions.utils.PermissionsUtils
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.components.MovableToolbarScaffold
+import com.furianrt.uikit.entities.UiAppTheme
+import com.furianrt.uikit.entities.UiThemeColor
 import com.furianrt.uikit.extensions.clickableNoRipple
+import com.furianrt.uikit.theme.SerenityTheme
+import com.furianrt.uikit.utils.PreviewWithBackground
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
 import dev.chrisbanes.haze.hazeSource
 import dev.chrisbanes.haze.rememberHazeState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.collections.map
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -151,13 +161,9 @@ private fun Content(
                 )
             }
         ) { topPadding ->
-            Crossfade(
-                targetState = state.theme,
-            ) { targetState ->
-                AppBackground(
-                    theme = targetState,
-                )
-            }
+            AppBackground(
+                theme = state.theme,
+            )
             when (state.content) {
                 is AppThemeState.Content.Loading -> LoadingContent()
                 is AppThemeState.Content.Success -> SuccessContent(
@@ -206,10 +212,21 @@ private fun SuccessContent(
 ) {
     val bottomInsetPadding = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
+    val columns = 3
+
+    var prevItemsSize by remember { mutableIntStateOf(state.items.size) }
+
+    LaunchedEffect(listState, state.items.size) {
+        if (state.items.size > prevItemsSize) {
+            listState.animateScrollToItem(0)
+        }
+        prevItemsSize = state.items.size
+    }
+
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
         state = listState,
-        columns = GridCells.Fixed(3),
+        columns = GridCells.Fixed(columns),
         verticalArrangement = Arrangement.spacedBy(14.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
         contentPadding = PaddingValues(
@@ -220,14 +237,37 @@ private fun SuccessContent(
         ),
     ) {
         itemsIndexed(
-            items = state.themes,
+            items = state.items,
             key = { _, item -> item.id },
+            span = { _, item ->
+                if (item is ThemeListItem.Hint) GridItemSpan(columns) else GridItemSpan(1)
+            },
         ) { _, item ->
-            ThemeItem(
-                theme = item,
-                isSelected = item.id == state.selectedId,
-                onClick = { onEvent(AppThemeEvent.OnThemeClick(it)) },
-            )
+            when (item) {
+                is ThemeListItem.CustomBackground -> ThemeItem(
+                    modifier = Modifier.animateItem(),
+                    theme = item.theme,
+                    isSelected = item.id == state.selectedId,
+                    allowDelete = true,
+                    onClick = { onEvent(AppThemeEvent.OnThemeClick(it)) },
+                    onDeleteClick = { onEvent(AppThemeEvent.OnDeleteBackgroundClick(it.id)) },
+                )
+
+                is ThemeListItem.RegularBackground -> ThemeItem(
+                    modifier = Modifier.animateItem(),
+                    theme = item.theme,
+                    isSelected = item.id == state.selectedId,
+                    allowDelete = false,
+                    onClick = { onEvent(AppThemeEvent.OnThemeClick(it)) },
+                )
+
+                is ThemeListItem.Hint -> Hint(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp)
+                        .animateItem(),
+                )
+            }
         }
     }
 }
@@ -237,4 +277,29 @@ private fun LoadingContent(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier.fillMaxSize())
+}
+
+@PreviewWithBackground
+@Composable
+private fun Preview() {
+    val items = UiThemeColor.getDarkThemesList().map { theme ->
+        ThemeListItem.RegularBackground(
+            theme = UiAppTheme.Regular(
+                color = theme,
+            ),
+        )
+    }
+    SerenityTheme {
+        Content(
+            state = AppThemeState(
+                theme = UiAppTheme.defaultTheme,
+                content = AppThemeState.Content.Success(
+                    items = items,
+                    selectedId = items[1].id,
+                ),
+            ),
+            mediaSelectorState = rememberMediaSelectorState(),
+            onEvent = {},
+        )
+    }
 }

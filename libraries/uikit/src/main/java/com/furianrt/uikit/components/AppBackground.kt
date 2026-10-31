@@ -1,12 +1,15 @@
 package com.furianrt.uikit.components
 
-import androidx.compose.animation.Crossfade
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,6 +26,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.entities.UiThemeImage
 import com.furianrt.uikit.entities.toContentAlignment
@@ -35,48 +39,51 @@ fun AppBackground(
     modifier: Modifier = Modifier,
     ignoreImage: Boolean = false,
 ) {
-    Crossfade(
-        modifier = modifier,
-        targetState = theme,
-    ) { targetState ->
-        val image = targetState.image
-        if (!ignoreImage && image != null) {
-            val context = LocalContext.current
-            val request = remember(context, image.source) {
-                ImageRequest.Builder(context)
-                    .data(
-                        when (image.source) {
-                            is UiThemeImage.Source.Link -> image.source.uri
-                            is UiThemeImage.Source.ResId -> image.source.resId
-                        },
-                    )
-                    .memoryCacheKey(image.source.id)
-                    .build()
-            }
-            AsyncImage(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(targetState.colorScheme.surface),
-                model = request,
-                contentScale = image.scaleType.toContentScale(),
-                alignment = image.scaleType.toContentAlignment(),
-                contentDescription = null,
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                targetState.colorScheme.surface,
-                                targetState.colorScheme.surface.brighterBy(0.12f)
-                            ),
-                            start = Offset.Zero,
-                            end = Offset.Infinite
+    Box(modifier = modifier) {
+        AnimatedContent(
+            targetState = theme,
+            contentKey = { it.id },
+            transitionSpec = { fadeIn().togetherWith(fadeOut()) },
+        ) { targetState ->
+            val image = targetState.image
+            if (!ignoreImage && image != null) {
+                val context = LocalContext.current
+                val request = remember(context, image.source) {
+                    ImageRequest.Builder(context)
+                        .data(
+                            when (image.source) {
+                                is UiThemeImage.Source.Link -> image.source.uri
+                                is UiThemeImage.Source.ResId -> image.source.resId
+                            },
                         )
-                    )
-            )
+                        .memoryCacheKey(theme.id)
+                        .build()
+                }
+                AsyncImage(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(targetState.colorScheme.surface),
+                    model = request,
+                    contentScale = image.scaleType.toContentScale(),
+                    alignment = image.scaleType.toContentAlignment(),
+                    contentDescription = null,
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    targetState.colorScheme.surface,
+                                    targetState.colorScheme.surface.brighterBy(0.12f)
+                                ),
+                                start = Offset.Zero,
+                                end = Offset.Infinite
+                            )
+                        )
+                )
+            }
         }
     }
 }

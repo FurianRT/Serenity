@@ -1,7 +1,11 @@
 package com.furianrt.apptheme.internal.ui.composables
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,13 +21,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.furianrt.uikit.anim.rememberOvershootEasing
 import com.furianrt.uikit.components.AppBackground
 import com.furianrt.uikit.entities.UiAppTheme
 import com.furianrt.uikit.extensions.applyIf
@@ -42,52 +52,85 @@ import com.furianrt.uikit.R as uiR
 internal fun ThemeItem(
     theme: UiAppTheme,
     isSelected: Boolean,
+    allowDelete: Boolean,
     onClick: (theme: UiAppTheme) -> Unit,
     modifier: Modifier = Modifier,
+    onDeleteClick: (theme: UiAppTheme) -> Unit = {},
 ) {
     val hazeState = rememberHazeState()
 
-    SerenityTheme(
-        colorScheme = theme.colorScheme,
-    ) {
-        Box(
-            modifier = modifier
-                .fillMaxWidth()
-                .aspectRatio(0.6f)
-                .shadow(8.dp, RoundedCornerShape(16.dp))
-                .clip(RoundedCornerShape(16.dp))
-                .background(MaterialTheme.colorScheme.surface)
-                .applyIf(isSelected) {
-                    Modifier.border(
-                        width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
-                        shape = RoundedCornerShape(16.dp),
+    var showDropDown by remember { mutableStateOf(false) }
+    val overshootEasing = rememberOvershootEasing(tension = 4.0f)
+    val scale by animateFloatAsState(
+        targetValue = if (showDropDown) 0.95f else 1f,
+        animationSpec = tween(
+            durationMillis = 300,
+            easing = if (showDropDown) overshootEasing else FastOutSlowInEasing,
+        ),
+    )
+    Box(modifier = modifier) {
+        SerenityTheme(
+            colorScheme = theme.colorScheme,
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(0.6f)
+                    .graphicsLayer {
+                        scaleX = scale
+                        scaleY = scale
+                    }
+                    .shadow(8.dp, RoundedCornerShape(16.dp))
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.surface)
+                    .applyIf(isSelected) {
+                        Modifier.border(
+                            width = 1.5.dp,
+                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
+                            shape = RoundedCornerShape(16.dp),
+                        )
+                    }
+                    .then(
+                        if (allowDelete) {
+                            Modifier.combinedClickable(
+                                interactionSource = null,
+                                indication = null,
+                                onClick = { onClick(theme) },
+                                onLongClick = { showDropDown = true },
+                            )
+                        } else {
+                            Modifier.clickableNoRipple { onClick(theme) }
+                        }
+                    ),
+            ) {
+                AppBackground(
+                    modifier = Modifier.hazeSource(hazeState),
+                    theme = theme,
+                )
+                Column(
+                    modifier = Modifier.padding(horizontal = 5.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(7.dp),
+                ) {
+                    Toolbar(
+                        modifier = Modifier.padding(horizontal = 4.dp),
+                        hazeState = hazeState,
+                    )
+                    SkeletonItem(
+                        hazeState = hazeState,
                     )
                 }
-                .clickableNoRipple { onClick(theme) },
-        ) {
-            AppBackground(
-                modifier = Modifier.hazeSource(hazeState),
-                theme = theme,
-            )
-            Column(
-                modifier = Modifier.padding(horizontal = 5.dp, vertical = 16.dp),
-                verticalArrangement = Arrangement.spacedBy(7.dp),
-            ) {
-                Toolbar(
-                    modifier = Modifier.padding(horizontal = 4.dp),
-                    hazeState = hazeState,
-                )
-                SkeletonItem(
-                    hazeState = hazeState,
+                ActionButton(
+                    modifier = Modifier
+                        .padding(end = 10.dp, bottom = 10.dp)
+                        .align(Alignment.BottomEnd),
                 )
             }
-            ActionButton(
-                modifier = Modifier
-                    .padding(end = 10.dp, bottom = 10.dp)
-                    .align(Alignment.BottomEnd),
-            )
         }
+        Menu(
+            expanded = showDropDown,
+            onDeleteClick = { onDeleteClick(theme) },
+            onDismissRequest = { showDropDown = false },
+        )
     }
 }
 
@@ -200,6 +243,7 @@ private fun Preview() {
         modifier = Modifier.width(120.dp),
         theme = UiAppTheme.defaultTheme,
         isSelected = true,
+        allowDelete = false,
         onClick = {},
     )
 }

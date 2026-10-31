@@ -26,6 +26,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
@@ -86,6 +87,12 @@ internal class AppearanceRepositoryImp @Inject constructor(
         mediaSaver.cancel(background)
         appCustomBackgroundDao.delete(PartAppCustomBackgroundId(id = background.id))
         appMediaSource.deleteAppBackgroundFile(background)
+    }
+
+    override suspend fun deleteAppCustomBackground(id: String) {
+        appCustomBackgroundDao.getBackground(id).first()?.let { background ->
+            deleteAppCustomBackground(background.toAppCustomBackground())
+        }
     }
 
     override fun getNoteFontColorsList(): List<NoteFontColor> = NoteFontColor.entries
